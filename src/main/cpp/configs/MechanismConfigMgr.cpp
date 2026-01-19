@@ -28,6 +28,7 @@ MechanismConfigMgr *MechanismConfigMgr::GetInstance()
 	if (MechanismConfigMgr::m_instance == nullptr)
 	{
 		MechanismConfigMgr::m_instance = new MechanismConfigMgr();
+	}
 	return MechanismConfigMgr::m_instance;
 }
 
