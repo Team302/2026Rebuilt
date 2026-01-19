@@ -27,13 +27,13 @@ void FieldElementCalculator::CalcPositionsForField(robin_hood::unordered_map<Fie
     // update all of the calculated values only
     for (auto &[key, translatedPose] : m_transformCalculatedMap)
     {
-        fieldConstantsPoseMap[key] = fieldConstantsPoseMap[m_transformCalculatedMap[key].referencePose] + m_transformCalculatedMap[key].transform + m_halfRobotTransform;
+        fieldConstantsPoseMap[key] = fieldConstantsPoseMap[m_transformCalculatedMap[key].referencePose] + m_transformCalculatedMap[key].transform;
     }
 
     // after transform the tags, if the tags are transformed first it doubly transforms the calculated values
     for (auto &[key, unusedValue] : m_transformTagsMap)
     {
-        fieldConstantsPoseMap[key] = fieldConstantsPoseMap[key] + m_halfRobotTransform;
+        fieldConstantsPoseMap[key] = fieldConstantsPoseMap[key];
     }
 
 #ifdef INCLUDE_FIELD_ELEMENT_POSE_LOGGER
@@ -64,7 +64,7 @@ void FieldElementCalculator::InitializeTransforms()
         TransformToPose(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER, m_calcTowerRightStick);
     m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_LEFT_SIDE] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER, m_calcDepoOffsetLeft);
-    m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEURTAL_SIDE] =
+    m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER, m_calcDepoOffsetCenter);
     m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_RIGHT_SIDE] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER, m_calcDepoOffsetRight);
@@ -80,7 +80,7 @@ void FieldElementCalculator::InitializeTransforms()
         TransformToPose(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER, m_calcTowerRightStick);
     m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::RED_DEPOT_LEFT_SIDE] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER, m_calcDepoOffsetLeft);
-    m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEURTAL_SIDE] =
+    m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER, m_calcDepoOffsetCenter);
     m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::RED_DEPOT_RIGHT_SIDE] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER, m_calcDepoOffsetRight);

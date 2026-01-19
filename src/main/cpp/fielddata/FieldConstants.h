@@ -48,7 +48,7 @@ public:
         BLUE_TOWER_RIGHT_STICK,
         BLUE_TOWER_LEVEL_1_LEFT,
         BLUE_TOWER_LEVEL_1_RIGHT,
-        BLUE_DEPOT_NEURTAL_SIDE,
+        BLUE_DEPOT_NEUTRAL_SIDE,
         BLUE_DEPOT_LEFT_SIDE,
         BLUE_DEPOT_RIGHT_SIDE,
 
@@ -58,7 +58,7 @@ public:
         RED_TOWER_RIGHT_STICK,
         RED_TOWER_LEVEL_1_LEFT,
         RED_TOWER_LEVEL_1_RIGHT,
-        RED_DEPOT_NEURTAL_SIDE,
+        RED_DEPOT_NEUTRAL_SIDE,
         RED_DEPOT_LEFT_SIDE,
         RED_DEPOT_RIGHT_SIDE
     };
@@ -103,5 +103,5 @@ private:
     std::array<frc::Pose2d, 68> m_fieldConst2dPoses;
 
     robin_hood::unordered_map<int, frc::Pose3d> m_aprilTagPoseMap;
-    std::array<frc::Pose2d, 23> m_aprilTag2dPoses;
+    std::array<frc::Pose2d, 32> m_aprilTag2dPoses;
 };
