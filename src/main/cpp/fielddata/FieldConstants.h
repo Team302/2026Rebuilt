@@ -63,19 +63,6 @@ public:
         RED_DEPOT_RIGHT_SIDE
     };
 
-    enum class FIELD_ELEMENT_OFFSETS
-    {
-        LEFT_STICK,
-        RIGHT_STICK
-    };
-
-    enum class CageLocation
-    {
-        LEFT,
-        CENTER,
-        RIGHT
-    };
-
     frc::Pose3d GetFieldElementPose(FIELD_ELEMENT element);
     frc::Pose2d GetFieldElementPose2d(FIELD_ELEMENT element);
 

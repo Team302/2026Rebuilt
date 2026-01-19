@@ -25,28 +25,12 @@ struct TransformToPose
     FieldConstants::FIELD_ELEMENT referencePose;
     frc::Transform3d transform;
 };
-enum OffsetEnums
-{
-    // Comp Red
-    COMP_RIGHT_RED,
-    COMP_LEFT_RED,
-    // Comp Blue
-    COMP_RIGHT_BLUE,
-    COMP_LEFT_BLUE,
-    // Practice Red
-    PRACTICE_LEFT_RED,
-    PRACTICE_RIGHT_RED,
-    // Practice Blue
-    PRACTICE_LEFT_BLUE,
-    PRACTICE_RIGHT_BLUE
-};
 
 class FieldElementCalculator
 {
 
 public:
     void CalcPositionsForField(robin_hood::unordered_map<FieldConstants::FIELD_ELEMENT, frc::Pose3d> &fieldConstantsPoseMap);
-    frc::Pose3d CalcOffsetPositionForElement(frc::Pose3d &poseOfFaceTag, FieldConstants::FIELD_ELEMENT_OFFSETS offset);
 
 private:
     void InitializeTransforms();
@@ -78,8 +62,6 @@ private:
             units::length::inch_t(0.0),
             units::length::inch_t(0.0)),
         frc::Rotation3d());
-
-    robin_hood::unordered_map<OffsetEnums, frc::Transform3d> m_reefBranchOffsetMap;
 
     // other transforms
     frc::Transform3d m_noTransform = frc::Transform3d(
