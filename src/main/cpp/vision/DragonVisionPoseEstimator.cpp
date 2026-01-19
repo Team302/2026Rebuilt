@@ -91,8 +91,7 @@ void DragonVisionPoseEstimator::RunCurrentState()
 
     if (m_quest != nullptr)
     {
-        m_quest->HandleHeartBeat();
-        m_quest->RefreshNT();
+        m_quest->Periodic();
     }
 
     AddVisionMeasurements();
