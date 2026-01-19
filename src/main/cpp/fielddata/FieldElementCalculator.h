@@ -51,7 +51,8 @@ public:
 private:
     void InitializeTransforms();
 
-    static constexpr units::length::inch_t m_xDistanceHubCenter{23.5};
+    static constexpr units::length::inch_t m_xDistanceHubCenter{-23.5};
+    static constexpr units::length::inch_t m_zDistanceHubCenter{0.0};
     static constexpr units::length::inch_t m_xDistanceTowerStickOffsetLeft{45.0};
     static constexpr units::length::inch_t m_yDistanceTowerStickOffsetLeft{-19.5};
     static constexpr units::length::inch_t m_xDistanceTowerStickOffsetRight{45.0};
@@ -59,10 +60,13 @@ private:
     static constexpr units::length::inch_t m_xDistanceTowerStickOffsetCenter{45.0};
     static constexpr units::length::inch_t m_xDistanceDepotOffsetCenter{27.0};
     static constexpr units::length::inch_t m_yDistanceDepotOffsetCenter{87.31};
+    static constexpr units::length::inch_t m_zDistanceDepotOffsetCenter{-21.75};
     static constexpr units::length::inch_t m_xDistanceDepotOffsetLeft{13.5};
     static constexpr units::length::inch_t m_yDistanceDepotOffsetLeft{108.31};
+    static constexpr units::length::inch_t m_zDistanceDepotOffsetLeft{-21.75};
     static constexpr units::length::inch_t m_xDistanceDepotOffsetRight{13.5};
     static constexpr units::length::inch_t m_yDistanceDepotOffsetRight{66.31};
+    static constexpr units::length::inch_t m_zDistanceDepotOffsetRight{-21.75};
     static constexpr units::length::inch_t m_xNoOffset{0.0};
     static constexpr units::length::inch_t m_yNoOffset{0.0};
     static constexpr units::length::inch_t m_zNoOffset{0.0};
@@ -89,7 +93,7 @@ private:
         frc::Translation3d(
             m_xDistanceHubCenter,
             m_yNoOffset,
-            m_zNoOffset),
+            m_zDistanceHubCenter),
         frc::Rotation3d());
 
     frc::Transform3d m_calcTowerLeftStick = frc::Transform3d(
@@ -117,21 +121,21 @@ private:
         frc::Translation3d(
             m_xDistanceDepotOffsetCenter,
             m_yDistanceDepotOffsetCenter,
-            m_zNoOffset),
+            m_zDistanceDepotOffsetCenter),
         frc::Rotation3d());
 
     frc::Transform3d m_calcDepoOffsetLeft = frc::Transform3d(
         frc::Translation3d(
             m_xDistanceDepotOffsetLeft,
             m_yDistanceDepotOffsetLeft,
-            m_zNoOffset),
+            m_zDistanceDepotOffsetLeft),
         frc::Rotation3d());
 
     frc::Transform3d m_calcDepoOffsetRight = frc::Transform3d(
         frc::Translation3d(
             m_xDistanceDepotOffsetRight,
             m_yDistanceDepotOffsetRight,
-            m_zNoOffset),
+            m_zDistanceDepotOffsetRight),
         frc::Rotation3d());
 
 
