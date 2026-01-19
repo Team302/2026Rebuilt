@@ -1,5 +1,5 @@
 //====================================================================================================================================================
-// Copyright 2025 Lake Orion Robotics FIRST Team 302
+// Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -16,12 +16,11 @@
 
 // WPILib / third-party
 #include "frc/geometry/Pose2d.h"
-#include "frc2/command/Command.h"
-#include "frc2/command/CommandHelper.h"
 
 // Project headers
 // #include "chassis/ChassisConfigMgr.h"
 // #include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "state/StateMgr.h"
 #include "vision/DragonVision.h"
 
 class DragonQuest;
@@ -46,7 +45,7 @@ class DragonQuest;
  * - Construct and schedule at robot initialization or when vision-based pose updates are desired.
  * - Ensure DragonVision provides properly timestamped/filtered detections for best results.
  */
-class DragonVisionPoseEstimator : public frc2::CommandHelper<frc2::Command, DragonVisionPoseEstimator>
+class DragonVisionPoseEstimator : public StateMgr
 {
 public:
     /**
@@ -57,29 +56,12 @@ public:
     DragonVisionPoseEstimator();
     ~DragonVisionPoseEstimator() = default;
 
-    // FRC Command Lifecycle methods
+    void RunCommonTasks() override;
 
-    /**
-     * @brief Called once when the command is scheduled.
-     *
-     * Prepare internal state and attempt to set initial pose if possible.
-     */
-    void Initialize() override;
-
-    /**
-     * @brief Called repeatedly while the command is scheduled.
-     *
-     * Reads camera detections and fuses them into the drivetrain pose estimator.
-     * Should be non-blocking and handle intermittent/invalid measurements.
-     */
-    void Execute() override;
-
-    /**
-     * @brief Command termination condition.
-     *
-     * This command is intended to run continuously; override to true only for explicit termination.
-     */
-    bool IsFinished() override;
+    /// @brief  run the current state
+    /// @return void
+    void RunCurrentState() override;
+    void SetCurrentState(int state, bool run) override;
 
     /**
      * @brief Attempt to compute and apply an initial absolute pose from vision.

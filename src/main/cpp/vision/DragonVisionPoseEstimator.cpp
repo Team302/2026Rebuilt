@@ -1,5 +1,5 @@
 //====================================================================================================================================================
-// Copyright 2025 Lake Orion Robotics FIRST Team 302
+// Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -51,6 +51,7 @@
 #include <optional>
 
 // #include "chassis/ChassisConfigMgr.h"
+#include "utils/PeriodicLooper.h"
 #include "vision/DragonQuest.h"
 #include "vision/DragonVision.h"
 #include "vision/DragonVisionPoseEstimator.h"
@@ -58,30 +59,13 @@
 
 DragonVisionPoseEstimator::DragonVisionPoseEstimator()
 {
+    PeriodicLooper::GetInstance()->RegisterAll(this);
+    m_vision = DragonVision::GetDragonVision();
     // m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
 }
-
-/**
- * @brief Initialize vision pointer and attempt to compute initial pose.
- *
- * Ensures a DragonVision pointer is available and then calls CalculateInitialPose()
- * to set the chassis pose from reliable MegaTag observations.
- */
-void DragonVisionPoseEstimator::Initialize()
+void DragonVisionPoseEstimator::RunCommonTasks()
 {
-    // Make sure we have a vision subsystem pointer.
-    // If we don't, try to get one
-    // If we still don't have one exit
-    if (m_vision == nullptr)
-    {
-        m_vision = DragonVision::GetDragonVision();
-    }
-    if (m_vision == nullptr)
-    {
-        return;
-    }
-
-    CalculateInitialPose();
+    // Nothing to do here yet
 }
 
 /**
@@ -90,20 +74,11 @@ void DragonVisionPoseEstimator::Initialize()
  * Ensures vision pointer availability, attempts to set an initial pose if needed,
  * maintains DragonQuest heartbeat/NT refresh, and pushes vision measurements to the chassis.
  */
-void DragonVisionPoseEstimator::Execute()
+void DragonVisionPoseEstimator::RunCurrentState()
 {
     // Make sure we have a vision subsystem pointer.
     // If we don't, try to get one
     // If we still don't have one exit
-    if (m_vision == nullptr)
-    {
-        m_vision = DragonVision::GetDragonVision();
-    }
-    if (m_vision == nullptr)
-    {
-        return;
-    }
-
     if (!m_initialPoseSet)
     {
         CalculateInitialPose();
@@ -123,13 +98,9 @@ void DragonVisionPoseEstimator::Execute()
     AddVisionMeasurements();
 }
 
-/**
- * @brief Indicate whether this command is finished.
- * @returns false (this is intended to run continuously while scheduled).
- */
-bool DragonVisionPoseEstimator::IsFinished()
+void DragonVisionPoseEstimator::SetCurrentState(int state, bool run)
 {
-    return false;
+    // Nothing to do here yet
 }
 
 /**
@@ -166,10 +137,13 @@ void DragonVisionPoseEstimator::CalculateInitialPose()
 {
     if (m_vision == nullptr)
     {
+        m_vision = DragonVision::GetDragonVision();
+    }
+    if (m_vision == nullptr)
+    {
         return;
     }
 
-    m_vision = DragonVision::GetDragonVision();
     // try making sure MegaTag1 has a good position before resetting pose to avoid screwing up MegaTag2 && Quest
     auto megaTag1Position = m_vision->GetRobotPositionMegaTag1();
     if (megaTag1Position.has_value())
