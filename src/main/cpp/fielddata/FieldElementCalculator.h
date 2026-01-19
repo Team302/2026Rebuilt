@@ -53,16 +53,16 @@ private:
 
     static constexpr units::length::inch_t m_xDistanceHubCenter{23.5};
     static constexpr units::length::inch_t m_xDistanceTowerStickOffsetLeft{45.0};
-    static constexpr units::length::inch_t m_yDistanceTowerStickOffsetLeft{19.5};
+    static constexpr units::length::inch_t m_yDistanceTowerStickOffsetLeft{-19.5};
     static constexpr units::length::inch_t m_xDistanceTowerStickOffsetRight{45.0};
-    static constexpr units::length::inch_t m_yDistanceTowerStickOffsetRight{-19.5};
+    static constexpr units::length::inch_t m_yDistanceTowerStickOffsetRight{19.5};
     static constexpr units::length::inch_t m_xDistanceTowerStickOffsetCenter{45.0};
     static constexpr units::length::inch_t m_xDistanceDepotOffsetCenter{27.0};
-    static constexpr units::length::inch_t m_yDistanceDepotOffsetCenter{-87.31};
+    static constexpr units::length::inch_t m_yDistanceDepotOffsetCenter{87.31};
     static constexpr units::length::inch_t m_xDistanceDepotOffsetLeft{13.5};
-    static constexpr units::length::inch_t m_yDistanceDepotOffsetLeft{-108.31};
+    static constexpr units::length::inch_t m_yDistanceDepotOffsetLeft{108.31};
     static constexpr units::length::inch_t m_xDistanceDepotOffsetRight{13.5};
-    static constexpr units::length::inch_t m_yDistanceDepotOffsetRight{-66.31};
+    static constexpr units::length::inch_t m_yDistanceDepotOffsetRight{66.31};
     static constexpr units::length::inch_t m_xNoOffset{0.0};
     static constexpr units::length::inch_t m_yNoOffset{0.0};
     static constexpr units::length::inch_t m_zNoOffset{0.0};

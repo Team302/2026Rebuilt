@@ -93,7 +93,7 @@ private:
     FieldConstants(const FieldConstants &) = delete;
     FieldConstants &operator=(const FieldConstants &) = delete;
     frc::Pose3d GetAprilTagPoseFromLayout(int tagID);
-    frc::AprilTagFieldLayout m_fieldLayout = frc::AprilTagFieldLayout::LoadField(frc::AprilTagField::k2025ReefscapeWelded); // change this guy for andymark field
+    frc::AprilTagFieldLayout m_fieldLayout = frc::AprilTagFieldLayout::LoadField(frc::AprilTagField::k2026RebuiltWelded); // change this guy for andymark field
 
     void ReadFieldCalibrationData();
 
