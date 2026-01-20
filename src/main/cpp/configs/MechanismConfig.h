@@ -1,3 +1,4 @@
+
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -12,12 +13,25 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
+
 #pragma once
 
-enum class RobotIdentifier
+#include "configs/RobotElementNames.h"
+#include "state/StateMgr.h"
+#include "mechanisms/MechanismTypes.h"
+
+class MechanismConfig
 {
-	CHASSIS_BOT_9998 = 9998,
-	CHASSIS_BOT_9997 = 9997,
-	COMP_BOT_302 = 302,
-	SIM_BOT_0 = 0,
+public:
+    MechanismConfig();
+    ~MechanismConfig();
+
+    void BuildRobot();
+
+    virtual StateMgr *GetMechanism(MechanismTypes::MECHANISM_TYPE mechType);
+
+protected:
+    virtual void DefineMechanisms();
+    virtual void DefineLEDs();
+    virtual void DefineCompressor();
 };
