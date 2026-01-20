@@ -12,7 +12,6 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-#include "vision/DragonQuest.h"
 #include "state/IRobotStateChangeSubscriber.h"
 #include "state/RobotState.h"
 #include "state/RobotStateChanges.h"
@@ -20,6 +19,7 @@
 #include "utils/AngleUtils.h"
 #include "utils/DragonField.h"
 #include "utils/logging/debug/Logger.h"
+#include "vision/DragonQuest.h"
 
 DragonQuest::DragonQuest(
     units::length::inch_t mountingXOffset, /// <I> x offset of Quest from robot center (forward relative to robot)
@@ -74,19 +74,22 @@ void DragonQuest::GetEstimatedPose()
     auto rawData = m_frameDataSubscriber.Get();
     if (rawData.empty())
     {
-        m_lastCalculatedPose = frc::Pose2d{}; // Return default pose if no data
+        m_lastCalculatedPose = frc::Pose2d{}; // Set the last pose to a default pose if no data is available
+        return;
     }
 
     questnav::protos::data::ProtobufQuestNavFrameData frameData;
     if (!frameData.ParseFromArray(rawData.data(), rawData.size()))
     {
         Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR_ONCE, string("DragonQuest"), string("GetEstimatedPose"), string("Failed to parse frame data"));
-        m_lastCalculatedPose = frc::Pose2d{};
+        m_lastCalculatedPose = frc::Pose2d{}; // Set the last pose to a default pose if no data is available
+        return;
     }
 
     if (!frameData.has_pose3d())
     {
-        m_lastCalculatedPose = frc::Pose2d{};
+        m_lastCalculatedPose = frc::Pose2d{}; // Set the last pose to a default pose if no data is available
+        return;
     }
 
     const auto &pose3d = frameData.pose3d();
@@ -144,8 +147,6 @@ void DragonQuest::SetIsConnected()
         }
         m_prevFrameCount = currentFrameCount;
     }
-    m_isConnected = true;
-    m_loopCounter = (m_loopCounter > 3) ? 0 : m_loopCounter + 1;
 }
 
 void DragonQuest::DataLog(uint64_t timestamp)

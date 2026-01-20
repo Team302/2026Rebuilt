@@ -18,7 +18,6 @@
 
 #include "frc/smartdashboard/SendableChooser.h"
 #include "frc/smartdashboard/SmartDashboard.h"
-
 #include "networktables/DoubleArrayTopic.h"
 #include "networktables/DoubleTopic.h"
 #include "networktables/IntegerTopic.h"
@@ -26,13 +25,11 @@
 #include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableInstance.h"
 #include "networktables/RawTopic.h"
-
 #include "state/IRobotStateChangeSubscriber.h"
 #include "utils/logging/signals/DragonDataLogger.h"
+#include "vision/DragonVisionPoseEstimatorStruct.h"
 #include "vision/Questnavlib/commands.pb.h"
 #include "vision/Questnavlib/data.pb.h"
-#include <networktables/RawTopic.h>
-#include "vision/DragonVisionPoseEstimatorStruct.h"
 
 using namespace std;
 
