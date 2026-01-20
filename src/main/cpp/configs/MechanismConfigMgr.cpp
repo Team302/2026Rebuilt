@@ -20,6 +20,8 @@
 #include "configs/MechanismConfigMgr.h"
 #include "utils/logging/debug/Logger.h"
 
+#include "configs/MechanismConfigCompBot_302.h"
+
 using namespace std;
 
 MechanismConfigMgr *MechanismConfigMgr::m_instance = nullptr;
@@ -42,7 +44,7 @@ void MechanismConfigMgr::InitRobot(RobotIdentifier id)
 	{
 	case RobotIdentifier::COMP_BOT_302:
 		Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing robot "), string("COMP_BOT_302"), string(""));
-		m_config = new MechanismConfig();
+		m_config = new MechanismConfigCompBot_302();
 		break;
 	case RobotIdentifier::CHASSIS_BOT_9997:
 		Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing robot "), string("CHASSIS_BOT_9997"), string(""));
