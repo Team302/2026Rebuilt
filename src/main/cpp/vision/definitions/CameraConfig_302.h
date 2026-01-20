@@ -26,19 +26,19 @@ public:
     void BuildCameraConfig() override;
 
 private:
-    static constexpr units::length::meter_t m_ll1MountingXOffset{0.24765};  // 9.75 inches
-    static constexpr units::length::meter_t m_ll1MountingYOffset{-0.08255}; // -3.25 inches
-    static constexpr units::length::meter_t m_ll1MountingZOffset{0.8223};   // 32.4 inches
-    static constexpr units::angle::degree_t m_ll1Pitch{-32.0};              // -32 degrees
-    static constexpr units::angle::degree_t m_ll1Yaw{0};                    // 0 degrees
-    static constexpr units::angle::degree_t m_ll1Roll{0};                   // 0 degrees
+    static constexpr units::length::meter_t m_ll1MountingXOffset{0.254}; // 9.75 inches
+    static constexpr units::length::meter_t m_ll1MountingYOffset{0.273}; // -3.25 inches
+    static constexpr units::length::meter_t m_ll1MountingZOffset{-0.25}; // 32.4 inches
+    static constexpr units::angle::degree_t m_ll1Pitch{5};               // -32 degrees
+    static constexpr units::angle::degree_t m_ll1Yaw{0};                 // 0 degrees
+    static constexpr units::angle::degree_t m_ll1Roll{30.376};           // 0 degrees
 
-    static constexpr units::length::inch_t m_ll2MountingXOffset{9.663};  // 9.663 inches
-    static constexpr units::length::inch_t m_ll2MountingYOffset{11.101}; // 11.101 inches Left
-    static constexpr units::length::inch_t m_ll2MountingZOffset{9.639};  // 9.639 inches
-    static constexpr units::angle::degree_t m_ll2Pitch{6.8};             // 6.8 degrees up
-    static constexpr units::angle::degree_t m_ll2Yaw{-40};               // 40 degrees to the right
-    static constexpr units::angle::degree_t m_ll2Roll{0};
+    static constexpr units::length::meter_t m_ll2MountingXOffset{0.253};  // 9.663 inches
+    static constexpr units::length::meter_t m_ll2MountingYOffset{-0.273}; // 11.101 inches Left
+    static constexpr units::length::meter_t m_ll2MountingZOffset{-0.25};  // 9.639 inches
+    static constexpr units::angle::degree_t m_ll2Pitch{5};                // 6.8 degrees up
+    static constexpr units::angle::degree_t m_ll2Yaw{0};                  // 40 degrees to the right
+    static constexpr units::angle::degree_t m_ll2Roll{-30.376};
 
     static constexpr units::length::inch_t m_questMountingXOffset{-12.3};
     static constexpr units::length::inch_t m_questMountingYOffset{-2.5};
