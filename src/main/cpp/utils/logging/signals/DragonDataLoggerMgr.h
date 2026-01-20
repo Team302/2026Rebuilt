@@ -1,6 +1,6 @@
 
 //====================================================================================================================================================
-// Copyright 2026 Lake Orion Robotics FIRST Team 302
+// Copyright 2025 Lake Orion Robotics FIRST Team 302
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -19,12 +19,31 @@
 #include <vector>
 
 #include "frc/Timer.h"
+#include "utils/logging/signals/ISignalLogger.h"
 #include "utils/logging/signals/DragonDataLogger.h"
+
+
+
+enum class LoggerType
+{
+    CTRE_SIGNAL_LOGGER,
+    UDP_LOGGER,
+    NETWORK_TABLES_LOGGER
+};
 
 class DragonDataLoggerMgr
 {
 public:
     static DragonDataLoggerMgr *GetInstance();
+
+    DragonDataLoggerMgr(const DragonDataLoggerMgr &) = delete;
+    DragonDataLoggerMgr &operator=(const DragonDataLoggerMgr &) = delete;
+
+    void RegisterLogger(DragonDataLogger *logger);
+    void SetLogger(std::unique_ptr<ISignalLogger> logger);
+    void SetLoggerType(LoggerType type, const std::string &ipAddress = "", int port = 0);
+    ISignalLogger *GetLogger() const { return m_logger.get(); }
+
     void RegisterItem(DragonDataLogger *item);
     void PeriodicDataLog();
 
@@ -38,7 +57,10 @@ private:
     frc::Timer m_timer;
     unsigned int m_lastIndex = 0;
 
+
     const units::time::second_t m_period{0.00075};
 
     static DragonDataLoggerMgr *m_instance;
+    std::unique_ptr<ISignalLogger> m_logger;
+    std::vector<DragonDataLogger *> m_loggers;
 };

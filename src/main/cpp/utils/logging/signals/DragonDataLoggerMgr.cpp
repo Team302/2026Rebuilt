@@ -1,6 +1,6 @@
 
 //====================================================================================================================================================
-// Copyright 2026 Lake Orion Robotics FIRST Team 302
+// Copyright 2025 Lake Orion Robotics FIRST Team 302
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
 // to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -22,6 +22,8 @@
 #include "frc/RobotController.h"
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include "utils/logging/signals/DragonDataLoggerSignals.h"
+#include "utils/logging/signals/CTRESignalLogger.h"
+#include "utils/logging/signals/UDPSignalLogger.h"
 
 using namespace std;
 using ctre::phoenix6::SignalLogger;
@@ -47,11 +49,52 @@ DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items() //, m_doubleDatalogSignal
     // SignalLogger::SetPath(logFolder.c_str());
     // SignalLogger::EnableAutoLogging(true);
     // SignalLogger::Start();
+    m_logger = std::make_unique<CTRESignalLogger>();
 
     SignalLogger::SetPath(GetLoggingDir().c_str());
     SignalLogger::EnableAutoLogging(true);
     SignalLogger::Start();
     m_timer.Start();
+}
+
+void DragonDataLoggerMgr::RegisterLogger(DragonDataLogger *logger)
+{
+    m_loggers.push_back(logger);
+}
+
+void DragonDataLoggerMgr::SetLogger(std::unique_ptr<ISignalLogger> logger)
+{
+    m_logger = std::move(logger);
+}
+
+void DragonDataLoggerMgr::SetLoggerType(LoggerType type, const std::string &ipAddress, int port)
+{
+    switch (type)
+    {
+    case LoggerType::CTRE_SIGNAL_LOGGER:
+        m_logger = std::make_unique<CTRESignalLogger>();
+        break;
+
+    case LoggerType::UDP_LOGGER:
+        if (!ipAddress.empty() && port > 0)
+        {
+            m_logger = std::make_unique<UDPSignalLogger>(ipAddress, port);
+        }
+        else
+        {
+            m_logger = std::make_unique<UDPSignalLogger>("127.0.0.1", 5800);
+        }
+        break;
+
+    case LoggerType::NETWORK_TABLES_LOGGER:
+        // Future implementation
+        // m_logger = std::make_unique<NetworkTablesLogger>();
+        break;
+
+    default:
+        m_logger = std::make_unique<UDPSignalLogger>("127.0.0.1", 5800);
+        break;
+    }
 }
 
 DragonDataLoggerMgr::~DragonDataLoggerMgr()
