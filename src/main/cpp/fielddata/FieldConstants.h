@@ -87,8 +87,8 @@ private:
     frc::Pose3d m_placeholder = frc::Pose3d();
 
     robin_hood::unordered_map<FIELD_ELEMENT, frc::Pose3d> fieldConstantsPoseMap;
-    std::array<frc::Pose2d, 68> m_fieldConst2dPoses;
+    std::array<frc::Pose2d, 22> m_fieldConst2dPoses;
 
     robin_hood::unordered_map<int, frc::Pose3d> m_aprilTagPoseMap;
-    std::array<frc::Pose2d, 32> m_aprilTag2dPoses;
+    std::array<frc::Pose2d, 33> m_aprilTag2dPoses;
 };

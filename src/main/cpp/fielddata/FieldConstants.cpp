@@ -97,10 +97,10 @@ FieldConstants::FieldConstants()
     auto pose = m_aprilTagPoseMap[1];
     Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "FieldConstants", "AprilTag1Pose", pose.X().value());
 
-    /*for (const auto &pair : m_aprilTagPoseMap)
+    for (const auto &pair : m_aprilTagPoseMap)
     {
         m_aprilTag2dPoses[pair.first] = pair.second.ToPose2d();
-    }*/
+    }
 
     FieldElementCalculator fc;
     fc.CalcPositionsForField(fieldConstantsPoseMap);
