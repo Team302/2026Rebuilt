@@ -160,9 +160,9 @@ frc::AprilTagFieldLayout DragonVision::m_aprilTagLayout = frc::AprilTagFieldLayo
 /// @note Calling repeatedly returns the cached layout; expensive load is only done once.
 frc::AprilTagFieldLayout DragonVision::GetAprilTagLayout()
 {
-	if (DragonVision::m_aprilTagLayout != frc::AprilTagFieldLayout::LoadField(frc::AprilTagField::k2025ReefscapeWelded))
+	if (DragonVision::m_aprilTagLayout != frc::AprilTagFieldLayout::LoadField(frc::AprilTagField::k2026RebuiltWelded))
 	{
-		DragonVision::m_aprilTagLayout = frc::AprilTagFieldLayout::LoadField(frc::AprilTagField::k2025ReefscapeWelded);
+		DragonVision::m_aprilTagLayout = frc::AprilTagFieldLayout::LoadField(frc::AprilTagField::k2026RebuiltWelded);
 	}
 	return DragonVision::m_aprilTagLayout;
 }
