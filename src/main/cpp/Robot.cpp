@@ -82,7 +82,7 @@
 // #include "auton/CyclePrimitives.h"
 // #include "auton/drivePrimitives/AutonUtils.h"
 // #include "chassis/ChassisConfigMgr.h"
-// #include "configs/MechanismConfigMgr.h"
+#include "configs/MechanismConfigMgr.h"
 #include "feedback/DriverFeedback.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/DriverStation.h"
@@ -177,8 +177,8 @@ void Robot::InitializeRobot()
 
   new RobotContainer(); // instantiate RobotContainer to setup commands and subsystems
 
-  // int32_t teamNumber = frc::RobotController::GetTeamNumber();
-  // MechanismConfigMgr::GetInstance()->InitRobot((RobotIdentifier)teamNumber);
+  int32_t teamNumber = frc::RobotController::GetTeamNumber();
+  MechanismConfigMgr::GetInstance()->InitRobot((RobotIdentifier)teamNumber);
 
   m_robotState = RobotState::GetInstance();
   m_robotState->Init();
