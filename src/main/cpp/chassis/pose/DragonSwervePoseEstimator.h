@@ -12,57 +12,37 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-
 #pragma once
+#include "chassis/ChassisConfigMgr.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "frc/geometry/Pose2d.h"
+#include "frc2/command/Command.h"
+#include "frc2/command/CommandHelper.h"
+#include <vector>
 
-class ChassisOptionEnums
+class DragonSwervePoseEstimator : public frc2::CommandHelper<frc2::Command, DragonSwervePoseEstimator>
 {
 public:
-    enum HeadingOption
-    {
-        MAINTAIN,
-        SPECIFIED_ANGLE,
-        FACE_GAME_PIECE,
-        IGNORE
-    };
+    static DragonSwervePoseEstimator *GetInstance();
+    DragonSwervePoseEstimator();
+    ~DragonSwervePoseEstimator() = default;
 
-    enum DriveStateType
-    {
-        ROBOT_DRIVE,
-        FIELD_DRIVE,
-        TRAJECTORY_DRIVE,
-        HOLD_DRIVE,
-        POLAR_DRIVE,
-        STOP_DRIVE
-    };
+    void Update();
 
-    enum NoMovementOption
-    {
-        STOP,
-        HOLD_POSITION
-    };
+    void CalculateInitialPose();
 
-    enum AutonControllerType
-    {
-        RAMSETE,
-        HOLONOMIC
-    };
+    void ResetPosition(const frc::Pose2d &pose);
+    frc::Pose2d GetPose() const;
 
-    enum AutonChassisOptions
-    {
-        NO_VISION
-    };
-    enum AutonAvoidOptions
-    {
-        ROBOT_COLLISION,
-        NO_AVOID_OPTION
-    };
+    // FRC Command Lifecycle methods
+    void Initialize() override;
+    void Execute() override;
+    bool IsFinished() override;
 
-    enum PathUpdateOption
-    {
-        NONE
-    };
+private:
+    static DragonSwervePoseEstimator *m_instance;
 
-    ChassisOptionEnums() = delete;
-    ~ChassisOptionEnums() = delete;
+    subsystems::CommandSwerveDrivetrain *m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
+
+    void AddVisionMeasurements();
 };

@@ -14,55 +14,31 @@
 //====================================================================================================================================================
 
 #pragma once
+#include <vector>
 
-class ChassisOptionEnums
-{
-public:
-    enum HeadingOption
-    {
-        MAINTAIN,
-        SPECIFIED_ANGLE,
-        FACE_GAME_PIECE,
-        IGNORE
-    };
+#include "frc/geometry/Pose2d.h"
+#include "units/time.h"
+#include "wpi/array.h"
 
-    enum DriveStateType
-    {
-        ROBOT_DRIVE,
-        FIELD_DRIVE,
-        TRAJECTORY_DRIVE,
-        HOLD_DRIVE,
-        POLAR_DRIVE,
-        STOP_DRIVE
-    };
+// struct DragonVisionPoseEstimatorStruct
+// {
+// public:
+//     DragonVisionPoseEstimatorStruct() : m_confidenceLevel(ConfidenceLevel::NONE),
+//                                         m_visionPose(frc::Pose2d{}),
+//                                         m_timeStamp(units::time::second_t(0.0)),
+//                                         m_stds(wpi::array(0.9, 0.9, 0.9)) {};
+//     ~DragonVisionPoseEstimatorStruct() = default;
 
-    enum NoMovementOption
-    {
-        STOP,
-        HOLD_POSITION
-    };
+//     enum ConfidenceLevel
+//     {
+//         NONE,
+//         LOW,
+//         MEDIUM,
+//         HIGH
+//     };
 
-    enum AutonControllerType
-    {
-        RAMSETE,
-        HOLONOMIC
-    };
-
-    enum AutonChassisOptions
-    {
-        NO_VISION
-    };
-    enum AutonAvoidOptions
-    {
-        ROBOT_COLLISION,
-        NO_AVOID_OPTION
-    };
-
-    enum PathUpdateOption
-    {
-        NONE
-    };
-
-    ChassisOptionEnums() = delete;
-    ~ChassisOptionEnums() = delete;
-};
+//     ConfidenceLevel m_confidenceLevel;
+//     frc::Pose2d m_visionPose;
+//     units::time::second_t m_timeStamp;
+//     wpi::array<double, 3> m_stds;
+// };

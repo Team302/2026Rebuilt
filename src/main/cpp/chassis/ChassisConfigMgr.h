@@ -15,54 +15,34 @@
 
 #pragma once
 
-class ChassisOptionEnums
+#include "chassis/generated/TunerConstants302.h"
+#include "chassis/generated/TunerConstants9998.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+
+using namespace ctre::phoenix6;
+
+namespace subsystems
+{
+    class CommandSwerveDrivetrain; // Forward declaration
+}
+
+class ChassisConfigMgr
 {
 public:
-    enum HeadingOption
-    {
-        MAINTAIN,
-        SPECIFIED_ANGLE,
-        FACE_GAME_PIECE,
-        IGNORE
-    };
+    static ChassisConfigMgr *GetInstance();
 
-    enum DriveStateType
-    {
-        ROBOT_DRIVE,
-        FIELD_DRIVE,
-        TRAJECTORY_DRIVE,
-        HOLD_DRIVE,
-        POLAR_DRIVE,
-        STOP_DRIVE
-    };
+    void CreateDrivetrain();
 
-    enum NoMovementOption
-    {
-        STOP,
-        HOLD_POSITION
-    };
+    subsystems::CommandSwerveDrivetrain *GetSwerveChassis();
 
-    enum AutonControllerType
-    {
-        RAMSETE,
-        HOLONOMIC
-    };
+    units::meters_per_second_t GetMaxSpeed() { return m_maxSpeed; }
+    double GetRotationRateDegreesPerSecond() const { return m_chassis != nullptr ? m_chassis.get()->GetPigeon2().GetAngularVelocityZWorld(true).GetValueAsDouble() : 0.0; }
 
-    enum AutonChassisOptions
-    {
-        NO_VISION
-    };
-    enum AutonAvoidOptions
-    {
-        ROBOT_COLLISION,
-        NO_AVOID_OPTION
-    };
+private:
+    ChassisConfigMgr();
+    virtual ~ChassisConfigMgr() = default;
 
-    enum PathUpdateOption
-    {
-        NONE
-    };
-
-    ChassisOptionEnums() = delete;
-    ~ChassisOptionEnums() = delete;
+    static ChassisConfigMgr *m_instance;
+    units::meters_per_second_t m_maxSpeed;
+    std::unique_ptr<subsystems::CommandSwerveDrivetrain> m_chassis;
 };
