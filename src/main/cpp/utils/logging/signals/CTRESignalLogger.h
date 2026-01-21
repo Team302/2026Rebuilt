@@ -17,4 +17,6 @@ public:
 
     void Start() override;
     void Stop() override;
+    std::string CreateLogFileName();
+    std::string GetLoggingDir();
 };

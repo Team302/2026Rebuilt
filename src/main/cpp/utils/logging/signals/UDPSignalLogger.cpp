@@ -6,6 +6,7 @@
 #else
 #include <cerrno>
 #endif
+#include <string>
 
 UDPSignalLogger::UDPSignalLogger(const std::string &ipAddress, int port)
     : m_ipAddress(ipAddress), m_port(port), m_isRunning(false)
@@ -96,6 +97,7 @@ std::string UDPSignalLogger::FormatMessage(std::string signalID, std::string typ
                                            std::string value, std::string_view units, units::time::second_t timestamp)
 {
     std::ostringstream oss;
+    oss << timestamp.value() << "," << signalID << "," << type << "," << value << "," << units;
     return oss.str();
 }
 

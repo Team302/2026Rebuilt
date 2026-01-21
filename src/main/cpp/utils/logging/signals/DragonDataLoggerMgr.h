@@ -50,9 +50,7 @@ public:
 private:
     DragonDataLoggerMgr();
     ~DragonDataLoggerMgr();
-    std::string CreateLogFileName();
-    std::string GetLoggingDir();
-
+    
     std::vector<DragonDataLogger *> m_items;
     frc::Timer m_timer;
     unsigned int m_lastIndex = 0;
