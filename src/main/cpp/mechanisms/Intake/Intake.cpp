@@ -145,7 +145,7 @@ void Intake::CreateCompBot302()
 	m_Intake = new ctre::phoenix6::hardware::TalonFX(4, ctre::phoenix6::CANBus("canivore"));
 	// m_Hopper = new ctre::phoenix6::hardware::TalonFX(0, ctre::phoenix6::CANBus("rio"));
 
-	m_Extender = new frc::Solenoid(0, frc::PneumaticsModuleType::REVPH, 0);
+	// m_Extender = new frc::Solenoid(0, frc::PneumaticsModuleType::REVPH, 0);
 
 	m_IsIntakeExtended = new frc::DigitalInput(0);
 	m_IsIntakeExtendedIsInverted = false;
@@ -306,6 +306,10 @@ void Intake::Update()
 void Intake::Cyclic()
 {
 	Update();
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentState());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeExtended", GetIsIntakeExtendedState());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IntakePercentOut", m_IntakePercentOut.Output.value());
 }
 
 ControlData *Intake::GetControlData(string name)
