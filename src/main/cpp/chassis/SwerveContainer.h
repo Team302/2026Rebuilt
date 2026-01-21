@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -16,33 +15,44 @@
 
 #pragma once
 
-// C++ Includes
+#include <memory>
 
-// FRC includes
+#include "frc2/command/CommandPtr.h"
+#include "frc2/command/button/CommandXboxController.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "state/IRobotStateChangeSubscriber.h"
+#include "chassis/generated/Telemetry.h"
+#include "chassis/ChassisConfigMgr.h"
+#include "teleopcontrol/TeleopControl.h"
+#include "chassis/commands/TrajectoryDrive.h"
 
-// Team 302 includes
-
-class TeleopControlFunctions
+class SwerveContainer : IRobotStateChangeSubscriber
 {
 public:
-    enum FUNCTION
-    {
-        READY,
-        ROBOT_ORIENTED_DRIVE,
-        HOLONOMIC_DRIVE_FORWARD,
-        HOLONOMIC_DRIVE_ROTATE,
-        HOLONOMIC_DRIVE_STRAFE,
-        AUTO_TURN_FORWARD,
-        AUTO_TURN_BACKWARD,
-        RESET_POSITION,
-        SLOW_MODE,
-        SYSID_MODIFER,
-        SYSID_QUASISTATICFORWARD,
-        SYSID_QUASISTATICREVERSE,
-        SYSID_DYNAMICFORWARD,
-        SYSID_DYNAMICREVERSE,
+    static SwerveContainer *GetInstance();
 
-        // tip correction controls
-        TIPCORRECTION_TOGGLE,
-    };
+    TrajectoryDrive *GetTrajectoryDriveCommand() { return m_trajectoryDrive.get(); }
+
+private:
+    SwerveContainer();
+    virtual ~SwerveContainer() = default;
+    static SwerveContainer *m_instance;
+
+    subsystems::CommandSwerveDrivetrain *m_chassis;
+
+    units::meters_per_second_t m_maxSpeed;
+    static constexpr units::radians_per_second_t m_maxAngularRate{1.25_tps};
+
+    Telemetry logger;
+
+    frc2::CommandPtr m_fieldDrive;
+    frc2::CommandPtr m_robotDrive;
+    std::unique_ptr<TrajectoryDrive> m_trajectoryDrive;
+
+    void ConfigureBindings();
+    void SetSysIDBinding(TeleopControl *controller);
+    void CreateStandardDriveCommands(TeleopControl *controller);
+    void CreateRebuiltDriveToCommands(TeleopControl *controller);
+
+    void NotifyStateUpdate(RobotStateChanges::StateChange change, int value) override;
 };

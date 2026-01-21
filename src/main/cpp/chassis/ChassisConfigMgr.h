@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -16,33 +15,33 @@
 
 #pragma once
 
-// C++ Includes
+#include "chassis/generated/TunerConstants302.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
 
-// FRC includes
+using namespace ctre::phoenix6;
 
-// Team 302 includes
+namespace subsystems
+{
+    class CommandSwerveDrivetrain; // Forward declaration
+}
 
-class TeleopControlFunctions
+class ChassisConfigMgr
 {
 public:
-    enum FUNCTION
-    {
-        READY,
-        ROBOT_ORIENTED_DRIVE,
-        HOLONOMIC_DRIVE_FORWARD,
-        HOLONOMIC_DRIVE_ROTATE,
-        HOLONOMIC_DRIVE_STRAFE,
-        AUTO_TURN_FORWARD,
-        AUTO_TURN_BACKWARD,
-        RESET_POSITION,
-        SLOW_MODE,
-        SYSID_MODIFER,
-        SYSID_QUASISTATICFORWARD,
-        SYSID_QUASISTATICREVERSE,
-        SYSID_DYNAMICFORWARD,
-        SYSID_DYNAMICREVERSE,
+    static ChassisConfigMgr *GetInstance();
 
-        // tip correction controls
-        TIPCORRECTION_TOGGLE,
-    };
+    void CreateDrivetrain();
+
+    subsystems::CommandSwerveDrivetrain *GetSwerveChassis();
+
+    units::meters_per_second_t GetMaxSpeed() { return m_maxSpeed; }
+    double GetRotationRateDegreesPerSecond() const { return m_chassis != nullptr ? m_chassis.get()->GetPigeon2().GetAngularVelocityZWorld(true).GetValueAsDouble() : 0.0; }
+
+private:
+    ChassisConfigMgr();
+    virtual ~ChassisConfigMgr() = default;
+
+    static ChassisConfigMgr *m_instance;
+    units::meters_per_second_t m_maxSpeed;
+    std::unique_ptr<subsystems::CommandSwerveDrivetrain> m_chassis;
 };
