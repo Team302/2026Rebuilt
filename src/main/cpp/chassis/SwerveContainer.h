@@ -41,15 +41,13 @@ private:
     subsystems::CommandSwerveDrivetrain *m_chassis;
 
     units::meters_per_second_t m_maxSpeed;
-    static constexpr units::radians_per_second_t m_maxAngularRate{1.5_tps};
+    static constexpr units::radians_per_second_t m_maxAngularRate{1.25_tps};
 
     Telemetry logger;
 
     frc2::CommandPtr m_fieldDrive;
     frc2::CommandPtr m_robotDrive;
     std::unique_ptr<TrajectoryDrive> m_trajectoryDrive;
-
-    bool m_climbMode = false;
 
     void ConfigureBindings();
     void SetSysIDBinding(TeleopControl *controller);

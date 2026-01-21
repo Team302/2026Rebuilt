@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ctre/phoenix6/swerve/SwerveDrivetrain.hpp"
+#include "ctre/phoenix6/CANcoder.hpp"
+#include "ctre/phoenix6/TalonFX.hpp"
 
 using namespace ctre::phoenix6;
 /**

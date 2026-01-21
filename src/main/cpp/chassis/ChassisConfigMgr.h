@@ -16,7 +16,6 @@
 #pragma once
 
 #include "chassis/generated/TunerConstants302.h"
-#include "chassis/generated/TunerConstants9998.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 
 using namespace ctre::phoenix6;

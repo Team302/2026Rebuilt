@@ -15,12 +15,12 @@
 
 #include "RobotContainer.h"
 
-// #include "chassis/SwerveContainer.h"
+#include "chassis/SwerveContainer.h"
 #include "vision/DragonVisionPoseEstimator.h"
 
 RobotContainer::RobotContainer()
 {
     // Initialize all of your commands and subsystems here
-    // m_swervecontainer = SwerveContainer::GetInstance();
+    m_swervecontainer = SwerveContainer::GetInstance();
     m_visionPoseEstimator = new DragonVisionPoseEstimator();
 }

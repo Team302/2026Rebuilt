@@ -31,10 +31,6 @@ private:
     nt::DoublePublisher driveTimestamp = driveStateTable->GetDoubleTopic("Timestamp").Publish();
     nt::DoublePublisher driveOdometryFrequency = driveStateTable->GetDoubleTopic("OdometryFrequency").Publish();
 
-    /* Robot pose for field positioning */
-    std::shared_ptr<nt::NetworkTable> table = inst.GetTable("Pose");
-    nt::DoubleArrayPublisher fieldPub = table->GetDoubleArrayTopic("robotPose").Publish();
-
     /* Mechanisms to represent the swerve module states */
     std::array<frc::Mechanism2d, 4> m_moduleMechanisms{
         frc::Mechanism2d{1, 1},

@@ -29,18 +29,11 @@ void Telemetry::Telemeterize(subsystems::CommandSwerveDrivetrain::SwerveDriveSta
     driveOdometryFrequency.Set(1.0 / state.OdometryPeriod.value());
 
     /* Also write to log file */
-    std::array<double, 8> moduleStatesArray{};
-    std::array<double, 8> moduleTargetsArray{};
-    for (int i = 0; i < 4; ++i)
-    {
-        moduleStatesArray[i * 2 + 0] = state.ModuleStates[i].angle.Radians().value();
-        moduleStatesArray[i * 2 + 1] = state.ModuleStates[i].speed.value();
-        moduleTargetsArray[i * 2 + 0] = state.ModuleTargets[i].angle.Radians().value();
-        moduleTargetsArray[i * 2 + 1] = state.ModuleTargets[i].speed.value();
-    }
-    SignalLogger::WriteDoubleArray("DriveState/Pose", {state.Pose.X().value(), state.Pose.Y().value(), state.Pose.Rotation().Degrees().value()});
-    SignalLogger::WriteDoubleArray("DriveState/ModuleStates", moduleStatesArray);
-    SignalLogger::WriteDoubleArray("DriveState/ModuleTargets", moduleTargetsArray);
+    SignalLogger::WriteStruct("DriveState/Pose", state.Pose);
+    SignalLogger::WriteStruct("DriveState/Speeds", state.Speeds);
+    SignalLogger::WriteStructArray<frc::SwerveModuleState>("DriveState/ModuleStates", state.ModuleStates);
+    SignalLogger::WriteStructArray<frc::SwerveModuleState>("DriveState/ModuleTargets", state.ModuleTargets);
+    SignalLogger::WriteStructArray<frc::SwerveModulePosition>("DriveState/ModulePositions", state.ModulePositions);
     SignalLogger::WriteValue("DriveState/OdometryPeriod", state.OdometryPeriod);
 
     /* Telemeterize each module state to a Mechanism2d */

@@ -62,7 +62,8 @@ void SwerveContainer::ConfigureBindings()
     m_chassis->RegisterTelemetry([this](auto const &state)
                                  { logger.Telemeterize(state); });
 
-    SetSysIDBinding(controller);
+    // When needed to do this, map the buttons accordingly and uncomment the lines below
+    // SetSysIDBinding(controller);
 }
 
 void SwerveContainer::CreateStandardDriveCommands(TeleopControl *controller)
@@ -94,18 +95,15 @@ void SwerveContainer::SetSysIDBinding(TeleopControl *controller)
     if (controller != nullptr)
     {
         // Run SysId routines when holding Select and A,X,Y,B.
-        // Note that each routine should be run exactly once in a single log.
-        (controller->GetCommandTrigger(TeleopControlFunctions::SYSID_MODIFER) && controller->GetCommandTrigger(TeleopControlFunctions::AUTO_ALIGN_HUMAN_PLAYER_STATION)).WhileTrue(m_chassis->SysIdQuasistatic(frc2::sysid::Direction::kForward)); // A
-        (controller->GetCommandTrigger(TeleopControlFunctions::SYSID_MODIFER) && controller->GetCommandTrigger(TeleopControlFunctions::AUTO_ALIGN_LEFT)).WhileTrue(m_chassis->SysIdQuasistatic(frc2::sysid::Direction::kReverse));                 // B
-        (controller->GetCommandTrigger(TeleopControlFunctions::SYSID_MODIFER) && controller->GetCommandTrigger(TeleopControlFunctions::AUTO_CLIMB)).WhileTrue(m_chassis->SysIdDynamic(frc2::sysid::Direction::kForward));                          // Y
-        (controller->GetCommandTrigger(TeleopControlFunctions::SYSID_MODIFER) && controller->GetCommandTrigger(TeleopControlFunctions::AUTO_ALIGN_RIGHT)).WhileTrue(m_chassis->SysIdDynamic(frc2::sysid::Direction::kReverse));                    // X
+        // Note that each routine should be run exactly once in a single log
+        (controller->GetCommandTrigger(TeleopControlFunctions::SYSID_MODIFER) && controller->GetCommandTrigger(TeleopControlFunctions::SYSID_QUASISTATICFORWARD)).WhileTrue(m_chassis->SysIdQuasistatic(frc2::sysid::Direction::kForward)); // A
+        (controller->GetCommandTrigger(TeleopControlFunctions::SYSID_MODIFER) && controller->GetCommandTrigger(TeleopControlFunctions::SYSID_QUASISTATICREVERSE)).WhileTrue(m_chassis->SysIdQuasistatic(frc2::sysid::Direction::kReverse)); // B
+        (controller->GetCommandTrigger(TeleopControlFunctions::SYSID_MODIFER) && controller->GetCommandTrigger(TeleopControlFunctions::SYSID_DYNAMICFORWARD)).WhileTrue(m_chassis->SysIdDynamic(frc2::sysid::Direction::kForward));         // Y
+        (controller->GetCommandTrigger(TeleopControlFunctions::SYSID_MODIFER) && controller->GetCommandTrigger(TeleopControlFunctions::SYSID_DYNAMICREVERSE)).WhileTrue(m_chassis->SysIdDynamic(frc2::sysid::Direction::kReverse));         // X
     }
 }
 
 void SwerveContainer::NotifyStateUpdate(RobotStateChanges::StateChange change, int value)
 {
-    if (change == RobotStateChanges::StateChange::ClimbModeStatus_Int)
-    {
-        m_climbMode = value;
-    }
+    // Fill in as needed
 }

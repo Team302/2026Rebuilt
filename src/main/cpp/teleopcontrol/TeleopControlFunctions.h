@@ -37,6 +37,10 @@ public:
         RESET_POSITION,
         SLOW_MODE,
         SYSID_MODIFER,
+        SYSID_QUASISTATICFORWARD,
+        SYSID_QUASISTATICREVERSE,
+        SYSID_DYNAMICFORWARD,
+        SYSID_DYNAMICREVERSE,
 
         // tip correction controls
         TIPCORRECTION_TOGGLE,
