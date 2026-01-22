@@ -23,10 +23,6 @@ public:
         MAINTAIN,
         SPECIFIED_ANGLE,
         FACE_GAME_PIECE,
-        FACE_REEF_CENTER,
-        FACE_REEF_FACE,
-        FACE_CORAL_STATION,
-        FACE_BARGE,
         IGNORE
     };
 
@@ -37,15 +33,6 @@ public:
         TRAJECTORY_DRIVE,
         HOLD_DRIVE,
         POLAR_DRIVE,
-        DRIVE_TO_CORAL_STATION,
-        DRIVE_TO_LEFT_REEF_BRANCH,
-        DRIVE_TO_RIGHT_REEF_BRANCH,
-        DRIVE_TO_LEFT_CAGE,
-        DRIVE_TO_RIGHT_CAGE,
-        DRIVE_TO_CENTER_CAGE,
-        DRIVE_TO_BARGE,
-        DRIVE_TO_ALGAE,
-        DRIVE_TO_PROCESSOR,
         STOP_DRIVE
     };
 
@@ -63,12 +50,10 @@ public:
 
     enum AutonChassisOptions
     {
-        VISION_DRIVE_SPEAKER,
         NO_VISION
     };
     enum AutonAvoidOptions
     {
-        PODIUM,
         ROBOT_COLLISION,
         NO_AVOID_OPTION
     };
