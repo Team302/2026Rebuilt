@@ -1,6 +1,26 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <topLevelAppDataElement xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <robotFiles />
+  <robotFiles>
+    <string>CompBot302.xml</string>
+  </robotFiles>
   <Robots />
-  <Mechanisms />
+  <Mechanisms>
+    <mechanism>
+      <GUID>cea1dfe8-5c25-49c7-97cd-9b59e6e149f3</GUID>
+      <name>Intake</name>
+      <MotorControllers />
+      <closedLoopControlParameters />
+      <solenoid />
+      <servo />
+      <analogInput />
+      <digitalInput />
+      <cancoder />
+      <stateMotorControlData />
+      <states />
+      <doubleParameters />
+      <boolParameters />
+      <constDoubleParameters />
+      <constBoolParameters />
+    </mechanism>
+  </Mechanisms>
 </topLevelAppDataElement>
