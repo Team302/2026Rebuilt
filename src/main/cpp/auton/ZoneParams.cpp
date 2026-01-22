@@ -21,10 +21,7 @@
 #include "chassis/ChassisOptionEnums.h"
 
 // @ADDMECH include for your mechanism state mgr
-
 // @ADDMECH mechanism state for mech as parameter
-// ZoneParams.cpp
-#include "auton/ZoneParams.h"
 
 ZoneParams::ZoneParams(
 	frc::Pose2d circlePose,

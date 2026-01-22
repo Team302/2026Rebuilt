@@ -22,8 +22,8 @@
 #include "auton/ZoneParser.h"
 #include "frc/Filesystem.h"
 #include "pugixml/pugixml.hpp"
-#include "utils/logging/debug/Logger.h"
 #include "RobinHood/robin_hood.h"
+#include "utils/logging/debug/Logger.h"
 
 using namespace std;
 using namespace pugi;

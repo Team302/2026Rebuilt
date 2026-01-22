@@ -32,10 +32,11 @@ AutonDrivePrimitive::AutonDrivePrimitive() : m_chassis(ChassisConfigMgr::GetInst
                                              m_zone(nullptr)
 {
     // Get mechanism handles once in the constructor
-    auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
-    if (config != nullptr)
-    {
-    }
+    // TODO: add mechanism state mgr retrievals here
+    // auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
+    // if (config != nullptr)
+    // {
+    // }
 }
 
 void AutonDrivePrimitive::Init(PrimitiveParams *params)
@@ -146,11 +147,12 @@ bool AutonDrivePrimitive::IsInZone()
 
 frc2::CommandPtr AutonDrivePrimitive::CreateDriveToPoseCommand(ChassisOptionEnums::DriveStateType driveToType)
 {
-    auto container = SwerveContainer::GetInstance();
-    switch (driveToType)
-    {
+    // TODO: add drive to types here as added
+    // auto container = SwerveContainer::GetInstance();
+    // switch (driveToType)
+    // {
 
-    default:
-        return frc2::cmd::None();
-    }
+    // default:
+    return frc2::cmd::None();
+    // }
 }
