@@ -106,7 +106,7 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
                     zoneMode = ZoneMode::CIRCLE;
                     radius = attr.as_double();
                 }
-                if (strcmp(attr.name(), "x1_rect") == 0)
+                else if (strcmp(attr.name(), "x1_rect") == 0)
                 {
                     zoneMode = ZoneMode::RECTANGLE;
                     xgrid1rect = units::length::meter_t(attr.as_double());
