@@ -3,15 +3,15 @@
 <auton>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueRightOutpost_A"
+choreoname = "BlueRightNoneOutpostDepot_A"
 time = "3.0"/>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueRightOutpost_B"
+choreoname = "BlueRightNoneOutpostDepot_B"
 time = "3.0"/>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueRightOutpost_C"
+choreoname = "BlueRightNoneOutpostDepot_C"
 time = "3.0"/>
 
 <!--This path could honestly do a lot more, we could probably grab some pieces from our side if people are willing to pass-->
