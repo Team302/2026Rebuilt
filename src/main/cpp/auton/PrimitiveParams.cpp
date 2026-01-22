@@ -35,6 +35,6 @@ PrimitiveParams::PrimitiveParams(PRIMITIVE_IDENTIFIER id,
 																						m_zones(zones),
 																						m_pathUpdateOption(pathUpdateOption)
 
-// @ADDMECH initilize state mgr attribute
+// @ADDMECH initialize state mgr attribute
 {
 }

@@ -333,7 +333,7 @@ void DragonVision::SetRobotPose(const frc::Pose2d &pose)
 }
 
 /// @brief Return limelights that match the provided usage/category and are running.
-/// @param usage The usage/category to filter by (e.g APRIL_TAGS).
+/// @param usage The usage/category to filter by (e.g., APRIL_TAGS).
 /// @return Vector of pointers to running DragonLimelight instances that match the criteria.
 /// @note Only returns cameras that report IsLimelightRunning() == true.
 std::vector<DragonLimelight *> DragonVision::GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE usage) const

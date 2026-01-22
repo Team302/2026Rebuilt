@@ -99,7 +99,7 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
 
                     zoneMode = ZoneMode::CIRCLE;
                     circleY = attr.as_double();
-                    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "ZoneParser", "parsed circley", circleX);
+                    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "ZoneParser", "parsed circley", circleY);
                 }
                 else if (strcmp(attr.name(), "radius") == 0)
                 {
