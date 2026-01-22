@@ -16,51 +16,17 @@
 
 #pragma once
 
-class RobotStateChanges
+// C++ Includes
+#include <string>
+#include "auton/ZoneParams.h"
+// FRC includes
+
+// Team 302 includes
+
+// Third Party Includes
+
+class ZoneParser
 {
 public:
-    enum StateChange
-    {
-        LoopCounterStart,
-        DesiredScoringMode_Int,
-        ClimbModeStatus_Int,
-        ChassisTipStatus_Int,
-        DriveAssistMode_Int,
-        GameState_Int,
-        CompressorChange_Int,
-        ChassisPose_Pose2D,
-        DriveToFieldElementIsDone_Bool,
-        DriveStateType_Int,
-        LoopCounterEnd // Must be last Enum for the loop counter
-    };
-
-    enum ScoringMode
-    {
-        FUEL
-    };
-
-    enum ClimbMode
-    {
-        ClimbModeOff,
-        ClimbModeOn
-    };
-
-    enum ChassisTilt
-    {
-        NotTilted,
-        Tilted
-    };
-
-    enum DriveAssist
-    {
-        DriveAssistOff,
-        DriveAssistOn
-    };
-
-    enum GamePeriod
-    {
-        Auton,
-        Teleop,
-        Disabled
-    };
+    static ZoneParams *ParseXML(std::string fulldirfile); // declare a new xml_node called zonenode for the zone element
 };

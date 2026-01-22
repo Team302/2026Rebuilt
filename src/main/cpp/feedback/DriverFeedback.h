@@ -68,8 +68,8 @@ private:
     units::time::millisecond_t m_blinkingPeriod{100};
 
     static DriverFeedback *m_instance;
-    RobotStateChanges::ScoringMode m_scoringMode = RobotStateChanges::ScoringMode::Coral;
-    RobotStateChanges::ClimbMode m_climbMode = RobotStateChanges::ClimbMode::ClimbModeOff;
+    RobotStateChanges::ScoringMode m_scoringMode = RobotStateChanges::ScoringMode::FUEL;
     bool m_driveToIsDone = false;
+    bool m_climbMode = false;
     ChassisOptionEnums::DriveStateType m_driveStateType = ChassisOptionEnums::DriveStateType::ROBOT_DRIVE;
 };

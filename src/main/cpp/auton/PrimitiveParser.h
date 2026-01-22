@@ -16,51 +16,20 @@
 
 #pragma once
 
-class RobotStateChanges
+// C++ Includes
+
+// FRC includes
+
+// Team 302 includes
+#include <auton/PrimitiveParams.h>
+
+// Third Party Includes
+
+class PrimitiveParser
 {
 public:
-    enum StateChange
-    {
-        LoopCounterStart,
-        DesiredScoringMode_Int,
-        ClimbModeStatus_Int,
-        ChassisTipStatus_Int,
-        DriveAssistMode_Int,
-        GameState_Int,
-        CompressorChange_Int,
-        ChassisPose_Pose2D,
-        DriveToFieldElementIsDone_Bool,
-        DriveStateType_Int,
-        LoopCounterEnd // Must be last Enum for the loop counter
-    };
+    static PrimitiveParamsVector ParseXML(std::string fileName);
 
-    enum ScoringMode
-    {
-        FUEL
-    };
-
-    enum ClimbMode
-    {
-        ClimbModeOff,
-        ClimbModeOn
-    };
-
-    enum ChassisTilt
-    {
-        NotTilted,
-        Tilted
-    };
-
-    enum DriveAssist
-    {
-        DriveAssistOff,
-        DriveAssistOn
-    };
-
-    enum GamePeriod
-    {
-        Auton,
-        Teleop,
-        Disabled
-    };
+private:
+    static void Print(PrimitiveParamsVector params);
 };

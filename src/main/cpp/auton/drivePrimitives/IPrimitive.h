@@ -16,51 +16,18 @@
 
 #pragma once
 
-class RobotStateChanges
+#include "units/time.h"
+
+class PrimitiveParams;
+
+class IPrimitive
 {
 public:
-    enum StateChange
-    {
-        LoopCounterStart,
-        DesiredScoringMode_Int,
-        ClimbModeStatus_Int,
-        ChassisTipStatus_Int,
-        DriveAssistMode_Int,
-        GameState_Int,
-        CompressorChange_Int,
-        ChassisPose_Pose2D,
-        DriveToFieldElementIsDone_Bool,
-        DriveStateType_Int,
-        LoopCounterEnd // Must be last Enum for the loop counter
-    };
+    const units::time::second_t LOOP_LENGTH = units::time::second_t(0.020);
 
-    enum ScoringMode
-    {
-        FUEL
-    };
-
-    enum ClimbMode
-    {
-        ClimbModeOff,
-        ClimbModeOn
-    };
-
-    enum ChassisTilt
-    {
-        NotTilted,
-        Tilted
-    };
-
-    enum DriveAssist
-    {
-        DriveAssistOff,
-        DriveAssistOn
-    };
-
-    enum GamePeriod
-    {
-        Auton,
-        Teleop,
-        Disabled
-    };
+    IPrimitive() = default;
+    virtual ~IPrimitive() = default;
+    virtual void Init(PrimitiveParams *Parms) = 0;
+    virtual void Run() = 0;
+    virtual bool IsDone() = 0;
 };
