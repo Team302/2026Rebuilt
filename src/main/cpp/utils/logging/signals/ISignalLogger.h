@@ -17,6 +17,7 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 #include <cstdint>
 #include <units/time.h>
 

@@ -37,13 +37,13 @@ private:
     std::string FormatMessage(std::string signalID, std::string type,
                               std::string value, std::string_view units, units::time::second_t timestamp);
 
+    std::string m_ipAddress;
+    int m_port;
+    std::atomic<bool> m_isRunning;
 #ifdef _WIN32
     SOCKET m_socket;
 #else
     int m_socket;
 #endif
     sockaddr_in m_serverAddr;
-    std::string m_ipAddress;
-    int m_port;
-    std::atomic<bool> m_isRunning;
 };
