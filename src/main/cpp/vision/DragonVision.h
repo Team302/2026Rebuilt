@@ -115,12 +115,6 @@ public:
 
     enum VISION_ELEMENT
     {
-        ALGAE,
-        BARGE,
-        CORAL,
-        CORAL_STATION,
-        PROCESSOR,
-        REEF,
         NEAREST_APRILTAG
     };
 

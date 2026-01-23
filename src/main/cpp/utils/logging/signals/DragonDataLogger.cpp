@@ -40,9 +40,6 @@ void DragonDataLogger::LogBoolData(uint64_t timestamp, DragonDataLogger::BoolSig
         case DragonDataLogger::DRIVE_TO_IS_DONE:
             SignalLogger::WriteBoolean(m_IsDonePath, value, m_latency);
             break;
-        case DragonDataLogger::BoolSignals::IS_ALGAE_DETECTED:
-            SignalLogger::WriteBoolean(m_IsAlgaeDetected, value, m_latency);
-            break;
         default:
             break;
         }
@@ -250,9 +247,6 @@ void DragonDataLogger::LogDoubleData(uint64_t timestamp, DragonDataLogger::Doubl
         case DragonDataLogger::DoubleSignals::LIMELIGHT1_NUMBER_OF_TAGS:
             SignalLogger::WriteDouble(m_limelight1NumberOfTagsPath, value, m_limelight1NumberOfTagsUnits, m_latency);
             break;
-        case DragonDataLogger::DoubleSignals::LIMELIGHT1_NUMBER_OF_ALGAE:
-            SignalLogger::WriteDouble(m_limelight1NumberOfAlgaePath, value, m_limelight1NumberOfAlgaeUnits, m_latency);
-            break;
         default:
             break;
         }
@@ -293,61 +287,6 @@ void DragonDataLogger::Log2DPoseData(uint64_t timestamp, DragonDataLogger::PoseS
             double rot = value.Rotation().Radians().value();
             std::vector<double> pose = {x, y, rot};
             SignalLogger::WriteDoubleArray(m_chassisPose2dPath, pose, m_pose2dUnits, m_latency);
-            break;
-        }
-        case DragonDataLogger::PoseSingals::VISION_DRIVE_TO_LEFT_REEF_BRANCH_TARGET_POSE:
-        {
-            double x = value.X().value();
-            double y = value.Y().value();
-            double rot = value.Rotation().Radians().value();
-            std::vector<double> pose = {x, y, rot};
-            SignalLogger::WriteDoubleArray(m_visionDriveLBranchPose2dPath, pose, m_visionDriveLBranchPose2dPath, m_latency);
-            break;
-        }
-        case DragonDataLogger::PoseSingals::VISION_DRIVE_TO_RIGHT_REEF_BRANCH_TARGET_POSE:
-        {
-            double x = value.X().value();
-            double y = value.Y().value();
-            double rot = value.Rotation().Radians().value();
-            std::vector<double> pose = {x, y, rot};
-            SignalLogger::WriteDoubleArray(m_visionDriveRBranchPose2dPath, pose, m_visionDriveRBranchPose2dPath, m_latency);
-            break;
-        }
-        case DragonDataLogger::PoseSingals::VISION_DRIVE_TO_CORAL_STATION_TARGET_POSE:
-        {
-            double x = value.X().value();
-            double y = value.Y().value();
-            double rot = value.Rotation().Radians().value();
-            std::vector<double> pose = {x, y, rot};
-            SignalLogger::WriteDoubleArray(m_visionDriveCoralStationPose2dPath, pose, m_visionDriveCoralStationPose2dUnits, m_latency);
-            break;
-            ;
-        }
-        case DragonDataLogger::PoseSingals::ODOMETRY_DRIVE_TO_LEFT_REEF_BRANCH_TARGET_POSE:
-        {
-            double x = value.X().value();
-            double y = value.Y().value();
-            double rot = value.Rotation().Radians().value();
-            std::vector<double> pose = {x, y, rot};
-            SignalLogger::WriteDoubleArray(m_odometryDriveLBranchPose2dPath, pose, m_odometryDriveLBranchPose2dUnits, m_latency);
-            break;
-        }
-        case DragonDataLogger::PoseSingals::ODOMETRY_DRIVE_TO_RIGHT_REEF_BRANCH_TARGET_POSE:
-        {
-            double x = value.X().value();
-            double y = value.Y().value();
-            double rot = value.Rotation().Radians().value();
-            std::vector<double> pose = {x, y, rot};
-            SignalLogger::WriteDoubleArray(m_odometryDriveRBranchPose2dPath, pose, m_odometryDriveRBranchPose2dUnits, m_latency);
-            break;
-        }
-        case DragonDataLogger::PoseSingals::ODOMETRY_DRIVE_TO_CORAL_STATION_TARGET_POSE:
-        {
-            double x = value.X().value();
-            double y = value.Y().value();
-            double rot = value.Rotation().Radians().value();
-            std::vector<double> pose = {x, y, rot};
-            SignalLogger::WriteDoubleArray(m_odometryDriveCoralStationPose2dPath, pose, m_odometryDriveCoralStationPose2dUnits, m_latency);
             break;
         }
         case DragonDataLogger::PoseSingals::CURRENT_CHASSIS_QUEST_POSE2D:

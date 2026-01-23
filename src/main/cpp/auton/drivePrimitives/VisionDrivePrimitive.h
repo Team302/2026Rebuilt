@@ -12,54 +12,40 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-
 #pragma once
 
-class RobotStateChanges
+// C++ Includes
+#include <memory>
+
+// Team302 Includes
+#include "auton/PrimitiveParams.h"
+#include "auton/drivePrimitives/IPrimitive.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "chassis/ChassisOptionEnums.h"
+#include "vision/DragonVision.h"
+
+// FRC,WPI Includes
+#include "frc/Timer.h"
+#include "units/time.h"
+
+class VisionDrivePrimitive : public IPrimitive
 {
 public:
-    enum StateChange
-    {
-        LoopCounterStart,
-        DesiredScoringMode_Int,
-        ClimbModeStatus_Int,
-        ChassisTipStatus_Int,
-        DriveAssistMode_Int,
-        GameState_Int,
-        CompressorChange_Int,
-        ChassisPose_Pose2D,
-        DriveToFieldElementIsDone_Bool,
-        DriveStateType_Int,
-        LoopCounterEnd // Must be last Enum for the loop counter
-    };
+    VisionDrivePrimitive();
 
-    enum ScoringMode
-    {
-        FUEL
-    };
+    virtual ~VisionDrivePrimitive() = default;
 
-    enum ClimbMode
-    {
-        ClimbModeOff,
-        ClimbModeOn
-    };
+    void Init(PrimitiveParams *params) override;
+    void Run() override;
+    bool IsDone() override;
 
-    enum ChassisTilt
-    {
-        NotTilted,
-        Tilted
-    };
+private:
+    subsystems::CommandSwerveDrivetrain *m_chassis;
+    ChassisOptionEnums::HeadingOption m_headingOption;
+    std::string m_ntName;
 
-    enum DriveAssist
-    {
-        DriveAssistOff,
-        DriveAssistOn
-    };
+    frc::Timer *m_timer;
+    units::time::second_t m_timeout;
 
-    enum GamePeriod
-    {
-        Auton,
-        Teleop,
-        Disabled
-    };
+    DragonVision *m_vision;
 };

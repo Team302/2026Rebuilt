@@ -13,53 +13,27 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#pragma once
+#include "auton/PrimitiveEnums.h"
+#include "auton/PrimitiveParams.h"
+#include "chassis/ChassisOptionEnums.h"
 
-class RobotStateChanges
+// @ADDMECH mechanism state for mech as parameter
+PrimitiveParams::PrimitiveParams(PRIMITIVE_IDENTIFIER id,
+								 units::time::second_t time,
+								 ChassisOptionEnums::HeadingOption headingOpt,
+								 float heading,
+								 std::string choreoTrajectoryName,
+								 ZoneParamsVector zones,
+								 VISION_ALIGNMENT visionAlignment,
+								 ChassisOptionEnums::DriveStateType pathUpdateOption) : m_id(id), // Primitive ID
+																						m_time(time),
+																						m_headingOption(headingOpt),
+																						m_heading(heading),
+																						m_choreoTrajectoryName(choreoTrajectoryName),
+																						m_visionAlignment(visionAlignment),
+																						m_zones(zones),
+																						m_pathUpdateOption(pathUpdateOption)
+
+// @ADDMECH initialize state mgr attribute
 {
-public:
-    enum StateChange
-    {
-        LoopCounterStart,
-        DesiredScoringMode_Int,
-        ClimbModeStatus_Int,
-        ChassisTipStatus_Int,
-        DriveAssistMode_Int,
-        GameState_Int,
-        CompressorChange_Int,
-        ChassisPose_Pose2D,
-        DriveToFieldElementIsDone_Bool,
-        DriveStateType_Int,
-        LoopCounterEnd // Must be last Enum for the loop counter
-    };
-
-    enum ScoringMode
-    {
-        FUEL
-    };
-
-    enum ClimbMode
-    {
-        ClimbModeOff,
-        ClimbModeOn
-    };
-
-    enum ChassisTilt
-    {
-        NotTilted,
-        Tilted
-    };
-
-    enum DriveAssist
-    {
-        DriveAssistOff,
-        DriveAssistOn
-    };
-
-    enum GamePeriod
-    {
-        Auton,
-        Teleop,
-        Disabled
-    };
-};
+}
