@@ -4751,6 +4751,7 @@
                   <name>Target</name>
                   <__units__>deg</__units__>
                   <type>Double</type>
+                  <value>15</value>
                 </target>
                 <motorName>Climber</motorName>
                 <Enabled>
@@ -4830,6 +4831,7 @@
                   <name>Target</name>
                   <__units__>deg</__units__>
                   <type>Double</type>
+                  <value>180</value>
                 </target>
                 <motorName>Climber</motorName>
                 <Enabled>

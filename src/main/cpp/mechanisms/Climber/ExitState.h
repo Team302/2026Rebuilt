@@ -47,5 +47,6 @@ namespace ClimberStates
 
 		const units::angle::degree_t m_ClimberTarget = units::angle::degree_t(0);
 		const bool m_ExtenderTarget = false;
+		const bool m_AllignmentTarget = false;
 	};
 }

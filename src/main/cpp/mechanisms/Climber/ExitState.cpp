@@ -51,11 +51,12 @@ void ExitState::Init()
 void ExitState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetClimberPositionDegree(m_ClimberTarget);
-	m_mechanism->GetExtender()->Set(m_ExtenderTarget);
+	m_mechanism->GetAllignment()->Set(m_AllignmentTarget);
 }
 
 void ExitState::Run()
 {
+	//MECH_TODO: Update Extender State when climber is below 5 deg?
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("ExitState"), string("Run"));
 }
 
