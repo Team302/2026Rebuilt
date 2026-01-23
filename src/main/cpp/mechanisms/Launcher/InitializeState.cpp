@@ -21,7 +21,7 @@
 // FRC includes
 
 // Team 302 includes
-#include "mechanisms/Intake/OffState.h"
+#include "mechanisms/Launcher/InitializeState.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "teleopcontrol/TeleopControlFunctions.h"
 #include "utils/logging/debug/Logger.h"
@@ -29,53 +29,55 @@
 // Third Party Includes
 
 using namespace std;
-using namespace IntakeStates;
+using namespace LauncherStates;
 
 /// @class ExampleForwardState
 /// @brief information about the control (open loop, closed loop position, closed loop velocity, etc.) for a mechanism state
-OffState::OffState(std::string stateName,
-				   int stateId,
-				   Intake *mech,
-				   RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId)
+InitializeState::InitializeState(std::string stateName,
+								 int stateId,
+								 Launcher *mech,
+								 RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId)
 {
 }
 
-void OffState::Init()
+void InitializeState::Init()
 {
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("OffState"), string("Init"));
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("InitializeState"), string("Init"));
 
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
 		InitCompBot302();
 }
 
-void OffState::InitCompBot302()
+void InitializeState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetIntakePercentOut(m_IntakeTarget);
-	// m_mechanism->UpdateTargetHopperPercentOut(m_HopperTarget);
+	m_mechanism->UpdateTargetLauncherPercentOut(m_LauncherTarget);
+	m_mechanism->UpdateTargetHoodPercentOut(m_HoodTarget);
+	m_mechanism->UpdateTargetTransferPercentOut(m_TransferTarget);
+	m_mechanism->UpdateTargetTurretPercentOut(m_TurretTarget);
+	m_mechanism->UpdateTargetIndexerPercentOut(m_IndexerTarget);
 }
 
-void OffState::Run()
+void InitializeState::Run()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("OffState"), string("Run"));
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("InitializeState"), string("Run"));
 }
 
-void OffState::Exit()
+void InitializeState::Exit()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("OffState"), string("Exit"));
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("InitializeState"), string("Exit"));
 }
 
-bool OffState::AtTarget()
+bool InitializeState::AtTarget()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("OffState"), string("AtTarget"));
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("InitializeState"), string("AtTarget"));
 
 	bool atTarget = false;
 	return atTarget;
 }
 
-bool OffState::IsTransitionCondition(bool considerGamepadTransitions)
+bool InitializeState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return (considerGamepadTransitions &&
-			((!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXPEL) && m_mechanism->GetCurrentState() == m_mechanism->STATE_EXPEL) ||
-			 (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::INTAKE) && m_mechanism->GetCurrentState() == m_mechanism->STATE_INTAKE)));
+	return false;
+	// return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXAMPLE_MECH_FORWARD));
 }

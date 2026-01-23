@@ -21,7 +21,7 @@
 // FRC includes
 
 // Team 302 includes
-#include "mechanisms/Intake/OffState.h"
+#include "mechanisms/Launcher/OffState.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "teleopcontrol/TeleopControlFunctions.h"
 #include "utils/logging/debug/Logger.h"
@@ -29,13 +29,13 @@
 // Third Party Includes
 
 using namespace std;
-using namespace IntakeStates;
+using namespace LauncherStates;
 
 /// @class ExampleForwardState
 /// @brief information about the control (open loop, closed loop position, closed loop velocity, etc.) for a mechanism state
 OffState::OffState(std::string stateName,
 				   int stateId,
-				   Intake *mech,
+				   Launcher *mech,
 				   RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId)
 {
 }
@@ -50,8 +50,11 @@ void OffState::Init()
 
 void OffState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetIntakePercentOut(m_IntakeTarget);
-	// m_mechanism->UpdateTargetHopperPercentOut(m_HopperTarget);
+	m_mechanism->UpdateTargetLauncherPercentOut(m_LauncherTarget);
+	m_mechanism->UpdateTargetHoodPercentOut(m_HoodTarget);
+	m_mechanism->UpdateTargetTransferPercentOut(m_TransferTarget);
+	m_mechanism->UpdateTargetTurretPercentOut(m_TurretTarget);
+	m_mechanism->UpdateTargetIndexerPercentOut(m_IndexerTarget);
 }
 
 void OffState::Run()
@@ -75,7 +78,6 @@ bool OffState::AtTarget()
 bool OffState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return (considerGamepadTransitions &&
-			((!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXPEL) && m_mechanism->GetCurrentState() == m_mechanism->STATE_EXPEL) ||
-			 (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::INTAKE) && m_mechanism->GetCurrentState() == m_mechanism->STATE_INTAKE)));
+	return false;
+	// return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXAMPLE_MECH_FORWARD));
 }

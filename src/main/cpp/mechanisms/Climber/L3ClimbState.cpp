@@ -21,7 +21,7 @@
 // FRC includes
 
 // Team 302 includes
-#include "mechanisms/Intake/OffState.h"
+#include "mechanisms/Climber/L3ClimbState.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "teleopcontrol/TeleopControlFunctions.h"
 #include "utils/logging/debug/Logger.h"
@@ -29,53 +29,51 @@
 // Third Party Includes
 
 using namespace std;
-using namespace IntakeStates;
+using namespace ClimberStates;
 
 /// @class ExampleForwardState
 /// @brief information about the control (open loop, closed loop position, closed loop velocity, etc.) for a mechanism state
-OffState::OffState(std::string stateName,
-				   int stateId,
-				   Intake *mech,
-				   RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId)
+L3ClimbState::L3ClimbState(std::string stateName,
+						   int stateId,
+						   Climber *mech,
+						   RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId)
 {
 }
 
-void OffState::Init()
+void L3ClimbState::Init()
 {
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("OffState"), string("Init"));
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("L3ClimbState"), string("Init"));
 
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
 		InitCompBot302();
 }
 
-void OffState::InitCompBot302()
+void L3ClimbState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetIntakePercentOut(m_IntakeTarget);
-	// m_mechanism->UpdateTargetHopperPercentOut(m_HopperTarget);
+	m_mechanism->UpdateTargetClimberPositionDegree(m_ClimberTarget);
 }
 
-void OffState::Run()
+void L3ClimbState::Run()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("OffState"), string("Run"));
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("L3ClimbState"), string("Run"));
 }
 
-void OffState::Exit()
+void L3ClimbState::Exit()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("OffState"), string("Exit"));
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("L3ClimbState"), string("Exit"));
 }
 
-bool OffState::AtTarget()
+bool L3ClimbState::AtTarget()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("OffState"), string("AtTarget"));
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("L3ClimbState"), string("AtTarget"));
 
 	bool atTarget = false;
 	return atTarget;
 }
 
-bool OffState::IsTransitionCondition(bool considerGamepadTransitions)
+bool L3ClimbState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return (considerGamepadTransitions &&
-			((!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXPEL) && m_mechanism->GetCurrentState() == m_mechanism->STATE_EXPEL) ||
-			 (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::INTAKE) && m_mechanism->GetCurrentState() == m_mechanism->STATE_INTAKE)));
+	return false;
+	// return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXAMPLE_MECH_FORWARD));
 }
