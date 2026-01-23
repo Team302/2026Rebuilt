@@ -104,10 +104,10 @@
           <name>boolParameter</name>
           <__units__ />
           <type>Boolean</type>
-          <value>false</value>
+          <value>true</value>
         </enable>
         <fusedCANcoder>
-          <name>CANcoderInstance</name>
+          <name>ClimberRotation</name>
         </fusedCANcoder>
         <sensorToMechanismRatio>
           <unitsFamily>none</unitsFamily>
@@ -263,6 +263,7 @@
         </peakReverseDutyCycle>
       </theConfigMotorSettings>
       <MotionMagicSettings>
+        <Mode>Dynamic</Mode>
         <CruiseVelocity>
           <unitsFamily>angularVelocity</unitsFamily>
           <name>doubleParameter</name>
@@ -297,51 +298,6 @@
         <__units__ />
         <type>UInt32</type>
         <value>13</value>
-      </CAN_ID>
-      <channel>
-        <unitsFamily>none</unitsFamily>
-        <name>uintParameter</name>
-        <__units__ />
-        <type>UInt32</type>
-        <value>0</value>
-      </channel>
-      <enableDualChannel>
-        <unitsFamily>none</unitsFamily>
-        <name>boolParameter</name>
-        <__units__ />
-        <type>Boolean</type>
-        <value>false</value>
-      </enableDualChannel>
-      <forwardChannel>
-        <unitsFamily>none</unitsFamily>
-        <name>uintParameter</name>
-        <__units__ />
-        <type>UInt32</type>
-        <value>0</value>
-      </forwardChannel>
-      <reverseChannel>
-        <unitsFamily>none</unitsFamily>
-        <name>uintParameter</name>
-        <__units__ />
-        <type>UInt32</type>
-        <value>0</value>
-      </reverseChannel>
-      <reversed>
-        <unitsFamily>none</unitsFamily>
-        <name>boolParameter</name>
-        <__units__ />
-        <type>Boolean</type>
-        <value>false</value>
-      </reversed>
-    </solenoid>
-    <solenoid>
-      <name>Reach</name>
-      <CAN_ID>
-        <unitsFamily>none</unitsFamily>
-        <name>uintParameter</name>
-        <__units__ />
-        <type>UInt32</type>
-        <value>14</value>
       </CAN_ID>
       <channel>
         <unitsFamily>none</unitsFamily>
@@ -561,6 +517,7 @@
       </enableFOC>
       <feedForwardType>DUTY_CYCLE</feedForwardType>
       <controlType>POSITION_DEGREES</controlType>
+      <GravityType>Arm_Cosine</GravityType>
     </motorControlData>
   </stateMotorControlData>
   <states>
@@ -571,8 +528,160 @@
       <boolParameters />
       <constDoubleParameters />
       <constBoolParameters />
-      <motorTargets />
-      <solenoidTarget />
+      <motorTargets>
+        <motorTarget>
+          <name>Climber</name>
+          <target>
+            <unitsFamily>angle</unitsFamily>
+            <name>Target</name>
+            <__units__>deg</__units__>
+            <type>Double</type>
+          </target>
+          <motorName>Climber</motorName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>true</value>
+          </Enabled>
+          <controlDataName>PositionDegree</controlDataName>
+        </motorTarget>
+      </motorTargets>
+      <solenoidTarget>
+        <solenoidTarget>
+          <name>Extender</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Boolean</type>
+          </target>
+          <solenoidName>Extender</solenoidName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+        </solenoidTarget>
+        <solenoidTarget>
+          <name>Reach</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Boolean</type>
+          </target>
+          <solenoidName>Reach</solenoidName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+        </solenoidTarget>
+        <solenoidTarget>
+          <name>Allignment</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Boolean</type>
+          </target>
+          <solenoidName>Allignment</solenoidName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+        </solenoidTarget>
+      </solenoidTarget>
+    </state>
+    <state>
+      <name>WantToClimb</name>
+      <transitionsTo />
+      <doubleParameters />
+      <boolParameters />
+      <constDoubleParameters />
+      <constBoolParameters />
+      <motorTargets>
+        <motorTarget>
+          <name>Climber</name>
+          <target>
+            <unitsFamily>angle</unitsFamily>
+            <name>Target</name>
+            <__units__>deg</__units__>
+            <type>Double</type>
+          </target>
+          <motorName>Climber</motorName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>true</value>
+          </Enabled>
+          <controlDataName>PositionDegree</controlDataName>
+        </motorTarget>
+      </motorTargets>
+      <solenoidTarget>
+        <solenoidTarget>
+          <name>Extender</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Boolean</type>
+          </target>
+          <solenoidName>Extender</solenoidName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+        </solenoidTarget>
+        <solenoidTarget>
+          <name>Reach</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Boolean</type>
+          </target>
+          <solenoidName>Reach</solenoidName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+        </solenoidTarget>
+        <solenoidTarget>
+          <name>Allignment</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Boolean</type>
+          </target>
+          <solenoidName>Allignment</solenoidName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+        </solenoidTarget>
+      </solenoidTarget>
     </state>
     <state>
       <name>PrepareToClimb</name>
@@ -581,8 +690,79 @@
       <boolParameters />
       <constDoubleParameters />
       <constBoolParameters />
-      <motorTargets />
-      <solenoidTarget />
+      <motorTargets>
+        <motorTarget>
+          <name>Climber</name>
+          <target>
+            <unitsFamily>angle</unitsFamily>
+            <name>Target</name>
+            <__units__>deg</__units__>
+            <type>Double</type>
+          </target>
+          <motorName>Climber</motorName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>true</value>
+          </Enabled>
+          <controlDataName>PositionDegree</controlDataName>
+        </motorTarget>
+      </motorTargets>
+      <solenoidTarget>
+        <solenoidTarget>
+          <name>Extender</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Boolean</type>
+          </target>
+          <solenoidName>Extender</solenoidName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+        </solenoidTarget>
+        <solenoidTarget>
+          <name>Reach</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Boolean</type>
+          </target>
+          <solenoidName>Reach</solenoidName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+        </solenoidTarget>
+        <solenoidTarget>
+          <name>Allignment</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Boolean</type>
+          </target>
+          <solenoidName>Allignment</solenoidName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+        </solenoidTarget>
+      </solenoidTarget>
     </state>
     <state>
       <name>L1Climb</name>
@@ -591,8 +771,79 @@
       <boolParameters />
       <constDoubleParameters />
       <constBoolParameters />
-      <motorTargets />
-      <solenoidTarget />
+      <motorTargets>
+        <motorTarget>
+          <name>Climber</name>
+          <target>
+            <unitsFamily>angle</unitsFamily>
+            <name>Target</name>
+            <__units__>deg</__units__>
+            <type>Double</type>
+          </target>
+          <motorName>Climber</motorName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>true</value>
+          </Enabled>
+          <controlDataName>PositionDegree</controlDataName>
+        </motorTarget>
+      </motorTargets>
+      <solenoidTarget>
+        <solenoidTarget>
+          <name>Extender</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Boolean</type>
+          </target>
+          <solenoidName>Extender</solenoidName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+        </solenoidTarget>
+        <solenoidTarget>
+          <name>Reach</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Boolean</type>
+          </target>
+          <solenoidName>Reach</solenoidName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+        </solenoidTarget>
+        <solenoidTarget>
+          <name>Allignment</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Boolean</type>
+          </target>
+          <solenoidName>Allignment</solenoidName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+        </solenoidTarget>
+      </solenoidTarget>
     </state>
     <state>
       <name>L3Climb</name>
@@ -601,11 +852,82 @@
       <boolParameters />
       <constDoubleParameters />
       <constBoolParameters />
-      <motorTargets />
-      <solenoidTarget />
+      <motorTargets>
+        <motorTarget>
+          <name>Climber</name>
+          <target>
+            <unitsFamily>angle</unitsFamily>
+            <name>Target</name>
+            <__units__>deg</__units__>
+            <type>Double</type>
+          </target>
+          <motorName>Climber</motorName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>true</value>
+          </Enabled>
+          <controlDataName>PositionDegree</controlDataName>
+        </motorTarget>
+      </motorTargets>
+      <solenoidTarget>
+        <solenoidTarget>
+          <name>Extender</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Boolean</type>
+          </target>
+          <solenoidName>Extender</solenoidName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+        </solenoidTarget>
+        <solenoidTarget>
+          <name>Reach</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Boolean</type>
+          </target>
+          <solenoidName>Reach</solenoidName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+        </solenoidTarget>
+        <solenoidTarget>
+          <name>Allignment</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Boolean</type>
+          </target>
+          <solenoidName>Allignment</solenoidName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+        </solenoidTarget>
+      </solenoidTarget>
     </state>
     <state>
-      <name>Unclimb</name>
+      <name>Exit</name>
       <transitionsTo />
       <doubleParameters />
       <boolParameters />

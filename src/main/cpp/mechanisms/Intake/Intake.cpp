@@ -143,9 +143,9 @@ void Intake::CreateCompBot302()
 {
 	m_ntName = "Intake";
 	m_Intake = new ctre::phoenix6::hardware::TalonFX(4, ctre::phoenix6::CANBus("canivore"));
-	// m_Hopper = new ctre::phoenix6::hardware::TalonFX(0, ctre::phoenix6::CANBus("rio"));
+	// m_Hopper = new ctre::phoenix6::hardware::TalonFX(0, ctre::phoenix6::CANBus("canivore"));
 
-	// m_Extender = new frc::Solenoid(0, frc::PneumaticsModuleType::REVPH, 0);
+	m_Extender = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 0);
 
 	m_IsIntakeExtended = new frc::DigitalInput(0);
 	m_IsIntakeExtendedIsInverted = false;
