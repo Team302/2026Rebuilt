@@ -50,11 +50,11 @@ void ClimbState::Init()
 
 void ClimbState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetLauncherPercentOut(m_LauncherTarget);
-	m_mechanism->UpdateTargetHoodPercentOut(m_HoodTarget);
-	m_mechanism->UpdateTargetTransferPercentOut(m_TransferTarget);
-	m_mechanism->UpdateTargetTurretPercentOut(m_TurretTarget);
-	m_mechanism->UpdateTargetIndexerPercentOut(m_IndexerTarget);
+	m_mechanism->UpdateTargetLauncherPercentOut(m_launcherTarget);
+	m_mechanism->UpdateTargetHoodPercentOut(m_hoodTarget);
+	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
+	m_mechanism->UpdateTargetTurretPercentOut(m_turretTarget);
+	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
 }
 
 void ClimbState::Run()

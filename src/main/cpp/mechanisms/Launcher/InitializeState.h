@@ -45,10 +45,10 @@ namespace LauncherStates
 		void InitCompBot302();
 		RobotIdentifier m_RobotId;
 
-		const double m_LauncherTarget = double(0);
-		const double m_HoodTarget = double(-0.05);
-		const double m_TransferTarget = double(0);
-		const double m_TurretTarget = double(-0.05);
-		const double m_IndexerTarget = double(0);
+		const double m_launcherTarget = double(0);
+		const double m_hoodTarget = double(-0.05);
+		const double m_transferTarget = double(0);
+		const double m_turretTarget = double(-0.05);
+		const double m_indexerTarget = double(0);
 	};
 }

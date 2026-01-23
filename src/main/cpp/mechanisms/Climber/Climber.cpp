@@ -108,8 +108,8 @@ m_ClimberTotalWattHoursLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Clim
 m_ClimberTotalWattHoursLogEntry.Append(0.0);
 m_ClimberLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberPosition");
 m_ClimberLogEntry.Append(0.0);
-m_ClimberTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberTarget");
-m_ClimberTargetLogEntry.Append(0.0);
+m_climberTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberTarget");
+m_climberTargetLogEntry.Append(0.0);
 m_ClimberPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberPower");
 m_ClimberPowerLogEntry.Append(0.0);
 m_ClimberEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberEnergy");
@@ -131,10 +131,10 @@ std::map<std::string, Climber::STATE_NAMES>
 void Climber::CreateCompBot302()
 {
 	m_ntName = "Climber";
-	m_Climber = new ctre::phoenix6::hardware::TalonFX(12, ctre::phoenix6::CANBus("canivore"));// MECH_TODO:
+	m_Climber = new ctre::phoenix6::hardware::TalonFX(12, ctre::phoenix6::CANBus("canivore")); // MECH_TODO:
 
-	m_Extender = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 2);// MECH_TODO: Verify channel
-	m_Allignment = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 3);// MECH_TODO: Verify channel
+	m_Extender = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 2);	  // MECH_TODO: Verify channel
+	m_Allignment = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 3); // MECH_TODO: Verify channel
 
 	ctre::phoenix6::configs::CANcoderConfiguration ClimberRotationConfigs{};
 	ClimberRotationConfigs.MagnetSensor.MagnetOffset = units::angle::turn_t(0);

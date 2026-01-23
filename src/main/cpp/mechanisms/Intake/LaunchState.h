@@ -45,8 +45,8 @@ namespace IntakeStates
 		void InitCompBot302();
 		RobotIdentifier m_RobotId;
 
-		const double m_IntakeTarget = double(1);
-		const double m_HopperTarget = double(1);
-		const bool m_ExtenderTarget = false;
+		const double m_intakeTarget = double(1);
+		const double m_hopperTarget = double(1);
+		const bool m_extenderTarget = false;
 	};
 }

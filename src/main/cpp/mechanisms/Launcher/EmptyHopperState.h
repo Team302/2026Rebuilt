@@ -45,10 +45,10 @@ namespace LauncherStates
 		void InitCompBot302();
 		RobotIdentifier m_RobotId;
 
-		const units::angular_velocity::turns_per_second_t m_LauncherTarget = units::angular_velocity::turns_per_second_t(0);
-		const units::angle::degree_t m_HoodTarget = units::angle::degree_t(0);
-		const double m_TransferTarget = double(1);
-		const units::angle::degree_t m_TurretTarget = units::angle::degree_t(0);
-		const double m_IndexerTarget = double(1);
+		const units::angular_velocity::turns_per_second_t m_launcherTarget = units::angular_velocity::turns_per_second_t(0);
+		const units::angle::degree_t m_hoodTarget = units::angle::degree_t(0);
+		const double m_transferTarget = double(1);
+		const units::angle::degree_t m_turretTarget = units::angle::degree_t(0);
+		const double m_indexerTarget = double(1);
 	};
 }

@@ -45,8 +45,8 @@ namespace ClimberStates
 		void InitCompBot302();
 		RobotIdentifier m_RobotId;
 
-		const units::angle::degree_t m_ClimberTarget = units::angle::degree_t(0);
-		const bool m_ExtenderTarget = true;
-		const bool m_AllignmentTarget = true;
+		const units::angle::degree_t m_climberTarget = units::angle::degree_t(0);
+		const bool m_extenderTarget = true;
+		const bool m_allignmentTarget = true;
 	};
 }
