@@ -47,5 +47,6 @@ namespace IntakeStates
 
 		const double m_IntakeTarget = double(0);
 		const double m_HopperTarget = double(0);
+		const bool m_ExtenderTarget = false;
 	};
 }

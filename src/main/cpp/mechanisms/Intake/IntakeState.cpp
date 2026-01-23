@@ -51,7 +51,8 @@ void IntakeState::Init()
 void IntakeState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetIntakePercentOut(m_IntakeTarget);
-	// m_mechanism->UpdateTargetHopperPercentOut(m_HopperTarget);
+	//m_mechanism->UpdateTargetHopperPercentOut(m_HopperTarget);
+	m_mechanism->GetExtender()->Set(m_ExtenderTarget);
 }
 
 void IntakeState::Run()

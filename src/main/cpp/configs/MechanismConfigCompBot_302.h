@@ -20,6 +20,8 @@
 #include "mechanisms/MechanismTypes.h"
 #include "state/StateMgr.h"
 #include "mechanisms/Intake/Intake.h"
+#include "mechanisms/Climber/Climber.h"
+#include "mechanisms/Launcher/Launcher.h"
 
 class MechanismConfigCompBot_302 : public MechanismConfig
 {
@@ -36,6 +38,8 @@ protected:
 
 private:
 	Intake *m_theIntake = nullptr;
+	Climber *m_theClimber = nullptr;
+	Launcher *m_theLauncher = nullptr;
 
 	std::unordered_map<MechanismTypes::MECHANISM_TYPE, StateMgr *> m_mechanismMap;
 };
