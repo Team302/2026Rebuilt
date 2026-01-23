@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "auton.dtd">
+<auton>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueMiddleRightToOutpost"
+time = "1.5"/>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "RightToLeftAlliance"
+time = "2.5"/>
+
+<!--This path could honestly do a lot more, we could probably grab some pieces from our side if people are willing to pass-->
+
+
+
+</auton>
