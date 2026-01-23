@@ -41,8 +41,7 @@ public:
     enum BoolSignals
     {
         IS_BROWNOUT,
-        DRIVE_TO_IS_DONE,
-        IS_ALGAE_DETECTED
+        DRIVE_TO_IS_DONE
     };
 
     enum DoubleSignals
@@ -95,8 +94,7 @@ public:
         RIGHT_BACK_SWERVE_DRIVE_WATT_HOURS,
         SWERVE_CHASSIS_TOTAL_CURRENT,
         SWERVE_CHASSIS_WATT_HOURS,
-        LIMELIGHT1_NUMBER_OF_TAGS,
-        LIMELIGHT1_NUMBER_OF_ALGAE
+        LIMELIGHT1_NUMBER_OF_TAGS
     };
 
     enum StringSignals
@@ -111,14 +109,7 @@ public:
         CURRENT_CHASSIS_POSE2D,
         CURRENT_CHASSIS_LIMELIGHT_POSE3D,
         CURRENT_CHASSIS_LIMELIGHT2_POSE3D,
-        CURRENT_CHASSIS_QUEST_POSE2D,
-        VISION_DRIVE_TO_LEFT_REEF_BRANCH_TARGET_POSE,
-        VISION_DRIVE_TO_RIGHT_REEF_BRANCH_TARGET_POSE,
-        VISION_DRIVE_TO_CORAL_STATION_TARGET_POSE,
-        ODOMETRY_DRIVE_TO_LEFT_REEF_BRANCH_TARGET_POSE,
-        ODOMETRY_DRIVE_TO_RIGHT_REEF_BRANCH_TARGET_POSE,
-        ODOMETRY_DRIVE_TO_CORAL_STATION_TARGET_POSE
-
+        CURRENT_CHASSIS_QUEST_POSE2D
     };
 
     enum ChassisSpeedSignals
@@ -258,26 +249,11 @@ public:
     string m_swerveChassisTotalCurrentUnits = "";
     string m_limelight1NumberOfTagsPath = "LL1/NumberOfTags";
     string m_limelight1NumberOfTagsUnits = "";
-    string m_limelight1NumberOfAlgaePath = "LL1/NumberOfAlgae";
-    string m_limelight1NumberOfAlgaeUnits = "";
     string m_headingStatePath = "/Chassis/HeadingState";
     string m_driveStatePath = "/Chassis/DriveState";
     string m_IsDonePath = "/Chassis/IsDone";
-    string m_IsAlgaeDetected = "/Chassis/IsAlgaeDetected";
 
     string m_chassisPose2dPath = "/Chassis/Pose2d";
-    string m_visionDriveLBranchPose2dPath = "/Vision/DriveToLeftReefBranchPose2d";
-    string m_visionDriveLBranchPose2dUnits = "X, Y, Rotation";
-    string m_visionDriveRBranchPose2dPath = "/Vision/DriveToRightReefBranchPose2d";
-    string m_visionDriveRBranchPose2dUnits = "X, Y, Rotation";
-    string m_visionDriveCoralStationPose2dPath = "/Vision/DriveToCoralStationPose2d";
-    string m_visionDriveCoralStationPose2dUnits = "X, Y, Rotation";
-    string m_odometryDriveLBranchPose2dPath = "/Odometry/DriveToLeftReefBranchPose2d";
-    string m_odometryDriveLBranchPose2dUnits = "X, Y, Rotation";
-    string m_odometryDriveRBranchPose2dPath = "/Odometry/DriveToRightReefBranchPose2d";
-    string m_odometryDriveRBranchPose2dUnits = "X, Y, Rotation";
-    string m_odometryDriveCoralStationPose2dPath = "/Odometry/DriveToCoralStationPose2d";
-    string m_odometryDriveCoralStationPose2dUnits = "X, Y, Rotation";
     string m_questPose2dPath = "/Chassis/QuestPose2d";
     string m_questPose2dUnits = "X, Y, Rotation";
 

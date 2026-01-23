@@ -12,54 +12,38 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-
 #pragma once
 
-class RobotStateChanges
+#include "auton/drivePrimitives/IPrimitive.h"
+#include "frc/Timer.h"
+#include "frc2/command/Command.h"
+#include <frc2/command/CommandScheduler.h>
+#include "auton/ZoneParams.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "auton/PrimitiveEnums.h"
+
+class AutonDrivePrimitive : public IPrimitive
 {
 public:
-    enum StateChange
-    {
-        LoopCounterStart,
-        DesiredScoringMode_Int,
-        ClimbModeStatus_Int,
-        ChassisTipStatus_Int,
-        DriveAssistMode_Int,
-        GameState_Int,
-        CompressorChange_Int,
-        ChassisPose_Pose2D,
-        DriveToFieldElementIsDone_Bool,
-        DriveStateType_Int,
-        LoopCounterEnd // Must be last Enum for the loop counter
-    };
+    AutonDrivePrimitive();
+    ~AutonDrivePrimitive() = default;
 
-    enum ScoringMode
-    {
-        FUEL
-    };
+    void Init(PrimitiveParams *params) override;
+    void Run() override;
+    bool IsDone() override;
 
-    enum ClimbMode
-    {
-        ClimbModeOff,
-        ClimbModeOn
-    };
+private:
+    frc2::CommandPtr CreateDriveToPoseCommand(ChassisOptionEnums::DriveStateType driveToType);
+    bool IsInZone();
+    int FindDriveToZoneIndex(ZoneParamsVector zones);
 
-    enum ChassisTilt
-    {
-        NotTilted,
-        Tilted
-    };
+    subsystems::CommandSwerveDrivetrain *m_chassis;
+    std::unique_ptr<frc::Timer> m_timer;
+    frc2::CommandPtr m_managedCommand;
 
-    enum DriveAssist
-    {
-        DriveAssistOff,
-        DriveAssistOn
-    };
-
-    enum GamePeriod
-    {
-        Auton,
-        Teleop,
-        Disabled
-    };
+    PRIMITIVE_IDENTIFIER m_activeId;
+    units::time::second_t m_maxTime;
+    bool m_visionTransition;
+    bool m_checkForDriveToUpdate;
+    ZoneParams *m_zone;
 };

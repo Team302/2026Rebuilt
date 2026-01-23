@@ -15,51 +15,14 @@
 
 #pragma once
 
-class RobotStateChanges
+#include <optional>
+#include <string>
+
+// Third Party Includes
+#include <choreo/Choreo.h>
+
+class AutonUtils
 {
 public:
-    enum StateChange
-    {
-        LoopCounterStart,
-        DesiredScoringMode_Int,
-        ClimbModeStatus_Int,
-        ChassisTipStatus_Int,
-        DriveAssistMode_Int,
-        GameState_Int,
-        CompressorChange_Int,
-        ChassisPose_Pose2D,
-        DriveToFieldElementIsDone_Bool,
-        DriveStateType_Int,
-        LoopCounterEnd // Must be last Enum for the loop counter
-    };
-
-    enum ScoringMode
-    {
-        FUEL
-    };
-
-    enum ClimbMode
-    {
-        ClimbModeOff,
-        ClimbModeOn
-    };
-
-    enum ChassisTilt
-    {
-        NotTilted,
-        Tilted
-    };
-
-    enum DriveAssist
-    {
-        DriveAssistOff,
-        DriveAssistOn
-    };
-
-    enum GamePeriod
-    {
-        Auton,
-        Teleop,
-        Disabled
-    };
+    static std::optional<choreo::Trajectory<choreo::SwerveSample>> GetTrajectoryFromPathFile(std::string pathName);
 };

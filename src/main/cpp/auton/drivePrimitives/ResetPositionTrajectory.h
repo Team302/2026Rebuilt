@@ -15,51 +15,26 @@
 
 #pragma once
 
-class RobotStateChanges
+#include "frc/geometry/Pose2d.h"
+
+#include "auton/drivePrimitives/IPrimitive.h"
+
+// Forward Declares
+class PrimitiveParams;
+
+class ResetPositionTrajectory : public IPrimitive
 {
 public:
-    enum StateChange
-    {
-        LoopCounterStart,
-        DesiredScoringMode_Int,
-        ClimbModeStatus_Int,
-        ChassisTipStatus_Int,
-        DriveAssistMode_Int,
-        GameState_Int,
-        CompressorChange_Int,
-        ChassisPose_Pose2D,
-        DriveToFieldElementIsDone_Bool,
-        DriveStateType_Int,
-        LoopCounterEnd // Must be last Enum for the loop counter
-    };
+    ResetPositionTrajectory();
+    virtual ~ResetPositionTrajectory() = default;
 
-    enum ScoringMode
-    {
-        FUEL
-    };
+    void Init(PrimitiveParams *param) override;
+    void Run() override;
+    bool IsDone() override;
 
-    enum ClimbMode
-    {
-        ClimbModeOff,
-        ClimbModeOn
-    };
-
-    enum ChassisTilt
-    {
-        NotTilted,
-        Tilted
-    };
-
-    enum DriveAssist
-    {
-        DriveAssistOff,
-        DriveAssistOn
-    };
-
-    enum GamePeriod
-    {
-        Auton,
-        Teleop,
-        Disabled
-    };
+private:
+    void ResetPose(frc::Pose2d pose);
+    const double m_maxAngularVelocityDegreesPerSecond = 720.0;
+    const units::length::meter_t m_distanceThreshold{2.75};
+    const units::length::meter_t m_centerline{8.774176};
 };

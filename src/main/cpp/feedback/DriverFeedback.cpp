@@ -91,7 +91,7 @@ void DriverFeedback::UpdateDiagnosticLEDs()
         questStatus = dragonVision->HealthCheckQuest();
     }
 
-    m_LEDStates->DiagnosticPattern(FMSData::GetAllianceColor(), false, false, false, questStatus, ll1Status);
+    m_LEDStates->DiagnosticPattern(FMSData::GetAllianceColor(), questStatus, ll1Status);
 }
 
 void DriverFeedback::ResetRequests(void)

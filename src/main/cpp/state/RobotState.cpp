@@ -38,7 +38,7 @@ RobotState *RobotState::GetInstance()
 }
 
 RobotState::RobotState() : m_brokers(),
-                           m_scoringMode(RobotStateChanges::ScoringMode::Coral),
+                           m_scoringMode(RobotStateChanges::ScoringMode::FUEL),
                            m_gamePhase(RobotStateChanges::Disabled)
 {
     m_brokers.reserve(RobotStateChanges::LoopCounterStart);

@@ -13,53 +13,19 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#pragma once
+#include "auton/drivePrimitives/AutonUtils.h"
+#include "choreo/Choreo.h"
+#include "utils/FMSData.h"
 
-class RobotStateChanges
+using frc::DriverStation;
+using std::string;
+
+std::optional<choreo::Trajectory<choreo::SwerveSample>> AutonUtils::GetTrajectoryFromPathFile(string pathName)
 {
-public:
-    enum StateChange
+    auto trajectory = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>(pathName);
+    if (trajectory.has_value() && FMSData::GetAllianceColor() == DriverStation::Alliance::kRed)
     {
-        LoopCounterStart,
-        DesiredScoringMode_Int,
-        ClimbModeStatus_Int,
-        ChassisTipStatus_Int,
-        DriveAssistMode_Int,
-        GameState_Int,
-        CompressorChange_Int,
-        ChassisPose_Pose2D,
-        DriveToFieldElementIsDone_Bool,
-        DriveStateType_Int,
-        LoopCounterEnd // Must be last Enum for the loop counter
-    };
-
-    enum ScoringMode
-    {
-        FUEL
-    };
-
-    enum ClimbMode
-    {
-        ClimbModeOff,
-        ClimbModeOn
-    };
-
-    enum ChassisTilt
-    {
-        NotTilted,
-        Tilted
-    };
-
-    enum DriveAssist
-    {
-        DriveAssistOff,
-        DriveAssistOn
-    };
-
-    enum GamePeriod
-    {
-        Auton,
-        Teleop,
-        Disabled
-    };
-};
+        return trajectory.value().Flipped();
+    }
+    return trajectory;
+}
