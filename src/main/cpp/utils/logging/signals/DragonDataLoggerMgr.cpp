@@ -42,7 +42,7 @@ DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items()
 {
 
     //m_logger = std::make_unique<CTRESignalLogger>();
-    m_logger = std::make_unique<UDPSignalLogger>("127.0.0.1", 5800);
+    m_logger = std::make_unique<UDPSignalLogger>("127.0.0.1", 5900);
 
     m_logger->Start();
     m_timer.Start();
@@ -56,11 +56,26 @@ void DragonDataLoggerMgr::RegisterLogger(DragonDataLogger *logger)
 
 void DragonDataLoggerMgr::SetLogger(std::unique_ptr<ISignalLogger> logger)
 {
+    if (!logger)
+    {
+        return;
+    }
+
+    if (m_logger)
+    {
+        m_logger->Stop();
+    }
     m_logger = std::move(logger);
+    m_logger->Start();
 }
 
 void DragonDataLoggerMgr::SetLoggerType(LoggerType type, const std::string &ipAddress, int port)
 {
+    if (m_logger)
+    {
+        m_logger->Stop();
+    }
+
     switch (type)
     {
     case LoggerType::CTRE_SIGNAL_LOGGER:
@@ -87,11 +102,19 @@ void DragonDataLoggerMgr::SetLoggerType(LoggerType type, const std::string &ipAd
         m_logger = std::make_unique<UDPSignalLogger>("127.0.0.1", 5800);
         break;
     }
+
+    if (m_logger)
+    {
+        m_logger->Start();
+    }
 }
 
 DragonDataLoggerMgr::~DragonDataLoggerMgr()
 {
-    m_logger->Stop();
+    if (m_logger)
+    {
+        m_logger->Stop();
+    }
 }
 
 void DragonDataLoggerMgr::RegisterItem(DragonDataLogger *item)
