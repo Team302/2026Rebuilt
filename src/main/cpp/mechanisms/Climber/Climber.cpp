@@ -126,10 +126,10 @@ std::map<std::string, Climber::STATE_NAMES>
 void Climber::CreateCompBot302()
 {
 	m_ntName = "Climber";
-	m_Climber = new ctre::phoenix6::hardware::TalonFX(12, ctre::phoenix6::CANBus("canivore"));
+	m_Climber = new ctre::phoenix6::hardware::TalonFX(12, ctre::phoenix6::CANBus("canivore")); // MECH_TODO:
 
-	m_Extender = new frc::Solenoid(13, frc::PneumaticsModuleType::REVPH, 0);
-	m_Allignment = new frc::Solenoid(15, frc::PneumaticsModuleType::REVPH, 0);
+	m_Extender = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 0); // MECH_TODO: Verify channel
+	// m_Allignment = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 0); // MECH_TODO: Verify channel
 
 	ctre::phoenix6::configs::CANcoderConfiguration ClimberRotationConfigs{};
 	ClimberRotationConfigs.MagnetSensor.MagnetOffset = units::angle::turn_t(0);
@@ -196,15 +196,24 @@ void Climber::InitializeTalonFXClimberCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
-	configs.MotorOutput.NeutralMode = NeutralModeValue::Coast;
+	configs.MotorOutput.NeutralMode = NeutralModeValue::Brake;
 	configs.MotorOutput.PeakForwardDutyCycle = 1;
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
-	configs.Feedback.FeedbackRemoteSensorID = 12;
+	configs.Feedback.FeedbackRemoteSensorID = 12; // MECH_TODO: Verify CAN ID
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::FusedCANcoder;
 	configs.Feedback.SensorToMechanismRatio = 0;
 	configs.Feedback.RotorToSensorRatio = 0;
+
+	/*MECH_TODO: Define Motion Magic Params
+
+	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::turns_per_second_t(850);
+	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(1000);
+	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
+	configs.MotionMagic.MotionMagicExpo_kV = ctre::unit::volts_per_turn_per_second_t(0.05);
+	configs.MotionMagic.MotionMagicExpo_kA = ctre::unit::volts_per_turn_per_second_squared_t(0.08);]
+	*/
 
 	configs.Slot0.kI = m_PositionDegree->GetI();
 	configs.Slot0.kD = m_PositionDegree->GetD();
@@ -225,8 +234,6 @@ void Climber::InitializeTalonFXClimberCompBot302()
 	}
 	if (!status.IsOK())
 		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_Climber", "m_Climber Status", status.GetName());
-
-	m_ClimberPositionDegree.EnableFOC = m_PositionDegree->IsFOCEnabled();
 }
 
 void Climber::SetCurrentState(int state, bool run)

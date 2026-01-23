@@ -111,7 +111,7 @@ private:
 
 	void InitializeTalonFXClimberCompBot302();
 
-	ctre::phoenix6::controls::DynamicMotionMagicVoltage m_ClimberPositionDegree{units::angle::turn_t(0.0), units::angular_velocity::radians_per_second_t(0), units::angular_acceleration::radians_per_second_squared_t(0), units::angular_jerk::radians_per_second_cubed_t(0)};
+	ctre::phoenix6::controls::MotionMagicExpoTorqueCurrentFOC m_ClimberPositionDegree{0_tr};
 	ctre::phoenix6::controls::ControlRequest *m_ClimberActiveTarget;
 
 	// void InitializeLogging();

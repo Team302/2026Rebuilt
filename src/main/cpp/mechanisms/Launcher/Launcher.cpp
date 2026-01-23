@@ -353,6 +353,7 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
 	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
 
+	// MECH_TODO: Set limit switches
 	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
@@ -373,6 +374,7 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
+	// MECH_TODO: Set Motion Magic params
 	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::radians_per_second_t(0);
 	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::radians_per_second_squared_t(0);
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
@@ -463,6 +465,7 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
 	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
 
+	// MECH_TODO: Set limit switches
 	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 1;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
@@ -483,6 +486,7 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
+	// MECH_TODO: Set Motion Magic params
 	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::radians_per_second_t(0);
 	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::radians_per_second_squared_t(0);
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
