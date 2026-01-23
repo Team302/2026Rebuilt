@@ -141,33 +141,36 @@ string AutonSelector::GetTargetFace()
 void AutonSelector::PutChoicesOnDashboard()
 {
 	// Starting Position
-	m_startposchooser.AddOption("Left", "Left");
-	m_startposchooser.AddOption("Center", "Center");
-	m_startposchooser.AddOption("Right", "Right");
-	m_startposchooser.SetDefaultOption("Center", "Center");
+	m_startposchooser.AddOption("Trench Depot Side", "Left");
+	m_startposchooser.AddOption("Bump Depot Side", "ML");
+	m_startposchooser.AddOption("Hub", "Middle");
+	m_startposchooser.AddOption("Bump Outpost Side", "MR");
+	m_startposchooser.SetDefaultOption("Trench Outpost Side", "Right");
 	frc::SmartDashboard::PutData("StartPos", &m_startposchooser);
 
-	// Game Piece Option
-	m_targetGamePiece.AddOption("Coral", "Coral");
-	m_targetGamePiece.AddOption("Algae", "Algae");
-	m_targetGamePiece.SetDefaultOption("Coral", "Coral");
-	frc::SmartDashboard::PutData("Target Game Piece", &m_targetGamePiece);
+	//Amount of times going into NZ
+	m_neutralZoneAmount.AddOption("0", "0");
+	m_neutralZoneAmount.AddOption("1", "1");
+	m_neutralZoneAmount.AddOption("2", "2");
+	m_neutralZoneAmount.AddOption("3", "3");
+	m_neutralZoneAmount.AddOption("4", "4");
+	m_neutralZoneAmount.AddOption("5", "5");
 
-	// Target Face Option
-	m_targetFace.AddOption("A-D", "AD");
-	m_targetFace.AddOption("C-F", "CF");
-	m_targetFace.AddOption("E-H", "EH");
-	m_targetFace.AddOption("G-J", "GJ");
-	m_targetFace.AddOption("I-L", "IL");
-	m_targetFace.AddOption("K-B", "KB");
-	m_targetFace.SetDefaultOption("G-H", "GH");
-	frc::SmartDashboard::PutData("Target Face", &m_targetFace);
+
+	// Depot Option
+	m_targetDepot.AddOption(true, "Depot");
+	m_targetDepot.AddOption(false, "");
+	frc::SmartDashboard::PutData("Has Depot?", &m_targetDepot);
+
+
+	// Outpost Option
+	m_targetOutpost.AddOption(true, "Outpost");
+	m_targetOutpost.AddOption(false, "");
+	frc::SmartDashboard::PutData("Has Outpost?", &m_targetOutpost);
 
 	// Level Option
-	m_desiredScoringLevel.AddOption("L1", "L1");
-	m_desiredScoringLevel.AddOption("L2", "L2");
-	m_desiredScoringLevel.AddOption("L3", "L3");
-	m_desiredScoringLevel.AddOption("L4", "L4");
-	m_desiredScoringLevel.SetDefaultOption("L4", "L4");
+	m_desiredPreload.AddOption("Launch", "Launch");
+	m_desiredPreload.AddOption("Drop", "Drop");
+	m_desiredPreload.SetDefaultOption("Launch", "Launch");
 	frc::SmartDashboard::PutData("Desired Level", &m_desiredScoringLevel);
 }
