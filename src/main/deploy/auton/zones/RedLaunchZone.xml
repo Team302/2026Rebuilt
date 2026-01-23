@@ -3,9 +3,9 @@
 
 <auton>
 <zone
-x1_rect = "0.15"
-y1_rect = "8.03"
-x2_rect = "3.83"
-y2_rect = "0.01"
+x1_rect = "12.55"
+y1_rect = "8.10"
+x2_rect = "16.55"
+y2_rect = "50.14"
 />
 </auton>
