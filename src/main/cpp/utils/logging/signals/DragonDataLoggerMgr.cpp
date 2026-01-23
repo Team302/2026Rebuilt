@@ -49,10 +49,6 @@ DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items()
 
 }
 
-void DragonDataLoggerMgr::RegisterLogger(DragonDataLogger *logger)
-{
-    m_loggers.push_back(logger);
-}
 
 void DragonDataLoggerMgr::SetLogger(std::unique_ptr<ISignalLogger> logger)
 {

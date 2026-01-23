@@ -17,6 +17,7 @@
 #pragma once
 #include <array>
 #include <vector>
+#include <memory>
 
 #include "frc/Timer.h"
 #include "utils/logging/signals/ISignalLogger.h"
@@ -39,7 +40,6 @@ public:
     DragonDataLoggerMgr(const DragonDataLoggerMgr &) = delete;
     DragonDataLoggerMgr &operator=(const DragonDataLoggerMgr &) = delete;
 
-    void RegisterLogger(DragonDataLogger *logger);
     void SetLogger(std::unique_ptr<ISignalLogger> logger);
     void SetLoggerType(LoggerType type, const std::string &ipAddress = "", int port = 0);
     ISignalLogger *GetLogger() const { return m_logger.get(); }
@@ -60,5 +60,4 @@ private:
 
     static DragonDataLoggerMgr *m_instance;
     std::unique_ptr<ISignalLogger> m_logger;
-    std::vector<DragonDataLogger *> m_loggers;
 };
