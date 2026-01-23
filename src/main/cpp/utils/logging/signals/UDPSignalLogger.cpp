@@ -1,6 +1,7 @@
 #include "utils/logging/signals/UDPSignalLogger.h"
 #include <sstream>
 #include <iostream>
+#include <cstring>
 #ifdef _WIN32
 // Windows-specific includes are in the header
 #else
