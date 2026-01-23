@@ -308,11 +308,6 @@ void DragonDataLogger::Log2DPoseData(uint64_t timestamp, DragonDataLogger::PoseS
         return;
     }
 
-    auto logger = dataMgr->GetLogger();
-    if (logger == nullptr)
-    {
-        return;
-    }
     switch (signalID)
     {
     case DragonDataLogger::PoseSingals::CURRENT_CHASSIS_POSE2D:
@@ -528,7 +523,7 @@ void DragonDataLogger::LogChassisSpeedsData(uint64_t timestamp, DragonDataLogger
     }
 
     auto logger = dataMgr->GetLogger();
-    if (logger != nullptr)
+    if (logger == nullptr)
     {
         return;
     }
