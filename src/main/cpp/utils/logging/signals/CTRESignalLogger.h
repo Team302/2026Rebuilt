@@ -11,9 +11,9 @@ public:
     ~CTRESignalLogger() override = default;
 
     void WriteBoolean(std::string signalID, bool value, units::time::second_t latency) override;
-    void WriteDouble(std::string signalI, double value, std::string_view units, units::time::second_t latency) override;
-    void WriteInteger(std::string signalI, int64_t value, std::string_view units, units::time::second_t latency) override;
-    void WriteString(std::string signalI, const std::string &value, units::time::second_t latency) override;
+    void WriteDouble(std::string signalID, double value, std::string_view units, units::time::second_t latency) override;
+    void WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::second_t latency) override;
+    void WriteString(std::string signalID, const std::string &value, units::time::second_t latency) override;
 
     void Start() override;
     void Stop() override;
