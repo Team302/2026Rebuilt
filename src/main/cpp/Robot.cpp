@@ -81,8 +81,8 @@
 // #include "auton/AutonPreviewer.h"
 // #include "auton/CyclePrimitives.h"
 // #include "auton/drivePrimitives/AutonUtils.h"
-// #include "chassis/ChassisConfigMgr.h"
-// #include "configs/MechanismConfigMgr.h"
+#include "chassis/ChassisConfigMgr.h"
+#include "configs/MechanismConfigMgr.h"
 #include "feedback/DriverFeedback.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/DriverStation.h"
@@ -172,13 +172,13 @@ void Robot::InitializeRobot()
 {
   FieldConstants::GetInstance();
   RoboRio::GetInstance();
-  // auto chassisConfig = ChassisConfigMgr::GetInstance();
-  // chassisConfig->CreateDrivetrain();
+  auto chassisConfig = ChassisConfigMgr::GetInstance();
+  chassisConfig->CreateDrivetrain();
 
   new RobotContainer(); // instantiate RobotContainer to setup commands and subsystems
 
-  // int32_t teamNumber = frc::RobotController::GetTeamNumber();
-  // MechanismConfigMgr::GetInstance()->InitRobot((RobotIdentifier)teamNumber);
+  int32_t teamNumber = frc::RobotController::GetTeamNumber();
+  MechanismConfigMgr::GetInstance()->InitRobot((RobotIdentifier)teamNumber);
 
   m_robotState = RobotState::GetInstance();
   m_robotState->Init();
@@ -201,11 +201,11 @@ void Robot::UpdateDriveTeamFeedback()
   //   m_previewer->CheckCurrentAuton();
   // }
 
-  // auto chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
-  // if (m_field != nullptr && chassis != nullptr)
-  // {
-  //   m_field->UpdateRobotPosition(chassis->GetPose());
-  // }
+  auto chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
+  if (m_field != nullptr && chassis != nullptr)
+  {
+    m_field->UpdateRobotPosition(chassis->GetPose());
+  }
   auto feedback = DriverFeedback::GetInstance();
   if (feedback != nullptr)
   {

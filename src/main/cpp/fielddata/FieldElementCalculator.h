@@ -25,48 +25,32 @@ struct TransformToPose
     FieldConstants::FIELD_ELEMENT referencePose;
     frc::Transform3d transform;
 };
-enum OffsetEnums
-{
-    // Comp Red
-    COMP_RIGHT_RED,
-    COMP_LEFT_RED,
-    // Comp Blue
-    COMP_RIGHT_BLUE,
-    COMP_LEFT_BLUE,
-    // Practice Red
-    PRACTICE_LEFT_RED,
-    PRACTICE_RIGHT_RED,
-    // Practice Blue
-    PRACTICE_LEFT_BLUE,
-    PRACTICE_RIGHT_BLUE
-};
 
 class FieldElementCalculator
 {
 
 public:
     void CalcPositionsForField(robin_hood::unordered_map<FieldConstants::FIELD_ELEMENT, frc::Pose3d> &fieldConstantsPoseMap);
-    frc::Pose3d CalcOffsetPositionForElement(frc::Pose3d &poseOfFaceTag, FieldConstants::FIELD_ELEMENT_OFFSETS offset);
 
 private:
     void InitializeTransforms();
-    void UpdateReefStickRobotTransforms();
-    void InitializeReefBranchTransformsMap();
-    void CalculateCenters(robin_hood::unordered_map<FieldConstants::FIELD_ELEMENT, frc::Pose3d> &fieldConstantsPoseMap);
-    frc::Pose3d AverageHexagonPose(frc::Pose3d &pose1, frc::Pose3d &pose2, frc::Pose3d &pose3, frc::Pose3d &pose4, frc::Pose3d &pose5, frc::Pose3d &pose6);
 
-    static constexpr units::length::inch_t m_xDistanceProcessors{16.0};
-    static constexpr units::length::inch_t m_yDistanceProcessors{-9.0};
-    static constexpr units::length::inch_t m_distanceBetweenSticks{6.5};
-    static constexpr units::length::inch_t m_xDistanceCage{-18.0};
-    static constexpr units::length::inch_t m_yDistanceCageRight{41.0};
-    static constexpr units::length::inch_t m_yDistanceCageLeft{-43.0};
-    static constexpr units::length::inch_t m_centerOffsetFromTag{-1.0};
-    static constexpr units::length::inch_t m_xDistanceBarge{20.0};
-    static constexpr units::length::inch_t m_yCoralRightAlliance{25.0};
-    static constexpr units::length::inch_t m_yCoralLeftAlliance{-25.0};
-    static constexpr units::length::inch_t m_yCoralLeftSidewall{25.0};
-    static constexpr units::length::inch_t m_yCoralRightSidewall{-25.0};
+    static constexpr units::length::inch_t m_xDistanceHubCenter{-23.5};
+    static constexpr units::length::inch_t m_zDistanceHubCenter{0.0};
+    static constexpr units::length::inch_t m_xDistanceTowerStickOffsetLeft{45.0};
+    static constexpr units::length::inch_t m_yDistanceTowerStickOffsetLeft{-19.5};
+    static constexpr units::length::inch_t m_xDistanceTowerStickOffsetRight{45.0};
+    static constexpr units::length::inch_t m_yDistanceTowerStickOffsetRight{19.5};
+    static constexpr units::length::inch_t m_xDistanceTowerStickOffsetCenter{45.0};
+    static constexpr units::length::inch_t m_xDistanceDepotOffsetCenter{27.0};
+    static constexpr units::length::inch_t m_yDistanceDepotOffsetCenter{87.31};
+    static constexpr units::length::inch_t m_zDistanceDepotOffsetCenter{-21.75};
+    static constexpr units::length::inch_t m_xDistanceDepotOffsetLeft{13.5};
+    static constexpr units::length::inch_t m_yDistanceDepotOffsetLeft{108.31};
+    static constexpr units::length::inch_t m_zDistanceDepotOffsetLeft{-21.75};
+    static constexpr units::length::inch_t m_xDistanceDepotOffsetRight{13.5};
+    static constexpr units::length::inch_t m_yDistanceDepotOffsetRight{66.31};
+    static constexpr units::length::inch_t m_zDistanceDepotOffsetRight{-21.75};
     static constexpr units::length::inch_t m_xNoOffset{0.0};
     static constexpr units::length::inch_t m_yNoOffset{0.0};
     static constexpr units::length::inch_t m_zNoOffset{0.0};
@@ -79,8 +63,6 @@ private:
             units::length::inch_t(0.0)),
         frc::Rotation3d());
 
-    robin_hood::unordered_map<OffsetEnums, frc::Transform3d> m_reefBranchOffsetMap;
-
     // other transforms
     frc::Transform3d m_noTransform = frc::Transform3d(
         frc::Translation3d(
@@ -89,100 +71,58 @@ private:
             m_zNoOffset),
         frc::Rotation3d());
 
-    frc::Transform3d m_calcCoralLeftAlliance = frc::Transform3d(
+    frc::Transform3d m_calcHubCenter = frc::Transform3d(
         frc::Translation3d(
-            m_xNoOffset,
-            m_yCoralLeftAlliance,
+            m_xDistanceHubCenter,
+            m_yNoOffset,
+            m_zDistanceHubCenter),
+        frc::Rotation3d());
+
+    frc::Transform3d m_calcTowerLeftStick = frc::Transform3d(
+        frc::Translation3d(
+            m_xDistanceTowerStickOffsetLeft,
+            m_yDistanceTowerStickOffsetLeft,
             m_zNoOffset),
         frc::Rotation3d());
 
-    frc::Transform3d m_calcCoralLeftSidewall = frc::Transform3d(
+    frc::Transform3d m_calcTowerRightStick = frc::Transform3d(
         frc::Translation3d(
-            m_xNoOffset,
-            m_yCoralLeftSidewall,
+            m_xDistanceTowerStickOffsetRight,
+            m_yDistanceTowerStickOffsetRight,
             m_zNoOffset),
         frc::Rotation3d());
 
-    frc::Transform3d m_calcCoralRightAlliance = frc::Transform3d(
+    frc::Transform3d m_calcTowerCenter = frc::Transform3d(
         frc::Translation3d(
-            m_xNoOffset,
-            m_yCoralRightAlliance,
-            m_zNoOffset),
-        frc::Rotation3d());
-
-    frc::Transform3d m_calcCoralRightSidewall = frc::Transform3d(
-        frc::Translation3d(
-            m_xNoOffset,
-            m_yCoralRightSidewall,
-            m_zNoOffset),
-        frc::Rotation3d());
-
-    frc::Transform3d m_calcCageLeft = frc::Transform3d(
-        frc::Translation3d(
-            m_xDistanceCage,
-            m_yDistanceCageLeft,
-            m_zNoOffset),
-        frc::Rotation3d());
-
-    frc::Transform3d m_calcCageRight = frc::Transform3d(
-        frc::Translation3d(
-            m_xDistanceCage,
-            m_yDistanceCageRight,
-            m_zNoOffset),
-        frc::Rotation3d());
-
-    frc::Transform3d m_calcCageCenter = frc::Transform3d(
-        frc::Translation3d(
-            m_xDistanceCage,
-            m_centerOffsetFromTag,
-            m_zNoOffset),
-        frc::Rotation3d());
-
-    frc::Transform3d m_calcLeftStick = frc::Transform3d(
-        frc::Translation3d(
-            m_xNoOffset,
-            -m_distanceBetweenSticks,
-            m_zNoOffset),
-        frc::Rotation3d());
-
-    frc::Transform3d m_calcRightStick = frc::Transform3d(
-        frc::Translation3d(
-            m_xNoOffset,
-            m_distanceBetweenSticks,
-            m_zNoOffset),
-        frc::Rotation3d());
-
-    frc::Transform3d m_calcBargeFront = frc::Transform3d(
-        frc::Translation3d(
-            m_xDistanceBarge, // 16.0
+            m_xDistanceTowerStickOffsetCenter,
             m_yNoOffset,
             m_zNoOffset),
         frc::Rotation3d());
 
-    frc::Transform3d m_calcBargeBack = frc::Transform3d(
+    frc::Transform3d m_calcDepoOffsetCenter = frc::Transform3d(
         frc::Translation3d(
-            m_xDistanceBarge, // 16.0
-            m_yNoOffset,
-            m_zNoOffset),
+            m_xDistanceDepotOffsetCenter,
+            m_yDistanceDepotOffsetCenter,
+            m_zDistanceDepotOffsetCenter),
         frc::Rotation3d());
 
-    frc::Transform3d m_calcProcessorRed = frc::Transform3d(
+    frc::Transform3d m_calcDepoOffsetLeft = frc::Transform3d(
         frc::Translation3d(
-            m_xDistanceProcessors,
-            m_yDistanceProcessors,
-            m_zNoOffset),
+            m_xDistanceDepotOffsetLeft,
+            m_yDistanceDepotOffsetLeft,
+            m_zDistanceDepotOffsetLeft),
         frc::Rotation3d());
-    frc::Transform3d m_calcProcessorBlue = frc::Transform3d(
+
+    frc::Transform3d m_calcDepoOffsetRight = frc::Transform3d(
         frc::Translation3d(
-            m_xDistanceProcessors,
-            m_yDistanceProcessors,
-            m_zNoOffset),
+            m_xDistanceDepotOffsetRight,
+            m_yDistanceDepotOffsetRight,
+            m_zDistanceDepotOffsetRight),
         frc::Rotation3d());
+
+
 
     robin_hood::unordered_map<FieldConstants::FIELD_ELEMENT, TransformToPose> m_transformCalculatedMap;
     robin_hood::unordered_map<FieldConstants::FIELD_ELEMENT, TransformToPose> m_transformTagsMap;
 
-    static constexpr units::length::inch_t m_reefBranchXOffset{0.0};
-    static constexpr units::length::inch_t m_reefBranchYOffset{-6.5};
-    static constexpr units::length::inch_t m_reefBranchZOffset{0.0};
 };

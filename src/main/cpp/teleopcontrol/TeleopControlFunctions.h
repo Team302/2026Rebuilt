@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -27,7 +26,6 @@ class TeleopControlFunctions
 public:
     enum FUNCTION
     {
-        READY,
         ROBOT_ORIENTED_DRIVE,
         HOLONOMIC_DRIVE_FORWARD,
         HOLONOMIC_DRIVE_ROTATE,
@@ -37,8 +35,19 @@ public:
         RESET_POSITION,
         SLOW_MODE,
         SYSID_MODIFER,
+        SYSID_QUASISTATICFORWARD,
+        SYSID_QUASISTATICREVERSE,
+        SYSID_DYNAMICFORWARD,
+        SYSID_DYNAMICREVERSE,
 
         // tip correction controls
         TIPCORRECTION_TOGGLE,
+
+        // Mechanisms specific
+        STOP,
+        INTAKE,
+        EXPEL,
+        LAUNCH,
+        EMPTY_HOPPER
     };
 };
