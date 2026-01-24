@@ -51,7 +51,7 @@ void ExitState::Init()
 void ExitState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetClimberPositionDegree(m_climberTarget);
-	m_mechanism->GetAllignment()->Set(m_allignmentTarget);
+	m_mechanism->GetAlignment()->Set(m_alignmentTarget);
 }
 
 void ExitState::Run()

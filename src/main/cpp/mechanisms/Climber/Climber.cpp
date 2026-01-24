@@ -131,21 +131,21 @@ std::map<std::string, Climber::STATE_NAMES>
 void Climber::CreateCompBot302()
 {
 	m_ntName = "Climber";
-	m_Climber = new ctre::phoenix6::hardware::TalonFX(12, ctre::phoenix6::CANBus("canivore")); // MECH_TODO:
+	m_climber = new ctre::phoenix6::hardware::TalonFX(12, ctre::phoenix6::CANBus("canivore"));
 
-	m_Extender = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 2);	  // MECH_TODO: Verify channel
-	m_Allignment = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 3); // MECH_TODO: Verify channel
+	m_extender = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 2);
+	m_alignment = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 3);
 
 	ctre::phoenix6::configs::CANcoderConfiguration ClimberRotationConfigs{};
 	ClimberRotationConfigs.MagnetSensor.MagnetOffset = units::angle::turn_t(0);
 	ClimberRotationConfigs.MagnetSensor.SensorDirection = ctre::phoenix6::signals::SensorDirectionValue::CounterClockwise_Positive;
-	m_ClimberRotation = new ctre::phoenix6::hardware::CANcoder(12, ctre::phoenix6::CANBus("canivore"));
-	m_ClimberRotation->GetConfigurator().Apply(ClimberRotationConfigs);
+	m_climberRotation = new ctre::phoenix6::hardware::CANcoder(12, ctre::phoenix6::CANBus("canivore"));
+	m_climberRotation->GetConfigurator().Apply(ClimberRotationConfigs);
 
-	m_PositionDegree = new ControlData(
+	m_positionDegree = new ControlData(
 		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_PositionDegree",								  // std::string indentifier
+		"m_positionDegree",								  // std::string indentifier
 		0,												  // double proportional
 		0,												  // double integral
 		0,												  // double derivative
@@ -219,26 +219,25 @@ void Climber::InitializeTalonFXClimberCompBot302()
 	configs.MotionMagic.MotionMagicExpo_kV = ctre::unit::volts_per_turn_per_second_t(0.05);
 	configs.MotionMagic.MotionMagicExpo_kA = ctre::unit::volts_per_turn_per_second_squared_t(0.08);]
 	*/
-
-	configs.Slot0.kI = m_PositionDegree->GetI();
-	configs.Slot0.kD = m_PositionDegree->GetD();
-	configs.Slot0.kG = m_PositionDegree->GetF();
-	configs.Slot0.kS = m_PositionDegree->GetS();
-	configs.Slot0.kV = m_PositionDegree->GetV();
-	configs.Slot0.kP = m_PositionDegree->GetP();
-	configs.Slot0.kA = m_PositionDegree->GetA();
-	configs.Slot0.GravityType = m_PositionDegree->GetGravityType();
-	configs.Slot0.StaticFeedforwardSign = m_PositionDegree->GetStaticFeedforwardSign();
+	configs.Slot0.kI = m_positionDegree->GetI();
+	configs.Slot0.kD = m_positionDegree->GetD();
+	configs.Slot0.kG = m_positionDegree->GetF();
+	configs.Slot0.kS = m_positionDegree->GetS();
+	configs.Slot0.kV = m_positionDegree->GetV();
+	configs.Slot0.kP = m_positionDegree->GetP();
+	configs.Slot0.kA = m_positionDegree->GetA();
+	configs.Slot0.GravityType = m_positionDegree->GetGravityType();
+	configs.Slot0.StaticFeedforwardSign = m_positionDegree->GetStaticFeedforwardSign();
 
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		status = m_Climber->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		status = m_climber->GetConfigurator().Apply(configs, units::time::second_t(0.25));
 		if (status.IsOK())
 			break;
 	}
 	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_Climber", "m_Climber Status", status.GetName());
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_climber", "m_climber Status", status.GetName());
 }
 
 void Climber::SetCurrentState(int state, bool run)
@@ -263,7 +262,7 @@ void Climber::SetControlConstants(RobotElementNames::MOTOR_CONTROLLER_USAGE iden
 /// @return void
 void Climber::Update()
 {
-	m_Climber->SetControl(*m_ClimberActiveTarget);
+	m_climber->SetControl(*m_climberActiveTarget);
 }
 
 void Climber::Cyclic()
@@ -274,7 +273,7 @@ void Climber::Cyclic()
 ControlData *Climber::GetControlData(string name)
 {
 	if (name.compare("PositionDegree") == 0)
-		return m_PositionDegree;
+		return m_positionDegree;
 
 	return nullptr;
 }

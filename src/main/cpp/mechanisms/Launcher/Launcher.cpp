@@ -175,16 +175,16 @@ std::map<std::string, Launcher::STATE_NAMES>
 void Launcher::CreateCompBot302()
 {
 	m_ntName = "Launcher";
-	m_Launcher = new ctre::phoenix6::hardware::TalonFX(16, ctre::phoenix6::CANBus("canivore"));
-	m_Hood = new ctre::phoenix6::hardware::TalonFXS(17, ctre::phoenix6::CANBus("canivore"));
-	m_Transfer = new ctre::phoenix6::hardware::TalonFX(18, ctre::phoenix6::CANBus("canivore"));
-	m_Turret = new ctre::phoenix6::hardware::TalonFXS(19, ctre::phoenix6::CANBus("canivore"));
-	m_Indexer = new ctre::phoenix6::hardware::TalonFX(20, ctre::phoenix6::CANBus("canivore"));
+	m_launcher = new ctre::phoenix6::hardware::TalonFX(16, ctre::phoenix6::CANBus("canivore"));
+	m_hood = new ctre::phoenix6::hardware::TalonFXS(17, ctre::phoenix6::CANBus("canivore"));
+	m_transfer = new ctre::phoenix6::hardware::TalonFX(18, ctre::phoenix6::CANBus("canivore"));
+	m_turret = new ctre::phoenix6::hardware::TalonFXS(19, ctre::phoenix6::CANBus("canivore"));
+	m_indexer = new ctre::phoenix6::hardware::TalonFX(20, ctre::phoenix6::CANBus("canivore"));
 
-	m_PercentOut = new ControlData(
+	m_percentOut = new ControlData(
 		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_PercentOut",									  // std::string indentifier
+		"m_percentOut",									  // std::string indentifier
 		0,												  // double proportional
 		0,												  // double integral
 		0,												  // double derivative
@@ -203,10 +203,10 @@ void Launcher::CreateCompBot302()
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_VelocityRPS = new ControlData(
+	m_velocityRPS = new ControlData(
 		ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_VelocityRPS",								  // std::string indentifier
+		"m_velocityRPS",								  // std::string indentifier
 		0,												  // double proportional
 		0,												  // double integral
 		0,												  // double derivative
@@ -225,10 +225,10 @@ void Launcher::CreateCompBot302()
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_PositionDegreesHood = new ControlData(
+	m_positionDegreesHood = new ControlData(
 		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_PositionDegreesHood",						  // std::string indentifier
+		"m_positionDegreesHood",						  // std::string indentifier
 		0,												  // double proportional
 		0,												  // double integral
 		0,												  // double derivative
@@ -247,10 +247,10 @@ void Launcher::CreateCompBot302()
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_PositionDegreesTurret = new ControlData(
+	m_positionDegreesTurret = new ControlData(
 		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_PositionDegreesTurret",						  // std::string indentifier
+		"m_positionDegreesTurret",						  // std::string indentifier
 		0,												  // double proportional
 		0,												  // double integral
 		0,												  // double derivative
@@ -318,25 +318,25 @@ void Launcher::InitializeTalonFXLauncherCompBot302()
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
 	configs.Feedback.SensorToMechanismRatio = 1;
 
-	configs.Slot0.kI = m_VelocityRPS->GetI();
-	configs.Slot0.kD = m_VelocityRPS->GetD();
-	configs.Slot0.kG = m_VelocityRPS->GetF();
-	configs.Slot0.kS = m_VelocityRPS->GetS();
-	configs.Slot0.kV = m_VelocityRPS->GetV();
-	configs.Slot0.kP = m_VelocityRPS->GetP();
-	configs.Slot0.kA = m_VelocityRPS->GetA();
-	configs.Slot0.GravityType = m_VelocityRPS->GetGravityType();
-	configs.Slot0.StaticFeedforwardSign = m_VelocityRPS->GetStaticFeedforwardSign();
+	configs.Slot0.kI = m_velocityRPS->GetI();
+	configs.Slot0.kD = m_velocityRPS->GetD();
+	configs.Slot0.kG = m_velocityRPS->GetF();
+	configs.Slot0.kS = m_velocityRPS->GetS();
+	configs.Slot0.kV = m_velocityRPS->GetV();
+	configs.Slot0.kP = m_velocityRPS->GetP();
+	configs.Slot0.kA = m_velocityRPS->GetA();
+	configs.Slot0.GravityType = m_velocityRPS->GetGravityType();
+	configs.Slot0.StaticFeedforwardSign = m_velocityRPS->GetStaticFeedforwardSign();
 
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		status = m_Launcher->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		status = m_launcher->GetConfigurator().Apply(configs, units::time::second_t(0.25));
 		if (status.IsOK())
 			break;
 	}
 	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_Launcher", "m_Launcher Status", status.GetName());
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_launcher", "m_launcher Status", status.GetName());
 }
 
 void Launcher::InitializeTalonFXSHoodCompBot302()
@@ -380,27 +380,25 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Disabled;
 
-	configs.Slot0.kI = m_PositionDegreesHood->GetI();
-	configs.Slot0.kD = m_PositionDegreesHood->GetD();
-	configs.Slot0.kG = m_PositionDegreesHood->GetF();
-	configs.Slot0.kS = m_PositionDegreesHood->GetS();
-	configs.Slot0.kV = m_PositionDegreesHood->GetV();
-	configs.Slot0.kP = m_PositionDegreesHood->GetP();
-	configs.Slot0.kA = m_PositionDegreesHood->GetA();
-	configs.Slot0.GravityType = m_PositionDegreesHood->GetGravityType();
-	configs.Slot0.StaticFeedforwardSign = m_PositionDegreesHood->GetStaticFeedforwardSign();
+	configs.Slot0.kI = m_positionDegreesHood->GetI();
+	configs.Slot0.kD = m_positionDegreesHood->GetD();
+	configs.Slot0.kG = m_positionDegreesHood->GetF();
+	configs.Slot0.kS = m_positionDegreesHood->GetS();
+	configs.Slot0.kV = m_positionDegreesHood->GetV();
+	configs.Slot0.kP = m_positionDegreesHood->GetP();
+	configs.Slot0.kA = m_positionDegreesHood->GetA();
+	configs.Slot0.GravityType = m_positionDegreesHood->GetGravityType();
+	configs.Slot0.StaticFeedforwardSign = m_positionDegreesHood->GetStaticFeedforwardSign();
 
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		status = m_Hood->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		status = m_hood->GetConfigurator().Apply(configs, units::time::second_t(0.25));
 		if (status.IsOK())
 			break;
 	}
 	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_Hood", "m_Hood Status", status.GetName());
-
-	m_HoodPositionDegreesHood.EnableFOC = m_PositionDegreesHood->IsFOCEnabled();
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_hood", "m_hood Status", status.GetName());
 }
 
 void Launcher::InitializeTalonFXTransferCompBot302()
@@ -443,12 +441,12 @@ void Launcher::InitializeTalonFXTransferCompBot302()
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		status = m_Transfer->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		status = m_transfer->GetConfigurator().Apply(configs, units::time::second_t(0.25));
 		if (status.IsOK())
 			break;
 	}
 	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_Transfer", "m_Transfer Status", status.GetName());
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_transfer", "m_transfer Status", status.GetName());
 }
 
 void Launcher::InitializeTalonFXSTurretCompBot302()
@@ -492,27 +490,25 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Disabled;
 
-	configs.Slot0.kI = m_PositionDegreesTurret->GetI();
-	configs.Slot0.kD = m_PositionDegreesTurret->GetD();
-	configs.Slot0.kG = m_PositionDegreesTurret->GetF();
-	configs.Slot0.kS = m_PositionDegreesTurret->GetS();
-	configs.Slot0.kV = m_PositionDegreesTurret->GetV();
-	configs.Slot0.kP = m_PositionDegreesTurret->GetP();
-	configs.Slot0.kA = m_PositionDegreesTurret->GetA();
-	configs.Slot0.GravityType = m_PositionDegreesTurret->GetGravityType();
-	configs.Slot0.StaticFeedforwardSign = m_PositionDegreesTurret->GetStaticFeedforwardSign();
+	configs.Slot0.kI = m_positionDegreesTurret->GetI();
+	configs.Slot0.kD = m_positionDegreesTurret->GetD();
+	configs.Slot0.kG = m_positionDegreesTurret->GetF();
+	configs.Slot0.kS = m_positionDegreesTurret->GetS();
+	configs.Slot0.kV = m_positionDegreesTurret->GetV();
+	configs.Slot0.kP = m_positionDegreesTurret->GetP();
+	configs.Slot0.kA = m_positionDegreesTurret->GetA();
+	configs.Slot0.GravityType = m_positionDegreesTurret->GetGravityType();
+	configs.Slot0.StaticFeedforwardSign = m_positionDegreesTurret->GetStaticFeedforwardSign();
 
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		status = m_Turret->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		status = m_turret->GetConfigurator().Apply(configs, units::time::second_t(0.25));
 		if (status.IsOK())
 			break;
 	}
 	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_Turret", "m_Turret Status", status.GetName());
-
-	m_TurretPositionDegreesTurret.EnableFOC = m_PositionDegreesTurret->IsFOCEnabled();
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_turret", "m_turret Status", status.GetName());
 }
 
 void Launcher::InitializeTalonFXIndexerCompBot302()
@@ -555,12 +551,12 @@ void Launcher::InitializeTalonFXIndexerCompBot302()
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		status = m_Indexer->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		status = m_indexer->GetConfigurator().Apply(configs, units::time::second_t(0.25));
 		if (status.IsOK())
 			break;
 	}
 	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_Indexer", "m_Indexer Status", status.GetName());
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_indexer", "m_indexer Status", status.GetName());
 }
 
 void Launcher::SetCurrentState(int state, bool run)
@@ -585,11 +581,11 @@ void Launcher::SetControlConstants(RobotElementNames::MOTOR_CONTROLLER_USAGE ide
 /// @return void
 void Launcher::Update()
 {
-	m_Launcher->SetControl(*m_LauncherActiveTarget);
-	m_Hood->SetControl(*m_HoodActiveTarget);
-	m_Transfer->SetControl(*m_TransferActiveTarget);
-	m_Turret->SetControl(*m_TurretActiveTarget);
-	m_Indexer->SetControl(*m_IndexerActiveTarget);
+	m_launcher->SetControl(*m_launcherActiveTarget);
+	m_hood->SetControl(*m_hoodActiveTarget);
+	m_transfer->SetControl(*m_transferActiveTarget);
+	m_turret->SetControl(*m_turretActiveTarget);
+	m_indexer->SetControl(*m_indexerActiveTarget);
 }
 
 void Launcher::Cyclic()
@@ -600,13 +596,13 @@ void Launcher::Cyclic()
 ControlData *Launcher::GetControlData(string name)
 {
 	if (name.compare("PercentOut") == 0)
-		return m_PercentOut;
+		return m_percentOut;
 	if (name.compare("VelocityRPS") == 0)
-		return m_VelocityRPS;
+		return m_velocityRPS;
 	if (name.compare("PositionDegreesHood") == 0)
-		return m_PositionDegreesHood;
+		return m_positionDegreesHood;
 	if (name.compare("PositionDegreesTurret") == 0)
-		return m_PositionDegreesTurret;
+		return m_positionDegreesTurret;
 
 	return nullptr;
 }
