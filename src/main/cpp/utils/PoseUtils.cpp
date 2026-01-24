@@ -12,18 +12,29 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-#pragma once
 
-// FRC Includes
-#include <frc/geometry/Pose2d.h>
-#include <frc/geometry/Translation2d.h>
+// Team 302 Includes
+#include "utils/PoseUtils.h"
 
-class DistanceBetweenPoses
+/// @brief Find the distance between two poses by using the Pythagorean Formula
+/// @param poseOne first pose to compare
+/// @param poseTwo second pose to compare
+/// @return frc::Translation2d - the difference in X value and the distance in Y value
+
+units::length::meter_t PoseUtils::GetDeltaBetweenPoses(const frc::Pose2d &pose1, const frc::Pose2d &pose2)
 {
-public:
-    DistanceBetweenPoses() = default;
-    ~DistanceBetweenPoses() = default;
+    return pose1.Translation().Distance(pose2.Translation());
+}
 
-    static double GetDeltaBetweenPoses(frc::Pose2d translationOne,
-                                       frc::Pose2d translationTwo);
-};
+bool PoseUtils::IsSamePose(const frc::Pose2d &pose1,
+                           const frc::Pose2d &pose2,
+                           units::length::centimeter_t tolerance)
+{
+    return GetDeltaBetweenPoses(pose1, pose2) < tolerance;
+}
+
+bool PoseUtils::IsPoseAtOrigin(const frc::Pose2d &pose,
+                               units::length::centimeter_t tolerance)
+{
+    return IsSamePose(pose, frc::Pose2d(), tolerance);
+}
