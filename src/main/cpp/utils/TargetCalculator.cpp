@@ -62,8 +62,8 @@ frc::Translation2d TargetCalculator::GetLauncherWorldPosition() const
 {
     auto pose = GetChassisPose();
 
-    // Get launcher position in robot frame using the virtual getter
-    auto launcherOffsetRobot = const_cast<TargetCalculator *>(this)->GetLauncherOffset();
+    // Get launcher position in robot frame
+    auto launcherOffsetRobot = GetLauncherOffset();
     double launcherX_robot = launcherOffsetRobot.X().value();
     double launcherY_robot = launcherOffsetRobot.Y().value();
 
