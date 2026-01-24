@@ -20,7 +20,6 @@
 #include "frc/DriverStation.h"
 #include "frc/RobotController.h"
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
-#include "utils/logging/signals/DragonDataLoggerSignals.h"
 #include "utils/logging/signals/CTRESignalLogger.h"
 #include "utils/logging/signals/UDPSignalLogger.h"
 

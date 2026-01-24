@@ -15,12 +15,14 @@
 
 #pragma once
 #include <string>
+#include <map>
 
 #include "frc/geometry/Pose2d.h"
 #include "frc/geometry/Pose3d.h"
 #include "frc/kinematics/ChassisSpeeds.h"
 #include "units/time.h"
-#include "utils/logging/signals/DragonDataLoggerSignals.h"
+#include "frc/kinematics/SwerveModuleState.h"
+#include "wpi/DataLog.h"
 
 using namespace std;
 
