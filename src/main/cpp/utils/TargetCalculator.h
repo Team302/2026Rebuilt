@@ -67,7 +67,7 @@ public:
      * \param lookaheadTime Time in seconds for projectile flight
      * \return Translation2d representing the virtual target in world coordinates
      */
-    frc::Translation2d CalculateVirtualTarget(const frc::Translation2d &realTarget, units::second_t lookaheadTime) const;
+    frc::Translation2d CalculateVirtualTarget(const frc::Translation2d &realTarget, units::time::second_t lookaheadTime) const;
 
     /**
      * \brief Get launcher/mechanism position in world coordinates
@@ -81,30 +81,30 @@ public:
 
     /**
      * \brief Calculate distance from chassis center to target
-     * \param target Target position in world coordinates (if nullptr, uses GetTargetPosition())
+     * \param lookaheadTime Time in seconds for virtual target calculation (default 0 = no compensation)
      * \return Distance in meters
      */
-    units::meter_t CalculateDistanceToTarget(const frc::Translation2d *target = nullptr);
+    units::meter_t CalculateDistanceToTarget(units::time::second_t lookaheadTime = 0_s);
 
     /**
      * \brief Calculate distance from launcher to target
      *
      * More precise than chassis center distance for mechanisms offset from robot center.
      *
-     * \param target Target position in world coordinates (if nullptr, uses GetTargetPosition())
+     * \param lookaheadTime Time in seconds for virtual target calculation (default 0 = no compensation)
      * \return Distance in meters
      */
-    units::meter_t CalculateLauncherDistanceToTarget(const frc::Translation2d *target = nullptr);
+    units::meter_t CalculateLauncherDistanceToTarget(units::time::second_t lookaheadTime = 0_s);
 
     /**
      * \brief Calculate angle from chassis center to target in robot frame
      *
      * Robot frame: 0° = forward (robot +X), 90° = left (robot +Y), -90° = right
      *
-     * \param target Target position in world coordinates (if nullptr, uses GetTargetPosition())
+     * \param lookaheadTime Time in seconds for virtual target calculation (default 0 = no compensation)
      * \return Angle in degrees
      */
-    units::degree_t CalculateAngleToTarget(const frc::Translation2d *target = nullptr);
+    units::degree_t CalculateAngleToTarget(units::time::second_t lookaheadTime = 0_s);
 
     /**
      * \brief Calculate angle from launcher to target in robot frame
@@ -112,10 +112,10 @@ public:
      * More precise than chassis center angle for mechanisms offset from robot center.
      * Robot frame: 0° = forward (robot +X), 90° = left (robot +Y), -90° = right
      *
-     * \param target Target position in world coordinates (if nullptr, uses GetTargetPosition())
+     * \param lookaheadTime Time in seconds for virtual target calculation (default 0 = no compensation)
      * \return Angle in degrees
      */
-    units::degree_t CalculateLauncherAngleToTarget(const frc::Translation2d *target = nullptr);
+    units::degree_t CalculateLauncherAngleToTarget(units::time::second_t lookaheadTime = 0_s);
 
     /**
      * \brief Set the launcher offset from robot center in robot coordinates
@@ -141,7 +141,7 @@ public:
      * \param lookaheadTime Time in seconds for projectile flight
      * \return Pose2d with virtual target position and zero rotation
      */
-    frc::Pose2d GetVirtualTargetPose(units::second_t lookaheadTime);
+    frc::Pose2d GetVirtualTargetPose(units::time::second_t lookaheadTime);
 
 protected:
     /**

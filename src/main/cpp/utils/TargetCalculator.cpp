@@ -41,7 +41,7 @@ frc::Translation2d TargetCalculator::GetTargetPosition()
 
 frc::Translation2d TargetCalculator::CalculateVirtualTarget(
     const frc::Translation2d &realTarget,
-    units::second_t lookaheadTime) const
+    units::time::second_t lookaheadTime) const
 {
     auto velocity = GetChassisVelocity();
 
@@ -84,32 +84,36 @@ frc::Translation2d TargetCalculator::GetLauncherWorldPosition() const
         pose.Y() + units::meter_t{launcherY_world}};
 }
 
-units::meter_t TargetCalculator::CalculateDistanceToTarget(const frc::Translation2d *target)
+units::meter_t TargetCalculator::CalculateDistanceToTarget(units::time::second_t lookaheadTime)
 {
     auto pose = GetChassisPose();
     auto robotPosition = frc::Translation2d{pose.X(), pose.Y()};
 
-    auto targetPos = (target != nullptr) ? *target : GetTargetPosition();
+    auto realTarget = GetTargetPosition();
+    auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
 
     // Calculate distance from chassis center to target
     return robotPosition.Distance(targetPos);
 }
 
-units::meter_t TargetCalculator::CalculateLauncherDistanceToTarget(const frc::Translation2d *target)
+units::meter_t TargetCalculator::CalculateLauncherDistanceToTarget(units::time::second_t lookaheadTime)
 {
     frc::Translation2d launcherPos = GetLauncherWorldPosition();
-    frc::Translation2d targetPos = (target != nullptr) ? *target : GetTargetPosition();
+
+    auto realTarget = GetTargetPosition();
+    auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
 
     // Calculate distance from launcher to target
     return launcherPos.Distance(targetPos);
 }
 
-units::degree_t TargetCalculator::CalculateAngleToTarget(const frc::Translation2d *target)
+units::degree_t TargetCalculator::CalculateAngleToTarget(units::time::second_t lookaheadTime)
 {
     frc::Pose2d pose = GetChassisPose();
     frc::Translation2d robotPosition = frc::Translation2d{pose.X(), pose.Y()};
 
-    frc::Translation2d targetPos = (target != nullptr) ? *target : GetTargetPosition();
+    auto realTarget = GetTargetPosition();
+    auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
 
     // Calculate vector from robot center to target in world frame
     auto xDistance = (targetPos.X() - robotPosition.X());
@@ -127,12 +131,13 @@ units::degree_t TargetCalculator::CalculateAngleToTarget(const frc::Translation2
     return angleToTarget;
 }
 
-units::degree_t TargetCalculator::CalculateLauncherAngleToTarget(const frc::Translation2d *target)
+units::degree_t TargetCalculator::CalculateLauncherAngleToTarget(units::time::second_t lookaheadTime)
 {
     frc::Translation2d launcherPos = GetLauncherWorldPosition();
     frc::Pose2d pose = GetChassisPose();
 
-    frc::Translation2d targetPos = (target != nullptr) ? *target : GetTargetPosition();
+    auto realTarget = GetTargetPosition();
+    auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
 
     // Calculate vector from launcher to target in world frame
     auto xDistance = (targetPos.X() - launcherPos.X());
@@ -156,7 +161,7 @@ void TargetCalculator::SetLauncherOffset(units::meter_t xOffset, units::meter_t 
 }
 
 frc::Pose2d TargetCalculator::GetVirtualTargetPose(
-    units::second_t lookaheadTime)
+    units::time::second_t lookaheadTime)
 {
     auto realTarget = GetTargetPosition();
     return frc::Pose2d{
