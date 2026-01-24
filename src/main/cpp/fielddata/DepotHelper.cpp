@@ -16,6 +16,7 @@
 #include "fielddata/DepotHelper.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "frc/geometry/Pose2d.h"
+#include "utils/PoseUtils.h"
 
 DepotHelper *DepotHelper::m_instance = nullptr;
 
@@ -50,6 +51,11 @@ DepotHelper::DepotHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerv
 //------------------------------------------------------------------
 bool DepotHelper::IsNearestDepotRed() const
 {
+    if (m_chassis == nullptr || m_fieldConstants == nullptr)
+    {
+        return false;
+    }
+
     auto currentPose = m_chassis->GetPose();
 
     auto blueDepot = FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE;
@@ -74,16 +80,19 @@ bool DepotHelper::IsNearestDepotRed() const
 //------------------------------------------------------------------
 frc::Pose2d DepotHelper::CalcDepotPose() const
 {
+    if (m_chassis == nullptr || m_fieldConstants == nullptr)
+    {
+        return frc::Pose2d();
+    }
+
     auto isNearestDepotRed = IsNearestDepotRed();
-    auto leftPose = isNearestDepotRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_LEFT_SIDE)
-                                      : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_LEFT_SIDE);
-    auto rightPose = isNearestDepotRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_RIGHT_SIDE)
-                                       : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_RIGHT_SIDE);
     auto neutralPose = isNearestDepotRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE)
                                          : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE);
-    auto centerX = (leftPose.X() + rightPose.X() + neutralPose.X()) / 3.0;
-    auto centerY = (leftPose.Y() + rightPose.Y() + neutralPose.Y()) / 3.0;
-    return frc::Pose2d(units::meter_t(centerX), units::meter_t(centerY), neutralPose.Rotation());
+
+    // neutralPose X accounts for half the robot on the intake side + bumpers + hopper/intake being extended
+    // neutralPose Y is center of the depot - no need to average with the side values
+    // rotation is based on the color
+    return frc::Pose2d(neutralPose.X(), neutralPose.Y(), isNearestDepotRed ? 0_deg : 180_deg);
 }
 
 //------------------------------------------------------------------
@@ -97,5 +106,9 @@ frc::Pose2d DepotHelper::CalcDepotPose() const
 units::length::meter_t DepotHelper::CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element,
                                                          frc::Pose2d currentPose) const
 {
-    return currentPose.Translation().Distance(m_fieldConstants->GetFieldElementPose2d(element).Translation());
+    if (m_fieldConstants == nullptr)
+    {
+        return units::length::meter_t(0.0);
+    }
+    return PoseUtils::GetDeltaBetweenPoses(currentPose, m_fieldConstants->GetFieldElementPose2d(element));
 }

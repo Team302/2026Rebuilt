@@ -577,7 +577,7 @@
         <name>uintParameter</name>
         <__units__ />
         <type>UInt32</type>
-        <value>0</value>
+        <value>1</value>
       </CAN_ID>
       <channel>
         <unitsFamily>none</unitsFamily>

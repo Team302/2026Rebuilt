@@ -39,15 +39,40 @@ public:
         SYSID_QUASISTATICREVERSE,
         SYSID_DYNAMICFORWARD,
         SYSID_DYNAMICREVERSE,
+        DRIVE_TO_DEPOT,
 
         // tip correction controls
         TIPCORRECTION_TOGGLE,
 
         // Mechanisms specific
-        STOP,
+
+        // Intake
         INTAKE,
         EXPEL,
+        INTAKE_OUT,
+        INTAKE_IN,
+        // Climber
+        CLIMB_MODE,
+        LEVEL1_CLIMB,
+        LEVEL3_CLIMB,
+        ALIGN_TO_LEFT_TOWER,
+        ALIGN_TO_RIGHT_TOWER,
+        CLIMB_MANUAL_ROTATE_DOWN,
+        CLIMB_MANUAL_ROTATE_UP,
+
+        // LAUNCHER
+        LAUNCHER_OFF,
         LAUNCH,
-        EMPTY_HOPPER
+
+        // VIRTUAL TARGET
+        UPDATE_VIRTUAL_TARGET_OFFSET_UP,
+        UPDATE_VIRTUAL_TARGET_OFFSET_DOWN,
+        UPDATE_VIRTUAL_TARGET_OFFSET_LEFT,
+        UPDATE_VIRTUAL_TARGET_OFFSET_RIGHT,
+        UPDATE_VIRTUAL_LEFT_PASSING_TARGET_X,
+        UPDATE_VIRTUAL_RIGHT_PASSING_TARGET_Y,
+        UPDATE_VIRTUAL_LEFT_PASSING_TARGET_Y,
+        UPDATE_VIRTUAL_RIGHT_PASSING_TARGET_X
+
     };
 };

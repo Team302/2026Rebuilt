@@ -14,6 +14,7 @@
 //====================================================================================================================================================
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"
 #include "fielddata/DepotHelper.h"
+#include "utils/PoseUtils.h"
 
 //------------------------------------------------------------------
 /// @brief      Constructor for DriveToDepot command
@@ -36,11 +37,33 @@ DriveToDepot::DriveToDepot(subsystems::CommandSwerveDrivetrain *chassis)
 //------------------------------------------------------------------
 frc::Pose2d DriveToDepot::GetEndPose()
 {
-    frc::Pose2d endPose;
+    frc::Pose2d endPose{};
     auto depotHelper = DepotHelper::GetInstance();
     if (depotHelper != nullptr)
     {
         endPose = depotHelper->CalcDepotPose();
     }
     return endPose;
+}
+
+//------------------------------------------------------------------
+/// @brief Checks if the DriveToDepot command has finished execution.
+///
+/// @return true if the end pose is at the origin or if the base class's IsFinished
+///         condition is met, false otherwise.
+///
+/// @details This method determines whether the command should terminate by first checking
+///          if the end pose is at the origin (which means we had an error calculating the
+///          target position) so we stop immediately.  Otherwise, it delegates to the base class's
+///          IsFinished() method to determine completion.
+//------------------------------------------------------------------
+bool DriveToDepot::IsFinished()
+{
+    auto endPose = GetEndPose();
+    if (PoseUtils::IsPoseAtOrigin(endPose, units::length::centimeter_t{1.0}))
+    {
+        return true;
+    }
+
+    return DriveToPose::IsFinished(); // call base class's IsFinished method
 }
