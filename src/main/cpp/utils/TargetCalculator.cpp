@@ -155,6 +155,15 @@ void TargetCalculator::SetLauncherOffset(units::meter_t xOffset, units::meter_t 
     // Default implementation does nothing. Subclasses should override if needed. May not need for different mechanisms.
 }
 
+frc::Pose2d TargetCalculator::GetVirtualTargetPose(
+    units::second_t lookaheadTime)
+{
+    auto realTarget = GetTargetPosition();
+    return frc::Pose2d{
+        CalculateVirtualTarget(realTarget, lookaheadTime),
+        frc::Rotation2d{}};
+}
+
 frc::Pose2d TargetCalculator::GetChassisPose() const
 {
     if (m_chassis != nullptr)

@@ -131,6 +131,18 @@ public:
      */
     virtual frc::Translation2d GetLauncherOffset() const { return frc::Translation2d(); }
 
+    /**
+     * \brief Get the virtual target position based on chassis velocity
+     *
+     * The virtual target compensates for robot movement during projectile flight.
+     * It offsets the real target by the distance the robot will travel during the
+     * lookahead time (projectile flight time).
+     *
+     * \param lookaheadTime Time in seconds for projectile flight
+     * \return Pose2d with virtual target position and zero rotation
+     */
+    frc::Pose2d GetVirtualTargetPose(units::second_t lookaheadTime);
+
 protected:
     /**
      * \brief Get the current chassis pose
