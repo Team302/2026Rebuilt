@@ -46,12 +46,12 @@ void CameraConfig_9998::BuildCameraConfig()
     ); // additional parameter
     vision->AddLimelight(front, DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
 
-    auto quest = new DragonQuest(units::length::inch_t(0),   // <I> x offset of Quest from robot center (forward relative to robot)
-                                 units::length::inch_t(0),   // <I> y offset of Quest from robot center (left relative to robot)
-                                 units::length::inch_t(0.0), // <I> z offset of Quest from robot center (up relative to robot)
-                                 units::angle::degree_t(0),  // <I> - Pitch of Quest
-                                 units::angle::degree_t(0),  // <I> - Yaw of Quest
-                                 units::angle::degree_t(0)   // <I> - Roll of Quest
+    auto quest = new DragonQuest(units::length::inch_t(9.75), // <I> x offset of Quest from robot center (forward relative to robot)
+                                 units::length::inch_t(0),    // <I> y offset of Quest from robot center (left relative to robot)
+                                 units::length::inch_t(13),   // <I> z offset of Quest from robot center (up relative to robot)
+                                 units::angle::degree_t(0),   // <I> - Pitch of Quest
+                                 units::angle::degree_t(0),   // <I> - Yaw of Quest
+                                 units::angle::degree_t(0)    // <I> - Roll of Quest
     );
     vision->AddQuest(quest);
 }
