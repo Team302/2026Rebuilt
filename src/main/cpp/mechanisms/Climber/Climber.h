@@ -36,13 +36,14 @@
 #include "state/IRobotStateChangeSubscriber.h"
 #include "mechanisms/controllers/ControlData.h"
 #include "state/RobotStateChanges.h"
+#include "state/RobotState.h"
 
 #include "configs/RobotElementNames.h"
 #include "configs/MechanismConfigMgr.h"
 
 #include "RobotIdentifier.h"
 
-class Climber : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber
+class Climber : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public RobotState
 {
 public:
 	enum STATE_NAMES
@@ -82,6 +83,10 @@ public:
 	void RunCommonTasks() override;
 	// void DataLog() override;
 
+	void NotifyStateUpdate(RobotStateChanges::StateChange stchange, int value) override;
+	bool IsClimbMode() const { return m_climbMode == RobotStateChanges::ClimbMode::CLIMB_MODE_ON; }
+	bool IsAuton() { return m_gameMode == RobotStateChanges::GamePeriod::Auton; };
+
 	RobotIdentifier getActiveRobotId() { return m_activeRobotId; }
 
 	ctre::phoenix6::hardware::TalonFX *GetClimber() const { return m_climber; }
@@ -108,6 +113,10 @@ private:
 	frc::Solenoid *m_alignment;
 	ctre::phoenix6::hardware::CANcoder *m_climberRotation;
 	ControlData *m_positionDegree;
+
+	RobotStateChanges::GamePeriod m_gameMode;
+	RobotStateChanges::ClimbMode m_climbMode;
+	RobotStateChanges::AllowedToClimb m_AllowedToClimb;
 
 	void InitializeTalonFXClimberCompBot302();
 

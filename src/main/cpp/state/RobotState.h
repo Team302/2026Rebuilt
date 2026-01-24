@@ -44,9 +44,12 @@ public:
     void PublishStateChange(RobotStateChanges::StateChange change, units::angular_velocity::degrees_per_second_t newValue);
     void PublishStateChange(RobotStateChanges::StateChange change, frc::Pose2d newValue);
     void PublishStateChange(RobotStateChanges::StateChange change, bool newValue);
+    void PublishLaunchMode(int currentLaunchState);
 
 private:
     void PublishGameStateChanges();
+    void PublishClimbMode(TeleopControl *controller);
+    void PublishAllowedToClimbStatus(bool intakeStatus);
 
     RobotState();
     ~RobotState();
@@ -54,6 +57,11 @@ private:
     std::vector<RobotStateChangeBroker *> m_brokers;
     RobotStateChanges::ScoringMode m_scoringMode;
     RobotStateChanges::GamePeriod m_gamePhase;
+    RobotStateChanges::ClimbMode m_climbMode;
+    RobotStateChanges::LaunchingMode m_launchMode;
+
+    bool m_climbButtonReleased;
+    bool m_LaunchButtonReleased;
 
     static RobotState *m_instance;
 };

@@ -101,5 +101,5 @@ private:
     frc::Pose2d m_rawQuestPose;
 
     bool m_isQuestEnabled = false; // <I> Is the Quest enabled?
-    RobotStateChanges::ClimbMode m_climbMode = RobotStateChanges::ClimbMode::ClimbModeOff;
+    RobotStateChanges::ClimbMode m_climbMode = RobotStateChanges::ClimbMode::CLIMB_MODE_OFF;
 };

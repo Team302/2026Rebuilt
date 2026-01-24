@@ -106,6 +106,9 @@ Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MEC
 													m_stateMap()
 {
 	PeriodicLooper::GetInstance()->RegisterAll(this);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Int);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Int);
+
 	// InitializeLogging();
 }
 
@@ -606,7 +609,15 @@ ControlData *Launcher::GetControlData(string name)
 
 	return nullptr;
 }
+void PublishLaunchMode(int currentLaunchState) override;
 
+{
+	PublishLaunchMode(GetCurrentState());
+}
+int Launcher::GetCurrentState()
+{
+	return StateMgr::GetCurrentState();
+}
 /* void Launcher::DataLog(uint64_t timestamp)
 {
    auto currTime = m_powerTimer.Get();

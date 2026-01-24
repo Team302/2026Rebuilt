@@ -22,7 +22,9 @@ public:
     {
         LoopCounterStart,
         DesiredScoringMode_Int,
+        LaunchingMode_Int,
         ClimbModeStatus_Int,
+        AllowedToClimbStatus_Int,
         ChassisTipStatus_Int,
         DriveAssistMode_Int,
         GameState_Int,
@@ -38,10 +40,22 @@ public:
         FUEL
     };
 
+    enum LaunchingMode
+    {
+        NOT_LAUNCHING,
+        LAUNCHING
+    };
+
     enum ClimbMode
     {
-        ClimbModeOff,
-        ClimbModeOn
+        CLIMB_MODE_OFF,
+        CLIMB_MODE_ON,
+    };
+
+    enum AllowedToClimb
+    {
+        ALLOWED,
+        NOT_ALLOWED
     };
 
     enum ChassisTilt

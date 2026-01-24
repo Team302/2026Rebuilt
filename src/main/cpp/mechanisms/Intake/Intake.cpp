@@ -96,6 +96,9 @@ Intake::Intake(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANI
 												m_stateMap()
 {
 	PeriodicLooper::GetInstance()->RegisterAll(this);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Int);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::LaunchingMode_Int);
+
 	// InitializeLogging();
 }
 
