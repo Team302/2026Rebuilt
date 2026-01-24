@@ -134,7 +134,7 @@ void Climber::CreateCompBot302()
 	m_climber = new ctre::phoenix6::hardware::TalonFX(12, ctre::phoenix6::CANBus("canivore"));
 
 	m_extender = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 2);
-	m_allignment = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 3);
+	m_alignment = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 3);
 
 	ctre::phoenix6::configs::CANcoderConfiguration ClimberRotationConfigs{};
 	ClimberRotationConfigs.MagnetSensor.MagnetOffset = units::angle::turn_t(0);

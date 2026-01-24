@@ -86,7 +86,7 @@ public:
 
 	ctre::phoenix6::hardware::TalonFX *GetClimber() const { return m_climber; }
 	frc::Solenoid *GetExtender() const { return m_extender; }
-	frc::Solenoid *GetAllignment() const { return m_allignment; }
+	frc::Solenoid *GetAlignment() const { return m_alignment; }
 	ctre::phoenix6::hardware::CANcoder *GetClimberRotation() const { return m_climberRotation; }
 	ControlData *GetPositionDegree() const { return m_positionDegree; }
 
@@ -105,7 +105,7 @@ private:
 
 	ctre::phoenix6::hardware::TalonFX *m_climber;
 	frc::Solenoid *m_extender;
-	frc::Solenoid *m_allignment;
+	frc::Solenoid *m_alignment;
 	ctre::phoenix6::hardware::CANcoder *m_climberRotation;
 	ControlData *m_positionDegree;
 

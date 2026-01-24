@@ -336,7 +336,7 @@
       </reversed>
     </solenoid>
     <solenoid>
-      <name>Allignment</name>
+      <name>Alignment</name>
       <CAN_ID>
         <unitsFamily>none</unitsFamily>
         <name>uintParameter</name>
@@ -592,14 +592,14 @@
           </Enabled>
         </solenoidTarget>
         <solenoidTarget>
-          <name>Allignment</name>
+          <name>Alignment</name>
           <target>
             <unitsFamily>none</unitsFamily>
             <name>Target</name>
             <__units__ />
             <type>Boolean</type>
           </target>
-          <solenoidName>Allignment</solenoidName>
+          <solenoidName>Alignment</solenoidName>
           <Enabled>
             <unitsFamily>none</unitsFamily>
             <name>boolParameter</name>
@@ -688,14 +688,14 @@
           </Enabled>
         </solenoidTarget>
         <solenoidTarget>
-          <name>Allignment</name>
+          <name>Alignment</name>
           <target>
             <unitsFamily>none</unitsFamily>
             <name>Target</name>
             <__units__ />
             <type>Boolean</type>
           </target>
-          <solenoidName>Allignment</solenoidName>
+          <solenoidName>Alignment</solenoidName>
           <Enabled>
             <unitsFamily>none</unitsFamily>
             <name>boolParameter</name>
@@ -791,14 +791,14 @@
           </Enabled>
         </solenoidTarget>
         <solenoidTarget>
-          <name>Allignment</name>
+          <name>Alignment</name>
           <target>
             <unitsFamily>none</unitsFamily>
             <name>Target</name>
             <__units__ />
             <type>Boolean</type>
           </target>
-          <solenoidName>Allignment</solenoidName>
+          <solenoidName>Alignment</solenoidName>
           <Enabled>
             <unitsFamily>none</unitsFamily>
             <name>boolParameter</name>
@@ -887,14 +887,14 @@
           </Enabled>
         </solenoidTarget>
         <solenoidTarget>
-          <name>Allignment</name>
+          <name>Alignment</name>
           <target>
             <unitsFamily>none</unitsFamily>
             <name>Target</name>
             <__units__ />
             <type>Boolean</type>
           </target>
-          <solenoidName>Allignment</solenoidName>
+          <solenoidName>Alignment</solenoidName>
           <Enabled>
             <unitsFamily>none</unitsFamily>
             <name>boolParameter</name>
@@ -983,14 +983,14 @@
           </Enabled>
         </solenoidTarget>
         <solenoidTarget>
-          <name>Allignment</name>
+          <name>Alignment</name>
           <target>
             <unitsFamily>none</unitsFamily>
             <name>Target</name>
             <__units__ />
             <type>Boolean</type>
           </target>
-          <solenoidName>Allignment</solenoidName>
+          <solenoidName>Alignment</solenoidName>
           <Enabled>
             <unitsFamily>none</unitsFamily>
             <name>boolParameter</name>
@@ -1055,14 +1055,14 @@
           </Enabled>
         </solenoidTarget>
         <solenoidTarget>
-          <name>Allignment</name>
+          <name>Alignment</name>
           <target>
             <unitsFamily>none</unitsFamily>
             <name>Target</name>
             <__units__ />
             <type>Boolean</type>
           </target>
-          <solenoidName>Allignment</solenoidName>
+          <solenoidName>Alignment</solenoidName>
           <Enabled>
             <unitsFamily>none</unitsFamily>
             <name>boolParameter</name>

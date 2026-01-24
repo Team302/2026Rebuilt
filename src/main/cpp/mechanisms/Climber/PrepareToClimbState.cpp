@@ -52,7 +52,7 @@ void PrepareToClimbState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetClimberPositionDegree(m_climberTarget);
 	m_mechanism->GetExtender()->Set(m_extenderTarget);
-	m_mechanism->GetAllignment()->Set(m_allignmentTarget);
+	m_mechanism->GetAlignment()->Set(m_alignmentTarget);
 }
 
 void PrepareToClimbState::Run()
