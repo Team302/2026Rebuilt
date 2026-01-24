@@ -38,14 +38,7 @@
 class TargetCalculator
 {
 public:
-    /**
-     * \brief Constructor - initializes the calculator with chassis reference
-     */
     TargetCalculator();
-
-    /**
-     * \brief Destructor
-     */
     ~TargetCalculator() = default;
 
     /**
@@ -136,7 +129,7 @@ public:
      * \brief Get the current launcher offset in robot coordinates
      * \return Translation2d with X, Y offsets in meters
      */
-    virtual frc::Translation2d GetLauncherOffset() const;
+    virtual frc::Translation2d GetLauncherOffset() const { return frc::Translation2d(); }
 
 protected:
     /**

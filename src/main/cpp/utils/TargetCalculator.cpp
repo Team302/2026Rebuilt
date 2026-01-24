@@ -97,8 +97,8 @@ units::meter_t TargetCalculator::CalculateDistanceToTarget(const frc::Translatio
 
 units::meter_t TargetCalculator::CalculateLauncherDistanceToTarget(const frc::Translation2d *target)
 {
-    auto launcherPos = GetLauncherWorldPosition();
-    auto targetPos = (target != nullptr) ? *target : GetTargetPosition();
+    frc::Translation2d launcherPos = GetLauncherWorldPosition();
+    frc::Translation2d targetPos = (target != nullptr) ? *target : GetTargetPosition();
 
     // Calculate distance from launcher to target
     return launcherPos.Distance(targetPos);
@@ -106,67 +106,53 @@ units::meter_t TargetCalculator::CalculateLauncherDistanceToTarget(const frc::Tr
 
 units::degree_t TargetCalculator::CalculateAngleToTarget(const frc::Translation2d *target)
 {
-    auto pose = GetChassisPose();
-    auto robotPosition = frc::Translation2d{pose.X(), pose.Y()};
+    frc::Pose2d pose = GetChassisPose();
+    frc::Translation2d robotPosition = frc::Translation2d{pose.X(), pose.Y()};
 
-    auto targetPos = (target != nullptr) ? *target : GetTargetPosition();
+    frc::Translation2d targetPos = (target != nullptr) ? *target : GetTargetPosition();
 
     // Calculate vector from robot center to target in world frame
-    double dx_world = (targetPos.X() - robotPosition.X()).value();
-    double dy_world = (targetPos.Y() - robotPosition.Y()).value();
+    auto xDistance = (targetPos.X() - robotPosition.X());
+    auto yDistance = (targetPos.Y() - robotPosition.Y());
 
     // Calculate angle in world frame (from +X axis)
-    double angle_world = std::atan2(dy_world, dx_world);
-
-    // Get robot's rotation
-    double robotAngle = pose.Rotation().Radians().value();
+    units::angle::degree_t fieldAngleToTarget = units::math::atan2(yDistance, xDistance);
+    units::angle::degree_t robotRotation = pose.Rotation().Degrees();
 
     // Convert to robot frame by subtracting robot's rotation
-    double angle_robot = angle_world - robotAngle;
+    units::angle::degree_t angleToTarget = fieldAngleToTarget - robotRotation;
 
     // Normalize angle to [-pi, pi]
-    angle_robot = std::atan2(std::sin(angle_robot), std::cos(angle_robot));
-
-    // Convert to degrees
-    return units::degree_t{std::toDegrees(angle_robot)};
+    angleToTarget = units::angle::degree_t{units::math::atan2(units::math::sin(angleToTarget), units::math::cos(angleToTarget))};
+    return angleToTarget;
 }
 
 units::degree_t TargetCalculator::CalculateLauncherAngleToTarget(const frc::Translation2d *target)
 {
-    auto launcherPos = GetLauncherWorldPosition();
-    auto pose = GetChassisPose();
+    frc::Translation2d launcherPos = GetLauncherWorldPosition();
+    frc::Pose2d pose = GetChassisPose();
 
-    auto targetPos = (target != nullptr) ? *target : GetTargetPosition();
+    frc::Translation2d targetPos = (target != nullptr) ? *target : GetTargetPosition();
 
     // Calculate vector from launcher to target in world frame
-    double dx_world = (targetPos.X() - launcherPos.X()).value();
-    double dy_world = (targetPos.Y() - launcherPos.Y()).value();
+    auto xDistance = (targetPos.X() - launcherPos.X());
+    auto yDistance = (targetPos.Y() - launcherPos.Y());
 
     // Calculate angle in world frame (from +X axis)
-    double angle_world = std::atan2(dy_world, dx_world);
-
-    // Get robot's rotation
-    double robotAngle = pose.Rotation().Radians().value();
+    units::angle::degree_t fieldAngleToTarget = units::math::atan2(yDistance, xDistance);
+    units::angle::degree_t robotRotation = pose.Rotation().Degrees();
 
     // Convert to robot frame by subtracting robot's rotation
-    double angle_robot = angle_world - robotAngle;
+    units::angle::degree_t angleToTarget = fieldAngleToTarget - robotRotation;
 
     // Normalize angle to [-pi, pi]
-    angle_robot = std::atan2(std::sin(angle_robot), std::cos(angle_robot));
-
-    // Convert to degrees
-    return units::degree_t{std::toDegrees(angle_robot)};
+    angleToTarget = units::angle::degree_t{units::math::atan2(units::math::sin(angleToTarget), units::math::cos(angleToTarget))};
+    return angleToTarget;
 }
 
 void TargetCalculator::SetLauncherOffset(units::meter_t xOffset, units::meter_t yOffset)
 {
-    // Default implementation does nothing. Subclasses should override if needed.
-}
-
-frc::Translation2d TargetCalculator::GetLauncherOffset() const
-{
-    // Default implementation returns origin. Subclasses should override.
-    return frc::Translation2d{0_m, 0_m};
+    // Default implementation does nothing. Subclasses should override if needed. May not need for different mechanisms.
 }
 
 frc::Pose2d TargetCalculator::GetChassisPose() const

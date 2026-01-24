@@ -17,7 +17,8 @@
 
 RebuiltTargetCalculator::RebuiltTargetCalculator()
 {
-    // Launcher offset initialized in member variable declaration
+    // TODO: update launcher offsets and target position(need to use zone logic later and field element calculator to get target position)
+    // Launcher offset initialized in member variable declaration for now
 }
 
 RebuiltTargetCalculator *RebuiltTargetCalculator::m_instance = nullptr;
