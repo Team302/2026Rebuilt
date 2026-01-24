@@ -43,13 +43,18 @@ frc::Translation2d TargetCalculator::CalculateVirtualTarget(
     const frc::Translation2d &realTarget,
     units::time::second_t lookaheadTime) const
 {
-    auto velocity = GetChassisVelocity();
+    auto robotVelocity = GetChassisVelocity();
+    auto pose = GetChassisPose();
 
-    // Calculate the offset based on robot velocity and lookahead time
-    // The virtual target is offset backward (opposite of velocity) to compensate
-    // for the robot's movement during projectile flight
-    units::meter_t offsetX = velocity.vx * lookaheadTime;
-    units::meter_t offsetY = velocity.vy * lookaheadTime;
+    // Convert robot-relative speeds to field-relative speeds
+    auto fieldVelocity = frc::ChassisSpeeds::FromRobotRelativeSpeeds(
+        robotVelocity.vx,
+        robotVelocity.vy,
+        robotVelocity.omega,
+        pose.Rotation());
+
+    units::meter_t offsetX = fieldVelocity.vx * lookaheadTime;
+    units::meter_t offsetY = fieldVelocity.vy * lookaheadTime;
 
     // Virtual goal = real goal - velocity_offset
     // This compensates for the robot moving toward/away from the goal
@@ -64,24 +69,22 @@ frc::Translation2d TargetCalculator::GetLauncherWorldPosition() const
 
     // Get launcher position in robot frame
     auto launcherOffsetRobot = GetLauncherOffset();
-    double launcherX_robot = launcherOffsetRobot.X().value();
-    double launcherY_robot = launcherOffsetRobot.Y().value();
+    auto launcherX_robot = launcherOffsetRobot.X();
+    auto launcherY_robot = launcherOffsetRobot.Y();
 
     // Get robot's rotation
-    double robotAngle = pose.Rotation().Radians().value();
-    double cosTheta = std::cos(robotAngle);
-    double sinTheta = std::sin(robotAngle);
+    auto robotAngle = pose.Rotation().Degrees();
+    auto cosTheta = units::math::cos(robotAngle);
+    auto sinTheta = units::math::sin(robotAngle);
 
     // Rotate launcher position from robot frame to world frame
-    // Rotation matrix: [cos -sin] [x]
-    //                 [sin  cos] [y]
-    double launcherX_world = launcherX_robot * cosTheta - launcherY_robot * sinTheta;
-    double launcherY_world = launcherX_robot * sinTheta + launcherY_robot * cosTheta;
+    auto launcherX_world = launcherX_robot * cosTheta - launcherY_robot * sinTheta;
+    auto launcherY_world = launcherX_robot * sinTheta + launcherY_robot * cosTheta;
 
     // Translate to world position (add robot center)
     return frc::Translation2d{
-        pose.X() + units::meter_t{launcherX_world},
-        pose.Y() + units::meter_t{launcherY_world}};
+        pose.X() + launcherX_world,
+        pose.Y() + launcherY_world};
 }
 
 units::meter_t TargetCalculator::CalculateDistanceToTarget(units::time::second_t lookaheadTime)
