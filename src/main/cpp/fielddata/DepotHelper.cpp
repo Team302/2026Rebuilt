@@ -74,6 +74,11 @@ bool DepotHelper::IsNearestDepotRed() const
 //------------------------------------------------------------------
 frc::Pose2d DepotHelper::CalcDepotPose() const
 {
+    if (m_chassis == nullptr || m_fieldConstants == nullptr)
+    {
+        return frc::Pose2d();
+    }
+
     auto isNearestDepotRed = IsNearestDepotRed();
     auto leftPose = isNearestDepotRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_LEFT_SIDE)
                                       : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_LEFT_SIDE);
@@ -83,7 +88,7 @@ frc::Pose2d DepotHelper::CalcDepotPose() const
                                          : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE);
     auto centerX = (leftPose.X() + rightPose.X() + neutralPose.X()) / 3.0;
     auto centerY = (leftPose.Y() + rightPose.Y() + neutralPose.Y()) / 3.0;
-    return frc::Pose2d(units::meter_t(centerX), units::meter_t(centerY), neutralPose.Rotation());
+    return frc::Pose2d(centerX, centerY, neutralPose.Rotation());
 }
 
 //------------------------------------------------------------------
@@ -97,5 +102,9 @@ frc::Pose2d DepotHelper::CalcDepotPose() const
 units::length::meter_t DepotHelper::CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element,
                                                          frc::Pose2d currentPose) const
 {
+    if (m_fieldConstants == nullptr)
+    {
+        return units::length::meter_t(0.0);
+    }
     return currentPose.Translation().Distance(m_fieldConstants->GetFieldElementPose2d(element).Translation());
 }

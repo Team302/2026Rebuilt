@@ -25,7 +25,7 @@
 /// It automatically determines which depot (red or blue) is closest to the robot's current position
 /// and calculates the target pose at the center of that depot using DepotHelper.
 ///
-/// The command uses path following to drive the robot to the calculated depot center position,
+/// The command uses PID control to drive the robot to the calculated depot center position,
 /// making it useful for autonomous routines or driver assistance features during matches.
 //====================================================================================================================================================
 class DriveToDepot : public DriveToPose

@@ -55,6 +55,7 @@ public:
     /// @return     TrajectoryDrive* - Pointer to the trajectory drive command
     //------------------------------------------------------------------
     TrajectoryDrive *GetTrajectoryDriveCommand() { return m_trajectoryDrive.get(); }
+    DriveToDepot *GetDriveToDepotCommand() { return m_driveToDepot.get(); }
 
 private:
     //------------------------------------------------------------------

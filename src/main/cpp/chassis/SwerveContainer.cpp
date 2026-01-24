@@ -14,6 +14,7 @@
 //====================================================================================================================================================
 
 #include "chassis/SwerveContainer.h"
+#include "chassis/ChassisConfigMgr.h"
 #include "chassis/commands/TeleopFieldDrive.h"
 #include "chassis/commands/TeleopRobotDrive.h"
 #include "frc2/command/button/RobotModeTriggers.h"
