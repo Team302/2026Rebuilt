@@ -142,18 +142,18 @@ std::map<std::string, Intake::STATE_NAMES>
 void Intake::CreateCompBot302()
 {
 	m_ntName = "Intake";
-	m_Intake = new ctre::phoenix6::hardware::TalonFX(4, ctre::phoenix6::CANBus("canivore"));
-	// m_Hopper = new ctre::phoenix6::hardware::TalonFX(0, ctre::phoenix6::CANBus("canivore"));
+	m_intake = new ctre::phoenix6::hardware::TalonFX(4, ctre::phoenix6::CANBus("canivore"));
+	// m_hopper = new ctre::phoenix6::hardware::TalonFX(0, ctre::phoenix6::CANBus("canivore"));
 
-	m_Extender = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 0);
+	m_extender = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 0);
 
-	m_IsIntakeExtended = new frc::DigitalInput(0);
-	m_IsIntakeExtendedIsInverted = false;
+	m_isIntakeExtended = new frc::DigitalInput(0);
+	m_isIntakeExtendedIsInverted = false;
 
-	m_PercentOut = new ControlData(
+	m_percentOut = new ControlData(
 		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_PercentOut",									  // std::string indentifier
+		"m_percentOut",									  // std::string indentifier
 		0,												  // double proportional
 		0,												  // double integral
 		0,												  // double derivative
@@ -221,12 +221,12 @@ void Intake::InitializeTalonFXIntakeCompBot302()
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		status = m_Intake->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		status = m_intake->GetConfigurator().Apply(configs, units::time::second_t(0.25));
 		if (status.IsOK())
 			break;
 	}
 	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_Intake", "m_Intake Status", status.GetName());
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intake", "m_intake Status", status.GetName());
 }
 
 void Intake::InitializeTalonFXHopperCompBot302()
@@ -269,12 +269,12 @@ void Intake::InitializeTalonFXHopperCompBot302()
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		status = m_Hopper->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		status = m_hopper->GetConfigurator().Apply(configs, units::time::second_t(0.25));
 		if (status.IsOK())
 			break;
 	}
 	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_Hopper", "m_Hopper Status", status.GetName());
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_hopper", "m_hopper Status", status.GetName());
 }
 
 void Intake::SetCurrentState(int state, bool run)
@@ -299,8 +299,8 @@ void Intake::SetControlConstants(RobotElementNames::MOTOR_CONTROLLER_USAGE ident
 /// @return void
 void Intake::Update()
 {
-	m_Intake->SetControl(*m_IntakeActiveTarget);
-	// m_Hopper->SetControl(*m_HopperActiveTarget);
+	m_intake->SetControl(*m_intakeActiveTarget);
+	// m_hopper->SetControl(*m_hopperActiveTarget);
 }
 
 void Intake::Cyclic()
@@ -309,13 +309,13 @@ void Intake::Cyclic()
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentState());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeExtended", GetIsIntakeExtendedState());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IntakePercentOut", m_IntakePercentOut.Output.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IntakePercentOut", m_intakePercentOut.Output.value());
 }
 
 ControlData *Intake::GetControlData(string name)
 {
 	if (name.compare("PercentOut") == 0)
-		return m_PercentOut;
+		return m_percentOut;
 
 	return nullptr;
 }

@@ -71,43 +71,43 @@ public:
 
 	void UpdateTargetLauncherPercentOut(double percentOut)
 	{
-		m_LauncherPercentOut.Output = percentOut;
-		m_LauncherActiveTarget = &m_LauncherPercentOut;
+		m_launcherPercentOut.Output = percentOut;
+		m_launcherActiveTarget = &m_launcherPercentOut;
 	}
 	void UpdateTargetHoodPercentOut(double percentOut)
 	{
-		m_HoodPercentOut.Output = percentOut;
-		m_HoodActiveTarget = &m_HoodPercentOut;
+		m_hoodPercentOut.Output = percentOut;
+		m_hoodActiveTarget = &m_hoodPercentOut;
 	}
 	void UpdateTargetTransferPercentOut(double percentOut)
 	{
-		m_TransferPercentOut.Output = percentOut;
-		m_TransferActiveTarget = &m_TransferPercentOut;
+		m_transferPercentOut.Output = percentOut;
+		m_transferActiveTarget = &m_transferPercentOut;
 	}
 	void UpdateTargetTurretPercentOut(double percentOut)
 	{
-		m_TurretPercentOut.Output = percentOut;
-		m_TurretActiveTarget = &m_TurretPercentOut;
+		m_turretPercentOut.Output = percentOut;
+		m_turretActiveTarget = &m_turretPercentOut;
 	}
 	void UpdateTargetIndexerPercentOut(double percentOut)
 	{
-		m_IndexerPercentOut.Output = percentOut;
-		m_IndexerActiveTarget = &m_IndexerPercentOut;
+		m_indexerPercentOut.Output = percentOut;
+		m_indexerActiveTarget = &m_indexerPercentOut;
 	}
 	void UpdateTargetHoodPositionDegreesHood(units::angle::turn_t position)
 	{
-		m_HoodPositionDegreesHood.Position = position;
-		m_HoodActiveTarget = &m_HoodPositionDegreesHood.WithSlot(0);
+		m_hoodPositionDegreesHood.Position = position;
+		m_hoodActiveTarget = &m_hoodPositionDegreesHood.WithSlot(0);
 	}
 	void UpdateTargetTurretPositionDegreesTurret(units::angle::turn_t position)
 	{
-		m_TurretPositionDegreesTurret.Position = position;
-		m_TurretActiveTarget = &m_TurretPositionDegreesTurret.WithSlot(0);
+		m_turretPositionDegreesTurret.Position = position;
+		m_turretActiveTarget = &m_turretPositionDegreesTurret.WithSlot(0);
 	}
 	void UpdateTargetLauncherVelocityRPS(units::angular_velocity::turns_per_second_t velocity)
 	{
-		m_LauncherVelocityRPS.Velocity = velocity;
-		m_LauncherActiveTarget = &m_LauncherVelocityRPS.WithSlot(0);
+		m_launcherVelocityRPS.Velocity = velocity;
+		m_launcherActiveTarget = &m_launcherVelocityRPS.WithSlot(0);
 	}
 
 	void CreateAndRegisterStates();
@@ -117,15 +117,15 @@ public:
 
 	RobotIdentifier getActiveRobotId() { return m_activeRobotId; }
 
-	ctre::phoenix6::hardware::TalonFX *GetLauncher() const { return m_Launcher; }
-	ctre::phoenix6::hardware::TalonFXS *GetHood() const { return m_Hood; }
-	ctre::phoenix6::hardware::TalonFX *GetTransfer() const { return m_Transfer; }
-	ctre::phoenix6::hardware::TalonFXS *GetTurret() const { return m_Turret; }
-	ctre::phoenix6::hardware::TalonFX *GetIndexer() const { return m_Indexer; }
-	ControlData *GetPercentOut() const { return m_PercentOut; }
-	ControlData *GetVelocityRPS() const { return m_VelocityRPS; }
-	ControlData *GetPositionDegreesHood() const { return m_PositionDegreesHood; }
-	ControlData *GetPositionDegreesTurret() const { return m_PositionDegreesTurret; }
+	ctre::phoenix6::hardware::TalonFX *GetLauncher() const { return m_launcher; }
+	ctre::phoenix6::hardware::TalonFXS *GetHood() const { return m_hood; }
+	ctre::phoenix6::hardware::TalonFX *GetTransfer() const { return m_transfer; }
+	ctre::phoenix6::hardware::TalonFXS *GetTurret() const { return m_turret; }
+	ctre::phoenix6::hardware::TalonFX *GetIndexer() const { return m_indexer; }
+	ControlData *GetPercentOut() const { return m_percentOut; }
+	ControlData *GetVelocityRPS() const { return m_velocityRPS; }
+	ControlData *GetPositionDegreesHood() const { return m_positionDegreesHood; }
+	ControlData *GetPositionDegreesTurret() const { return m_positionDegreesTurret; }
 
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
 
@@ -140,15 +140,15 @@ protected:
 private:
 	std::unordered_map<std::string, STATE_NAMES> m_stateMap;
 
-	ctre::phoenix6::hardware::TalonFX *m_Launcher;
-	ctre::phoenix6::hardware::TalonFXS *m_Hood;
-	ctre::phoenix6::hardware::TalonFX *m_Transfer;
-	ctre::phoenix6::hardware::TalonFXS *m_Turret;
-	ctre::phoenix6::hardware::TalonFX *m_Indexer;
-	ControlData *m_PercentOut;
-	ControlData *m_VelocityRPS;
-	ControlData *m_PositionDegreesHood;
-	ControlData *m_PositionDegreesTurret;
+	ctre::phoenix6::hardware::TalonFX *m_launcher;
+	ctre::phoenix6::hardware::TalonFXS *m_hood;
+	ctre::phoenix6::hardware::TalonFX *m_transfer;
+	ctre::phoenix6::hardware::TalonFXS *m_turret;
+	ctre::phoenix6::hardware::TalonFX *m_indexer;
+	ControlData *m_percentOut;
+	ControlData *m_velocityRPS;
+	ControlData *m_positionDegreesHood;
+	ControlData *m_positionDegreesTurret;
 
 	void InitializeTalonFXLauncherCompBot302();
 	void InitializeTalonFXSHoodCompBot302();
@@ -156,19 +156,19 @@ private:
 	void InitializeTalonFXSTurretCompBot302();
 	void InitializeTalonFXIndexerCompBot302();
 
-	ctre::phoenix6::controls::DutyCycleOut m_LauncherPercentOut{0.0};
-	ctre::phoenix6::controls::DutyCycleOut m_HoodPercentOut{0.0};
-	ctre::phoenix6::controls::DutyCycleOut m_TransferPercentOut{0.0};
-	ctre::phoenix6::controls::DutyCycleOut m_TurretPercentOut{0.0};
-	ctre::phoenix6::controls::DutyCycleOut m_IndexerPercentOut{0.0};
-	ctre::phoenix6::controls::MotionMagicVoltage m_HoodPositionDegreesHood{units::angle::degree_t(0.0)};
-	ctre::phoenix6::controls::MotionMagicVoltage m_TurretPositionDegreesTurret{units::angle::degree_t(0.0)};
-	ctre::phoenix6::controls::VelocityVoltage m_LauncherVelocityRPS{units::angular_velocity::turns_per_second_t(0.0)};
-	ctre::phoenix6::controls::ControlRequest *m_LauncherActiveTarget;
-	ctre::phoenix6::controls::ControlRequest *m_HoodActiveTarget;
-	ctre::phoenix6::controls::ControlRequest *m_TransferActiveTarget;
-	ctre::phoenix6::controls::ControlRequest *m_TurretActiveTarget;
-	ctre::phoenix6::controls::ControlRequest *m_IndexerActiveTarget;
+	ctre::phoenix6::controls::DutyCycleOut m_launcherPercentOut{0.0};
+	ctre::phoenix6::controls::DutyCycleOut m_hoodPercentOut{0.0};
+	ctre::phoenix6::controls::DutyCycleOut m_transferPercentOut{0.0};
+	ctre::phoenix6::controls::DutyCycleOut m_turretPercentOut{0.0};
+	ctre::phoenix6::controls::DutyCycleOut m_indexerPercentOut{0.0};
+	ctre::phoenix6::controls::MotionMagicVoltage m_hoodPositionDegreesHood{units::angle::degree_t(0.0)};
+	ctre::phoenix6::controls::MotionMagicVoltage m_turretPositionDegreesTurret{units::angle::degree_t(0.0)};
+	ctre::phoenix6::controls::VelocityVoltage m_launcherVelocityRPS{units::angular_velocity::turns_per_second_t(0.0)};
+	ctre::phoenix6::controls::ControlRequest *m_launcherActiveTarget;
+	ctre::phoenix6::controls::ControlRequest *m_hoodActiveTarget;
+	ctre::phoenix6::controls::ControlRequest *m_transferActiveTarget;
+	ctre::phoenix6::controls::ControlRequest *m_turretActiveTarget;
+	ctre::phoenix6::controls::ControlRequest *m_indexerActiveTarget;
 
 	// void InitializeLogging();
 };

@@ -72,13 +72,13 @@ public:
 
 	void UpdateTargetIntakePercentOut(double percentOut)
 	{
-		m_IntakePercentOut.Output = percentOut;
-		m_IntakeActiveTarget = &m_IntakePercentOut;
+		m_intakePercentOut.Output = percentOut;
+		m_intakeActiveTarget = &m_intakePercentOut;
 	}
 	void UpdateTargetHopperPercentOut(double percentOut)
 	{
-		m_HopperPercentOut.Output = percentOut;
-		m_HopperActiveTarget = &m_HopperPercentOut;
+		m_hopperPercentOut.Output = percentOut;
+		m_hopperActiveTarget = &m_hopperPercentOut;
 	}
 
 	void CreateAndRegisterStates();
@@ -88,11 +88,11 @@ public:
 
 	RobotIdentifier getActiveRobotId() { return m_activeRobotId; }
 
-	ctre::phoenix6::hardware::TalonFX *GetIntake() const { return m_Intake; }
-	ctre::phoenix6::hardware::TalonFX *GetHopper() const { return m_Hopper; }
-	frc::Solenoid *GetExtender() const { return m_Extender; }
-	bool GetIsIntakeExtendedState() const { return m_IsIntakeExtendedIsInverted ? !m_IsIntakeExtended->Get() : m_IsIntakeExtended->Get(); }
-	ControlData *GetPercentOut() const { return m_PercentOut; }
+	ctre::phoenix6::hardware::TalonFX *GetIntake() const { return m_intake; }
+	ctre::phoenix6::hardware::TalonFX *GetHopper() const { return m_hopper; }
+	frc::Solenoid *GetExtender() const { return m_extender; }
+	bool GetIsIntakeExtendedState() const { return m_isIntakeExtendedIsInverted ? !m_isIntakeExtended->Get() : m_isIntakeExtended->Get(); }
+	ControlData *GetPercentOut() const { return m_percentOut; }
 
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
 
@@ -107,20 +107,20 @@ protected:
 private:
 	std::unordered_map<std::string, STATE_NAMES> m_stateMap;
 
-	ctre::phoenix6::hardware::TalonFX *m_Intake;
-	ctre::phoenix6::hardware::TalonFX *m_Hopper;
-	frc::Solenoid *m_Extender;
-	frc::DigitalInput *m_IsIntakeExtended;
-	bool m_IsIntakeExtendedIsInverted;
-	ControlData *m_PercentOut;
+	ctre::phoenix6::hardware::TalonFX *m_intake;
+	ctre::phoenix6::hardware::TalonFX *m_hopper;
+	frc::Solenoid *m_extender;
+	frc::DigitalInput *m_isIntakeExtended;
+	bool m_isIntakeExtendedIsInverted;
+	ControlData *m_percentOut;
 
 	void InitializeTalonFXIntakeCompBot302();
 	void InitializeTalonFXHopperCompBot302();
 
-	ctre::phoenix6::controls::DutyCycleOut m_IntakePercentOut{0.0};
-	ctre::phoenix6::controls::DutyCycleOut m_HopperPercentOut{0.0};
-	ctre::phoenix6::controls::ControlRequest *m_IntakeActiveTarget;
-	ctre::phoenix6::controls::ControlRequest *m_HopperActiveTarget;
+	ctre::phoenix6::controls::DutyCycleOut m_intakePercentOut{0.0};
+	ctre::phoenix6::controls::DutyCycleOut m_hopperPercentOut{0.0};
+	ctre::phoenix6::controls::ControlRequest *m_intakeActiveTarget;
+	ctre::phoenix6::controls::ControlRequest *m_hopperActiveTarget;
 
 	// void InitializeLogging();
 };
