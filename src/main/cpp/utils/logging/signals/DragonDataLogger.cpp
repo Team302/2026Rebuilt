@@ -266,9 +266,6 @@ void DragonDataLogger::LogDoubleData(uint64_t timestamp, DragonDataLogger::Doubl
     case DragonDataLogger::DoubleSignals::LIMELIGHT1_NUMBER_OF_TAGS:
         logger->WriteDouble(m_limelight1NumberOfTagsPath, value, m_limelight1NumberOfTagsUnits, m_latency);
         break;
-    case DragonDataLogger::DoubleSignals::LIMELIGHT1_NUMBER_OF_ALGAE:
-        logger->WriteDouble(m_limelight1NumberOfAlgaePath, value, m_limelight1NumberOfAlgaeUnits, m_latency);
-        break;
     default:
         break;
     }
