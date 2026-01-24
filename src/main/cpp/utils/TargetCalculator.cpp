@@ -119,22 +119,16 @@ units::degree_t TargetCalculator::CalculateAngleToTarget(units::time::second_t l
     auto xDistance = (targetPos.X() - robotPosition.X());
     auto yDistance = (targetPos.Y() - robotPosition.Y());
 
-    // Calculate angle in world frame (from +X axis)
-    units::angle::degree_t fieldAngleToTarget = units::math::atan2(yDistance, xDistance);
-    units::angle::degree_t robotRotation = pose.Rotation().Degrees();
+    // Calculate angle in world frame (from +X axis / forward direction)
+    // This is relative to field forward, not robot heading
+    units::angle::degree_t angleToTarget = units::math::atan2(yDistance, xDistance);
 
-    // Convert to robot frame by subtracting robot's rotation
-    units::angle::degree_t angleToTarget = fieldAngleToTarget - robotRotation;
-
-    // Normalize angle to [-pi, pi]
-    angleToTarget = units::angle::degree_t{units::math::atan2(units::math::sin(angleToTarget), units::math::cos(angleToTarget))};
     return angleToTarget;
 }
 
 units::degree_t TargetCalculator::CalculateLauncherAngleToTarget(units::time::second_t lookaheadTime)
 {
     frc::Translation2d launcherPos = GetLauncherWorldPosition();
-    frc::Pose2d pose = GetChassisPose();
 
     auto realTarget = GetTargetPosition();
     auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
@@ -143,15 +137,10 @@ units::degree_t TargetCalculator::CalculateLauncherAngleToTarget(units::time::se
     auto xDistance = (targetPos.X() - launcherPos.X());
     auto yDistance = (targetPos.Y() - launcherPos.Y());
 
-    // Calculate angle in world frame (from +X axis)
-    units::angle::degree_t fieldAngleToTarget = units::math::atan2(yDistance, xDistance);
-    units::angle::degree_t robotRotation = pose.Rotation().Degrees();
+    // Calculate angle in world frame (from +X axis / forward direction)
+    // This is relative to field forward, not robot heading
+    units::degree_t angleToTarget = units::math::atan2(yDistance, xDistance);
 
-    // Convert to robot frame by subtracting robot's rotation
-    units::angle::degree_t angleToTarget = fieldAngleToTarget - robotRotation;
-
-    // Normalize angle to [-pi, pi]
-    angleToTarget = units::angle::degree_t{units::math::atan2(units::math::sin(angleToTarget), units::math::cos(angleToTarget))};
     return angleToTarget;
 }
 
