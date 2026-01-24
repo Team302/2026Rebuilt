@@ -21,7 +21,7 @@
 // FRC includes
 
 // Team 302 includes
-#include "mechanisms/Intake/LaunchState.h"
+#include "mechanisms/Launcher/PrepareToLaunchState.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "teleopcontrol/TeleopControlFunctions.h"
 #include "utils/logging/debug/Logger.h"
@@ -29,50 +29,50 @@
 // Third Party Includes
 
 using namespace std;
-using namespace IntakeStates;
+using namespace LauncherStates;
 
 /// @class ExampleForwardState
 /// @brief information about the control (open loop, closed loop position, closed loop velocity, etc.) for a mechanism state
-LaunchState::LaunchState(std::string stateName,
-						 int stateId,
-						 Intake *mech,
-						 RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId)
+PrepareToLaunchState::PrepareToLaunchState(std::string stateName,
+										   int stateId,
+										   Launcher *mech,
+										   RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId)
 {
 }
 
-void LaunchState::Init()
+void PrepareToLaunchState::Init()
 {
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LaunchState"), string("Init"));
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("PrepareToLaunchState"), string("Init"));
 
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
 		InitCompBot302();
 }
 
-void LaunchState::InitCompBot302()
+void PrepareToLaunchState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
-	// m_mechanism->UpdateTargetHopperPercentOut(m_hopperTarget);
+	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
+	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
 }
 
-void LaunchState::Run()
+void PrepareToLaunchState::Run()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LaunchState"), string("Run"));
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("PrepareToLaunchState"), string("Run"));
 }
 
-void LaunchState::Exit()
+void PrepareToLaunchState::Exit()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LaunchState"), string("Exit"));
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("PrepareToLaunchState"), string("Exit"));
 }
 
-bool LaunchState::AtTarget()
+bool PrepareToLaunchState::AtTarget()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LaunchState"), string("AtTarget"));
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("PrepareToLaunchState"), string("AtTarget"));
 
 	bool atTarget = false;
 	return atTarget;
 }
 
-bool LaunchState::IsTransitionCondition(bool considerGamepadTransitions)
+bool PrepareToLaunchState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
 	return false;

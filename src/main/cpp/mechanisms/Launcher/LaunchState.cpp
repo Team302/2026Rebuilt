@@ -21,7 +21,7 @@
 // FRC includes
 
 // Team 302 includes
-#include "mechanisms/Intake/LaunchState.h"
+#include "mechanisms/Launcher/LaunchState.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "teleopcontrol/TeleopControlFunctions.h"
 #include "utils/logging/debug/Logger.h"
@@ -29,13 +29,13 @@
 // Third Party Includes
 
 using namespace std;
-using namespace IntakeStates;
+using namespace LauncherStates;
 
 /// @class ExampleForwardState
 /// @brief information about the control (open loop, closed loop position, closed loop velocity, etc.) for a mechanism state
 LaunchState::LaunchState(std::string stateName,
 						 int stateId,
-						 Intake *mech,
+						 Launcher *mech,
 						 RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId)
 {
 }
@@ -50,8 +50,8 @@ void LaunchState::Init()
 
 void LaunchState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
-	// m_mechanism->UpdateTargetHopperPercentOut(m_hopperTarget);
+	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
+	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
 }
 
 void LaunchState::Run()

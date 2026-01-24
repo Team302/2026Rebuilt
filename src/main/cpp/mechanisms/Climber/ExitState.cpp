@@ -21,7 +21,7 @@
 // FRC includes
 
 // Team 302 includes
-#include "mechanisms/Intake/LaunchState.h"
+#include "mechanisms/Climber/ExitState.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "teleopcontrol/TeleopControlFunctions.h"
 #include "utils/logging/debug/Logger.h"
@@ -29,50 +29,51 @@
 // Third Party Includes
 
 using namespace std;
-using namespace IntakeStates;
+using namespace ClimberStates;
 
 /// @class ExampleForwardState
 /// @brief information about the control (open loop, closed loop position, closed loop velocity, etc.) for a mechanism state
-LaunchState::LaunchState(std::string stateName,
-						 int stateId,
-						 Intake *mech,
-						 RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId)
+ExitState::ExitState(std::string stateName,
+					 int stateId,
+					 Climber *mech,
+					 RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId)
 {
 }
 
-void LaunchState::Init()
+void ExitState::Init()
 {
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LaunchState"), string("Init"));
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("ExitState"), string("Init"));
 
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
 		InitCompBot302();
 }
 
-void LaunchState::InitCompBot302()
+void ExitState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
-	// m_mechanism->UpdateTargetHopperPercentOut(m_hopperTarget);
+	m_mechanism->UpdateTargetClimberPositionDegree(m_climberTarget);
+	m_mechanism->GetAllignment()->Set(m_allignmentTarget);
 }
 
-void LaunchState::Run()
+void ExitState::Run()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LaunchState"), string("Run"));
+	// MECH_TODO: Update Extender State when climber is below 5 deg?
+	//  Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("ExitState"), string("Run"));
 }
 
-void LaunchState::Exit()
+void ExitState::Exit()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LaunchState"), string("Exit"));
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("ExitState"), string("Exit"));
 }
 
-bool LaunchState::AtTarget()
+bool ExitState::AtTarget()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LaunchState"), string("AtTarget"));
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("ExitState"), string("AtTarget"));
 
 	bool atTarget = false;
 	return atTarget;
 }
 
-bool LaunchState::IsTransitionCondition(bool considerGamepadTransitions)
+bool ExitState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
 	return false;
