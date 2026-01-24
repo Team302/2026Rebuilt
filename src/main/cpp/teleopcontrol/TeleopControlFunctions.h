@@ -39,6 +39,7 @@ public:
         SYSID_QUASISTATICREVERSE,
         SYSID_DYNAMICFORWARD,
         SYSID_DYNAMICREVERSE,
+        DRIVE_TO_DEPOT,
 
         // tip correction controls
         TIPCORRECTION_TOGGLE,

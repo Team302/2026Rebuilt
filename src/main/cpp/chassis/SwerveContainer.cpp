@@ -17,6 +17,7 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "chassis/commands/TeleopFieldDrive.h"
 #include "chassis/commands/TeleopRobotDrive.h"
+#include "frc2/command/ProxyCommand.h"
 #include "frc2/command/button/RobotModeTriggers.h"
 #include "state/RobotState.h"
 #include "utils/logging/debug/Logger.h"
@@ -70,6 +71,7 @@ void SwerveContainer::ConfigureBindings()
     auto controller = TeleopControl::GetInstance();
 
     CreateStandardDriveCommands(controller);
+    CreateRebuiltDriveToCommands(controller);
 
     m_chassis->RegisterTelemetry([this](auto const &state)
                                  { logger.Telemeterize(state); });
@@ -114,6 +116,8 @@ void SwerveContainer::CreateStandardDriveCommands(TeleopControl *controller)
 //------------------------------------------------------------------
 void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
 {
+    // auto driveToDepot = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_DEPOT);
+    // driveToDepot.WhileTrue(frc2::ProxyCommand(m_driveToDepot.get()).ToPtr());
 }
 
 //------------------------------------------------------------------
