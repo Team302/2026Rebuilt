@@ -56,8 +56,8 @@ public:
         LEVEL3_CLIMB,
         ALIGN_TO_LEFT_TOWER,
         ALIGN_TO_RIGHT_TOWER,
-        MANUAL_ROTATE_DOWN,
-        MANUAL_ROTATE_UP,
+        CLIMB_MANUAL_ROTATE_DOWN,
+        CLIMB_MANUAL_ROTATE_UP,
 
         // LAUNCHER
         LAUNCHER_OFF,

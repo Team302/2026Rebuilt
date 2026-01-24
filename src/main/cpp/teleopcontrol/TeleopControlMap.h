@@ -162,8 +162,6 @@ robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlB
 
     {TeleopControlFunctions::INTAKE, driverRBumper},
     {TeleopControlFunctions::EXPEL, driverLBumper},
-    {TeleopControlFunctions::MANUAL_ROTATE_DOWN, driverLTriggerPressed},
-    {TeleopControlFunctions::MANUAL_ROTATE_UP, driverRTriggerPressed},
     {TeleopControlFunctions::LEVEL1_CLIMB, driverAButton},
     {TeleopControlFunctions::LEVEL3_CLIMB, driverYButton},
     {TeleopControlFunctions::ALIGN_TO_LEFT_TOWER, driverXButton},
@@ -227,4 +225,5 @@ robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlA
     {TeleopControlFunctions::UPDATE_VIRTUAL_LEFT_PASSING_TARGET_Y, copilotLJoystickX},
     {TeleopControlFunctions::UPDATE_VIRTUAL_RIGHT_PASSING_TARGET_X, copilotRJoystickY},
     {TeleopControlFunctions::UPDATE_VIRTUAL_RIGHT_PASSING_TARGET_Y, copilotRJoystickX},
-};
+    {TeleopControlFunctions::CLIMB_MANUAL_ROTATE_DOWN, driverLTrigger},
+    {TeleopControlFunctions::CLIMB_MANUAL_ROTATE_UP, driverRTrigger}};
