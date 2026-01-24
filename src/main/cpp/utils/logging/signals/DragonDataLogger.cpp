@@ -13,7 +13,6 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include "ctre/phoenix6/SignalLogger.hpp"
 #include "networktables/NetworkTable.h"
 #include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableInstance.h"
@@ -21,7 +20,6 @@
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include "utils/logging/signals/ISignalLogger.h"
 
-using ctre::phoenix6::SignalLogger;
 
 DragonDataLogger::DragonDataLogger()
 {
@@ -279,14 +277,20 @@ void DragonDataLogger::LogStringData(uint64_t timestamp, DragonDataLogger::Strin
         return;
     }
 
+    auto logger = dataMgr->GetLogger();
+    if (logger == nullptr)
+    {
+        return;
+    }
+
     switch (signalID)
     {
     case DragonDataLogger::StringSignals::CHASSIS_DRIVE_STATE:
-        SignalLogger::WriteString(m_driveStatePath, value, m_latency);
+        logger->WriteString(m_driveStatePath, value, m_latency);
         break;
 
     case DragonDataLogger::StringSignals::CHASSIS_HEADING_STATE:
-        SignalLogger::WriteString(m_headingStatePath, value, m_latency);
+        logger->WriteString(m_headingStatePath, value, m_latency);
         break;
 
     default:
@@ -301,6 +305,12 @@ void DragonDataLogger::Log2DPoseData(uint64_t timestamp, DragonDataLogger::PoseS
         return;
     }
 
+    auto logger = dataMgr->GetLogger();
+    if (logger == nullptr)
+    {
+        return;
+    }
+
     switch (signalID)
     {
     case DragonDataLogger::PoseSingals::CURRENT_CHASSIS_POSE2D:
@@ -309,7 +319,7 @@ void DragonDataLogger::Log2DPoseData(uint64_t timestamp, DragonDataLogger::PoseS
         double y = value.Y().value();
         double rot = value.Rotation().Radians().value();
         std::vector<double> pose = {x, y, rot};
-        SignalLogger::WriteDoubleArray(m_chassisPose2dPath, pose, m_pose2dUnits, m_latency);
+        logger->WriteDoubleArray(m_chassisPose2dPath, pose, m_pose2dUnits, m_latency);
         break;
     }
 
@@ -319,7 +329,7 @@ void DragonDataLogger::Log2DPoseData(uint64_t timestamp, DragonDataLogger::PoseS
         double y = value.Y().value();
         double rot = value.Rotation().Radians().value();
         std::vector<double> pose = {x, y, rot};
-        SignalLogger::WriteDoubleArray(m_questPose2dPath, pose, m_questPose2dUnits, m_latency);
+        logger->WriteDoubleArray(m_questPose2dPath, pose, m_questPose2dUnits, m_latency);
         break;
     }
     default:
@@ -330,31 +340,39 @@ void DragonDataLogger::Log2DPoseData(uint64_t timestamp, DragonDataLogger::PoseS
 void DragonDataLogger::Log3DPoseData(uint64_t timestamp, DragonDataLogger::PoseSingals signalID, frc::Pose3d value)
 {
     auto dataMgr = DragonDataLoggerMgr::GetInstance();
-    if (dataMgr != nullptr)
+    if (dataMgr == nullptr)
     {
-        switch (signalID)
-        {
-        case DragonDataLogger::PoseSingals::CURRENT_CHASSIS_LIMELIGHT_POSE3D:
-        {
-            double x = value.ToPose2d().X().value();
-            double y = value.ToPose2d().Y().value();
-            double rot = value.ToPose2d().Rotation().Radians().value();
-            std::vector<double> pose = {x, y, rot};
-            SignalLogger::WriteDoubleArray(m_limelight1Pose3dPath, pose, m_limelight2Pose3dPath, m_latency);
-            break;
-        }
-        case DragonDataLogger::PoseSingals::CURRENT_CHASSIS_LIMELIGHT2_POSE3D:
-        {
-            double x = value.ToPose2d().X().value();
-            double y = value.ToPose2d().Y().value();
-            double rot = value.ToPose2d().Rotation().Radians().value();
-            std::vector<double> pose = {x, y, rot};
-            SignalLogger::WriteDoubleArray(m_limelight2Pose3dPath, pose, m_limelight2Pose3dPath, m_latency);
-            break;
-        }
-        default:
-            break;
-        }
+        return;
+    }
+
+    auto logger = dataMgr->GetLogger();
+    if (logger == nullptr)
+    {
+        return;
+    }
+
+    switch (signalID)
+    {
+    case DragonDataLogger::PoseSingals::CURRENT_CHASSIS_LIMELIGHT_POSE3D:
+    {
+        double x = value.ToPose2d().X().value();
+        double y = value.ToPose2d().Y().value();
+        double rot = value.ToPose2d().Rotation().Radians().value();
+        std::vector<double> pose = {x, y, rot};
+        logger->WriteDoubleArray(m_limelight1Pose3dPath, pose, m_limelight2Pose3dPath, m_latency);
+        break;
+    }
+    case DragonDataLogger::PoseSingals::CURRENT_CHASSIS_LIMELIGHT2_POSE3D:
+    {
+        double x = value.ToPose2d().X().value();
+        double y = value.ToPose2d().Y().value();
+        double rot = value.ToPose2d().Rotation().Radians().value();
+        std::vector<double> pose = {x, y, rot};
+        logger->WriteDoubleArray(m_limelight2Pose3dPath, pose, m_limelight2Pose3dPath, m_latency);
+        break;
+    }
+    default:
+        break;
     }
 }
 

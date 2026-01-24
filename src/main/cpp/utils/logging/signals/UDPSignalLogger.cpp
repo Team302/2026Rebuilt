@@ -157,3 +157,18 @@ void UDPSignalLogger::WriteString(std::string signalID, const std::string &value
     std::string message = FormatMessage(signalID, "string", value, "string", timestamp);
     SendData(message);
 }
+
+void UDPSignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t timestamp)
+{
+    std::ostringstream oss;
+    for (size_t i = 0; i < value.size(); ++i)
+    {
+        oss << value[i];
+        if (i < value.size() - 1)
+        {
+            oss << ";"; 
+        }
+    }
+    std::string message = FormatMessage(signalID, "double_array", oss.str(), units, timestamp);
+    SendData(message);
+}

@@ -41,6 +41,11 @@ void CTRESignalLogger::WriteString(std::string signalID, const std::string &valu
     SignalLogger::WriteString(signalID, value, latency);
 }
 
+void CTRESignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t latency)
+{
+    SignalLogger::WriteDoubleArray(signalID, value, units, latency);
+}
+
 void CTRESignalLogger::Start()
 {
     SignalLogger::SetPath(GetLoggingDir().c_str());
