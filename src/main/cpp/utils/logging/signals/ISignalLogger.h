@@ -1,3 +1,4 @@
+
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -14,49 +15,25 @@
 //====================================================================================================================================================
 
 #pragma once
-#include <array>
+
+#include <string>
+#include <string_view>
+#include <cstdint>
+#include <units/time.h>
 #include <vector>
-#include <memory>
 
-#include "frc/Timer.h"
-#include "utils/logging/signals/ISignalLogger.h"
-#include "utils/logging/signals/DragonDataLogger.h"
-
-
-
-enum class LoggerType
-{
-    CTRE_SIGNAL_LOGGER,
-    UDP_LOGGER,
-    NETWORK_TABLES_LOGGER
-};
-
-class DragonDataLoggerMgr
+class ISignalLogger
 {
 public:
-    static DragonDataLoggerMgr *GetInstance();
+    virtual ~ISignalLogger() = default;
 
-    DragonDataLoggerMgr(const DragonDataLoggerMgr &) = delete;
-    DragonDataLoggerMgr &operator=(const DragonDataLoggerMgr &) = delete;
+    virtual void WriteBoolean(std::string signalID, bool value, units::time::second_t latency) = 0;
+    virtual void WriteDouble(std::string signalID, double value, std::string_view units, units::time::second_t latency) = 0;
+    virtual void WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::second_t latency) = 0;
+    virtual void WriteString(std::string signalID, const std::string &value, units::time::second_t latency) = 0;
+    virtual void WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t latency) = 0;
 
-    void SetLogger(std::unique_ptr<ISignalLogger> logger);
-    void SetLoggerType(LoggerType type, const std::string &ipAddress = "", int port = 0);
-    ISignalLogger *GetLogger() const { return m_logger.get(); }
-
-    void RegisterItem(DragonDataLogger *item);
-    void PeriodicDataLog();
-
-private:
-    DragonDataLoggerMgr();
-    ~DragonDataLoggerMgr();
-    
-    std::vector<DragonDataLogger *> m_items;
-    frc::Timer m_timer;
-    unsigned int m_lastIndex = 0;
-
-
-    const units::time::second_t m_period{0.00075};
-
-    static DragonDataLoggerMgr *m_instance;
-    std::unique_ptr<ISignalLogger> m_logger;
+    // Optional: methods for starting/stopping logging
+    virtual void Start() = 0;
+    virtual void Stop() = 0;
 };
