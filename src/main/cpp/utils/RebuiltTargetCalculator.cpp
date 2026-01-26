@@ -18,7 +18,10 @@
 RebuiltTargetCalculator::RebuiltTargetCalculator()
 {
     // TODO: update launcher offsets and target position(need to use zone logic later and field element calculator to get target position)
-    // Launcher offset initialized in member variable declaration for now
+    // Mechanism offset initialized in member variable declaration for now
+
+    TargetCalculator();
+    SetMechanismOffset(m_mechanismOffset);
 }
 
 RebuiltTargetCalculator *RebuiltTargetCalculator::m_instance = nullptr;
@@ -39,14 +42,4 @@ frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
     // - Zone detector for zone-specific targets
     // For now, return hardcoded hub target for testing
     return m_hubTarget;
-}
-
-void RebuiltTargetCalculator::SetLauncherOffset(units::meter_t xOffset, units::meter_t yOffset)
-{
-    m_launcherOffset = frc::Translation2d{xOffset, yOffset};
-}
-
-frc::Translation2d RebuiltTargetCalculator::GetLauncherOffset() const
-{
-    return m_launcherOffset;
 }

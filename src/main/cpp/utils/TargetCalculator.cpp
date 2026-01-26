@@ -63,28 +63,28 @@ frc::Translation2d TargetCalculator::CalculateVirtualTarget(
         realTarget.Y() - offsetY};
 }
 
-frc::Translation2d TargetCalculator::GetLauncherWorldPosition() const
+frc::Translation2d TargetCalculator::GetMechanismWorldPosition() const
 {
-    auto pose = GetChassisPose();
+    auto robotPose = GetChassisPose();
+    return robotPose.Translation() + m_mechanismOffset.RotateBy(robotPose.Rotation());
 
-    // Get launcher position in robot frame
-    auto launcherOffsetRobot = GetLauncherOffset();
-    auto launcherX_robot = launcherOffsetRobot.X();
-    auto launcherY_robot = launcherOffsetRobot.Y();
+    // // Get mechanism position in robot frame
+    // auto mechanismX_robot = m_mechanismOffset.X();
+    // auto mechanismY_robot = m_mechanismOffset.Y();
 
-    // Get robot's rotation
-    auto robotAngle = pose.Rotation().Degrees();
-    auto cosTheta = units::math::cos(robotAngle);
-    auto sinTheta = units::math::sin(robotAngle);
+    // // Get robot's rotation
+    // auto robotAngle = pose.Rotation().Degrees();
+    // auto cosTheta = units::math::cos(robotAngle);
+    // auto sinTheta = units::math::sin(robotAngle);
 
-    // Rotate launcher position from robot frame to world frame
-    auto launcherX_world = launcherX_robot * cosTheta - launcherY_robot * sinTheta;
-    auto launcherY_world = launcherX_robot * sinTheta + launcherY_robot * cosTheta;
+    // // Rotate mechanism position from robot frame to world frame
+    // auto mechanismX_world = mechanismX_robot * cosTheta - mechanismY_robot * sinTheta;
+    // auto mechanismY_world = mechanismX_robot * sinTheta + mechanismY_robot * cosTheta;
 
-    // Translate to world position (add robot center)
-    return frc::Translation2d{
-        pose.X() + launcherX_world,
-        pose.Y() + launcherY_world};
+    // // Translate to world position (add robot center)
+    // return frc::Translation2d{
+    //     pose.X() + mechanismX_world,
+    //     pose.Y() + mechanismY_world};
 }
 
 units::meter_t TargetCalculator::CalculateDistanceToTarget(units::time::second_t lookaheadTime)
@@ -99,15 +99,15 @@ units::meter_t TargetCalculator::CalculateDistanceToTarget(units::time::second_t
     return robotPosition.Distance(targetPos);
 }
 
-units::meter_t TargetCalculator::CalculateLauncherDistanceToTarget(units::time::second_t lookaheadTime)
+units::meter_t TargetCalculator::CalculateMechanismDistanceToTarget(units::time::second_t lookaheadTime)
 {
-    frc::Translation2d launcherPos = GetLauncherWorldPosition();
+    frc::Translation2d mechanismPos = GetMechanismWorldPosition();
 
     auto realTarget = GetTargetPosition();
     auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
 
-    // Calculate distance from launcher to target
-    return launcherPos.Distance(targetPos);
+    // Calculate distance from mechanism to target
+    return mechanismPos.Distance(targetPos);
 }
 
 units::degree_t TargetCalculator::CalculateAngleToTarget(units::time::second_t lookaheadTime)
@@ -129,16 +129,16 @@ units::degree_t TargetCalculator::CalculateAngleToTarget(units::time::second_t l
     return angleToTarget;
 }
 
-units::degree_t TargetCalculator::CalculateLauncherAngleToTarget(units::time::second_t lookaheadTime)
+units::degree_t TargetCalculator::CalculateMechanismAngleToTarget(units::time::second_t lookaheadTime)
 {
-    frc::Translation2d launcherPos = GetLauncherWorldPosition();
+    frc::Translation2d mechanismPos = GetMechanismWorldPosition();
 
     auto realTarget = GetTargetPosition();
     auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
 
-    // Calculate vector from launcher to target in world frame
-    auto xDistance = (targetPos.X() - launcherPos.X());
-    auto yDistance = (targetPos.Y() - launcherPos.Y());
+    // Calculate vector from mechanism to target in world frame
+    auto xDistance = (targetPos.X() - mechanismPos.X());
+    auto yDistance = (targetPos.Y() - mechanismPos.Y());
 
     // Calculate angle in world frame (from +X axis / forward direction)
     // This is relative to field forward, not robot heading
@@ -147,9 +147,9 @@ units::degree_t TargetCalculator::CalculateLauncherAngleToTarget(units::time::se
     return angleToTarget;
 }
 
-void TargetCalculator::SetLauncherOffset(units::meter_t xOffset, units::meter_t yOffset)
+void TargetCalculator::SetMechanismOffset(frc::Translation2d offset)
 {
-    // Default implementation does nothing. Subclasses should override if needed. May not need for different mechanisms.
+    m_mechanismOffset = offset;
 }
 
 frc::Pose2d TargetCalculator::GetVirtualTargetPose(
