@@ -112,21 +112,13 @@ units::meter_t TargetCalculator::CalculateMechanismDistanceToTarget(units::time:
 
 units::degree_t TargetCalculator::CalculateAngleToTarget(units::time::second_t lookaheadTime)
 {
-    frc::Pose2d pose = GetChassisPose();
-    frc::Translation2d robotPosition = frc::Translation2d{pose.X(), pose.Y()};
+    frc::Pose2d robotPose = GetChassisPose();
 
     auto realTarget = GetTargetPosition();
     auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
+    frc::Translation2d vectorToTarget = targetPos - robotPose.Translation();
 
-    // Calculate vector from robot center to target in world frame
-    auto xDistance = (targetPos.X() - robotPosition.X());
-    auto yDistance = (targetPos.Y() - robotPosition.Y());
-
-    // Calculate angle in world frame (from +X axis / forward direction)
-    // This is relative to field forward, not robot heading
-    units::angle::degree_t angleToTarget = units::math::atan2(yDistance, xDistance);
-
-    return angleToTarget;
+    return vectorToTarget.Angle().Degrees();
 }
 
 units::degree_t TargetCalculator::CalculateMechanismAngleToTarget(units::time::second_t lookaheadTime)
@@ -135,16 +127,9 @@ units::degree_t TargetCalculator::CalculateMechanismAngleToTarget(units::time::s
 
     auto realTarget = GetTargetPosition();
     auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
+    frc::Translation2d vectorToTarget = targetPos - mechanismPos;
 
-    // Calculate vector from mechanism to target in world frame
-    auto xDistance = (targetPos.X() - mechanismPos.X());
-    auto yDistance = (targetPos.Y() - mechanismPos.Y());
-
-    // Calculate angle in world frame (from +X axis / forward direction)
-    // This is relative to field forward, not robot heading
-    units::degree_t angleToTarget = units::math::atan2(yDistance, xDistance);
-
-    return angleToTarget;
+    return vectorToTarget.Angle().Degrees();
 }
 
 void TargetCalculator::SetMechanismOffset(frc::Translation2d offset)
