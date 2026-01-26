@@ -119,12 +119,6 @@ public:
     void SetLEDMode(DRAGON_LIMELIGHT_LED_MODE mode);
 
     ///-----------------------------------------------------------------------------------
-    /// @brief Set the camera mode (vision vs driver camera).
-    /// @param mode Camera mode enum to write to the Limelight NT entry.
-    ///-----------------------------------------------------------------------------------
-    void SetCamMode(DRAGON_LIMELIGHT_CAM_MODE mode);
-
-    ///-----------------------------------------------------------------------------------
     /// @brief Select the active Limelight pipeline index.
     /// @param pipeline Pipeline enum index to set on the Limelight.
     ///-----------------------------------------------------------------------------------
@@ -195,7 +189,7 @@ private:
     /// @brief Important internal state used by Limelight wrapper.
     ///-----------------------------------------------------------------------------------
     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER m_identifier;
-    std::shared_ptr<nt::NetworkTable> m_limelightNT;
+    std::string m_networkTableName; ///< network table name for this Limelight
 
     const double START_HB = -9999;     ///< initial heartbeat sentinel
     const double MAX_HB = 2000000000;  ///< safety max heartbeat (unused currently)
