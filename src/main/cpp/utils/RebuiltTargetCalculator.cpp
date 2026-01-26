@@ -22,6 +22,10 @@ RebuiltTargetCalculator::RebuiltTargetCalculator()
 
     TargetCalculator();
     SetMechanismOffset(m_mechanismOffset);
+
+    m_field = DragonField::GetInstance();
+    m_field->AddPose("TargetPosition", frc::Pose2d(GetTargetPosition(), frc::Rotation2d()));
+    m_field->AddPose("LauncherPosition", frc::Pose2d());
 }
 
 RebuiltTargetCalculator *RebuiltTargetCalculator::m_instance = nullptr;
@@ -42,4 +46,47 @@ frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
     // - Zone detector for zone-specific targets
     // For now, return hardcoded hub target for testing
     return m_hubTarget;
+}
+
+units::angle::degree_t RebuiltTargetCalculator::GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle)
+{
+
+    m_field->UpdateObject("TargetPosition", GetVirtualTargetPose(looheadTime));
+
+    units::degree_t fieldAngleToTarget = CalculateMechanismAngleToTarget(looheadTime);
+    auto robotPose = GetChassisPose();
+
+    frc::Rotation2d relativeRot = frc::Rotation2d(fieldAngleToTarget) - robotPose.Rotation();
+    units::degree_t robotRelativeGoal = relativeRot.Degrees();
+
+    units::degree_t bestAngle = 0_deg;
+    bool hasFoundValidAngle = false;
+    units::degree_t minDistance = 10000_deg; // Extremely large initial value to ensure any valid angle is closer
+
+    for (int i = -1; i <= 1; i++)
+    {
+        units::degree_t potentialSetpoint = robotRelativeGoal + (360_deg * i);
+
+        if (potentialSetpoint >= m_minLauncherAngle && potentialSetpoint <= m_maxLauncherAngle)
+        {
+            auto distance = units::math::abs(potentialSetpoint - currentLauncherAngle);
+            if (distance < minDistance)
+            {
+                bestAngle = potentialSetpoint;
+                minDistance = distance;
+                hasFoundValidAngle = true;
+            }
+        }
+    }
+
+    if (!hasFoundValidAngle)
+    {
+        units::degree_t normalizedGoal = relativeRot.Degrees();
+        if (normalizedGoal < 0_deg)
+            normalizedGoal += 360_deg;
+        bestAngle = std::clamp(normalizedGoal, m_minLauncherAngle, m_maxLauncherAngle);
+    }
+
+    m_field->UpdateObject("LauncherPosition", frc::Pose2d(GetMechanismWorldPosition(), robotPose.Rotation() + frc::Rotation2d(bestAngle)));
+    return bestAngle;
 }

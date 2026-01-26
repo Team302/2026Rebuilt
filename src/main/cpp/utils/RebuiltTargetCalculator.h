@@ -15,6 +15,7 @@
 #pragma once
 
 #include "utils/TargetCalculator.h"
+#include "utils/DragonField.h"
 
 #include <frc/geometry/Translation2d.h>
 #include <units/length.h>
@@ -43,6 +44,11 @@ public:
      * \return Translation2d with target position in meters (world frame)
      */
     frc::Translation2d GetTargetPosition() override;
+    /**
+     * \brief Get the launcher angle target to hit the current target within launcher limits
+     * \return Angle in degrees
+     */
+    units::angle::degree_t GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle);
 
 private:
     /**
@@ -59,4 +65,9 @@ private:
     // Mechanism position offset from robot center in robot frame (meters)
     // Default: 5.5 inches (0.1397m) back, centered
     frc::Translation2d m_mechanismOffset{-0.1397_m, 0_m};
+
+    DragonField *m_field; // Want to add targets and launcehr position
+
+    const units::degree_t m_minLauncherAngle = 90_deg;
+    const units::degree_t m_maxLauncherAngle = 270_deg;
 };
