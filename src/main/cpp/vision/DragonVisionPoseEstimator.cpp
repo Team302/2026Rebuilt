@@ -166,7 +166,7 @@ void DragonVisionPoseEstimator::CalculateInitialPose()
  */
 void DragonVisionPoseEstimator::AddVisionMeasurements()
 {
-    if (m_vision == nullptr)
+    if (m_vision == nullptr || m_chassis == nullptr)
     {
         return;
     }
