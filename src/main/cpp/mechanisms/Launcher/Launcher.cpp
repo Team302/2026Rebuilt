@@ -609,8 +609,8 @@ ControlData *Launcher::GetControlData(string name)
 
 	return nullptr;
 }
-void PublishLaunchMode(int currentLaunchState) override;
 
+void Launcher::PublishLaunchMode(int currentLaunchState) override
 {
 	PublishLaunchMode(GetCurrentState());
 }
