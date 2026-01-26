@@ -67,24 +67,6 @@ frc::Translation2d TargetCalculator::GetMechanismWorldPosition() const
 {
     auto robotPose = GetChassisPose();
     return robotPose.Translation() + m_mechanismOffset.RotateBy(robotPose.Rotation());
-
-    // // Get mechanism position in robot frame
-    // auto mechanismX_robot = m_mechanismOffset.X();
-    // auto mechanismY_robot = m_mechanismOffset.Y();
-
-    // // Get robot's rotation
-    // auto robotAngle = pose.Rotation().Degrees();
-    // auto cosTheta = units::math::cos(robotAngle);
-    // auto sinTheta = units::math::sin(robotAngle);
-
-    // // Rotate mechanism position from robot frame to world frame
-    // auto mechanismX_world = mechanismX_robot * cosTheta - mechanismY_robot * sinTheta;
-    // auto mechanismY_world = mechanismX_robot * sinTheta + mechanismY_robot * cosTheta;
-
-    // // Translate to world position (add robot center)
-    // return frc::Translation2d{
-    //     pose.X() + mechanismX_world,
-    //     pose.Y() + mechanismY_world};
 }
 
 units::meter_t TargetCalculator::CalculateDistanceToTarget(units::time::second_t lookaheadTime)
