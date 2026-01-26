@@ -33,7 +33,7 @@
 
 // Team 302 includes
 #include "chassis/ChassisConfigMgr.h"
-#include "chassis/Generated/CommandSwerveDrivetrain.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "fielddata/FieldAprilTagIDs.h"
 #include "vision/DragonVisionEnums.h"
 #include "vision/DragonVisionStruct.h"
