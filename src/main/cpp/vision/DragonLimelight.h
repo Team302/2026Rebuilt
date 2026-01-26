@@ -32,6 +32,8 @@
 #include "units/time.h"
 
 // Team 302 includes
+#include "chassis/ChassisConfigMgr.h"
+#include "chassis/Generated/CommandSwerveDrivetrain.h"
 #include "fielddata/FieldAprilTagIDs.h"
 #include "vision/DragonVisionEnums.h"
 #include "vision/DragonVisionStruct.h"
@@ -203,8 +205,8 @@ private:
     DRAGON_LIMELIGHT_PIPELINE m_pipeline; ///< currently selected pipeline
 
     // from old dragon camera
-    std::string m_cameraName; ///< sanitized camera name used with helpers
-    // subsystems::CommandSwerveDrivetrain *m_chassis;      ///< pointer to chassis for orientation/limits
+    std::string m_cameraName;                            ///< sanitized camera name used with helpers
+    subsystems::CommandSwerveDrivetrain *m_chassis;      ///< pointer to chassis for orientation/limits
     frc::Pose3d m_cameraPose;                            ///< camera transform relative to robot
     const double m_maxRotationRateDegreesPerSec = 720.0; ///< fallback limit if chassis not available
     // Small orientation/yaw/pitch members used when setting robot orientation in Limelight
