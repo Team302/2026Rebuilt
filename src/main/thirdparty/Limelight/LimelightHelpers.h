@@ -19,6 +19,13 @@
 #include <chrono>
 #include <cstring>
 #include <iostream>
+#include <string>
+#include <vector>
+#include <memory>
+#include <unordered_map>
+#include <span>
+#include <numbers>
+#include <algorithm>
 
 #include "networktables/DoubleArrayTopic.h"
 #include "networktables/NetworkTable.h"
