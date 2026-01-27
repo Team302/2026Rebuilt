@@ -70,14 +70,14 @@ public:
     frc::Translation2d CalculateVirtualTarget(const frc::Translation2d &realTarget, units::time::second_t lookaheadTime) const;
 
     /**
-     * \brief Get launcher/mechanism position in world coordinates
+     * \brief Get mechanism/mechanism position in world coordinates
      *
-     * The launcher position is defined relative to the robot's center in robot coordinates,
+     * The mechanism position is defined relative to the robot's center in robot coordinates,
      * then rotated and translated to world coordinates using the current chassis pose.
      *
-     * \return Translation2d with launcher position in meters (world frame)
+     * \return Translation2d with mechanism position in meters (world frame)
      */
-    frc::Translation2d GetLauncherWorldPosition() const;
+    frc::Translation2d GetMechanismWorldPosition() const;
 
     /**
      * \brief Calculate distance from chassis center to target
@@ -87,14 +87,14 @@ public:
     units::meter_t CalculateDistanceToTarget(units::time::second_t lookaheadTime = 0_s);
 
     /**
-     * \brief Calculate distance from launcher to target
+     * \brief Calculate distance from mechanism to target
      *
      * More precise than chassis center distance for mechanisms offset from robot center.
      *
      * \param lookaheadTime Time in seconds for virtual target calculation (default 0 = no compensation)
      * \return Distance in meters
      */
-    units::meter_t CalculateLauncherDistanceToTarget(units::time::second_t lookaheadTime = 0_s);
+    units::meter_t CalculateMechanismDistanceToTarget(units::time::second_t lookaheadTime = 0_s);
 
     /**
      * \brief Calculate angle from chassis center to target in robot frame
@@ -107,7 +107,7 @@ public:
     units::degree_t CalculateAngleToTarget(units::time::second_t lookaheadTime = 0_s);
 
     /**
-     * \brief Calculate angle from launcher to target in robot frame
+     * \brief Calculate angle from mechanism to target in robot frame
      *
      * More precise than chassis center angle for mechanisms offset from robot center.
      * Robot frame: 0° = forward (robot +X), 90° = left (robot +Y), -90° = right
@@ -115,21 +115,15 @@ public:
      * \param lookaheadTime Time in seconds for virtual target calculation (default 0 = no compensation)
      * \return Angle in degrees
      */
-    units::degree_t CalculateLauncherAngleToTarget(units::time::second_t lookaheadTime = 0_s);
+    units::degree_t CalculateMechanismAngleToTarget(units::time::second_t lookaheadTime = 0_s);
 
     /**
-     * \brief Set the launcher offset from robot center in robot coordinates
+     * \brief Set the mechanism offset from robot center in robot coordinates
      *
      * \param xOffset X offset in meters (+ = forward)
      * \param yOffset Y offset in meters (+ = left)
      */
-    virtual void SetLauncherOffset(units::meter_t xOffset, units::meter_t yOffset);
-
-    /**
-     * \brief Get the current launcher offset in robot coordinates
-     * \return Translation2d with X, Y offsets in meters
-     */
-    virtual frc::Translation2d GetLauncherOffset() const { return frc::Translation2d(); }
+    void SetMechanismOffset(frc::Translation2d offset);
 
     /**
      * \brief Get the virtual target position based on chassis velocity
@@ -158,6 +152,7 @@ protected:
 
 private:
     static TargetCalculator *m_instance;
+    frc::Translation2d m_mechanismOffset;
 
     subsystems::CommandSwerveDrivetrain *m_chassis;
 };

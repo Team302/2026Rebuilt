@@ -15,6 +15,7 @@
 #pragma once
 
 #include "utils/TargetCalculator.h"
+#include "utils/DragonField.h"
 
 #include <frc/geometry/Translation2d.h>
 #include <units/length.h>
@@ -25,7 +26,7 @@
  *
  * This class extends TargetCalculator with 2026-specific configuration:
  * - Hardcoded hub target (for testing, will integrate with field element calculator later)
- * - Launcher offset configuration for the shooting mechanism
+ * - Mechanism offset configuration for the shooting mechanism
  *
  * TODO: Integrate with FieldElementCalculator and ZoneCalculator when available
  */
@@ -43,24 +44,15 @@ public:
      * \return Translation2d with target position in meters (world frame)
      */
     frc::Translation2d GetTargetPosition() override;
-
     /**
-     * \brief Set the launcher offset from robot center in robot coordinates
-     *
-     * \param xOffset X offset in meters (+ = forward)
-     * \param yOffset Y offset in meters (+ = left)
+     * \brief Get the launcher angle target to hit the current target within launcher limits
+     * \return Angle in degrees
      */
-    void SetLauncherOffset(units::meter_t xOffset, units::meter_t yOffset) override;
-
-    /**
-     * \brief Get the current launcher offset in robot coordinates
-     * \return Translation2d with X, Y offsets in meters
-     */
-    frc::Translation2d GetLauncherOffset() const override;
+    units::angle::degree_t GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle);
 
 private:
     /**
-     * \brief Constructor - initializes with default launcher offset
+     * \brief Constructor - initializes with default mechanism offset
      */
     RebuiltTargetCalculator();
 
@@ -70,7 +62,12 @@ private:
     // Hardcoded hub target for testing (approximate field position in meters)
     frc::Translation2d m_hubTarget{4.625_m, 4.025_m};
 
-    // Launcher position offset from robot center in robot frame (meters)
+    // Mechanism position offset from robot center in robot frame (meters)
     // Default: 5.5 inches (0.1397m) back, centered
-    frc::Translation2d m_launcherOffset{-0.1397_m, 0_m};
+    frc::Translation2d m_mechanismOffset{-0.1397_m, 0_m};
+
+    DragonField *m_field; // Want to add targets and launcehr position
+
+    const units::degree_t m_minLauncherAngle = 90_deg;
+    const units::degree_t m_maxLauncherAngle = 270_deg;
 };
