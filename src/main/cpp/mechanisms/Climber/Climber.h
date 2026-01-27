@@ -36,7 +36,6 @@
 #include "state/IRobotStateChangeSubscriber.h"
 #include "mechanisms/controllers/ControlData.h"
 #include "state/RobotStateChanges.h"
-#include "state/RobotState.h"
 
 #include "configs/RobotElementNames.h"
 #include "configs/MechanismConfigMgr.h"
