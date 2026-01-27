@@ -33,6 +33,7 @@
 #include "state/IRobotStateChangeSubscriber.h"
 #include "mechanisms/controllers/ControlData.h"
 #include "state/RobotStateChanges.h"
+#include "state/RobotState.h"
 
 #include "configs/RobotElementNames.h"
 #include "configs/MechanismConfigMgr.h"
@@ -130,6 +131,10 @@ public:
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
 
 	void SetCurrentState(int state, bool run) override;
+	void PublishLaunchMode(bool launching);
+	void NotifyStateUpdate(RobotStateChanges::StateChange statechange, bool value) override;
+	bool IsInClimbMode() const { return m_isClimbMode; }
+	bool IsAllowedToClimb() const { return m_isAllowedToClimb; }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -170,5 +175,7 @@ private:
 	ctre::phoenix6::controls::ControlRequest *m_turretActiveTarget;
 	ctre::phoenix6::controls::ControlRequest *m_indexerActiveTarget;
 
+	bool m_isClimbMode = false;
+	bool m_isAllowedToClimb = false;
 	// void InitializeLogging();
 };

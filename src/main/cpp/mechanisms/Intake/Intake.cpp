@@ -97,6 +97,9 @@ Intake::Intake(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANI
 												m_stateMap()
 {
 	PeriodicLooper::GetInstance()->RegisterAll(this);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsLaunching_Bool);
+
 	// InitializeLogging();
 }
 
@@ -288,8 +291,13 @@ void Intake::RunCommonTasks()
 	// This function is called once per loop before the current state Run()
 	ManualControl();
 	Cyclic();
-}
 
+	if (m_isAllowedToClimb == GetIsIntakeExtendedState())
+	{
+		m_isAllowedToClimb = !GetIsIntakeExtendedState();
+		NotifyStateUpdate(RobotStateChanges::StateChange::ClimbModeStatus_Bool, m_isAllowedToClimb);
+	}
+}
 /// @brief  Set the control constants (e.g. PIDF values).
 /// @param [in] ControlData*                                   pid:  the control constants
 /// @return void
@@ -320,6 +328,17 @@ ControlData *Intake::GetControlData(string name)
 		return m_percentOut;
 
 	return nullptr;
+}
+void Intake::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value)
+{
+	if (change == RobotStateChanges::StateChange::ClimbModeStatus_Bool)
+	{
+		m_isInClimbMode = value;
+	}
+	else if (change == RobotStateChanges::StateChange::IsLaunching_Bool)
+	{
+		m_isLaunching = value;
+	}
 }
 void Intake::ManualControl()
 {
