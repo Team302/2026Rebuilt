@@ -289,8 +289,13 @@ void Intake::RunCommonTasks()
 {
 	// This function is called once per loop before the current state Run()
 	Cyclic();
-}
 
+	if (m_isAllowedToClimb == GetIsIntakeExtendedState())
+	{
+		m_isAllowedToClimb = !GetIsIntakeExtendedState();
+		NotifyStateUpdate(RobotStateChanges::StateChange::ClimbModeStatus_Bool, m_isAllowedToClimb);
+	}
+}
 /// @brief  Set the control constants (e.g. PIDF values).
 /// @param [in] ControlData*                                   pid:  the control constants
 /// @return void

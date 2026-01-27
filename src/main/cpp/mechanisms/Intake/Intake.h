@@ -125,5 +125,6 @@ private:
 
 	bool m_isInClimbMode = false;
 	bool m_isLaunching = false;
+	bool m_isAllowedToClimb = false;
 	// void InitializeLogging();
 };
