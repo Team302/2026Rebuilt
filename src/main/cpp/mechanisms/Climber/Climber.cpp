@@ -93,13 +93,12 @@ void Climber::CreateAndRegisterStates()
 Climber::Climber(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANISM_TYPE::CLIMBER, std::string("Climber")),
 												  m_activeRobotId(activeRobotId),
 												  m_stateMap(),
-												  m_climbMode(RobotStateChanges::ClimbMode::CLIMB_MODE_OFF),
-												  m_AllowedToClimb(RobotStateChanges::AllowedToClimb::NOT_ALLOWED)
+												  m_climbModeStatus(false),
+												  m_allowedToClimb(false)
 {
 	PeriodicLooper::GetInstance()->RegisterAll(this);
-	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Int);
-	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::GameState_Int);
-	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Int);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Bool);
 
 	// InitializeLogging();
 }
@@ -275,19 +274,16 @@ void Climber::Cyclic()
 {
 	Update();
 }
-void Climber::NotifyStateUpdate(RobotStateChanges::StateChange statechange, int value)
+void Climber::NotifyStateUpdate(RobotStateChanges::StateChange statechange, bool value)
 {
-	if (statechange == RobotStateChanges::StateChange::ClimbModeStatus_Int)
+	if (statechange == RobotStateChanges::StateChange::ClimbModeStatus_Bool)
 	{
-		m_climbMode = static_cast<RobotStateChanges::ClimbMode>(value);
+		m_climbModeStatus = value;
 	}
-	else if (statechange == RobotStateChanges::StateChange::GameState_Int)
+
+	else if (statechange == RobotStateChanges::StateChange::AllowedToClimbStatus_Bool)
 	{
-		m_gameMode = static_cast<RobotStateChanges::GamePeriod>(value);
-	}
-	else if (statechange == RobotStateChanges::StateChange::AllowedToClimbStatus_Int)
-	{
-		m_AllowedToClimb = static_cast<RobotStateChanges::AllowedToClimb>(value);
+		m_allowedToClimb = value;
 	}
 }
 

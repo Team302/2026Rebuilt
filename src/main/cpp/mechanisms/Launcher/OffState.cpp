@@ -46,6 +46,7 @@ void OffState::Init()
 
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
 		InitCompBot302();
+	m_mechanism->PublishLaunchMode(false);
 }
 
 void OffState::InitCompBot302()

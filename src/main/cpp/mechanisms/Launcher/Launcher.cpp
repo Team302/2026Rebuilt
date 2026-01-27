@@ -106,8 +106,8 @@ Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MEC
 													m_stateMap()
 {
 	PeriodicLooper::GetInstance()->RegisterAll(this);
-	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Int);
-	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Int);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Bool);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 
 	// InitializeLogging();
 }
@@ -610,14 +610,23 @@ ControlData *Launcher::GetControlData(string name)
 	return nullptr;
 }
 
-void Launcher::PublishLaunchMode(int currentLaunchState) override
+void Launcher::PublishLaunchMode(bool launching)
 {
-	PublishLaunchMode(GetCurrentState());
+	RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::IsLaunching_Bool, launching);
 }
-int Launcher::GetCurrentState()
+
+void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, bool value)
 {
-	return StateMgr::GetCurrentState();
+	if (statechange == RobotStateChanges::StateChange::ClimbModeStatus_Bool)
+	{
+		m_isClimbMode = value;
+	}
+	else if (statechange == RobotStateChanges::StateChange::AllowedToClimbStatus_Bool)
+	{
+		m_isAllowedToClimb = value;
+	}
 }
+
 /* void Launcher::DataLog(uint64_t timestamp)
 {
    auto currTime = m_powerTimer.Get();

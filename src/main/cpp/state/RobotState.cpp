@@ -182,17 +182,10 @@ void RobotState::PublishClimbMode(TeleopControl *controller)
     {
         if (m_climbButtonReleased)
         {
-            m_climbMode = (m_climbMode == RobotStateChanges::CLIMB_MODE_OFF) ? RobotStateChanges::CLIMB_MODE_ON : RobotStateChanges::CLIMB_MODE_OFF;
+            m_climbModeStatus = !m_climbModeStatus;
 
-            PublishStateChange(RobotStateChanges::ClimbModeStatus_Int, m_climbMode);
+            PublishStateChange(RobotStateChanges::ClimbModeStatus_Bool, m_climbModeStatus);
         }
     }
     m_climbButtonReleased = !controller->IsButtonPressed(TeleopControlFunctions::CLIMB_MODE);
-}
-void RobotState::PublishLaunchMode(int currentLaunchState)
-{
-    PublishStateChange(RobotStateChanges::LaunchingMode_Int, currentLaunchState);
-}
-void RobotState::PublishAllowedToClimbStatus(bool intakeStatus)
-{
 }

@@ -57,7 +57,7 @@ public:
 
     void HandleDashboard();
 
-    void NotifyStateUpdate(RobotStateChanges::StateChange change, int value) override;
+    void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
 
 private:
     DragonQuest() = delete;
@@ -101,5 +101,5 @@ private:
     frc::Pose2d m_rawQuestPose;
 
     bool m_isQuestEnabled = false; // <I> Is the Quest enabled?
-    RobotStateChanges::ClimbMode m_climbMode = RobotStateChanges::ClimbMode::CLIMB_MODE_OFF;
+    bool m_isClimbMode = false;
 };

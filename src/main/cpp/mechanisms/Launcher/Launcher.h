@@ -40,7 +40,7 @@
 
 #include "RobotIdentifier.h"
 
-class Launcher : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public RobotState
+class Launcher : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber
 {
 public:
 	enum STATE_NAMES
@@ -131,8 +131,8 @@ public:
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
 
 	void SetCurrentState(int state, bool run) override;
-	void PublishLaunchMode(int currentLaunchState) override;
-	inline int GetCurrentState() const override;
+	void PublishLaunchMode(bool launching);
+	void NotifyStateUpdate(RobotStateChanges::StateChange statechange, bool value) override;
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -173,5 +173,7 @@ private:
 	ctre::phoenix6::controls::ControlRequest *m_turretActiveTarget;
 	ctre::phoenix6::controls::ControlRequest *m_indexerActiveTarget;
 
+	bool m_isClimbMode = false;
+	bool m_isAllowedToClimb = false;
 	// void InitializeLogging();
 };

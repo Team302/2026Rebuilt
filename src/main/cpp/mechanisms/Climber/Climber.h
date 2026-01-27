@@ -43,7 +43,7 @@
 
 #include "RobotIdentifier.h"
 
-class Climber : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public RobotState
+class Climber : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber
 {
 public:
 	enum STATE_NAMES
@@ -83,9 +83,7 @@ public:
 	void RunCommonTasks() override;
 	// void DataLog() override;
 
-	void NotifyStateUpdate(RobotStateChanges::StateChange stchange, int value) override;
-	bool IsClimbMode() const { return m_climbMode == RobotStateChanges::ClimbMode::CLIMB_MODE_ON; }
-	bool IsAuton() { return m_gameMode == RobotStateChanges::GamePeriod::Auton; };
+	void NotifyStateUpdate(RobotStateChanges::StateChange stchange, bool value) override;
 
 	RobotIdentifier getActiveRobotId() { return m_activeRobotId; }
 
@@ -95,6 +93,8 @@ public:
 	ctre::phoenix6::hardware::CANcoder *GetClimberRotation() const { return m_climberRotation; }
 	ControlData *GetPositionDegree() const { return m_positionDegree; }
 
+	bool IsClimbMode() const { return m_climbModeStatus; }
+	bool IsAllowedToClimb() const { return m_allowedToClimb; };
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
 
 	void SetCurrentState(int state, bool run) override;
@@ -114,9 +114,8 @@ private:
 	ctre::phoenix6::hardware::CANcoder *m_climberRotation;
 	ControlData *m_positionDegree;
 
-	RobotStateChanges::GamePeriod m_gameMode;
-	RobotStateChanges::ClimbMode m_climbMode;
-	RobotStateChanges::AllowedToClimb m_AllowedToClimb;
+	bool m_climbModeStatus;
+	bool m_allowedToClimb;
 
 	void InitializeTalonFXClimberCompBot302();
 

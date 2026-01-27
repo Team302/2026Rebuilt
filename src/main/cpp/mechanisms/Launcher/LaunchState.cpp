@@ -44,6 +44,8 @@ void LaunchState::Init()
 {
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LaunchState"), string("Init"));
 
+	m_mechanism->PublishLaunchMode(true);
+
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
 		InitCompBot302();
 }
