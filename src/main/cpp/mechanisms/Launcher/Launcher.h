@@ -33,6 +33,7 @@
 #include "state/IRobotStateChangeSubscriber.h"
 #include "mechanisms/controllers/ControlData.h"
 #include "state/RobotStateChanges.h"
+#include "state/RobotState.h"
 
 #include "configs/RobotElementNames.h"
 #include "configs/MechanismConfigMgr.h"
@@ -131,6 +132,10 @@ public:
 
 	void SetCurrentState(int state, bool run) override;
 	bool IsLauncherProtected() const { return m_launcherProtect; }
+	void PublishLaunchMode(bool launching);
+	void NotifyStateUpdate(RobotStateChanges::StateChange statechange, bool value) override;
+	bool IsInClimbMode() const { return m_isClimbMode; }
+	bool IsAllowedToClimb() const { return m_isAllowedToClimb; }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -173,5 +178,7 @@ private:
 
 	bool m_launcherProtect = false;
 
+	bool m_isClimbMode = false;
+	bool m_isAllowedToClimb = false;
 	// void InitializeLogging();
 };

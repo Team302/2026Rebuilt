@@ -107,6 +107,9 @@ Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MEC
 													m_stateMap()
 {
 	PeriodicLooper::GetInstance()->RegisterAll(this);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Bool);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
+
 	// InitializeLogging();
 }
 
@@ -610,6 +613,23 @@ ControlData *Launcher::GetControlData(string name)
 		return m_positionDegreesTurret;
 
 	return nullptr;
+}
+
+void Launcher::PublishLaunchMode(bool launching)
+{
+	RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::IsLaunching_Bool, launching);
+}
+
+void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, bool value)
+{
+	if (statechange == RobotStateChanges::StateChange::ClimbModeStatus_Bool)
+	{
+		m_isClimbMode = value;
+	}
+	else if (statechange == RobotStateChanges::StateChange::AllowedToClimbStatus_Bool)
+	{
+		m_isAllowedToClimb = value;
+	}
 }
 
 /* void Launcher::DataLog(uint64_t timestamp)

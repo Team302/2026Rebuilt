@@ -39,6 +39,7 @@
 #include "mechanisms/Intake/ExpelState.h"
 #include "mechanisms/Intake/LaunchState.h"
 #include "mechanisms/Intake/EmptyHopperState.h"
+#include "teleopcontrol/TeleopControl.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -96,6 +97,9 @@ Intake::Intake(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANI
 												m_stateMap()
 {
 	PeriodicLooper::GetInstance()->RegisterAll(this);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsLaunching_Bool);
+
 	// InitializeLogging();
 }
 
@@ -285,9 +289,15 @@ void Intake::SetCurrentState(int state, bool run)
 void Intake::RunCommonTasks()
 {
 	// This function is called once per loop before the current state Run()
+	ManualControl();
 	Cyclic();
-}
 
+	if (m_isAllowedToClimb == GetIsIntakeExtendedState())
+	{
+		m_isAllowedToClimb = !GetIsIntakeExtendedState();
+		NotifyStateUpdate(RobotStateChanges::StateChange::ClimbModeStatus_Bool, m_isAllowedToClimb);
+	}
+}
 /// @brief  Set the control constants (e.g. PIDF values).
 /// @param [in] ControlData*                                   pid:  the control constants
 /// @return void
@@ -319,7 +329,34 @@ ControlData *Intake::GetControlData(string name)
 
 	return nullptr;
 }
-
+void Intake::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value)
+{
+	if (change == RobotStateChanges::StateChange::ClimbModeStatus_Bool)
+	{
+		m_isInClimbMode = value;
+	}
+	else if (change == RobotStateChanges::StateChange::IsLaunching_Bool)
+	{
+		m_isLaunching = value;
+	}
+}
+void Intake::ManualControl()
+{
+	TeleopControl *controller = TeleopControl::GetInstance();
+	if (controller != nullptr && GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
+	{
+		bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
+		bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE);
+		if (intakeOutPressed)
+		{
+			m_extender->Set(true);
+		}
+		else if (intakeInPressed)
+		{
+			m_extender->Set(false);
+		}
+	}
+}
 /* void Intake::DataLog(uint64_t timestamp)
 {
    auto currTime = m_powerTimer.Get();

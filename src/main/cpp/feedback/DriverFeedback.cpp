@@ -51,16 +51,6 @@ void DriverFeedback::UpdateFeedback()
 
 void DriverFeedback::UpdateRumble()
 {
-    auto controller = TeleopControl::GetInstance();
-    if (!frc::DriverStation::IsTeleop() || m_climbMode)
-    {
-        controller->SetRumble(0, false, false);
-        controller->SetRumble(1, false, false);
-    }
-    else
-    {
-        controller->SetRumble(1, m_driveToIsDone, m_driveToIsDone);
-    }
 }
 
 void DriverFeedback::UpdateLEDStates()

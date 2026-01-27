@@ -36,7 +36,6 @@
 #include "state/IRobotStateChangeSubscriber.h"
 #include "mechanisms/controllers/ControlData.h"
 #include "state/RobotStateChanges.h"
-
 #include "configs/RobotElementNames.h"
 #include "configs/MechanismConfigMgr.h"
 
@@ -95,8 +94,12 @@ public:
 	ControlData *GetPercentOut() const { return m_percentOut; }
 
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
-
 	void SetCurrentState(int state, bool run) override;
+
+	void ManualControl();
+	void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
+	bool IsInClimbMode() const { return m_isInClimbMode; }
+	bool IsLaunching() const { return m_isLaunching; }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -122,5 +125,8 @@ private:
 	ctre::phoenix6::controls::ControlRequest *m_intakeActiveTarget;
 	ctre::phoenix6::controls::ControlRequest *m_hopperActiveTarget;
 
+	bool m_isInClimbMode = false;
+	bool m_isLaunching = false;
+	bool m_isAllowedToClimb = false;
 	// void InitializeLogging();
 };

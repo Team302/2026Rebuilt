@@ -82,6 +82,8 @@ public:
 	void RunCommonTasks() override;
 	// void DataLog() override;
 
+	void NotifyStateUpdate(RobotStateChanges::StateChange stchange, bool value) override;
+
 	RobotIdentifier getActiveRobotId() { return m_activeRobotId; }
 
 	ctre::phoenix6::hardware::TalonFX *GetClimber() const { return m_climber; }
@@ -90,6 +92,8 @@ public:
 	ctre::phoenix6::hardware::CANcoder *GetClimberRotation() const { return m_climberRotation; }
 	ControlData *GetPositionDegree() const { return m_positionDegree; }
 
+	bool IsClimbMode() const { return m_climbModeStatus; }
+	bool IsAllowedToClimb() const { return m_allowedToClimb; };
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
 
 	void SetCurrentState(int state, bool run) override;
@@ -108,6 +112,9 @@ private:
 	frc::Solenoid *m_alignment;
 	ctre::phoenix6::hardware::CANcoder *m_climberRotation;
 	ControlData *m_positionDegree;
+
+	bool m_climbModeStatus;
+	bool m_allowedToClimb;
 
 	void InitializeTalonFXClimberCompBot302();
 
