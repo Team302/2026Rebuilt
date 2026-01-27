@@ -39,6 +39,7 @@
 #include "mechanisms/Intake/ExpelState.h"
 #include "mechanisms/Intake/LaunchState.h"
 #include "mechanisms/Intake/EmptyHopperState.h"
+#include "teleopcontrol/TeleopControl.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -319,7 +320,23 @@ ControlData *Intake::GetControlData(string name)
 
 	return nullptr;
 }
-
+void Intake::ManualControl()
+{
+	TeleopControl *controller = TeleopControl::GetInstance();
+	if (controller != nullptr)
+	{
+		bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
+		bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE);
+		if (intakeOutPressed)
+		{
+			m_extender->Set(true);
+		}
+		else if (intakeInPressed)
+		{
+			m_extender->Set(false);
+		}
+	}
+}
 /* void Intake::DataLog(uint64_t timestamp)
 {
    auto currTime = m_powerTimer.Get();
