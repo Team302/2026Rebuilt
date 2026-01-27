@@ -96,8 +96,8 @@ Intake::Intake(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANI
 												m_stateMap()
 {
 	PeriodicLooper::GetInstance()->RegisterAll(this);
-	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Int);
-	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::LaunchingMode_Int);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsLaunching_Bool);
 
 	// InitializeLogging();
 }
@@ -322,7 +322,17 @@ ControlData *Intake::GetControlData(string name)
 
 	return nullptr;
 }
-
+void Intake::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value)
+{
+	if (change == RobotStateChanges::StateChange::ClimbModeStatus_Bool)
+	{
+		m_isInClimbMode = value;
+	}
+	else if (change == RobotStateChanges::StateChange::IsLaunching_Bool)
+	{
+		m_isLaunching = value;
+	}
+}
 /* void Intake::DataLog(uint64_t timestamp)
 {
    auto currTime = m_powerTimer.Get();

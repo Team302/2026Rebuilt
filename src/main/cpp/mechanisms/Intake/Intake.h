@@ -97,6 +97,7 @@ public:
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
 
 	void SetCurrentState(int state, bool run) override;
+	void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -122,5 +123,7 @@ private:
 	ctre::phoenix6::controls::ControlRequest *m_intakeActiveTarget;
 	ctre::phoenix6::controls::ControlRequest *m_hopperActiveTarget;
 
+	bool m_isInClimbMode = false;
+	bool m_isLaunching = false;
 	// void InitializeLogging();
 };

@@ -46,7 +46,7 @@ void InitializeState::Init()
 
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
 		InitCompBot302();
-	m - mechanism->PublishLaunchMode(false);
+	m_mechanism->PublishLaunchMode(false);
 }
 
 void InitializeState::InitCompBot302()
