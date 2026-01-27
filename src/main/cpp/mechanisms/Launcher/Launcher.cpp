@@ -38,6 +38,7 @@
 #include "mechanisms/Launcher/LaunchState.h"
 #include "mechanisms/Launcher/EmptyHopperState.h"
 #include "mechanisms/Launcher/ClimbState.h"
+#include "TeleopControl/TeleopControl.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -81,7 +82,7 @@ void Launcher::CreateAndRegisterStates()
 	AddToStateVector(ClimbStateInst);
 
 	OffStateInst->RegisterTransitionState(InitializeStateInst);
-	InitializeStateInst->RegisterTransitionState(InitializeStateInst);
+	InitializeStateInst->RegisterTransitionState(IdleStateInst);
 	IdleStateInst->RegisterTransitionState(OffStateInst);
 	IdleStateInst->RegisterTransitionState(PrepareToLaunchStateInst);
 	IdleStateInst->RegisterTransitionState(EmptyHopperStateInst);
@@ -568,6 +569,10 @@ void Launcher::RunCommonTasks()
 {
 	// This function is called once per loop before the current state Run()
 	Cyclic();
+	if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCHER_OFF))
+	{
+		m_launcherProtect = !m_launcherProtect;
+	}
 }
 
 /// @brief  Set the control constants (e.g. PIDF values).
