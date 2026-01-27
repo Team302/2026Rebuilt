@@ -1,3 +1,4 @@
+
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -13,15 +14,26 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-// Team 302 Includes
-#include <utils/DistanceBetweenPoses.h>
+#pragma once
 
-/// @brief Find the distance between two poses by using the Pythagorean Formula
-/// @param poseOne first pose to compare
-/// @param poseTwo second pose to compare
-/// @return frc::Translation2d - the difference in X value and the distance in Y value
+#include "utils/logging/signals/ISignalLogger.h"
+#include "ctre/phoenix6/SignalLogger.hpp"
+#include <units/time.h>
 
-double DistanceBetweenPoses::GetDeltaBetweenPoses(frc::Pose2d poseOne, frc::Pose2d poseTwo)
+class CTRESignalLogger : public ISignalLogger
 {
-    return sqrt(pow((poseTwo.X() - poseOne.X()).to<double>(), 2) + pow((poseTwo.Y() - poseOne.Y()).to<double>(), 2));
-}
+public:
+    CTRESignalLogger() = default;
+    ~CTRESignalLogger() override = default;
+
+    void WriteBoolean(std::string signalID, bool value, units::time::second_t latency) override;
+    void WriteDouble(std::string signalID, double value, std::string_view units, units::time::second_t latency) override;
+    void WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::second_t latency) override;
+    void WriteString(std::string signalID, const std::string &value, units::time::second_t latency) override;
+    void WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t latency) override;
+
+    void Start() override;
+    void Stop() override;
+    std::string CreateLogFileName();
+    std::string GetLoggingDir();
+};

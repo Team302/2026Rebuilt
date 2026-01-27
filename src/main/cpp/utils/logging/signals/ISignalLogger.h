@@ -1,3 +1,4 @@
+
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -15,64 +16,24 @@
 
 #pragma once
 
-// C++ Includes
+#include <string>
+#include <string_view>
+#include <cstdint>
+#include <units/time.h>
+#include <vector>
 
-// FRC includes
-
-// Team 302 includes
-
-class TeleopControlFunctions
+class ISignalLogger
 {
 public:
-    enum FUNCTION
-    {
-        ROBOT_ORIENTED_DRIVE,
-        HOLONOMIC_DRIVE_FORWARD,
-        HOLONOMIC_DRIVE_ROTATE,
-        HOLONOMIC_DRIVE_STRAFE,
-        AUTO_TURN_FORWARD,
-        AUTO_TURN_BACKWARD,
-        RESET_POSITION,
-        SLOW_MODE,
-        SYSID_MODIFER,
-        SYSID_QUASISTATICFORWARD,
-        SYSID_QUASISTATICREVERSE,
-        SYSID_DYNAMICFORWARD,
-        SYSID_DYNAMICREVERSE,
-        DRIVE_TO_DEPOT,
+    virtual ~ISignalLogger() = default;
 
-        // tip correction controls
-        TIPCORRECTION_TOGGLE,
+    virtual void WriteBoolean(std::string signalID, bool value, units::time::second_t latency) = 0;
+    virtual void WriteDouble(std::string signalID, double value, std::string_view units, units::time::second_t latency) = 0;
+    virtual void WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::second_t latency) = 0;
+    virtual void WriteString(std::string signalID, const std::string &value, units::time::second_t latency) = 0;
+    virtual void WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t latency) = 0;
 
-        // Mechanisms specific
-
-        // Intake
-        INTAKE,
-        EXPEL,
-        INTAKE_OUT,
-        INTAKE_IN,
-        // Climber
-        CLIMB_MODE,
-        LEVEL1_CLIMB,
-        LEVEL3_CLIMB,
-        ALIGN_TO_LEFT_TOWER,
-        ALIGN_TO_RIGHT_TOWER,
-        CLIMB_MANUAL_ROTATE_DOWN,
-        CLIMB_MANUAL_ROTATE_UP,
-
-        // LAUNCHER
-        LAUNCHER_OFF,
-        LAUNCH,
-
-        // VIRTUAL TARGET
-        UPDATE_VIRTUAL_TARGET_OFFSET_UP,
-        UPDATE_VIRTUAL_TARGET_OFFSET_DOWN,
-        UPDATE_VIRTUAL_TARGET_OFFSET_LEFT,
-        UPDATE_VIRTUAL_TARGET_OFFSET_RIGHT,
-        UPDATE_VIRTUAL_LEFT_PASSING_TARGET_X,
-        UPDATE_VIRTUAL_RIGHT_PASSING_TARGET_Y,
-        UPDATE_VIRTUAL_LEFT_PASSING_TARGET_Y,
-        UPDATE_VIRTUAL_RIGHT_PASSING_TARGET_X
-
-    };
+    // Optional: methods for starting/stopping logging
+    virtual void Start() = 0;
+    virtual void Stop() = 0;
 };

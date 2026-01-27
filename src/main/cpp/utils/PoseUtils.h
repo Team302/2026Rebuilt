@@ -12,67 +12,26 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-
 #pragma once
 
-// C++ Includes
+// FRC Includes
+#include "frc/geometry/Pose2d.h"
+#include "frc/geometry/Translation2d.h"
+#include "units/length.h"
 
-// FRC includes
-
-// Team 302 includes
-
-class TeleopControlFunctions
+class PoseUtils
 {
 public:
-    enum FUNCTION
-    {
-        ROBOT_ORIENTED_DRIVE,
-        HOLONOMIC_DRIVE_FORWARD,
-        HOLONOMIC_DRIVE_ROTATE,
-        HOLONOMIC_DRIVE_STRAFE,
-        AUTO_TURN_FORWARD,
-        AUTO_TURN_BACKWARD,
-        RESET_POSITION,
-        SLOW_MODE,
-        SYSID_MODIFER,
-        SYSID_QUASISTATICFORWARD,
-        SYSID_QUASISTATICREVERSE,
-        SYSID_DYNAMICFORWARD,
-        SYSID_DYNAMICREVERSE,
-        DRIVE_TO_DEPOT,
+    PoseUtils() = default;
+    ~PoseUtils() = default;
 
-        // tip correction controls
-        TIPCORRECTION_TOGGLE,
+    static units::length::meter_t GetDeltaBetweenPoses(const frc::Pose2d &translationOne,
+                                                       const frc::Pose2d &translationTwo);
 
-        // Mechanisms specific
+    static bool IsSamePose(const frc::Pose2d &pose1,
+                           const frc::Pose2d &pose2,
+                           units::length::centimeter_t tolerance);
 
-        // Intake
-        INTAKE,
-        EXPEL,
-        INTAKE_OUT,
-        INTAKE_IN,
-        // Climber
-        CLIMB_MODE,
-        LEVEL1_CLIMB,
-        LEVEL3_CLIMB,
-        ALIGN_TO_LEFT_TOWER,
-        ALIGN_TO_RIGHT_TOWER,
-        CLIMB_MANUAL_ROTATE_DOWN,
-        CLIMB_MANUAL_ROTATE_UP,
-
-        // LAUNCHER
-        LAUNCHER_OFF,
-        LAUNCH,
-
-        // VIRTUAL TARGET
-        UPDATE_VIRTUAL_TARGET_OFFSET_UP,
-        UPDATE_VIRTUAL_TARGET_OFFSET_DOWN,
-        UPDATE_VIRTUAL_TARGET_OFFSET_LEFT,
-        UPDATE_VIRTUAL_TARGET_OFFSET_RIGHT,
-        UPDATE_VIRTUAL_LEFT_PASSING_TARGET_X,
-        UPDATE_VIRTUAL_RIGHT_PASSING_TARGET_Y,
-        UPDATE_VIRTUAL_LEFT_PASSING_TARGET_Y,
-        UPDATE_VIRTUAL_RIGHT_PASSING_TARGET_X
-
-    };
+    static bool IsPoseAtOrigin(const frc::Pose2d &pose,
+                               units::length::centimeter_t tolerance);
 };

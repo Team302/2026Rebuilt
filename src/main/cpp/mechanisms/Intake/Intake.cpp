@@ -39,6 +39,7 @@
 #include "mechanisms/Intake/ExpelState.h"
 #include "mechanisms/Intake/LaunchState.h"
 #include "mechanisms/Intake/EmptyHopperState.h"
+#include "teleopcontrol/TeleopControl.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -288,6 +289,7 @@ void Intake::SetCurrentState(int state, bool run)
 void Intake::RunCommonTasks()
 {
 	// This function is called once per loop before the current state Run()
+	ManualControl();
 	Cyclic();
 
 	if (m_isAllowedToClimb == GetIsIntakeExtendedState())
@@ -336,6 +338,23 @@ void Intake::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value
 	else if (change == RobotStateChanges::StateChange::IsLaunching_Bool)
 	{
 		m_isLaunching = value;
+	}
+}
+void Intake::ManualControl()
+{
+	TeleopControl *controller = TeleopControl::GetInstance();
+	if (controller != nullptr && GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
+	{
+		bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
+		bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE);
+		if (intakeOutPressed)
+		{
+			m_extender->Set(true);
+		}
+		else if (intakeInPressed)
+		{
+			m_extender->Set(false);
+		}
 	}
 }
 /* void Intake::DataLog(uint64_t timestamp)

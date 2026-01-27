@@ -19,6 +19,7 @@
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 
 #include "chassis/generated/TunerConstants302.h"
+#include "chassis/generated/TunerConstants9998.h"
 #include "RobotIdentifier.h"
 
 ChassisConfigMgr *ChassisConfigMgr::m_instance = nullptr;
@@ -49,10 +50,10 @@ void ChassisConfigMgr::CreateDrivetrain()
         m_chassis = TunerConstants302::CreateDrivetrain();
         break;
 
-        // case RobotIdentifier::CHASSIS_BOT_9998:
-        //     m_maxSpeed = TunerConstants9998::kSpeedAt12Volts;
-        //     m_chassis = TunerConstants9998::CreateDrivetrain();
-        //     break;
+    case RobotIdentifier::CHASSIS_BOT_9998:
+        m_maxSpeed = TunerConstants9998::kSpeedAt12Volts;
+        m_chassis = TunerConstants9998::CreateDrivetrain();
+        break;
 
     case RobotIdentifier::SIM_BOT_0:
         m_maxSpeed = TunerConstants302::kSpeedAt12Volts;

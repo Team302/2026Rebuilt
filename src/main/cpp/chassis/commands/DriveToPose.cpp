@@ -15,10 +15,20 @@
 #include "chassis/commands/DriveToPose.h" // Update path if needed
 #include "frc/geometry/Rotation2d.h"
 #include "frc/geometry/Translation2d.h"
-#include "utils/AngleUtils.h"
 #include "state/RobotState.h"
+#include "utils/AngleUtils.h"
+#include "utils/PoseUtils.h"
 #include "utils/logging/debug/Logger.h"
 
+//------------------------------------------------------------------
+/// @brief      Constructor for DriveToPose command
+/// @param[in]  chassis - Pointer to the swerve drive subsystem
+/// @details    Initializes the command with PID controllers for X and Y
+///             translation. Sets up I-zone for integral control, captures
+///             the initial pose, and calculates the feedforward range.
+///             The command uses a combination of feedforward and PID
+///             control for smooth and accurate pose targeting.
+//------------------------------------------------------------------
 DriveToPose::DriveToPose(
     subsystems::CommandSwerveDrivetrain *chassis) : m_chassis(chassis)
 
@@ -30,6 +40,14 @@ DriveToPose::DriveToPose(
     m_feedForwardRange = m_ffMaxRadius - m_ffMinRadius;
 }
 
+//------------------------------------------------------------------
+/// @brief      Initializes the command when it starts
+/// @details    Called once when the command is scheduled. Resets the
+///             same pose tracker, retrieves current chassis speeds,
+///             gets the target end pose, and resets both PID controllers
+///             with the current position and velocity. Sets the PID
+///             goals to the target end pose coordinates.
+//------------------------------------------------------------------
 void DriveToPose::Initialize()
 {
     m_chassis->ResetSamePose();
@@ -48,6 +66,18 @@ void DriveToPose::Initialize()
     }
 }
 
+//------------------------------------------------------------------
+/// @brief      Executes the command periodically
+/// @details    Called repeatedly while the command is scheduled (typically
+///             every 20ms). Updates the current pose, calculates feedforward
+///             velocity based on distance to target, and applies PID control
+///             for fine adjustments. If the distance error exceeds the reset
+///             threshold, the PID controllers are reset to prevent windup.
+///             Otherwise, PID corrections are added to feedforward speeds
+///             and clamped to maximum velocity. The resulting chassis speeds
+///             are sent to the drivetrain with heading control to face the
+///             target rotation. Logs error and completion status.
+//------------------------------------------------------------------
 void DriveToPose::Execute()
 {
     frc::ChassisSpeeds chassisSpeeds{};
@@ -80,27 +110,60 @@ void DriveToPose::Execute()
 
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElementIsDone_Bool, IsFinished());
 }
+
+//------------------------------------------------------------------
+/// @brief      Determines if the command has finished
+/// @return     bool - true if the robot has reached the target pose or
+///             stopped moving, false otherwise
+/// @details    Checks two completion conditions:
+///             1. Robot pose matches target pose within distance threshold
+///             2. Robot has stopped moving (same pose as previous cycle)
+///             Logs the completion status and same-pose status for debugging.
+///             Updates the previous pose for next cycle comparison.
+//------------------------------------------------------------------
 bool DriveToPose::IsFinished()
 {
-    bool isDone = false;
-    bool isSamePose = false;
-
-    auto distance = m_currentPose.Translation().Distance(m_endPose.Translation());
-
-    isDone = distance < m_distanceThreshold;
-    isSamePose = m_chassis->IsSamePose();
-    m_prevPose = m_currentPose;
-
+    bool isDone = PoseUtils::IsSamePose(m_currentPose, m_endPose, m_distanceThreshold);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Is Done", isDone);
+    if (isDone)
+    {
+        return true;
+    }
+
+    auto isSamePose = m_chassis->IsSamePose();
+    m_prevPose = m_currentPose;
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Is SamePose", isSamePose);
-    return (isDone || isSamePose);
+    return isSamePose;
 }
 
+//------------------------------------------------------------------
+/// @brief      Ends the command
+/// @param[in]  interrupted - true if the command was interrupted,
+///             false if it finished normally
+/// @details    Called once when the command ends, either by finishing
+///             normally or being interrupted. Applies a brake request
+///             to stop the robot's motion.
+//------------------------------------------------------------------
 void DriveToPose::End(bool interrupted)
 {
     m_chassis->SetControl(swerve::requests::SwerveDriveBrake{});
 }
 
+//------------------------------------------------------------------
+/// @brief      Calculates feedforward velocity towards the target
+/// @param[out] chassisSpeeds - Chassis speeds structure to populate
+///             with calculated feedforward velocities
+/// @details    Computes the distance error to the target and applies
+///             a scaled feedforward velocity based on the error magnitude.
+///             Uses a ramping profile within the feedforward range:
+///             - No feedforward if within minimum radius
+///             - Linearly scaled feedforward between min and max radius
+///             - Full feedforward speed beyond max radius
+///             The feedforward velocity is directed along the angle
+///             towards the target, decomposed into X and Y components.
+///             This provides smooth approach behavior and reduces
+///             overshoot near the target.
+//------------------------------------------------------------------
 void DriveToPose::CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds)
 {
     if (m_chassis != nullptr)
