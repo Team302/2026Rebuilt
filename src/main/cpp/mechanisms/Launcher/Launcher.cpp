@@ -38,7 +38,7 @@
 #include "mechanisms/Launcher/LaunchState.h"
 #include "mechanisms/Launcher/EmptyHopperState.h"
 #include "mechanisms/Launcher/ClimbState.h"
-#include "TeleopControl/TeleopControl.h"
+#include "teleopControl/TeleopControl.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
