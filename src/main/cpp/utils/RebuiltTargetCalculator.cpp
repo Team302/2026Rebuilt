@@ -61,7 +61,7 @@ units::angle::degree_t RebuiltTargetCalculator::GetLauncherTarget(units::time::s
 
     units::degree_t bestAngle = 0_deg;
     bool hasFoundValidAngle = false;
-    units::degree_t minDistance = 10000_deg; // Extremely large initial value to ensure any valid angle is closer
+    units::degree_t minError = 360_deg; // Extremely large initial value to ensure any valid angle is closer
 
     for (int i = -1; i <= 1; i++)
     {
@@ -69,11 +69,11 @@ units::angle::degree_t RebuiltTargetCalculator::GetLauncherTarget(units::time::s
 
         if (potentialSetpoint >= m_minLauncherAngle && potentialSetpoint <= m_maxLauncherAngle)
         {
-            auto distance = units::math::abs(potentialSetpoint - currentLauncherAngle);
-            if (distance < minDistance)
+            auto error = units::math::abs(potentialSetpoint - currentLauncherAngle);
+            if (error < minError)
             {
                 bestAngle = potentialSetpoint;
-                minDistance = distance;
+                minError = error;
                 hasFoundValidAngle = true;
             }
         }
