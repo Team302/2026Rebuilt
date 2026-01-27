@@ -15,12 +15,11 @@
 
 #include "utils/RebuiltTargetCalculator.h"
 
-RebuiltTargetCalculator::RebuiltTargetCalculator()
+RebuiltTargetCalculator::RebuiltTargetCalculator() : TargetCalculator()
 {
     // TODO: update launcher offsets and target position(need to use zone logic later and field element calculator to get target position)
     // Mechanism offset initialized in member variable declaration for now
 
-    TargetCalculator();
     SetMechanismOffset(m_mechanismOffset);
 
     m_field = DragonField::GetInstance();

@@ -22,23 +22,6 @@ TargetCalculator::TargetCalculator()
     m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
 }
 
-TargetCalculator *TargetCalculator::m_instance = nullptr;
-
-TargetCalculator *TargetCalculator::GetInstance()
-{
-    if (m_instance == nullptr)
-    {
-        m_instance = new TargetCalculator();
-    }
-    return m_instance;
-}
-
-frc::Translation2d TargetCalculator::GetTargetPosition()
-{
-    // Default implementation returns origin. Subclasses should override.
-    return frc::Translation2d{0_m, 0_m};
-}
-
 frc::Translation2d TargetCalculator::CalculateVirtualTarget(
     const frc::Translation2d &realTarget,
     units::time::second_t lookaheadTime) const

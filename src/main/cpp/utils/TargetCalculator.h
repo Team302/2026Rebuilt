@@ -38,15 +38,6 @@
 class TargetCalculator
 {
 public:
-    TargetCalculator();
-    ~TargetCalculator() = default;
-
-    /**
-     * \brief Get singleton instance
-     * \return Pointer to the TargetCalculator singleton
-     */
-    static TargetCalculator *GetInstance();
-
     /**
      * \brief Get the current target position in world coordinates (field frame)
      * \return Translation2d with X, Y position in meters
@@ -54,7 +45,7 @@ public:
      * Subclasses should override this to provide their specific target.
      * Non-const to allow dynamic target selection based on chassis position.
      */
-    virtual frc::Translation2d GetTargetPosition();
+    virtual frc::Translation2d GetTargetPosition() = 0;
 
     /**
      * \brief Calculate the virtual target position based on chassis velocity
@@ -138,6 +129,9 @@ public:
     frc::Pose2d GetVirtualTargetPose(units::time::second_t lookaheadTime);
 
 protected:
+    TargetCalculator();
+    ~TargetCalculator() = default;
+
     /**
      * \brief Get the current chassis pose
      * \return Pose2d with X, Y position (meters) and rotation (radians)
