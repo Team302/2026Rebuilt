@@ -36,7 +36,6 @@
 #include "state/IRobotStateChangeSubscriber.h"
 #include "mechanisms/controllers/ControlData.h"
 #include "state/RobotStateChanges.h"
-
 #include "configs/RobotElementNames.h"
 #include "configs/MechanismConfigMgr.h"
 
@@ -95,7 +94,7 @@ public:
 	ControlData *GetPercentOut() const { return m_percentOut; }
 
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
-
+	void ManualControl();
 	void SetCurrentState(int state, bool run) override;
 
 protected:
