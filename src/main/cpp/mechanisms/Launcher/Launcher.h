@@ -133,6 +133,8 @@ public:
 	void SetCurrentState(int state, bool run) override;
 	void PublishLaunchMode(bool launching);
 	void NotifyStateUpdate(RobotStateChanges::StateChange statechange, bool value) override;
+	bool IsInClimbMode() const { return m_isClimbMode; }
+	bool IsAllowedToClimb() const { return m_isAllowedToClimb; }
 
 protected:
 	RobotIdentifier m_activeRobotId;
