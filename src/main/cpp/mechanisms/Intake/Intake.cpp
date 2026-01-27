@@ -324,15 +324,15 @@ ControlData *Intake::GetControlData(string name)
 void Intake::ManualControl()
 {
 	TeleopControl *controller = TeleopControl::GetInstance();
-	if (controller != nullptr)
+	if (controller != nullptr && GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
 	{
 		bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
 		bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE);
-		if (intakeOutPressed && GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
+		if (intakeOutPressed)
 		{
 			m_extender->Set(true);
 		}
-		else if (intakeInPressed && GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
+		else if (intakeInPressed)
 		{
 			m_extender->Set(false);
 		}
