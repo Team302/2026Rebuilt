@@ -286,6 +286,7 @@ void Intake::SetCurrentState(int state, bool run)
 void Intake::RunCommonTasks()
 {
 	// This function is called once per loop before the current state Run()
+	ManualControl();
 	Cyclic();
 }
 
@@ -327,11 +328,11 @@ void Intake::ManualControl()
 	{
 		bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
 		bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE);
-		if (intakeOutPressed)
+		if (intakeOutPressed && GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
 		{
 			m_extender->Set(true);
 		}
-		else if (intakeInPressed)
+		else if (intakeInPressed && GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
 		{
 			m_extender->Set(false);
 		}
