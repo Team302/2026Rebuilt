@@ -55,12 +55,14 @@ string AutonSelector::GetSelectedAutoFile()
 {
 	std::string autonfile(frc::filesystem::GetDeployDirectory());
 	autonfile += std::filesystem::path("/auton/").string();
-	autonfile += GetDesiredScoringLevel() + "/";
 	autonfile += GetAlianceColor();
 	autonfile += GetStartPos();
-	autonfile += GetTargetFace();
-	autonfile += GetTargetGamePiece();
-	autonfile += GetDesiredScoringLevel();
+	autonfile += GetDesiredPreload();
+	autonfile += GetNeutralZoneAmount();
+	autonfile += GetDepotOption();
+	autonfile += GetOutpostOption();
+	autonfile += GetFuelStrategy();
+	autonfile += GetClimbingOption();
 	autonfile += std::string(".xml");
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("auton"), string("file"), autonfile);
@@ -118,18 +120,31 @@ string AutonSelector::GetStartPos()
 	return m_startposchooser.GetSelected();
 }
 
-string AutonSelector::GetTargetGamePiece()
+string AutonSelector::GetNeutralZoneAmount()
 {
-	return m_targetGamePiece.GetSelected();
+	return m_neutralZoneAmount.GetSelected();
 }
 
-string AutonSelector::GetDesiredScoringLevel()
+string AutonSelector::GetDepotOption()
 {
-	return m_desiredScoringLevel.GetSelected();
+	return m_targetDepot.GetSelected();
 }
-string AutonSelector::GetTargetFace()
+
+string AutonSelector::GetOutpostOption()
 {
-	return m_targetFace.GetSelected();
+	return m_targetOutpost.GetSelected();
+}
+string AutonSelector::GetClimbingOption()
+{
+	return m_climbing.GetSelected();
+}
+string AutonSelector::GetDesiredPreload()
+{
+	return m_desiredPreload.GetSelected();
+}
+string AutonSelector::GetFuelStrategy()
+{
+	return m_fuelStrategy.GetSelected();
 }
 
 //---------------------------------------------------------------------
@@ -141,33 +156,46 @@ string AutonSelector::GetTargetFace()
 void AutonSelector::PutChoicesOnDashboard()
 {
 	// Starting Position
-	m_startposchooser.AddOption("Left", "Left");
-	m_startposchooser.AddOption("Center", "Center");
-	m_startposchooser.AddOption("Right", "Right");
-	m_startposchooser.SetDefaultOption("Center", "Center");
+	m_startposchooser.AddOption("Trench Depot Side", "L");
+	m_startposchooser.AddOption("Bump Depot Side", "ML");
+	m_startposchooser.AddOption("Hub", "M");
+	m_startposchooser.AddOption("Bump Outpost Side", "MR");
+	m_startposchooser.SetDefaultOption("Trench Outpost Side", "R");
 	frc::SmartDashboard::PutData("StartPos", &m_startposchooser);
 
-	// Game Piece Option
-	m_targetGamePiece.AddOption("Coral", "Coral");
-	m_targetGamePiece.AddOption("Algae", "Algae");
-	m_targetGamePiece.SetDefaultOption("Coral", "Coral");
-	frc::SmartDashboard::PutData("Target Game Piece", &m_targetGamePiece);
+	// Amount of times going into NZ
+	m_neutralZoneAmount.AddOption("0", "0");
+	m_neutralZoneAmount.AddOption("1", "1");
+	m_neutralZoneAmount.AddOption("2", "2");
+	m_neutralZoneAmount.AddOption("3", "3");
+	m_neutralZoneAmount.AddOption("4", "4");
+	m_neutralZoneAmount.AddOption("5", "5");
+	frc::SmartDashboard::PutData("Times in Neutral Zone", &m_neutralZoneAmount);
 
-	// Target Face Option
-	m_targetFace.AddOption("A-D", "AD");
-	m_targetFace.AddOption("C-F", "CF");
-	m_targetFace.AddOption("E-H", "EH");
-	m_targetFace.AddOption("G-J", "GJ");
-	m_targetFace.AddOption("I-L", "IL");
-	m_targetFace.AddOption("K-B", "KB");
-	m_targetFace.SetDefaultOption("G-H", "GH");
-	frc::SmartDashboard::PutData("Target Face", &m_targetFace);
+	// Depot Option
+	m_targetDepot.AddOption("true", "Dep");
+	m_targetDepot.AddOption("false", "ND");
+	frc::SmartDashboard::PutData("Has Depot?", &m_targetDepot);
 
-	// Level Option
-	m_desiredScoringLevel.AddOption("L1", "L1");
-	m_desiredScoringLevel.AddOption("L2", "L2");
-	m_desiredScoringLevel.AddOption("L3", "L3");
-	m_desiredScoringLevel.AddOption("L4", "L4");
-	m_desiredScoringLevel.SetDefaultOption("L4", "L4");
-	frc::SmartDashboard::PutData("Desired Level", &m_desiredScoringLevel);
+	// Outpost Option
+	m_targetOutpost.AddOption("true", "Out");
+	m_targetOutpost.AddOption("false", "NO");
+	frc::SmartDashboard::PutData("Has Outpost?", &m_targetOutpost);
+
+	// Climbing Option
+	m_climbing.AddOption("true", "Climb");
+	m_climbing.AddOption("false", "NC");
+	frc::SmartDashboard::PutData("Climb?", &m_climbing);
+
+	// Preload Option
+	m_desiredPreload.AddOption("Launch", "Launch");
+	m_desiredPreload.AddOption("Drop", "Drop");
+	m_desiredPreload.SetDefaultOption("Launch", "Launch");
+	frc::SmartDashboard::PutData("Desired Preload", &m_desiredPreload);
+
+	// Fuel Strategy Option
+	m_fuelStrategy.AddOption("Score", "Score");
+	m_fuelStrategy.AddOption("Pass", "Pass");
+	m_fuelStrategy.SetDefaultOption("Score", "Score");
+	frc::SmartDashboard::PutData("Desired Strategy", &m_fuelStrategy);
 }

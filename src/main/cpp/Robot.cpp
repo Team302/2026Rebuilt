@@ -78,8 +78,8 @@
 
 #include "RobotContainer.h"
 #include "RobotIdentifier.h"
-// #include "auton/AutonPreviewer.h"
-// #include "auton/CyclePrimitives.h"
+#include "auton/AutonPreviewer.h"
+#include "auton/CyclePrimitives.h"
 // #include "auton/drivePrimitives/AutonUtils.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "configs/MechanismConfigMgr.h"
@@ -139,19 +139,19 @@ void Robot::AutonomousInit()
 {
   frc::SetCurrentThreadPriority(true, 15);
 
-  // if (m_cyclePrims != nullptr)
-  // {
-  //   m_cyclePrims->Init();
-  // }
+  if (m_cyclePrims != nullptr)
+  {
+    m_cyclePrims->Init();
+  }
   PeriodicLooper::GetInstance()->AutonRunCurrentState();
 }
 
 void Robot::AutonomousPeriodic()
 {
-  // if (m_cyclePrims != nullptr)
-  // {
-  //   m_cyclePrims->Run();
-  // }
+  if (m_cyclePrims != nullptr)
+  {
+    m_cyclePrims->Run();
+  }
   PeriodicLooper::GetInstance()->AutonRunCurrentState();
 }
 
@@ -186,8 +186,8 @@ void Robot::InitializeRobot()
 
 void Robot::InitializeAutonOptions()
 {
-  // m_cyclePrims = new CyclePrimitives(); // intialize auton selections
-  // m_previewer = new AutonPreviewer(m_cyclePrims);
+  m_cyclePrims = new CyclePrimitives(); // intialize auton selections
+  m_previewer = new AutonPreviewer(m_cyclePrims);
 }
 void Robot::InitializeDriveteamFeedback()
 {
@@ -196,10 +196,10 @@ void Robot::InitializeDriveteamFeedback()
 
 void Robot::UpdateDriveTeamFeedback()
 {
-  // if (m_previewer != nullptr)
-  // {
-  //   m_previewer->CheckCurrentAuton();
-  // }
+  if (m_previewer != nullptr)
+  {
+    m_previewer->CheckCurrentAuton();
+  }
 
   auto chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
   if (m_field != nullptr && chassis != nullptr)
