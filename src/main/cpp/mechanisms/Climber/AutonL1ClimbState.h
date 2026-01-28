@@ -25,7 +25,7 @@ using namespace std;
 
 namespace ClimberStates
 {
-	class AutonL1ClimbState : public State, public L1ClimbState
+	class AutonL1ClimbState : public L1ClimbState
 	{
 	public:
 		AutonL1ClimbState() = delete;
@@ -34,17 +34,9 @@ namespace ClimberStates
 						  Climber *mech,
 						  RobotIdentifier activeRobotId);
 		~AutonL1ClimbState() = default;
-		void Init();
-		void Run();
-		void Exit();
-		bool AtTarget();
 		bool IsTransitionCondition(bool) override;
 
 	private:
-		Climber *m_mechanism;
-		void InitCompBot302();
-		RobotIdentifier m_RobotId;
-
 		const units::angle::degree_t m_climberTarget = units::angle::degree_t(15);
 		const bool m_extenderTarget = false;
 		const bool m_alignmentTarget = false;

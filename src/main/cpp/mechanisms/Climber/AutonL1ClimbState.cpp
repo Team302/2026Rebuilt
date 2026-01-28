@@ -35,7 +35,7 @@ using namespace ClimberStates;
 AutonL1ClimbState::AutonL1ClimbState(std::string stateName,
 									 int stateId,
 									 Climber *mech,
-									 RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId)
+									 RobotIdentifier activeRobotId) : L1ClimbState(stateName, stateId, mech, activeRobotId)
 {
 }
 
