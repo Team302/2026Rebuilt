@@ -16,10 +16,10 @@
 #include <string>
 
 #include "utils/logging/debug/Logger.h"
-#include "vision/definitions/CameraConfig_302.h"
 #include "vision/DragonLimelight.h"
 #include "vision/DragonQuest.h"
 #include "vision/DragonVision.h"
+#include "vision/definitions/CameraConfig_302.h"
 
 void CameraConfig_302::BuildCameraConfig()
 {
@@ -39,8 +39,7 @@ void CameraConfig_302::BuildCameraConfig()
                                                  units::angle::degree_t(m_ll1Yaw),             // units::angle::degree_t yaw,            /// <I> - Yaw of Camera
                                                  units::angle::degree_t(m_ll1Roll),            // units::angle::degree_t roll,           /// <I> - Roll of Camera
                                                  DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG,         /// <I> enum for starting pipeline
-                                                 DRAGON_LIMELIGHT_LED_MODE::LED_OFF,           // DRAGON_LIMELIGHT_LED_MODE ledMode,
-                                                 DRAGON_LIMELIGHT_CAM_MODE::CAM_VISION         // CAM_MODE camMode,
+                                                 DRAGON_LIMELIGHT_LED_MODE::LED_OFF            // DRAGON_LIMELIGHT_LED_MODE ledMode,
 
     ); // additional parameter
     vision->AddLimelight(front, DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
@@ -56,8 +55,7 @@ void CameraConfig_302::BuildCameraConfig()
                                                 units::angle::degree_t(m_ll2Yaw),             // units::angle::degree_t yaw,            /// <I> - Yaw of Camera
                                                 units::angle::degree_t(m_ll2Roll),            // units::angle::degree_t roll,           /// <I> - Roll of Camera
                                                 DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG,         /// <I> enum for starting pipeline
-                                                DRAGON_LIMELIGHT_LED_MODE::LED_OFF,           // DRAGON_LIMELIGHT_LED_MODE ledMode,
-                                                DRAGON_LIMELIGHT_CAM_MODE::CAM_VISION         // CAM_MODE camMode,
+                                                DRAGON_LIMELIGHT_LED_MODE::LED_OFF            // DRAGON_LIMELIGHT_LED_MODE ledMode,
 
     ); // additional parameter
     vision->AddLimelight(back, DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);

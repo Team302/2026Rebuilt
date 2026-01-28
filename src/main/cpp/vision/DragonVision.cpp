@@ -44,6 +44,7 @@
 // FRC
 #include "frc/RobotController.h"
 #include "frc/Timer.h"
+#include "frc/apriltag/AprilTagFieldLayout.h"
 #include "frc/geometry/Pose2d.h"
 
 // Team 302 includes
