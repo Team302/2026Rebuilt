@@ -18,17 +18,18 @@
 
 #include "frc/smartdashboard/SendableChooser.h"
 #include "frc/smartdashboard/SmartDashboard.h"
-
 #include "networktables/DoubleArrayTopic.h"
 #include "networktables/DoubleTopic.h"
 #include "networktables/IntegerTopic.h"
 #include "networktables/NetworkTable.h"
 #include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableInstance.h"
-
+#include "networktables/RawTopic.h"
 #include "state/IRobotStateChangeSubscriber.h"
 #include "utils/logging/signals/DragonDataLogger.h"
 #include "vision/DragonVisionPoseEstimatorStruct.h"
+#include "vision/Questnavlib/commands.pb.h"
+#include "vision/Questnavlib/data.pb.h"
 
 using namespace std;
 
@@ -44,24 +45,26 @@ public:
         units::angle::degree_t mountingYaw,    /// <I> - Yaw of Quest
         units::angle::degree_t mountingRoll    /// <I> - Roll of Quest
     );
-    frc::Pose2d GetEstimatedPose();
     void DataLog(uint64_t timestamp) override;
-    bool HealthCheck() { return m_isConnected; };
-    void SetIsConnected();
 
-    void SetRobotPose(const frc::Pose2d &pose);
+    bool HealthCheck() { return m_isConnected; };
+
     DragonVisionPoseEstimatorStruct GetPoseEstimate();
 
-    void RefreshNT();
-    void HandleHeartBeat();
+    void SetRobotPose(const frc::Pose2d &pose);
 
-    void HandleDashboard();
+    void Periodic();
 
     void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
 
 private:
     DragonQuest() = delete;
-    void ZeroPosition();
+
+    void GetEstimatedPose();
+
+    void SetIsConnected();
+
+    void HandleDashboard();
 
     units::length::inch_t m_mountingXOffset; /// <I> x offset of Quest from robot center (forward relative to robot)
     units::length::inch_t m_mountingYOffset; /// <I> y offset of Quest from robot center (left relative to robot)
@@ -71,16 +74,17 @@ private:
     units::angle::degree_t m_mountingRoll;   /// <I> - Roll of Quest
 
     std::shared_ptr<nt::NetworkTable> m_networktable;
-    static DragonQuest *m_dragonquest;
-    nt::IntegerSubscriber m_questMiso;
-    nt::IntegerPublisher m_questMosi;
-    nt::DoubleArrayTopic m_posTopic;
-    nt::DoubleArrayTopic m_rotationTopic;
-    nt::IntegerTopic m_frameCountTopic;
-    nt::DoubleArrayPublisher m_initialPosePublisher;
-    nt::DoubleSubscriber m_heartbeatRequestSub;
-    nt::DoublePublisher m_heartbeatResponsePub;
-    nt::DoubleSubscriber m_timestamp;
+
+    // Replace array topics with raw topics for protobuf
+    nt::RawPublisher m_frameDataPublisher;
+    nt::RawSubscriber m_frameDataSubscriber;
+    nt::RawPublisher m_commandPublisher;
+    nt::RawSubscriber m_commandResponseSubscriber;
+    nt::RawPublisher m_deviceDataPublisher;
+    nt::RawSubscriber m_deviceDataSubscriber;
+
+    // Add command ID tracking
+    uint32_t m_nextCommandId = 1;
 
     frc::SendableChooser<bool> m_questEnabledChooser;
     frc::SendableChooser<bool> m_questEndgameEnabledChooser;
@@ -98,7 +102,7 @@ private:
 
     int m_lastProcessedHeartbeatId = 0;
 
-    frc::Pose2d m_rawQuestPose;
+    frc::Pose2d m_lastCalculatedPose;
 
     bool m_isQuestEnabled = false; // <I> Is the Quest enabled?
     bool m_isClimbMode = false;
