@@ -574,7 +574,7 @@ void Launcher::RunCommonTasks()
 	Cyclic();
 	if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCHER_OFF))
 	{
-		m_launcherProtect = !m_launcherProtect;
+		m_launcherProtectedMode = !m_launcherProtectedMode;
 	}
 }
 
