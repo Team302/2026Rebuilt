@@ -56,6 +56,7 @@ void OffState::InitCompBot302()
 	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
 	m_mechanism->UpdateTargetTurretPercentOut(m_turretTarget);
 	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
+	m_mechanism->UpdateTargetAgitatorPercentOut(m_agitatorTarget);
 }
 
 void OffState::Run()

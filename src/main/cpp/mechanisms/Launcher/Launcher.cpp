@@ -74,7 +74,7 @@ void Launcher::CreateAndRegisterStates()
 	LaunchState *LaunchStateInst = new LaunchState(string("Launch"), 4, this, m_activeRobotId);
 	AddToStateVector(LaunchStateInst);
 
-	EmptyHopperState *EmptyHopperStateInst = new EmptyHopperState(string("EmptyHopper"), 5, this, m_activeRobotId);
+	EmptyHopperState *EmptyHopperStateInst = new EmptyHopperState(string("EmptyAgitator"), 5, this, m_activeRobotId);
 	AddToStateVector(EmptyHopperStateInst);
 
 	ClimbState *ClimbStateInst = new ClimbState(string("Climb"), 6, this, m_activeRobotId);
@@ -183,6 +183,7 @@ void Launcher::CreateCompBot302()
 	m_transfer = new ctre::phoenix6::hardware::TalonFX(18, ctre::phoenix6::CANBus("canivore"));
 	m_turret = new ctre::phoenix6::hardware::TalonFXS(19, ctre::phoenix6::CANBus("canivore"));
 	m_indexer = new ctre::phoenix6::hardware::TalonFX(20, ctre::phoenix6::CANBus("canivore"));
+	m_agitator = new ctre::phoenix6::hardware::TalonFX(0, ctre::phoenix6::CANBus("canivore"));
 
 	m_percentOut = new ControlData(
 		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
@@ -283,7 +284,9 @@ void Launcher::InitializeCompBot302()
 	InitializeTalonFXTransferCompBot302();
 	InitializeTalonFXSTurretCompBot302();
 	InitializeTalonFXIndexerCompBot302();
+	InitializeTalonFXAgitatorCompBot302();
 }
+
 void Launcher::InitializeTalonFXLauncherCompBot302()
 {
 	TalonFXConfiguration configs{};
@@ -560,6 +563,54 @@ void Launcher::InitializeTalonFXIndexerCompBot302()
 	}
 	if (!status.IsOK())
 		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_indexer", "m_indexer Status", status.GetName());
+}
+
+void Launcher::InitializeTalonFXAgitatorCompBot302()
+{
+	TalonFXConfiguration configs{};
+	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
+	configs.CurrentLimits.StatorCurrentLimitEnable = true;
+	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
+	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
+	configs.CurrentLimits.SupplyCurrentLowerLimit = units::current::ampere_t(35);
+	configs.CurrentLimits.SupplyCurrentLowerTime = units::time::second_t(0);
+
+	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
+	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
+	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
+
+	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
+	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(0);
+	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
+	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
+
+	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
+	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 0;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
+	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
+
+	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
+	configs.MotorOutput.NeutralMode = NeutralModeValue::Coast;
+	configs.MotorOutput.PeakForwardDutyCycle = 1;
+	configs.MotorOutput.PeakReverseDutyCycle = -1;
+	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
+
+	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
+	configs.Feedback.SensorToMechanismRatio = 1;
+
+	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	for (int i = 0; i < 5; ++i)
+	{
+		status = m_agitator->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		if (status.IsOK())
+			break;
+	}
+	if (!status.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_agitator", "m_agitator Status", status.GetName());
 }
 
 void Launcher::SetCurrentState(int state, bool run)

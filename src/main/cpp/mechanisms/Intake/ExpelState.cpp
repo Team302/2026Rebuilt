@@ -51,7 +51,7 @@ void ExpelState::Init()
 void ExpelState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
-	// m_mechanism->UpdateTargetHopperPercentOut(m_hopperTarget);
+	// m_mechanism->UpdateTargetAgitatorPercentOut(m_agitatorTarget);
 	m_mechanism->GetExtender()->Set(m_extenderTarget);
 }
 

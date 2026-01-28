@@ -71,7 +71,7 @@ void Intake::CreateAndRegisterStates()
 	LaunchState *LaunchStateInst = new LaunchState(string("Launch"), 3, this, m_activeRobotId);
 	AddToStateVector(LaunchStateInst);
 
-	EmptyHopperState *EmptyHopperStateInst = new EmptyHopperState(string("EmptyHopper"), 4, this, m_activeRobotId);
+	EmptyHopperState *EmptyHopperStateInst = new EmptyHopperState(string("EmptyAgitator"), 4, this, m_activeRobotId);
 	AddToStateVector(EmptyHopperStateInst);
 
 	OffStateInst->RegisterTransitionState(IntakeStateInst);
@@ -119,14 +119,14 @@ m_IntakePowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakeP
 m_IntakePowerLogEntry.Append(0.0);
 m_IntakeEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakeEnergy");
 m_IntakeEnergyLogEntry.Append(0.0);
-m_HopperLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/HopperPosition");
-m_HopperLogEntry.Append(0.0);
-m_hopperTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/HopperTarget");
-m_hopperTargetLogEntry.Append(0.0);
-m_HopperPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/HopperPower");
-m_HopperPowerLogEntry.Append(0.0);
-m_HopperEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/HopperEnergy");
-m_HopperEnergyLogEntry.Append(0.0);
+m_AgitatorLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorPosition");
+m_AgitatorLogEntry.Append(0.0);
+m_agitatorTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorTarget");
+m_agitatorTargetLogEntry.Append(0.0);
+m_AgitatorPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorPower");
+m_AgitatorPowerLogEntry.Append(0.0);
+m_AgitatorEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorEnergy");
+m_AgitatorEnergyLogEntry.Append(0.0);
 m_IsIntakeExtendedLogEntry = wpi::log::BooleanLogEntry(log, "mechanisms/Intake/IsIntakeExtended");
 m_IsIntakeExtendedLogEntry.Append(false);
 
@@ -147,7 +147,6 @@ void Intake::CreateCompBot302()
 {
 	m_ntName = "Intake";
 	m_intake = new ctre::phoenix6::hardware::TalonFX(4, ctre::phoenix6::CANBus("canivore"));
-	// m_hopper = new ctre::phoenix6::hardware::TalonFX(0, ctre::phoenix6::CANBus("canivore"));
 
 	m_extender = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 0);
 
@@ -183,7 +182,6 @@ void Intake::CreateCompBot302()
 void Intake::InitializeCompBot302()
 {
 	InitializeTalonFXIntakeCompBot302();
-	// InitializeTalonFXHopperCompBot302();
 }
 void Intake::InitializeTalonFXIntakeCompBot302()
 {
@@ -233,54 +231,6 @@ void Intake::InitializeTalonFXIntakeCompBot302()
 		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intake", "m_intake Status", status.GetName());
 }
 
-void Intake::InitializeTalonFXHopperCompBot302()
-{
-	TalonFXConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
-	configs.CurrentLimits.StatorCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
-	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLowerLimit = units::current::ampere_t(35);
-	configs.CurrentLimits.SupplyCurrentLowerTime = units::time::second_t(0);
-
-	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
-	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
-	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
-
-	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
-	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
-
-	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
-	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
-
-	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
-	configs.MotorOutput.NeutralMode = NeutralModeValue::Coast;
-	configs.MotorOutput.PeakForwardDutyCycle = 1;
-	configs.MotorOutput.PeakReverseDutyCycle = -1;
-	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
-
-	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.Feedback.SensorToMechanismRatio = 1;
-
-	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
-	for (int i = 0; i < 5; ++i)
-	{
-		status = m_hopper->GetConfigurator().Apply(configs, units::time::second_t(0.25));
-		if (status.IsOK())
-			break;
-	}
-	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_hopper", "m_hopper Status", status.GetName());
-}
-
 void Intake::SetCurrentState(int state, bool run)
 {
 	StateMgr::SetCurrentState(state, run);
@@ -310,7 +260,7 @@ void Intake::SetControlConstants(RobotElementNames::MOTOR_CONTROLLER_USAGE ident
 void Intake::Update()
 {
 	m_intake->SetControl(*m_intakeActiveTarget);
-	// m_hopper->SetControl(*m_hopperActiveTarget);
+	// m_agitator->SetControl(*m_agitatorActiveTarget);
 }
 
 void Intake::Cyclic()
@@ -367,13 +317,13 @@ m_energy = get<1>(IntakePower);
 m_totalEnergy += m_energy;
 LogIntakePower(timestamp, m_power);
 LogIntakeEnergy(timestamp, m_energy);
-LogHopper(timestamp, m_Hopper->GetPosition().GetValueAsDouble());
-auto HopperPower = DragonPower::CalcPowerEnergy(currTime, m_Hopper->GetSupplyVoltage().GetValueAsDouble(), m_Hopper->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(HopperPower);
-m_energy = get<1>(HopperPower);
+LogAgitator(timestamp, m_Agitator->GetPosition().GetValueAsDouble());
+auto AgitatorPower = DragonPower::CalcPowerEnergy(currTime, m_Agitator->GetSupplyVoltage().GetValueAsDouble(), m_Agitator->GetSupplyCurrent().GetValueAsDouble());
+m_power = get<0>(AgitatorPower);
+m_energy = get<1>(AgitatorPower);
 m_totalEnergy += m_energy;
-LogHopperPower(timestamp, m_power);
-LogHopperEnergy(timestamp, m_energy);
+LogAgitatorPower(timestamp, m_power);
+LogAgitatorEnergy(timestamp, m_energy);
 LogIsIntakeExtended(timestamp, GetIsIntakeExtended());
 LogIntakeState(timestamp, GetCurrentState());
 m_totalWattHours += DragonPower::ConvertEnergyToWattHours(m_totalEnergy);

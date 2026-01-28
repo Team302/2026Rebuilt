@@ -46,7 +46,7 @@ namespace IntakeStates
 		RobotIdentifier m_RobotId;
 
 		const double m_intakeTarget = double(1);
-		const double m_hopperTarget = double(1);
+		const double m_agitatorTarget = double(1);
 		const bool m_extenderTarget = false;
 	};
 }

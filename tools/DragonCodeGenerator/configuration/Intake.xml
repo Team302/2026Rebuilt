@@ -287,7 +287,7 @@
     </MotorController>
     <MotorController
       xsi:type="TalonFX">
-      <name>Hopper</name>
+      <name>Agitator</name>
       <ControllerEnabled>Yes</ControllerEnabled>
       <theDistanceAngleCalcInfo>
         <gearRatio>
@@ -782,7 +782,7 @@
           <name>stringParameterConstInMechInstance</name>
           <__units__ />
           <type>String</type>
-          <value>EmptyHopper</value>
+          <value>EmptyAgitator</value>
         </stringParameterConstInMechInstance>
       </transitionsTo>
       <doubleParameters />
@@ -809,14 +809,14 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
         <motorTarget>
-          <name>Hopper</name>
+          <name>Agitator</name>
           <target>
             <unitsFamily>none</unitsFamily>
             <name>Target</name>
             <__units__ />
             <type>Double</type>
           </target>
-          <motorName>Hopper</motorName>
+          <motorName>Agitator</motorName>
           <Enabled>
             <unitsFamily>none</unitsFamily>
             <name>boolParameter</name>
@@ -869,7 +869,7 @@
           <name>stringParameterConstInMechInstance</name>
           <__units__ />
           <type>String</type>
-          <value>EmptyHopper</value>
+          <value>EmptyAgitator</value>
         </stringParameterConstInMechInstance>
       </transitionsTo>
       <doubleParameters />
@@ -896,14 +896,14 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
         <motorTarget>
-          <name>Hopper</name>
+          <name>Agitator</name>
           <target>
             <unitsFamily>none</unitsFamily>
             <name>Target</name>
             <__units__ />
             <type>Double</type>
           </target>
-          <motorName>Hopper</motorName>
+          <motorName>Agitator</motorName>
           <Enabled>
             <unitsFamily>none</unitsFamily>
             <name>boolParameter</name>
@@ -956,7 +956,7 @@
           <name>stringParameterConstInMechInstance</name>
           <__units__ />
           <type>String</type>
-          <value>EmptyHopper</value>
+          <value>EmptyAgitator</value>
         </stringParameterConstInMechInstance>
       </transitionsTo>
       <doubleParameters />
@@ -983,14 +983,14 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
         <motorTarget>
-          <name>Hopper</name>
+          <name>Agitator</name>
           <target>
             <unitsFamily>none</unitsFamily>
             <name>Target</name>
             <__units__ />
             <type>Double</type>
           </target>
-          <motorName>Hopper</motorName>
+          <motorName>Agitator</motorName>
           <Enabled>
             <unitsFamily>none</unitsFamily>
             <name>boolParameter</name>
@@ -1050,7 +1050,7 @@
           <name>stringParameterConstInMechInstance</name>
           <__units__ />
           <type>String</type>
-          <value>EmptyHopper</value>
+          <value>EmptyAgitator</value>
         </stringParameterConstInMechInstance>
       </transitionsTo>
       <doubleParameters />
@@ -1077,14 +1077,14 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
         <motorTarget>
-          <name>Hopper</name>
+          <name>Agitator</name>
           <target>
             <unitsFamily>none</unitsFamily>
             <name>Target</name>
             <__units__ />
             <type>Double</type>
           </target>
-          <motorName>Hopper</motorName>
+          <motorName>Agitator</motorName>
           <Enabled>
             <unitsFamily>none</unitsFamily>
             <name>boolParameter</name>
@@ -1116,7 +1116,7 @@
       </solenoidTarget>
     </state>
     <state>
-      <name>EmptyHopper</name>
+      <name>EmptyAgitator</name>
       <transitionsTo>
         <stringParameterConstInMechInstance>
           <unitsFamily>none</unitsFamily>
@@ -1157,14 +1157,14 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
         <motorTarget>
-          <name>Hopper</name>
+          <name>Agitator</name>
           <target>
             <unitsFamily>none</unitsFamily>
             <name>Target</name>
             <__units__ />
             <type>Double</type>
           </target>
-          <motorName>Hopper</motorName>
+          <motorName>Agitator</motorName>
           <Enabled>
             <unitsFamily>none</unitsFamily>
             <name>boolParameter</name>
