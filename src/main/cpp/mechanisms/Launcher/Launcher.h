@@ -131,6 +131,7 @@ public:
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
 
 	void SetCurrentState(int state, bool run) override;
+	bool IsLauncherInProtectedMode() const { return m_launcherProtectedMode; }
 	void PublishLaunchMode(bool launching);
 	void NotifyStateUpdate(RobotStateChanges::StateChange statechange, bool value) override;
 	bool IsInClimbMode() const { return m_isClimbMode; }
@@ -175,6 +176,8 @@ private:
 	ctre::phoenix6::controls::ControlRequest *m_turretActiveTarget;
 	ctre::phoenix6::controls::ControlRequest *m_indexerActiveTarget;
 
+	bool m_launcherProtectedMode = false;
+	bool m_launcherOffButtonReleased = true;
 	bool m_isClimbMode = false;
 	bool m_isAllowedToClimb = false;
 	// void InitializeLogging();
