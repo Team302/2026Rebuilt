@@ -584,7 +584,6 @@ void Launcher::RunCommonTasks()
 	{
 		m_launcherOffButtonReleased = true;
 	}
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Protected Mode", m_launcherProtectedMode);
 }
 
 /// @brief  Set the control constants (e.g. PIDF values).
