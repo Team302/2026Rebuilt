@@ -51,7 +51,6 @@ void EmptyHopperState::Init()
 void EmptyHopperState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
-	// m_mechanism->UpdateTargetAgitatorPercentOut(m_agitatorTarget);
 	m_mechanism->GetExtender()->Set(m_extenderTarget);
 }
 
