@@ -822,7 +822,7 @@
                 <name>stringParameterConstInMechInstance</name>
                 <__units__ />
                 <type>String</type>
-                <value>EmptyAgitator</value>
+                <value>EmptyHopper</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
             <doubleParameters />
@@ -909,7 +909,7 @@
                 <name>stringParameterConstInMechInstance</name>
                 <__units__ />
                 <type>String</type>
-                <value>EmptyAgitator</value>
+                <value>EmptyHopper</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
             <doubleParameters />
@@ -999,7 +999,7 @@
                 <name>stringParameterConstInMechInstance</name>
                 <__units__ />
                 <type>String</type>
-                <value>EmptyAgitator</value>
+                <value>EmptyHopper</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
             <doubleParameters />
@@ -1096,7 +1096,7 @@
                 <name>stringParameterConstInMechInstance</name>
                 <__units__ />
                 <type>String</type>
-                <value>EmptyAgitator</value>
+                <value>EmptyHopper</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
             <doubleParameters />
@@ -1164,7 +1164,7 @@
             </solenoidTarget>
           </state>
           <state>
-            <name>EmptyAgitator</name>
+            <name>EmptyHopper</name>
             <transitionsTo>
               <stringParameterConstInMechInstance>
                 <unitsFamily>none</unitsFamily>
@@ -3339,7 +3339,7 @@
                 <name>stringParameterConstInMechInstance</name>
                 <__units__ />
                 <type>String</type>
-                <value>EmptyAgitator</value>
+                <value>EmptyHopper</value>
               </stringParameterConstInMechInstance>
               <stringParameterConstInMechInstance>
                 <unitsFamily>none</unitsFamily>
@@ -3477,7 +3477,7 @@
                 <name>stringParameterConstInMechInstance</name>
                 <__units__ />
                 <type>String</type>
-                <value>EmptyAgitator</value>
+                <value>EmptyHopper</value>
               </stringParameterConstInMechInstance>
               <stringParameterConstInMechInstance>
                 <unitsFamily>none</unitsFamily>
@@ -3712,7 +3712,7 @@
             <solenoidTarget />
           </state>
           <state>
-            <name>EmptyAgitator</name>
+            <name>EmptyHopper</name>
             <transitionsTo>
               <stringParameterConstInMechInstance>
                 <unitsFamily>none</unitsFamily>
