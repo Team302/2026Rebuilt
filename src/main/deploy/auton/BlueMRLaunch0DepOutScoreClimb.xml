@@ -10,6 +10,11 @@ time = "1.5"/>
 choreoname = "RightToLeftAlliance"
 time = "2.5"/>
 
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "DepotToLaunchToClimb"
+time = "2.5"/>
+
+
 <!--This path could honestly do a lot more, we could probably grab some pieces from our side if people are willing to pass-->
 
 
