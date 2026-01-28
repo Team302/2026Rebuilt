@@ -177,7 +177,7 @@ private:
 	ctre::phoenix6::controls::ControlRequest *m_indexerActiveTarget;
 
 	bool m_launcherProtectedMode = false;
-
+	bool m_launcherOffButtonReleased = true;
 	bool m_isClimbMode = false;
 	bool m_isAllowedToClimb = false;
 	// void InitializeLogging();

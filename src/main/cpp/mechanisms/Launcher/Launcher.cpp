@@ -38,7 +38,7 @@
 #include "mechanisms/Launcher/LaunchState.h"
 #include "mechanisms/Launcher/EmptyHopperState.h"
 #include "mechanisms/Launcher/ClimbState.h"
-#include "teleopControl/TeleopControl.h"
+#include "teleopcontrol/TeleopControl.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -574,8 +574,17 @@ void Launcher::RunCommonTasks()
 	Cyclic();
 	if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCHER_OFF))
 	{
-		m_launcherProtectedMode = !m_launcherProtectedMode;
+		if (m_launcherOffButtonReleased)
+		{
+			m_launcherProtectedMode = !m_launcherProtectedMode;
+		}
+		m_launcherOffButtonReleased = false;
 	}
+	else
+	{
+		m_launcherOffButtonReleased = true;
+	}
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Protected Mode", m_launcherProtectedMode);
 }
 
 /// @brief  Set the control constants (e.g. PIDF values).
