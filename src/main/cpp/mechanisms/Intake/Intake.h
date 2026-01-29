@@ -94,6 +94,7 @@ public:
 	void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
 	bool IsInClimbMode() const { return m_isInClimbMode; }
 	bool IsLaunching() const { return m_isLaunching; }
+	bool IsIntakeExtended() const { return GetIsIntakeExtendedState(); }
 
 protected:
 	RobotIdentifier m_activeRobotId;
