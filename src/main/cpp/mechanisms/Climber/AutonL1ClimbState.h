@@ -37,8 +37,5 @@ namespace ClimberStates
 		bool IsTransitionCondition(bool) override;
 
 	private:
-		const units::angle::degree_t m_climberTarget = units::angle::degree_t(15);
-		const bool m_extenderTarget = false;
-		const bool m_alignmentTarget = false;
 	};
 }
