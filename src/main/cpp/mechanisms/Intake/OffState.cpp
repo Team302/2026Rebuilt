@@ -51,7 +51,6 @@ void OffState::Init()
 void OffState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
-	// m_mechanism->UpdateTargetHopperPercentOut(m_hopperTarget);
 }
 
 void OffState::Run()

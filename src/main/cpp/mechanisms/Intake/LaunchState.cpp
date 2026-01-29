@@ -51,7 +51,6 @@ void LaunchState::Init()
 void LaunchState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
-	// m_mechanism->UpdateTargetHopperPercentOut(m_hopperTarget);
 }
 
 void LaunchState::Run()
