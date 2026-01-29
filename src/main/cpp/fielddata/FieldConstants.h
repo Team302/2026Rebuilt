@@ -38,6 +38,7 @@ public:
         BLUE_HUB_ALLIANCE_CENTER,
         BLUE_HUB_OUTPOST_CENTER,
         BLUE_TOWER_CENTER,
+        BLUE_OUTPOST_CENTER,
         // 2026 - RED APRIL TAGS
         RED_HUB_ALLIANCE_CENTER,
         RED_HUB_OUTPOST_CENTER,
@@ -51,7 +52,10 @@ public:
         BLUE_DEPOT_NEUTRAL_SIDE,
         BLUE_DEPOT_LEFT_SIDE,
         BLUE_DEPOT_RIGHT_SIDE,
+        BLUE_DEPOT_PASSING_TARGET,
+        BLUE_OUTPOST_PASSING_TARGET,
 
+        
         // 2026 - Red Calculated Positions
         RED_HUB_CENTER,
         RED_TOWER_LEFT_STICK,
@@ -60,7 +64,10 @@ public:
         RED_TOWER_LEVEL_1_RIGHT,
         RED_DEPOT_NEUTRAL_SIDE,
         RED_DEPOT_LEFT_SIDE,
-        RED_DEPOT_RIGHT_SIDE
+        RED_DEPOT_RIGHT_SIDE,
+        RED_DEPOT_PASSING_TARGET,
+        RED_OUTPOST_PASSING_TARGET
+
     };
 
     frc::Pose3d GetFieldElementPose(FIELD_ELEMENT element);
