@@ -71,7 +71,7 @@ void Intake::CreateAndRegisterStates()
 	LaunchState *LaunchStateInst = new LaunchState(string("Launch"), 3, this, m_activeRobotId);
 	AddToStateVector(LaunchStateInst);
 
-	EmptyHopperState *EmptyHopperStateInst = new EmptyHopperState(string("EmptyAgitator"), 4, this, m_activeRobotId);
+	EmptyHopperState *EmptyHopperStateInst = new EmptyHopperState(string("EmptyHopper"), 4, this, m_activeRobotId);
 	AddToStateVector(EmptyHopperStateInst);
 
 	OffStateInst->RegisterTransitionState(IntakeStateInst);

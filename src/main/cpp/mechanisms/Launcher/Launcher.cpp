@@ -75,7 +75,7 @@ void Launcher::CreateAndRegisterStates()
 	LaunchState *LaunchStateInst = new LaunchState(string("Launch"), 4, this, m_activeRobotId);
 	AddToStateVector(LaunchStateInst);
 
-	EmptyHopperState *EmptyHopperStateInst = new EmptyHopperState(string("EmptyAgitator"), 5, this, m_activeRobotId);
+	EmptyHopperState *EmptyHopperStateInst = new EmptyHopperState(string("EmptyHopper"), 5, this, m_activeRobotId);
 	AddToStateVector(EmptyHopperStateInst);
 
 	ClimbState *ClimbStateInst = new ClimbState(string("Climb"), 6, this, m_activeRobotId);
