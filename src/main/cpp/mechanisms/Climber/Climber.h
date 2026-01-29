@@ -52,7 +52,8 @@ public:
 		STATE_PREPARE_TO_CLIMB,
 		STATE_L1CLIMB,
 		STATE_L3CLIMB,
-		STATE_EXIT
+		STATE_EXIT,
+		STATE_AUTON_L1CLIMB
 	};
 
 	Climber(RobotIdentifier activeRobotId);
