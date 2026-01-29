@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "zone.dtd">
+
+<auton>
+<zone circlex="4.60" circley="2.54" radius="65.0"/>
+</auton>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "zone.dtd">
+
+<auton>
+<zone
+x1_rect = "3.14"
+y1_rect = "3.64"
+x2_rect = "5.97"
+y2_rect = "1.60"
+/>
+</auton>
