@@ -70,6 +70,7 @@ void FieldElementCalculator::InitializeTransforms()
         TransformToPose(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER, m_calcDepoOffsetRight);
     m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_PASSING_TARGET] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_CENTER, m_calcDepoPassingTarget);
+    
 
     // Red Calculated Positions
     m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER] =
@@ -84,5 +85,7 @@ void FieldElementCalculator::InitializeTransforms()
         TransformToPose(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER, m_calcDepoOffsetCenter);
     m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::RED_DEPOT_RIGHT_SIDE] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER, m_calcDepoOffsetRight);
+    m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::RED_DEPOT_PASSING_TARGET] =
+        TransformToPose(FieldConstants::FIELD_ELEMENT::RED_OUTPOST_CENTER, m_calcDepoPassingTarget);
 }
 

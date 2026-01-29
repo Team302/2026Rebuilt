@@ -43,6 +43,7 @@ public:
         RED_HUB_ALLIANCE_CENTER,
         RED_HUB_OUTPOST_CENTER,
         RED_TOWER_CENTER,
+        RED_OUTPOST_CENTER,
         // 2026 - Blue Calculated Positions
         BLUE_HUB_CENTER,
         BLUE_TOWER_LEFT_STICK,
