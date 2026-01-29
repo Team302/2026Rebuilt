@@ -18,8 +18,8 @@
 #include "frc/geometry/Pose2d.h"
 
 // Project headers
-// #include "chassis/ChassisConfigMgr.h"
-// #include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "chassis/ChassisConfigMgr.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "state/StateMgr.h"
 #include "vision/DragonVision.h"
 
@@ -85,7 +85,7 @@ private:
     /**
      * Pointer to the swerve drivetrain used to update/fetch odometry/pose estimator.
      */
-    // subsystems::CommandSwerveDrivetrain *m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
+    subsystems::CommandSwerveDrivetrain *m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
 
     /**
      * Pointer to the vision subsystem providing target detections.
