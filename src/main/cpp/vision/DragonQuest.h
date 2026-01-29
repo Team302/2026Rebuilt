@@ -28,8 +28,10 @@
 #include "state/IRobotStateChangeSubscriber.h"
 #include "utils/logging/signals/DragonDataLogger.h"
 #include "vision/DragonVisionPoseEstimatorStruct.h"
+#ifdef __FRC_ROBORIO__
 #include "vision/Questnavlib/commands.pb.h"
 #include "vision/Questnavlib/data.pb.h"
+#endif
 
 using namespace std;
 

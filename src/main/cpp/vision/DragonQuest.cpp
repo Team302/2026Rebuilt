@@ -71,6 +71,7 @@ void DragonQuest::Periodic()
 
 void DragonQuest::GetEstimatedPose()
 {
+#ifdef __FRC_ROBORIO__
     auto rawData = m_frameDataSubscriber.Get();
     if (rawData.empty())
     {
@@ -114,10 +115,12 @@ void DragonQuest::GetEstimatedPose()
     frc::Pose2d robotPose = questPose.TransformBy(m_questToRobotTransform.Inverse());
 
     m_lastCalculatedPose = robotPose;
+#endif
 }
 
 void DragonQuest::SetIsConnected()
 {
+#ifdef __FRC_ROBORIO__
     auto rawData = m_frameDataSubscriber.Get();
     if (rawData.empty())
     {
@@ -147,6 +150,7 @@ void DragonQuest::SetIsConnected()
         }
         m_prevFrameCount = currentFrameCount;
     }
+#endif
 }
 
 void DragonQuest::DataLog(uint64_t timestamp)
@@ -156,6 +160,7 @@ void DragonQuest::DataLog(uint64_t timestamp)
 
 void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
 {
+#ifdef __FRC_ROBORIO__
     if (!m_hasReset)
     {
         frc::Pose2d questPose = pose.TransformBy(m_questToRobotTransform);
@@ -196,6 +201,7 @@ void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
 
         m_hasReset = true;
     }
+#endif
 }
 
 void DragonQuest::HandleDashboard()
@@ -222,6 +228,7 @@ void DragonQuest::NotifyStateUpdate(RobotStateChanges::StateChange change, int v
 }
 DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
 {
+#ifdef __FRC_ROBORIO__
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("m_hasReset"), m_hasReset);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("m_isConnected"), m_isConnected);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("m_isQuestEnabled"), m_isQuestEnabled);
@@ -244,4 +251,9 @@ DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("confidence"), string("HIGH"));
     }
     return str;
+#else
+    DragonVisionPoseEstimatorStruct str;
+    str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE;
+    return str;
+#endif
 }
