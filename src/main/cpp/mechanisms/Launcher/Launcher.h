@@ -144,6 +144,9 @@ public:
 	void NotifyStateUpdate(RobotStateChanges::StateChange statechange, bool value) override;
 	bool IsInClimbMode() const { return m_isClimbMode; }
 	bool IsAllowedToClimb() const { return m_isAllowedToClimb; }
+	bool IsLauncherAtTarget();
+	bool IsAllowedToLaunch();
+	bool IsLauncherInitialized();
 
 protected:
 	RobotIdentifier m_activeRobotId;

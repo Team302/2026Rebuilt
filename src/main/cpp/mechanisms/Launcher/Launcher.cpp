@@ -690,7 +690,21 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 		m_isAllowedToClimb = value;
 	}
 }
-
+bool Launcher::IsLauncherAtTarget()
+{
+	// TODO : POPULATE FUNCTION
+	return false;
+}
+bool Launcher::IsAllowedToLaunch()
+{
+	// TODO : POPULATE FUNCTION
+	return false;
+}
+bool Launcher::IsLauncherInitialized()
+{
+	// TODO : POPULATE FUNCTION
+	return false;
+}
 /* void Launcher::DataLog(uint64_t timestamp)
 {
    auto currTime = m_powerTimer.Get();
