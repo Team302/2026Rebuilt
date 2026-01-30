@@ -89,7 +89,7 @@ frc::Pose2d DepotHelper::CalcDepotPose() const
     auto neutralPose = isNearestDepotRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE)
                                          : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE);
 
-    // neutralPose X accounts for half the robot on the intake side + bumpers + hopper/intake being extended
+    // neutralPose X accounts for half the robot on the intake side + bumpers + agitator/intake being extended
     // neutralPose Y is center of the depot - no need to average with the side values
     // rotation is based on the color
     return frc::Pose2d(neutralPose.X(), neutralPose.Y(), isNearestDepotRed ? 0_deg : 180_deg);

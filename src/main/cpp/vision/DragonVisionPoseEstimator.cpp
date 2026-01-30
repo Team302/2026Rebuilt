@@ -50,7 +50,6 @@
 #include <optional>
 
 #include "chassis/ChassisConfigMgr.h"
-#include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "utils/PeriodicLooper.h"
 #include "vision/DragonQuest.h"
 #include "vision/DragonVision.h"

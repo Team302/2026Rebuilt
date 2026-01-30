@@ -46,6 +46,7 @@ void InitializeState::Init()
 
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
 		InitCompBot302();
+	m_mechanism->PublishLaunchMode(false);
 }
 
 void InitializeState::InitCompBot302()
@@ -55,6 +56,7 @@ void InitializeState::InitCompBot302()
 	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
 	m_mechanism->UpdateTargetTurretPercentOut(m_turretTarget);
 	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
+	m_mechanism->UpdateTargetAgitatorPercentOut(m_agitatorTarget);
 }
 
 void InitializeState::Run()
@@ -78,6 +80,6 @@ bool InitializeState::AtTarget()
 bool InitializeState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return false;
+	return !m_mechanism->IsLauncherInProtectedMode();
 	// return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXAMPLE_MECH_FORWARD));
 }

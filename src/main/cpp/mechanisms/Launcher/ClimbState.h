@@ -50,5 +50,6 @@ namespace LauncherStates
 		const double m_transferTarget = double(0);
 		const double m_turretTarget = double(0);
 		const double m_indexerTarget = double(0);
+		const double m_agitatorTarget = double(0);
 	};
 }
