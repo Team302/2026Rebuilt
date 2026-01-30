@@ -50,7 +50,7 @@
 /// Sorted includes: standard library first, then project headers (alphabetical).
 #include <optional>
 
-// #include "chassis/ChassisConfigMgr.h"
+#include "chassis/ChassisConfigMgr.h"
 #include "utils/PeriodicLooper.h"
 #include "vision/DragonQuest.h"
 #include "vision/DragonVision.h"
@@ -61,7 +61,7 @@ DragonVisionPoseEstimator::DragonVisionPoseEstimator()
 {
     PeriodicLooper::GetInstance()->RegisterAll(this);
     m_vision = DragonVision::GetDragonVision();
-    // m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
+    m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
 }
 void DragonVisionPoseEstimator::RunCommonTasks()
 {
@@ -109,8 +109,7 @@ void DragonVisionPoseEstimator::SetCurrentState(int state, bool run)
  */
 frc::Pose2d DragonVisionPoseEstimator::GetPose() const
 {
-    // return (m_chassis != nullptr) ? m_chassis->GetPose() : frc::Pose2d{};
-    return frc::Pose2d{};
+    return (m_chassis != nullptr) ? m_chassis->GetPose() : frc::Pose2d{};
 }
 
 /**
@@ -120,10 +119,10 @@ frc::Pose2d DragonVisionPoseEstimator::GetPose() const
  */
 void DragonVisionPoseEstimator::ResetPosition(const frc::Pose2d &pose)
 {
-    // if (m_chassis != nullptr)
-    // {
-    //     m_chassis->ResetPose(pose);
-    // }
+    if (m_chassis != nullptr)
+    {
+        m_chassis->ResetPose(pose);
+    }
 }
 
 /**
