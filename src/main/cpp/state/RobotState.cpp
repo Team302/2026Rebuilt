@@ -37,7 +37,7 @@ RobotState *RobotState::GetInstance()
 }
 
 RobotState::RobotState() : m_brokers(),
-                           m_scoringMode(RobotStateChanges::ScoringMode::Coral),
+                           m_scoringMode(RobotStateChanges::ScoringMode::FUEL),
                            m_gamePhase(RobotStateChanges::Disabled)
 {
     m_brokers.reserve(RobotStateChanges::LoopCounterStart);
@@ -70,6 +70,7 @@ void RobotState::Run()
         auto controller = TeleopControl::GetInstance();
         if (controller != nullptr)
         {
+            PublishClimbMode(controller);
         }
     }
 }
@@ -173,4 +174,17 @@ void RobotState::PublishGameStateChanges()
         m_gamePhase = gameState;
         PublishStateChange(RobotStateChanges::GameState_Int, gameState);
     }
+}
+void RobotState::PublishClimbMode(TeleopControl *controller)
+{
+    if (controller->IsButtonPressed(TeleopControlFunctions::CLIMB_MODE))
+    {
+        if (m_climbButtonReleased)
+        {
+            m_climbModeStatus = !m_climbModeStatus;
+
+            PublishStateChange(RobotStateChanges::ClimbModeStatus_Bool, m_climbModeStatus);
+        }
+    }
+    m_climbButtonReleased = !controller->IsButtonPressed(TeleopControlFunctions::CLIMB_MODE);
 }

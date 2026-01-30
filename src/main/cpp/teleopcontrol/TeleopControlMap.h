@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -161,8 +160,20 @@ robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlB
     {TeleopControlFunctions::ROBOT_ORIENTED_DRIVE, driverDPad0},
     {TeleopControlFunctions::SYSID_MODIFER, driverSelectButton},
 
-    {TeleopControlFunctions::READY, copilotStartButton},
-};
+    {TeleopControlFunctions::INTAKE, driverRBumper},
+    {TeleopControlFunctions::EXPEL, driverLBumper},
+    {TeleopControlFunctions::LEVEL1_CLIMB, driverAButton},
+    {TeleopControlFunctions::LEVEL3_CLIMB, driverYButton},
+    {TeleopControlFunctions::ALIGN_TO_LEFT_TOWER, driverXButton},
+    {TeleopControlFunctions::ALIGN_TO_RIGHT_TOWER, driverBButton},
+    {TeleopControlFunctions::UPDATE_VIRTUAL_TARGET_OFFSET_DOWN, copilotDPad180},
+    {TeleopControlFunctions::UPDATE_VIRTUAL_TARGET_OFFSET_UP, copilotDPad0},
+    {TeleopControlFunctions::UPDATE_VIRTUAL_TARGET_OFFSET_RIGHT, copilotDPad90},
+    {TeleopControlFunctions::UPDATE_VIRTUAL_TARGET_OFFSET_LEFT, copilotDPad270},
+    {TeleopControlFunctions::LAUNCH, copilotAButton},
+    {TeleopControlFunctions::LAUNCHER_OFF, copilotStartButton},
+    {TeleopControlFunctions::INTAKE_IN, copilotLBumper},
+    {TeleopControlFunctions::INTAKE_OUT, copilotRBumper}};
 
 const TeleopControlAxis driverLJoystickX = {TeleopControlMappingEnums::DRIVER, TeleopControlMappingEnums::LEFT_JOYSTICK_X, TeleopControlMappingEnums::APPLY_STANDARD_DEADBAND, TeleopControlMappingEnums::AXIS_PROFILE::LINEAR, TeleopControlMappingEnums::REVERSED, 1.0};
 const TeleopControlAxis driverLJoystickY = {TeleopControlMappingEnums::DRIVER, TeleopControlMappingEnums::LEFT_JOYSTICK_Y, TeleopControlMappingEnums::APPLY_STANDARD_DEADBAND, TeleopControlMappingEnums::AXIS_PROFILE::LINEAR, TeleopControlMappingEnums::REVERSED, 1.0};
@@ -210,4 +221,9 @@ robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlA
     {TeleopControlFunctions::HOLONOMIC_DRIVE_FORWARD, driverLJoystickY},
     {TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE, driverLJoystickX},
     {TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE, driverRJoystickX},
-};
+    {TeleopControlFunctions::UPDATE_VIRTUAL_LEFT_PASSING_TARGET_X, copilotLJoystickY},
+    {TeleopControlFunctions::UPDATE_VIRTUAL_LEFT_PASSING_TARGET_Y, copilotLJoystickX},
+    {TeleopControlFunctions::UPDATE_VIRTUAL_RIGHT_PASSING_TARGET_X, copilotRJoystickY},
+    {TeleopControlFunctions::UPDATE_VIRTUAL_RIGHT_PASSING_TARGET_Y, copilotRJoystickX},
+    {TeleopControlFunctions::CLIMB_MANUAL_ROTATE_DOWN, driverLTrigger},
+    {TeleopControlFunctions::CLIMB_MANUAL_ROTATE_UP, driverRTrigger}};

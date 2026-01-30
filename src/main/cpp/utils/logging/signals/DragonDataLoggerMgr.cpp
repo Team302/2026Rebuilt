@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -21,7 +20,8 @@
 #include "frc/DriverStation.h"
 #include "frc/RobotController.h"
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
-#include "utils/logging/signals/DragonDataLoggerSignals.h"
+#include "utils/logging/signals/CTRESignalLogger.h"
+#include "utils/logging/signals/UDPSignalLogger.h"
 
 using namespace std;
 using ctre::phoenix6::SignalLogger;
@@ -36,61 +36,79 @@ DragonDataLoggerMgr *DragonDataLoggerMgr::GetInstance()
     return DragonDataLoggerMgr::m_instance;
 }
 
-DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items() //, m_doubleDatalogSignals(), m_boolDatalogSignals(), m_stringDatalogSignals()
+DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items() 
 {
-    // auto logFolder = GetLoggingDir();
-    // // frc::DataLogManager::Start(logFolder, CreateLogFileName());
-    // frc::DataLogManager::Start();
-    // frc::DriverStation::StartDataLog(frc::DataLogManager::GetLog());
-    // DragonDataLoggerSignals::GetInstance();
 
-    // SignalLogger::SetPath(logFolder.c_str());
-    // SignalLogger::EnableAutoLogging(true);
-    // SignalLogger::Start();
+    //m_logger = std::make_unique<CTRESignalLogger>();
+    m_logger = std::make_unique<UDPSignalLogger>("127.0.0.1", 5900);
 
-    SignalLogger::SetPath(GetLoggingDir().c_str());
-    SignalLogger::EnableAutoLogging(true);
-    SignalLogger::Start();
+    m_logger->Start();
     m_timer.Start();
+
+}
+
+
+void DragonDataLoggerMgr::SetLogger(std::unique_ptr<ISignalLogger> logger)
+{
+    if (!logger)
+    {
+        return;
+    }
+
+    if (m_logger)
+    {
+        m_logger->Stop();
+    }
+    m_logger = std::move(logger);
+    m_logger->Start();
+}
+
+void DragonDataLoggerMgr::SetLoggerType(LoggerType type, const std::string &ipAddress, int port)
+{
+    if (m_logger)
+    {
+        m_logger->Stop();
+    }
+
+    switch (type)
+    {
+    case LoggerType::CTRE_SIGNAL_LOGGER:
+        m_logger = std::make_unique<CTRESignalLogger>();
+        break;
+
+    case LoggerType::UDP_LOGGER:
+        if (!ipAddress.empty() && port > 0)
+        {
+            m_logger = std::make_unique<UDPSignalLogger>(ipAddress, port);
+        }
+        else
+        {
+            m_logger = std::make_unique<UDPSignalLogger>("127.0.0.1", 5800);
+        }
+        break;
+
+    case LoggerType::NETWORK_TABLES_LOGGER:
+        // Future implementation
+        // m_logger = std::make_unique<NetworkTablesLogger>();
+        break;
+
+    default:
+        m_logger = std::make_unique<UDPSignalLogger>("127.0.0.1", 5800);
+        break;
+    }
+
+    if (m_logger)
+    {
+        m_logger->Start();
+    }
 }
 
 DragonDataLoggerMgr::~DragonDataLoggerMgr()
 {
-    SignalLogger::Stop();
-}
-
-/**
- * @brief Create a log file name based on the current date and time
- */
-std::string DragonDataLoggerMgr::CreateLogFileName()
-{
-    time_t now = time(0);
-    tm *ltm = localtime(&now);
-    char buffer[80];
-    strftime(buffer, 80, "%Y%m%d-%H%M%S", ltm);
-    string time(buffer);
-
-    string filename = "frc302-" + time + ".wpilog";
-    return filename;
-}
-
-std::string DragonDataLoggerMgr::GetLoggingDir()
-{
-    // check if usb log directory exists
-    if (std::filesystem::exists("/media/sda1/logs/"))
+    if (m_logger)
     {
-        return std::filesystem::path("/media/sda1/logs/").string();
+        m_logger->Stop();
     }
-    else if (std::filesystem::exists("/home/lvuser/logs/"))
-    {
-        return std::filesystem::path("/home/lvuser/logs/").string();
-    }
-    else if (std::filesystem::exists("/home/systemcore/logs/"))
-    {
-        return std::filesystem::path("/home/systemcore/logs/").string();
-    }
-
-    return std::string("");
 }
 
 void DragonDataLoggerMgr::RegisterItem(DragonDataLogger *item)
@@ -109,10 +127,4 @@ void DragonDataLoggerMgr::PeriodicDataLog()
         item->DataLog(timestamp);
         m_lastIndex += ((m_lastIndex >= (m_items.size() - 1)) ? -m_lastIndex : 1);
     }
-    // for (auto item : m_items)
-    //{
-    //     item->DataLog(timestamp);
-    // }
-    //  wpi::log::DataLog &log = frc::DataLogManager::GetLog();
-    //  log.Flush();
 }

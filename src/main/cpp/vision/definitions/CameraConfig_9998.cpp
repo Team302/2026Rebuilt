@@ -16,10 +16,10 @@
 #include <string>
 
 #include "utils/logging/debug/Logger.h"
-#include "vision/definitions/CameraConfig_9998.h"
 #include "vision/DragonLimelight.h"
 #include "vision/DragonQuest.h"
 #include "vision/DragonVision.h"
+#include "vision/definitions/CameraConfig_9998.h"
 
 void CameraConfig_9998::BuildCameraConfig()
 {
@@ -41,7 +41,6 @@ void CameraConfig_9998::BuildCameraConfig()
                                                  units::angle::degree_t(0),                 // units::angle::degree_t roll,           /// <I> - Roll of camera
                                                  DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG,      /// <I> enum for starting pipeline
                                                  DRAGON_LIMELIGHT_LED_MODE::LED_OFF,        // DRAGON_LIMELIGHT_LED_MODE ledMode,
-                                                 DRAGON_LIMELIGHT_CAM_MODE::CAM_VISION      // CAM_MODE camMode,
 
     ); // additional parameter
     vision->AddLimelight(front, DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);

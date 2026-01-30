@@ -21,7 +21,6 @@
 #include "vision/definitions/CameraConfig_9998.h"
 #include "vision/definitions/CameraConfig.h"
 #include "vision/definitions/CameraConfigMgr.h"
-
 using namespace std;
 
 CameraConfigMgr *CameraConfigMgr::m_instance = nullptr;

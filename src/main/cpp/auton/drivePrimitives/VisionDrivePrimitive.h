@@ -14,16 +14,38 @@
 //====================================================================================================================================================
 #pragma once
 
-// FRC Includes
-#include <frc/geometry/Pose2d.h>
-#include <frc/geometry/Translation2d.h>
+// C++ Includes
+#include <memory>
 
-class DistanceBetweenPoses
+// Team302 Includes
+#include "auton/PrimitiveParams.h"
+#include "auton/drivePrimitives/IPrimitive.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "chassis/ChassisOptionEnums.h"
+#include "vision/DragonVision.h"
+
+// FRC,WPI Includes
+#include "frc/Timer.h"
+#include "units/time.h"
+
+class VisionDrivePrimitive : public IPrimitive
 {
 public:
-    DistanceBetweenPoses() = default;
-    ~DistanceBetweenPoses() = default;
+    VisionDrivePrimitive();
 
-    static double GetDeltaBetweenPoses(frc::Pose2d translationOne,
-                                       frc::Pose2d translationTwo);
+    virtual ~VisionDrivePrimitive() = default;
+
+    void Init(PrimitiveParams *params) override;
+    void Run() override;
+    bool IsDone() override;
+
+private:
+    subsystems::CommandSwerveDrivetrain *m_chassis;
+    ChassisOptionEnums::HeadingOption m_headingOption;
+    std::string m_ntName;
+
+    frc::Timer *m_timer;
+    units::time::second_t m_timeout;
+
+    DragonVision *m_vision;
 };

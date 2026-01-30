@@ -44,6 +44,7 @@
 // FRC
 #include "frc/RobotController.h"
 #include "frc/Timer.h"
+#include "frc/apriltag/AprilTagFieldLayout.h"
 #include "frc/geometry/Pose2d.h"
 
 // Team 302 includes
@@ -244,7 +245,7 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonVision::GetObjectDetectio
 																							const std::vector<int> &validClasses) const
 {
 	std::vector<std::unique_ptr<DragonVisionStruct>> alltargets;
-	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE);
+	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION);
 	for (auto limelight : limelights)
 	{
 		auto camTargets = limelight->GetObjectDetectionTargetInfo(validClasses);
@@ -319,7 +320,7 @@ DragonVisionPoseEstimatorStruct DragonVision::GetRobotPositionQuest()
 /// @note Updates all running limelights and the DragonQuest instance (if present).
 void DragonVision::SetRobotPose(const frc::Pose2d &pose)
 {
-	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS);
+	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
 	for (auto limelight : limelights)
 	{
 		limelight->SetRobotPose(pose);
@@ -333,7 +334,7 @@ void DragonVision::SetRobotPose(const frc::Pose2d &pose)
 }
 
 /// @brief Return limelights that match the provided usage/category and are running.
-/// @param usage The usage/category to filter by (ALGAE_AND_APRIL_TAGS, APRIL_TAGS, etc.).
+/// @param usage The usage/category to filter by (e.g., APRIL_TAGS).
 /// @return Vector of pointers to running DragonLimelight instances that match the criteria.
 /// @note Only returns cameras that report IsLimelightRunning() == true.
 std::vector<DragonLimelight *> DragonVision::GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE usage) const
@@ -341,42 +342,13 @@ std::vector<DragonLimelight *> DragonVision::GetLimelights(DRAGON_LIMELIGHT_CAME
 	std::vector<DragonLimelight *> validLimelights;
 	for (auto it = m_dragonLimelightMap.begin(); it != m_dragonLimelightMap.end(); ++it)
 	{
-		bool addCam = false;
+		auto thisUsage = (*it).first;
 		auto limelight = (*it).second;
-		if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS)
-		{
-			if (limelight->IsLimelightRunning())
-			{
-				validLimelights.emplace_back(limelight);
-			}
-		}
-		else
-		{
 
-			addCam = (*it).first == usage;
-			if (!addCam)
-			{
-				if ((*it).first == DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS)
-				{
-					auto pipe = DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG;
-					if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS)
-					{
-						addCam = pipe == DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG;
-					}
-					else if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE)
-					{
-						addCam = pipe == DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL || pipe == DRAGON_LIMELIGHT_PIPELINE::COLOR_THRESHOLD;
-					}
-				}
-			}
-		}
-
+		auto addCam = thisUsage == usage && limelight->IsLimelightRunning();
 		if (addCam)
 		{
-			if (limelight->IsLimelightRunning())
-			{
-				validLimelights.emplace_back(limelight);
-			}
+			validLimelights.emplace_back(limelight);
 		}
 	}
 	return validLimelights;
@@ -387,7 +359,7 @@ std::vector<DragonLimelight *> DragonVision::GetLimelights(DRAGON_LIMELIGHT_CAME
 /// @return Pointer to the DragonLimelight if found and running; nullptr otherwise.
 DragonLimelight *DragonVision::GetLimelightFromIdentifier(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier) const
 {
-	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS);
+	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
 	for (auto limelight : limelights)
 	{
 		if (limelight->GetCameraIdentifier() == identifier)

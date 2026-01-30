@@ -51,16 +51,6 @@ void DriverFeedback::UpdateFeedback()
 
 void DriverFeedback::UpdateRumble()
 {
-    auto controller = TeleopControl::GetInstance();
-    if (!frc::DriverStation::IsTeleop() || m_climbMode)
-    {
-        controller->SetRumble(0, false, false);
-        controller->SetRumble(1, false, false);
-    }
-    else
-    {
-        controller->SetRumble(1, m_driveToIsDone, m_driveToIsDone);
-    }
 }
 
 void DriverFeedback::UpdateLEDStates()
@@ -91,7 +81,7 @@ void DriverFeedback::UpdateDiagnosticLEDs()
         questStatus = dragonVision->HealthCheckQuest();
     }
 
-    m_LEDStates->DiagnosticPattern(FMSData::GetAllianceColor(), false, false, false, questStatus, ll1Status);
+    m_LEDStates->DiagnosticPattern(FMSData::GetAllianceColor(), questStatus, ll1Status);
 }
 
 void DriverFeedback::ResetRequests(void)

@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -49,7 +48,7 @@ public:
 	void SetChaserPattern(frc::Color c);
 	void SetClosingInChaserPattern(frc::Color c);
 
-	void DiagnosticPattern(frc::DriverStation::Alliance alliance, bool coralInSensor, bool coralOutSensor, bool algaeSensor, bool questStatus, bool ll1Status);
+	void DiagnosticPattern(frc::DriverStation::Alliance alliance, bool questStatus, bool ll1Status);
 
 	static DragonLeds *GetInstance();
 
@@ -66,9 +65,6 @@ private:
 
 	const int m_blinkPatternPeriod = 10;
 	const int m_allianceColorLED = 0;
-	const int m_coralInSensorDiagnosticLED = 1;
-	const int m_coralOutSensorDiagnosticLED = 2;
-	const int m_algaeSensorDiagnosticLED = 3;
 	const int m_questDiagnosticLED = 4;
 	const int m_limeLight1diagnosticLED = 5;
 

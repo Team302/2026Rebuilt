@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -23,7 +22,9 @@ public:
     {
         LoopCounterStart,
         DesiredScoringMode_Int,
-        ClimbModeStatus_Int,
+        IsLaunching_Bool,
+        ClimbModeStatus_Bool,
+        AllowedToClimbStatus_Bool,
         ChassisTipStatus_Int,
         DriveAssistMode_Int,
         GameState_Int,
@@ -31,23 +32,12 @@ public:
         ChassisPose_Pose2D,
         DriveToFieldElementIsDone_Bool,
         DriveStateType_Int,
-        ElevatorHeight_Inch,
-        IsInBargeZone_Bool,
-        IsInReefZone_Bool,
-        DesiredCoralSide_Int,
         LoopCounterEnd // Must be last Enum for the loop counter
     };
 
     enum ScoringMode
     {
-        Coral,
-        Algae
-    };
-
-    enum ClimbMode
-    {
-        ClimbModeOff,
-        ClimbModeOn
+        FUEL
     };
 
     enum ChassisTilt
@@ -67,10 +57,5 @@ public:
         Auton,
         Teleop,
         Disabled
-    };
-    enum DesiredCoralSide
-    {
-        Sidewall,
-        AllianceWall
     };
 };

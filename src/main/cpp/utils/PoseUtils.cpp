@@ -14,14 +14,27 @@
 //====================================================================================================================================================
 
 // Team 302 Includes
-#include <utils/DistanceBetweenPoses.h>
+#include "utils/PoseUtils.h"
 
 /// @brief Find the distance between two poses by using the Pythagorean Formula
 /// @param poseOne first pose to compare
 /// @param poseTwo second pose to compare
 /// @return frc::Translation2d - the difference in X value and the distance in Y value
 
-double DistanceBetweenPoses::GetDeltaBetweenPoses(frc::Pose2d poseOne, frc::Pose2d poseTwo)
+units::length::meter_t PoseUtils::GetDeltaBetweenPoses(const frc::Pose2d &pose1, const frc::Pose2d &pose2)
 {
-    return sqrt(pow((poseTwo.X() - poseOne.X()).to<double>(), 2) + pow((poseTwo.Y() - poseOne.Y()).to<double>(), 2));
+    return pose1.Translation().Distance(pose2.Translation());
+}
+
+bool PoseUtils::IsSamePose(const frc::Pose2d &pose1,
+                           const frc::Pose2d &pose2,
+                           units::length::centimeter_t tolerance)
+{
+    return GetDeltaBetweenPoses(pose1, pose2) < tolerance;
+}
+
+bool PoseUtils::IsPoseAtOrigin(const frc::Pose2d &pose,
+                               units::length::centimeter_t tolerance)
+{
+    return IsSamePose(pose, frc::Pose2d(), tolerance);
 }

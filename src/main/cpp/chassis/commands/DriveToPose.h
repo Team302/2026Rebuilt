@@ -14,11 +14,11 @@
 //====================================================================================================================================================
 #pragma once
 
-#include "frc2/command/CommandHelper.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "frc2/command/Command.h"
+#include "frc2/command/CommandHelper.h"
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/geometry/Pose2d.h>
-#include "chassis/generated/CommandSwerveDrivetrain.h"
 
 class DriveToPose : public frc2::CommandHelper<frc2::Command, DriveToPose>
 {
@@ -38,7 +38,7 @@ public:
     void End(bool interrupted) override;
 
 protected:
-    virtual frc::Pose2d GetEndPose() { return frc::Pose2d(); };
+    virtual frc::Pose2d GetEndPose() { return m_endPose; };
 
 private:
     void CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds);

@@ -16,9 +16,9 @@
 #include <string>
 
 #include "utils/logging/debug/Logger.h"
-#include "vision/definitions/CameraConfig_9997.h"
 #include "vision/DragonLimelight.h"
 #include "vision/DragonVision.h"
+#include "vision/definitions/CameraConfig_9997.h"
 
 void CameraConfig_9997::BuildCameraConfig()
 {
@@ -39,8 +39,7 @@ void CameraConfig_9997::BuildCameraConfig()
                                                   units::angle::degree_t(0),                 // units::angle::degree_t yaw,            /// <I> - Yaw of camera
                                                   units::angle::degree_t(0),                 // units::angle::degree_t roll,           /// <I> - Roll of camera
                                                   DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG,      /// <I> enum for starting pipeline
-                                                  DRAGON_LIMELIGHT_LED_MODE::LED_OFF,        // DRAGON_LIMELIGHT_LED_MODE ledMode,
-                                                  DRAGON_LIMELIGHT_CAM_MODE::CAM_VISION      // CAM_MODE camMode,
+                                                  DRAGON_LIMELIGHT_LED_MODE::LED_OFF         // DRAGON_LIMELIGHT_LED_MODE ledMode,
 
     ); // additional parameter
     vision->AddLimelight(placer, DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);

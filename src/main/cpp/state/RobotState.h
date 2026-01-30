@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -48,6 +47,7 @@ public:
 
 private:
     void PublishGameStateChanges();
+    void PublishClimbMode(TeleopControl *controller);
 
     RobotState();
     ~RobotState();
@@ -55,6 +55,9 @@ private:
     std::vector<RobotStateChangeBroker *> m_brokers;
     RobotStateChanges::ScoringMode m_scoringMode;
     RobotStateChanges::GamePeriod m_gamePhase;
+    bool m_climbModeStatus;
+
+    bool m_climbButtonReleased;
 
     static RobotState *m_instance;
 };

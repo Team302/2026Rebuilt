@@ -47,10 +47,9 @@
  *  - Keep documentation near the implementation when behavior/assumptions change.
  */
 
-/// Sorted includes: standard library first, then project headers (alphabetical).
 #include <optional>
 
-// #include "chassis/ChassisConfigMgr.h"
+#include "chassis/ChassisConfigMgr.h"
 #include "utils/PeriodicLooper.h"
 #include "vision/DragonQuest.h"
 #include "vision/DragonVision.h"
@@ -61,7 +60,7 @@ DragonVisionPoseEstimator::DragonVisionPoseEstimator()
 {
     PeriodicLooper::GetInstance()->RegisterAll(this);
     m_vision = DragonVision::GetDragonVision();
-    // m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
+    m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
 }
 void DragonVisionPoseEstimator::RunCommonTasks()
 {
@@ -108,8 +107,7 @@ void DragonVisionPoseEstimator::SetCurrentState(int state, bool run)
  */
 frc::Pose2d DragonVisionPoseEstimator::GetPose() const
 {
-    // return (m_chassis != nullptr) ? m_chassis->GetPose() : frc::Pose2d{};
-    return frc::Pose2d{};
+    return (m_chassis != nullptr) ? m_chassis->GetPose() : frc::Pose2d{};
 }
 
 /**
@@ -119,10 +117,10 @@ frc::Pose2d DragonVisionPoseEstimator::GetPose() const
  */
 void DragonVisionPoseEstimator::ResetPosition(const frc::Pose2d &pose)
 {
-    // if (m_chassis != nullptr)
-    // {
-    //     m_chassis->ResetPose(pose);
-    // }
+    if (m_chassis != nullptr)
+    {
+        m_chassis->ResetPose(pose);
+    }
 }
 
 /**
@@ -166,7 +164,7 @@ void DragonVisionPoseEstimator::CalculateInitialPose()
  */
 void DragonVisionPoseEstimator::AddVisionMeasurements()
 {
-    if (m_vision == nullptr)
+    if (m_vision == nullptr || m_chassis == nullptr)
     {
         return;
     }
@@ -174,12 +172,12 @@ void DragonVisionPoseEstimator::AddVisionMeasurements()
     auto visPose = m_vision->GetRobotPositionMegaTag2();
     if (visPose.has_value())
     {
-        // m_chassis->AddVisionMeasurement(visPose.value().estimatedPose.ToPose2d(), units::second_t{visPose.value().timeStamp}, visPose.value().visionMeasurementStdDevs);
+        m_chassis->AddVisionMeasurement(visPose.value().estimatedPose.ToPose2d(), units::second_t{visPose.value().timeStamp}, visPose.value().visionMeasurementStdDevs);
     }
 
     auto questPose = m_vision->GetRobotPositionQuest();
     if (questPose.m_confidenceLevel == DragonVisionPoseEstimatorStruct::ConfidenceLevel::HIGH)
     {
-        // m_chassis->AddVisionMeasurement(questPose.m_visionPose, questPose.m_timeStamp, questPose.m_stds);
+        m_chassis->AddVisionMeasurement(questPose.m_visionPose, questPose.m_timeStamp, questPose.m_stds);
     }
 }
