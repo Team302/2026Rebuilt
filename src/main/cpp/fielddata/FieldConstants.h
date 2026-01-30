@@ -56,8 +56,7 @@ public:
         BLUE_DEPOT_PASSING_TARGET,
         BLUE_OUTPOST_PASSING_TARGET,
 
-        
-        // 2026 - Red Calculated Positions
+                // 2026 - Red Calculated Positions
         RED_HUB_CENTER,
         RED_TOWER_LEFT_STICK,
         RED_TOWER_RIGHT_STICK,
@@ -95,7 +94,7 @@ private:
     frc::Pose3d m_placeholder = frc::Pose3d();
 
     robin_hood::unordered_map<FIELD_ELEMENT, frc::Pose3d> fieldConstantsPoseMap;
-    std::array<frc::Pose2d, 22> m_fieldConst2dPoses;
+    std::array<frc::Pose2d, 28> m_fieldConst2dPoses;
 
     robin_hood::unordered_map<int, frc::Pose3d> m_aprilTagPoseMap;
     std::array<frc::Pose2d, 33> m_aprilTag2dPoses;
