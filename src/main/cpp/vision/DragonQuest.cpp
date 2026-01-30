@@ -38,11 +38,13 @@ DragonQuest::DragonQuest(
 {
     m_networktable = nt::NetworkTableInstance::GetDefault().GetTable(std::string("QuestNav"));
 
+#ifdef __FRC_ROBORIO__
     // Initialize protobuf topics
-    m_frameDataSubscriber = m_networktable.get()->GetRawTopic("frameData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavFrameData", {});
-    m_deviceDataSubscriber = m_networktable.get()->GetRawTopic("deviceData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavDeviceData", {});
-    m_commandPublisher = m_networktable.get()->GetRawTopic("commands").Publish("proto:questnav.protos.commands.ProtobufQuestNavCommand");
-    m_commandResponseSubscriber = m_networktable.get()->GetRawTopic("response").Subscribe("proto:questnav.protos.commands.ProtobufQuestNavCommandResponse", {});
+    m_frameDataSubscriber = m_networktable->GetRawTopic("frameData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavFrameData", {});
+    m_deviceDataSubscriber = m_networktable->GetRawTopic("deviceData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavDeviceData", {});
+    m_commandPublisher = m_networktable->GetRawTopic("commands").Publish("proto:questnav.protos.commands.ProtobufQuestNavCommand");
+    m_commandResponseSubscriber = m_networktable->GetRawTopic("response").Subscribe("proto:questnav.protos.commands.ProtobufQuestNavCommandResponse", {});
+#endif
 
     m_questToRobotTransform = frc::Transform2d{
         frc::Translation2d(m_mountingXOffset, m_mountingYOffset),
@@ -59,7 +61,7 @@ DragonQuest::DragonQuest(
     frc::SmartDashboard::PutData("Quest ON/OFF", &m_questEnabledChooser);
     frc::SmartDashboard::PutData("Quest Endgame ONLY", &m_questEndgameEnabledChooser);
     RobotState *RobotStates = RobotState::GetInstance();
-    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Int);
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 }
 
 void DragonQuest::Periodic()
@@ -137,6 +139,7 @@ void DragonQuest::SetIsConnected()
 
     int32_t currentFrameCount = frameData.frame_count();
 
+    m_loopCounter++;
     if (m_loopCounter > 3)
     {
         if (currentFrameCount != m_prevFrameCount && frameData.istracking())
@@ -210,7 +213,7 @@ void DragonQuest::HandleDashboard()
     if (m_questEnabledChooser.GetSelected() == true)
     {
         m_isQuestEnabled = true;
-        if (m_questEndgameEnabledChooser.GetSelected() == true && m_climbMode != RobotStateChanges::ClimbMode::ClimbModeOn)
+        if (m_questEndgameEnabledChooser.GetSelected() == true && !m_isClimbMode)
         {
             m_isQuestEnabled = false;
         }
@@ -221,10 +224,10 @@ void DragonQuest::HandleDashboard()
     }
 }
 
-void DragonQuest::NotifyStateUpdate(RobotStateChanges::StateChange change, int value)
+void DragonQuest::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value)
 {
-    if (RobotStateChanges::StateChange::ClimbModeStatus_Int == change)
-        m_climbMode = static_cast<RobotStateChanges::ClimbMode>(value);
+    if (RobotStateChanges::StateChange::ClimbModeStatus_Bool == change)
+        m_isClimbMode = value;
 }
 DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
 {

@@ -40,9 +40,8 @@ void CameraConfig_9998::BuildCameraConfig()
                                                  units::angle::degree_t(0),                 // units::angle::degree_t yaw,            /// <I> - Yaw of camera
                                                  units::angle::degree_t(0),                 // units::angle::degree_t roll,           /// <I> - Roll of camera
                                                  DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG,      /// <I> enum for starting pipeline
-                                                 DRAGON_LIMELIGHT_LED_MODE::LED_OFF,        // DRAGON_LIMELIGHT_LED_MODE ledMode,
-
-    ); // additional parameter
+                                                 DRAGON_LIMELIGHT_LED_MODE::LED_OFF         // DRAGON_LIMELIGHT_LED_MODE ledMode
+    );                                                                                      // additional parameter
     vision->AddLimelight(front, DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
 
     auto quest = new DragonQuest(units::length::inch_t(9.75), // <I> x offset of Quest from robot center (forward relative to robot)
