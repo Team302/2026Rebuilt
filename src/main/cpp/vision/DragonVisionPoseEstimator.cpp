@@ -47,7 +47,6 @@
  *  - Keep documentation near the implementation when behavior/assumptions change.
  */
 
-/// Sorted includes: standard library first, then project headers (alphabetical).
 #include <optional>
 
 #include "chassis/ChassisConfigMgr.h"
@@ -166,7 +165,7 @@ void DragonVisionPoseEstimator::CalculateInitialPose()
  */
 void DragonVisionPoseEstimator::AddVisionMeasurements()
 {
-    if (m_vision == nullptr)
+    if (m_vision == nullptr || m_chassis == nullptr)
     {
         return;
     }
@@ -174,12 +173,12 @@ void DragonVisionPoseEstimator::AddVisionMeasurements()
     auto visPose = m_vision->GetRobotPositionMegaTag2();
     if (visPose.has_value())
     {
-        // m_chassis->AddVisionMeasurement(visPose.value().estimatedPose.ToPose2d(), units::second_t{visPose.value().timeStamp}, visPose.value().visionMeasurementStdDevs);
+        m_chassis->AddVisionMeasurement(visPose.value().estimatedPose.ToPose2d(), units::second_t{visPose.value().timeStamp}, visPose.value().visionMeasurementStdDevs);
     }
 
     auto questPose = m_vision->GetRobotPositionQuest();
     if (questPose.m_confidenceLevel == DragonVisionPoseEstimatorStruct::ConfidenceLevel::HIGH)
     {
-        // m_chassis->AddVisionMeasurement(questPose.m_visionPose, questPose.m_timeStamp, questPose.m_stds);
+        m_chassis->AddVisionMeasurement(questPose.m_visionPose, questPose.m_timeStamp, questPose.m_stds);
     }
 }
