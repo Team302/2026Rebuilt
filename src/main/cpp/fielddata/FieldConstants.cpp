@@ -37,6 +37,10 @@ FieldConstants::FieldConstants()
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_TOWER_CENTER] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::BLUE_TOWER_CENTER_TAG));
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_HUB_ALLIANCE_CENTER] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::BLUE_HUB_ALLIANCE_CENTER_TAG));
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_OUTPOST_CENTER] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::BLUE_OUTPOST_CENTER_TAG));
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_DEPOT] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::BLUE_TRENCH_NEUTRAL_DEPOT_TAG));
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::BLUE_TRENCH_ALLIANCE_DEPOT_TAG));
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_OUTPOST] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::BLUE_TRENCH_NEUTRAL_OUTPOST_TAG));
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::BLUE_TRENCH_ALLIANCE_OUTPOST_TAG));
 
     // Blue Calculated Positions
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_TOWER_LEFT_STICK] = m_placeholder;
@@ -55,6 +59,12 @@ FieldConstants::FieldConstants()
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_TOWER_CENTER] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::RED_TOWER_CENTER_TAG));
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_HUB_ALLIANCE_CENTER] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::RED_HUB_ALLIANCE_CENTER_TAG));
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_OUTPOST_CENTER] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::RED_OUTPOST_CENTER_TAG));
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_HUB_OUTPOST_CENTER] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::RED_OUTPOST_CENTER_TAG));
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_TRENCH_NEUTRAL_DEPOT] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::RED_TRENCH_NEUTRAL_DEPOT_TAG));
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::RED_TRENCH_ALLIANCE_DEPOT_TAG));
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_TRENCH_NEUTRAL_OUTPOST] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::RED_TRENCH_NEUTRAL_OUTPOST_TAG));
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::RED_TRENCH_ALLIANCE_OUTPOST_TAG));
+
     // Red Calculated Positions
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_TOWER_LEFT_STICK] = m_placeholder;
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_TOWER_RIGHT_STICK] = m_placeholder;
@@ -130,9 +140,8 @@ void FieldConstants::ReadFieldCalibrationData()
     if (std::filesystem::exists(m_fieldFilePath))
     {
         m_aprilTagVector = frc::AprilTagFieldLayout(m_fieldFilePath).GetTags();
-        for (unsigned int i = 0; i < m_aprilTagVector.size(); i++)
+        for (auto tag : m_aprilTagVector)
         {
-            frc::AprilTag tag = m_aprilTagVector[i];
             m_aprilTagPoseMap[tag.ID] = tag.pose;
         }
     }

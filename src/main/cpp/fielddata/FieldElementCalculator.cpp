@@ -53,7 +53,14 @@ void FieldElementCalculator::InitializeTransforms()
     m_transformTagsMap[FieldConstants::FIELD_ELEMENT::RED_HUB_ALLIANCE_CENTER];
     m_transformTagsMap[FieldConstants::FIELD_ELEMENT::RED_HUB_OUTPOST_CENTER];
     m_transformTagsMap[FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER];
-  
+    m_transformTagsMap[FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_DEPOT];
+    m_transformTagsMap[FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT];
+    m_transformTagsMap[FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_OUTPOST];
+    m_transformTagsMap[FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST];
+    m_transformTagsMap[FieldConstants::FIELD_ELEMENT::RED_TRENCH_NEUTRAL_DEPOT];
+    m_transformTagsMap[FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT];
+    m_transformTagsMap[FieldConstants::FIELD_ELEMENT::RED_TRENCH_NEUTRAL_OUTPOST];
+    m_transformTagsMap[FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST];
 
     // Blue Calculated Positions
     m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER] =
