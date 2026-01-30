@@ -36,6 +36,7 @@ FieldConstants::FieldConstants()
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_HUB_OUTPOST_CENTER] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::BLUE_HUB_OUTPOST_CENTER_TAG));
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_TOWER_CENTER] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::BLUE_TOWER_CENTER_TAG));
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_HUB_ALLIANCE_CENTER] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::BLUE_HUB_ALLIANCE_CENTER_TAG));
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_HUB_OUTPOST_CENTER] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::BLUE_OUTPOST_CENTER_TAG));
 
     // Blue Calculated Positions
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_TOWER_LEFT_STICK] = m_placeholder;
@@ -46,12 +47,14 @@ FieldConstants::FieldConstants()
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_DEPOT_LEFT_SIDE] = m_placeholder;
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_DEPOT_RIGHT_SIDE] = m_placeholder;
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_HUB_CENTER] = m_placeholder;
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_DEPOT_PASSING_TARGET] = m_placeholder;
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_OUTPOST_PASSING_TARGET] = m_placeholder;
 
     // Red AprilTag locations
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_HUB_OUTPOST_CENTER] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::RED_HUB_OUTPOST_CENTER_TAG));
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_TOWER_CENTER] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::RED_TOWER_CENTER_TAG));
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_HUB_ALLIANCE_CENTER] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::RED_HUB_ALLIANCE_CENTER_TAG));
-
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_HUB_OUTPOST_CENTER] = GetAprilTagPoseFromLayout(static_cast<int>(FieldAprilTagIDs::RED_OUTPOST_CENTER_TAG));
     // Red Calculated Positions
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_TOWER_LEFT_STICK] = m_placeholder;
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_TOWER_RIGHT_STICK] = m_placeholder;
@@ -61,6 +64,8 @@ FieldConstants::FieldConstants()
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_DEPOT_LEFT_SIDE] = m_placeholder;
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_DEPOT_RIGHT_SIDE] = m_placeholder;
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_HUB_CENTER] = m_placeholder;
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_DEPOT_PASSING_TARGET] = m_placeholder;
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_OUTPOST_PASSING_TARGET] = m_placeholder;
 
     m_aprilTagPoseMap[1] = GetAprilTagPoseFromLayout(1);
     m_aprilTagPoseMap[2] = GetAprilTagPoseFromLayout(2);
