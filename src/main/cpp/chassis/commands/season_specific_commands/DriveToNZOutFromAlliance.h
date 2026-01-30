@@ -17,7 +17,6 @@
 #include "chassis/commands/DriveToPose.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "fielddata/FieldConstants.h"
-
 //====================================================================================================================================================
 /// @class DriveToNZOutFromAllience
 /// @brief Command to autonomously drive the robot to the nearest bump on the field
@@ -63,6 +62,7 @@ public:
     bool IsFinished() override;
     frc::Pose2d GetNearestBumpPose();
     frc::Pose2d m_robotPose;
+    subsystems::CommandSwerveDrivetrain *m_chassis;
 
 private:
     static constexpr units::degree_t RedBumpOutpostToNZ{45.0};
@@ -74,4 +74,11 @@ private:
     static constexpr units::degree_t BlueBumpOutpostToAlliance{45.0};
     static constexpr units::degree_t BlueBumpDepotToNZ{45.0};
     static constexpr units::degree_t BlueBumpDepotToAlliance{45.0};
+
+    FieldConstants *m_fieldConstants;
+
+    units::length::meter_t m_bumpRedOutpostToNZY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_OUTPOST_CENTER).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_OUTPOST_CENTER).Y()) / 2;
+    units::length::meter_t m_bumpBlueOutpostToNZY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_OUTPOST_CENTER).Y() + m_chassis->GetPose().Y()) / 2;
+
+    frc::Pose2d m_bumpRedNZtoOutpostY;
 };

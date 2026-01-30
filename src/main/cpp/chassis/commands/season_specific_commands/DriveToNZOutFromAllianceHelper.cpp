@@ -16,9 +16,12 @@
 #include "DriveToNZOutFromAllianceHelper.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "frc/geometry/Pose2d.h"
-#include "utils/PoseUtils.h"
 
-DriveToNZOutFromAllianceHelper *DriveToNZOutFromAllianceHelper::m_instance = nullptr;
+#include "utils/PoseUtils.h"
+#include <utils/PoseUtils.h>
+
+DriveToNZOutFromAllianceHelper *DriveToNZOutFromAllianceHelper::m_instance = nullptr,
+                               m_fieldConstants(FieldConstants::GetInstance());
 
 //------------------------------------------------------------------
 /// @brief      Get the singleton instance of DepotHelper
@@ -41,4 +44,35 @@ DriveToNZOutFromAllianceHelper *DriveToNZOutFromAllianceHelper::GetInstance()
 DriveToNZOutFromAllianceHelper::DriveToNZOutFromAllianceHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
                                                                    m_fieldConstants(FieldConstants::GetInstance())
 {
+}
+
+frc::Pose2d DriveToNZOutFromAllianceHelper::CalcNearestBump(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose)
+{
+
+    units::length::meter_t blueOutpostDistance = PoseUtils::GetDeltaBetweenPoses(m_chassis->GetPose(), m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_OUTPOST_CENTER));
+    units::length::meter_t redOutpostDistance = PoseUtils::GetDeltaBetweenPoses(m_chassis->GetPose(), m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_OUTPOST_CENTER));
+    units::length::meter_t blueDepotDistance = PoseUtils::GetDeltaBetweenPoses(m_chassis->GetPose(), m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_LEFT_SIDE));
+    units::length::meter_t redDepotDistance = PoseUtils::GetDeltaBetweenPoses(m_chassis->GetPose(), m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_LEFT_SIDE));
+
+    m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_OUTPOST_CENTER);
+    m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_OUTPOST_CENTER);
+    m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_LEFT_SIDE);
+    m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_LEFT_SIDE);
+
+    if (blueOutpostDistance < redOutpostDistance && blueOutpostDistance < blueDepotDistance && blueOutpostDistance < redDepotDistance)
+    {
+        return m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_OUTPOST_CENTER);
+    }
+    else if (redOutpostDistance < blueOutpostDistance && redOutpostDistance < blueDepotDistance && redOutpostDistance < redDepotDistance)
+    {
+        return m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_OUTPOST_CENTER);
+    }
+    else if (blueDepotDistance < blueOutpostDistance && blueDepotDistance < redOutpostDistance && blueDepotDistance < redDepotDistance)
+    {
+        return m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_LEFT_SIDE);
+    }
+    else
+    {
+        return m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_LEFT_SIDE);
+    }
 }

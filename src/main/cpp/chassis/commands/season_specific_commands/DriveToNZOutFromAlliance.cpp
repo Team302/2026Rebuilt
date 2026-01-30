@@ -71,13 +71,9 @@ bool DriveToNZOutFromAlliance::IsFinished()
     return DriveToPose::IsFinished(); // call base class's IsFinished method
 }
 
-frc::Pose2d GetNearestBumpPose()
+frc::Pose2d DriveToNZOutFromAlliance::GetNearestBumpPose()
 {
     // Implementation for determining the nearest bump pose
     // robot pose not defined yet
-    if ((m_robotPose - FieldConstants::FIELD_ELEMENT::BLUE_HUB_OUTPOST_CENTER) < (m_robotPose - FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_LEFT_SIDE))
-    {
-
-        return frc::Pose2d{};
-    }
+    m_robotPose = m_chassis->GetPose();
 }

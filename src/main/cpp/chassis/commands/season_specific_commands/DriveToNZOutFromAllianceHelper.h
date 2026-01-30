@@ -40,8 +40,10 @@ public:
     /// @return     DepotHelper* - Pointer to the singleton instance
     //------------------------------------------------------------------
     static DriveToNZOutFromAllianceHelper *GetInstance();
+    units::length::meter_t CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
 
 private:
+    FieldConstants *m_fieldConstants;
     //------------------------------------------------------------------
     /// @brief      Private constructor for singleton pattern
     /// @details    Initializes the chassis and field constants references
@@ -62,49 +64,10 @@ private:
     /// @param[in]  currentPose - The pose to measure distance from
     /// @return     units::length::meter_t - The distance in meters
     //------------------------------------------------------------------
-    units::length::meter_t CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
+    frc::Pose2d CalcNearestBump(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
 
     /// @brief Pointer to the swerve drivetrain subsystem
     subsystems::CommandSwerveDrivetrain *m_chassis;
 
     /// @brief Pointer to the field constants singleton
-    FieldConstants *m_fieldConstants;
-};
-class DriveToNZOutFromAllianceHelper
-{
-public:
-    //------------------------------------------------------------------
-    /// @brief      Get the singleton instance of DepotHelper
-    /// @return     DepotHelper* - Pointer to the singleton instance
-    //------------------------------------------------------------------
-    static DriveToNZOutFromAllianceHelper *GetInstance();
-
-private:
-    //------------------------------------------------------------------
-    /// @brief      Private constructor for singleton pattern
-    /// @details    Initializes the chassis and field constants references
-    //------------------------------------------------------------------
-    DriveToNZOutFromAllianceHelper();
-
-    //------------------------------------------------------------------
-    /// @brief      Destructor (default implementation)
-    //------------------------------------------------------------------
-    ~DriveToNZOutFromAllianceHelper() = default;
-
-    /// @brief Singleton instance pointer
-    static DriveToNZOutFromAllianceHelper *m_instance;
-
-    //------------------------------------------------------------------
-    /// @brief      Calculates the distance from a given pose to a field element
-    /// @param[in]  element - The field element to measure distance to
-    /// @param[in]  currentPose - The pose to measure distance from
-    /// @return     units::length::meter_t - The distance in meters
-    //------------------------------------------------------------------
-    units::length::meter_t CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
-
-    /// @brief Pointer to the swerve drivetrain subsystem
-    subsystems::CommandSwerveDrivetrain *m_chassis;
-
-    /// @brief Pointer to the field constants singleton
-    FieldConstants *m_fieldConstants;
 };
