@@ -14,6 +14,13 @@
 //====================================================================================================================================================
 
 #pragma once
+#include <frc/geometry/Pose2d.h>
+#include <frc/geometry/Pose2d.h>
+#include <utils/FMSData.h>
+#include <auton/AutonGrid.h>
+#include <auton/ZoneParams.h>
+#include <utils/TargetCalculator.h>
+#include <chassis/generated/CommandSwerveDrivetrain.h>
 
 // C++ Includes
 #include <vector>
@@ -22,17 +29,14 @@
 
 // Team 302 includes
 
-
 // Third Party Includes
-
 
 class ZoneHelper
 {
 public:
-    bool isInAllianceZone();
+    virtual std::string GetZoneFile() = 0;
 
-private:
-    
-
+protected:
+    frc::Pose2d m_robotPose = m_chassis->GetPose();
+    subsystems::CommandSwerveDrivetrain *m_chassis;
 };
-

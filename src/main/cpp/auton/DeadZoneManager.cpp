@@ -12,9 +12,31 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-
-#include <auton/ZoneHelper.h>
+#include <auton/DeadZoneManager.h>
+#include <frc/DriverStation.h>
 using frc::DriverStation;
 
-// @ADDMECH include for your mechanism state mgr
-// @ADDMECH mechanism state for mech as parameter
+std::string DeadZoneManager::GetZoneFile()
+{
+    if (DriverStation::GetAlliance() == DriverStation::Alliance::kRed)
+    {
+        return "src/main/deploy/auton/zones/RedDeadZone.xml";
+    }
+    else
+    {
+        return "src/main/deploy/auton/zones/BlueDeadZone.xml";
+    }
+}
+
+bool DeadZoneManager::isInDeadZone()
+{
+    ZoneParams GetZoneFile();
+    if (GetZoneFile().IsPoseInZone(m_robotPose))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}

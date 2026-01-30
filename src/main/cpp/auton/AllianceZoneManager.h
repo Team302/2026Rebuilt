@@ -13,8 +13,12 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include <auton/ZoneHelper.h>
-using frc::DriverStation;
+#pragma once
 
-// @ADDMECH include for your mechanism state mgr
-// @ADDMECH mechanism state for mech as parameter
+#include <auton/ZoneHelper.h>
+
+class AllianceZoneManager : public ZoneHelper
+{
+    std::string GetZoneFile() override;
+    bool isInDeadZone();
+};
