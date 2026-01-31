@@ -37,10 +37,10 @@ DriveToOutpost::DriveToOutpost(subsystems::CommandSwerveDrivetrain *chassis)
 frc::Pose2d DriveToOutpost::GetEndPose()
 {
     frc::Pose2d endPose;
-    auto OutpostHelper = OutpostHelper::GetInstance();
-    if (OutpostHelper != nullptr)
+    auto outpostHelper = OutpostHelper::GetInstance();
+    if (outpostHelper != nullptr)
     {
-        endPose = OutpostHelper->CalcOutpostPose();
+        endPose = outpostHelper->CalcOutpostPose();
     }
     return endPose;
 }
