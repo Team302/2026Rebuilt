@@ -36,9 +36,6 @@ DragonQuest::DragonQuest(
         m_mountingYaw(mountingYaw),
         m_mountingRoll(mountingRoll)
 {
-#ifdef __FRC_ROBORIO__
-    m_networktable = nt::NetworkTableInstance::GetDefault().GetTable(std::string("QuestNav"));
-#endif
 
     m_questToRobotTransform = frc::Transform2d{
         frc::Translation2d(m_mountingXOffset, m_mountingYOffset),
@@ -68,21 +65,22 @@ void DragonQuest::Periodic()
     // {
     // GetEstimatedPose();
     // }
-    // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_isConnected"), m_isConnected);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_isConnected"), m_isConnected);
 }
 
 void DragonQuest::InitNT()
 {
 #ifdef __FRC_ROBORIO__
     // Initialize protobuf topics
-    if (m_networktable != nullptr && !m_isNTInitialized)
+    auto networktable = nt::NetworkTableInstance::GetDefault().GetTable(std::string("QuestNav"));
+    if (networktable.get() != nullptr && !m_isNTInitialized)
     {
-        m_frameDataSubscriber = m_networktable->GetRawTopic("frameData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavFrameData", {});
-        m_deviceDataSubscriber = m_networktable->GetRawTopic("deviceData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavDeviceData", {});
-        m_commandPublisher = m_networktable->GetRawTopic("commands").Publish("proto:questnav.protos.commands.ProtobufQuestNavCommand");
-        m_commandResponseSubscriber = m_networktable->GetRawTopic("response").Subscribe("proto:questnav.protos.commands.ProtobufQuestNavCommandResponse", {});
-        // m_isNTInitialized = true; // Mark as successfully initialized
-        // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_isNTInitialized"), m_isNTInitialized);
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_isConnected"), networktable.get() != nullptr);
+        m_frameDataSubscriber = networktable.get()->GetRawTopic("frameData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavFrameData", {});
+        m_deviceDataSubscriber = networktable.get()->GetRawTopic("deviceData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavDeviceData", {});
+        m_commandPublisher = networktable.get()->GetRawTopic("commands").Publish("proto:questnav.protos.commands.ProtobufQuestNavCommand");
+        m_commandResponseSubscriber = networktable.get()->GetRawTopic("response").Subscribe("proto:questnav.protos.commands.ProtobufQuestNavCommandResponse", {});
+        m_isNTInitialized = true; // Mark as successfully initialized
     }
 #endif
 }
@@ -95,7 +93,6 @@ void DragonQuest::GetEstimatedPose()
         m_lastCalculatedPose = frc::Pose2d{};
         return;
     }
-
     auto rawData = m_frameDataSubscriber.Get();
     if (rawData.empty())
     {
@@ -151,7 +148,6 @@ void DragonQuest::SetIsConnected()
         m_isConnected = false;
         return;
     }
-
     auto rawData = m_frameDataSubscriber.Get();
     if (rawData.empty())
     {

@@ -77,8 +77,6 @@ private:
     units::angle::degree_t m_mountingYaw;    /// <I> - Yaw of Quest
     units::angle::degree_t m_mountingRoll;   /// <I> - Roll of Quest
 
-    std::shared_ptr<nt::NetworkTable> m_networktable;
-
     // Replace array topics with raw topics for protobuf
     nt::RawPublisher m_frameDataPublisher;
     nt::RawSubscriber m_frameDataSubscriber;
