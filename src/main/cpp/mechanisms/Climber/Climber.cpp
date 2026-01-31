@@ -302,7 +302,7 @@ ControlData *Climber::GetControlData(string name)
 }
 units::angle::degree_t Climber::GetPigeonPitch()
 {
-	units::angle::degree_t pigeonPitch = units::angle::degree_t(m_chassis->GetPigeon2().GetPitch().GetValue().value());
+	units::angle::degree_t pigeonPitch = m_chassis->GetPigeon2().GetPitch().GetValue();
 	return pigeonPitch;
 }
 /* void Climber::DataLog(uint64_t timestamp)

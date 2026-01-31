@@ -75,5 +75,5 @@ bool OffState::AtTarget()
 bool OffState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return (m_mechanism->GetPigeonPitch() < m_mechanism->GetClimberExitThreshold() && !m_mechanism->IsClimbMode());
+	return (m_mechanism->GetPigeonPitch() < m_climberExitThreshold && !m_mechanism->IsClimbMode());
 }
