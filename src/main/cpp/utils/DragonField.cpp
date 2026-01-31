@@ -14,11 +14,9 @@
 //====================================================================================================================================================
 
 #include <string>
-#include <algorithm>
 
 // FRC Includes
 #include "frc/smartdashboard/SmartDashboard.h"
-#include "utils/logging/debug/Logger.h"
 
 // Team 302 Includes
 #include "utils/DragonField.h"

@@ -46,6 +46,4 @@ private:
     static DragonField *m_instance;
 
     void AddSelector(std::string name, bool defaultValue);
-
-    int m_cyclingCounter = 0;
 };
