@@ -39,6 +39,7 @@
 
 #include "configs/RobotElementNames.h"
 #include "configs/MechanismConfigMgr.h"
+#include "chassis/ChassisConfigMgr.h"
 
 #include "RobotIdentifier.h"
 
@@ -96,7 +97,6 @@ public:
 	bool IsClimbMode() const { return m_climbModeStatus; }
 	bool IsAllowedToClimb() const { return m_allowedToClimb; };
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
-
 	void SetCurrentState(int state, bool run) override;
 	void UpdateTargetClimberPercentOut(double percentOut)
 	{
@@ -104,6 +104,10 @@ public:
 		m_climberActiveTarget = &m_ClimberPercentOut;
 	}
 	void ManualClimb(units::angle::degree_t climbTarget);
+
+	// Hand-created Methods
+
+	units::angle::degree_t GetPigeonPitch();
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -120,9 +124,6 @@ private:
 	ctre::phoenix6::hardware::CANcoder *m_climberRotation;
 	ControlData *m_positionDegree;
 
-	bool m_climbModeStatus;
-	bool m_allowedToClimb;
-
 	void InitializeTalonFXClimberCompBot302();
 
 	ctre::phoenix6::controls::MotionMagicExpoTorqueCurrentFOC m_climberPositionDegree{0_tr};
@@ -130,6 +131,10 @@ private:
 	ctre::phoenix6::controls::DutyCycleOut m_ClimberPercentOut{0.0};
 	double m_percentOutScale = 0.85;
 	double m_holdPercentOut = 0.3;
+
+	bool m_climbModeStatus;
+	bool m_allowedToClimb;
+	subsystems::CommandSwerveDrivetrain *m_chassis; ///< pointer to chassis for pitch
 
 	// void InitializeLogging();
 };

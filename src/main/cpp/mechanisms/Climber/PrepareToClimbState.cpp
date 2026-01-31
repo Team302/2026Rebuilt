@@ -76,6 +76,5 @@ bool PrepareToClimbState::AtTarget()
 bool PrepareToClimbState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return false;
-	// return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXAMPLE_MECH_FORWARD));
+	return (m_mechanism->IsAllowedToClimb());
 }

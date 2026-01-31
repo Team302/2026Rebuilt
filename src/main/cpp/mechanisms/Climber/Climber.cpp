@@ -101,7 +101,8 @@ Climber::Climber(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHA
 												  m_activeRobotId(activeRobotId),
 												  m_stateMap(),
 												  m_climbModeStatus(false),
-												  m_allowedToClimb(false)
+												  m_allowedToClimb(false),
+												  m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis())
 {
 	PeriodicLooper::GetInstance()->RegisterAll(this);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
@@ -318,6 +319,11 @@ void Climber::ManualClimb(units::angle::degree_t climbTarget)
 	{
 		UpdateTargetClimberPercentOut(0.0);
 	}
+}
+units::angle::degree_t Climber::GetPigeonPitch()
+{
+	units::angle::degree_t pigeonPitch = m_chassis->GetPigeon2().GetPitch().GetValue();
+	return pigeonPitch;
 }
 /* void Climber::DataLog(uint64_t timestamp)
 {
