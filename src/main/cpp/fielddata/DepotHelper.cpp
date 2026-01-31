@@ -15,6 +15,7 @@
 
 #include "fielddata/DepotHelper.h"
 #include "chassis/ChassisConfigMgr.h"
+#include "fielddata/FieldOffsetValues.h"
 #include "frc/geometry/Pose2d.h"
 #include "utils/PoseUtils.h"
 
@@ -58,11 +59,8 @@ bool DepotHelper::IsNearestDepotRed() const
 
     auto currentPose = m_chassis->GetPose();
 
-    auto blueDepot = FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE;
-    auto redDepot = FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE;
-
-    auto blueDistance = CalcDistanceToObject(blueDepot, currentPose);
-    auto redDistance = CalcDistanceToObject(redDepot, currentPose);
+    auto blueDistance = CalcDistanceToObject(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE, currentPose);
+    auto redDistance = CalcDistanceToObject(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE, currentPose);
     if (blueDistance < redDistance)
     {
         return false;
@@ -89,10 +87,10 @@ frc::Pose2d DepotHelper::CalcDepotPose() const
     auto neutralPose = isNearestDepotRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE)
                                          : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE);
 
-    // neutralPose X accounts for half the robot on the intake side + bumpers + agitator/intake being extended
+    // Get the X position from the FieldOffsetValues based on nearest depot color
     // neutralPose Y is center of the depot - no need to average with the side values
     // rotation is based on the color
-    return frc::Pose2d(neutralPose.X(), neutralPose.Y(), isNearestDepotRed ? 0_deg : 180_deg);
+    return frc::Pose2d(FieldOffsetValues::GetInstance()->GetXValue(isNearestDepotRed, FIELD_OFFSET_ITEMS::DEPOT_X), neutralPose.Y(), isNearestDepotRed ? 0_deg : 180_deg);
 }
 
 //------------------------------------------------------------------

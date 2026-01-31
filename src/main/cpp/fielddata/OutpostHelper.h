@@ -44,9 +44,11 @@ public:
     //------------------------------------------------------------------
     /// @brief      Calculates the center pose of the nearest Outpost
     /// @return     frc::Pose2d - The calculated center pose of the Outpost
-    /// @details    Determines which Outpost (red or blue) is nearest, then
-    ///             calculates the center point by averaging the X and Y
-    ///             coordinates of the left, right, and neutral side poses.
+    /// @details    Determines which Outpost (red or blue) is nearest to the robot.
+    ///             Calculates the center pose using:
+    ///             - The depot's neutral side X position (aligned with wall)
+    ///             - The Outpost center's Y position (perpendicular distance)
+    ///             - Rotation based on the nearest alliance (0° for red, 180° for blue)
     //------------------------------------------------------------------
     frc::Pose2d CalcOutpostPose() const;
 
@@ -68,14 +70,19 @@ private:
     //------------------------------------------------------------------
     /// @brief      Determines which Outpost (red or blue) is nearest to the robot
     /// @return     bool - true if the red Outpost is nearest, false if blue Outpost is nearest
+    /// @details    Calculates the distance from the robot's current pose to both
+    ///             Outpost centers and returns true if red is nearest, false if blue is nearest
     //------------------------------------------------------------------
     bool IsNearestOutpostRed() const;
 
     //------------------------------------------------------------------
     /// @brief      Calculates the distance from a given pose to a field element
-    /// @param[in]  element - The field element to measure distance to
+    /// @param[in]  element - The field element to calculate distance to
     /// @param[in]  currentPose - The pose to measure distance from
     /// @return     units::length::meter_t - The distance in meters
+    /// @details    Computes the Euclidean distance between the translation
+    ///             components of the current pose and the field element pose.
+    ///             This is a helper method used internally for distance comparisons.
     //------------------------------------------------------------------
     units::length::meter_t CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
 

@@ -15,6 +15,7 @@
 
 #include "fielddata/OutpostHelper.h"
 #include "chassis/ChassisConfigMgr.h"
+#include "fielddata/FieldOffsetValues.h"
 #include "frc/geometry/Pose2d.h"
 
 //------------------------------------------------------------------
@@ -32,9 +33,11 @@ OutpostHelper *OutpostHelper::GetInstance()
 }
 
 //------------------------------------------------------------------
-/// @brief      Constructor for OutpostHelper
-/// @details    Initializes the chassis and field constants references
-///             Used by GetInstance() to create the singleton
+/// @brief      Private constructor for OutpostHelper
+/// @details    Initializes the chassis and field constants references.
+///             Called by GetInstance() to create the singleton instance.
+///             The constructor initializes member pointers to the swerve
+///             drivetrain subsystem and field constants.
 //------------------------------------------------------------------
 OutpostHelper::OutpostHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
                                  m_fieldConstants(FieldConstants::GetInstance())
@@ -45,17 +48,15 @@ OutpostHelper::OutpostHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetS
 /// @brief      Determines which Outpost (red or blue) is nearest to the robot
 /// @return     bool - true if the red Outpost is nearest, false if blue Outpost is nearest
 /// @details    Calculates the distance from the robot's current pose to both
-///             the blue and red Outpost neutral sides, then compares them
+///             the blue and red Outpost centers, then compares them to
+///             determine which Outpost is closest to the robot
 //------------------------------------------------------------------
 bool OutpostHelper::IsNearestOutpostRed() const
 {
     auto currentPose = m_chassis->GetPose();
 
-    auto blueOutpost = FieldConstants::FIELD_ELEMENT::BLUE_Outpost_NEUTRAL_SIDE;
-    auto redOutpost = FieldConstants::FIELD_ELEMENT::RED_Outpost_NEUTRAL_SIDE;
-
-    auto blueDistance = CalcDistanceToObject(blueOutpost, currentPose);
-    auto redDistance = CalcDistanceToObject(redOutpost, currentPose);
+    auto blueDistance = CalcDistanceToObject(FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_CENTER, currentPose);
+    auto redDistance = CalcDistanceToObject(FieldConstants::FIELD_ELEMENT::RED_OUTPOST_CENTER, currentPose);
     if (blueDistance < redDistance)
     {
         return false;
@@ -66,32 +67,30 @@ bool OutpostHelper::IsNearestOutpostRed() const
 //------------------------------------------------------------------
 /// @brief      Calculates the center pose of the nearest Outpost
 /// @return     frc::Pose2d - The calculated center pose of the Outpost
-/// @details    Determines which Outpost (red or blue) is nearest, then
-///             calculates the center point by averaging the X and Y coordinates
-///             of the left, right, and neutral side poses. Uses the neutral
-///             side's rotation for the resulting pose orientation.
+/// @details    Determines which Outpost (red or blue) is nearest to the robot.
+///             Calculates the center pose using:
+///             - The Outpost's X position from FieldOffsetValues (aligned with wall)
+///             - The Outpost center's Y position (perpendicular distance)
+///             - Rotation based on the nearest alliance (0° for red, 180° for blue)
 //------------------------------------------------------------------
 frc::Pose2d OutpostHelper::CalcOutpostPose() const
 {
     auto isNearestOutpostRed = IsNearestOutpostRed();
-    auto leftPose = isNearestOutpostRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_Outpost_LEFT_SIDE)
-                                        : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_Outpost_LEFT_SIDE);
-    auto rightPose = isNearestOutpostRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_Outpost_RIGHT_SIDE)
-                                         : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_Outpost_RIGHT_SIDE);
-    auto neutralPose = isNearestOutpostRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_Outpost_NEUTRAL_SIDE)
-                                           : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_Outpost_NEUTRAL_SIDE);
-    auto centerX = (leftPose.X() + rightPose.X() + neutralPose.X()) / 3.0;
-    auto centerY = (leftPose.Y() + rightPose.Y() + neutralPose.Y()) / 3.0;
-    return frc::Pose2d(units::meter_t(centerX), units::meter_t(centerY), neutralPose.Rotation());
+
+    auto outpostpose = isNearestOutpostRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_OUTPOST_CENTER)
+                                           : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_CENTER);
+
+    return frc::Pose2d(FieldOffsetValues::GetInstance()->GetXValue(isNearestOutpostRed, FIELD_OFFSET_ITEMS::OUTPOST_X), outpostpose.Y(), isNearestOutpostRed ? 0_deg : 180_deg);
 }
 
 //------------------------------------------------------------------
 /// @brief      Calculates the distance from a given pose to a field element
-/// @param[in]  element - The field element to measure distance to
+/// @param[in]  element - The field element to calculate distance to
 /// @param[in]  currentPose - The pose to measure distance from
 /// @return     units::length::meter_t - The distance in meters
-/// @details    Uses the translation components of both poses to calculate
-///             the Euclidean distance between them
+/// @details    Computes the Euclidean distance between the translation
+///             components of the current pose and the field element pose.
+///             This is a helper method used internally for distance comparisons.
 //------------------------------------------------------------------
 units::length::meter_t OutpostHelper::CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element,
                                                            frc::Pose2d currentPose) const
