@@ -97,8 +97,11 @@ public:
 	bool IsClimbMode() const { return m_climbModeStatus; }
 	bool IsAllowedToClimb() const { return m_allowedToClimb; };
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
-	units::angle::degree_t GetPigeonPitch();
 	void SetCurrentState(int state, bool run) override;
+
+	// Hand-created Methods
+
+	units::angle::degree_t GetPigeonPitch();
 
 protected:
 	RobotIdentifier m_activeRobotId;
