@@ -95,5 +95,9 @@ frc::Pose2d OutpostHelper::CalcOutpostPose() const
 units::length::meter_t OutpostHelper::CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element,
                                                            frc::Pose2d currentPose) const
 {
+    if (m_fieldConstants == nullptr)
+    {
+        return 0_m;
+    }
     return currentPose.Translation().Distance(m_fieldConstants->GetFieldElementPose2d(element).Translation());
 }
