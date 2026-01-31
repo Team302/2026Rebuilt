@@ -77,8 +77,20 @@ private:
 
     FieldConstants *m_fieldConstants;
 
-    units::length::meter_t m_bumpRedOutpostToNZY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_OUTPOST_CENTER).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_OUTPOST_CENTER).Y()) / 2;
-    units::length::meter_t m_bumpBlueOutpostToNZY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_OUTPOST_CENTER).Y() + m_chassis->GetPose().Y()) / 2;
+    units::length::meter_t m_bumpRedOutpostToNZY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y()) / 2;
+    units::length::meter_t m_bumpBlueOutpostToNZY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y()) / 2;
+    units::length::meter_t m_bumpBlueDepotToNY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y()) / 2;
+    units::length::meter_t m_bumpRedDeppotToNY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y()) / 2;
+
+    units::length::meter_t m_bumpRedNZToOutpostY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_NEUTRAL_OUTPOST).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_NEUTRAL_OUTPOST).Y()) / 2;
+    units::length::meter_t m_bumpBlueNZToOutpostY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_OUTPOST).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_OUTPOST).Y()) / 2;
+    units::length::meter_t m_bumpRedNZToDepotY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_NEUTRAL_DEPOT).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_NEUTRAL_DEPOT).Y()) / 2;
+    units::length::meter_t m_bumpBlueNZToDepotY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_DEPOT).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_DEPOT).Y()) / 2;
 
     frc::Pose2d m_bumpRedNZtoOutpostY;
+
+    units::length::meter_t m_bumpRedNZToAllianceX = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_ALLIANCE_CENTER).X());
+    units::length::meter_t m_bumpRedAllianceToNZX = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_OUTPOST_CENTER).X());
+    units::length::meter_t m_bumpBlueNZToAllianceX = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_ALLIANCE_CENTER).X());
+    units::length::meter_t m_bumpBlueAllianceToNZX = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_OUTPOST_CENTER).X());
 };

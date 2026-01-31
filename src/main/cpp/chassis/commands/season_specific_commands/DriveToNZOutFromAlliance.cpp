@@ -43,7 +43,7 @@ frc::Pose2d DriveToNZOutFromAlliance::GetEndPose()
     auto DriveToNZOutFromAllianceHelper = DriveToNZOutFromAllianceHelper::GetInstance();
     if (DriveToNZOutFromAllianceHelper != nullptr)
     {
-        endPose = DriveToNZOutFromAllianceHelper->CalcAlliancePose();
+        // todo zones not yet pushed
     }
     return endPose;
 }

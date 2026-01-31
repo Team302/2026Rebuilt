@@ -18,8 +18,7 @@
 #include "frc/geometry/Pose2d.h"
 #include "utils/PoseUtils.h"
 
-DriveToNZOutFromAllianceHelper *DriveToNZOutFromAllianceHelper::m_instance = nullptr,
-                               FieldConstants *m_fieldConstants(new FieldConstants::GetInstance());
+DriveToNZOutFromAllianceHelper *DriveToNZOutFromAllianceHelper::m_instance = nullptr;
 
 //------------------------------------------------------------------
 /// @brief      Get the singleton instance of DepotHelper
@@ -44,7 +43,7 @@ DriveToNZOutFromAllianceHelper::DriveToNZOutFromAllianceHelper() : m_chassis(Cha
 {
 }
 
-frc::Pose2d *DriveToNZOutFromAllianceHelper::CalcNearestBump(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const
+frc::Pose2d DriveToNZOutFromAllianceHelper::CalcNearestBump(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const
 {
 
     units::length::meter_t blueOutpostDistance = PoseUtils::GetDeltaBetweenPoses(m_chassis->GetPose(), m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_OUTPOST_CENTER));
@@ -74,4 +73,3 @@ frc::Pose2d *DriveToNZOutFromAllianceHelper::CalcNearestBump(FieldConstants::FIE
         return m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_LEFT_SIDE);
     }
 }
-// I think needs the trench april tag poses
