@@ -13,15 +13,13 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include "DriveToNZOutFromAllianceHelper.h"
+#include "chassis/commands/season_specific_commands/DriveToNZOutFromAllianceHelper.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "frc/geometry/Pose2d.h"
-
 #include "utils/PoseUtils.h"
-#include <utils/PoseUtils.h>
 
 DriveToNZOutFromAllianceHelper *DriveToNZOutFromAllianceHelper::m_instance = nullptr,
-                               m_fieldConstants(FieldConstants::GetInstance());
+                               FieldConstants *m_fieldConstants(new FieldConstants::GetInstance());
 
 //------------------------------------------------------------------
 /// @brief      Get the singleton instance of DepotHelper
@@ -46,7 +44,7 @@ DriveToNZOutFromAllianceHelper::DriveToNZOutFromAllianceHelper() : m_chassis(Cha
 {
 }
 
-frc::Pose2d DriveToNZOutFromAllianceHelper::CalcNearestBump(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose)
+frc::Pose2d *DriveToNZOutFromAllianceHelper::CalcNearestBump(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const
 {
 
     units::length::meter_t blueOutpostDistance = PoseUtils::GetDeltaBetweenPoses(m_chassis->GetPose(), m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_OUTPOST_CENTER));
@@ -71,8 +69,9 @@ frc::Pose2d DriveToNZOutFromAllianceHelper::CalcNearestBump(FieldConstants::FIEL
     {
         return m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_LEFT_SIDE);
     }
-    else
+    else if (redDepotDistance < blueOutpostDistance && redDepotDistance < redOutpostDistance && redDepotDistance < blueDepotDistance)
     {
         return m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_LEFT_SIDE);
     }
 }
+// I think needs the trench april tag poses

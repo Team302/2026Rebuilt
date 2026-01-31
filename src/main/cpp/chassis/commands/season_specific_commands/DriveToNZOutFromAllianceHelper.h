@@ -40,7 +40,7 @@ public:
     /// @return     DepotHelper* - Pointer to the singleton instance
     //------------------------------------------------------------------
     static DriveToNZOutFromAllianceHelper *GetInstance();
-    units::length::meter_t CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
+    frc::Pose2d CalcNearestBump(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
 
 private:
     FieldConstants *m_fieldConstants;
@@ -64,7 +64,6 @@ private:
     /// @param[in]  currentPose - The pose to measure distance from
     /// @return     units::length::meter_t - The distance in meters
     //------------------------------------------------------------------
-    frc::Pose2d CalcNearestBump(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
 
     /// @brief Pointer to the swerve drivetrain subsystem
     subsystems::CommandSwerveDrivetrain *m_chassis;
