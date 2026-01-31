@@ -103,7 +103,7 @@ public:
 		m_ClimberPercentOut.Output = percentOut;
 		m_climberActiveTarget = &m_ClimberPercentOut;
 	}
-	void ManualClimb(units::angle::degree_t climbTarget);
+	void ManualClimb(units::angle::degree_t climbTarget, double manualClimberPercent);
 
 	// Hand-created Methods
 
@@ -129,8 +129,8 @@ private:
 	ctre::phoenix6::controls::MotionMagicExpoTorqueCurrentFOC m_climberPositionDegree{0_tr};
 	ctre::phoenix6::controls::ControlRequest *m_climberActiveTarget;
 	ctre::phoenix6::controls::DutyCycleOut m_ClimberPercentOut{0.0};
-	double m_percentOutScale = 0.85;
-	double m_holdPercentOut = 0.3;
+	double m_percentOutScale = 0.5;
+	double m_holdPercentOut = 0;
 
 	bool m_climbModeStatus;
 	bool m_allowedToClimb;
