@@ -17,12 +17,9 @@
 
 #include <auton/ZoneHelper.h>
 
-class DeadZoneManager : public ZoneHelper
+class NeutralZoneManager : public ZoneHelper
 {
 public:
     virtual std::string GetZoneFile() override;
-    bool isInDeadZone();
-
-private:
-    std::string m_neutralZoneFile = "NZDeadZone.xml";
+    bool isInNeutralZone();
 };

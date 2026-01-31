@@ -12,17 +12,18 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
+#include <auton/NeutralZoneManager.h>
+#include <frc/DriverStation.h>
+#include <auton/ZoneParams.h>
 
-#pragma once
+using frc::DriverStation;
 
-#include <auton/ZoneHelper.h>
-
-class DeadZoneManager : public ZoneHelper
+std::string NeutralZoneManager::GetZoneFile()
 {
-public:
-    virtual std::string GetZoneFile() override;
-    bool isInDeadZone();
+    return "NeutralZone.xml";
+}
 
-private:
-    std::string m_neutralZoneFile = "NZDeadZone.xml";
-};
+bool NeutralZoneManager::isInNeutralZone()
+{
+    return isInZone(GetZoneFile());
+}
