@@ -51,4 +51,13 @@ public:
     ///             target calculation using OutpostHelper
     //------------------------------------------------------------------
     frc::Pose2d GetEndPose() override;
+
+    //------------------------------------------------------------------
+    /// @brief      Determines if the DriveToOutpost command has finished execution
+    /// @return     true if the command has completed driving to the outpost,
+    ///             false if the command should continue running
+    /// @details    Called repeatedly by the command scheduler to check completion status
+    //------------------------------------------------------------------
+
+    bool IsFinished() override;
 };
