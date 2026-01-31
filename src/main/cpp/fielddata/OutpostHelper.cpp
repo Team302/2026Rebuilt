@@ -53,6 +53,11 @@ OutpostHelper::OutpostHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetS
 //------------------------------------------------------------------
 bool OutpostHelper::IsNearestOutpostRed() const
 {
+    if (m_chassis == nullptr || m_fieldConstants == nullptr)
+    {
+        return false;
+    }
+
     auto currentPose = m_chassis->GetPose();
 
     auto blueDistance = CalcDistanceToObject(FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_CENTER, currentPose);
@@ -75,6 +80,11 @@ bool OutpostHelper::IsNearestOutpostRed() const
 //------------------------------------------------------------------
 frc::Pose2d OutpostHelper::CalcOutpostPose() const
 {
+    if (m_chassis == nullptr || m_fieldConstants == nullptr)
+    {
+        return frc::Pose2d();
+    }
+
     auto isNearestOutpostRed = IsNearestOutpostRed();
 
     auto outpostPose = isNearestOutpostRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_OUTPOST_CENTER)
@@ -95,5 +105,9 @@ frc::Pose2d OutpostHelper::CalcOutpostPose() const
 units::length::meter_t OutpostHelper::CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element,
                                                            frc::Pose2d currentPose) const
 {
+    if (m_fieldConstants == nullptr)
+    {
+        return units::length::meter_t(0.0);
+    }
     return currentPose.Translation().Distance(m_fieldConstants->GetFieldElementPose2d(element).Translation());
 }
