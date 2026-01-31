@@ -38,6 +38,8 @@
 #include "mechanisms/Launcher/LaunchState.h"
 #include "mechanisms/Launcher/EmptyHopperState.h"
 #include "mechanisms/Launcher/ClimbState.h"
+#include "mechanisms/Launcher/LauncherTuningState.h"
+
 #include "teleopcontrol/TeleopControl.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
@@ -81,12 +83,16 @@ void Launcher::CreateAndRegisterStates()
 	ClimbState *ClimbStateInst = new ClimbState(string("Climb"), 6, this, m_activeRobotId);
 	AddToStateVector(ClimbStateInst);
 
+	LauncherTuningState *LauncherTuningStateInst = new LauncherTuningState(string("LauncherTuning"), 7, this, m_activeRobotId);
+	AddToStateVector(LauncherTuningStateInst);
+
 	OffStateInst->RegisterTransitionState(InitializeStateInst);
 	InitializeStateInst->RegisterTransitionState(IdleStateInst);
 	IdleStateInst->RegisterTransitionState(OffStateInst);
 	IdleStateInst->RegisterTransitionState(PrepareToLaunchStateInst);
 	IdleStateInst->RegisterTransitionState(EmptyHopperStateInst);
 	IdleStateInst->RegisterTransitionState(ClimbStateInst);
+	IdleStateInst->RegisterTransitionState(LauncherTuningStateInst);
 	PrepareToLaunchStateInst->RegisterTransitionState(OffStateInst);
 	PrepareToLaunchStateInst->RegisterTransitionState(IdleStateInst);
 	PrepareToLaunchStateInst->RegisterTransitionState(LaunchStateInst);
@@ -100,6 +106,8 @@ void Launcher::CreateAndRegisterStates()
 	EmptyHopperStateInst->RegisterTransitionState(ClimbStateInst);
 	ClimbStateInst->RegisterTransitionState(OffStateInst);
 	ClimbStateInst->RegisterTransitionState(IdleStateInst);
+	LauncherTuningStateInst->RegisterTransitionState(OffStateInst);
+	LauncherTuningStateInst->RegisterTransitionState(LaunchStateInst);
 }
 
 Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANISM_TYPE::LAUNCHER, std::string("Launcher")),
@@ -174,6 +182,7 @@ std::map<std::string, Launcher::STATE_NAMES>
 		{"STATE_LAUNCH", Launcher::STATE_NAMES::STATE_LAUNCH},
 		{"STATE_EMPTY_HOPPER", Launcher::STATE_NAMES::STATE_EMPTY_HOPPER},
 		{"STATE_CLIMB", Launcher::STATE_NAMES::STATE_CLIMB},
+		{"STATE_LAUNCHER_TUNING", Launcher::STATE_NAMES::STATE_LAUNCHER_TUNING},
 	};
 
 void Launcher::CreateCompBot302()
