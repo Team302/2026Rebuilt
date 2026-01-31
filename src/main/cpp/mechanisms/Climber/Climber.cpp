@@ -41,6 +41,7 @@
 #include "mechanisms/Climber/L3ClimbState.h"
 #include "mechanisms/Climber/ExitState.h"
 #include "mechanisms/Climber/AutonL1ClimbState.h"
+#include "teleopcontrol/TeleopControl.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -299,6 +300,18 @@ ControlData *Climber::GetControlData(string name)
 		return m_positionDegree;
 
 	return nullptr;
+}
+void Climber::ManualClimb(units::angle::degree_t climbTarget, double manualClimberPercent)
+{
+	auto climberPosition = GetPigeonPitch();
+	if (climberPosition > climbTarget)
+	{
+		UpdateTargetClimberPercentOut(m_holdPercentOut);
+	}
+	else
+	{
+		UpdateTargetClimberPercentOut(manualClimberPercent * m_percentOutScale);
+	}
 }
 units::angle::degree_t Climber::GetPigeonPitch()
 {
