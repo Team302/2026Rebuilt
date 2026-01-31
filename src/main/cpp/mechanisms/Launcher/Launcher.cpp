@@ -701,19 +701,6 @@ bool Launcher::IsAllowedToLaunch()
 	return false;
 }
 
-// bool Launcher::IsLauncherInitialized()
-// {
-// 	// TODO : POPULATE FUNCTION
-// 	return false;
-
-// 	/*To do this, create method in the Launcher.cpp Create a member variable of type bool
-// 	called m_launcherInitialized, initialize it to false. Then Create a getter and setter
-// 	method called called void SetLauncherInitialized(bool initialized) and bool
-// 	IsLauncherInitalized(). Both will be inline methods in the .h file. In the Init of Off State,
-// 	call SetLauncherInitialized and pass in false. Then In the run method of the Initialize state,
-// 	if both the hood and turret are on the reverse limit switch, call SetLauncherInitialized and
-// 	pass true*/
-// }
 /* void Launcher::DataLog(uint64_t timestamp)
 {
    auto currTime = m_powerTimer.Get();
