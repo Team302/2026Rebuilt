@@ -144,6 +144,10 @@ public:
 	void NotifyStateUpdate(RobotStateChanges::StateChange statechange, bool value) override;
 	bool IsInClimbMode() const { return m_isClimbMode; }
 	bool IsAllowedToClimb() const { return m_isAllowedToClimb; }
+	bool IsLauncherAtTarget();
+	bool IsAllowedToLaunch();
+	bool IsLauncherInitialized() const { return m_launcherInitialized; }
+	void SetLauncherInitialized(bool initialized) { m_launcherInitialized = initialized; }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -193,5 +197,6 @@ private:
 	bool m_launcherOffButtonReleased = true;
 	bool m_isClimbMode = false;
 	bool m_isAllowedToClimb = false;
+	bool m_launcherInitialized = false;
 	// void InitializeLogging();
 };
