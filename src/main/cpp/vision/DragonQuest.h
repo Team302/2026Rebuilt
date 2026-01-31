@@ -93,6 +93,7 @@ private:
 
     bool m_hasReset = false;
     bool m_isConnected = false;
+    bool m_isNTInitialized = false; // Track if subscribers were successfully initialized
 
     frc::Transform2d m_questToRobotTransform; // <I> Transform from Quest to robot (used to calculate the robot pose from the quest pose)
 

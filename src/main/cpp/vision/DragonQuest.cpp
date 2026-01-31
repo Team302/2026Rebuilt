@@ -40,12 +40,13 @@ DragonQuest::DragonQuest(
     m_networktable = nt::NetworkTableInstance::GetDefault().GetTable(std::string("QuestNav"));
 
     // Initialize protobuf topics
-    if (m_networktable)
+    if (m_networktable != nullptr)
     {
         m_frameDataSubscriber = m_networktable->GetRawTopic("frameData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavFrameData", {});
         m_deviceDataSubscriber = m_networktable->GetRawTopic("deviceData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavDeviceData", {});
         m_commandPublisher = m_networktable->GetRawTopic("commands").Publish("proto:questnav.protos.commands.ProtobufQuestNavCommand");
         m_commandResponseSubscriber = m_networktable->GetRawTopic("response").Subscribe("proto:questnav.protos.commands.ProtobufQuestNavCommandResponse", {});
+        m_isNTInitialized = true; // Mark as successfully initialized
     }
 #endif
 
@@ -72,12 +73,18 @@ void DragonQuest::Periodic()
 {
     SetIsConnected();
     HandleDashboard();
-    GetEstimatedPose();
+    if (m_isConnected)
+    {
+        GetEstimatedPose();
+    }
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("m_isConnected"), m_isConnected);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("m_isNTInitialized"), m_isNTInitialized);
 }
 
 void DragonQuest::GetEstimatedPose()
 {
 #ifdef __FRC_ROBORIO__
+
     auto rawData = m_frameDataSubscriber.Get();
     if (rawData.empty())
     {
@@ -88,7 +95,6 @@ void DragonQuest::GetEstimatedPose()
     questnav::protos::data::ProtobufQuestNavFrameData frameData;
     if (!frameData.ParseFromArray(rawData.data(), rawData.size()))
     {
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR_ONCE, string("DragonQuest"), string("GetEstimatedPose"), string("Failed to parse frame data"));
         m_lastCalculatedPose = frc::Pose2d{}; // Set the last pose to a default pose if no data is available
         return;
     }
@@ -129,6 +135,12 @@ void DragonQuest::GetEstimatedPose()
 void DragonQuest::SetIsConnected()
 {
 #ifdef __FRC_ROBORIO__
+    if (!m_isNTInitialized)
+    {
+        m_isConnected = false;
+        return;
+    }
+
     auto rawData = m_frameDataSubscriber.Get();
     if (rawData.empty())
     {
