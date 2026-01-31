@@ -95,127 +95,159 @@
 #include "utils/logging/debug/Logger.h"
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 
+/// @brief Constructor for the Robot class.
+/// Initializes all core subsystems, auton options, and drive-team feedback in sequence.
+/// Also warm-loads the data logger to avoid first-run delays.
 Robot::Robot()
 {
-  Logger::GetLogger()->PutLoggingSelectionsOnDashboard();
+    Logger::GetLogger()->PutLoggingSelectionsOnDashboard();
 
-  InitializeRobot();
-  InitializeAutonOptions();
-  InitializeDriveteamFeedback();
+    InitializeRobot();
+    InitializeAutonOptions();
+    InitializeDriveteamFeedback();
 
-  m_datalogger = DragonDataLoggerMgr::GetInstance();
+    m_datalogger = DragonDataLoggerMgr::GetInstance();
 
-  // auto path = AutonUtils::GetTrajectoryFromPathFile("BlueLeftInside_I"); // load choreo library so we don't get loop overruns during autonperiodic
+    // auto path = AutonUtils::GetTrajectoryFromPathFile("BlueLeftInside_I"); // load choreo library so we don't get loop overruns during autonperiodic
 }
 
+/// @brief Called periodically while the robot is running, regardless of mode.
+/// Runs the CommandScheduler, manages logging (guarded by FMS attachment),
+/// updates RobotState, and refreshes drive-team feedback (vision, field position, HUD).
 void Robot::RobotPeriodic()
 {
-  frc2::CommandScheduler::GetInstance().Run();
+    frc2::CommandScheduler::GetInstance().Run();
 
-  isFMSAttached = frc::DriverStation::IsFMSAttached();
-  if (!isFMSAttached)
-  {
-    Logger::GetLogger()->PeriodicLog();
-  }
+    isFMSAttached = frc::DriverStation::IsFMSAttached();
+    if (!isFMSAttached)
+    {
+        Logger::GetLogger()->PeriodicLog();
+    }
 
-   if (m_datalogger != nullptr && !frc::DriverStation::IsDisabled())
-   {
-       m_datalogger->PeriodicDataLog();
-   }
+    if (m_datalogger != nullptr && !frc::DriverStation::IsDisabled())
+    {
+        m_datalogger->PeriodicDataLog();
+    }
 
-  if (m_robotState != nullptr)
-  {
-    m_robotState->Run();
-  }
+    if (m_robotState != nullptr)
+    {
+        m_robotState->Run();
+    }
 
-  UpdateDriveTeamFeedback();
+    UpdateDriveTeamFeedback();
 }
 
+/// @brief Called periodically while the robot is disabled.
+/// Updates the PeriodicLooper's disabled state for any mode-specific behavior.
 void Robot::DisabledPeriodic()
 {
+    PeriodicLooper::GetInstance()->DisabledRunCurrentState();
 }
 
+/// @brief Called once when autonomous mode begins.
+/// Elevates thread priority to reduce jitter, initializes cycle primitives,
+/// and transitions PeriodicLooper to autonomous state.
 void Robot::AutonomousInit()
 {
-  frc::SetCurrentThreadPriority(true, 15);
+    frc::SetCurrentThreadPriority(true, 15);
 
-  if (m_cyclePrims != nullptr)
-  {
-    m_cyclePrims->Init();
-  }
-  PeriodicLooper::GetInstance()->AutonRunCurrentState();
+    if (m_cyclePrims != nullptr)
+    {
+        m_cyclePrims->Init();
+    }
+    PeriodicLooper::GetInstance()->AutonRunCurrentState();
 }
 
+/// @brief Called periodically while in autonomous mode.
+/// Executes the current cycle primitives routine and updates the PeriodicLooper's autonomous state.
 void Robot::AutonomousPeriodic()
 {
-  if (m_cyclePrims != nullptr)
-  {
-    m_cyclePrims->Run();
-  }
-  PeriodicLooper::GetInstance()->AutonRunCurrentState();
+    if (m_cyclePrims != nullptr)
+    {
+        m_cyclePrims->Run();
+    }
+    PeriodicLooper::GetInstance()->AutonRunCurrentState();
 }
 
+/// @brief Called once when teleop mode begins.
+/// Transitions PeriodicLooper to teleop state and cancels any outstanding commands.
 void Robot::TeleopInit()
 {
-  PeriodicLooper::GetInstance()->TeleopRunCurrentState();
-  frc2::CommandScheduler::GetInstance().CancelAll();
+    PeriodicLooper::GetInstance()->TeleopRunCurrentState();
+    frc2::CommandScheduler::GetInstance().CancelAll();
 }
 
+/// @brief Called periodically while in teleop mode.
+/// Updates the PeriodicLooper's teleop state for mode-specific behavior.
 void Robot::TeleopPeriodic() { PeriodicLooper::GetInstance()->TeleopRunCurrentState(); }
 
+/// @brief Called once when test mode begins.
+/// Cancels any outstanding commands to reset the robot state for testing.
 void Robot::TestInit()
 {
-  frc2::CommandScheduler::GetInstance().CancelAll();
+    frc2::CommandScheduler::GetInstance().CancelAll();
 }
 
+/// @brief Initializes all core robot subsystems in the correct order.
+/// Sets up singletons (FieldConstants, RoboRio), creates the drivetrain via ChassisConfigMgr,
+/// instantiates RobotContainer to bind commands and subsystems, configures mechanisms,
+/// and initializes RobotState.
 void Robot::InitializeRobot()
 {
-  FieldConstants::GetInstance();
-  RoboRio::GetInstance();
-  auto chassisConfig = ChassisConfigMgr::GetInstance();
-  chassisConfig->CreateDrivetrain();
+    FieldConstants::GetInstance();
+    RoboRio::GetInstance();
+    auto chassisConfig = ChassisConfigMgr::GetInstance();
+    chassisConfig->CreateDrivetrain();
 
-  new RobotContainer(); // instantiate RobotContainer to setup commands and subsystems
+    new RobotContainer(); // instantiate RobotContainer to setup commands and subsystems
 
-  int32_t teamNumber = frc::RobotController::GetTeamNumber();
-  MechanismConfigMgr::GetInstance()->InitRobot((RobotIdentifier)teamNumber);
+    int32_t teamNumber = frc::RobotController::GetTeamNumber();
+    MechanismConfigMgr::GetInstance()->InitRobot((RobotIdentifier)teamNumber);
 
-  m_robotState = RobotState::GetInstance();
-  m_robotState->Init();
+    m_robotState = RobotState::GetInstance();
+    m_robotState->Init();
 }
 
+/// @brief Initializes autonomous options and routines.
+/// Creates CyclePrimitives for managing auton sequences and AutonPreviewer for auton selection logic.
 void Robot::InitializeAutonOptions()
 {
-  m_cyclePrims = new CyclePrimitives(); // intialize auton selections
-  m_previewer = new AutonPreviewer(m_cyclePrims);
+    m_cyclePrims = new CyclePrimitives(); // intialize auton selections
+    m_previewer = new AutonPreviewer(m_cyclePrims);
 }
+/// @brief Initializes drive-team feedback systems.
+/// Sets up DragonField for field visualization and robot position tracking.
+/// @todo Move DragonField initialization into a dedicated drive-team feedback manager class.
 void Robot::InitializeDriveteamFeedback()
 {
-  m_field = DragonField::GetInstance(); // TODO: move to drive team feedback
+    m_field = DragonField::GetInstance(); // TODO: move to drive team feedback
 }
 
+/// @brief Updates all drive-team feedback and auton selection information.
+/// Checks current auton selection via previewer, updates the field with the robot's current pose,
+/// and refreshes driver feedback (dashboard HUD, camera feeds, etc.).
 void Robot::UpdateDriveTeamFeedback()
 {
-  if (m_previewer != nullptr)
-  {
-    m_previewer->CheckCurrentAuton();
-  }
+    if (m_previewer != nullptr)
+    {
+        m_previewer->CheckCurrentAuton();
+    }
 
-  auto chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
-  if (m_field != nullptr && chassis != nullptr)
-  {
-    m_field->UpdateRobotPosition(chassis->GetPose());
-  }
-  auto feedback = DriverFeedback::GetInstance();
-  if (feedback != nullptr)
-  {
-    feedback->UpdateFeedback();
-  }
+    auto chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
+    if (m_field != nullptr && chassis != nullptr)
+    {
+        m_field->UpdateRobotPosition(chassis->GetPose());
+    }
+    auto feedback = DriverFeedback::GetInstance();
+    if (feedback != nullptr)
+    {
+        feedback->UpdateFeedback();
+    }
 }
 
 #ifndef RUNNING_FRC_TESTS
 int main()
 {
-  return frc::StartRobot<Robot>();
+    return frc::StartRobot<Robot>();
 }
 #endif

@@ -44,8 +44,8 @@
 
 namespace
 {
-    bool IsValidAprilTag(const std::vector<FieldAprilTagIDs> &validTags, int tagID);
-    bool IsValidObjectClass(const std::vector<int> &validClasses, int classID);
+    bool IsValidAprilTag(std::string networktablename, const std::vector<FieldAprilTagIDs> &validTags, int tagID);
+    bool IsValidObjectClass(std::string networktablename, const std::vector<int> &validClasses, int classID);
     std::optional<std::pair<double, double>> GetStandardDeviationsForMetaTag1PoseEstimation(int ntags, double targetAreaPercent);
 }
 
@@ -141,7 +141,7 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetAprilTagVis
 
     for (auto aprilTag : aprilTags)
     {
-        auto isValid = IsValidAprilTag(validAprilTagIDs, aprilTag.id);
+        auto isValid = IsValidAprilTag(m_cameraName, validAprilTagIDs, aprilTag.id);
 
         if (!isValid)
         {
@@ -178,7 +178,7 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetObjectDetec
 
     for (auto object : objects)
     {
-        auto isValid = IsValidObjectClass(validClasses, object.classId);
+        auto isValid = IsValidObjectClass(m_networkTableName, validClasses, object.classId);
 
         if (!isValid)
         {
@@ -286,6 +286,12 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag1Pose()
 /// ----------------------------------------------------------------------------------
 std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
 {
+    auto hasTarget = LimelightHelpers::getTV(m_cameraName);
+    if (!hasTarget)
+    {
+        return std::nullopt;
+    }
+
     if (!m_robotPoseSet)
     {
         auto megatag1pose = GetMegaTag1Pose();
@@ -378,8 +384,14 @@ namespace
     /// @param tagID numeric id to test
     /// @return true if tagID is accepted, false otherwise.
     /// ----------------------------------------------------------------------------------
-    bool IsValidAprilTag(const std::vector<FieldAprilTagIDs> &validTags, int tagID)
+    bool IsValidAprilTag(std::string networktablename, const std::vector<FieldAprilTagIDs> &validTags, int tagID)
     {
+        auto hasTarget = LimelightHelpers::getTV(networktablename);
+        if (!hasTarget)
+        {
+            return false;
+        }
+
         if (validTags.empty())
         {
             return true;
@@ -398,8 +410,14 @@ namespace
     /// @param classID numeric class id to test
     /// @return true if classID is accepted, false otherwise.
     /// ----------------------------------------------------------------------------------
-    bool IsValidObjectClass(const std::vector<int> &validClasses, int classID)
+    bool IsValidObjectClass(std::string networktablename, const std::vector<int> &validClasses, int classID)
     {
+        auto hasTarget = LimelightHelpers::getTV(networktablename);
+        if (!hasTarget)
+        {
+            return false;
+        }
+
         if (validClasses.empty())
         {
             return true;

@@ -50,6 +50,8 @@
 #include <optional>
 
 #include "chassis/ChassisConfigMgr.h"
+#include "frc/RobotBase.h"
+
 #include "utils/PeriodicLooper.h"
 #include "vision/DragonQuest.h"
 #include "vision/DragonVision.h"
@@ -165,20 +167,23 @@ void DragonVisionPoseEstimator::CalculateInitialPose()
  */
 void DragonVisionPoseEstimator::AddVisionMeasurements()
 {
-    if (m_vision == nullptr || m_chassis == nullptr)
+    if (!frc::RobotBase::IsSimulation())
     {
-        return;
-    }
+        if (m_vision == nullptr || m_chassis == nullptr)
+        {
+            return;
+        }
 
-    auto visPose = m_vision->GetRobotPositionMegaTag2();
-    if (visPose.has_value())
-    {
-        m_chassis->AddVisionMeasurement(visPose.value().estimatedPose.ToPose2d(), units::second_t{visPose.value().timeStamp}, visPose.value().visionMeasurementStdDevs);
-    }
+        auto visPose = m_vision->GetRobotPositionMegaTag2();
+        if (visPose.has_value())
+        {
+            m_chassis->AddVisionMeasurement(visPose.value().estimatedPose.ToPose2d(), units::second_t{visPose.value().timeStamp}, visPose.value().visionMeasurementStdDevs);
+        }
 
-    auto questPose = m_vision->GetRobotPositionQuest();
-    if (questPose.m_confidenceLevel == DragonVisionPoseEstimatorStruct::ConfidenceLevel::HIGH)
-    {
-        m_chassis->AddVisionMeasurement(questPose.m_visionPose, questPose.m_timeStamp, questPose.m_stds);
+        auto questPose = m_vision->GetRobotPositionQuest();
+        if (questPose.m_confidenceLevel == DragonVisionPoseEstimatorStruct::ConfidenceLevel::HIGH)
+        {
+            m_chassis->AddVisionMeasurement(questPose.m_visionPose, questPose.m_timeStamp, questPose.m_stds);
+        }
     }
 }
