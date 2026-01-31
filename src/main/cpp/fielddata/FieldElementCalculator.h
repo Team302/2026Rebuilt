@@ -51,6 +51,12 @@ private:
     static constexpr units::length::inch_t m_xDistanceDepotOffsetRight{13.5};
     static constexpr units::length::inch_t m_yDistanceDepotOffsetRight{66.31};
     static constexpr units::length::inch_t m_zDistanceDepotOffsetRight{-21.75};
+    static constexpr units::length::inch_t m_depotPassingTargetXOffset{40.0};
+    static constexpr units::length::inch_t m_depotPassingTargetYOffset{265.0};
+    static constexpr units::length::inch_t m_depotPassingTargetZOffset{-21.75};
+    static constexpr units::length::inch_t m_outpostPassingTargetXOffset{40.0};
+    static constexpr units::length::inch_t m_outpostPassingTargetYOffset{0.0};
+    static constexpr units::length::inch_t m_outpostPassingTargetZOffset{-21.75};
     static constexpr units::length::inch_t m_xNoOffset{0.0};
     static constexpr units::length::inch_t m_yNoOffset{0.0};
     static constexpr units::length::inch_t m_zNoOffset{0.0};
@@ -120,7 +126,19 @@ private:
             m_zDistanceDepotOffsetRight),
         frc::Rotation3d());
 
+    frc::Transform3d m_calcDepoPassingTarget = frc::Transform3d(
+        frc::Translation3d(
+            m_depotPassingTargetXOffset,
+            m_depotPassingTargetYOffset,
+            m_depotPassingTargetZOffset),
+        frc::Rotation3d());
 
+    frc::Transform3d m_calcOutpostPassingTarget = frc::Transform3d(
+        frc::Translation3d(
+            m_outpostPassingTargetXOffset,
+            m_outpostPassingTargetYOffset,
+            m_outpostPassingTargetZOffset),
+        frc::Rotation3d());
 
     robin_hood::unordered_map<FieldConstants::FIELD_ELEMENT, TransformToPose> m_transformCalculatedMap;
     robin_hood::unordered_map<FieldConstants::FIELD_ELEMENT, TransformToPose> m_transformTagsMap;
