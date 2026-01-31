@@ -286,7 +286,7 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag1Pose()
 /// ----------------------------------------------------------------------------------
 std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
 {
-    auto hasTarget = LimelightHelpers::getTV();
+    auto hasTarget = LimelightHelpers::getTV(m_cameraName);
     if (!hasTarget)
     {
         return std::nullopt;
