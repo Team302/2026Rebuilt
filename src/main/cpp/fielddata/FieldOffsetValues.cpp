@@ -48,8 +48,17 @@ FieldOffsetValues::FieldOffsetValues()
 {
     auto fieldConstants = FieldConstants::GetInstance();
 
-    m_blueDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE).X();
-    m_redDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE).X();
+    if (fieldConstants != nullptr)
+    {
+        m_blueDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE).X();
+        m_redDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE).X();
+    }
+    else
+    {
+        // Fallback to safe default values if FieldConstants is unavailable
+        m_blueDepotX = units::length::meter_t{0.0};
+        m_redDepotX = units::length::meter_t{0.0};
+    }
 
     m_blueOutpostX = m_blueDepotX;
     m_redOutpostX = m_redDepotX;
