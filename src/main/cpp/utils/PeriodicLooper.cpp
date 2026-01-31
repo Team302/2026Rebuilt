@@ -80,6 +80,7 @@ PeriodicLooper::~PeriodicLooper()
     m_auton.clear();
     m_teleop.clear();
     m_simulation.clear();
+    m_disabled.clear();
 }
 
 /**
