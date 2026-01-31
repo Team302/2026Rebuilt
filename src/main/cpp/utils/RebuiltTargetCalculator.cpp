@@ -20,8 +20,6 @@
 RebuiltTargetCalculator::RebuiltTargetCalculator() : TargetCalculator()
 {
     // TODO: update launcher offsets and target position(need to use zone logic later and field element calculator to get target position)
-    // Mechanism offset initialized in member variable declaration for now
-
     SetMechanismOffset(m_mechanismOffset);
 
     m_field = DragonField::GetInstance();
@@ -45,21 +43,29 @@ frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
 {
 
     bool isInAllianceZone = true; // TODO: Replace with zone calculator logic
-    frc::Pose2d targetPosition;
+    frc::Translation2d targetPosition{};
+    auto alliance = FMSData::GetAllianceColor();
 
-    if (isInAllianceZone)
+    if (m_fieldConstants != nullptr)
     {
-        auto fieldElement = FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kBlue
-                                ? FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER
-                                : FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER;
+        auto fieldElement = FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER;
+        if (isInAllianceZone)
+        {
+            fieldElement = alliance == frc::DriverStation::Alliance::kBlue
+                               ? FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER
+                               : FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER;
+        }
+        else
+        {
+            fieldElement = FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kBlue
+                               ? FieldConstants::FIELD_ELEMENT::RED_OUTPOST_PASSING_TARGET
+                               : FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_PASSING_TARGET;
+        }
 
-        targetPosition = m_fieldConstants->GetFieldElementPose2d(fieldElement);
-    }
-    else
-    {
+        targetPosition = m_fieldConstants->GetFieldElementPose2d(fieldElement).Translation();
     }
 
-    return frc::Translation2d(targetPosition.X(), targetPosition.Y());
+    return targetPosition;
 }
 
 units::angle::degree_t RebuiltTargetCalculator::GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle)
