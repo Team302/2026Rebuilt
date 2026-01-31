@@ -162,8 +162,8 @@ YourTargetCalculator::YourTargetCalculator() : TargetCalculator()
 
     // Initialize field visualization
     m_field = DragonField::GetInstance();
-    m_field->AddPose("TargetPosition", frc::Pose2d(GetTargetPosition(), frc::Rotation2d()));
-    m_field->AddPose("LauncherPosition", frc::Pose2d());
+    m_field->AddObject("TargetPosition", frc::Pose2d(GetTargetPosition(), frc::Rotation2d()));
+    m_field->AddObject("LauncherPosition", frc::Pose2d());
 }
 
 YourTargetCalculator *YourTargetCalculator::m_instance = nullptr;

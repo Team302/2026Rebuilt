@@ -28,9 +28,10 @@ public:
 
     void UpdateRobotPosition(frc::Pose2d robotPose);
 
-    void AddPose(std::string name, frc::Pose2d pose);
+    void AddObject(std::string name, frc::Pose2d pose, bool defaultSelectorValue = false);
     void AddTrajectory(std::string name, frc::Trajectory trajectory);
     void UpdateObject(std::string name, frc::Pose2d pose);
+    void UpdateEnabledStates();
     // void UpdateObjectVisionPose(std::string name, std::optional<VisionPose> visionPose);
 
     /// @brief get the singeleton of FMSData
@@ -41,6 +42,8 @@ public:
 private:
     frc::Field2d m_field;
     std::vector<frc::FieldObject2d *> m_objects;
-
+    std::vector<std::pair<std::string, bool>> m_objectNameEnabled;
     static DragonField *m_instance;
+
+    void AddSelector(std::string name, bool defaultValue);
 };
