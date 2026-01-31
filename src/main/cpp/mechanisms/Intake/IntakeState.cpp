@@ -51,7 +51,6 @@ void IntakeState::Init()
 void IntakeState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
-	// m_mechanism->UpdateTargetHopperPercentOut(m_hopperTarget);
 	m_mechanism->GetExtender()->Set(m_extenderTarget);
 }
 
@@ -76,6 +75,5 @@ bool IntakeState::AtTarget()
 bool IntakeState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return (considerGamepadTransitions &&
-			TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::INTAKE));
+	return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::INTAKE));
 }

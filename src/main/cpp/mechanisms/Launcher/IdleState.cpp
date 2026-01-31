@@ -54,6 +54,7 @@ void IdleState::InitCompBot302()
 	m_mechanism->UpdateTargetLauncherPercentOut(m_launcherTarget);
 	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
 	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
+	m_mechanism->UpdateTargetAgitatorPercentOut(m_agitatorTarget);
 }
 
 void IdleState::Run()

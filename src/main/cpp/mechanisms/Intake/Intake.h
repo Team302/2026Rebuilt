@@ -74,11 +74,6 @@ public:
 		m_intakePercentOut.Output = percentOut;
 		m_intakeActiveTarget = &m_intakePercentOut;
 	}
-	void UpdateTargetHopperPercentOut(double percentOut)
-	{
-		m_hopperPercentOut.Output = percentOut;
-		m_hopperActiveTarget = &m_hopperPercentOut;
-	}
 
 	void CreateAndRegisterStates();
 	void Cyclic();
@@ -88,7 +83,6 @@ public:
 	RobotIdentifier getActiveRobotId() { return m_activeRobotId; }
 
 	ctre::phoenix6::hardware::TalonFX *GetIntake() const { return m_intake; }
-	ctre::phoenix6::hardware::TalonFX *GetHopper() const { return m_hopper; }
 	frc::Solenoid *GetExtender() const { return m_extender; }
 	bool GetIsIntakeExtendedState() const { return m_isIntakeExtendedIsInverted ? !m_isIntakeExtended->Get() : m_isIntakeExtended->Get(); }
 	ControlData *GetPercentOut() const { return m_percentOut; }
@@ -100,6 +94,7 @@ public:
 	void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
 	bool IsInClimbMode() const { return m_isInClimbMode; }
 	bool IsLaunching() const { return m_isLaunching; }
+	bool IsIntakeExtended() const { return GetIsIntakeExtendedState(); }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -111,19 +106,15 @@ private:
 	std::unordered_map<std::string, STATE_NAMES> m_stateMap;
 
 	ctre::phoenix6::hardware::TalonFX *m_intake;
-	ctre::phoenix6::hardware::TalonFX *m_hopper;
 	frc::Solenoid *m_extender;
 	frc::DigitalInput *m_isIntakeExtended;
 	bool m_isIntakeExtendedIsInverted;
 	ControlData *m_percentOut;
 
 	void InitializeTalonFXIntakeCompBot302();
-	void InitializeTalonFXHopperCompBot302();
 
 	ctre::phoenix6::controls::DutyCycleOut m_intakePercentOut{0.0};
-	ctre::phoenix6::controls::DutyCycleOut m_hopperPercentOut{0.0};
 	ctre::phoenix6::controls::ControlRequest *m_intakeActiveTarget;
-	ctre::phoenix6::controls::ControlRequest *m_hopperActiveTarget;
 
 	bool m_isInClimbMode = false;
 	bool m_isLaunching = false;
