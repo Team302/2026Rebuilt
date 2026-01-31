@@ -78,5 +78,8 @@ bool LaunchState::AtTarget()
 bool LaunchState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return ((m_mechanism->IsLauncherAtTarget()) || (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH)));
+	return ((m_mechanism->IsLauncherAtTarget()) ||
+			(considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH)));
+	// this is in the issue, but it shouldn't be needed
+	//||(considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH) && m_mechanism->GetCurrentState() == Launcher::STATE_LAUNCHER_TUNING;
 }

@@ -148,6 +148,7 @@ public:
 	bool IsAllowedToLaunch();
 	bool IsLauncherInitialized() const { return m_launcherInitialized; }
 	void SetLauncherInitialized(bool initialized) { m_launcherInitialized = initialized; }
+	bool IsTuningLauncherMode() const { return m_tuningLauncher; }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -198,5 +199,6 @@ private:
 	bool m_isClimbMode = false;
 	bool m_isAllowedToClimb = false;
 	bool m_launcherInitialized = false;
+	bool m_tuningLauncher = false;
 	// void InitializeLogging();
 };

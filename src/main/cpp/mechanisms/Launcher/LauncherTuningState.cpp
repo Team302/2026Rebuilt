@@ -59,7 +59,33 @@ void LauncherTuningState::InitCompBot302()
 
 void LauncherTuningState::Run()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LauncherTuningState"), string("Run"));
+	double manualPercentOut = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::UPDATE_VIRTUAL_LEFT_PASSING_TARGET_X) * .15;
+	if (abs(manualPercentOut) > 0.075)
+	{
+		m_mechanism->UpdateTargetHoodPercentOut(manualPercentOut);
+	}
+
+	if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::UPDATE_VIRTUAL_TARGET_OFFSET_UP))
+	{
+		if (m_speedUpButtonReleased)
+		{
+			m_mechanism->UpdateTargetLauncherPercentOut(m_launcherTarget + 100);
+		}
+		m_speedUpButtonReleased = false;
+	}
+	else if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::UPDATE_VIRTUAL_TARGET_OFFSET_DOWN))
+	{
+		if (m_speedDownButtonReleased)
+		{
+			m_mechanism->UpdateTargetLauncherPercentOut(m_launcherTarget - 100);
+		}
+		m_speedDownButtonReleased = false;
+	}
+	else
+	{
+		m_speedUpButtonReleased = true;
+		m_speedDownButtonReleased = true;
+	}
 }
 
 void LauncherTuningState::Exit()
@@ -78,6 +104,6 @@ bool LauncherTuningState::AtTarget()
 bool LauncherTuningState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return false;
+	return m_mechanism->IsTuningLauncherMode();
 	// return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXAMPLE_MECH_FORWARD));
 }
