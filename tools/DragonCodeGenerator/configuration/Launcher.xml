@@ -2096,6 +2096,13 @@
           <type>String</type>
           <value>Climb</value>
         </stringParameterConstInMechInstance>
+        <stringParameterConstInMechInstance>
+          <unitsFamily>none</unitsFamily>
+          <name>stringParameterConstInMechInstance</name>
+          <__units__ />
+          <type>String</type>
+          <value>LauncherTuning</value>
+        </stringParameterConstInMechInstance>
       </transitionsTo>
       <doubleParameters />
       <boolParameters />
@@ -2688,6 +2695,122 @@
             <__units__ />
             <type>Boolean</type>
             <value>true</value>
+          </Enabled>
+          <controlDataName>PercentOut</controlDataName>
+        </motorTarget>
+      </motorTargets>
+      <solenoidTarget />
+    </state>
+    <state>
+      <name>LauncherTuning</name>
+      <transitionsTo>
+        <stringParameterConstInMechInstance>
+          <unitsFamily>none</unitsFamily>
+          <name>stringParameterConstInMechInstance</name>
+          <__units__ />
+          <type>String</type>
+          <value>Off</value>
+        </stringParameterConstInMechInstance>
+        <stringParameterConstInMechInstance>
+          <unitsFamily>none</unitsFamily>
+          <name>stringParameterConstInMechInstance</name>
+          <__units__ />
+          <type>String</type>
+          <value>Launch</value>
+        </stringParameterConstInMechInstance>
+      </transitionsTo>
+      <doubleParameters />
+      <boolParameters />
+      <constDoubleParameters />
+      <constBoolParameters />
+      <motorTargets>
+        <motorTarget>
+          <name>Launcher</name>
+          <target>
+            <unitsFamily>angularVelocity</unitsFamily>
+            <name>Target</name>
+            <__units__>rad/s</__units__>
+            <type>Double</type>
+          </target>
+          <motorName>Launcher</motorName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>true</value>
+          </Enabled>
+          <controlDataName>VelocityRPS</controlDataName>
+        </motorTarget>
+        <motorTarget>
+          <name>Hood</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Double</type>
+          </target>
+          <motorName>Hood</motorName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+          <controlDataName>PercentOut</controlDataName>
+        </motorTarget>
+        <motorTarget>
+          <name>Transfer</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Double</type>
+          </target>
+          <motorName>Transfer</motorName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+          <controlDataName>PercentOut</controlDataName>
+        </motorTarget>
+        <motorTarget>
+          <name>Turret</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Double</type>
+          </target>
+          <motorName>Turret</motorName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
+          </Enabled>
+          <controlDataName>PercentOut</controlDataName>
+        </motorTarget>
+        <motorTarget>
+          <name>Indexer</name>
+          <target>
+            <unitsFamily>none</unitsFamily>
+            <name>Target</name>
+            <__units__ />
+            <type>Double</type>
+          </target>
+          <motorName>Indexer</motorName>
+          <Enabled>
+            <unitsFamily>none</unitsFamily>
+            <name>boolParameter</name>
+            <__units__ />
+            <type>Boolean</type>
+            <value>false</value>
           </Enabled>
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
