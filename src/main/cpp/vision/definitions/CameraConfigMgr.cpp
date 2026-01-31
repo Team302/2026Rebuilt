@@ -16,11 +16,11 @@
 #include <string>
 
 #include "utils/logging/debug/Logger.h"
-#include "vision/definitions/CameraConfig.h"
-#include "vision/definitions/CameraConfigMgr.h"
 #include "vision/definitions/CameraConfig_302.h"
 #include "vision/definitions/CameraConfig_9997.h"
 #include "vision/definitions/CameraConfig_9998.h"
+#include "vision/definitions/CameraConfig.h"
+#include "vision/definitions/CameraConfigMgr.h"
 using namespace std;
 
 CameraConfigMgr *CameraConfigMgr::m_instance = nullptr;
