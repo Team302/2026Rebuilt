@@ -90,7 +90,13 @@ frc::Pose2d DepotHelper::CalcDepotPose() const
     // Get the X position from the FieldOffsetValues based on nearest depot color
     // neutralPose Y is center of the depot - no need to average with the side values
     // rotation is based on the color
-    return frc::Pose2d(FieldOffsetValues::GetInstance()->GetXValue(isNearestDepotRed, FIELD_OFFSET_ITEMS::DEPOT_X), neutralPose.Y(), isNearestDepotRed ? 0_deg : 180_deg);
+    auto fieldOffsetValues = FieldOffsetValues::GetInstance();
+    if (fieldOffsetValues == nullptr)
+    {
+        // Fallback: use the neutralPose directly if FieldOffsetValues is unavailable
+        return neutralPose;
+    }
+    return frc::Pose2d(fieldOffsetValues->GetXValue(isNearestDepotRed, FIELD_OFFSET_ITEMS::DEPOT_X), neutralPose.Y(), isNearestDepotRed ? 0_deg : 180_deg);
 }
 
 //------------------------------------------------------------------
