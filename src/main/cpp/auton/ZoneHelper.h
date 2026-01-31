@@ -14,66 +14,33 @@
 //====================================================================================================================================================
 
 #pragma once
+#include <frc/geometry/Pose2d.h>
+#include <frc/geometry/Pose2d.h>
+#include <utils/FMSData.h>
+#include <auton/AutonGrid.h>
+#include <auton/ZoneParams.h>
+#include <utils/TargetCalculator.h>
+#include <chassis/generated/CommandSwerveDrivetrain.h>
 
 // C++ Includes
+#include <vector>
 
 // FRC includes
 
 // Team 302 includes
 
-class TeleopControlFunctions
+// Third Party Includes
+
+class ZoneHelper
 {
 public:
-    enum FUNCTION
-    {
-        ROBOT_ORIENTED_DRIVE,
-        HOLONOMIC_DRIVE_FORWARD,
-        HOLONOMIC_DRIVE_ROTATE,
-        HOLONOMIC_DRIVE_STRAFE,
-        AUTO_TURN_FORWARD,
-        AUTO_TURN_BACKWARD,
-        RESET_POSITION,
-        SLOW_MODE,
-        SYSID_MODIFER,
-        SYSID_QUASISTATICFORWARD,
-        SYSID_QUASISTATICREVERSE,
-        SYSID_DYNAMICFORWARD,
-        SYSID_DYNAMICREVERSE,
-        DRIVE_TO_DEPOT,
-        DRIVE_TO_OUTPOST,
+    void InitZones();
+    virtual std::string GetZoneFile() = 0;
+    bool isInZone();
+    bool isInZone(std::string zoneFile);
 
-        // tip correction controls
-        TIPCORRECTION_TOGGLE,
-
-        // Mechanisms specific
-
-        // Intake
-        INTAKE,
-        EXPEL,
-        INTAKE_OUT,
-        INTAKE_IN,
-        // Climber
-        CLIMB_MODE,
-        LEVEL1_CLIMB,
-        LEVEL3_CLIMB,
-        ALIGN_TO_LEFT_TOWER,
-        ALIGN_TO_RIGHT_TOWER,
-        CLIMB_MANUAL_ROTATE_DOWN,
-        CLIMB_MANUAL_ROTATE_UP,
-
-        // LAUNCHER
-        LAUNCHER_OFF,
-        LAUNCH,
-
-        // VIRTUAL TARGET
-        UPDATE_VIRTUAL_TARGET_OFFSET_UP,
-        UPDATE_VIRTUAL_TARGET_OFFSET_DOWN,
-        UPDATE_VIRTUAL_TARGET_OFFSET_LEFT,
-        UPDATE_VIRTUAL_TARGET_OFFSET_RIGHT,
-        UPDATE_VIRTUAL_LEFT_PASSING_TARGET_X,
-        UPDATE_VIRTUAL_RIGHT_PASSING_TARGET_Y,
-        UPDATE_VIRTUAL_LEFT_PASSING_TARGET_Y,
-        UPDATE_VIRTUAL_RIGHT_PASSING_TARGET_X
-
-    };
+protected:
+    frc::Pose2d m_robotPose = m_chassis->GetPose();
+    subsystems::CommandSwerveDrivetrain *m_chassis;
+    ZoneParams *m_zones;
 };

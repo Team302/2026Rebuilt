@@ -12,68 +12,25 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
+#include <auton/DeadZoneManager.h>
+#include <frc/DriverStation.h>
+#include <auton/ZoneParams.h>
 
-#pragma once
+using frc::DriverStation;
 
-// C++ Includes
-
-// FRC includes
-
-// Team 302 includes
-
-class TeleopControlFunctions
+std::string DeadZoneManager::GetZoneFile()
 {
-public:
-    enum FUNCTION
+    if (DriverStation::GetAlliance() == DriverStation::Alliance::kRed)
     {
-        ROBOT_ORIENTED_DRIVE,
-        HOLONOMIC_DRIVE_FORWARD,
-        HOLONOMIC_DRIVE_ROTATE,
-        HOLONOMIC_DRIVE_STRAFE,
-        AUTO_TURN_FORWARD,
-        AUTO_TURN_BACKWARD,
-        RESET_POSITION,
-        SLOW_MODE,
-        SYSID_MODIFER,
-        SYSID_QUASISTATICFORWARD,
-        SYSID_QUASISTATICREVERSE,
-        SYSID_DYNAMICFORWARD,
-        SYSID_DYNAMICREVERSE,
-        DRIVE_TO_DEPOT,
-        DRIVE_TO_OUTPOST,
+        return "RedDeadZone.xml";
+    }
+    else
+    {
+        return "BlueDeadZone.xml";
+    }
+}
 
-        // tip correction controls
-        TIPCORRECTION_TOGGLE,
-
-        // Mechanisms specific
-
-        // Intake
-        INTAKE,
-        EXPEL,
-        INTAKE_OUT,
-        INTAKE_IN,
-        // Climber
-        CLIMB_MODE,
-        LEVEL1_CLIMB,
-        LEVEL3_CLIMB,
-        ALIGN_TO_LEFT_TOWER,
-        ALIGN_TO_RIGHT_TOWER,
-        CLIMB_MANUAL_ROTATE_DOWN,
-        CLIMB_MANUAL_ROTATE_UP,
-
-        // LAUNCHER
-        LAUNCHER_OFF,
-        LAUNCH,
-
-        // VIRTUAL TARGET
-        UPDATE_VIRTUAL_TARGET_OFFSET_UP,
-        UPDATE_VIRTUAL_TARGET_OFFSET_DOWN,
-        UPDATE_VIRTUAL_TARGET_OFFSET_LEFT,
-        UPDATE_VIRTUAL_TARGET_OFFSET_RIGHT,
-        UPDATE_VIRTUAL_LEFT_PASSING_TARGET_X,
-        UPDATE_VIRTUAL_RIGHT_PASSING_TARGET_Y,
-        UPDATE_VIRTUAL_LEFT_PASSING_TARGET_Y,
-        UPDATE_VIRTUAL_RIGHT_PASSING_TARGET_X
-
-    };
-};
+bool DeadZoneManager::isInDeadZone()
+{
+    return isInZone(GetZoneFile()) || isInZone(m_neutralZoneFile);
+}

@@ -42,6 +42,7 @@ OffState::OffState(std::string stateName,
 
 void OffState::Init()
 {
+	m_mechanism->SetLauncherInitialized(false);
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("OffState"), string("Init"));
 
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
