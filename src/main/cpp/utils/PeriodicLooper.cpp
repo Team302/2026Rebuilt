@@ -176,7 +176,7 @@ void PeriodicLooper::SimulationRunCurrentState()
  */
 void PeriodicLooper::DisabledRunCurrentState()
 {
-    RunCurrentStates(m_disabled);
+    RunCurrentStates(m_disabled); // No gamepad transitions in disabled mode
 }
 
 /**
