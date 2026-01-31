@@ -286,6 +286,12 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag1Pose()
 /// ----------------------------------------------------------------------------------
 std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
 {
+    auto hasTarget = LimelightHelpers::getTV();
+    if (!hasTarget)
+    {
+        return std::nullopt;
+    }
+
     if (!m_robotPoseSet)
     {
         auto megatag1pose = GetMegaTag1Pose();
@@ -380,6 +386,12 @@ namespace
     /// ----------------------------------------------------------------------------------
     bool IsValidAprilTag(const std::vector<FieldAprilTagIDs> &validTags, int tagID)
     {
+        auto hasTarget = LimelightHelpers::getTV();
+        if (!hasTarget)
+        {
+            return false;
+        }
+
         if (validTags.empty())
         {
             return true;
@@ -400,6 +412,12 @@ namespace
     /// ----------------------------------------------------------------------------------
     bool IsValidObjectClass(const std::vector<int> &validClasses, int classID)
     {
+        auto hasTarget = LimelightHelpers::getTV();
+        if (!hasTarget)
+        {
+            return false;
+        }
+
         if (validClasses.empty())
         {
             return true;
