@@ -22,11 +22,11 @@ std::string AllianceZoneManager::GetZoneFile()
 {
     if (DriverStation::GetAlliance() == DriverStation::Alliance::kRed)
     {
-        return "src/main/deploy/auton/zones/RedAllianceZone.xml";
+        return "RedAllianceZone.xml";
     }
     else
     {
-        return "src/main/deploy/auton/zones/BlueAllianceZone.xml";
+        return "BlueAllianceZone.xml";
     }
 }
 

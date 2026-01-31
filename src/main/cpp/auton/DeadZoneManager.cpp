@@ -22,22 +22,18 @@ std::string DeadZoneManager::GetZoneFile()
 {
     if (DriverStation::GetAlliance() == DriverStation::Alliance::kRed)
     {
-        return "src/main/deploy/auton/zones/RedDeadZone.xml";
+        return "RedDeadZone.xml";
     }
     else
     {
-        return "src/main/deploy/auton/zones/BlueDeadZone.xml";
+        return "BlueDeadZone.xml";
     }
 }
 
 bool DeadZoneManager::isInDeadZone()
 {
     // create a ZoneParams object from the neutral zone filename and check the pose
-    if (isInZone())
-    {
-        return true;
-    }
-    else if (isInZone(m_neutralZoneFile))
+    if (isInZone() || isInZone(m_neutralZoneFile))
     {
         return true;
     }
