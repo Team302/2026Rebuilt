@@ -23,8 +23,8 @@ RebuiltTargetCalculator::RebuiltTargetCalculator() : TargetCalculator()
     SetMechanismOffset(m_mechanismOffset);
 
     m_field = DragonField::GetInstance();
-    m_field->AddPose("TargetPosition", frc::Pose2d(GetTargetPosition(), frc::Rotation2d()));
-    m_field->AddPose("LauncherPosition", frc::Pose2d());
+    m_field->AddObject("Target Position", frc::Pose2d(GetTargetPosition(), frc::Rotation2d()), true);
+    m_field->AddObject("Launcher Position", frc::Pose2d());
 }
 
 RebuiltTargetCalculator *RebuiltTargetCalculator::m_instance = nullptr;
@@ -50,7 +50,7 @@ frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
 units::angle::degree_t RebuiltTargetCalculator::GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle)
 {
 
-    m_field->UpdateObject("TargetPosition", GetVirtualTargetPose(looheadTime));
+    m_field->UpdateObject("Target Position", GetVirtualTargetPose(looheadTime));
 
     units::degree_t fieldAngleToTarget = CalculateMechanismAngleToTarget(looheadTime);
     auto robotPose = GetChassisPose();
@@ -86,6 +86,6 @@ units::angle::degree_t RebuiltTargetCalculator::GetLauncherTarget(units::time::s
         bestAngle = std::clamp(normalizedGoal, m_minLauncherAngle, m_maxLauncherAngle);
     }
 
-    m_field->UpdateObject("LauncherPosition", frc::Pose2d(GetMechanismWorldPosition(), robotPose.Rotation() + frc::Rotation2d(bestAngle)));
+    m_field->UpdateObject("Launcher Position", frc::Pose2d(GetMechanismWorldPosition(), robotPose.Rotation() + frc::Rotation2d(bestAngle)));
     return bestAngle;
 }

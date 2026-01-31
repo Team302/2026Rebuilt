@@ -45,10 +45,13 @@ void DragonField::UpdateRobotPosition(frc::Pose2d robotPose)
     m_field.SetRobotPose(robotPose);
 }
 
-void DragonField::AddPose(std::string name, frc::Pose2d pose)
+void DragonField::AddObject(std::string name, frc::Pose2d pose, bool defaultSelectorValue)
 {
-    m_objects.emplace_back(m_field.GetObject(name));
+    if (!defaultSelectorValue)
+        pose = frc::Pose2d(99_m, 99_m, frc::Rotation2d()); // place out of view when not enabled initially
+
     m_field.GetObject(name)->SetPose(pose);
+    AddSelector(name, defaultSelectorValue);
 }
 
 void DragonField::AddTrajectory(std::string name, frc::Trajectory trajectory)
@@ -67,8 +70,30 @@ void DragonField::ResetField()
 
 void DragonField::UpdateObject(std::string name, frc::Pose2d object)
 {
-    frc::FieldObject2d *fieldObject = m_field.GetObject(name);
-    fieldObject->SetPose(object);
+    auto objectPair = std::find_if(m_objectNameEnabled.begin(), m_objectNameEnabled.end(),
+                                   [&name](const std::pair<std::string, bool> &pair)
+                                   { return pair.first == name; });
+
+    if (objectPair != m_objectNameEnabled.end() && objectPair->second)
+    {
+        frc::FieldObject2d *fieldObject = m_field.GetObject(name);
+        fieldObject->SetPose(object);
+    }
+}
+
+void DragonField::UpdateEnabledStates()
+{
+    for (auto &objectPair : m_objectNameEnabled)
+    {
+        bool enabled = frc::SmartDashboard::GetBoolean(objectPair.first + " Enabled On Field", objectPair.second);
+        objectPair.second = enabled;
+    }
+}
+
+void DragonField::AddSelector(std::string name, bool defaultValue)
+{
+    frc::SmartDashboard::PutBoolean(name + " Enabled On Field", defaultValue);
+    m_objectNameEnabled.emplace_back(name, defaultValue);
 }
 
 // void DragonField::UpdateObjectVisionPose(std::string name, std::optional<VisionPose> visionPose)

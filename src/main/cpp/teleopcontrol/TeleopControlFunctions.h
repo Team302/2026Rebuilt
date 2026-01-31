@@ -40,6 +40,7 @@ public:
         SYSID_DYNAMICFORWARD,
         SYSID_DYNAMICREVERSE,
         DRIVE_TO_DEPOT,
+        DRIVE_TO_OUTPOST,
 
         // tip correction controls
         TIPCORRECTION_TOGGLE,
