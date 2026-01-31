@@ -61,6 +61,10 @@ void InitializeState::InitCompBot302()
 
 void InitializeState::Run()
 {
+	if (m_mechanism->GetTurret()->GetReverseLimit().GetValue().ClosedToGround && m_mechanism->GetHood()->GetReverseLimit().GetValue().ClosedToGround) // if both the hood and turret are on the reverse limit switch,
+	{
+		m_mechanism->SetLauncherInitialized(true);
+	}
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("InitializeState"), string("Run"));
 }
 

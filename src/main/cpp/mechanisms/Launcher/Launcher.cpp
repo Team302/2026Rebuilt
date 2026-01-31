@@ -475,14 +475,14 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 1;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(180);
-	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
+	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 1;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
@@ -700,11 +700,20 @@ bool Launcher::IsAllowedToLaunch()
 	// TODO : POPULATE FUNCTION
 	return false;
 }
-bool Launcher::IsLauncherInitialized()
-{
-	// TODO : POPULATE FUNCTION
-	return false;
-}
+
+// bool Launcher::IsLauncherInitialized()
+// {
+// 	// TODO : POPULATE FUNCTION
+// 	return false;
+
+// 	/*To do this, create method in the Launcher.cpp Create a member variable of type bool
+// 	called m_launcherInitialized, initialize it to false. Then Create a getter and setter
+// 	method called called void SetLauncherInitialized(bool initialized) and bool
+// 	IsLauncherInitalized(). Both will be inline methods in the .h file. In the Init of Off State,
+// 	call SetLauncherInitialized and pass in false. Then In the run method of the Initialize state,
+// 	if both the hood and turret are on the reverse limit switch, call SetLauncherInitialized and
+// 	pass true*/
+// }
 /* void Launcher::DataLog(uint64_t timestamp)
 {
    auto currTime = m_powerTimer.Get();
