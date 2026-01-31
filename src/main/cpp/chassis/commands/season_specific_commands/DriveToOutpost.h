@@ -58,6 +58,5 @@ public:
     ///             false if the command should continue running
     /// @details    Called repeatedly by the command scheduler to check completion status
     //------------------------------------------------------------------
-
     bool IsFinished() override;
 };
