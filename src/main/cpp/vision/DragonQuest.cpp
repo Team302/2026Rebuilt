@@ -38,16 +38,6 @@ DragonQuest::DragonQuest(
 {
 #ifdef __FRC_ROBORIO__
     m_networktable = nt::NetworkTableInstance::GetDefault().GetTable(std::string("QuestNav"));
-
-    // Initialize protobuf topics
-    if (m_networktable != nullptr)
-    {
-        m_frameDataSubscriber = m_networktable->GetRawTopic("frameData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavFrameData", {});
-        m_deviceDataSubscriber = m_networktable->GetRawTopic("deviceData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavDeviceData", {});
-        m_commandPublisher = m_networktable->GetRawTopic("commands").Publish("proto:questnav.protos.commands.ProtobufQuestNavCommand");
-        m_commandResponseSubscriber = m_networktable->GetRawTopic("response").Subscribe("proto:questnav.protos.commands.ProtobufQuestNavCommandResponse", {});
-        m_isNTInitialized = true; // Mark as successfully initialized
-    }
 #endif
 
     m_questToRobotTransform = frc::Transform2d{
@@ -71,19 +61,40 @@ DragonQuest::DragonQuest(
 
 void DragonQuest::Periodic()
 {
-    SetIsConnected();
-    HandleDashboard();
-    if (m_isConnected)
+    InitNT(); // crashes roborio
+    // SetIsConnected();
+    // HandleDashboard(); //Crashes roborio
+    // if (m_isConnected)
+    // {
+    // GetEstimatedPose();
+    // }
+    // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_isConnected"), m_isConnected);
+}
+
+void DragonQuest::InitNT()
+{
+#ifdef __FRC_ROBORIO__
+    // Initialize protobuf topics
+    if (m_networktable != nullptr && !m_isNTInitialized)
     {
-        GetEstimatedPose();
+        m_frameDataSubscriber = m_networktable->GetRawTopic("frameData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavFrameData", {});
+        m_deviceDataSubscriber = m_networktable->GetRawTopic("deviceData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavDeviceData", {});
+        m_commandPublisher = m_networktable->GetRawTopic("commands").Publish("proto:questnav.protos.commands.ProtobufQuestNavCommand");
+        m_commandResponseSubscriber = m_networktable->GetRawTopic("response").Subscribe("proto:questnav.protos.commands.ProtobufQuestNavCommandResponse", {});
+        // m_isNTInitialized = true; // Mark as successfully initialized
+        // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_isNTInitialized"), m_isNTInitialized);
     }
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("m_isConnected"), m_isConnected);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("m_isNTInitialized"), m_isNTInitialized);
+#endif
 }
 
 void DragonQuest::GetEstimatedPose()
 {
 #ifdef __FRC_ROBORIO__
+    if (!m_isNTInitialized)
+    {
+        m_lastCalculatedPose = frc::Pose2d{};
+        return;
+    }
 
     auto rawData = m_frameDataSubscriber.Get();
     if (rawData.empty())
@@ -181,48 +192,48 @@ void DragonQuest::DataLog(uint64_t timestamp)
 
 void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
 {
-#ifdef __FRC_ROBORIO__
-    if (!m_hasReset)
-    {
-        frc::Pose2d questPose = pose.TransformBy(m_questToRobotTransform);
+    // #ifdef __FRC_ROBORIO__
+    // if (!m_hasReset)
+    // {
+    //     frc::Pose2d questPose = pose.TransformBy(m_questToRobotTransform);
 
-        // Create pose reset command
-        questnav::protos::commands::ProtobufQuestNavCommand command;
-        command.set_type(questnav::protos::commands::POSE_RESET);
-        command.set_command_id(m_nextCommandId++);
+    //     // Create pose reset command
+    //     questnav::protos::commands::ProtobufQuestNavCommand command;
+    //     command.set_type(questnav::protos::commands::POSE_RESET);
+    //     command.set_command_id(m_nextCommandId++);
 
-        auto *payload = command.mutable_pose_reset_payload();
-        auto *targetPose = payload->mutable_target_pose();
+    //     auto *payload = command.mutable_pose_reset_payload();
+    //     auto *targetPose = payload->mutable_target_pose();
 
-        // Set translation
-        auto *translation = targetPose->mutable_translation();
-        translation->set_x(questPose.X().value());
-        translation->set_y(questPose.Y().value());
-        translation->set_z(0.0);
+    //     // Set translation
+    //     auto *translation = targetPose->mutable_translation();
+    //     translation->set_x(questPose.X().value());
+    //     translation->set_y(questPose.Y().value());
+    //     translation->set_z(0.0);
 
-        // Set rotation using quaternion
-        auto *rotation = targetPose->mutable_rotation();
-        auto *quaternion = rotation->mutable_q();
+    //     // Set rotation using quaternion
+    //     auto *rotation = targetPose->mutable_rotation();
+    //     auto *quaternion = rotation->mutable_q();
 
-        // Convert 2D rotation to quaternion (rotation around Z axis)
-        double yawRadians = questPose.Rotation().Radians().value();
-        double halfYaw = yawRadians / 2.0;
+    //     // Convert 2D rotation to quaternion (rotation around Z axis)
+    //     double yawRadians = questPose.Rotation().Radians().value();
+    //     double halfYaw = yawRadians / 2.0;
 
-        quaternion->set_w(std::cos(halfYaw)); // Real part
-        quaternion->set_x(0.0);               // X axis
-        quaternion->set_y(0.0);               // Y axis
-        quaternion->set_z(std::sin(halfYaw)); // Z axis (yaw rotation)
+    //     quaternion->set_w(std::cos(halfYaw)); // Real part
+    //     quaternion->set_x(0.0);               // X axis
+    //     quaternion->set_y(0.0);               // Y axis
+    //     quaternion->set_z(std::sin(halfYaw)); // Z axis (yaw rotation)
 
-        // Serialize and publish
-        std::string serialized;
-        command.SerializeToString(&serialized);
-        m_commandPublisher.Set(std::span<const uint8_t>(
-            reinterpret_cast<const uint8_t *>(serialized.data()),
-            serialized.size()));
+    //     // Serialize and publish
+    //     std::string serialized;
+    //     command.SerializeToString(&serialized);
+    //     m_commandPublisher.Set(std::span<const uint8_t>(
+    //         reinterpret_cast<const uint8_t *>(serialized.data()),
+    //         serialized.size()));
 
-        m_hasReset = true;
-    }
-#endif
+    //     m_hasReset = true;
+    // }
+    // #endif
 }
 
 void DragonQuest::HandleDashboard()
@@ -250,26 +261,26 @@ void DragonQuest::NotifyStateUpdate(RobotStateChanges::StateChange change, bool 
 DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
 {
 #ifdef __FRC_ROBORIO__
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("m_hasReset"), m_hasReset);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("m_isConnected"), m_isConnected);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("m_isQuestEnabled"), m_isQuestEnabled);
+    // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_hasReset"), m_hasReset);
+    // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_isConnected"), m_isConnected);
+    // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_isQuestEnabled"), m_isQuestEnabled);
 
     DragonVisionPoseEstimatorStruct str;
     if (!m_hasReset || !m_isConnected || !m_isQuestEnabled)
     {
         str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE;
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("confidence"), string("NONE"));
+        // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("confidence"), string("NONE"));
     }
     else
     {
         str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::HIGH;
         str.m_visionPose = m_lastCalculatedPose;
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("x"), str.m_visionPose.X().value());
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("y"), str.m_visionPose.Y().value());
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("rot"), str.m_visionPose.Rotation().Degrees().value());
+        // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("x"), str.m_visionPose.X().value());
+        // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("y"), str.m_visionPose.Y().value());
+        // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("rot"), str.m_visionPose.Rotation().Degrees().value());
         str.m_stds = wpi::array{m_stdxy, m_stdxy, m_stddeg};
         str.m_timeStamp = units::time::second_t(m_frameDataSubscriber.GetAtomic().serverTime);
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("confidence"), string("HIGH"));
+        // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("confidence"), string("HIGH"));
     }
     return str;
 #else

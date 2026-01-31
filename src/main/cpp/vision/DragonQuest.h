@@ -28,10 +28,10 @@
 #include "state/IRobotStateChangeSubscriber.h"
 #include "utils/logging/signals/DragonDataLogger.h"
 #include "vision/DragonVisionPoseEstimatorStruct.h"
-#ifdef __FRC_ROBORIO__
+// #ifdef __FRC_ROBORIO__
 #include "vision/Questnavlib/commands.pb.h"
 #include "vision/Questnavlib/data.pb.h"
-#endif
+// #endif
 
 using namespace std;
 
@@ -67,6 +67,8 @@ private:
     void SetIsConnected();
 
     void HandleDashboard();
+
+    void InitNT();
 
     units::length::inch_t m_mountingXOffset; /// <I> x offset of Quest from robot center (forward relative to robot)
     units::length::inch_t m_mountingYOffset; /// <I> y offset of Quest from robot center (left relative to robot)
