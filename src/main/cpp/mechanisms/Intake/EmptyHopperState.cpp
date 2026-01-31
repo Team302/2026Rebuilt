@@ -51,7 +51,6 @@ void EmptyHopperState::Init()
 void EmptyHopperState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
-	// m_mechanism->UpdateTargetHopperPercentOut(m_hopperTarget);
 	m_mechanism->GetExtender()->Set(m_extenderTarget);
 }
 
@@ -76,6 +75,5 @@ bool EmptyHopperState::AtTarget()
 bool EmptyHopperState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return false;
-	// return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXAMPLE_MECH_FORWARD));
+	return (m_mechanism->IsInClimbMode() && m_mechanism->GetCurrentState() != m_mechanism->STATE_LAUNCH);
 }

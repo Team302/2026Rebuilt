@@ -44,6 +44,7 @@
 // FRC
 #include "frc/RobotController.h"
 #include "frc/Timer.h"
+#include "frc/apriltag/AprilTagFieldLayout.h"
 #include "frc/geometry/Pose2d.h"
 
 // Team 302 includes
@@ -341,42 +342,13 @@ std::vector<DragonLimelight *> DragonVision::GetLimelights(DRAGON_LIMELIGHT_CAME
 	std::vector<DragonLimelight *> validLimelights;
 	for (auto it = m_dragonLimelightMap.begin(); it != m_dragonLimelightMap.end(); ++it)
 	{
-		bool addCam = false;
+		auto thisUsage = (*it).first;
 		auto limelight = (*it).second;
-		if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS)
-		{
-			if (limelight->IsLimelightRunning())
-			{
-				validLimelights.emplace_back(limelight);
-			}
-		}
-		else
-		{
 
-			addCam = (*it).first == usage;
-			if (!addCam)
-			{
-				if ((*it).first == DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS)
-				{
-					auto pipe = DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG;
-					if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS)
-					{
-						addCam = pipe == DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG;
-					}
-					else if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION)
-					{
-						addCam = pipe == DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL || pipe == DRAGON_LIMELIGHT_PIPELINE::COLOR_THRESHOLD;
-					}
-				}
-			}
-		}
-
+		auto addCam = thisUsage == usage && limelight->IsLimelightRunning();
 		if (addCam)
 		{
-			if (limelight->IsLimelightRunning())
-			{
-				validLimelights.emplace_back(limelight);
-			}
+			validLimelights.emplace_back(limelight);
 		}
 	}
 	return validLimelights;

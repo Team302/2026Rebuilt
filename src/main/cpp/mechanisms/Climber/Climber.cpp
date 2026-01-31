@@ -40,6 +40,7 @@
 #include "mechanisms/Climber/L1ClimbState.h"
 #include "mechanisms/Climber/L3ClimbState.h"
 #include "mechanisms/Climber/ExitState.h"
+#include "mechanisms/Climber/AutonL1ClimbState.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -77,6 +78,9 @@ void Climber::CreateAndRegisterStates()
 	ExitState *ExitStateInst = new ExitState(string("Exit"), 5, this, m_activeRobotId);
 	AddToStateVector(ExitStateInst);
 
+	AutonL1ClimbState *AutonL1ClimbStateInst = new AutonL1ClimbState(string("AutonL1Climb"), 6, this, m_activeRobotId);
+	AddToStateVector(AutonL1ClimbStateInst);
+
 	OffStateInst->RegisterTransitionState(WantToClimbStateInst);
 	WantToClimbStateInst->RegisterTransitionState(OffStateInst);
 	WantToClimbStateInst->RegisterTransitionState(PrepareToClimbStateInst);
@@ -88,6 +92,7 @@ void Climber::CreateAndRegisterStates()
 	L3ClimbStateInst->RegisterTransitionState(L1ClimbStateInst);
 	L3ClimbStateInst->RegisterTransitionState(ExitStateInst);
 	ExitStateInst->RegisterTransitionState(OffStateInst);
+	AutonL1ClimbStateInst->RegisterTransitionState(ExitStateInst);
 }
 
 Climber::Climber(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANISM_TYPE::CLIMBER, std::string("Climber")),
@@ -131,7 +136,7 @@ std::map<std::string, Climber::STATE_NAMES>
 		{"STATE_L1CLIMB", Climber::STATE_NAMES::STATE_L1CLIMB},
 		{"STATE_L3CLIMB", Climber::STATE_NAMES::STATE_L3CLIMB},
 		{"STATE_EXIT", Climber::STATE_NAMES::STATE_EXIT},
-	};
+		{"STATE_AUTON_L1CLIMB", Climber::STATE_NAMES::STATE_AUTON_L1CLIMB}};
 
 void Climber::CreateCompBot302()
 {

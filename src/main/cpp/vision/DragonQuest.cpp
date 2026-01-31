@@ -13,6 +13,8 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include "vision/DragonQuest.h"
+#include "chassis/ChassisConfigMgr.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "state/IRobotStateChangeSubscriber.h"
 #include "state/RobotState.h"
 #include "state/RobotStateChanges.h"
@@ -20,6 +22,10 @@
 #include "utils/AngleUtils.h"
 #include "utils/DragonField.h"
 #include "utils/logging/debug/Logger.h"
+
+//
+// NOTE!!!! this is being changed, to be compatible with the latest quest code, so we are now returning in most methods!!
+//
 
 DragonQuest::DragonQuest(
     units::length::inch_t mountingXOffset, /// <I> x offset of Quest from robot center (forward relative to robot)
@@ -72,6 +78,8 @@ DragonQuest::DragonQuest(
 
 frc::Pose2d DragonQuest::GetEstimatedPose()
 {
+    auto chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis(); // temporary
+    return chassis != nullptr ? chassis->GetPose() : frc::Pose2d();     // temporary
 
     std::vector<double> posarray = m_posTopic.GetEntry(std::array<double, 3>{}).Get();
     std::vector<double> rotationarray = m_rotationTopic.GetEntry(std::array<double, 3>{}).Get();
@@ -89,6 +97,8 @@ frc::Pose2d DragonQuest::GetEstimatedPose()
 
 void DragonQuest::SetIsConnected()
 {
+    return; // temporary
+
     double currentFrameCount = m_frameCountTopic.GetEntry(0).Get();
     if (m_loopCounter > 3)
     {
@@ -109,6 +119,8 @@ void DragonQuest::SetIsConnected()
 
 void DragonQuest::ZeroPosition()
 {
+    return; // temporary
+
     if (m_questMiso.Get() != 99)
     {
         m_questMosi.Set(1);
@@ -117,11 +129,14 @@ void DragonQuest::ZeroPosition()
 
 void DragonQuest::DataLog(uint64_t timestamp)
 {
+    return; // temporary
     Log2DPoseData(timestamp, DragonDataLogger::PoseSingals::CURRENT_CHASSIS_QUEST_POSE2D, GetEstimatedPose());
 }
 
 void DragonQuest::RefreshNT()
 {
+    return; // temporary
+
     m_posTopic = m_networktable.get()->GetDoubleArrayTopic("position");
     m_rotationTopic = m_networktable.get()->GetDoubleArrayTopic("eulerAngles");
     m_frameCountTopic = m_networktable.get()->GetIntegerTopic("frameCount");
@@ -129,10 +144,14 @@ void DragonQuest::RefreshNT()
 
 void DragonQuest::HandleHeartBeat()
 {
+    return; // temporary
+
     if (m_questMiso.Get() == 98)
     {
+
         m_questMosi.Set(0);
     }
+
     double requestId = m_heartbeatRequestSub.Get();
     // Only respond to new requests to avoid flooding
     if (requestId > 0 && requestId != m_lastProcessedHeartbeatId)
@@ -145,6 +164,8 @@ void DragonQuest::HandleHeartBeat()
 
 void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
 {
+    return; // temporary
+
     if (!m_hasReset)
     {
         frc::Pose2d questPose = pose.TransformBy(m_questToRobotTransform);
@@ -163,6 +184,7 @@ void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
 
 void DragonQuest::HandleDashboard()
 {
+    return; // temporary
 
     if (m_questEnabledChooser.GetSelected() == true)
     {
@@ -180,12 +202,16 @@ void DragonQuest::HandleDashboard()
 
 void DragonQuest::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value)
 {
+    return; // temporary
+
     if (RobotStateChanges::StateChange::ClimbModeStatus_Bool == change)
         m_isClimbMode = value;
 }
 DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
 {
     DragonVisionPoseEstimatorStruct str;
+    return str;
+
     HandleDashboard();
     if (!m_hasReset || !m_isConnected || !m_isQuestEnabled)
     {
