@@ -44,6 +44,8 @@ void LaunchState::Init()
 {
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LaunchState"), string("Init"));
 
+	m_mechanism->PublishLaunchMode(true);
+
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
 		InitCompBot302();
 }
@@ -52,6 +54,7 @@ void LaunchState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
 	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
+	m_mechanism->UpdateTargetAgitatorPercentOut(m_agitatorTarget);
 }
 
 void LaunchState::Run()

@@ -44,9 +44,12 @@ public:
 	std::string GetSelectedAutoFile();
 	std::string GetAlianceColor();
 	std::string GetStartPos();
-	std::string GetTargetGamePiece();
-	std::string GetDesiredScoringLevel();
-	std::string GetTargetFace();
+	std::string GetNeutralZoneAmount();
+	std::string GetDepotOption();
+	std::string GetOutpostOption();
+	std::string GetClimbingOption();
+	std::string GetDesiredPreload();
+	std::string GetFuelStrategy();
 
 	//---------------------------------------------------------------------
 	// Method: 		GetSelectedAutoFile
@@ -70,7 +73,10 @@ private:
 
 	// Attributues
 	frc::SendableChooser<std::string> m_startposchooser;
-	frc::SendableChooser<std::string> m_targetFace;
-	frc::SendableChooser<std::string> m_targetGamePiece;
-	frc::SendableChooser<std::string> m_desiredScoringLevel;
+	frc::SendableChooser<std::string> m_neutralZoneAmount;
+	frc::SendableChooser<std::string> m_targetDepot;
+	frc::SendableChooser<std::string> m_targetOutpost;
+	frc::SendableChooser<std::string> m_climbing;
+	frc::SendableChooser<std::string> m_desiredPreload;
+	frc::SendableChooser<std::string> m_fuelStrategy;
 };

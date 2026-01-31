@@ -46,12 +46,14 @@ void PrepareToLaunchState::Init()
 
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
 		InitCompBot302();
+	m_mechanism->PublishLaunchMode(true);
 }
 
 void PrepareToLaunchState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
 	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
+	m_mechanism->UpdateTargetAgitatorPercentOut(m_agitatorTarget);
 }
 
 void PrepareToLaunchState::Run()

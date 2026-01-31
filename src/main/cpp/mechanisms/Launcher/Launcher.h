@@ -33,6 +33,7 @@
 #include "state/IRobotStateChangeSubscriber.h"
 #include "mechanisms/controllers/ControlData.h"
 #include "state/RobotStateChanges.h"
+#include "state/RobotState.h"
 
 #include "configs/RobotElementNames.h"
 #include "configs/MechanismConfigMgr.h"
@@ -110,6 +111,12 @@ public:
 		m_launcherActiveTarget = &m_launcherVelocityRPS.WithSlot(0);
 	}
 
+	void UpdateTargetAgitatorPercentOut(double percentOut)
+	{
+		m_agitatorPercentOut.Output = percentOut;
+		m_agitatorActiveTarget = &m_agitatorPercentOut;
+	}
+
 	void CreateAndRegisterStates();
 	void Cyclic();
 	void RunCommonTasks() override;
@@ -122,6 +129,8 @@ public:
 	ctre::phoenix6::hardware::TalonFX *GetTransfer() const { return m_transfer; }
 	ctre::phoenix6::hardware::TalonFXS *GetTurret() const { return m_turret; }
 	ctre::phoenix6::hardware::TalonFX *GetIndexer() const { return m_indexer; }
+	ctre::phoenix6::hardware::TalonFX *GetAgitator() const { return m_agitator; }
+
 	ControlData *GetPercentOut() const { return m_percentOut; }
 	ControlData *GetVelocityRPS() const { return m_velocityRPS; }
 	ControlData *GetPositionDegreesHood() const { return m_positionDegreesHood; }
@@ -130,6 +139,11 @@ public:
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
 
 	void SetCurrentState(int state, bool run) override;
+	bool IsLauncherInProtectedMode() const { return m_launcherProtectedMode; }
+	void PublishLaunchMode(bool launching);
+	void NotifyStateUpdate(RobotStateChanges::StateChange statechange, bool value) override;
+	bool IsInClimbMode() const { return m_isClimbMode; }
+	bool IsAllowedToClimb() const { return m_isAllowedToClimb; }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -145,6 +159,8 @@ private:
 	ctre::phoenix6::hardware::TalonFX *m_transfer;
 	ctre::phoenix6::hardware::TalonFXS *m_turret;
 	ctre::phoenix6::hardware::TalonFX *m_indexer;
+	ctre::phoenix6::hardware::TalonFX *m_agitator;
+
 	ControlData *m_percentOut;
 	ControlData *m_velocityRPS;
 	ControlData *m_positionDegreesHood;
@@ -155,12 +171,14 @@ private:
 	void InitializeTalonFXTransferCompBot302();
 	void InitializeTalonFXSTurretCompBot302();
 	void InitializeTalonFXIndexerCompBot302();
+	void InitializeTalonFXAgitatorCompBot302();
 
 	ctre::phoenix6::controls::DutyCycleOut m_launcherPercentOut{0.0};
 	ctre::phoenix6::controls::DutyCycleOut m_hoodPercentOut{0.0};
 	ctre::phoenix6::controls::DutyCycleOut m_transferPercentOut{0.0};
 	ctre::phoenix6::controls::DutyCycleOut m_turretPercentOut{0.0};
 	ctre::phoenix6::controls::DutyCycleOut m_indexerPercentOut{0.0};
+	ctre::phoenix6::controls::DutyCycleOut m_agitatorPercentOut{0.0};
 	ctre::phoenix6::controls::MotionMagicVoltage m_hoodPositionDegreesHood{units::angle::degree_t(0.0)};
 	ctre::phoenix6::controls::MotionMagicVoltage m_turretPositionDegreesTurret{units::angle::degree_t(0.0)};
 	ctre::phoenix6::controls::VelocityVoltage m_launcherVelocityRPS{units::angular_velocity::turns_per_second_t(0.0)};
@@ -169,6 +187,11 @@ private:
 	ctre::phoenix6::controls::ControlRequest *m_transferActiveTarget;
 	ctre::phoenix6::controls::ControlRequest *m_turretActiveTarget;
 	ctre::phoenix6::controls::ControlRequest *m_indexerActiveTarget;
+	ctre::phoenix6::controls::ControlRequest *m_agitatorActiveTarget;
 
+	bool m_launcherProtectedMode = false;
+	bool m_launcherOffButtonReleased = true;
+	bool m_isClimbMode = false;
+	bool m_isAllowedToClimb = false;
 	// void InitializeLogging();
 };

@@ -18,7 +18,6 @@
 #include <string>
 #include <vector>
 
-// #include "chassis/ChassisConfigMgr.h"
 #include "state/RobotStateChangeBroker.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "utils/DragonField.h"
@@ -71,6 +70,7 @@ void RobotState::Run()
         auto controller = TeleopControl::GetInstance();
         if (controller != nullptr)
         {
+            PublishClimbMode(controller);
         }
     }
 }
@@ -174,4 +174,17 @@ void RobotState::PublishGameStateChanges()
         m_gamePhase = gameState;
         PublishStateChange(RobotStateChanges::GameState_Int, gameState);
     }
+}
+void RobotState::PublishClimbMode(TeleopControl *controller)
+{
+    if (controller->IsButtonPressed(TeleopControlFunctions::CLIMB_MODE))
+    {
+        if (m_climbButtonReleased)
+        {
+            m_climbModeStatus = !m_climbModeStatus;
+
+            PublishStateChange(RobotStateChanges::ClimbModeStatus_Bool, m_climbModeStatus);
+        }
+    }
+    m_climbButtonReleased = !controller->IsButtonPressed(TeleopControlFunctions::CLIMB_MODE);
 }
