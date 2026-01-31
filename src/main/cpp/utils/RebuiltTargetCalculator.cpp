@@ -25,10 +25,11 @@ RebuiltTargetCalculator::RebuiltTargetCalculator() : TargetCalculator()
     SetMechanismOffset(m_mechanismOffset);
 
     m_field = DragonField::GetInstance();
+    m_fieldConstants = FieldConstants::GetInstance();
     m_field->AddPose("Target Position", frc::Pose2d(GetTargetPosition(), frc::Rotation2d()));
     m_field->AddPose("Launcher Position", frc::Pose2d());
 
-    m_fieldConstants = FieldConstants::GetInstance();
+    
 }
 
 RebuiltTargetCalculator *RebuiltTargetCalculator::m_instance = nullptr;
