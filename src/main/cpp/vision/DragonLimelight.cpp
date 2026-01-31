@@ -44,7 +44,7 @@
 
 namespace
 {
-    bool IsValidAprilTag(std::string networktablename, const, std::vector<FieldAprilTagIDs> &validTags, int tagID);
+    bool IsValidAprilTag(std::string networktablename, const std::vector<FieldAprilTagIDs> &validTags, int tagID);
     bool IsValidObjectClass(std::string networktablename, const std::vector<int> &validClasses, int classID);
     std::optional<std::pair<double, double>> GetStandardDeviationsForMetaTag1PoseEstimation(int ntags, double targetAreaPercent);
 }
