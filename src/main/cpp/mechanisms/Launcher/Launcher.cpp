@@ -110,6 +110,7 @@ Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MEC
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 
+	m_targetCalculator = RebuiltTargetCalculator::GetInstance();
 	// InitializeLogging();
 }
 
@@ -657,6 +658,8 @@ void Launcher::Update()
 
 void Launcher::Cyclic()
 {
+	CalculateTargets();
+
 	Update();
 }
 
@@ -689,6 +692,11 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 	{
 		m_isAllowedToClimb = value;
 	}
+}
+
+void Launcher::CalculateTargets()
+{
+	m_launcherTargetAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_launcher->GetPosition().GetValue());
 }
 
 /* void Launcher::DataLog(uint64_t timestamp)

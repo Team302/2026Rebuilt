@@ -14,6 +14,8 @@
 //====================================================================================================================================================
 
 #include "utils/RebuiltTargetCalculator.h"
+#include "utils/FMSData.h"
+#include "utils/logging/debug/Logger.h"
 
 RebuiltTargetCalculator::RebuiltTargetCalculator() : TargetCalculator()
 {
@@ -23,8 +25,10 @@ RebuiltTargetCalculator::RebuiltTargetCalculator() : TargetCalculator()
     SetMechanismOffset(m_mechanismOffset);
 
     m_field = DragonField::GetInstance();
-    m_field->AddPose("TargetPosition", frc::Pose2d(GetTargetPosition(), frc::Rotation2d()));
-    m_field->AddPose("LauncherPosition", frc::Pose2d());
+    m_field->AddPose("Target Position", frc::Pose2d(GetTargetPosition(), frc::Rotation2d()));
+    m_field->AddPose("Launcher Position", frc::Pose2d());
+
+    m_fieldConstants = FieldConstants::GetInstance();
 }
 
 RebuiltTargetCalculator *RebuiltTargetCalculator::m_instance = nullptr;
@@ -40,17 +44,29 @@ RebuiltTargetCalculator *RebuiltTargetCalculator::GetInstance()
 
 frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
 {
-    // TODO: Replace with dynamic target selection based on:
-    // - FieldElementCalculator for actual target position
-    // - Zone detector for zone-specific targets
-    // For now, return hardcoded hub target for testing
-    return m_hubTarget;
+
+    bool isInAllianceZone = true; // TODO: Replace with zone calculator logic
+    frc::Pose2d targetPosition;
+
+    if (isInAllianceZone)
+    {
+        auto fieldElement = FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kBlue
+                                ? FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER
+                                : FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER;
+
+        targetPosition = m_fieldConstants->GetFieldElementPose2d(fieldElement);
+    }
+    else
+    {
+    }
+
+    return frc::Translation2d(targetPosition.X(), targetPosition.Y());
 }
 
 units::angle::degree_t RebuiltTargetCalculator::GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle)
 {
 
-    m_field->UpdateObject("TargetPosition", GetVirtualTargetPose(looheadTime));
+    m_field->UpdateObject("Target Position", GetVirtualTargetPose(looheadTime));
 
     units::degree_t fieldAngleToTarget = CalculateMechanismAngleToTarget(looheadTime);
     auto robotPose = GetChassisPose();
@@ -86,6 +102,6 @@ units::angle::degree_t RebuiltTargetCalculator::GetLauncherTarget(units::time::s
         bestAngle = std::clamp(normalizedGoal, m_minLauncherAngle, m_maxLauncherAngle);
     }
 
-    m_field->UpdateObject("LauncherPosition", frc::Pose2d(GetMechanismWorldPosition(), robotPose.Rotation() + frc::Rotation2d(bestAngle)));
+    m_field->UpdateObject("Launcher Position", frc::Pose2d(GetMechanismWorldPosition(), robotPose.Rotation() + frc::Rotation2d(bestAngle)));
     return bestAngle;
 }

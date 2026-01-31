@@ -16,6 +16,7 @@
 
 #include "utils/TargetCalculator.h"
 #include "utils/DragonField.h"
+#include "fielddata/FieldConstants.h"
 
 #include <frc/geometry/Translation2d.h>
 #include <units/length.h>
@@ -58,10 +59,6 @@ private:
 
     static RebuiltTargetCalculator *m_instance;
 
-    // TODO: Replace with FieldElementCalculator and ZoneCalculator integration
-    // Hardcoded hub target for testing (approximate field position in meters)
-    frc::Translation2d m_hubTarget{4.625_m, 4.025_m};
-
     // Mechanism position offset from robot center in robot frame (meters)
     // Default: 5.5 inches (0.1397m) back, centered
     frc::Translation2d m_mechanismOffset{-0.1397_m, 0_m};
@@ -70,4 +67,6 @@ private:
 
     const units::degree_t m_minLauncherAngle = 90_deg;
     const units::degree_t m_maxLauncherAngle = 270_deg;
+
+    FieldConstants *m_fieldConstants;
 };
