@@ -13,8 +13,6 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include <auton/AllianceZoneManager.h>
-#include <frc/DriverStation.h>
-#include <auton/ZoneParams.h>
 
 using frc::DriverStation;
 
@@ -32,13 +30,5 @@ std::string AllianceZoneManager::GetZoneFile()
 
 bool AllianceZoneManager::isInAllianceZone()
 {
-    // create a ZoneParams object from the neutral zone filename and check the pose
-    if (isInZone())
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return isInZone();
 }

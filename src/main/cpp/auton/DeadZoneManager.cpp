@@ -33,12 +33,5 @@ std::string DeadZoneManager::GetZoneFile()
 bool DeadZoneManager::isInDeadZone()
 {
     // create a ZoneParams object from the neutral zone filename and check the pose
-    if (isInZone() || isInZone(m_neutralZoneFile))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return isInZone() || isInZone(m_neutralZoneFile);
 }
