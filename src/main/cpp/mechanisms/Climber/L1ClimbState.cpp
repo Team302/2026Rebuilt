@@ -56,6 +56,8 @@ void L1ClimbState::InitCompBot302()
 
 void L1ClimbState::Run()
 {
+	m_mechanism->ManualClimb(m_climberTarget);
+
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("L1ClimbState"), string("Run"));
 }
 

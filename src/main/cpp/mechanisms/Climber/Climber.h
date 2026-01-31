@@ -98,6 +98,12 @@ public:
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
 
 	void SetCurrentState(int state, bool run) override;
+	void UpdateTargetClimberPercentOut(double percentOut)
+	{
+		m_ClimberPercentOut.Output = percentOut;
+		m_climberActiveTarget = &m_ClimberPercentOut;
+	}
+	void ManualClimb(units::angle::degree_t climbTarget);
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -121,6 +127,9 @@ private:
 
 	ctre::phoenix6::controls::MotionMagicExpoTorqueCurrentFOC m_climberPositionDegree{0_tr};
 	ctre::phoenix6::controls::ControlRequest *m_climberActiveTarget;
+	ctre::phoenix6::controls::DutyCycleOut m_ClimberPercentOut{0.0};
+	double m_percentOutScale = 0.85;
+	double m_holdPercentOut = 0.3;
 
 	// void InitializeLogging();
 };

@@ -41,6 +41,8 @@
 #include "mechanisms/Climber/L3ClimbState.h"
 #include "mechanisms/Climber/ExitState.h"
 #include "mechanisms/Climber/AutonL1ClimbState.h"
+#include "teleopcontrol/TeleopControlFunctions.h"
+#include "teleopcontrol/TeleopControl.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -299,7 +301,24 @@ ControlData *Climber::GetControlData(string name)
 
 	return nullptr;
 }
+void Climber::ManualClimb(units::angle::degree_t climbTarget)
+{
+	auto climberPosition = GetClimber()->GetPosition().GetValue();
+	double manualClimberPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::CLIMB_MANUAL_ROTATE_UP) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::CLIMB_MANUAL_ROTATE_DOWN);
 
+	if (climberPosition < climbTarget) // so we keep climbing if we are up
+		UpdateTargetClimberPercentOut(m_holdPercentOut);
+
+	if (abs(manualClimberPercent) > 0.075)
+	{
+		double climberPercentOutTarget = manualClimberPercent * m_percentOutScale;
+		UpdateTargetClimberPercentOut(climberPercentOutTarget);
+	}
+	else
+	{
+		UpdateTargetClimberPercentOut(0.0);
+	}
+}
 /* void Climber::DataLog(uint64_t timestamp)
 {
    auto currTime = m_powerTimer.Get();
