@@ -36,14 +36,17 @@ DragonQuest::DragonQuest(
         m_mountingYaw(mountingYaw),
         m_mountingRoll(mountingRoll)
 {
+#ifdef __FRC_ROBORIO__
     m_networktable = nt::NetworkTableInstance::GetDefault().GetTable(std::string("QuestNav"));
 
-#ifdef __FRC_ROBORIO__
     // Initialize protobuf topics
-    m_frameDataSubscriber = m_networktable->GetRawTopic("frameData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavFrameData", {});
-    m_deviceDataSubscriber = m_networktable->GetRawTopic("deviceData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavDeviceData", {});
-    m_commandPublisher = m_networktable->GetRawTopic("commands").Publish("proto:questnav.protos.commands.ProtobufQuestNavCommand");
-    m_commandResponseSubscriber = m_networktable->GetRawTopic("response").Subscribe("proto:questnav.protos.commands.ProtobufQuestNavCommandResponse", {});
+    if (m_networktable)
+    {
+        m_frameDataSubscriber = m_networktable->GetRawTopic("frameData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavFrameData", {});
+        m_deviceDataSubscriber = m_networktable->GetRawTopic("deviceData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavDeviceData", {});
+        m_commandPublisher = m_networktable->GetRawTopic("commands").Publish("proto:questnav.protos.commands.ProtobufQuestNavCommand");
+        m_commandResponseSubscriber = m_networktable->GetRawTopic("response").Subscribe("proto:questnav.protos.commands.ProtobufQuestNavCommandResponse", {});
+    }
 #endif
 
     m_questToRobotTransform = frc::Transform2d{
@@ -62,6 +65,7 @@ DragonQuest::DragonQuest(
     frc::SmartDashboard::PutData("Quest Endgame ONLY", &m_questEndgameEnabledChooser);
     RobotState *RobotStates = RobotState::GetInstance();
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
+    // m_field = DragonField::GetInstance();
 }
 
 void DragonQuest::Periodic()
@@ -117,6 +121,8 @@ void DragonQuest::GetEstimatedPose()
     frc::Pose2d robotPose = questPose.TransformBy(m_questToRobotTransform.Inverse());
 
     m_lastCalculatedPose = robotPose;
+    // m_field->AddPose("QuestPose", robotPose);
+
 #endif
 }
 

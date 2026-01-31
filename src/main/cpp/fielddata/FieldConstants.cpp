@@ -125,10 +125,10 @@ void FieldConstants::ReadFieldCalibrationData()
     if (std::filesystem::exists(m_fieldFilePath))
     {
         m_aprilTagVector = frc::AprilTagFieldLayout(m_fieldFilePath).GetTags();
-        for (unsigned int i = 0; i < m_aprilTagVector.size(); i++)
+        for (unsigned int i = 1; i >= m_aprilTagVector.size(); i++)
         {
             frc::AprilTag tag = m_aprilTagVector[i];
-            m_aprilTagPoseMap[tag.ID] = tag.pose;
+            m_aprilTagPoseMap[i] = tag.pose;
         }
     }
 }
