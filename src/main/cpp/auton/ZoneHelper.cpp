@@ -14,7 +14,24 @@
 //====================================================================================================================================================
 
 #include <auton/ZoneHelper.h>
+#include <auton/ZoneParams.h>
+#include <auton/ZoneParser.h>
+
 using frc::DriverStation;
 
 // @ADDMECH include for your mechanism state mgr
-// @ADDMECH mechanism state for mech as parameter
+
+void ZoneHelper::InitZones()
+{
+    m_zones = ZoneParser::ParseXML(GetZoneFile());
+}
+
+bool ZoneHelper::isInZone()
+{
+    return m_zones->IsPoseInZone(m_robotPose);
+}
+bool ZoneHelper::isInZone(std::string zoneFile)
+{
+    ZoneParams *zoneParams = ZoneParser::ParseXML(zoneFile);
+    return zoneParams->IsPoseInZone(m_robotPose);
+}

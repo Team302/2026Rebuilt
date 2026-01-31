@@ -19,6 +19,10 @@
 
 class DeadZoneManager : public ZoneHelper
 {
-    std::string GetZoneFile() override;
+public:
+    virtual std::string GetZoneFile() override;
     bool isInDeadZone();
+
+private:
+    std::string m_neutralZoneFile = "src/main/deploy/auton/zones/NZDeadZone.xml";
 };

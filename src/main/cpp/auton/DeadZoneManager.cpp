@@ -14,6 +14,8 @@
 //====================================================================================================================================================
 #include <auton/DeadZoneManager.h>
 #include <frc/DriverStation.h>
+#include <auton/ZoneParams.h>
+
 using frc::DriverStation;
 
 std::string DeadZoneManager::GetZoneFile()
@@ -30,8 +32,12 @@ std::string DeadZoneManager::GetZoneFile()
 
 bool DeadZoneManager::isInDeadZone()
 {
-    ZoneParams GetZoneFile();
-    if (GetZoneFile().IsPoseInZone(m_robotPose))
+    // create a ZoneParams object from the neutral zone filename and check the pose
+    if (isInZone())
+    {
+        return true;
+    }
+    else if (isInZone(m_neutralZoneFile))
     {
         return true;
     }

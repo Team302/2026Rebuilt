@@ -20,5 +20,5 @@
 class AllianceZoneManager : public ZoneHelper
 {
     std::string GetZoneFile() override;
-    bool isInDeadZone();
+    bool isInAllianceZone();
 };
