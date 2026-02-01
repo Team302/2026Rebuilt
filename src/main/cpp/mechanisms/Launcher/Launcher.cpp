@@ -704,7 +704,7 @@ bool Launcher::IsLauncherAtTarget()
 	// TODO : POPULATE FUNCTION
 	return false;
 }
-bool Launcher::IsAllowedToLaunch()
+bool Launcher::IsInLaunchZone() const
 {
 	// TODO : POPULATE FUNCTION
 	return false;

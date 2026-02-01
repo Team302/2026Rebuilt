@@ -79,6 +79,6 @@ bool IdleState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
 	return (m_mechanism->IsLauncherInitialized() && m_mechanism->GetCurrentState() == Launcher::STATE_INITIALIZE) ||
-		   (considerGamepadTransitions && !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH) && ((m_mechanism->GetCurrentState() == Launcher::STATE_LAUNCH) || m_mechanism->GetCurrentState() == Launcher::STATE_PREPARE_TO_LAUNCH)) ||
+		   (considerGamepadTransitions && (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH) && !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH_OVERRIDE)) && ((m_mechanism->GetCurrentState() == Launcher::STATE_LAUNCH) || m_mechanism->GetCurrentState() == Launcher::STATE_PREPARE_TO_LAUNCH)) ||
 		   (!m_mechanism->IsInClimbMode() && (m_mechanism->GetCurrentState() == Launcher::STATE_CLIMB || m_mechanism->GetCurrentState() == Launcher::STATE_EMPTY_HOPPER));
 }

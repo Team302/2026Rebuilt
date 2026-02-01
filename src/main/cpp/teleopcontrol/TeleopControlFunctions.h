@@ -64,6 +64,7 @@ public:
         // LAUNCHER
         LAUNCHER_OFF,
         LAUNCH,
+        LAUNCH_OVERRIDE,
 
         // VIRTUAL TARGET
         UPDATE_VIRTUAL_TARGET_OFFSET_UP,

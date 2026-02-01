@@ -145,7 +145,7 @@ public:
 	bool IsInClimbMode() const { return m_isClimbMode; }
 	bool IsAllowedToClimb() const { return m_isAllowedToClimb; }
 	bool IsLauncherAtTarget();
-	bool IsAllowedToLaunch();
+	bool IsInLaunchZone() const;
 	bool IsLauncherInitialized() const { return m_launcherInitialized; }
 	void SetLauncherInitialized(bool initialized) { m_launcherInitialized = initialized; }
 	bool IsTuningLauncherMode() const { return m_tuningLauncher; }
