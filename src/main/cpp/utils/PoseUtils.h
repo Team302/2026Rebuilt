@@ -18,6 +18,7 @@
 #include "frc/geometry/Pose2d.h"
 #include "frc/geometry/Translation2d.h"
 #include "units/length.h"
+#include "fielddata/FieldConstants.h"
 
 class PoseUtils
 {
@@ -34,4 +35,6 @@ public:
 
     static bool IsPoseAtOrigin(const frc::Pose2d &pose,
                                units::length::centimeter_t tolerance);
+
+    static FieldConstants::FIELD_ELEMENT GetClosestFieldElement(const frc::Pose2d &pose, FieldConstants::FIELD_ELEMENT firstElement, FieldConstants::FIELD_ELEMENT secondElement);
 };

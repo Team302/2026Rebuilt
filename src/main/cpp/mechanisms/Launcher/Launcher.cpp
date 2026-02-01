@@ -624,6 +624,7 @@ void Launcher::RunCommonTasks()
 {
 	// This function is called once per loop before the current state Run()
 	Cyclic();
+
 	if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCHER_OFF))
 	{
 		if (m_launcherOffButtonReleased)
@@ -636,6 +637,10 @@ void Launcher::RunCommonTasks()
 	{
 		m_launcherOffButtonReleased = true;
 	}
+
+	// Update Launcher Targets/Field
+	m_targetCalculator->UpdateTargetOffset();
+	CalculateTargets();
 }
 
 /// @brief  Set the control constants (e.g. PIDF values).
@@ -658,8 +663,6 @@ void Launcher::Update()
 
 void Launcher::Cyclic()
 {
-	CalculateTargets();
-
 	Update();
 }
 
@@ -695,12 +698,12 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 }
 bool Launcher::IsLauncherAtTarget()
 {
-	// TODO : POPULATE FUNCTION
+	// MECH_TODO: POPULATE FUNCTION
 	return false;
 }
 bool Launcher::IsAllowedToLaunch()
 {
-	// TODO : POPULATE FUNCTION
+	//  MECH_TODO: POPULATE FUNCTION
 	return false;
 }
 

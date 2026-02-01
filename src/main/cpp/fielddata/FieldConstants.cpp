@@ -105,7 +105,6 @@ FieldConstants::FieldConstants()
     m_aprilTagPoseMap[30] = GetAprilTagPoseFromLayout(30);
     m_aprilTagPoseMap[31] = GetAprilTagPoseFromLayout(31);
     m_aprilTagPoseMap[32] = GetAprilTagPoseFromLayout(32);
-    auto pose = m_aprilTagPoseMap[1];
 
     for (const auto &pair : m_aprilTagPoseMap)
     {

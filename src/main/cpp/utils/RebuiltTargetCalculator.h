@@ -17,6 +17,7 @@
 #include "utils/TargetCalculator.h"
 #include "utils/DragonField.h"
 #include "fielddata/FieldConstants.h"
+#include "auton/AllianceZoneManager.h"
 
 #include <frc/geometry/Translation2d.h>
 #include <units/length.h>
@@ -51,11 +52,35 @@ public:
      */
     units::angle::degree_t GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle);
 
+    /**
+     * \brief Update the target offset based on driver input
+     */
+    void UpdateTargetOffset();
+
 private:
     /**
      * \brief Constructor - initializes with default mechanism offset
      */
     RebuiltTargetCalculator();
+
+    /**
+     * \brief Get the passing target offset based on field element type
+     * \param fieldElement The field element to check
+     * \return X offset value
+     */
+    units::length::inch_t GetPassingTargetXOffset(FieldConstants::FIELD_ELEMENT fieldElement);
+
+    /**
+     * \brief Get the passing target offset based on field element type
+     * \param fieldElement The field element to check
+     * \return Y offset value
+     */
+    units::length::inch_t GetPassingTargetYOffset(FieldConstants::FIELD_ELEMENT fieldElement);
+
+    /**
+     * \brief Update the passing target positions on the field based on current offsets
+     * */
+    void UpdatePassingTargetsOnField();
 
     static RebuiltTargetCalculator *m_instance;
 
@@ -69,4 +94,13 @@ private:
     const units::degree_t m_maxLauncherAngle = 270_deg;
 
     FieldConstants *m_fieldConstants;
+    AllianceZoneManager *m_zoneManager;
+
+    units::length::inch_t m_xTargetOffset = 0_in;
+    units::length::inch_t m_yTargetOffset = 0_in;
+
+    units::length::inch_t m_passingDepotTargetXOffset = 0_in;
+    units::length::inch_t m_passingDepotTargetYOffset = 0_in;
+    units::length::inch_t m_passingOutpostTargetXOffset = 0_in;
+    units::length::inch_t m_passingOutpostTargetYOffset = 0_in;
 };
