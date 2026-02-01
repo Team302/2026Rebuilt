@@ -31,7 +31,6 @@
 #include "state/IRobotStateChangeSubscriber.h"
 #include "mechanisms/controllers/ControlData.h"
 #include "state/RobotStateChanges.h"
-#include "state/RobotState.h"
 
 #include "configs/RobotElementNames.h"
 #include "configs/MechanismConfigMgr.h"
@@ -52,7 +51,8 @@ public:
 		STATE_PREPARE_TO_LAUNCH,
 		STATE_LAUNCH,
 		STATE_EMPTY_HOPPER,
-		STATE_CLIMB
+		STATE_CLIMB,
+		STATE_LAUNCHER_TUNING
 	};
 
 	Launcher(RobotIdentifier activeRobotId);
@@ -146,9 +146,10 @@ public:
 	bool IsInClimbMode() const { return m_isClimbMode; }
 	bool IsAllowedToClimb() const { return m_isAllowedToClimb; }
 	bool IsLauncherAtTarget();
-	bool IsAllowedToLaunch();
+	bool IsInLaunchZone() const;
 	bool IsLauncherInitialized() const { return m_launcherInitialized; }
 	void SetLauncherInitialized(bool initialized) { m_launcherInitialized = initialized; }
+	bool IsTuningLauncherMode() const { return m_tuningLauncher; }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -207,5 +208,6 @@ private:
 	void CalculateTargets();
 
 	bool m_launcherInitialized = false;
+	bool m_tuningLauncher = false;
 	// void InitializeLogging();
 };
