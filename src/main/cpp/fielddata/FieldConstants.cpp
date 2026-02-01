@@ -45,8 +45,6 @@ FieldConstants::FieldConstants()
     // Blue Calculated Positions
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_TOWER_LEFT_STICK] = m_placeholder;
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_TOWER_RIGHT_STICK] = m_placeholder;
-    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_TOWER_LEVEL_1_LEFT] = m_placeholder;
-    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_TOWER_LEVEL_1_RIGHT] = m_placeholder;
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE] = m_placeholder;
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_DEPOT_LEFT_SIDE] = m_placeholder;
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_DEPOT_RIGHT_SIDE] = m_placeholder;
@@ -68,8 +66,6 @@ FieldConstants::FieldConstants()
     // Red Calculated Positions
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_TOWER_LEFT_STICK] = m_placeholder;
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_TOWER_RIGHT_STICK] = m_placeholder;
-    fieldConstantsPoseMap[FIELD_ELEMENT::RED_TOWER_LEVEL_1_LEFT] = m_placeholder;
-    fieldConstantsPoseMap[FIELD_ELEMENT::RED_TOWER_LEVEL_1_RIGHT] = m_placeholder;
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE] = m_placeholder;
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_DEPOT_LEFT_SIDE] = m_placeholder;
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_DEPOT_RIGHT_SIDE] = m_placeholder;
@@ -109,8 +105,6 @@ FieldConstants::FieldConstants()
     m_aprilTagPoseMap[30] = GetAprilTagPoseFromLayout(30);
     m_aprilTagPoseMap[31] = GetAprilTagPoseFromLayout(31);
     m_aprilTagPoseMap[32] = GetAprilTagPoseFromLayout(32);
-    auto pose = m_aprilTagPoseMap[1];
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "FieldConstants", "AprilTag1Pose", pose.X().value());
 
     for (const auto &pair : m_aprilTagPoseMap)
     {

@@ -47,8 +47,8 @@ DepotHelper::DepotHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerv
 //------------------------------------------------------------------
 /// @brief      Determines which depot (red or blue) is nearest to the robot
 /// @return     bool - true if the red depot is nearest, false if blue depot is nearest
-/// @details    Calculates the distance from the robot's current pose to both
-///             the blue and red depot neutral sides, then compares them
+/// @details    Uses PoseUtils::GetClosestFieldElement to determine which depot
+///             (red or blue) neutral side is nearest to the robot's current pose
 //------------------------------------------------------------------
 bool DepotHelper::IsNearestDepotRed() const
 {
@@ -58,14 +58,10 @@ bool DepotHelper::IsNearestDepotRed() const
     }
 
     auto currentPose = m_chassis->GetPose();
-
-    auto blueDistance = CalcDistanceToObject(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE, currentPose);
-    auto redDistance = CalcDistanceToObject(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE, currentPose);
-    if (blueDistance < redDistance)
-    {
-        return false;
-    }
-    return true;
+    auto nearestDepot = PoseUtils::GetClosestFieldElement(currentPose,
+                                                          FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE,
+                                                          FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE);
+    return nearestDepot == FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE;
 }
 
 //------------------------------------------------------------------
@@ -97,22 +93,4 @@ frc::Pose2d DepotHelper::CalcDepotPose() const
         return neutralPose;
     }
     return frc::Pose2d(fieldOffsetValues->GetXValue(isNearestDepotRed, FIELD_OFFSET_ITEMS::DEPOT_X), neutralPose.Y(), isNearestDepotRed ? 0_deg : 180_deg);
-}
-
-//------------------------------------------------------------------
-/// @brief      Calculates the distance from a given pose to a field element
-/// @param[in]  element - The field element to measure distance to
-/// @param[in]  currentPose - The pose to measure distance from
-/// @return     units::length::meter_t - The distance in meters
-/// @details    Uses the translation components of both poses to calculate
-///             the Euclidean distance between them
-//------------------------------------------------------------------
-units::length::meter_t DepotHelper::CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element,
-                                                         frc::Pose2d currentPose) const
-{
-    if (m_fieldConstants == nullptr)
-    {
-        return units::length::meter_t(0.0);
-    }
-    return PoseUtils::GetDeltaBetweenPoses(currentPose, m_fieldConstants->GetFieldElementPose2d(element));
 }
