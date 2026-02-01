@@ -87,7 +87,6 @@ DragonLimelight::DragonLimelight(std::string networkTableName,
     SetPipeline(initialPipeline);
     SetCameraPose_RobotSpace(mountingXOffset.to<double>(), mountingYOffset.to<double>(), mountingZOffset.to<double>(), roll.to<double>(), pitch.to<double>(), yaw.to<double>());
     m_cameraName = LimelightHelpers::sanitizeName(std::string(networkTableName));
-    m_healthTimer = new frc::Timer();
     for (int port = 5800; port <= 5809; port++)
     {
         wpi::PortForwarder::GetInstance().Add(port + static_cast<int>(identifier), "limelight.local", port);
@@ -117,11 +116,11 @@ bool DragonLimelight::IsLimelightRunning()
     else if (m_lastHeartbeat != currentHb)
     {
         m_lastHeartbeat = currentHb;
-        m_healthTimer->Reset(); // reset when we see a new heartbeat
-        m_healthTimer->Start();
+        m_healthTimer.Reset(); // reset when we see a new heartbeat
+        m_healthTimer.Start();
         return true;
     }
-    else if (m_healthTimer->Get().to<double>() < 0.5) // if we haven't seen a new heartbeat in 0.5 seconds
+    else if (m_healthTimer.Get().to<double>() < 0.5) // if we haven't seen a new heartbeat in 0.5 seconds
     {
         return true;
     }

@@ -57,6 +57,17 @@ DragonQuest::DragonQuest(
     // m_field = DragonField::GetInstance();
 }
 
+// Static strings to avoid repeated heap allocations in logging
+static const std::string kQuestNavDebug = "questnavdebug";
+static const std::string kIsConnected = "m_isConnected";
+static const std::string kIsNTInitialized = "m_isNTInitialized";
+static const std::string kInitNT = "InitNT";
+static const std::string kNetworkTableObtained = "NetworkTable obtained";
+static const std::string kFailedToGetNT = "Failed to get NetworkTable";
+static const std::string kSuccessfullyInitialized = "Successfully initialized";
+static const std::string kBadAlloc = "InitNT bad_alloc";
+static const std::string kException = "InitNT exception";
+
 void DragonQuest::Periodic()
 {
     if (!m_isNTInitialized)
@@ -73,8 +84,8 @@ void DragonQuest::Periodic()
         //     GetEstimatedPose();
         // }
     }
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_isConnected"), m_isConnected);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_isNTInitialized"), m_isNTInitialized);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kIsConnected, m_isConnected);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kIsNTInitialized, m_isNTInitialized);
 }
 
 void DragonQuest::InitNT()
@@ -91,11 +102,11 @@ void DragonQuest::InitNT()
         auto networktable = nt::NetworkTableInstance::GetDefault().GetTable(std::string("QuestNav"));
         if (networktable.get() == nullptr)
         {
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("questnavdebug"), string("InitNT"), string("Failed to get NetworkTable"));
+            Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, kQuestNavDebug, kInitNT, kFailedToGetNT);
             return;
         }
 
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("NetworkTable obtained"), true);
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kNetworkTableObtained, true);
 
         // Create subscribers with reduced buffer sizes to minimize memory allocation
         nt::PubSubOptions options;
@@ -108,16 +119,16 @@ void DragonQuest::InitNT()
         m_commandResponseSubscriber = networktable.get()->GetRawTopic("response").Subscribe("proto:questnav.protos.commands.ProtobufQuestNavCommandResponse", {}, options);
 
         m_isNTInitialized = true; // Mark as successfully initialized
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("InitNT"), string("Successfully initialized"));
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kInitNT, kSuccessfullyInitialized);
     }
     catch (const std::bad_alloc &e)
     {
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("questnavdebug"), string("InitNT bad_alloc"), string(e.what()));
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, kQuestNavDebug, kBadAlloc, std::string(e.what()));
         m_isNTInitialized = false;
     }
     catch (const std::exception &e)
     {
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("questnavdebug"), string("InitNT exception"), string(e.what()));
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, kQuestNavDebug, kException, std::string(e.what()));
         m_isNTInitialized = false;
     }
 #endif
