@@ -12,6 +12,7 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
+#include "vision/DragonQuest.h"
 #include "state/IRobotStateChangeSubscriber.h"
 #include "state/RobotState.h"
 #include "state/RobotStateChanges.h"
@@ -19,7 +20,6 @@
 #include "utils/AngleUtils.h"
 #include "utils/DragonField.h"
 #include "utils/logging/debug/Logger.h"
-#include "vision/DragonQuest.h"
 
 DragonQuest::DragonQuest(
     units::length::inch_t mountingXOffset, /// <I> x offset of Quest from robot center (forward relative to robot)
@@ -29,6 +29,7 @@ DragonQuest::DragonQuest(
     units::angle::degree_t mountingYaw,    /// <I> - Yaw of Quest
     units::angle::degree_t mountingRoll    /// <I> - Roll of Quest
     ) : IRobotStateChangeSubscriber(),
+        DragonDataLogger(),
         m_mountingXOffset(mountingXOffset),
         m_mountingYOffset(mountingYOffset),
         m_mountingZOffset(mountingZOffset),
