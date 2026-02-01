@@ -103,4 +103,10 @@ private:
     units::length::inch_t m_passingDepotTargetYOffset = 0_in;
     units::length::inch_t m_passingOutpostTargetXOffset = 0_in;
     units::length::inch_t m_passingOutpostTargetYOffset = 0_in;
+
+    // Button state tracking for single press per button
+    bool m_prevUpPressed = false;
+    bool m_prevDownPressed = false;
+    bool m_prevLeftPressed = false;
+    bool m_prevRightPressed = false;
 };

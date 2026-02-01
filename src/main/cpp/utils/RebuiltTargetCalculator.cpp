@@ -144,30 +144,38 @@ units::angle::degree_t RebuiltTargetCalculator::GetLauncherTarget(units::time::s
 void RebuiltTargetCalculator::UpdateTargetOffset()
 {
     auto teleopControl = TeleopControl::GetInstance();
+    auto alliance = FMSData::GetAllianceColor();
 
     if (teleopControl != nullptr)
     {
-        // Updating target offsets (all targets will be effected)
-        if (teleopControl->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_UP))
+        bool isUpPressed = teleopControl->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_UP);
+        bool isDownPressed = teleopControl->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_DOWN);
+        bool isLeftPressed = teleopControl->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_LEFT);
+        bool isRightPressed = teleopControl->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_RIGHT);
+
+        if (isUpPressed && !m_prevUpPressed)
         {
-            m_xTargetOffset += 5_in;
+            m_xTargetOffset += alliance == frc::DriverStation::Alliance::kBlue ? 5_in : -5_in;
         }
-        else if (teleopControl->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_DOWN))
+        if (isDownPressed && !m_prevDownPressed)
         {
-            m_xTargetOffset -= 5_in;
+            m_xTargetOffset += alliance == frc::DriverStation::Alliance::kBlue ? -5_in : 5_in;
         }
-        else if (teleopControl->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_LEFT))
+        if (isLeftPressed && !m_prevLeftPressed)
         {
-            m_yTargetOffset += 5_in;
+            m_yTargetOffset += alliance == frc::DriverStation::Alliance::kBlue ? 5_in : -5_in;
         }
-        else if (teleopControl->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_RIGHT))
+        if (isRightPressed && !m_prevRightPressed)
         {
-            m_yTargetOffset -= 5_in;
+            m_yTargetOffset += alliance == frc::DriverStation::Alliance::kBlue ? -5_in : 5_in;
         }
+
+        m_prevUpPressed = isUpPressed;
+        m_prevDownPressed = isDownPressed;
+        m_prevLeftPressed = isLeftPressed;
+        m_prevRightPressed = isRightPressed;
 
         // Passing target offsets
-        auto alliance = FMSData::GetAllianceColor();
-
         m_passingDepotTargetXOffset += teleopControl->GetAxisValue(TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_X) * (alliance == frc::DriverStation::Alliance::kBlue ? 1_in : -1_in);
         m_passingDepotTargetYOffset += teleopControl->GetAxisValue(TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_Y) * (alliance == frc::DriverStation::Alliance::kBlue ? -1_in : 1_in);
         m_passingOutpostTargetXOffset += teleopControl->GetAxisValue(TeleopControlFunctions::UPDATE_OUTPOST_PASSING_TARGET_X) * (alliance == frc::DriverStation::Alliance::kBlue ? 1_in : -1_in);
