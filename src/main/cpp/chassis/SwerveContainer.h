@@ -19,6 +19,7 @@
 
 #include "chassis/commands/TrajectoryDrive.h"
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"
+#include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "chassis/generated/Telemetry.h"
 #include "frc2/command/CommandPtr.h"
@@ -56,6 +57,7 @@ public:
     //------------------------------------------------------------------
     TrajectoryDrive *GetTrajectoryDriveCommand() { return m_trajectoryDrive.get(); }
     DriveToDepot *GetDriveToDepotCommand() { return m_driveToDepot.get(); }
+    DriveToOutpost *GetDriveToOutpostCommand() { return m_driveToOutpost.get(); }
 
 private:
     //------------------------------------------------------------------
@@ -96,6 +98,9 @@ private:
 
     /// @brief Drive to depot command for season-specific autonomous navigation
     std::unique_ptr<DriveToDepot> m_driveToDepot;
+
+    /// @brief Drive to outpost command for season-specific autonomous navigation
+    std::unique_ptr<DriveToOutpost> m_driveToOutpost;
 
     //------------------------------------------------------------------
     /// @brief      Configures button bindings for chassis control

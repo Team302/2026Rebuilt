@@ -24,6 +24,7 @@
 
 // Season Specific Commands
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"
+#include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 
 //------------------------------------------------------------------
 /// @brief      Static method to create or return the singleton instance
@@ -50,9 +51,9 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
                                      m_fieldDrive(std::make_unique<TeleopFieldDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate)),
                                      m_robotDrive(std::make_unique<TeleopRobotDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate)),
                                      m_trajectoryDrive(std::make_unique<TrajectoryDrive>(m_chassis)),
-                                     m_driveToDepot(std::make_unique<DriveToDepot>(m_chassis))
+                                     m_driveToDepot(std::make_unique<DriveToDepot>(m_chassis)),
+                                     m_driveToOutpost(std::make_unique<DriveToOutpost>(m_chassis))
 {
-
     if (m_chassis != nullptr)
     {
         ConfigureBindings();
@@ -118,6 +119,9 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
 {
     // auto driveToDepot = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_DEPOT);
     // driveToDepot.WhileTrue(frc2::ProxyCommand(m_driveToDepot.get()).ToPtr());
+
+    // auto driveToOutpost = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_OUTPOST);
+    // driveToOutpost.WhileTrue(frc2::ProxyCommand(m_driveToOutpost.get()).ToPtr());
 }
 
 //------------------------------------------------------------------
