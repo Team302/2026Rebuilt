@@ -136,6 +136,7 @@ bool DragonLimelight::IsLimelightRunning()
 std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetAprilTagVisionTargetInfo(const std::vector<FieldAprilTagIDs> &validAprilTagIDs) const
 {
     std::vector<std::unique_ptr<DragonVisionStruct>> targets;
+    return targets;
     auto aprilTags = LimelightHelpers::getRawFiducials(m_networkTableName);
 
     for (auto aprilTag : aprilTags)
@@ -173,6 +174,7 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetAprilTagVis
 std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetObjectDetectionTargetInfo(const std::vector<int> &validClasses) const
 {
     std::vector<std::unique_ptr<DragonVisionStruct>> targets;
+    return targets;
     auto objects = LimelightHelpers::getRawDetections(m_networkTableName);
 
     for (auto object : objects)
@@ -266,8 +268,11 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag1Pose()
     units::time::millisecond_t currentTime = frc::Timer::GetFPGATimestamp();
     units::time::millisecond_t timestamp = currentTime - units::millisecond_t(limelightMeasurement.timestampSeconds / 1000.0);
 
-    double xyStds = deviations.value().first;
-    double degStds = deviations.value().second;
+    // double xyStds = deviations.value().first;
+    // double degStds = deviations.value().second;
+
+    double xyStds = 0.1;
+    double degStds = 0.1;
 
     m_megatag1PosBool = true;
     m_megatag1Pos = {pose3d, timestamp, {xyStds, xyStds, degStds}, PoseEstimationStrategy::MEGA_TAG};
