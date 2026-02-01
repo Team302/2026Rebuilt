@@ -46,12 +46,12 @@ public:
         TIPCORRECTION_TOGGLE,
 
         // Mechanisms specific
-
         // Intake
         INTAKE,
         EXPEL,
         INTAKE_OUT,
         INTAKE_IN,
+
         // Climber
         CLIMB_MODE,
         LEVEL1_CLIMB,
@@ -65,15 +65,15 @@ public:
         LAUNCHER_OFF,
         LAUNCH,
 
-        // VIRTUAL TARGET
+        // TARGET OFFSETS
         UPDATE_TARGET_OFFSET_UP,
         UPDATE_TARGET_OFFSET_DOWN,
         UPDATE_TARGET_OFFSET_LEFT,
         UPDATE_TARGET_OFFSET_RIGHT,
         UPDATE_DEPOT_PASSING_TARGET_X,
-        UPDATE_OUTPOST_PASSING_TARGET_Y,
         UPDATE_DEPOT_PASSING_TARGET_Y,
-        UPDATE_OUTPOST_PASSING_TARGET_X
+        UPDATE_OUTPOST_PASSING_TARGET_X,
+        UPDATE_OUTPOST_PASSING_TARGET_Y
 
     };
 };

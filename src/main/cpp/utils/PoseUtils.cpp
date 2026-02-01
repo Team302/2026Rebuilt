@@ -52,8 +52,6 @@ FieldConstants::FIELD_ELEMENT PoseUtils::GetClosestFieldElement(const frc::Pose2
     {
         return firstElement;
     }
-    else
-    {
-        return secondElement;
-    }
+
+    return secondElement;
 }
