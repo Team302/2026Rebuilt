@@ -133,7 +133,6 @@ void FieldConstants::ReadFieldCalibrationData()
 {
     if (std::filesystem::exists(m_fieldFilePath))
     {
-        std::cout << "FieldConstants: Reading field layout file: " << m_fieldFilePath << std::endl;
         m_aprilTagVector = frc::AprilTagFieldLayout(m_fieldFilePath).GetTags();
         for (auto tag : m_aprilTagVector)
         {
