@@ -701,13 +701,25 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 }
 bool Launcher::IsLauncherAtTarget()
 {
-	// TODO : POPULATE FUNCTION
+	// Launcher Speed error, Hood Angle error, Turret angle error are within a threshold, and if we are in launch zone. Also check chassis speed.
 	return false;
 }
 bool Launcher::IsInLaunchZone() const
 {
-	// TODO : POPULATE FUNCTION
+	// call deadzone manager to see if we can or can't launch
 	return false;
+}
+void Launcher::CalculateTargets()
+{
+	// Call TargetCalculator to get back distance and angle to the target
+	// Call interpolation Tables for Speed and Hood Angles
+}
+void Launcher::UpdateLauncherTargets()
+{
+	// Take the calculated targets and update the motor argets by calling ClaculateTargets.
+	// Don't unpdate if in off or initialize states
+	// Take final targets and decide what the actual targets should be based off states and other needs, then call the update methods.
+	// if we are able to climb and in climb mode, set hood and turret targets to climb positions so we don't keep adjusting while climbing
 }
 
 /* void Launcher::DataLog(uint64_t timestamp)
