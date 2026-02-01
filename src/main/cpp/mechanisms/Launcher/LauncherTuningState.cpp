@@ -50,11 +50,7 @@ void LauncherTuningState::Init()
 
 void LauncherTuningState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetLauncherPercentOut(m_launcherTarget);
-	m_mechanism->UpdateTargetHoodPercentOut(m_hoodTarget);
-	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
-	m_mechanism->UpdateTargetTurretPercentOut(m_turretTarget);
-	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
+	m_mechanism->UpdateTargetLauncherVelocityRPS(m_launcherTarget);
 }
 
 void LauncherTuningState::Run()
@@ -69,7 +65,7 @@ void LauncherTuningState::Run()
 	{
 		if (m_speedUpButtonReleased)
 		{
-			m_mechanism->UpdateTargetLauncherPercentOut(m_launcherTarget + 100);
+			m_launcherTarget += units::angular_velocity::revolutions_per_minute_t(100);
 		}
 		m_speedUpButtonReleased = false;
 	}
@@ -77,7 +73,7 @@ void LauncherTuningState::Run()
 	{
 		if (m_speedDownButtonReleased)
 		{
-			m_mechanism->UpdateTargetLauncherPercentOut(m_launcherTarget - 100);
+			m_launcherTarget -= units::angular_velocity::revolutions_per_minute_t(100);
 		}
 		m_speedDownButtonReleased = false;
 	}
@@ -86,6 +82,7 @@ void LauncherTuningState::Run()
 		m_speedUpButtonReleased = true;
 		m_speedDownButtonReleased = true;
 	}
+	m_mechanism->UpdateTargetLauncherVelocityRPS(m_launcherTarget);
 }
 
 void LauncherTuningState::Exit()
@@ -105,5 +102,4 @@ bool LauncherTuningState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
 	return m_mechanism->IsTuningLauncherMode();
-	// return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXAMPLE_MECH_FORWARD));
 }
