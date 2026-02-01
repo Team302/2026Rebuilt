@@ -58,29 +58,66 @@ DragonQuest::DragonQuest(
 
 void DragonQuest::Periodic()
 {
-    InitNT(); // crashes roborio
-    // SetIsConnected();
-    // HandleDashboard(); //Crashes roborio
-    // if (m_isConnected)
-    // {
-    // GetEstimatedPose();
-    // }
+    if (!m_isNTInitialized)
+    {
+        InitNT(); // Try to initialize if not already done
+    }
+
+    if (m_isNTInitialized)
+    {
+        // SetIsConnected();
+        // HandleDashboard();
+        // if (m_isConnected)
+        // {
+        //     GetEstimatedPose();
+        // }
+    }
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_isConnected"), m_isConnected);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_isNTInitialized"), m_isNTInitialized);
 }
 
 void DragonQuest::InitNT()
 {
 #ifdef __FRC_ROBORIO__
-    // Initialize protobuf topics
-    auto networktable = nt::NetworkTableInstance::GetDefault().GetTable(std::string("QuestNav"));
-    if (networktable.get() != nullptr && !m_isNTInitialized)
+    // Initialize protobuf topics with error handling
+    if (m_isNTInitialized)
     {
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_isConnected"), networktable.get() != nullptr);
-        m_frameDataSubscriber = networktable.get()->GetRawTopic("frameData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavFrameData", {});
-        m_deviceDataSubscriber = networktable.get()->GetRawTopic("deviceData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavDeviceData", {});
+        return; // Already initialized
+    }
+
+    try
+    {
+        auto networktable = nt::NetworkTableInstance::GetDefault().GetTable(std::string("QuestNav"));
+        if (networktable.get() == nullptr)
+        {
+            Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("questnavdebug"), string("InitNT"), string("Failed to get NetworkTable"));
+            return;
+        }
+
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("NetworkTable obtained"), true);
+
+        // Create subscribers with reduced buffer sizes to minimize memory allocation
+        nt::PubSubOptions options;
+        options.keepDuplicates = false;
+        options.pollStorage = 1; // Minimal buffer size
+
+        m_frameDataSubscriber = networktable.get()->GetRawTopic("frameData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavFrameData", {}, options);
+        m_deviceDataSubscriber = networktable.get()->GetRawTopic("deviceData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavDeviceData", {}, options);
         m_commandPublisher = networktable.get()->GetRawTopic("commands").Publish("proto:questnav.protos.commands.ProtobufQuestNavCommand");
-        m_commandResponseSubscriber = networktable.get()->GetRawTopic("response").Subscribe("proto:questnav.protos.commands.ProtobufQuestNavCommandResponse", {});
+        m_commandResponseSubscriber = networktable.get()->GetRawTopic("response").Subscribe("proto:questnav.protos.commands.ProtobufQuestNavCommandResponse", {}, options);
+
         m_isNTInitialized = true; // Mark as successfully initialized
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("InitNT"), string("Successfully initialized"));
+    }
+    catch (const std::bad_alloc &e)
+    {
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("questnavdebug"), string("InitNT bad_alloc"), string(e.what()));
+        m_isNTInitialized = false;
+    }
+    catch (const std::exception &e)
+    {
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("questnavdebug"), string("InitNT exception"), string(e.what()));
+        m_isNTInitialized = false;
     }
 #endif
 }
