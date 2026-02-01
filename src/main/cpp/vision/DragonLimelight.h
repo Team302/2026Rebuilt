@@ -191,7 +191,7 @@ private:
     const double START_HB = -9999;     ///< initial heartbeat sentinel
     const double MAX_HB = 2000000000;  ///< safety max heartbeat (unused currently)
     double m_lastHeartbeat = START_HB; ///< last seen heartbeat value
-    frc::Timer *m_healthTimer;         ///< local timer used for heartbeat health checks
+    frc::Timer m_healthTimer;          ///< local timer used for heartbeat health checks (stack allocated)
 
     DRAGON_LIMELIGHT_PIPELINE m_pipeline; ///< currently selected pipeline
 
