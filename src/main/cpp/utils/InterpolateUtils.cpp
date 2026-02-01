@@ -45,7 +45,7 @@ units::length::meter_t InterpolateUtils::linearInterpolate(const units::length::
         i++;
     }
 
-    return units::length::meter_t(std::lerp(x[i - 1].value(), x[i].value(), targetX.value()));
+    return units::length::meter_t(std::lerp(y[i - 1].value(), y[i].value(), (targetX.value() - x[i - 1].value()) / (x[i].value() - x[i - 1].value())));
 }
 
 /// @brief This method performs a linear interpolation for velocity
@@ -79,7 +79,7 @@ units::velocity::meters_per_second_t InterpolateUtils::linearInterpolate(
         i++;
     }
 
-    return units::velocity::meters_per_second_t(std::lerp(x[i - 1].value(), x[i].value(), targetX.value()));
+    return units::velocity::meters_per_second_t(std::lerp(y[i - 1].value(), y[i].value(), (targetX.value() - x[i - 1].value()) / (x[i].value() - x[i - 1].value())));
 }
 
 /// @brief This method performs a linear interpolation for angle
@@ -113,9 +113,34 @@ units::angle::degree_t InterpolateUtils::linearInterpolate(
         i++;
     }
 
-    return units::angle::degree_t(std::lerp(x[i - 1].value(), x[i].value(), targetX.value()));
+    return units::angle::degree_t(std::lerp(y[i - 1].value(), y[i].value(), (targetX.value() - x[i - 1].value()) / (x[i].value() - x[i - 1].value())));
 }
 
+units::angle::degree_t InterpolateUtils::linearInterpolate(
+    const units::length::inch_t x[],
+    const units::angle::degree_t y[],
+    int size,
+    units::length::inch_t targetX)
+{
+    // Handle edge cases (targetX outside the range of x values)
+    if (targetX <= x[0])
+    {
+        return y[0];
+    }
+    else if (targetX >= x[size - 1])
+    {
+        return y[size - 1];
+    }
+
+    // Find the indices of the x values surrounding targetX
+    int i = 0;
+    while (i < size - 1 && x[i] < targetX)
+    {
+        i++;
+    }
+
+    return units::angle::degree_t(std::lerp(y[i - 1].value(), y[i].value(), (targetX.value() - x[i - 1].value()) / (x[i].value() - x[i - 1].value())));
+}
 /// @brief This method performs a linear interpolation for voltage
 ///              given x and y arrays and the target x.  This assumes
 ///              that the x array is in ascending order.
@@ -147,7 +172,7 @@ units::voltage::volt_t InterpolateUtils::linearInterpolate(
         i++;
     }
 
-    return units::voltage::volt_t(std::lerp(x[i - 1].value(), x[i].value(), targetX.value()));
+    return units::voltage::volt_t(std::lerp(y[i - 1].value(), y[i].value(), (targetX.value() - x[i - 1].value()) / (x[i].value() - x[i - 1].value())));
 }
 
 /// @brief This method performs a linear interpolation for angular velocity
@@ -181,7 +206,33 @@ units::angular_velocity::radians_per_second_t InterpolateUtils::linearInterpolat
         i++;
     }
 
-    return units::angular_velocity::radians_per_second_t(std::lerp(x[i - 1].value(), x[i].value(), targetX.value()));
+    return units::angular_velocity::radians_per_second_t(std::lerp(y[i - 1].value(), y[i].value(), (targetX.value() - x[i - 1].value()) / (x[i].value() - x[i - 1].value())));
+}
+
+units::angular_velocity::revolutions_per_minute_t InterpolateUtils::linearInterpolate(
+    const units::length::inch_t x[],
+    const units::angular_velocity::revolutions_per_minute_t y[],
+    int size,
+    units::length::inch_t targetX)
+{
+    // Handle edge cases (targetX outside the range of x values)
+    if (targetX <= x[0])
+    {
+        return y[0];
+    }
+    else if (targetX >= x[size - 1])
+    {
+        return y[size - 1];
+    }
+
+    // Find the indices of the x values surrounding targetX
+    int i = 0;
+    while (i < size - 1 && x[i] < targetX)
+    {
+        i++;
+    }
+
+    return units::angular_velocity::revolutions_per_minute_t(std::lerp(y[i - 1].value(), y[i].value(), (targetX.value() - x[i - 1].value()) / (x[i].value() - x[i - 1].value())));
 }
 
 /// @brief This method performs a linear interpolation for double
@@ -215,5 +266,5 @@ double InterpolateUtils::linearInterpolate(
         i++;
     }
 
-    return std::lerp(x[i - 1], x[i], targetX);
+    return std::lerp(y[i - 1], y[i], (targetX - x[i - 1]) / (x[i] - x[i - 1]));
 }

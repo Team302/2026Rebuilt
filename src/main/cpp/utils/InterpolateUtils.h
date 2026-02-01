@@ -24,21 +24,23 @@
 class InterpolateUtils
 {
 public:
-    // Position interpolation
-    units::length::meter_t linearInterpolate(const units::length::meter_t x[], const units::length::meter_t y[], int size, units::length::meter_t targetX);
+    // Length interpolation
+    static units::length::meter_t linearInterpolate(const units::length::meter_t x[], const units::length::meter_t y[], int size, units::length::meter_t targetX);
 
     // Velocity interpolation
-    units::velocity::meters_per_second_t linearInterpolate(const units::velocity::meters_per_second_t x[], const units::velocity::meters_per_second_t y[], int size, units::velocity::meters_per_second_t targetX);
+    static units::velocity::meters_per_second_t linearInterpolate(const units::velocity::meters_per_second_t x[], const units::velocity::meters_per_second_t y[], int size, units::velocity::meters_per_second_t targetX);
+    static units::angular_velocity::revolutions_per_minute_t linearInterpolate(const units::length::inch_t x[], const units::angular_velocity::revolutions_per_minute_t y[], int size, units::length::inch_t targetX);
 
     // Angle interpolation
-    units::angle::degree_t linearInterpolate(const units::angle::degree_t x[], const units::angle::degree_t y[], int size, units::angle::degree_t targetX);
+    static units::angle::degree_t linearInterpolate(const units::angle::degree_t x[], const units::angle::degree_t y[], int size, units::angle::degree_t targetX);
+    static units::angle::degree_t linearInterpolate(const units::length::inch_t x[], const units::angle::degree_t y[], int size, units::length::inch_t targetX);
 
     // Angular Velocity interpolation
-    units::angular_velocity::radians_per_second_t linearInterpolate(const units::angular_velocity::radians_per_second_t x[], const units::angular_velocity::radians_per_second_t y[], int size, units::angular_velocity::radians_per_second_t targetX);
+    static units::angular_velocity::radians_per_second_t linearInterpolate(const units::angular_velocity::radians_per_second_t x[], const units::angular_velocity::radians_per_second_t y[], int size, units::angular_velocity::radians_per_second_t targetX);
 
     // Voltage interpolation
-    units::voltage::volt_t linearInterpolate(const units::voltage::volt_t x[], const units::voltage::volt_t y[], int size, units::voltage::volt_t targetX);
+    static units::voltage::volt_t linearInterpolate(const units::voltage::volt_t x[], const units::voltage::volt_t y[], int size, units::voltage::volt_t targetX);
 
     // Double interpolation
-    double linearInterpolate(const double x[], const double y[], int size, double targetX);
+    static double linearInterpolate(const double x[], const double y[], int size, double targetX);
 };

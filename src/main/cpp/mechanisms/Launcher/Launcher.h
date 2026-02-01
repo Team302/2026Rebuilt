@@ -150,7 +150,6 @@ public:
 	bool IsLauncherInitialized() const { return m_launcherInitialized; }
 	void SetLauncherInitialized(bool initialized) { m_launcherInitialized = initialized; }
 	bool IsTuningLauncherMode() const { return m_tuningLauncher; }
-	void CalculateTargets();
 	void UpdateLauncherTargets();
 
 protected:
@@ -219,5 +218,16 @@ private:
 
 	bool m_launcherInitialized = false;
 	bool m_tuningLauncher = false;
+	static const int m_passingArraySize = 10;
+	static const int m_scoringArraySize = 10;
+	// TODO MECH tune and change values in these arrays
+	std::array<units::length::inch_t, m_scoringArraySize> m_scoringDistanceArray = {20.0_in, 40.0_in, 60.0_in, 80.0_in, 1000.0_in, 120.0_in, 140.0_in, 160.0_in, 180.0_in, 200.0_in};
+	std::array<units::angle::degree_t, m_scoringArraySize> m_scoringHoodAngleArray = {0.0_deg, 0.0_deg, 0.0_deg, 0.0_deg, 0.0_deg, 0.0_deg, 0.0_deg, 0.0_deg, 0.0_deg, 0.0_deg};
+	std::array<units::angular_velocity::revolutions_per_minute_t, m_scoringArraySize> m_scoringLauncherVelocityArray = {0.0_rpm, 0.0_rpm, 0.0_rpm, 0.0_rpm, 0.0_rpm, 0.0_rpm, 0.0_rpm, 0.0_rpm, 0.0_rpm, 0.0_rpm};
+
+	std::array<units::length::foot_t, m_passingArraySize> m_passingDistanceArray = {10.0_ft, 15.0_ft, 20.0_ft, 25.0_ft, 30.0_ft, 35.0_ft, 40.0_ft};
+	std::array<units::angle::degree_t, m_passingArraySize> m_passingHoodAngleArray = {0.0_deg, 0.0_deg, 0.0_deg, 0.0_deg, 0.0_deg, 15.5_deg, 18.5_deg};
+	std::array<units::angular_velocity::revolutions_per_minute_t, m_passingArraySize> m_passingLauncherVelocityArray = {2455.7_rpm, 2468.7_rpm, 2481.7_rpm, 2494.7_rpm, 2513._rpm};
+
 	// void InitializeLogging();
 };

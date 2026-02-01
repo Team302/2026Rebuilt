@@ -41,6 +41,7 @@
 #include "mechanisms/Launcher/LauncherTuningState.h"
 
 #include "teleopcontrol/TeleopControl.h"
+#include "utils/InterpolateUtils.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -106,6 +107,7 @@ void Launcher::CreateAndRegisterStates()
 	EmptyHopperStateInst->RegisterTransitionState(ClimbStateInst);
 	ClimbStateInst->RegisterTransitionState(OffStateInst);
 	ClimbStateInst->RegisterTransitionState(IdleStateInst);
+	ClimbStateInst->RegisterTransitionState(PrepareToLaunchStateInst);
 	LauncherTuningStateInst->RegisterTransitionState(OffStateInst);
 	LauncherTuningStateInst->RegisterTransitionState(LaunchStateInst);
 }
@@ -737,14 +739,34 @@ void Launcher::CalculateTargets()
 	// Call TargetCalculator to get back distance and angle to the target
 	// Call interpolation Tables for Speed and Hood Angles
 	m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_launcher->GetPosition().GetValue());
-	units::length::meter_t distanceToTarget = m_targetCalculator->CalculateDistanceToTarget();
+	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateDistanceToTarget();
+	// access alliance zone manager to know where we are
+	// zone = AllianceZoneManager::GetInstance()->GetCurrentZone();
+	// if (zone == alliance zone)
+	m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_scoringDistanceArray.data(), m_scoringHoodAngleArray.data(), m_scoringArraySize, distanceToTarget);
+	m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_scoringDistanceArray.data(), m_scoringLauncherVelocityArray.data(), m_scoringArraySize, distanceToTarget);
+	// else
+	/**
+	m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_passingDistanceArray.data(), m_passingHoodAngleArray.data(), m_passingArraySize, distanceToTarget);
+	m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_passingDistanceArray.data(), m_passingLauncherVelocityArray.data(), m_passingArraySize, distanceToTarget);
+	 */
 }
 void Launcher::UpdateLauncherTargets()
 {
-	// Take the calculated targets and update the motor argets by calling ClaculateTargets.
+	// Take the calculated targets and update the motor targets by calling ClaculateTargets.
 	// Don't unpdate if in off or initialize states
 	// Take final targets and decide what the actual targets should be based off states and other needs, then call the update methods.
 	// if we are able to climb and in climb mode, set hood and turret targets to climb positions so we don't keep adjusting while climbing
+	int currentState = GetCurrentState();
+
+	if (currentState == STATE_NAMES::STATE_OFF || currentState == STATE_NAMES::STATE_INITIALIZE || currentState == STATE_NAMES::STATE_CLIMB)
+	{
+		return;
+	}
+
+	UpdateTargetHoodPositionDegreesHood(m_targetHoodAngle);
+	UpdateTargetTurretPositionDegreesTurret(m_targetTurretAngle);
+	UpdateTargetLauncherVelocityRPS(m_targetLauncherAngularVelocity);
 }
 
 /* void Launcher::DataLog(uint64_t timestamp)
