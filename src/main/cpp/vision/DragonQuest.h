@@ -15,9 +15,6 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
-
 #include "frc/smartdashboard/SendableChooser.h"
 #include "frc/smartdashboard/SmartDashboard.h"
 #include "networktables/DoubleArrayTopic.h"
@@ -34,8 +31,6 @@
 #include "vision/Questnavlib/commands.pb.h"
 #include "vision/Questnavlib/data.pb.h"
 #endif
-
-using namespace std;
 
 class DragonQuest : public IRobotStateChangeSubscriber, public DragonDataLogger
 

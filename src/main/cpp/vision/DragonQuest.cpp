@@ -77,12 +77,12 @@ void DragonQuest::Periodic()
 
     if (m_isNTInitialized)
     {
-        // SetIsConnected();
-        // HandleDashboard();
-        // if (m_isConnected)
-        // {
-        //     GetEstimatedPose();
-        // }
+        SetIsConnected();
+        HandleDashboard();
+        if (m_isConnected)
+        {
+            GetEstimatedPose();
+        }
     }
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kIsConnected, m_isConnected);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kIsNTInitialized, m_isNTInitialized);
@@ -237,48 +237,48 @@ void DragonQuest::DataLog(uint64_t timestamp)
 
 void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
 {
-    // #ifdef __FRC_ROBORIO__
-    // if (!m_hasReset)
-    // {
-    //     frc::Pose2d questPose = pose.TransformBy(m_questToRobotTransform);
+#ifdef __FRC_ROBORIO__
+    if (!m_hasReset)
+    {
+        frc::Pose2d questPose = pose.TransformBy(m_questToRobotTransform);
 
-    //     // Create pose reset command
-    //     questnav::protos::commands::ProtobufQuestNavCommand command;
-    //     command.set_type(questnav::protos::commands::POSE_RESET);
-    //     command.set_command_id(m_nextCommandId++);
+        // Create pose reset command
+        questnav::protos::commands::ProtobufQuestNavCommand command;
+        command.set_type(questnav::protos::commands::POSE_RESET);
+        command.set_command_id(m_nextCommandId++);
 
-    //     auto *payload = command.mutable_pose_reset_payload();
-    //     auto *targetPose = payload->mutable_target_pose();
+        auto *payload = command.mutable_pose_reset_payload();
+        auto *targetPose = payload->mutable_target_pose();
 
-    //     // Set translation
-    //     auto *translation = targetPose->mutable_translation();
-    //     translation->set_x(questPose.X().value());
-    //     translation->set_y(questPose.Y().value());
-    //     translation->set_z(0.0);
+        // Set translation
+        auto *translation = targetPose->mutable_translation();
+        translation->set_x(questPose.X().value());
+        translation->set_y(questPose.Y().value());
+        translation->set_z(0.0);
 
-    //     // Set rotation using quaternion
-    //     auto *rotation = targetPose->mutable_rotation();
-    //     auto *quaternion = rotation->mutable_q();
+        // Set rotation using quaternion
+        auto *rotation = targetPose->mutable_rotation();
+        auto *quaternion = rotation->mutable_q();
 
-    //     // Convert 2D rotation to quaternion (rotation around Z axis)
-    //     double yawRadians = questPose.Rotation().Radians().value();
-    //     double halfYaw = yawRadians / 2.0;
+        // Convert 2D rotation to quaternion (rotation around Z axis)
+        double yawRadians = questPose.Rotation().Radians().value();
+        double halfYaw = yawRadians / 2.0;
 
-    //     quaternion->set_w(std::cos(halfYaw)); // Real part
-    //     quaternion->set_x(0.0);               // X axis
-    //     quaternion->set_y(0.0);               // Y axis
-    //     quaternion->set_z(std::sin(halfYaw)); // Z axis (yaw rotation)
+        quaternion->set_w(std::cos(halfYaw)); // Real part
+        quaternion->set_x(0.0);               // X axis
+        quaternion->set_y(0.0);               // Y axis
+        quaternion->set_z(std::sin(halfYaw)); // Z axis (yaw rotation)
 
-    //     // Serialize and publish
-    //     std::string serialized;
-    //     command.SerializeToString(&serialized);
-    //     m_commandPublisher.Set(std::span<const uint8_t>(
-    //         reinterpret_cast<const uint8_t *>(serialized.data()),
-    //         serialized.size()));
+        // Serialize and publish
+        std::string serialized;
+        command.SerializeToString(&serialized);
+        m_commandPublisher.Set(std::span<const uint8_t>(
+            reinterpret_cast<const uint8_t *>(serialized.data()),
+            serialized.size()));
 
-    //     m_hasReset = true;
-    // }
-    // #endif
+        m_hasReset = true;
+    }
+#endif
 }
 
 void DragonQuest::HandleDashboard()
