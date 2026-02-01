@@ -216,11 +216,6 @@ void RebuiltTargetCalculator::UpdatePassingTargetsOnField()
     frc::Pose2d depotPose = frc::Pose2d(m_fieldConstants->GetFieldElementPose2d(depotPassingTarget).Translation() + passingDepotOffset, frc::Rotation2d());
     frc::Pose2d outpostPose = frc::Pose2d(m_fieldConstants->GetFieldElementPose2d(outpostPassingTarget).Translation() + passingOutpostOffset, frc::Rotation2d());
 
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "RebuiltTargetCalculator", "Depot Passing Target Position X (m)", depotPose.X().to<double>());
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "RebuiltTargetCalculator", "Depot Passing Target Position Y (m)", depotPose.Y().to<double>());
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "RebuiltTargetCalculator", "Outpost Passing Target Position X (m)", outpostPose.X().to<double>());
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "RebuiltTargetCalculator", "Outpost Passing Target Position Y (m)", outpostPose.Y().to<double>());
-
     m_field->UpdateObject("Depot Passing Target Position", depotPose);
     m_field->UpdateObject("Outpost Passing Target Position", outpostPose);
 }
