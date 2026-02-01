@@ -23,14 +23,19 @@
 
 void FieldConstantsPoseLogger::LogFieldElementPoses(robin_hood::unordered_map<FieldConstants::FIELD_ELEMENT, frc::Pose3d> &fieldConstantsPoseMap)
 {
-
-    frc::DataLogManager::Start("", "field_poses.wpilog");
+    auto now = std::chrono::system_clock::now();
+    auto time_t = std::chrono::system_clock::to_time_t(now);
+    std::stringstream ss;
+    ss << "field_poses_" << std::put_time(std::localtime(&time_t), "%Y%m%d_%H%M%S") << ".wpilog";
+    std::string LogFileName = ss.str();
+    frc::DataLogManager::Start("", LogFileName);
     wpi::log::DataLog &log = frc::DataLogManager::GetLog();
 
     for (auto &[key, pose] : fieldConstantsPoseMap)
     {
         auto poseLog = wpi::log::StructLogEntry<frc::Pose3d>(log, magic_enum::enum_name(key));
         poseLog.Append(pose);
+        std::cout << "Field Element: " << magic_enum::enum_name(key) << " Pose X: " << pose.X().to<double>() << " Pose Y: " << pose.Y().to<double>() << std::endl;
     }
 
     log.Flush();

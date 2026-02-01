@@ -118,6 +118,7 @@ Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MEC
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 
+	m_targetCalculator = RebuiltTargetCalculator::GetInstance();
 	// InitializeLogging();
 }
 
@@ -632,6 +633,7 @@ void Launcher::RunCommonTasks()
 {
 	// This function is called once per loop before the current state Run()
 	Cyclic();
+
 	if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCHER_OFF))
 	{
 		if (m_launcherOffButtonReleased)
@@ -644,6 +646,10 @@ void Launcher::RunCommonTasks()
 	{
 		m_launcherOffButtonReleased = true;
 	}
+
+	// Update Launcher Targets/Field
+	m_targetCalculator->UpdateTargetOffset();
+	CalculateTargets();
 }
 
 /// @brief  Set the control constants (e.g. PIDF values).
@@ -701,13 +707,18 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 }
 bool Launcher::IsLauncherAtTarget()
 {
-	// TODO : POPULATE FUNCTION
+	// MECH_TODO: POPULATE FUNCTION
 	return false;
 }
 bool Launcher::IsInLaunchZone() const
 {
-	// TODO : POPULATE FUNCTION
+	//  MECH_TODO: POPULATE FUNCTION
 	return false;
+}
+
+void Launcher::CalculateTargets()
+{
+	m_launcherTargetAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_launcher->GetPosition().GetValue());
 }
 
 /* void Launcher::DataLog(uint64_t timestamp)

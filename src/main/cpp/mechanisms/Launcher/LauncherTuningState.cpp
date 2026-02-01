@@ -55,13 +55,13 @@ void LauncherTuningState::InitCompBot302()
 
 void LauncherTuningState::Run()
 {
-	double manualPercentOut = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::UPDATE_VIRTUAL_LEFT_PASSING_TARGET_X) * .15;
+	double manualPercentOut = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_X) * .15;
 	if (abs(manualPercentOut) > 0.075)
 	{
 		m_mechanism->UpdateTargetHoodPercentOut(manualPercentOut);
 	}
 
-	if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::UPDATE_VIRTUAL_TARGET_OFFSET_UP))
+	if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_UP))
 	{
 		if (m_speedUpButtonReleased)
 		{
@@ -69,7 +69,7 @@ void LauncherTuningState::Run()
 		}
 		m_speedUpButtonReleased = false;
 	}
-	else if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::UPDATE_VIRTUAL_TARGET_OFFSET_DOWN))
+	else if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_DOWN))
 	{
 		if (m_speedDownButtonReleased)
 		{

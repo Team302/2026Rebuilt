@@ -21,8 +21,6 @@
 #include <string>
 
 // FRC Includes
-#include <networktables/NetworkTable.h>
-
 #include "ctre/phoenix6/TalonFX.hpp"
 #include "ctre/phoenix6/controls/Follower.hpp"
 #include "ctre/phoenix6/configs/Configuration.hpp"
@@ -38,6 +36,9 @@
 #include "configs/MechanismConfigMgr.h"
 
 #include "RobotIdentifier.h"
+
+// Includes after generation
+#include "utils/RebuiltTargetCalculator.h"
 
 class Launcher : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber
 {
@@ -198,6 +199,14 @@ private:
 	bool m_launcherOffButtonReleased = true;
 	bool m_isClimbMode = false;
 	bool m_isAllowedToClimb = false;
+
+	units::angle::degree_t m_launcherTargetAngle = 0.0_deg;
+	units::time::second_t m_lookaheadTime = 0.5_s;
+
+	RebuiltTargetCalculator *m_targetCalculator;
+
+	void CalculateTargets();
+
 	bool m_launcherInitialized = false;
 	bool m_tuningLauncher = false;
 	// void InitializeLogging();
