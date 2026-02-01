@@ -44,7 +44,6 @@ namespace LauncherStates
 		Launcher *m_mechanism;
 		void InitCompBot302();
 		RobotIdentifier m_RobotId;
-
 		const double m_launcherTarget = double(0);
 		const double m_hoodTarget = double(0);
 		const double m_transferTarget = double(0);
