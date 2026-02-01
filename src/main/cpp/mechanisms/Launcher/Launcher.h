@@ -202,8 +202,16 @@ private:
 	bool m_isClimbMode = false;
 	bool m_isAllowedToClimb = false;
 
-	units::angle::degree_t m_launcherTargetAngle = 0.0_deg;
 	units::time::second_t m_lookaheadTime = 0.5_s;
+
+	units::angle::degree_t m_targetTurretAngle = 0.0_deg;
+	units::angular_velocity::revolutions_per_minute_t m_targetLauncherAngularVelocity = 0.0_rpm;
+	units::angle::degree_t m_targetHoodAngle = 0.0_deg;
+
+	units::angle::degree_t m_turretAngleThreshold = 5.0_deg;
+	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 25.0_rpm;
+	units::angle::degree_t m_hoodAngleThreshold = 3.0_deg;
+	units::velocity::meters_per_second_t m_chassisSpeedThreshold = 1.0_mps;
 
 	RebuiltTargetCalculator *m_targetCalculator;
 
@@ -211,6 +219,5 @@ private:
 
 	bool m_launcherInitialized = false;
 	bool m_tuningLauncher = false;
-	units::velocity::turns_per_second_t m_targetLauncherVelocityRPS;
 	// void InitializeLogging();
 };

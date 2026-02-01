@@ -708,7 +708,24 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 bool Launcher::IsLauncherAtTarget()
 {
 	// Launcher Speed error, Hood Angle error, Turret angle error are within a threshold, and if we are in launch zone. Also check chassis speed.
-	return false;
+	units::angle::degree_t hoodError = m_hood->GetPosition().GetValue() - m_targetHoodAngle;
+	units::angle::degree_t turretError = m_turret->GetPosition().GetValue() - m_targetTurretAngle;
+	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = m_launcher->GetVelocity().GetValue() - m_targetLauncherAngularVelocity;
+	bool inLaunchzone = IsInLaunchZone();
+	// units::velocity::meters_per_second_t chassisSpeed = m_chassis->GetVelocity();
+	if (units::math::abs(hoodError) < m_hoodAngleThreshold &&
+		units::math::abs(turretError) < m_turretAngleThreshold &&
+		units::math::abs(launcherSpeedError) < m_launcherVelocityThreshold &&
+		inLaunchzone /*&&
+		units::math::abs(chassisSpeed) < m_chassisSpeedThreshold*/
+	)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 bool Launcher::IsInLaunchZone() const
 {
@@ -719,6 +736,8 @@ void Launcher::CalculateTargets()
 {
 	// Call TargetCalculator to get back distance and angle to the target
 	// Call interpolation Tables for Speed and Hood Angles
+	m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_launcher->GetPosition().GetValue());
+	units::length::meter_t distanceToTarget = m_targetCalculator->CalculateDistanceToTarget();
 }
 void Launcher::UpdateLauncherTargets()
 {
@@ -726,11 +745,6 @@ void Launcher::UpdateLauncherTargets()
 	// Don't unpdate if in off or initialize states
 	// Take final targets and decide what the actual targets should be based off states and other needs, then call the update methods.
 	// if we are able to climb and in climb mode, set hood and turret targets to climb positions so we don't keep adjusting while climbing
-}
-
-void Launcher::CalculateTargets()
-{
-	m_launcherTargetAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_launcher->GetPosition().GetValue());
 }
 
 /* void Launcher::DataLog(uint64_t timestamp)
