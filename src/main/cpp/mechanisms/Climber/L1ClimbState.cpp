@@ -56,6 +56,16 @@ void L1ClimbState::InitCompBot302()
 
 void L1ClimbState::Run()
 {
+	double manualClimberPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::CLIMB_MANUAL_ROTATE_UP) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::CLIMB_MANUAL_ROTATE_DOWN);
+	if (manualClimberPercent > .075)
+	{
+		m_mechanism->ManualClimb(m_climberTarget, manualClimberPercent);
+	}
+	else
+	{
+		m_mechanism->UpdateTargetClimberPositionDegree(m_climberTarget);
+	}
+
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("L1ClimbState"), string("Run"));
 }
 
