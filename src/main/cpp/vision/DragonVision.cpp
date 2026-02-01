@@ -85,6 +85,16 @@ DragonVision *DragonVision::GetDragonVision()
 	return DragonVision::m_dragonVision;
 }
 
+/// @brief Destructor - cleans up owned Limelight and Quest resources.
+/// @note unique_ptr members are automatically cleaned up.
+DragonVision::~DragonVision()
+{
+	// unique_ptr members (m_dragonLimelightMap values and m_dragonQuest) are
+	// automatically cleaned up when the object is destroyed
+	m_dragonLimelightMap.clear();
+	m_dragonQuest.reset();
+}
+
 /// @brief Check health for all limelights that match a usage.
 /// @param usage The camera usage category to check (e.g., APRIL_TAGS).
 /// @return true if all matching cameras that are considered return running; false otherwise.
@@ -123,7 +133,7 @@ std::vector<bool> DragonVision::HealthCheckAllLimelights()
 	std::vector<bool> healthStatuses;
 	for (const auto &pair : m_dragonLimelightMap)
 	{
-		DragonLimelight *limelight = pair.second;
+		DragonLimelight *limelight = pair.second.get();
 		if (limelight != nullptr)
 		{
 			healthStatuses.push_back(limelight->IsLimelightRunning());
@@ -185,20 +195,20 @@ void DragonVision::InitializeCameras()
 	CameraConfigMgr::GetInstance()->InitCameras(static_cast<RobotIdentifier>(teamNumber));
 }
 /// @brief Add a Limelight instance to the manager.
-/// @param camera Pointer to the DragonLimelight to add.
+/// @param camera Unique pointer to the DragonLimelight to add.
 /// @param usage The camera usage category for this camera.
-/// @note Ownership is not transferred here; this class stores the raw pointer.
-void DragonVision::AddLimelight(DragonLimelight *camera, DRAGON_LIMELIGHT_CAMERA_USAGE usage)
+/// @note Ownership is transferred; this class will delete the camera when appropriate.
+void DragonVision::AddLimelight(std::unique_ptr<DragonLimelight> camera, DRAGON_LIMELIGHT_CAMERA_USAGE usage)
 {
-	m_dragonLimelightMap.insert(std::pair<DRAGON_LIMELIGHT_CAMERA_USAGE, DragonLimelight *>(usage, camera));
+	m_dragonLimelightMap.insert(std::make_pair(usage, std::move(camera)));
 }
 
 /// @brief Register the DragonQuest instance with the manager.
-/// @param quest Pointer to the DragonQuest instance.
-/// @note Ownership not transferred; this class keeps the raw pointer.
-void DragonVision::AddQuest(DragonQuest *quest)
+/// @param quest Unique pointer to the DragonQuest instance.
+/// @note Ownership is transferred; this class will delete quest when appropriate.
+void DragonVision::AddQuest(std::unique_ptr<DragonQuest> quest)
 {
-	m_dragonQuest = quest;
+	m_dragonQuest = std::move(quest);
 }
 
 /// @brief Aggregate AprilTag targets from all relevant limelights and select according to option.
@@ -340,10 +350,10 @@ void DragonVision::SetRobotPose(const frc::Pose2d &pose)
 std::vector<DragonLimelight *> DragonVision::GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE usage) const
 {
 	std::vector<DragonLimelight *> validLimelights;
-	for (auto it = m_dragonLimelightMap.begin(); it != m_dragonLimelightMap.end(); ++it)
+	for (const auto &it : m_dragonLimelightMap)
 	{
-		auto thisUsage = (*it).first;
-		auto limelight = (*it).second;
+		auto thisUsage = it.first;
+		auto limelight = it.second.get();
 
 		auto addCam = thisUsage == usage && limelight->IsLimelightRunning();
 		if (addCam)

@@ -26,6 +26,7 @@
 
 // Team 302 Includes
 #include "vision/DragonLimelight.h"
+#include "vision/DragonQuest.h"
 #include "vision/DragonVisionPoseEstimatorStruct.h"
 #include "vision/VisionPose.h"
 
@@ -67,8 +68,6 @@
 //   - Prefer using VisionTargetOption and DRAGON_LIMELIGHT_* enums for camera/pipeline
 //     selection to improve readability and reduce magic constants.
 //   - Avoid reordering enum values if they are persisted or communicated via NT.
-
-class DragonQuest;
 
 class DragonVision : public frc2::SubsystemBase
 /**
@@ -119,14 +118,14 @@ public:
     };
 
     /// @brief Register a Limelight camera with the vision manager.
-    /// @param camera Raw pointer to DragonLimelight to add (ownership NOT transferred).
+    /// @param camera Unique pointer to DragonLimelight to add (ownership IS transferred).
     /// @param usage Category/usage enum for this camera (affects pipeline selection and queries).
-    /// @note The manager stores the raw pointer; lifetime must be managed by caller.
-    void AddLimelight(DragonLimelight *camera, DRAGON_LIMELIGHT_CAMERA_USAGE usage);
+    /// @note The manager takes ownership of the camera and will delete it when appropriate.
+    void AddLimelight(std::unique_ptr<DragonLimelight> camera, DRAGON_LIMELIGHT_CAMERA_USAGE usage);
 
     /// @brief Register the DragonQuest vision subsystem.
-    /// @param quest Raw pointer to the DragonQuest instance (ownership NOT transferred).
-    void AddQuest(DragonQuest *quest);
+    /// @param quest Unique pointer to the DragonQuest instance (ownership IS transferred).
+    void AddQuest(std::unique_ptr<DragonQuest> quest);
 
     static frc::AprilTagFieldLayout m_aprilTagLayout;
 
@@ -191,7 +190,8 @@ public:
 private:
     /// @brief Constructor (private for singleton).
     DragonVision() = default;
-    ~DragonVision() override = default;
+    /// @brief Destructor - cleans up owned resources.
+    ~DragonVision() override;
 
     /// @brief Distribute a Pose2d to vision subsystems that accept external robot pose.
     /// @param pose The pose to set (frc::Pose2d).
@@ -210,17 +210,17 @@ private:
 
     /// @brief Return the registered DragonQuest instance (may be nullptr).
     /// @return Raw pointer to DragonQuest (no ownership transfer).
-    DragonQuest *GetQuest() const { return m_dragonQuest; };
+    DragonQuest *GetQuest() const { return m_dragonQuest.get(); };
 
     /// @brief Singleton instance pointer.
     static DragonVision *m_dragonVision;
 
     /// @brief Map of usage/category to camera instances.
-    /// @note Raw pointers stored; lifetime managed externally.
-    std::multimap<DRAGON_LIMELIGHT_CAMERA_USAGE, DragonLimelight *> m_dragonLimelightMap;
+    /// @note Smart pointers stored; DragonVision owns the cameras.
+    std::multimap<DRAGON_LIMELIGHT_CAMERA_USAGE, std::unique_ptr<DragonLimelight>> m_dragonLimelightMap;
 
-    /// @brief Registered DragonQuest instance (raw pointer, may be null).
-    DragonQuest *m_dragonQuest = nullptr;
+    /// @brief Registered DragonQuest instance (owned by DragonVision).
+    std::unique_ptr<DragonQuest> m_dragonQuest = nullptr;
 
     /// @brief Tracks whether an initial pose has been set on vision subsystems.
     bool m_initialPoseSet = false;
