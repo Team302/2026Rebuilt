@@ -71,14 +71,6 @@ private:
     //------------------------------------------------------------------
     bool IsNearestDepotRed() const;
 
-    //------------------------------------------------------------------
-    /// @brief      Calculates the distance from a given pose to a field element
-    /// @param[in]  element - The field element to measure distance to
-    /// @param[in]  currentPose - The pose to measure distance from
-    /// @return     units::length::meter_t - The distance in meters
-    //------------------------------------------------------------------
-    units::length::meter_t CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
-
     /// @brief Pointer to the swerve drivetrain subsystem
     subsystems::CommandSwerveDrivetrain *m_chassis;
 

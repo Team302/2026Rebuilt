@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ctre/phoenix6/swerve/SwerveDrivetrain.hpp"
 #include "ctre/phoenix6/CANcoder.hpp"
 #include "ctre/phoenix6/TalonFX.hpp"
+#include "ctre/phoenix6/swerve/SwerveDrivetrain.hpp"
 
 using namespace ctre::phoenix6;
 
@@ -71,7 +71,7 @@ class TunerConstants9998
     // Configs for the Pigeon 2; leave this nullopt to skip applying Pigeon 2 configs
     static constexpr std::optional<configs::Pigeon2Configuration> pigeonConfigs = std::nullopt;
 
-    static constexpr std::string_view kCANBusName = "Canivore";
+    static constexpr std::string_view kCANBusName = "swerve";
 
 public:
     // CAN bus that the devices are located on;
