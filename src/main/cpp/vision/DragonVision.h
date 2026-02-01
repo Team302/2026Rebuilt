@@ -189,7 +189,7 @@ public:
 
 private:
     /// @brief Constructor (private for singleton).
-    DragonVision() = default;
+    DragonVision();
     /// @brief Destructor - cleans up owned resources.
     ~DragonVision() override;
 
@@ -220,7 +220,7 @@ private:
     std::multimap<DRAGON_LIMELIGHT_CAMERA_USAGE, std::unique_ptr<DragonLimelight>> m_dragonLimelightMap;
 
     /// @brief Registered DragonQuest instance (owned by DragonVision).
-    std::unique_ptr<DragonQuest> m_dragonQuest = nullptr;
+    std::unique_ptr<DragonQuest> m_dragonQuest;
 
     /// @brief Tracks whether an initial pose has been set on vision subsystems.
     bool m_initialPoseSet = false;

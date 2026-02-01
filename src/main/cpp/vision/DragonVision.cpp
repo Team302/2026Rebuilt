@@ -85,6 +85,12 @@ DragonVision *DragonVision::GetDragonVision()
 	return DragonVision::m_dragonVision;
 }
 
+DragonVision::DragonVision()
+	: m_dragonLimelightMap(),
+	  m_dragonQuest()
+{
+}
+
 /// @brief Destructor - cleans up owned Limelight and Quest resources.
 /// @note unique_ptr members are automatically cleaned up.
 DragonVision::~DragonVision()
