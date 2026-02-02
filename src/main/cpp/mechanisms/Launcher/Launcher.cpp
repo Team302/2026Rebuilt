@@ -652,6 +652,9 @@ void Launcher::RunCommonTasks()
 	// Update Launcher Targets/Field
 	m_targetCalculator->UpdateTargetOffset();
 	CalculateTargets();
+	UpdateLauncherTargets();
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Current State", GetCurrentState());
 }
 
 /// @brief  Set the control constants (e.g. PIDF values).
@@ -757,10 +760,6 @@ void Launcher::CalculateTargets()
 }
 void Launcher::UpdateLauncherTargets()
 {
-	// Take the calculated targets and update the motor targets by calling ClaculateTargets.
-	// Don't unpdate if in off or initialize states
-	// Take final targets and decide what the actual targets should be based off states and other needs, then call the update methods.
-	// if we are able to climb and in climb mode, set hood and turret targets to climb positions so we don't keep adjusting while climbing
 	int currentState = GetCurrentState();
 
 	if (currentState == STATE_NAMES::STATE_OFF || currentState == STATE_NAMES::STATE_INITIALIZE || currentState == STATE_NAMES::STATE_CLIMB)
