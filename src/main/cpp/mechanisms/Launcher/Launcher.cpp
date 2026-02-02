@@ -736,20 +736,24 @@ bool Launcher::IsInLaunchZone() const
 }
 void Launcher::CalculateTargets()
 {
-	// Call TargetCalculator to get back distance and angle to the target
-	// Call interpolation Tables for Speed and Hood Angles
 	m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_launcher->GetPosition().GetValue());
-	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateDistanceToTarget();
-	// access alliance zone manager to know where we are
-	// zone = AllianceZoneManager::GetInstance()->GetCurrentZone();
-	// if (zone == alliance zone)
-	m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_scoringDistanceArray.data(), m_scoringHoodAngleArray.data(), m_scoringArraySize, distanceToTarget);
-	m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_scoringDistanceArray.data(), m_scoringLauncherVelocityArray.data(), m_scoringArraySize, distanceToTarget);
-	// else
-	/**
-	m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_passingDistanceArray.data(), m_passingHoodAngleArray.data(), m_passingArraySize, distanceToTarget);
-	m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_passingDistanceArray.data(), m_passingLauncherVelocityArray.data(), m_passingArraySize, distanceToTarget);
-	 */
+	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateDistanceToTarget(m_lookaheadTime);
+
+	// if (AllianceZoneManager::GetInstance()->IsInAllinaceZone())
+	if (true)
+	{
+		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_scoringDistanceArray, m_scoringHoodAngleArray, distanceToTarget);
+		m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_scoringDistanceArray, m_scoringLauncherVelocityArray, distanceToTarget);
+	}
+	else
+	{
+		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingHoodAngleArray, units::length::foot_t(distanceToTarget));
+		m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingLauncherVelocityArray, units::length::foot_t(distanceToTarget));
+	}
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Distance To Target", distanceToTarget.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Hood Angle Target", m_targetHoodAngle.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Launcher Speed Target", m_targetLauncherAngularVelocity.value());
 }
 void Launcher::UpdateLauncherTargets()
 {

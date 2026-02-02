@@ -15,6 +15,9 @@
 
 #pragma once
 
+#include <array>
+#include <cmath>
+#include <algorithm>
 #include <units/angle.h>
 #include <units/length.h>
 #include <units/velocity.h>
@@ -24,23 +27,48 @@
 class InterpolateUtils
 {
 public:
-    // Length interpolation
-    static units::length::meter_t linearInterpolate(const units::length::meter_t x[], const units::length::meter_t y[], int size, units::length::meter_t targetX);
+    /**
+     * @brief Smart interpolation for any types (Units or doubles).
+     * Automatically handles unit wrappers by using .value() for calculations.
+     */
+    template <typename T, typename U, size_t N>
+    static U linearInterpolate(const std::array<T, N> &x, const std::array<U, N> &y, T targetX)
+    {
+        // Edge Case: targetX is below the range
+        if (targetX <= x[0])
+            return y[0];
 
-    // Velocity interpolation
-    static units::velocity::meters_per_second_t linearInterpolate(const units::velocity::meters_per_second_t x[], const units::velocity::meters_per_second_t y[], int size, units::velocity::meters_per_second_t targetX);
-    static units::angular_velocity::revolutions_per_minute_t linearInterpolate(const units::length::inch_t x[], const units::angular_velocity::revolutions_per_minute_t y[], int size, units::length::inch_t targetX);
+        // Edge Case: targetX is above the range
+        if (targetX >= x[N - 1])
+            return y[N - 1];
 
-    // Angle interpolation
-    static units::angle::degree_t linearInterpolate(const units::angle::degree_t x[], const units::angle::degree_t y[], int size, units::angle::degree_t targetX);
-    static units::angle::degree_t linearInterpolate(const units::length::inch_t x[], const units::angle::degree_t y[], int size, units::length::inch_t targetX);
+        // Binary search to find the bounding indices
+        auto it = std::lower_bound(x.begin(), x.end(), targetX);
+        size_t i = std::distance(x.begin(), it);
 
-    // Angular Velocity interpolation
-    static units::angular_velocity::radians_per_second_t linearInterpolate(const units::angular_velocity::radians_per_second_t x[], const units::angular_velocity::radians_per_second_t y[], int size, units::angular_velocity::radians_per_second_t targetX);
+        // Perform the linear interpolation math
+        //
+        double x0 = x[i - 1].value();
+        double x1 = x[i].value();
+        double y0 = y[i - 1].value();
+        double y1 = y[i].value();
+        double tx = targetX.value();
 
-    // Voltage interpolation
-    static units::voltage::volt_t linearInterpolate(const units::voltage::volt_t x[], const units::voltage::volt_t y[], int size, units::voltage::volt_t targetX);
+        double result = std::lerp(y0, y1, (tx - x0) / (x1 - x0));
 
-    // Double interpolation
-    static double linearInterpolate(const double x[], const double y[], int size, double targetX);
+        return U{result};
+    }
+
+    // Explicit overload for raw doubles (since they don't have a .value() method)
+    template <size_t N>
+    static double linearInterpolate(const std::array<double, N> &x, const std::array<double, N> &y, double targetX)
+    {
+        if (targetX <= x[0])
+            return y[0];
+        if (targetX >= x[N - 1])
+            return y[N - 1];
+        auto it = std::lower_bound(x.begin(), x.end(), targetX);
+        size_t i = std::distance(x.begin(), it);
+        return std::lerp(y[i - 1], y[i], (targetX - x[i - 1]) / (x[i] - x[i - 1]));
+    }
 };
