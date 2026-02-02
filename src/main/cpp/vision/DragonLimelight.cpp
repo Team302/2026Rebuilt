@@ -46,7 +46,7 @@ namespace
 {
     bool IsValidAprilTag(std::string networktablename, const std::vector<FieldAprilTagIDs> &validTags, int tagID);
     bool IsValidObjectClass(std::string networktablename, const std::vector<int> &validClasses, int classID);
-    std::optional<std::pair<double, double>> GetStandardDeviationsForMetaTag1PoseEstimation(int ntags, double targetAreaPercent);
+    std::optional<std::pair<double, double>> GetStandardDeviationsForMetaTag1PoseEstimation(const std::string &cameraName, int ntags, double targetAreaPercent);
 }
 
 /// ----------------------------------------------------------------------------------
@@ -257,7 +257,7 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag1Pose()
     {
         return std::nullopt;
     }
-    auto deviations = GetStandardDeviationsForMetaTag1PoseEstimation(limelightMeasurement.tagCount, limelightMeasurement.avgTagArea);
+    auto deviations = GetStandardDeviationsForMetaTag1PoseEstimation(m_cameraName, limelightMeasurement.tagCount, limelightMeasurement.avgTagArea);
     if (!deviations.has_value())
     {
         return std::nullopt;
@@ -437,11 +437,12 @@ namespace
     /// ----------------------------------------------------------------------------------
     /// @brief Compute conservative standard deviations for pose (x/y in meters, yaw in degrees)
     ///        based on number of tags seen and their average area reported by Limelight.
+    /// @param cameraName network table name of the limelight camera
     /// @param ntags number of tags used in the pose estimate
     /// @param targetAreaPercent average tag area (normalized float from Limelight)
     /// @return pair(xyStdMeters, yawStdDegrees) if computable, std::nullopt if pose not reliable.
     /// ----------------------------------------------------------------------------------
-    std::optional<std::pair<double, double>> GetStandardDeviationsForMetaTag1PoseEstimation(int ntags, double targetAreaPercent)
+    std::optional<std::pair<double, double>> GetStandardDeviationsForMetaTag1PoseEstimation(const std::string &cameraName, int ntags, double targetAreaPercent)
     {
 
         if (ntags == 0)
@@ -451,7 +452,7 @@ namespace
 
         double xyStds = 0.5; // assume we see 2 or more tags
         double degStds = 6;  // assume we see 2 or more tags
-        LimelightHelpers::PoseEstimate limelightMeasurement = LimelightHelpers::getBotPoseEstimate_wpiBlue("");
+        LimelightHelpers::PoseEstimate limelightMeasurement = LimelightHelpers::getBotPoseEstimate_wpiBlue(cameraName);
 
         if (limelightMeasurement.tagCount == 1)
         {
