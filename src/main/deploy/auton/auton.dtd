@@ -14,7 +14,6 @@
           heading           CDATA "0.0"
 		  choreoname		CDATA #IMPLIED
 		  visionAligment    ( UNKNOWN ) "UNKNOWN"
-		  allianceColor ( RED | BLUE | BOTH ) "BOTH"
 >
 
 

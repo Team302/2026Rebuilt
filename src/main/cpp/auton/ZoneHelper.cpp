@@ -19,19 +19,19 @@
 
 using frc::DriverStation;
 
-void ZoneHelper::InitZones()
+// void ZoneHelper::InitZones()
+// {
+//     for(int i = 0; i <= GetZoneFiles().size(); i++){
+//         m_zoneFiles = ZoneParser::ParseXML(GetZoneFile()[i]);
+//     }
+// }
+
+bool ZoneHelper::IsInZones(ZoneParams *zonefiles)
 {
-    m_zones = ZoneParser::ParseXML(GetZoneFile());
+    return zoneFiles->IsPoseInZone(m_robotPose);
 }
 
-bool ZoneHelper::IsInZones()
+bool ZoneHelper::IsInZone(ZoneParams *zoneFile)
 {
-    return m_zones->IsPoseInZone(m_robotPose);
-}
-
-// This function is mainly if you want to check a different zone file than the ones in the managers
-bool ZoneHelper::IsInZone(std::string zoneFile)
-{
-    ZoneParams *zoneParams = ZoneParser::ParseXML(zoneFile);
-    return zoneParams->IsPoseInZone(m_robotPose);
+    return zoneFile->IsPoseInZone(m_robotPose);
 }

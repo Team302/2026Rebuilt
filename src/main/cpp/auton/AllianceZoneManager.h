@@ -31,4 +31,5 @@ private:
     std::string m_zoneFiles[2] = {
         "RedAllianceZone.xml",
         "BlueAllianceZone.xml"};
+    ZoneParams *m_parsedZoneFiles[2];
 };

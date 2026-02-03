@@ -38,6 +38,9 @@
     headingOption           ( MAINTAIN | SPECIFIED_ANGLE | FACE_GAME_PIECE | IGNORE) "IGNORE"
     pathUpdateOption        ( NOTHING ) "NOTHING"
 
+    allianceColor ( RED | BLUE | BOTH ) "BOTH"
+
+
     
 >
 
