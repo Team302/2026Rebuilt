@@ -34,7 +34,7 @@
 
 #include "configs/RobotElementNames.h"
 #include "configs/MechanismConfigMgr.h"
-
+#include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "RobotIdentifier.h"
 
 // Includes after generation
@@ -210,10 +210,10 @@ private:
 	units::angle::degree_t m_turretAngleThreshold = 5.0_deg;
 	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 25.0_rpm;
 	units::angle::degree_t m_hoodAngleThreshold = 3.0_deg;
-	units::velocity::meters_per_second_t m_chassisSpeedThreshold = 1.0_mps;
+	units::velocity::meters_per_second_t m_chassisSpeedThreshold = 3.0_mps;
 
 	RebuiltTargetCalculator *m_targetCalculator;
-
+	subsystems::CommandSwerveDrivetrain *m_chassis;
 	void CalculateTargets();
 
 	bool m_launcherInitialized = false;
