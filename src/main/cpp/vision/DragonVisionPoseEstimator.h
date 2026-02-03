@@ -109,4 +109,5 @@ private:
      * @brief True when an initial pose has been successfully set from vision.
      */
     bool m_initialPoseSet = false;
+    int m_initializationDelay = 0;
 };
