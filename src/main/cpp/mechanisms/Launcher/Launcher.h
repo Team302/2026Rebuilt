@@ -21,8 +21,6 @@
 #include <string>
 
 // FRC Includes
-#include <networktables/NetworkTable.h>
-
 #include "ctre/phoenix6/TalonFX.hpp"
 #include "ctre/phoenix6/controls/Follower.hpp"
 #include "ctre/phoenix6/configs/Configuration.hpp"
@@ -33,12 +31,14 @@
 #include "state/IRobotStateChangeSubscriber.h"
 #include "mechanisms/controllers/ControlData.h"
 #include "state/RobotStateChanges.h"
-#include "state/RobotState.h"
 
 #include "configs/RobotElementNames.h"
 #include "configs/MechanismConfigMgr.h"
 
 #include "RobotIdentifier.h"
+
+// Includes after generation
+#include "utils/RebuiltTargetCalculator.h"
 
 class Launcher : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber
 {
@@ -51,7 +51,8 @@ public:
 		STATE_PREPARE_TO_LAUNCH,
 		STATE_LAUNCH,
 		STATE_EMPTY_HOPPER,
-		STATE_CLIMB
+		STATE_CLIMB,
+		STATE_LAUNCHER_TUNING
 	};
 
 	Launcher(RobotIdentifier activeRobotId);
@@ -144,6 +145,11 @@ public:
 	void NotifyStateUpdate(RobotStateChanges::StateChange statechange, bool value) override;
 	bool IsInClimbMode() const { return m_isClimbMode; }
 	bool IsAllowedToClimb() const { return m_isAllowedToClimb; }
+	bool IsLauncherAtTarget();
+	bool IsInLaunchZone() const;
+	bool IsLauncherInitialized() const { return m_launcherInitialized; }
+	void SetLauncherInitialized(bool initialized) { m_launcherInitialized = initialized; }
+	bool IsTuningLauncherMode() const { return m_tuningLauncher; }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -193,5 +199,15 @@ private:
 	bool m_launcherOffButtonReleased = true;
 	bool m_isClimbMode = false;
 	bool m_isAllowedToClimb = false;
+
+	units::angle::degree_t m_launcherTargetAngle = 0.0_deg;
+	units::time::second_t m_lookaheadTime = 0.5_s;
+
+	RebuiltTargetCalculator *m_targetCalculator;
+
+	void CalculateTargets();
+
+	bool m_launcherInitialized = false;
+	bool m_tuningLauncher = false;
 	// void InitializeLogging();
 };

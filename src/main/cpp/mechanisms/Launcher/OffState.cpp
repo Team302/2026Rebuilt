@@ -42,6 +42,7 @@ OffState::OffState(std::string stateName,
 
 void OffState::Init()
 {
+	m_mechanism->SetLauncherInitialized(false);
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("OffState"), string("Init"));
 
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
@@ -81,5 +82,4 @@ bool OffState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
 	return m_mechanism->IsLauncherInProtectedMode();
-	// return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXAMPLE_MECH_FORWARD));
 }

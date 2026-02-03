@@ -41,6 +41,7 @@
 #include "mechanisms/Climber/L3ClimbState.h"
 #include "mechanisms/Climber/ExitState.h"
 #include "mechanisms/Climber/AutonL1ClimbState.h"
+#include "teleopcontrol/TeleopControl.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -99,7 +100,8 @@ Climber::Climber(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHA
 												  m_activeRobotId(activeRobotId),
 												  m_stateMap(),
 												  m_climbModeStatus(false),
-												  m_allowedToClimb(false)
+												  m_allowedToClimb(false),
+												  m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis())
 {
 	PeriodicLooper::GetInstance()->RegisterAll(this);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
@@ -299,7 +301,23 @@ ControlData *Climber::GetControlData(string name)
 
 	return nullptr;
 }
-
+void Climber::ManualClimb(units::angle::degree_t climbTarget, double manualClimberPercent)
+{
+	auto climberPosition = GetPigeonPitch();
+	if (climberPosition > climbTarget)
+	{
+		UpdateTargetClimberPercentOut(m_holdPercentOut);
+	}
+	else
+	{
+		UpdateTargetClimberPercentOut(manualClimberPercent * m_percentOutScale);
+	}
+}
+units::angle::degree_t Climber::GetPigeonPitch()
+{
+	units::angle::degree_t pigeonPitch = m_chassis->GetPigeon2().GetPitch().GetValue();
+	return pigeonPitch;
+}
 /* void Climber::DataLog(uint64_t timestamp)
 {
    auto currTime = m_powerTimer.Get();

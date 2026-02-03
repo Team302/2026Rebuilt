@@ -14,66 +14,49 @@
 //====================================================================================================================================================
 #pragma once
 
-// C++ includes
-
+#include "chassis/commands/DriveToPose.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
-#include "fielddata/FieldConstants.h"
-#include "frc/geometry/Pose2d.h"
 
 //====================================================================================================================================================
-/// @class DepotHelper
-/// @brief Helper class for depot-related calculations and navigation
+/// @class DriveToOutpost
+/// @brief Command to autonomously drive the robot to the nearest Outpost on the field
 ///
-/// This singleton class provides utilities for interacting with depots on the field, including:
-/// - Determining which depot (red or blue) is closest to the robot
-/// - Calculating the center pose of the nearest depot
-/// - Computing distances to field elements
+/// This command extends DriveToPose to provide specific functionality for navigating to Outposts.
+/// It automatically determines which Outpost (red or blue) is closest to the robot's current position
+/// and calculates the target pose at the center of that Outpost using OutpostHelper.
 ///
-/// The class uses the robot's current pose and field constants to make alliance-aware decisions
-/// about depot locations and navigation targets.
+/// The command uses path following to drive the robot to the calculated Outpost center position,
+/// making it useful for autonomous routines or driver assistance features during matches.
 //====================================================================================================================================================
-class DepotHelper
+class DriveToOutpost : public DriveToPose
 {
 public:
     //------------------------------------------------------------------
-    /// @brief      Get the singleton instance of DepotHelper
-    /// @return     DepotHelper* - Pointer to the singleton instance
+    /// @brief      Constructor for DriveToOutpost command
+    /// @param[in]  chassis - Pointer to the swerve drive subsystem
+    /// @details    Initializes the command with the chassis reference for
+    ///             autonomous navigation to the nearest Outpost
     //------------------------------------------------------------------
-    static DepotHelper *GetInstance();
-
-    //------------------------------------------------------------------
-    /// @brief      Calculates the center pose of the nearest depot
-    /// @return     frc::Pose2d - The calculated center pose of the depot
-    /// @details    Determines which depot (red or blue) is nearest, then
-    ///             calculates the center point by averaging the X and Y
-    ///             coordinates of the left, right, and neutral side poses.
-    //------------------------------------------------------------------
-    frc::Pose2d CalcDepotPose() const;
-
-private:
-    //------------------------------------------------------------------
-    /// @brief      Private constructor for singleton pattern
-    /// @details    Initializes the chassis and field constants references
-    //------------------------------------------------------------------
-    DepotHelper();
+    DriveToOutpost(subsystems::CommandSwerveDrivetrain *chassis);
 
     //------------------------------------------------------------------
     /// @brief      Destructor (default implementation)
     //------------------------------------------------------------------
-    ~DepotHelper() = default;
-
-    /// @brief Singleton instance pointer
-    static DepotHelper *m_instance;
+    ~DriveToOutpost() = default;
 
     //------------------------------------------------------------------
-    /// @brief      Determines which depot (red or blue) is nearest to the robot
-    /// @return     bool - true if the red depot is nearest, false if blue depot is nearest
+    /// @brief      Calculates the target end pose for the Outpost
+    /// @return     frc::Pose2d - The target pose at the center of the nearest Outpost
+    /// @details    Overrides the base class method to provide Outpost-specific
+    ///             target calculation using OutpostHelper
     //------------------------------------------------------------------
-    bool IsNearestDepotRed() const;
+    frc::Pose2d GetEndPose() override;
 
-    /// @brief Pointer to the swerve drivetrain subsystem
-    subsystems::CommandSwerveDrivetrain *m_chassis;
-
-    /// @brief Pointer to the field constants singleton
-    FieldConstants *m_fieldConstants;
+    //------------------------------------------------------------------
+    /// @brief      Determines if the DriveToOutpost command has finished execution
+    /// @return     true if the command has completed driving to the outpost,
+    ///             false if the command should continue running
+    /// @details    Called repeatedly by the command scheduler to check completion status
+    //------------------------------------------------------------------
+    bool IsFinished() override;
 };

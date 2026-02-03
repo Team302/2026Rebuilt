@@ -13,32 +13,34 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include <fielddata/FieldConstantsPoseLogger.h>
+#pragma once
+#include <frc/geometry/Pose2d.h>
+#include <frc/geometry/Pose2d.h>
+#include <utils/FMSData.h>
+#include <auton/AutonGrid.h>
+#include <auton/ZoneParams.h>
+#include <utils/TargetCalculator.h>
+#include <chassis/generated/CommandSwerveDrivetrain.h>
 
-#ifdef INCLUDE_FIELD_ELEMENT_POSE_LOGGER
-#include "wpi/DataLog.h"
-#include "frc/DataLogManager.h"
-#include "frc/geometry/Pose3d.h"
-#include "magic_enum/magic_enum.hpp"
+// C++ Includes
+#include <vector>
 
-void FieldConstantsPoseLogger::LogFieldElementPoses(robin_hood::unordered_map<FieldConstants::FIELD_ELEMENT, frc::Pose3d> &fieldConstantsPoseMap)
+// FRC includes
+
+// Team 302 includes
+
+// Third Party Includes
+
+class ZoneHelper
 {
-    auto now = std::chrono::system_clock::now();
-    auto time_t = std::chrono::system_clock::to_time_t(now);
-    std::stringstream ss;
-    ss << "field_poses_" << std::put_time(std::localtime(&time_t), "%Y%m%d_%H%M%S") << ".wpilog";
-    std::string LogFileName = ss.str();
-    frc::DataLogManager::Start("", LogFileName);
-    wpi::log::DataLog &log = frc::DataLogManager::GetLog();
+public:
+    void InitZones();
+    virtual std::string GetZoneFile() = 0;
+    bool isInZone();
+    bool isInZone(std::string zoneFile);
 
-    for (auto &[key, pose] : fieldConstantsPoseMap)
-    {
-        auto poseLog = wpi::log::StructLogEntry<frc::Pose3d>(log, magic_enum::enum_name(key));
-        poseLog.Append(pose);
-        std::cout << "Field Element: " << magic_enum::enum_name(key) << " Pose X: " << pose.X().to<double>() << " Pose Y: " << pose.Y().to<double>() << std::endl;
-    }
-
-    log.Flush();
-}
-
-#endif
+protected:
+    frc::Pose2d m_robotPose = m_chassis->GetPose();
+    subsystems::CommandSwerveDrivetrain *m_chassis;
+    ZoneParams *m_zones;
+};

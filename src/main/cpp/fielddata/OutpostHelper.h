@@ -21,55 +21,70 @@
 #include "frc/geometry/Pose2d.h"
 
 //====================================================================================================================================================
-/// @class DepotHelper
-/// @brief Helper class for depot-related calculations and navigation
+/// @class OutpostHelper
+/// @brief Helper class for Outpost-related calculations and navigation
 ///
-/// This singleton class provides utilities for interacting with depots on the field, including:
-/// - Determining which depot (red or blue) is closest to the robot
-/// - Calculating the center pose of the nearest depot
+/// This singleton class provides utilities for interacting with Outposts on the field, including:
+/// - Determining which Outpost (red or blue) is closest to the robot
+/// - Calculating the center pose of the nearest Outpost
 /// - Computing distances to field elements
 ///
 /// The class uses the robot's current pose and field constants to make alliance-aware decisions
-/// about depot locations and navigation targets.
+/// about Outpost locations and navigation targets.
 //====================================================================================================================================================
-class DepotHelper
+class OutpostHelper
 {
 public:
     //------------------------------------------------------------------
-    /// @brief      Get the singleton instance of DepotHelper
-    /// @return     DepotHelper* - Pointer to the singleton instance
+    /// @brief      Get the singleton instance of OutpostHelper
+    /// @return     OutpostHelper* - Pointer to the singleton instance
     //------------------------------------------------------------------
-    static DepotHelper *GetInstance();
+    static OutpostHelper *GetInstance();
 
     //------------------------------------------------------------------
-    /// @brief      Calculates the center pose of the nearest depot
-    /// @return     frc::Pose2d - The calculated center pose of the depot
-    /// @details    Determines which depot (red or blue) is nearest, then
-    ///             calculates the center point by averaging the X and Y
-    ///             coordinates of the left, right, and neutral side poses.
+    /// @brief      Calculates the center pose of the nearest Outpost
+    /// @return     frc::Pose2d - The calculated center pose of the Outpost
+    /// @details    Determines which Outpost (red or blue) is nearest to the robot.
+    ///             Calculates the center pose using:
+    ///             - The depot's neutral side X position (aligned with wall)
+    ///             - The Outpost center's Y position (perpendicular distance)
+    ///             - Rotation based on the nearest alliance (0° for red, 180° for blue)
     //------------------------------------------------------------------
-    frc::Pose2d CalcDepotPose() const;
+    frc::Pose2d CalcOutpostPose() const;
 
 private:
     //------------------------------------------------------------------
     /// @brief      Private constructor for singleton pattern
     /// @details    Initializes the chassis and field constants references
     //------------------------------------------------------------------
-    DepotHelper();
+    OutpostHelper();
 
     //------------------------------------------------------------------
     /// @brief      Destructor (default implementation)
     //------------------------------------------------------------------
-    ~DepotHelper() = default;
+    ~OutpostHelper() = default;
 
     /// @brief Singleton instance pointer
-    static DepotHelper *m_instance;
+    static OutpostHelper *m_instance;
 
     //------------------------------------------------------------------
-    /// @brief      Determines which depot (red or blue) is nearest to the robot
-    /// @return     bool - true if the red depot is nearest, false if blue depot is nearest
+    /// @brief      Determines which Outpost (red or blue) is nearest to the robot
+    /// @return     bool - true if the red Outpost is nearest, false if blue Outpost is nearest
+    /// @details    Calculates the distance from the robot's current pose to both
+    ///             Outpost centers and returns true if red is nearest, false if blue is nearest
     //------------------------------------------------------------------
-    bool IsNearestDepotRed() const;
+    bool IsNearestOutpostRed() const;
+
+    //------------------------------------------------------------------
+    /// @brief      Calculates the distance from a given pose to a field element
+    /// @param[in]  element - The field element to calculate distance to
+    /// @param[in]  currentPose - The pose to measure distance from
+    /// @return     units::length::meter_t - The distance in meters
+    /// @details    Computes the Euclidean distance between the translation
+    ///             components of the current pose and the field element pose.
+    ///             This is a helper method used internally for distance comparisons.
+    //------------------------------------------------------------------
+    units::length::meter_t CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
 
     /// @brief Pointer to the swerve drivetrain subsystem
     subsystems::CommandSwerveDrivetrain *m_chassis;

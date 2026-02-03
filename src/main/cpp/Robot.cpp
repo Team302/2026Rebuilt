@@ -142,6 +142,8 @@ void Robot::RobotPeriodic()
 void Robot::DisabledPeriodic()
 {
     PeriodicLooper::GetInstance()->DisabledRunCurrentState();
+
+    m_field->UpdateEnabledStates();
 }
 
 /// @brief Called once when autonomous mode begins.

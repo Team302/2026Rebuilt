@@ -38,3 +38,20 @@ bool PoseUtils::IsPoseAtOrigin(const frc::Pose2d &pose,
 {
     return IsSamePose(pose, frc::Pose2d(), tolerance);
 }
+
+FieldConstants::FIELD_ELEMENT PoseUtils::GetClosestFieldElement(const frc::Pose2d &pose, FieldConstants::FIELD_ELEMENT firstElement, FieldConstants::FIELD_ELEMENT secondElement)
+{
+    auto fieldConstants = FieldConstants::GetInstance();
+    auto firstElementPose = fieldConstants->GetFieldElementPose2d(firstElement);
+    auto secondElementPose = fieldConstants->GetFieldElementPose2d(secondElement);
+
+    auto distanceToFirst = GetDeltaBetweenPoses(pose, firstElementPose);
+    auto distanceToSecond = GetDeltaBetweenPoses(pose, secondElementPose);
+
+    if (distanceToFirst < distanceToSecond)
+    {
+        return firstElement;
+    }
+
+    return secondElement;
+}

@@ -13,32 +13,13 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include <fielddata/FieldConstantsPoseLogger.h>
+#pragma once
 
-#ifdef INCLUDE_FIELD_ELEMENT_POSE_LOGGER
-#include "wpi/DataLog.h"
-#include "frc/DataLogManager.h"
-#include "frc/geometry/Pose3d.h"
-#include "magic_enum/magic_enum.hpp"
+#include <auton/ZoneHelper.h>
 
-void FieldConstantsPoseLogger::LogFieldElementPoses(robin_hood::unordered_map<FieldConstants::FIELD_ELEMENT, frc::Pose3d> &fieldConstantsPoseMap)
+class NeutralZoneManager : public ZoneHelper
 {
-    auto now = std::chrono::system_clock::now();
-    auto time_t = std::chrono::system_clock::to_time_t(now);
-    std::stringstream ss;
-    ss << "field_poses_" << std::put_time(std::localtime(&time_t), "%Y%m%d_%H%M%S") << ".wpilog";
-    std::string LogFileName = ss.str();
-    frc::DataLogManager::Start("", LogFileName);
-    wpi::log::DataLog &log = frc::DataLogManager::GetLog();
-
-    for (auto &[key, pose] : fieldConstantsPoseMap)
-    {
-        auto poseLog = wpi::log::StructLogEntry<frc::Pose3d>(log, magic_enum::enum_name(key));
-        poseLog.Append(pose);
-        std::cout << "Field Element: " << magic_enum::enum_name(key) << " Pose X: " << pose.X().to<double>() << " Pose Y: " << pose.Y().to<double>() << std::endl;
-    }
-
-    log.Flush();
-}
-
-#endif
+public:
+    virtual std::string GetZoneFile() override;
+    bool isInNeutralZone();
+};

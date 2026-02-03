@@ -15,6 +15,7 @@
 
 #include "fielddata/DepotHelper.h"
 #include "chassis/ChassisConfigMgr.h"
+#include "fielddata/FieldOffsetValues.h"
 #include "frc/geometry/Pose2d.h"
 #include "utils/PoseUtils.h"
 
@@ -46,8 +47,8 @@ DepotHelper::DepotHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerv
 //------------------------------------------------------------------
 /// @brief      Determines which depot (red or blue) is nearest to the robot
 /// @return     bool - true if the red depot is nearest, false if blue depot is nearest
-/// @details    Calculates the distance from the robot's current pose to both
-///             the blue and red depot neutral sides, then compares them
+/// @details    Uses PoseUtils::GetClosestFieldElement to determine which depot
+///             (red or blue) neutral side is nearest to the robot's current pose
 //------------------------------------------------------------------
 bool DepotHelper::IsNearestDepotRed() const
 {
@@ -57,17 +58,10 @@ bool DepotHelper::IsNearestDepotRed() const
     }
 
     auto currentPose = m_chassis->GetPose();
-
-    auto blueDepot = FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE;
-    auto redDepot = FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE;
-
-    auto blueDistance = CalcDistanceToObject(blueDepot, currentPose);
-    auto redDistance = CalcDistanceToObject(redDepot, currentPose);
-    if (blueDistance < redDistance)
-    {
-        return false;
-    }
-    return true;
+    auto nearestDepot = PoseUtils::GetClosestFieldElement(currentPose,
+                                                          FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE,
+                                                          FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE);
+    return nearestDepot == FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE;
 }
 
 //------------------------------------------------------------------
@@ -89,26 +83,14 @@ frc::Pose2d DepotHelper::CalcDepotPose() const
     auto neutralPose = isNearestDepotRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE)
                                          : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE);
 
-    // neutralPose X accounts for half the robot on the intake side + bumpers + agitator/intake being extended
+    // Get the X position from the FieldOffsetValues based on nearest depot color
     // neutralPose Y is center of the depot - no need to average with the side values
     // rotation is based on the color
-    return frc::Pose2d(neutralPose.X(), neutralPose.Y(), isNearestDepotRed ? 0_deg : 180_deg);
-}
-
-//------------------------------------------------------------------
-/// @brief      Calculates the distance from a given pose to a field element
-/// @param[in]  element - The field element to measure distance to
-/// @param[in]  currentPose - The pose to measure distance from
-/// @return     units::length::meter_t - The distance in meters
-/// @details    Uses the translation components of both poses to calculate
-///             the Euclidean distance between them
-//------------------------------------------------------------------
-units::length::meter_t DepotHelper::CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element,
-                                                         frc::Pose2d currentPose) const
-{
-    if (m_fieldConstants == nullptr)
+    auto fieldOffsetValues = FieldOffsetValues::GetInstance();
+    if (fieldOffsetValues == nullptr)
     {
-        return units::length::meter_t(0.0);
+        // Fallback: use the neutralPose directly if FieldOffsetValues is unavailable
+        return neutralPose;
     }
-    return PoseUtils::GetDeltaBetweenPoses(currentPose, m_fieldConstants->GetFieldElementPose2d(element));
+    return frc::Pose2d(fieldOffsetValues->GetXValue(isNearestDepotRed, FIELD_OFFSET_ITEMS::DEPOT_X), neutralPose.Y(), isNearestDepotRed ? 0_deg : 180_deg);
 }

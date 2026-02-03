@@ -38,6 +38,8 @@
 #include "mechanisms/Launcher/LaunchState.h"
 #include "mechanisms/Launcher/EmptyHopperState.h"
 #include "mechanisms/Launcher/ClimbState.h"
+#include "mechanisms/Launcher/LauncherTuningState.h"
+
 #include "teleopcontrol/TeleopControl.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
@@ -81,12 +83,16 @@ void Launcher::CreateAndRegisterStates()
 	ClimbState *ClimbStateInst = new ClimbState(string("Climb"), 6, this, m_activeRobotId);
 	AddToStateVector(ClimbStateInst);
 
+	LauncherTuningState *LauncherTuningStateInst = new LauncherTuningState(string("LauncherTuning"), 7, this, m_activeRobotId);
+	AddToStateVector(LauncherTuningStateInst);
+
 	OffStateInst->RegisterTransitionState(InitializeStateInst);
 	InitializeStateInst->RegisterTransitionState(IdleStateInst);
 	IdleStateInst->RegisterTransitionState(OffStateInst);
 	IdleStateInst->RegisterTransitionState(PrepareToLaunchStateInst);
 	IdleStateInst->RegisterTransitionState(EmptyHopperStateInst);
 	IdleStateInst->RegisterTransitionState(ClimbStateInst);
+	IdleStateInst->RegisterTransitionState(LauncherTuningStateInst);
 	PrepareToLaunchStateInst->RegisterTransitionState(OffStateInst);
 	PrepareToLaunchStateInst->RegisterTransitionState(IdleStateInst);
 	PrepareToLaunchStateInst->RegisterTransitionState(LaunchStateInst);
@@ -100,6 +106,8 @@ void Launcher::CreateAndRegisterStates()
 	EmptyHopperStateInst->RegisterTransitionState(ClimbStateInst);
 	ClimbStateInst->RegisterTransitionState(OffStateInst);
 	ClimbStateInst->RegisterTransitionState(IdleStateInst);
+	LauncherTuningStateInst->RegisterTransitionState(OffStateInst);
+	LauncherTuningStateInst->RegisterTransitionState(LaunchStateInst);
 }
 
 Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANISM_TYPE::LAUNCHER, std::string("Launcher")),
@@ -110,6 +118,7 @@ Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MEC
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 
+	m_targetCalculator = RebuiltTargetCalculator::GetInstance();
 	// InitializeLogging();
 }
 
@@ -174,6 +183,7 @@ std::map<std::string, Launcher::STATE_NAMES>
 		{"STATE_LAUNCH", Launcher::STATE_NAMES::STATE_LAUNCH},
 		{"STATE_EMPTY_HOPPER", Launcher::STATE_NAMES::STATE_EMPTY_HOPPER},
 		{"STATE_CLIMB", Launcher::STATE_NAMES::STATE_CLIMB},
+		{"STATE_LAUNCHER_TUNING", Launcher::STATE_NAMES::STATE_LAUNCHER_TUNING},
 	};
 
 void Launcher::CreateCompBot302()
@@ -475,14 +485,14 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 1;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(180);
-	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
+	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 1;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
@@ -623,6 +633,7 @@ void Launcher::RunCommonTasks()
 {
 	// This function is called once per loop before the current state Run()
 	Cyclic();
+
 	if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCHER_OFF))
 	{
 		if (m_launcherOffButtonReleased)
@@ -635,6 +646,10 @@ void Launcher::RunCommonTasks()
 	{
 		m_launcherOffButtonReleased = true;
 	}
+
+	// Update Launcher Targets/Field
+	m_targetCalculator->UpdateTargetOffset();
+	CalculateTargets();
 }
 
 /// @brief  Set the control constants (e.g. PIDF values).
@@ -689,6 +704,21 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 	{
 		m_isAllowedToClimb = value;
 	}
+}
+bool Launcher::IsLauncherAtTarget()
+{
+	// MECH_TODO: POPULATE FUNCTION
+	return false;
+}
+bool Launcher::IsInLaunchZone() const
+{
+	//  MECH_TODO: POPULATE FUNCTION
+	return false;
+}
+
+void Launcher::CalculateTargets()
+{
+	m_launcherTargetAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_launcher->GetPosition().GetValue());
 }
 
 /* void Launcher::DataLog(uint64_t timestamp)

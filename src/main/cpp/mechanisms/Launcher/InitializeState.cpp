@@ -61,6 +61,10 @@ void InitializeState::InitCompBot302()
 
 void InitializeState::Run()
 {
+	if (m_mechanism->GetTurret()->GetReverseLimit().GetValue().ClosedToGround && m_mechanism->GetHood()->GetReverseLimit().GetValue().ClosedToGround)
+	{
+		m_mechanism->SetLauncherInitialized(true);
+	}
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("InitializeState"), string("Run"));
 }
 
@@ -81,5 +85,4 @@ bool InitializeState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
 	return !m_mechanism->IsLauncherInProtectedMode();
-	// return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXAMPLE_MECH_FORWARD));
 }

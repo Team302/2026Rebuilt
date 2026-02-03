@@ -14,17 +14,33 @@
 //====================================================================================================================================================
 
 #include "utils/RebuiltTargetCalculator.h"
+#include "utils/FMSData.h"
+#include "utils/PoseUtils.h"
+#include "teleopcontrol/TeleopControl.h"
+#include "utils/logging/debug/Logger.h"
 
 RebuiltTargetCalculator::RebuiltTargetCalculator() : TargetCalculator()
 {
     // TODO: update launcher offsets and target position(need to use zone logic later and field element calculator to get target position)
-    // Mechanism offset initialized in member variable declaration for now
-
     SetMechanismOffset(m_mechanismOffset);
 
     m_field = DragonField::GetInstance();
-    m_field->AddPose("TargetPosition", frc::Pose2d(GetTargetPosition(), frc::Rotation2d()));
-    m_field->AddPose("LauncherPosition", frc::Pose2d());
+    m_fieldConstants = FieldConstants::GetInstance();
+    // m_zoneManager = AllianceZoneManager::GetInstance();
+
+    auto outpostPassingTarget = FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_PASSING_TARGET;
+    auto depotPassingTarget = FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_PASSING_TARGET;
+
+    if (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed)
+    {
+        outpostPassingTarget = FieldConstants::FIELD_ELEMENT::RED_OUTPOST_PASSING_TARGET;
+        depotPassingTarget = FieldConstants::FIELD_ELEMENT::RED_DEPOT_PASSING_TARGET;
+    }
+
+    m_field->AddObject("Outpost Passing Target Position", frc::Pose2d(m_fieldConstants->GetFieldElementPose2d(outpostPassingTarget).Translation(), frc::Rotation2d()), true);
+    m_field->AddObject("Depot Passing Target Position", frc::Pose2d(m_fieldConstants->GetFieldElementPose2d(depotPassingTarget).Translation(), frc::Rotation2d()), true);
+    m_field->AddObject("Current Target Position", frc::Pose2d());
+    m_field->AddObject("Launcher Position", frc::Pose2d());
 }
 
 RebuiltTargetCalculator *RebuiltTargetCalculator::m_instance = nullptr;
@@ -40,17 +56,52 @@ RebuiltTargetCalculator *RebuiltTargetCalculator::GetInstance()
 
 frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
 {
-    // TODO: Replace with dynamic target selection based on:
-    // - FieldElementCalculator for actual target position
-    // - Zone detector for zone-specific targets
-    // For now, return hardcoded hub target for testing
-    return m_hubTarget;
+
+    bool isInAllianceZone = true; // m_zoneManager->isInAllianceZone();
+    frc::Translation2d targetPosition{};
+    auto alliance = FMSData::GetAllianceColor();
+
+    if (m_fieldConstants != nullptr)
+    {
+        auto fieldElement = FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER;
+        if (isInAllianceZone)
+        {
+            fieldElement = alliance == frc::DriverStation::Alliance::kRed
+                               ? FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER
+                               : fieldElement;
+            targetPosition = m_fieldConstants->GetFieldElementPose2d(fieldElement).Translation();
+        }
+        else
+        {
+            auto blueOutpost = FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_PASSING_TARGET;
+            auto blueDepot = FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_PASSING_TARGET;
+            auto redOutpost = FieldConstants::FIELD_ELEMENT::RED_OUTPOST_PASSING_TARGET;
+            auto redDepot = FieldConstants::FIELD_ELEMENT::RED_DEPOT_PASSING_TARGET;
+
+            if (alliance == frc::DriverStation::Alliance::kBlue)
+            {
+                fieldElement = PoseUtils::GetClosestFieldElement(GetChassisPose(), blueOutpost, blueDepot);
+            }
+            else
+            {
+                fieldElement = PoseUtils::GetClosestFieldElement(GetChassisPose(), redOutpost, redDepot);
+            }
+
+            auto xPassingOffset = GetPassingTargetXOffset(fieldElement);
+            auto yPassingOffset = GetPassingTargetYOffset(fieldElement);
+            targetPosition = m_fieldConstants->GetFieldElementPose2d(fieldElement).Translation() + frc::Translation2d(xPassingOffset, yPassingOffset);
+        }
+    }
+
+    targetPosition = targetPosition + frc::Translation2d(m_xTargetOffset, m_yTargetOffset);
+
+    return targetPosition;
 }
 
 units::angle::degree_t RebuiltTargetCalculator::GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle)
 {
 
-    m_field->UpdateObject("TargetPosition", GetVirtualTargetPose(looheadTime));
+    m_field->UpdateObject("Current Target Position", GetVirtualTargetPose(looheadTime));
 
     units::degree_t fieldAngleToTarget = CalculateMechanismAngleToTarget(looheadTime);
     auto robotPose = GetChassisPose();
@@ -86,6 +137,85 @@ units::angle::degree_t RebuiltTargetCalculator::GetLauncherTarget(units::time::s
         bestAngle = std::clamp(normalizedGoal, m_minLauncherAngle, m_maxLauncherAngle);
     }
 
-    m_field->UpdateObject("LauncherPosition", frc::Pose2d(GetMechanismWorldPosition(), robotPose.Rotation() + frc::Rotation2d(bestAngle)));
+    m_field->UpdateObject("Launcher Position", frc::Pose2d(GetMechanismWorldPosition(), robotPose.Rotation() + frc::Rotation2d(bestAngle)));
     return bestAngle;
+}
+
+void RebuiltTargetCalculator::UpdateTargetOffset()
+{
+    auto teleopControl = TeleopControl::GetInstance();
+    auto alliance = FMSData::GetAllianceColor();
+
+    if (teleopControl != nullptr)
+    {
+        bool isUpPressed = teleopControl->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_UP);
+        bool isDownPressed = teleopControl->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_DOWN);
+        bool isLeftPressed = teleopControl->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_LEFT);
+        bool isRightPressed = teleopControl->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_RIGHT);
+
+        if (isUpPressed && !m_prevUpPressed)
+        {
+            m_xTargetOffset += alliance == frc::DriverStation::Alliance::kBlue ? 5_in : -5_in;
+        }
+        if (isDownPressed && !m_prevDownPressed)
+        {
+            m_xTargetOffset += alliance == frc::DriverStation::Alliance::kBlue ? -5_in : 5_in;
+        }
+        if (isLeftPressed && !m_prevLeftPressed)
+        {
+            m_yTargetOffset += alliance == frc::DriverStation::Alliance::kBlue ? 5_in : -5_in;
+        }
+        if (isRightPressed && !m_prevRightPressed)
+        {
+            m_yTargetOffset += alliance == frc::DriverStation::Alliance::kBlue ? -5_in : 5_in;
+        }
+
+        m_prevUpPressed = isUpPressed;
+        m_prevDownPressed = isDownPressed;
+        m_prevLeftPressed = isLeftPressed;
+        m_prevRightPressed = isRightPressed;
+
+        // Passing target offsets
+        m_passingDepotTargetXOffset += teleopControl->GetAxisValue(TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_X) * (alliance == frc::DriverStation::Alliance::kBlue ? 1_in : -1_in);
+        m_passingDepotTargetYOffset += teleopControl->GetAxisValue(TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_Y) * (alliance == frc::DriverStation::Alliance::kBlue ? -1_in : 1_in);
+        m_passingOutpostTargetXOffset += teleopControl->GetAxisValue(TeleopControlFunctions::UPDATE_OUTPOST_PASSING_TARGET_X) * (alliance == frc::DriverStation::Alliance::kBlue ? 1_in : -1_in);
+        m_passingOutpostTargetYOffset += teleopControl->GetAxisValue(TeleopControlFunctions::UPDATE_OUTPOST_PASSING_TARGET_Y) * (alliance == frc::DriverStation::Alliance::kBlue ? -1_in : 1_in);
+    }
+
+    UpdatePassingTargetsOnField();
+}
+
+units::length::inch_t RebuiltTargetCalculator::GetPassingTargetXOffset(FieldConstants::FIELD_ELEMENT fieldElement)
+{
+    auto blueOutpost = FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_PASSING_TARGET;
+    auto redOutpost = FieldConstants::FIELD_ELEMENT::RED_OUTPOST_PASSING_TARGET;
+    return (fieldElement == blueOutpost || fieldElement == redOutpost) ? m_passingOutpostTargetXOffset : m_passingDepotTargetXOffset;
+}
+
+units::length::inch_t RebuiltTargetCalculator::GetPassingTargetYOffset(FieldConstants::FIELD_ELEMENT fieldElement)
+{
+    auto blueOutpost = FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_PASSING_TARGET;
+    auto redOutpost = FieldConstants::FIELD_ELEMENT::RED_OUTPOST_PASSING_TARGET;
+    return (fieldElement == blueOutpost || fieldElement == redOutpost) ? m_passingOutpostTargetYOffset : m_passingDepotTargetYOffset;
+}
+
+void RebuiltTargetCalculator::UpdatePassingTargetsOnField()
+{
+    frc::Translation2d passingDepotOffset = frc::Translation2d(m_passingDepotTargetXOffset, m_passingDepotTargetYOffset);
+    frc::Translation2d passingOutpostOffset = frc::Translation2d(m_passingOutpostTargetXOffset, m_passingOutpostTargetYOffset);
+
+    auto depotPassingTarget = FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_PASSING_TARGET;
+    auto outpostPassingTarget = FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_PASSING_TARGET;
+
+    if (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed)
+    {
+        depotPassingTarget = FieldConstants::FIELD_ELEMENT::RED_DEPOT_PASSING_TARGET;
+        outpostPassingTarget = FieldConstants::FIELD_ELEMENT::RED_OUTPOST_PASSING_TARGET;
+    }
+
+    frc::Pose2d depotPose = frc::Pose2d(m_fieldConstants->GetFieldElementPose2d(depotPassingTarget).Translation() + passingDepotOffset, frc::Rotation2d());
+    frc::Pose2d outpostPose = frc::Pose2d(m_fieldConstants->GetFieldElementPose2d(outpostPassingTarget).Translation() + passingOutpostOffset, frc::Rotation2d());
+
+    m_field->UpdateObject("Depot Passing Target Position", depotPose);
+    m_field->UpdateObject("Outpost Passing Target Position", outpostPose);
 }
