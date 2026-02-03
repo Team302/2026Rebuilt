@@ -41,6 +41,7 @@
 #include "mechanisms/Launcher/LauncherTuningState.h"
 
 #include "teleopcontrol/TeleopControl.h"
+#include "utils/InterpolateUtils.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -106,6 +107,7 @@ void Launcher::CreateAndRegisterStates()
 	EmptyHopperStateInst->RegisterTransitionState(ClimbStateInst);
 	ClimbStateInst->RegisterTransitionState(OffStateInst);
 	ClimbStateInst->RegisterTransitionState(IdleStateInst);
+	ClimbStateInst->RegisterTransitionState(PrepareToLaunchStateInst);
 	LauncherTuningStateInst->RegisterTransitionState(OffStateInst);
 	LauncherTuningStateInst->RegisterTransitionState(LaunchStateInst);
 }
@@ -650,6 +652,9 @@ void Launcher::RunCommonTasks()
 	// Update Launcher Targets/Field
 	m_targetCalculator->UpdateTargetOffset();
 	CalculateTargets();
+	UpdateLauncherTargets();
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Current State", GetCurrentState());
 }
 
 /// @brief  Set the control constants (e.g. PIDF values).
@@ -707,18 +712,57 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 }
 bool Launcher::IsLauncherAtTarget()
 {
-	// MECH_TODO: POPULATE FUNCTION
-	return false;
+	// Launcher Speed error, Hood Angle error, Turret angle error are within a threshold, and if we are in launch zone. Also check chassis speed.
+	units::angle::degree_t hoodError = m_hood->GetPosition().GetValue() - m_targetHoodAngle;
+	units::angle::degree_t turretError = m_turret->GetPosition().GetValue() - m_targetTurretAngle;
+	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = m_launcher->GetVelocity().GetValue() - m_targetLauncherAngularVelocity;
+	bool inLaunchzone = IsInLaunchZone();
+	// units::velocity::meters_per_second_t chassisSpeed = m_chassis->GetVelocity();
+	return ((units::math::abs(hoodError) < m_hoodAngleThreshold) &&
+			(units::math::abs(turretError) < m_turretAngleThreshold) &&
+			(units::math::abs(launcherSpeedError) < m_launcherVelocityThreshold) &&
+			(inLaunchzone) /*&&
+			units::math::abs(chassisSpeed) < m_chassisSpeedThreshold*/
+	);
 }
 bool Launcher::IsInLaunchZone() const
 {
-	//  MECH_TODO: POPULATE FUNCTION
-	return false;
+	// call deadzone manager to see if we can or can't launch
+	return true;
 }
-
 void Launcher::CalculateTargets()
 {
-	m_launcherTargetAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_launcher->GetPosition().GetValue());
+	m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_launcher->GetPosition().GetValue());
+	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateDistanceToTarget(m_lookaheadTime);
+
+	// if (AllianceZoneManager::GetInstance()->IsInAllinaceZone())
+	if (true)
+	{
+		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_scoringDistanceArray, m_scoringHoodAngleArray, distanceToTarget);
+		m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_scoringDistanceArray, m_scoringLauncherVelocityArray, distanceToTarget);
+	}
+	else
+	{
+		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingHoodAngleArray, units::length::foot_t(distanceToTarget));
+		m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingLauncherVelocityArray, units::length::foot_t(distanceToTarget));
+	}
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Distance To Target", distanceToTarget.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Hood Angle Target", m_targetHoodAngle.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Launcher Speed Target", m_targetLauncherAngularVelocity.value());
+}
+void Launcher::UpdateLauncherTargets()
+{
+	int currentState = GetCurrentState();
+
+	if (currentState == STATE_NAMES::STATE_OFF || currentState == STATE_NAMES::STATE_INITIALIZE || currentState == STATE_NAMES::STATE_CLIMB)
+	{
+		return;
+	}
+
+	UpdateTargetHoodPositionDegreesHood(m_targetHoodAngle);
+	UpdateTargetTurretPositionDegreesTurret(m_targetTurretAngle);
+	UpdateTargetLauncherVelocityRPS(m_targetLauncherAngularVelocity);
 }
 
 /* void Launcher::DataLog(uint64_t timestamp)
