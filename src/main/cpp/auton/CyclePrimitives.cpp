@@ -36,7 +36,11 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "chassis/ChassisOptionEnums.h"
 
-// #include "mechanisms/MechanismTypes.h"
+#include "configs/MechanismConfigMgr.h"
+#include "mechanisms/MechanismTypes.h"
+#include "mechanisms/Launcher/Launcher.h"
+#include "mechanisms/Intake/Intake.h"
+#include "mechanisms/Climber/Climber.h"
 
 // Third Party Includes
 #include "ctre/phoenix6/SignalLogger.hpp"
@@ -206,17 +210,20 @@ void CyclePrimitives::RunDriveStop()
 void CyclePrimitives::SetMechanismStatesFromParam(PrimitiveParams *params)
 {
 
-    // auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
-    // if (params != nullptr && config != nullptr)
-    // {
-    //     auto taleStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::DRAGON_TALE);
-    //     auto taleMgr = taleStateMgr != nullptr ? dynamic_cast<DragonTale *>(taleStateMgr) : nullptr;
+    auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
+    if (params != nullptr && config != nullptr)
+    {
+        auto launcherStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::LAUNCHER);
+        auto intakeStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::INTAKE);
+        auto climberStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::CLIMBER);
 
-    //     if (taleMgr != nullptr && params->IsTaleStateChanging())
-    //     {
-    //         taleMgr->SetCurrentState(params->GetTaleState(), true);
-    //     }
-    // }
+        auto launcherMgr = launcherStateMgr != nullptr ? dynamic_cast<Launcher *>(launcherStateMgr) : nullptr;
+
+        // if (taleMgr != nullptr && params->IsTaleStateChanging())
+        // {
+        //     taleMgr->SetCurrentState(params->GetTaleState(), true);
+        // }
+    }
 }
 void CyclePrimitives::SetMechanismStatesFromZone(ZoneParams *params)
 {

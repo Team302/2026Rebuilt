@@ -14,6 +14,7 @@
           heading           CDATA "0.0"
 		  choreoname		CDATA #IMPLIED
 		  visionAligment    ( UNKNOWN ) "UNKNOWN"
+		  intakeState		( STATE_OFF |STATE_INTAKE | STATE_EXPEL | STATE_LAUNCH | STATE_EMPTY_HOPPER) "STATE_OFF"
 >
 
 
