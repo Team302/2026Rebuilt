@@ -24,13 +24,13 @@ void ZoneHelper::InitZones()
     m_zones = ZoneParser::ParseXML(GetZoneFile());
 }
 
-bool ZoneHelper::isInZone()
+bool ZoneHelper::IsInZones()
 {
     return m_zones->IsPoseInZone(m_robotPose);
 }
 
 // This function is mainly if you want to check a different zone file than the ones in the managers
-bool ZoneHelper::isInZone(std::string zoneFile)
+bool ZoneHelper::IsInZone(std::string zoneFile)
 {
     ZoneParams *zoneParams = ZoneParser::ParseXML(zoneFile);
     return zoneParams->IsPoseInZone(m_robotPose);

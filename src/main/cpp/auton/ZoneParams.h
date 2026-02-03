@@ -47,6 +47,7 @@ public:
                ChassisOptionEnums::HeadingOption headingOption,
                ChassisOptionEnums::DriveStateType pathUpdateOption,
                ChassisOptionEnums::AutonAvoidOptions autonavoidoption,
+               ChassisOptionEnums::AllianceColor allianceColor,
                ZoneMode zoneMode); // declare ZoneParams public constructor with parameters xgrid1, etc.
 
     ZoneParams() = delete;
@@ -68,6 +69,8 @@ public:
     ChassisOptionEnums::AutonChassisOptions GetChassisOption() const { return m_chassisoption; }
     ChassisOptionEnums::AutonAvoidOptions GetAvoidOption() const { return m_avoidoption; }
 
+    ChassisOptionEnums::AllianceColor GetAllianceColor() const { return m_allianceColor; }
+
     bool IsPoseInZone(frc::Pose2d robotPose);
 
 private:
@@ -81,6 +84,8 @@ private:
     ChassisOptionEnums::AutonAvoidOptions m_avoidoption; // instances of said parameters
 
     ChassisOptionEnums::DriveStateType m_pathUpdateOption;
+
+    ChassisOptionEnums::AllianceColor m_allianceColor;
 
     ZoneMode m_zoneMode;
 

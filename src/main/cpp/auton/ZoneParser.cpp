@@ -44,6 +44,12 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
 
     static robin_hood::unordered_map<string, ChassisOptionEnums::DriveStateType> xmlStringToPathUpdateOptionMap{{"NOTHING", ChassisOptionEnums::STOP_DRIVE}};
 
+    static robin_hood::unordered_map<std::string, ChassisOptionEnums::AllianceColor> xmlStringToAllianceColorMap{
+        {"RED", ChassisOptionEnums::AllianceColor::RED},
+        {"BLUE", ChassisOptionEnums::AllianceColor::BLUE},
+        {"BOTH", ChassisOptionEnums::AllianceColor::BOTH},
+
+    };
     static robin_hood::unordered_map<std::string, ChassisOptionEnums::AutonAvoidOptions> xmlStringToAvoidOptionEnumMap{
         {"ROBOT_COLLISION", ChassisOptionEnums::AutonAvoidOptions::ROBOT_COLLISION},
         {"NO_AVOID_OPTION", ChassisOptionEnums::AutonAvoidOptions::NO_AVOID_OPTION},
@@ -82,6 +88,7 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
             ChassisOptionEnums::HeadingOption chosenHeadingOption = ChassisOptionEnums::HeadingOption::IGNORE;
 
             ChassisOptionEnums::DriveStateType chosenUpdateOption = ChassisOptionEnums::STOP_DRIVE;
+            ChassisOptionEnums::AllianceColor chosenAllianceColor = ChassisOptionEnums::AllianceColor::BOTH;
             ChassisOptionEnums::AutonAvoidOptions avoidChosenOption = ChassisOptionEnums::AutonAvoidOptions::NO_AVOID_OPTION;
 
             // looping through the zone xml attributes to define the location of a given zone (based on 2 sets grid coordinates)
@@ -165,6 +172,19 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
                         hasError = true;
                     }
                 }
+                else if (strcmp(attr.name(), "allianceColor") == 0)
+                {
+                    auto itr = xmlStringToAllianceColorMap.find(attr.value());
+                    if (itr != xmlStringToAllianceColorMap.end())
+                    {
+                        chosenAllianceColor = itr->second;
+                        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "ZoneParser", "Alliance Color Parsed", chosenAllianceColor);
+                    }
+                    else
+                    {
+                        hasError = true;
+                    }
+                }
                 else if (strcmp(attr.name(), "avoidOption") == 0)
                 {
                     auto itr = xmlStringToAvoidOptionEnumMap.find(attr.value());
@@ -193,6 +213,7 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
                                        chosenHeadingOption,
                                        chosenUpdateOption,
                                        avoidChosenOption,
+                                       chosenAllianceColor,
                                        zoneMode));
             }
 

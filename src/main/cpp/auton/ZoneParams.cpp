@@ -33,6 +33,7 @@ ZoneParams::ZoneParams(
 	ChassisOptionEnums::HeadingOption headingOption,
 	ChassisOptionEnums::DriveStateType pathUpdateOption,
 	ChassisOptionEnums::AutonAvoidOptions autonavoidoption,
+	ChassisOptionEnums::AllianceColor allianceColor,
 	ZoneMode zoneMode) : m_xgrid1rect(xgrid1rect),
 						 m_xgrid2rect(xgrid2rect),
 						 m_ygrid1rect(ygrid1rect),
@@ -41,6 +42,7 @@ ZoneParams::ZoneParams(
 						 m_headingOption(headingOption),
 						 m_avoidoption(autonavoidoption),
 						 m_pathUpdateOption(pathUpdateOption),
+						 m_allianceColor(allianceColor),
 						 m_zoneMode(zoneMode),
 						 m_circlePose(circlePose),
 						 m_radius(radius)

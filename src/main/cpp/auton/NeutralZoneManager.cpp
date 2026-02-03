@@ -25,5 +25,5 @@ std::string NeutralZoneManager::GetZoneFile()
 
 bool NeutralZoneManager::isInNeutralZone()
 {
-    return isInZone(GetZoneFile());
+    return IsInZone(GetZoneFile());
 }

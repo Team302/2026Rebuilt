@@ -16,19 +16,29 @@
 
 using frc::DriverStation;
 
+AllianceZoneManager *AllianceZoneManager::m_instance = nullptr;
+AllianceZoneManager *AllianceZoneManager::GetInstance()
+{
+    if (AllianceZoneManager::m_instance == nullptr)
+    {
+        AllianceZoneManager::m_instance = new AllianceZoneManager();
+    }
+    return AllianceZoneManager::m_instance;
+}
+
 std::string AllianceZoneManager::GetZoneFile()
 {
     if (DriverStation::GetAlliance() == DriverStation::Alliance::kRed)
     {
-        return "RedAllianceZone.xml";
+        return m_zoneFiles[0];
     }
     else
     {
-        return "BlueAllianceZone.xml";
+        return m_zoneFiles[1];
     }
 }
 
-bool AllianceZoneManager::isInAllianceZone()
+bool AllianceZoneManager::IsInAllianceZone()
 {
-    return isInZone();
+    return IsInZone(GetZoneFile());
 }

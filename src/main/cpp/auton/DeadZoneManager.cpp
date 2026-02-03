@@ -32,5 +32,5 @@ std::string DeadZoneManager::GetZoneFile()
 
 bool DeadZoneManager::isInDeadZone()
 {
-    return isInZone(GetZoneFile()) || isInZone(m_neutralZoneFile);
+    return IsInZone(GetZoneFile()) || IsInZone(m_neutralZoneFile);
 }

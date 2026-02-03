@@ -36,8 +36,8 @@ class ZoneHelper
 public:
     void InitZones();
     virtual std::string GetZoneFile() = 0;
-    bool isInZone();
-    bool isInZone(std::string zoneFile);
+    bool IsInZones();
+    bool IsInZone(std::string zoneFile);
 
 protected:
     frc::Pose2d m_robotPose = m_chassis->GetPose();
