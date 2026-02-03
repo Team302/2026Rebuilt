@@ -14,14 +14,14 @@
 //====================================================================================================================================================
 
 // Developer documentation:
-// Brief: High-level manager for vision subsystems (Limelight + QUEST).
+// Brief: High-level manager for vision (Limelight + QUEST).
 // Responsibilities:
 //  - Singleton access via DragonVision::GetDragonVision()
 //  - Manage multiple DragonLimelight instances and a DragonQuest instance
 //  - Query and aggregate AprilTag and object-detection targets across cameras
 //  - Select targets according to VisionTargetOption and return selected target data
 //  - Provide robot pose estimates fused/selected from camera poses
-//  - Configure per-camera pipelines and set robot pose for vision subsystems
+//  - Configure per-camera pipelines and set robot pose for vision
 //
 // Notes:
 //  - Not thread-safe; callers must synchronize if used from multiple threads concurrently.
@@ -295,10 +295,12 @@ std::optional<VisionPose> DragonVision::GetRobotPositionMegaTag1()
 		auto pose = limelight->GetMegaTag1Pose();
 		if (pose.has_value())
 		{
-			poses.emplace_back(pose.value());
+			return pose;
+			// poses.emplace_back(pose.value());
 		}
 	}
-	return GetBestPose(poses);
+	return std::nullopt;
+	// return GetBestPose(poses);
 }
 
 /// @brief Query all registered limelights for MegaTag2-based robot poses and choose the best.
@@ -313,10 +315,12 @@ std::optional<VisionPose> DragonVision::GetRobotPositionMegaTag2()
 		auto pose = limelight->GetMegaTag2Pose();
 		if (pose.has_value())
 		{
-			poses.emplace_back(pose.value());
+			return pose;
+			// poses.emplace_back(pose.value());
 		}
 	}
-	return GetBestPose(poses);
+	return std::nullopt;
+	// return GetBestPose(poses);
 }
 
 /// @brief Get robot pose estimate derived from Quest detections.
@@ -331,7 +335,7 @@ DragonVisionPoseEstimatorStruct DragonVision::GetRobotPositionQuest()
 	return {};
 }
 
-/// @brief Set a robot pose for all vision subsystems that consume robot pose information.
+/// @brief Set a robot pose for all vision that consume robot pose information.
 /// @param pose The new robot pose (frc::Pose2d) to distribute.
 /// @note Updates all running limelights and the DragonQuest instance (if present).
 void DragonVision::SetRobotPose(const frc::Pose2d &pose)

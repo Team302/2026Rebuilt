@@ -86,7 +86,6 @@ DragonLimelight::DragonLimelight(std::string networkTableName,
     SetLEDMode(ledMode);
     SetPipeline(initialPipeline);
     SetCameraPose_RobotSpace(mountingXOffset.to<double>(), mountingYOffset.to<double>(), mountingZOffset.to<double>(), roll.to<double>(), pitch.to<double>(), yaw.to<double>());
-    m_cameraName = LimelightHelpers::sanitizeName(std::string(networkTableName));
     for (int port = 5800; port <= 5809; port++)
     {
         wpi::PortForwarder::GetInstance().Add(port + static_cast<int>(identifier), "limelight.local", port);
@@ -141,7 +140,7 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetAprilTagVis
 
     for (auto aprilTag : aprilTags)
     {
-        auto isValid = IsValidAprilTag(m_cameraName, validAprilTagIDs, aprilTag.id);
+        auto isValid = IsValidAprilTag(m_networkTableName, validAprilTagIDs, aprilTag.id);
 
         if (!isValid)
         {
@@ -231,7 +230,7 @@ std::optional<VisionPose> DragonLimelight::EstimatePoseOdometryLimelight(bool us
     }
 
     auto mode = static_cast<int>(LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_ONLY); // Chief Delphi answer says perfect portrait pose doesn't work with internal IMU
-    LimelightHelpers::SetIMUMode(m_cameraName, mode);
+    LimelightHelpers::SetIMUMode(m_networkTableName, mode);
 
     if (useMegatag2)
     {
@@ -251,13 +250,13 @@ std::optional<VisionPose> DragonLimelight::EstimatePoseOdometryLimelight(bool us
 /// ----------------------------------------------------------------------------------
 std::optional<VisionPose> DragonLimelight::GetMegaTag1Pose()
 {
-    auto limelightMeasurement = LimelightHelpers::getBotPoseEstimate_wpiBlue(m_cameraName);
+    auto limelightMeasurement = LimelightHelpers::getBotPoseEstimate_wpiBlue(m_networkTableName);
 
     if (limelightMeasurement.tagCount == 0)
     {
         return std::nullopt;
     }
-    auto deviations = GetStandardDeviationsForMetaTag1PoseEstimation(m_cameraName, limelightMeasurement.tagCount, limelightMeasurement.avgTagArea);
+    auto deviations = GetStandardDeviationsForMetaTag1PoseEstimation(m_networkTableName, limelightMeasurement.tagCount, limelightMeasurement.avgTagArea);
     if (!deviations.has_value())
     {
         return std::nullopt;
@@ -290,7 +289,7 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag1Pose()
 /// ----------------------------------------------------------------------------------
 std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
 {
-    auto hasTarget = LimelightHelpers::getTV(m_cameraName);
+    auto hasTarget = LimelightHelpers::getTV(m_networkTableName);
     if (!hasTarget)
     {
         return std::nullopt;
@@ -306,8 +305,8 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
     }
     // Get the pose estimate
     auto mode = frc::DriverStation::IsDisabled() ? static_cast<int>(LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_AND_FUSE_WITH_INTERNAL_IMU) : static_cast<int>(LIMELIGHT_IMU_MODE::USE_INTERNAL_IMU);
-    LimelightHelpers::SetIMUMode(m_cameraName, mode);
-    auto poseEstimate = LimelightHelpers::getBotPoseEstimate_wpiBlue_MegaTag2(m_cameraName);
+    LimelightHelpers::SetIMUMode(m_networkTableName, mode);
+    auto poseEstimate = LimelightHelpers::getBotPoseEstimate_wpiBlue_MegaTag2(m_networkTableName);
 
     double xyStds = .7;
     double degStds = 9999999;
@@ -330,17 +329,17 @@ void DragonLimelight::SetLEDMode(DRAGON_LIMELIGHT_LED_MODE mode)
     switch (mode)
     {
     case DRAGON_LIMELIGHT_LED_MODE::LED_PIPELINE_CONTROL:
-        LimelightHelpers::setLEDMode_PipelineControl(m_cameraName);
+        LimelightHelpers::setLEDMode_PipelineControl(m_networkTableName);
         break;
     case DRAGON_LIMELIGHT_LED_MODE::LED_BLINK:
-        LimelightHelpers::setLEDMode_ForceBlink(m_cameraName);
+        LimelightHelpers::setLEDMode_ForceBlink(m_networkTableName);
         break;
     case DRAGON_LIMELIGHT_LED_MODE::LED_ON:
-        LimelightHelpers::setLEDMode_ForceOn(m_cameraName);
+        LimelightHelpers::setLEDMode_ForceOn(m_networkTableName);
         break;
     case DRAGON_LIMELIGHT_LED_MODE::LED_OFF: // default to off
     default:
-        LimelightHelpers::setLEDMode_ForceOff(m_cameraName);
+        LimelightHelpers::setLEDMode_ForceOff(m_networkTableName);
         break;
     }
 }
@@ -353,7 +352,7 @@ void DragonLimelight::SetLEDMode(DRAGON_LIMELIGHT_LED_MODE mode)
 void DragonLimelight::SetPipeline(DRAGON_LIMELIGHT_PIPELINE pipeline)
 {
     m_pipeline = pipeline;
-    LimelightHelpers::setPipelineIndex(m_cameraName, static_cast<int>(pipeline));
+    LimelightHelpers::setPipelineIndex(m_networkTableName, static_cast<int>(pipeline));
 }
 
 /// ----------------------------------------------------------------------------------
@@ -362,7 +361,7 @@ void DragonLimelight::SetPipeline(DRAGON_LIMELIGHT_PIPELINE pipeline)
 /// ----------------------------------------------------------------------------------
 void DragonLimelight::SetPriorityTagID(int id)
 {
-    LimelightHelpers::setPriorityTagID(m_cameraName, id);
+    LimelightHelpers::setPriorityTagID(m_networkTableName, id);
 }
 
 /// ----------------------------------------------------------------------------------
@@ -377,7 +376,7 @@ void DragonLimelight::SetPriorityTagID(int id)
 /// ----------------------------------------------------------------------------------
 void DragonLimelight::SetCameraPose_RobotSpace(double forward, double left, double up, double roll, double pitch, double yaw)
 {
-    LimelightHelpers::setCameraPose_RobotSpace(m_cameraName, forward, left, up, roll, pitch, yaw);
+    LimelightHelpers::setCameraPose_RobotSpace(m_networkTableName, forward, left, up, roll, pitch, yaw);
 }
 
 namespace
@@ -494,7 +493,7 @@ void DragonLimelight::SetRobotPose(const frc::Pose2d &pose)
         roll = m_cameraPose.Rotation().X().value();
     }
 
-    LimelightHelpers::SetRobotOrientation(m_cameraName,
+    LimelightHelpers::SetRobotOrientation(m_networkTableName,
                                           pose.Rotation().Degrees().value(),
                                           yawrate,
                                           pitch,

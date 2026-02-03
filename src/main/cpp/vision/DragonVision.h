@@ -32,11 +32,9 @@
 
 #include "fielddata/FieldConstants.h"
 
-#include <frc2/command/SubsystemBase.h>
-
 // Developer documentation:
 // @file DragonVision.h
-// @brief High-level vision subsystem interface.
+// @brief High-level vision interface.
 //
 // Purpose:
 //   DragonVision centralizes camera and vision processing integration for the robot.
@@ -53,14 +51,14 @@
 //
 // Usage notes:
 //   - AddLimelight/AddQuest should be called during robot initialization to register
-//     cameras with this subsystem.
+//     cameras with this.
 //   - GetRobotPositionMegaTag* returns an optional VisionPose; callers should check
 //     for validity before use.
 //   - Keep enum and NT key mappings synchronized with camera wrappers and network
 //     table consumers to avoid mismatches.
 //
 // Class summary:
-//   DragonVision : frc2::SubsystemBase
+//   DragonVision
 //     - Public API: AddLimelight, AddQuest, GetRobotPositionMegaTag*, HealthCheck, SetPipeline
 //     - Threading: callers should assume single-threaded access from the robot loop.
 //
@@ -69,27 +67,27 @@
 //     selection to improve readability and reduce magic constants.
 //   - Avoid reordering enum values if they are persisted or communicated via NT.
 
-class DragonVision : public frc2::SubsystemBase
+class DragonVision
 /**
  * @class DragonVision
  * @brief Manages vision-related functionality, including camera initialization,
  *        AprilTag detection, object detection, and robot pose estimation.
  *
  * This class provides a singleton interface for managing vision systems,
- * including Limelight cameras and the DragonQuest subsystem. It supports
+ * including Limelight cameras and the DragonQuest. It supports
  * registering cameras, aggregating detection results, performing health checks,
  * and estimating robot poses based on vision data.
  *
  * Key Features:
  * - Singleton pattern for centralized vision management.
  * - Support for AprilTag and object detection.
- * - Health checks for cameras and vision subsystems.
+ * - Health checks for cameras and vision.
  * - Robot pose estimation using multiple detection methods.
  *
  * Usage Notes:
  * - The singleton instance is not thread-safe during initialization; ensure
  *   proper synchronization if accessed concurrently during startup.
- * - Camera and subsystem lifetimes must be managed externally; raw pointers
+ * - Camera lifetime must be managed externally; raw pointers
  *   are stored internally without ownership transfer.
  * - The class is designed for use throughout the program's lifetime, with
  *   intentional memory leaks for the singleton instance.
@@ -123,7 +121,7 @@ public:
     /// @note The manager takes ownership of the camera and will delete it when appropriate.
     void AddLimelight(std::unique_ptr<DragonLimelight> camera, DRAGON_LIMELIGHT_CAMERA_USAGE usage);
 
-    /// @brief Register the DragonQuest vision subsystem.
+    /// @brief Register the DragonQuest vision.
     /// @param quest Unique pointer to the DragonQuest instance (ownership IS transferred).
     void AddQuest(std::unique_ptr<DragonQuest> quest);
 
@@ -191,9 +189,9 @@ private:
     /// @brief Constructor (private for singleton).
     DragonVision();
     /// @brief Destructor - cleans up owned resources.
-    ~DragonVision() override;
+    ~DragonVision();
 
-    /// @brief Distribute a Pose2d to vision subsystems that accept external robot pose.
+    /// @brief Distribute a Pose2d to vision that accept external robot pose.
     /// @param pose The pose to set (frc::Pose2d).
     /// @note Updates running limelights and the registered DragonQuest instance.
     void SetRobotPose(const frc::Pose2d &pose);
@@ -222,6 +220,6 @@ private:
     /// @brief Registered DragonQuest instance (owned by DragonVision).
     std::unique_ptr<DragonQuest> m_dragonQuest;
 
-    /// @brief Tracks whether an initial pose has been set on vision subsystems.
+    /// @brief Tracks whether an initial pose has been set on vision.
     bool m_initialPoseSet = false;
 };
