@@ -17,6 +17,7 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "frc/geometry/Pose2d.h"
 #include "utils/PoseUtils.h"
+#include "utils/PoseUtils.cpp"
 
 DriveToTowerHelper *DriveToTowerHelper::m_instance = nullptr;
 
@@ -88,13 +89,39 @@ frc::Pose2d DriveToTowerHelper::CalcTowerPose() const
     auto isNearestTowerRed = IsNearestTowerRed();
     auto neutralPose = isNearestTowerRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER)
                                          : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER);
+    if (IsNearestTowerRed())
+    {
+        auto closestFieldElement = PoseUtils::GetClosestFieldElement(neutralPose, FieldConstants::FIELD_ELEMENT::RED_DEPOT_LEFT_SIDE, FieldConstants::FIELD_ELEMENT::RED_OUTPOST_PASSING_TARGET);
+        if (closestFieldElement == FieldConstants::FIELD_ELEMENT::RED_DEPOT_LEFT_SIDE)
+        {
+            return frc::Pose2d(neutralPose.X(), neutralPose.Y() - units::length::inch_t(12.0), 0_deg);
+        }
+        else
+        {
+            return frc::Pose2d(neutralPose.X(), neutralPose.Y() + units::length::inch_t(12.0), 0_deg);
+        }
 
-    // neutralPose X accounts for half the robot on the intake side + bumpers + agitator/intake being extended
-    // neutralPose Y is center of the depot - no need to average with the side values
-    // rotation is based on the color
-    return frc::Pose2d(neutralPose.X(), neutralPose.Y(), isNearestTowerRed ? 0_deg : 180_deg);
+        // equasion to position robot correctly with offset
+    }
+    else
+    {
+        auto closestFieldElement = PoseUtils::GetClosestFieldElement(neutralPose, FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_LEFT_SIDE, FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_PASSING_TARGET);
+        if (closestFieldElement == FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_LEFT_SIDE)
+        {
+            return frc::Pose2d(neutralPose.X(), neutralPose.Y() - units::length::inch_t(12.0), 180_deg);
+        }
+        else
+        {
+            return frc::Pose2d(neutralPose.X(), neutralPose.Y() + units::length::inch_t(12.0), 180_deg);
+        }
+    }
 }
 
+// return frc::Pose2d(neutralPose.X(), neutralPose.Y(), isNearestTowerRed ? 0_deg : 180_deg);
+
+// neutralPose X accounts for half the robot on the intake side + bumpers + agitator/intake being extended
+// neutralPose Y is center of the depot - no need to average with the side values
+// rotation is based on the color
 //------------------------------------------------------------------
 /// @brief      Calculates the distance from a given pose to a field element
 /// @param[in]  element - The field element to measure distance to
