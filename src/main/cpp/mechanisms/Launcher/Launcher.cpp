@@ -42,6 +42,7 @@
 
 #include "teleopcontrol/TeleopControl.h"
 #include "utils/InterpolateUtils.h"
+#include "units/math.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -114,7 +115,8 @@ void Launcher::CreateAndRegisterStates()
 
 Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANISM_TYPE::LAUNCHER, std::string("Launcher")),
 													m_activeRobotId(activeRobotId),
-													m_stateMap()
+													m_stateMap(),
+													m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis())
 {
 	PeriodicLooper::GetInstance()->RegisterAll(this);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Bool);
@@ -717,13 +719,14 @@ bool Launcher::IsLauncherAtTarget()
 	units::angle::degree_t turretError = m_turret->GetPosition().GetValue() - m_targetTurretAngle;
 	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = m_launcher->GetVelocity().GetValue() - m_targetLauncherAngularVelocity;
 	bool inLaunchzone = IsInLaunchZone();
-	// units::velocity::meters_per_second_t chassisSpeed = m_chassis->GetVelocity();
+	auto chassisSpeeds = m_chassis->GetState().Speeds;
+
+	auto Speed = units::math::sqrt(units::math::abs(chassisSpeeds.vx * chassisSpeeds.vx) + units::math::abs(chassisSpeeds.vy * chassisSpeeds.vy));
 	return ((units::math::abs(hoodError) < m_hoodAngleThreshold) &&
 			(units::math::abs(turretError) < m_turretAngleThreshold) &&
 			(units::math::abs(launcherSpeedError) < m_launcherVelocityThreshold) &&
-			(inLaunchzone) /*&&
-			units::math::abs(chassisSpeed) < m_chassisSpeedThreshold*/
-	);
+			(inLaunchzone) &&
+			(Speed < m_chassisSpeedThreshold));
 }
 bool Launcher::IsInLaunchZone() const
 {
