@@ -735,7 +735,7 @@ bool Launcher::IsLauncherAtTarget()
 bool Launcher::IsInLaunchZone() const
 {
 	// call deadzone manager to see if we can or can't launch
-	return false;
+	return true;
 }
 void Launcher::CalculateTargets()
 {
