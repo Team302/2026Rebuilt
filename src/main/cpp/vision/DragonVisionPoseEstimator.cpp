@@ -80,11 +80,6 @@ void DragonVisionPoseEstimator::RunCurrentState()
     // Make sure we have a vision subsystem pointer.
     // If we don't, try to get one
     // If we still don't have one exit
-    m_initializationDelay++;
-    if (m_initializationDelay < 1000)
-    {
-        return;
-    }
     if (!m_initialPoseSet)
     {
         CalculateInitialPose();
