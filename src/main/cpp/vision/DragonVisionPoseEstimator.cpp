@@ -144,17 +144,24 @@ void DragonVisionPoseEstimator::CalculateInitialPose()
     }
 
     // try making sure MegaTag1 has a good position before resetting pose to avoid screwing up MegaTag2 && Quest
-    auto megaTag1Position = m_vision->GetRobotPositionMegaTag1();
-    if (megaTag1Position.has_value())
-    {
-        ResetPosition(megaTag1Position.value().estimatedPose.ToPose2d());
+    // auto megaTag1Position = m_vision->GetRobotPositionMegaTag1();
+    // if (megaTag1Position.has_value())
+    // {
+    //     ResetPosition(megaTag1Position.value().estimatedPose.ToPose2d());
 
-        auto megaTag2Position = m_vision->GetRobotPositionMegaTag2();
-        if (megaTag2Position.has_value())
-        {
-            ResetPosition(megaTag2Position.value().estimatedPose.ToPose2d());
-            m_initialPoseSet = true;
-        }
+    //     auto megaTag2Position = m_vision->GetRobotPositionMegaTag2();
+    //     if (megaTag2Position.has_value())
+    //     {
+    //         ResetPosition(megaTag2Position.value().estimatedPose.ToPose2d());
+    //         m_initialPoseSet = true;
+    //     }
+    // }
+
+    auto megaTag2Position = m_vision->GetRobotPositionMegaTag2();
+    if (megaTag2Position.has_value())
+    {
+        ResetPosition(megaTag2Position.value().estimatedPose.ToPose2d());
+        m_initialPoseSet = true;
     }
 }
 
