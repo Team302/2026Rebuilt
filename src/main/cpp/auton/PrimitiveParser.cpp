@@ -27,6 +27,12 @@
 
 #include <pugixml/pugixml.hpp>
 
+#include "mechanisms/MechanismTypes.h"
+#include "configs/MechanismConfigMgr.h"
+#include "mechanisms/Intake/Intake.h"
+#include "mechanisms/Launcher/Launcher.h"
+#include "mechanisms/Climber/Climber.h"
+
 using namespace std;
 using namespace pugi;
 
@@ -119,6 +125,10 @@ PrimitiveParamsVector PrimitiveParser::ParseXML(string fulldirfile)
                     auto headingOption = ChassisOptionEnums::HeadingOption::IGNORE;
                     auto heading = 0.0;
                     auto visionAlignment = PrimitiveParams::VISION_ALIGNMENT::UNKNOWN;
+                    auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
+                    Intake::STATE_NAMES intakeState = Intake::STATE_OFF;
+                    Launcher::STATE_NAMES launcherState = Launcher::STATE_OFF;
+                    Climber::STATE_NAMES climberState = Climber::STATE_OFF;
 
                     std::string pathName;
                     std::string choreoTrajectoryName;
@@ -201,8 +211,61 @@ PrimitiveParamsVector PrimitiveParser::ParseXML(string fulldirfile)
                             }
                             **/
                         }
-                    }
+                        else if (strcmp(attr.name(), "intakeState") == 0)
+                        {
+                            if (config != nullptr && config->GetMechanism(MechanismTypes::MECHANISM_TYPE::INTAKE) != nullptr)
+                            {
+                                Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("PrimitiveParser"), string("Found intake mechanism"), string(attr.value()));
 
+                                auto intakeStateItr = Intake::stringToSTATE_NAMESEnumMap.find(attr.value());
+                                if (intakeStateItr != Intake::stringToSTATE_NAMESEnumMap.end())
+                                {
+                                    intakeState = intakeStateItr->second;
+                                }
+                                else
+                                {
+                                    Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("PrimitiveParser"), string("ParseXML invalid intake state"), attr.value());
+                                    hasError = true;
+                                }
+                            }
+                        }
+                        else if (strcmp(attr.name(), "launcherState") == 0)
+                        {
+                            if (config != nullptr && config->GetMechanism(MechanismTypes::MECHANISM_TYPE::LAUNCHER) != nullptr)
+                            {
+                                Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("PrimitiveParser"), string("Found launcher mechanism"), string(attr.value()));
+
+                                auto launcherStateItr = Launcher::stringToSTATE_NAMESEnumMap.find(attr.value());
+                                if (launcherStateItr != Launcher::stringToSTATE_NAMESEnumMap.end())
+                                {
+                                    launcherState = launcherStateItr->second;
+                                }
+                                else
+                                {
+                                    Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("PrimitiveParser"), string("ParseXML invalid launcher state"), attr.value());
+                                    hasError = true;
+                                }
+                            }
+                        }
+                        else if (strcmp(attr.name(), "climberState") == 0)
+                        {
+                            if (config != nullptr && config->GetMechanism(MechanismTypes::MECHANISM_TYPE::CLIMBER) != nullptr)
+                            {
+                                Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("PrimitiveParser"), string("Found climber mechanism"), string(attr.value()));
+
+                                auto climberStateItr = Climber::stringToSTATE_NAMESEnumMap.find(attr.value());
+                                if (climberStateItr != Climber::stringToSTATE_NAMESEnumMap.end())
+                                {
+                                    climberState = climberStateItr->second;
+                                }
+                                else
+                                {
+                                    Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("PrimitiveParser"), string("ParseXML invalid climber state"), attr.value());
+                                    hasError = true;
+                                }
+                            }
+                        }
+                    }
                     if (!hasError)
                     {
                         for (xml_node child = primitiveNode.first_child(); child && !hasError; child = child.next_sibling())
@@ -233,7 +296,10 @@ PrimitiveParamsVector PrimitiveParser::ParseXML(string fulldirfile)
                                                                      zones, // vector of all zones included as part of the path
                                                                             // can have multiple zones as part of a complex path
                                                                      visionAlignment,
-                                                                     pathUpdateOption));
+                                                                     pathUpdateOption,
+                                                                     intakeState,
+                                                                     launcherState,
+                                                                     climberState));
                     }
                     else
                     {

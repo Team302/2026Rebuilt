@@ -219,7 +219,7 @@ void CyclePrimitives::SetMechanismStatesFromParam(PrimitiveParams *params)
 
         auto launcherMgr = launcherStateMgr != nullptr ? dynamic_cast<Launcher *>(launcherStateMgr) : nullptr;
 
-        // if (taleMgr != nullptr && params->IsTaleStateChanging())
+        // if (launcherMgr != nullptr && params->IsTaleStateChanging())
         // {
         //     taleMgr->SetCurrentState(params->GetTaleState(), true);
         // }

@@ -27,6 +27,9 @@
 #include "chassis/ChassisOptionEnums.h"
 #include "vision/DragonVision.h"
 #include "auton/ZoneParams.h"
+#include "mechanisms/Intake/Intake.h"
+#include "mechanisms/Launcher/Launcher.h"
+#include "mechanisms/Climber/Climber.h"
 
 // Third Party Includes
 
@@ -45,7 +48,10 @@ public:
                     std::string choreoTrajectoryName,
                     ZoneParamsVector zones, // create zones parameter of type
                     VISION_ALIGNMENT visionAlignment,
-                    ChassisOptionEnums::DriveStateType pathUpdateOption); // create zones parameter of type ZonesParamsVector
+                    ChassisOptionEnums::DriveStateType pathUpdateOption,
+                    Intake::STATE_NAMES intakeState,
+                    Launcher::STATE_NAMES launcherState,
+                    Climber::STATE_NAMES climberState); // create zones parameter of type ZonesParamsVector
 
     PrimitiveParams() = delete;
     virtual ~PrimitiveParams() = default; // Destructor
@@ -76,6 +82,9 @@ private:
     ZoneParamsVector m_zones;
 
     ChassisOptionEnums::DriveStateType m_pathUpdateOption;
+    Intake::STATE_NAMES m_intakeState;
+    Launcher::STATE_NAMES m_launcherState;
+    Climber::STATE_NAMES m_climberState;
 };
 
 typedef std::vector<PrimitiveParams *> PrimitiveParamsVector;
