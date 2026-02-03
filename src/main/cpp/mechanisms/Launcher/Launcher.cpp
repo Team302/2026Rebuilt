@@ -718,19 +718,12 @@ bool Launcher::IsLauncherAtTarget()
 	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = m_launcher->GetVelocity().GetValue() - m_targetLauncherAngularVelocity;
 	bool inLaunchzone = IsInLaunchZone();
 	// units::velocity::meters_per_second_t chassisSpeed = m_chassis->GetVelocity();
-	if (units::math::abs(hoodError) < m_hoodAngleThreshold &&
-		units::math::abs(turretError) < m_turretAngleThreshold &&
-		units::math::abs(launcherSpeedError) < m_launcherVelocityThreshold &&
-		inLaunchzone /*&&
-		units::math::abs(chassisSpeed) < m_chassisSpeedThreshold*/
-	)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return ((units::math::abs(hoodError) < m_hoodAngleThreshold) &&
+			(units::math::abs(turretError) < m_turretAngleThreshold) &&
+			(units::math::abs(launcherSpeedError) < m_launcherVelocityThreshold) &&
+			(inLaunchzone) /*&&
+			units::math::abs(chassisSpeed) < m_chassisSpeedThreshold*/
+	);
 }
 bool Launcher::IsInLaunchZone() const
 {
