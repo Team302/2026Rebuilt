@@ -143,7 +143,7 @@ std::map<std::string, Climber::STATE_NAMES>
 void Climber::CreateCompBot302()
 {
 	m_ntName = "Climber";
-	m_climber = new ctre::phoenix6::hardware::TalonFX(12, ctre::phoenix6::CANBus("canivore"));
+	m_climber = new ctre::phoenix6::hardware::TalonFX(11, ctre::phoenix6::CANBus("canivore"));
 
 	m_extender = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 2);
 	m_alignment = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 3);
@@ -151,7 +151,7 @@ void Climber::CreateCompBot302()
 	ctre::phoenix6::configs::CANcoderConfiguration ClimberRotationConfigs{};
 	ClimberRotationConfigs.MagnetSensor.MagnetOffset = units::angle::turn_t(0);
 	ClimberRotationConfigs.MagnetSensor.SensorDirection = ctre::phoenix6::signals::SensorDirectionValue::CounterClockwise_Positive;
-	m_climberRotation = new ctre::phoenix6::hardware::CANcoder(12, ctre::phoenix6::CANBus("canivore"));
+	m_climberRotation = new ctre::phoenix6::hardware::CANcoder(11, ctre::phoenix6::CANBus("canivore"));
 	m_climberRotation->GetConfigurator().Apply(ClimberRotationConfigs);
 
 	m_positionDegree = new ControlData(

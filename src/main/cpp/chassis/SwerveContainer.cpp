@@ -19,6 +19,7 @@
 #include "chassis/commands/TeleopRobotDrive.h"
 #include "frc2/command/ProxyCommand.h"
 #include "frc2/command/button/RobotModeTriggers.h"
+#include "frc2/command/Commands.h"
 #include "state/RobotState.h"
 #include "utils/logging/debug/Logger.h"
 
@@ -54,6 +55,8 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
                                      m_driveToDepot(std::make_unique<DriveToDepot>(m_chassis)),
                                      m_driveToOutpost(std::make_unique<DriveToOutpost>(m_chassis))
 {
+    RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
+
     if (m_chassis != nullptr)
     {
         ConfigureBindings();
@@ -117,11 +120,28 @@ void SwerveContainer::CreateStandardDriveCommands(TeleopControl *controller)
 //------------------------------------------------------------------
 void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
 {
-    // auto driveToDepot = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_DEPOT);
-    // driveToDepot.WhileTrue(frc2::ProxyCommand(m_driveToDepot.get()).ToPtr());
+    auto driveToDepot = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_DEPOT);
+    auto driveToOutpost = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_OUTPOST);
 
-    // auto driveToOutpost = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_OUTPOST);
-    // driveToOutpost.WhileTrue(frc2::ProxyCommand(m_driveToOutpost.get()).ToPtr());
+    driveToDepot.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::Command *
+                                                    {
+        if (m_climbModeStatus) {
+            // TODO: Replace with actual Drive To Tower Depot Side Command
+        }
+        else
+        {
+            return m_driveToDepot.get();
+        } }));
+
+    driveToOutpost.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::Command *
+                                                      {
+        if (m_climbModeStatus) {
+            // TODO: Replace with actual Drive To Tower Outpost Side Command
+        }
+        else
+        {
+            return m_driveToOutpost.get();
+        } }));
 }
 
 //------------------------------------------------------------------
@@ -156,5 +176,8 @@ void SwerveContainer::SetSysIDBinding(TeleopControl *controller)
 //------------------------------------------------------------------
 void SwerveContainer::NotifyStateUpdate(RobotStateChanges::StateChange change, int value)
 {
-    // Fill in as needed
+    if (change == RobotStateChanges::StateChange::ClimbModeStatus_Bool)
+    {
+        m_climbModeStatus = value;
+    }
 }
