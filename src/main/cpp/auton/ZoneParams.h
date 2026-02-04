@@ -24,6 +24,9 @@
 #include "auton/AutonGrid.h"
 #include "chassis/ChassisOptionEnums.h"
 #include "auton/PrimitiveEnums.h"
+#include "mechanisms/Launcher/Launcher.h"
+#include "mechanisms/Intake/Intake.h"
+#include "mechanisms/Climber/Climber.h"
 
 // Third Party Includes
 
@@ -39,15 +42,21 @@ class ZoneParams
 public:
     ZoneParams(frc::Pose2d circlePose,
                units::length::inch_t radius,
-               units::length::meter_t m_xgrid1rect,
-               units::length::meter_t m_xgrid2rect,
-               units::length::meter_t m_ygrid1rect,
-               units::length::meter_t m_ygrid2rect,
+               units::length::meter_t xgrid1rect,
+               units::length::meter_t xgrid2rect,
+               units::length::meter_t ygrid1rect,
+               units::length::meter_t ygrid2rect,
                ChassisOptionEnums::AutonChassisOptions autonchassisoption,
                ChassisOptionEnums::HeadingOption headingOption,
                ChassisOptionEnums::DriveStateType pathUpdateOption,
                ChassisOptionEnums::AutonAvoidOptions autonavoidoption,
-               ZoneMode zoneMode); // declare ZoneParams public constructor with parameters xgrid1, etc.
+               ZoneMode zoneMode,
+               bool isLauncherStateChanged,
+               bool isIntakeStateChanged,
+               bool isClimberStateChanged,
+               Launcher::STATE_NAMES launcherState,
+               Intake::STATE_NAMES intakeState,
+               Climber::STATE_NAMES climberState); // declare ZoneParams public constructor with parameters xgrid1, etc.
 
     ZoneParams() = delete;
     ~ZoneParams() = default; // Destructor
@@ -65,27 +74,40 @@ public:
     ChassisOptionEnums::DriveStateType GetPathUpdateOption() const { return m_pathUpdateOption; }
 
     ChassisOptionEnums::HeadingOption GetHeadingOption() const { return m_headingOption; }
-    ChassisOptionEnums::AutonChassisOptions GetChassisOption() const { return m_chassisoption; }
+    ChassisOptionEnums::AutonChassisOptions GetChassisOption() const { return m_autonChassisOption; }
     ChassisOptionEnums::AutonAvoidOptions GetAvoidOption() const { return m_avoidoption; }
 
     bool IsPoseInZone(frc::Pose2d robotPose);
 
+    bool IsLauncherStateChanging() const { return m_isLauncherStateChanged; }
+    bool IsIntakeStateChanging() const { return m_isIntakeStateChanged; }
+    bool IsClimberStateChanging() const { return m_isClimberStateChanged; }
+    Launcher::STATE_NAMES GetLauncherState() const { return m_launcherState; }
+    Intake::STATE_NAMES GetIntakeState() const { return m_intakeState; }
+    Climber::STATE_NAMES GetClimberState() const { return m_climberState; }
+
 private:
+    frc::Pose2d m_circlePose;
+    units::length::inch_t m_radius;
+
     units::length::meter_t m_xgrid1rect;
     units::length::meter_t m_xgrid2rect;
     units::length::meter_t m_ygrid1rect;
     units::length::meter_t m_ygrid2rect;
 
-    ChassisOptionEnums::AutonChassisOptions m_chassisoption;
+    ChassisOptionEnums::AutonChassisOptions m_autonChassisOption;
     ChassisOptionEnums::HeadingOption m_headingOption;
-    ChassisOptionEnums::AutonAvoidOptions m_avoidoption; // instances of said parameters
-
     ChassisOptionEnums::DriveStateType m_pathUpdateOption;
+    ChassisOptionEnums::AutonAvoidOptions m_avoidoption; // instances of said parameters
 
     ZoneMode m_zoneMode;
 
-    frc::Pose2d m_circlePose;
-    units::length::inch_t m_radius;
+    bool m_isLauncherStateChanged;
+    bool m_isIntakeStateChanged;
+    bool m_isClimberStateChanged;
+    Launcher::STATE_NAMES m_launcherState;
+    Intake::STATE_NAMES m_intakeState;
+    Climber::STATE_NAMES m_climberState;
 };
 
 typedef std::vector<ZoneParams *> ZoneParamsVector; // create typedef ZoneParamsVector
