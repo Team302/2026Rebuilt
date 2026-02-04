@@ -18,7 +18,6 @@
 #include <frc/geometry/Pose2d.h>
 #include <utils/FMSData.h>
 #include <auton/AutonGrid.h>
-#include <auton/ZoneParams.h>
 #include <utils/TargetCalculator.h>
 #include <chassis/generated/CommandSwerveDrivetrain.h>
 
@@ -28,6 +27,7 @@
 // FRC includes
 
 // Team 302 includes
+class ZoneParams; // Forward declaration
 
 // Third Party Includes
 

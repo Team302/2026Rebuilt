@@ -49,8 +49,11 @@ public:
                     ZoneParamsVector zones, // create zones parameter of type
                     VISION_ALIGNMENT visionAlignment,
                     ChassisOptionEnums::DriveStateType pathUpdateOption,
-                    Intake::STATE_NAMES intakeState,
+                    bool launcherStateChanged,
+                    bool intakeStateChanged,
+                    bool climberStateChanged,
                     Launcher::STATE_NAMES launcherState,
+                    Intake::STATE_NAMES intakeState,
                     Climber::STATE_NAMES climberState); // create zones parameter of type ZonesParamsVector
 
     PrimitiveParams() = delete;
@@ -69,6 +72,13 @@ public:
 
     void SetVisionAlignment(VISION_ALIGNMENT visionAlignment) { m_visionAlignment = visionAlignment; }
 
+    bool IsLauncherStateChanging() const { return m_isLauncherStateChanged; }
+    bool IsIntakeStateChanging() const { return m_isIntakeStateChanged; }
+    bool IsClimberStateChanging() const { return m_isClimberStateChanged; }
+    Launcher::STATE_NAMES GetLauncherState() const { return m_launcherState; }
+    Intake::STATE_NAMES GetIntakeState() const { return m_intakeState; }
+    Climber::STATE_NAMES GetClimberState() const { return m_climberState; }
+
 private:
     // Primitive Parameters
     PRIMITIVE_IDENTIFIER m_id; // Primitive ID
@@ -82,8 +92,12 @@ private:
     ZoneParamsVector m_zones;
 
     ChassisOptionEnums::DriveStateType m_pathUpdateOption;
-    Intake::STATE_NAMES m_intakeState;
+
+    bool m_isLauncherStateChanged;
+    bool m_isIntakeStateChanged;
+    bool m_isClimberStateChanged;
     Launcher::STATE_NAMES m_launcherState;
+    Intake::STATE_NAMES m_intakeState;
     Climber::STATE_NAMES m_climberState;
 };
 
