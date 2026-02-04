@@ -95,7 +95,7 @@ private:
     /**
      * Optional quest/goal tracker used by vision logic (may be nullptr until initialized).
      */
-    DragonQuest *m_quest;
+    DragonQuest *m_quest = nullptr;
 
     /**
      * @brief Convert and add vision-based pose measurements to the drivetrain estimator.

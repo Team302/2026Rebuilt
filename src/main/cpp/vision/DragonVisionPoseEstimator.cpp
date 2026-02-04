@@ -63,6 +63,7 @@ DragonVisionPoseEstimator::DragonVisionPoseEstimator()
     m_vision = DragonVision::GetDragonVision();
     m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
     PeriodicLooper::GetInstance()->RegisterAll(this);
+    m_quest = m_vision->GetQuest();
 }
 void DragonVisionPoseEstimator::RunCommonTasks()
 {

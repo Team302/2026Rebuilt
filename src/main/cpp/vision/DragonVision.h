@@ -185,6 +185,10 @@ public:
     /// @return DragonVisionPoseEstimatorStruct - confidence level indicates the usefulness of the pose.
     DragonVisionPoseEstimatorStruct GetRobotPositionQuest();
 
+    /// @brief Return the registered DragonQuest instance (may be nullptr).
+    /// @return Raw pointer to DragonQuest (no ownership transfer).
+    DragonQuest *GetQuest() const { return m_dragonQuest.get(); };
+
 private:
     /// @brief Constructor (private for singleton).
     DragonVision();
@@ -205,10 +209,6 @@ private:
     /// @param identifier Camera identifier to search for.
     /// @return Pointer to the DragonLimelight if found and running; nullptr otherwise.
     DragonLimelight *GetLimelightFromIdentifier(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier) const;
-
-    /// @brief Return the registered DragonQuest instance (may be nullptr).
-    /// @return Raw pointer to DragonQuest (no ownership transfer).
-    DragonQuest *GetQuest() const { return m_dragonQuest.get(); };
 
     /// @brief Singleton instance pointer.
     static DragonVision *m_dragonVision;
