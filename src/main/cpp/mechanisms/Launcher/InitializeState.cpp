@@ -65,6 +65,10 @@ void InitializeState::Run()
 	{
 		m_mechanism->SetLauncherInitialized(true);
 	}
+
+	// For Launcher Tuning Percent Out Testing
+	m_mechanism->SetLauncherInitialized(true);
+
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("InitializeState"), string("Run"));
 }
 

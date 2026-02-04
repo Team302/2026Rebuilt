@@ -216,7 +216,7 @@ private:
 	subsystems::CommandSwerveDrivetrain *m_chassis;
 	void CalculateTargets();
 
-	bool m_launcherInitialized = true;
+	bool m_launcherInitialized = false;
 	bool m_tuningLauncher = true;
 
 	// TODO MECH tune and change values in these arrays
