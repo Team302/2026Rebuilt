@@ -753,12 +753,14 @@ void Launcher::CalculateTargets()
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Distance To Target", distanceToTarget.value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Hood Angle Target", m_targetHoodAngle.value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Launcher Speed Target", m_targetLauncherAngularVelocity.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Launcher Speed RPM", units::angular_velocity::revolutions_per_minute_t(m_launcher->GetVelocity().GetValue()).value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Hood Angle", units::angle::degree_t(m_hood->GetPosition().GetValue()).value());
 }
 void Launcher::UpdateLauncherTargets()
 {
 	int currentState = GetCurrentState();
 
-	if (currentState == STATE_NAMES::STATE_OFF || currentState == STATE_NAMES::STATE_INITIALIZE || currentState == STATE_NAMES::STATE_CLIMB)
+	if (currentState == STATE_NAMES::STATE_OFF || currentState == STATE_NAMES::STATE_INITIALIZE || currentState == STATE_NAMES::STATE_CLIMB || currentState == STATE_NAMES::STATE_LAUNCHER_TUNING)
 	{
 		return;
 	}

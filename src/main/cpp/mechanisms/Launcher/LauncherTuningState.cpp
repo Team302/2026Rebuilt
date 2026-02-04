@@ -55,16 +55,17 @@ void LauncherTuningState::InitCompBot302()
 
 void LauncherTuningState::Run()
 {
-	double manualPercentOut = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_X) * .15;
-	if (abs(manualPercentOut) > 0.075)
+	double manualHoodPercentOut = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_X) * .15;
+	if (abs(manualHoodPercentOut) > 0.075)
 	{
-		m_mechanism->UpdateTargetHoodPercentOut(manualPercentOut);
+		m_mechanism->UpdateTargetHoodPercentOut(manualHoodPercentOut);
 	}
 
 	if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_UP))
 	{
 		if (m_speedUpButtonReleased)
 		{
+			m_launcherPercentOut += 0.05;
 			m_launcherTarget += units::angular_velocity::revolutions_per_minute_t(100);
 		}
 		m_speedUpButtonReleased = false;
@@ -73,6 +74,7 @@ void LauncherTuningState::Run()
 	{
 		if (m_speedDownButtonReleased)
 		{
+			m_launcherPercentOut -= 0.05;
 			m_launcherTarget -= units::angular_velocity::revolutions_per_minute_t(100);
 		}
 		m_speedDownButtonReleased = false;
@@ -82,7 +84,23 @@ void LauncherTuningState::Run()
 		m_speedUpButtonReleased = true;
 		m_speedDownButtonReleased = true;
 	}
-	m_mechanism->UpdateTargetLauncherVelocityRPS(m_launcherTarget);
+
+	if (m_tuningLauncherPercentOut)
+	{
+		m_mechanism->UpdateTargetLauncherPercentOut(m_launcherPercentOut);
+		double manualTurretPercentOut = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::UPDATE_OUTPOST_PASSING_TARGET_Y) * .15;
+		if (abs(manualTurretPercentOut) > 0.075)
+		{
+			m_mechanism->UpdateTargetHoodPercentOut(manualTurretPercentOut);
+		}
+	}
+	else
+	{
+		m_mechanism->UpdateTargetLauncherVelocityRPS(m_launcherTarget);
+	}
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("LauncherTuningState"), string("Launcher Target RPM"), m_launcherTarget.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("LauncherTuningState"), string("Launcher Percent Out"), m_launcherPercentOut);
 }
 
 void LauncherTuningState::Exit()
