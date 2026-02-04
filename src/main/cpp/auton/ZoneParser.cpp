@@ -44,10 +44,10 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
 
     static robin_hood::unordered_map<string, ChassisOptionEnums::DriveStateType> xmlStringToPathUpdateOptionMap{{"NOTHING", ChassisOptionEnums::STOP_DRIVE}};
 
-    static robin_hood::unordered_map<std::string, ChassisOptionEnums::AllianceColor> xmlStringToAllianceColorMap{
-        {"RED", ChassisOptionEnums::AllianceColor::RED},
-        {"BLUE", ChassisOptionEnums::AllianceColor::BLUE},
-        {"BOTH", ChassisOptionEnums::AllianceColor::BOTH},
+    static robin_hood::unordered_map<std::string, ZoneParams::AllianceColor> xmlStringToAllianceColorMap{
+        {"RED", ZoneParams::AllianceColor::RED},
+        {"BLUE", ZoneParams::AllianceColor::BLUE},
+        {"BOTH", ZoneParams::AllianceColor::BOTH},
 
     };
     static robin_hood::unordered_map<std::string, ChassisOptionEnums::AutonAvoidOptions> xmlStringToAvoidOptionEnumMap{
@@ -88,7 +88,7 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
             ChassisOptionEnums::HeadingOption chosenHeadingOption = ChassisOptionEnums::HeadingOption::IGNORE;
 
             ChassisOptionEnums::DriveStateType chosenUpdateOption = ChassisOptionEnums::STOP_DRIVE;
-            ChassisOptionEnums::AllianceColor chosenAllianceColor = ChassisOptionEnums::AllianceColor::BOTH;
+            ZoneParams::AllianceColor chosenAllianceColor = ZoneParams::AllianceColor::BOTH;
             ChassisOptionEnums::AutonAvoidOptions avoidChosenOption = ChassisOptionEnums::AutonAvoidOptions::NO_AVOID_OPTION;
 
             // looping through the zone xml attributes to define the location of a given zone (based on 2 sets grid coordinates)

@@ -37,6 +37,13 @@ enum class ZoneMode
 class ZoneParams
 {
 public:
+    enum AllianceColor
+    {
+        RED,
+        BLUE,
+        BOTH
+    };
+
     ZoneParams(frc::Pose2d circlePose,
                units::length::inch_t radius,
                units::length::meter_t m_xgrid1rect,
@@ -47,7 +54,7 @@ public:
                ChassisOptionEnums::HeadingOption headingOption,
                ChassisOptionEnums::DriveStateType pathUpdateOption,
                ChassisOptionEnums::AutonAvoidOptions autonavoidoption,
-               ChassisOptionEnums::AllianceColor allianceColor,
+               ZoneParams::AllianceColor allianceColor,
                ZoneMode zoneMode); // declare ZoneParams public constructor with parameters xgrid1, etc.
 
     ZoneParams() = delete;
@@ -69,7 +76,7 @@ public:
     ChassisOptionEnums::AutonChassisOptions GetChassisOption() const { return m_chassisoption; }
     ChassisOptionEnums::AutonAvoidOptions GetAvoidOption() const { return m_avoidoption; }
 
-    ChassisOptionEnums::AllianceColor GetAllianceColor() const { return m_allianceColor; }
+    ZoneParams::AllianceColor GetAllianceColor() const { return m_allianceColor; }
 
     bool IsPoseInZone(frc::Pose2d robotPose);
 
@@ -85,7 +92,7 @@ private:
 
     ChassisOptionEnums::DriveStateType m_pathUpdateOption;
 
-    ChassisOptionEnums::AllianceColor m_allianceColor;
+    AllianceColor m_allianceColor;
 
     ZoneMode m_zoneMode;
 

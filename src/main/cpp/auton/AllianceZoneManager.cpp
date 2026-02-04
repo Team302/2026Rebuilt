@@ -26,25 +26,20 @@ AllianceZoneManager *AllianceZoneManager::GetInstance()
     return AllianceZoneManager::m_instance;
 }
 
-
-
-std::string AllianceZoneManager::GetZoneFiles()
+AllianceZoneManager::AllianceZoneManager() : ZoneHelper(m_allianceZoneFiles)
 {
-        for(int i = 0; i <= m_zoneFiles.size(); i++){
-        m_parsedZoneFiles.insert(ZoneParser::ParseXML(m_zoneFiles[i]));
-    }
-    return m_parsedZoneFiles;
+    m_blueAllianceZone = GetAllianceZones(ZoneParams::AllianceColor::BLUE);
+    m_redAllianceZone = GetAllianceZones(ZoneParams::AllianceColor::RED);
 }
-
-
-
 
 bool AllianceZoneManager::IsInAllianceZone()
 {
-    if (DriverStation::GetAlliance() == DriverStation::Alliance::kRed){
-        return IsInZone(m_parsedZoneFiles[0]);
-    }   
-    else{
-        return IsInZone(m_parsedZoneFiles[1]);
+    if (DriverStation::GetAlliance() == DriverStation::Alliance::kRed)
+    {
+        return IsInZones(m_redAllianceZone);
+    }
+    else
+    {
+        return IsInZones(m_blueAllianceZone);
     }
 }

@@ -20,8 +20,7 @@
 #include "auton/AutonGrid.h"
 #include "auton/ZoneParams.h"
 #include "utils/TargetCalculator.h"
-#include "chassis/generated/CommandSwerveDrivetrain.h"
-
+#include "chassis/ChassisConfigMgr.h"
 // C++ Includes
 #include "vector"
 
@@ -35,12 +34,17 @@ class ZoneHelper
 {
 public:
     // void InitZones();
-    virtual std::string GetZoneFiles() = 0;
-    bool IsInZones();
-    bool IsInZone(std::string zoneFile);
+    bool IsInZones(std::vector<ZoneParams *> zoneFiles);
+    bool IsInZone(ZoneParams *zoneFile);
+    void ParseZoneFiles();
 
 protected:
-    frc::Pose2d m_robotPose = m_chassis->GetPose();
     subsystems::CommandSwerveDrivetrain *m_chassis;
-    ZoneParams *m_zones;
+    std::vector<ZoneParams> *m_zones;
+    std::vector<std::string> m_zoneFiles;
+
+    ZoneHelper(std::vector<std::string> zoneFiles);
+    ~ZoneHelper();
+
+    std::vector<ZoneParams *> GetAllianceZones(ZoneParams::AllianceColor alliance);
 };

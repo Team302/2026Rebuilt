@@ -52,12 +52,7 @@ public:
     {
         NO_VISION
     };
-    enum AllianceColor
-    {
-        RED,
-        BLUE,
-        BOTH
-    };
+
     enum AutonAvoidOptions
     {
         ROBOT_COLLISION,

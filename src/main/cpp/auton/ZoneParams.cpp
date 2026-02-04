@@ -33,7 +33,7 @@ ZoneParams::ZoneParams(
 	ChassisOptionEnums::HeadingOption headingOption,
 	ChassisOptionEnums::DriveStateType pathUpdateOption,
 	ChassisOptionEnums::AutonAvoidOptions autonavoidoption,
-	ChassisOptionEnums::AllianceColor allianceColor,
+	ZoneParams::AllianceColor allianceColor,
 	ZoneMode zoneMode) : m_xgrid1rect(xgrid1rect),
 						 m_xgrid2rect(xgrid2rect),
 						 m_ygrid1rect(ygrid1rect),

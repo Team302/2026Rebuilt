@@ -26,7 +26,7 @@ RebuiltTargetCalculator::RebuiltTargetCalculator() : TargetCalculator()
 
     m_field = DragonField::GetInstance();
     m_fieldConstants = FieldConstants::GetInstance();
-    // m_zoneManager = AllianceZoneManager::GetInstance();
+    m_zoneManager = AllianceZoneManager::GetInstance();
 
     auto outpostPassingTarget = FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_PASSING_TARGET;
     auto depotPassingTarget = FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_PASSING_TARGET;
@@ -57,7 +57,7 @@ RebuiltTargetCalculator *RebuiltTargetCalculator::GetInstance()
 frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
 {
 
-    bool isInAllianceZone = true; // m_zoneManager->isInAllianceZone();
+    bool isInAllianceZone = m_zoneManager->IsInAllianceZone();
     frc::Translation2d targetPosition{};
     auto alliance = FMSData::GetAllianceColor();
 
