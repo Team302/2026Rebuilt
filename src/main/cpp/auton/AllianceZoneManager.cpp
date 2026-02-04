@@ -16,6 +16,13 @@
 
 using frc::DriverStation;
 
+AllianceZoneManager::AllianceZoneManager() : ZoneHelper()
+{
+    ParseZoneFiles();
+    m_blueAllianceZone = GetAllianceZones(ZoneParams::AllianceColor::BLUE);
+    m_redAllianceZone = GetAllianceZones(ZoneParams::AllianceColor::RED);
+}
+
 AllianceZoneManager *AllianceZoneManager::m_instance = nullptr;
 AllianceZoneManager *AllianceZoneManager::GetInstance()
 {
@@ -26,11 +33,10 @@ AllianceZoneManager *AllianceZoneManager::GetInstance()
     return AllianceZoneManager::m_instance;
 }
 
-AllianceZoneManager::AllianceZoneManager() : ZoneHelper(m_allianceZoneFiles)
+std::vector<std::string> AllianceZoneManager::GetZoneFiles()
 {
-    m_blueAllianceZone = GetAllianceZones(ZoneParams::AllianceColor::BLUE);
-    m_redAllianceZone = GetAllianceZones(ZoneParams::AllianceColor::RED);
-}
+    return m_allianceZoneFiles;
+};
 
 bool AllianceZoneManager::IsInAllianceZone()
 {

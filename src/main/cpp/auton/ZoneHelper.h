@@ -43,7 +43,9 @@ protected:
     std::vector<ZoneParams> *m_zones;
     std::vector<std::string> m_zoneFiles;
 
-    ZoneHelper(std::vector<std::string> zoneFiles);
+    virtual std::vector<std::string> GetZoneFiles() = 0;
+
+    ZoneHelper();
     ~ZoneHelper();
 
     std::vector<ZoneParams *> GetAllianceZones(ZoneParams::AllianceColor alliance);

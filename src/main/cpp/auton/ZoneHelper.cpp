@@ -20,16 +20,15 @@
 
 using frc::DriverStation;
 
-ZoneHelper::ZoneHelper(std::vector<std::string> zoneFiles) : m_zoneFiles(zoneFiles)
+ZoneHelper::ZoneHelper()
 {
     m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
     m_zones = new std::vector<ZoneParams>();
-    ParseZoneFiles();
 }
 
 void ZoneHelper::ParseZoneFiles()
 {
-    for (auto file : m_zoneFiles)
+    for (auto file : GetZoneFiles())
     {
         m_zones->emplace_back(*ZoneParser::ParseXML(file));
     }
