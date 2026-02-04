@@ -25,9 +25,9 @@
 #include "RobinHood/robin_hood.h"
 #include "utils/logging/debug/Logger.h"
 
-#include "mechanisms/launcher/Launcher.h"
-#include "mechanisms/intake/Intake.h"
-#include "mechanisms/climber/Climber.h"
+#include "mechanisms/Launcher/Launcher.h"
+#include "mechanisms/Intake/Intake.h"
+#include "mechanisms/Climber/Climber.h"
 
 using namespace std;
 using namespace pugi;
