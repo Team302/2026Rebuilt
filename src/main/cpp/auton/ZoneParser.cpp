@@ -48,10 +48,10 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
 
     static robin_hood::unordered_map<string, ChassisOptionEnums::DriveStateType> xmlStringToPathUpdateOptionMap{{"NOTHING", ChassisOptionEnums::STOP_DRIVE}};
 
-    static robin_hood::unordered_map<std::string, ZoneParams::AllianceColor> xmlStringToAllianceColorMap{
-        {"RED", ZoneParams::AllianceColor::RED},
-        {"BLUE", ZoneParams::AllianceColor::BLUE},
-        {"BOTH", ZoneParams::AllianceColor::BOTH},
+    static robin_hood::unordered_map<std::string, ZoneAllianceColor> xmlStringToAllianceColorMap{
+        {"RED", ZoneAllianceColor::RED},
+        {"BLUE", ZoneAllianceColor::BLUE},
+        {"BOTH", ZoneAllianceColor::BOTH},
 
     };
     static robin_hood::unordered_map<std::string, ChassisOptionEnums::AutonAvoidOptions> xmlStringToAvoidOptionEnumMap{
@@ -94,7 +94,7 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
             ChassisOptionEnums::HeadingOption chosenHeadingOption = ChassisOptionEnums::HeadingOption::IGNORE;
 
             ChassisOptionEnums::DriveStateType chosenUpdateOption = ChassisOptionEnums::STOP_DRIVE;
-            ZoneParams::AllianceColor chosenAllianceColor = ZoneParams::AllianceColor::BOTH;
+            ZoneAllianceColor chosenAllianceColor = ZoneAllianceColor::BOTH;
             ChassisOptionEnums::AutonAvoidOptions avoidChosenOption = ChassisOptionEnums::AutonAvoidOptions::NO_AVOID_OPTION;
 
             Launcher::STATE_NAMES launcherState = Launcher::STATE_NAMES::STATE_OFF;
@@ -190,7 +190,7 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
                     if (itr != xmlStringToAllianceColorMap.end())
                     {
                         chosenAllianceColor = itr->second;
-                        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "ZoneParser", "Alliance Color Parsed", chosenAllianceColor);
+                        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "ZoneParser", "Alliance Color Parsed", int(chosenAllianceColor));
                     }
                     else
                     {

@@ -28,8 +28,8 @@
 
 // DeadZoneManager::DeadZoneManager() : ZoneHelper(m_deadZoneFiles)
 // {
-//     m_blueAllianceZones = GetAllianceZones(ZoneParams::AllianceColor::BLUE);
-//     m_redAllianceZones = GetAllianceZones(ZoneParams::AllianceColor::RED);
+//     m_blueAllianceZones = GetAllianceZones(ZoneAllianceColor::BLUE);
+//     m_redAllianceZones = GetAllianceZones(ZoneAllianceColor::RED);
 // }
 
 // bool DeadZoneManager::IsInDeadZone()

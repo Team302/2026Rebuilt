@@ -34,7 +34,7 @@ void ZoneHelper::ParseZoneFiles()
     }
 }
 
-std::vector<ZoneParams *> ZoneHelper::GetAllianceZones(ZoneParams::AllianceColor alliance)
+std::vector<ZoneParams *> ZoneHelper::GetAllianceZones(ZoneAllianceColor alliance)
 {
     std::vector<ZoneParams *> allianceZones;
     for (auto &zone : *m_zones)

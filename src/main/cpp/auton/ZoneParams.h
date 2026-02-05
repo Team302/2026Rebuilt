@@ -37,16 +37,16 @@ enum class ZoneMode
     CIRCLE,
 };
 
+enum class ZoneAllianceColor
+{
+    RED,
+    BLUE,
+    BOTH
+};
+
 class ZoneParams
 {
 public:
-    enum AllianceColor
-    {
-        RED,
-        BLUE,
-        BOTH
-    };
-
     ZoneParams(frc::Pose2d circlePose,
                units::length::inch_t radius,
                units::length::meter_t xgrid1rect,
@@ -57,7 +57,7 @@ public:
                ChassisOptionEnums::HeadingOption headingOption,
                ChassisOptionEnums::DriveStateType pathUpdateOption,
                ChassisOptionEnums::AutonAvoidOptions autonavoidoption,
-               ZoneParams::AllianceColor allianceColor,
+               ZoneAllianceColor allianceColor,
                ZoneMode zoneMode,
                bool isLauncherStateChanged,
                bool isIntakeStateChanged,
@@ -85,7 +85,7 @@ public:
     ChassisOptionEnums::AutonChassisOptions GetChassisOption() const { return m_autonChassisOption; }
     ChassisOptionEnums::AutonAvoidOptions GetAvoidOption() const { return m_avoidoption; }
 
-    ZoneParams::AllianceColor GetAllianceColor() const { return m_allianceColor; }
+    ZoneAllianceColor GetAllianceColor() const { return m_allianceColor; }
 
     bool IsPoseInZone(frc::Pose2d robotPose);
 
@@ -110,7 +110,7 @@ private:
     ChassisOptionEnums::DriveStateType m_pathUpdateOption;
     ChassisOptionEnums::AutonAvoidOptions m_avoidoption; // instances of said parameters
 
-    AllianceColor m_allianceColor;
+    ZoneAllianceColor m_allianceColor;
 
     ZoneMode m_zoneMode;
 

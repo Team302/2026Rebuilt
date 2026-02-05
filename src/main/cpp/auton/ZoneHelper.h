@@ -27,7 +27,8 @@
 // FRC includes
 
 // Team 302 includes
-class ZoneParams; // Forward declaration
+class ZoneParams;             // Forward declaration
+enum class ZoneAllianceColor; // Forward declaration
 
 // Third Party Includes
 
@@ -49,5 +50,5 @@ protected:
     ZoneHelper();
     ~ZoneHelper();
 
-    std::vector<ZoneParams *> GetAllianceZones(ZoneParams::AllianceColor alliance);
+    std::vector<ZoneParams *> GetAllianceZones(ZoneAllianceColor alliance);
 };

@@ -13,14 +13,15 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include <auton/AllianceZoneManager.h>
+#include "ZoneParams.h"
 
 using frc::DriverStation;
 
 AllianceZoneManager::AllianceZoneManager() : ZoneHelper()
 {
     ParseZoneFiles();
-    m_blueAllianceZone = GetAllianceZones(ZoneParams::AllianceColor::BLUE);
-    m_redAllianceZone = GetAllianceZones(ZoneParams::AllianceColor::RED);
+    m_blueAllianceZone = GetAllianceZones(ZoneAllianceColor::BLUE);
+    m_redAllianceZone = GetAllianceZones(ZoneAllianceColor::RED);
 }
 
 AllianceZoneManager *AllianceZoneManager::m_instance = nullptr;

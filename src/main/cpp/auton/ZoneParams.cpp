@@ -33,7 +33,7 @@ ZoneParams::ZoneParams(
 	ChassisOptionEnums::HeadingOption headingOption,
 	ChassisOptionEnums::DriveStateType pathUpdateOption,
 	ChassisOptionEnums::AutonAvoidOptions autonavoidoption,
-	ZoneParams::AllianceColor allianceColor,
+	ZoneAllianceColor allianceColor,
 	ZoneMode zoneMode,
 	bool isLauncherStateChanged,
 	bool isIntakeStateChanged,
