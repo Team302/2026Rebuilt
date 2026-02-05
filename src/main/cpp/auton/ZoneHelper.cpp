@@ -17,6 +17,7 @@
 #include <auton/ZoneParams.h>
 #include <auton/ZoneParser.h>
 #include "utils/logging/debug/Logger.h"
+#include <algorithm>
 
 using frc::DriverStation;
 
@@ -49,15 +50,9 @@ std::vector<ZoneParams *> ZoneHelper::GetAllianceZones(ZoneAllianceColor allianc
 
 bool ZoneHelper::IsInZones(std::vector<ZoneParams *> zoneFiles)
 {
-    // std::find_if could be used here
-    for (auto zone : zoneFiles)
-    {
-        if (IsInZone(zone))
-        {
-            return true;
-        }
-    }
-    return false;
+    return std::find_if(zoneFiles.begin(), zoneFiles.end(),
+                        [this](ZoneParams *zone)
+                        { return IsInZone(zone); }) != zoneFiles.end();
 }
 
 bool ZoneHelper::IsInZone(ZoneParams *zoneFile)
