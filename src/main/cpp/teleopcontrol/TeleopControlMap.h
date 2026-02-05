@@ -155,19 +155,24 @@ const TeleopControlButton extra4DPad315 = {TeleopControlMappingEnums::EXTRA4, Te
 
 robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlButton> teleopControlMapButtonMap{
 
+    // Driver Controls
     {TeleopControlFunctions::RESET_POSITION, driverDPad90},
-
     {TeleopControlFunctions::ROBOT_ORIENTED_DRIVE, driverDPad0},
     {TeleopControlFunctions::SYSID_MODIFER, driverSelectButton},
 
+    // Season Specific Driver Controls
     {TeleopControlFunctions::INTAKE, driverRBumper},
     {TeleopControlFunctions::EXPEL, driverLBumper},
-    // {TeleopControlFunctions::DRIVE_TO_DEPOT, driverBButton},
-    // {TeleopControlFunctions::DRIVE_TO_OUTPOST, driverAButton},
+    {TeleopControlFunctions::DRIVE_TO_DEPOT, driverXButton},
+    {TeleopControlFunctions::DRIVE_TO_OUTPOST, driverBButton},
+    {TeleopControlFunctions::DRIVE_TO_TOWER_LEFT, driverXButton},
+    {TeleopControlFunctions::DRIVE_TO_TOWER_RIGHT, driverBButton},
     {TeleopControlFunctions::LEVEL1_CLIMB, driverAButton},
     {TeleopControlFunctions::LEVEL3_CLIMB, driverYButton},
     {TeleopControlFunctions::ALIGN_TO_LEFT_TOWER, driverXButton},
     {TeleopControlFunctions::ALIGN_TO_RIGHT_TOWER, driverBButton},
+
+    // Season Specific Co-Pilot Controls
     {TeleopControlFunctions::UPDATE_TARGET_OFFSET_DOWN, copilotDPad180},
     {TeleopControlFunctions::UPDATE_TARGET_OFFSET_UP, copilotDPad0},
     {TeleopControlFunctions::UPDATE_TARGET_OFFSET_RIGHT, copilotDPad90},
@@ -221,9 +226,13 @@ const TeleopControlAxis extra4LTrigger = {TeleopControlMappingEnums::EXTRA4, Tel
 const TeleopControlAxis extra4RTrigger = {TeleopControlMappingEnums::EXTRA4, TeleopControlMappingEnums::RIGHT_TRIGGER, TeleopControlMappingEnums::APPLY_STANDARD_DEADBAND, TeleopControlMappingEnums::CUBED, TeleopControlMappingEnums::SYNCED, 1.0};
 
 robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlAxis> teleopControlMapAxisMap{
+
+    // Driver Controls
     {TeleopControlFunctions::HOLONOMIC_DRIVE_FORWARD, driverLJoystickY},
     {TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE, driverLJoystickX},
     {TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE, driverRJoystickX},
+
+    // Season Specific Co-Pilot Controls
     {TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_X, copilotLJoystickY},
     {TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_Y, copilotLJoystickX},
     {TeleopControlFunctions::UPDATE_OUTPOST_PASSING_TARGET_X, copilotRJoystickY},

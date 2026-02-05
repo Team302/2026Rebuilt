@@ -136,4 +136,6 @@ private:
     /// @details    Overrides IRobotStateChangeSubscriber interface method
     //------------------------------------------------------------------
     void NotifyStateUpdate(RobotStateChanges::StateChange change, int value) override;
+
+    bool m_climbModeStatus = false;
 };

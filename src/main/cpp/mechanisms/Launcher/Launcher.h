@@ -34,7 +34,7 @@
 
 #include "configs/RobotElementNames.h"
 #include "configs/MechanismConfigMgr.h"
-
+#include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "RobotIdentifier.h"
 
 // Includes after generation
@@ -150,6 +150,7 @@ public:
 	bool IsLauncherInitialized() const { return m_launcherInitialized; }
 	void SetLauncherInitialized(bool initialized) { m_launcherInitialized = initialized; }
 	bool IsTuningLauncherMode() const { return m_tuningLauncher; }
+	void UpdateLauncherTargets();
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -200,14 +201,32 @@ private:
 	bool m_isClimbMode = false;
 	bool m_isAllowedToClimb = false;
 
-	units::angle::degree_t m_launcherTargetAngle = 0.0_deg;
 	units::time::second_t m_lookaheadTime = 0.5_s;
 
-	RebuiltTargetCalculator *m_targetCalculator;
+	units::angle::degree_t m_targetTurretAngle = 0.0_deg;
+	units::angular_velocity::revolutions_per_minute_t m_targetLauncherAngularVelocity = 0.0_rpm;
+	units::angle::degree_t m_targetHoodAngle = 0.0_deg;
 
+	units::angle::degree_t m_turretAngleThreshold = 5.0_deg;
+	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 25.0_rpm;
+	units::angle::degree_t m_hoodAngleThreshold = 3.0_deg;
+	units::velocity::meters_per_second_t m_chassisSpeedThreshold = 3.0_mps;
+
+	RebuiltTargetCalculator *m_targetCalculator;
+	subsystems::CommandSwerveDrivetrain *m_chassis;
 	void CalculateTargets();
 
 	bool m_launcherInitialized = false;
 	bool m_tuningLauncher = false;
+
+	// TODO MECH tune and change values in these arrays
+	std::array<units::length::inch_t, 10> m_scoringDistanceArray = {20.0_in, 40.0_in, 60.0_in, 80.0_in, 100.0_in, 120.0_in, 140.0_in, 160.0_in, 180.0_in, 200.0_in};
+	std::array<units::angle::degree_t, 10> m_scoringHoodAngleArray = {0.0_deg, 5.0_deg, 10.0_deg, 15.0_deg, 20.0_deg, 25.0_deg, 30.0_deg, 35.0_deg, 40.0_deg, 45.0_deg};
+	std::array<units::angular_velocity::revolutions_per_minute_t, 10> m_scoringLauncherVelocityArray = {500.0_rpm, 600.0_rpm, 700.0_rpm, 800.0_rpm, 900.0_rpm, 1000.0_rpm, 1100.0_rpm, 1200.0_rpm, 1300.0_rpm, 1400.0_rpm};
+
+	std::array<units::length::foot_t, 7> m_passingDistanceArray = {10.0_ft, 15.0_ft, 20.0_ft, 25.0_ft, 30.0_ft, 35.0_ft, 40.0_ft};
+	std::array<units::angle::degree_t, 7> m_passingHoodAngleArray = {0.0_deg, 5.0_deg, 10.0_deg, 15.0_deg, 20.0_deg, 25.0_deg, 30.0_deg};
+	std::array<units::angular_velocity::revolutions_per_minute_t, 7> m_passingLauncherVelocityArray = {500.0_rpm, 600.0_rpm, 700.0_rpm, 800.0_rpm, 900.0_rpm, 1000.0_rpm, 1100.0_rpm};
+
 	// void InitializeLogging();
 };
