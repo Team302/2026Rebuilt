@@ -26,6 +26,7 @@ class TeleopControlFunctions
 public:
     enum FUNCTION
     {
+        // General Drive Commands
         ROBOT_ORIENTED_DRIVE,
         HOLONOMIC_DRIVE_FORWARD,
         HOLONOMIC_DRIVE_ROTATE,
@@ -39,11 +40,13 @@ public:
         SYSID_QUASISTATICREVERSE,
         SYSID_DYNAMICFORWARD,
         SYSID_DYNAMICREVERSE,
+        TIPCORRECTION_TOGGLE,
+
+        // Season Specific Drive Commands
         DRIVE_TO_DEPOT,
         DRIVE_TO_OUTPOST,
-
-        // tip correction controls
-        TIPCORRECTION_TOGGLE,
+        DRIVE_TO_TOWER_LEFT,
+        DRIVE_TO_TOWER_RIGHT,
 
         // Mechanisms specific
         // Intake
