@@ -25,6 +25,10 @@
 #include "RobinHood/robin_hood.h"
 #include "utils/logging/debug/Logger.h"
 
+#include "mechanisms/Launcher/Launcher.h"
+#include "mechanisms/Intake/Intake.h"
+#include "mechanisms/Climber/Climber.h"
+
 using namespace std;
 using namespace pugi;
 
@@ -83,13 +87,21 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
             ZoneMode zoneMode = ZoneMode::NOTHING;
 
             // TODO: add zoneType parsing and check
-
+            bool isLauncherStateChanged = false;
+            bool isIntakeStateChanged = false;
+            bool isClimberStateChanged = false;
             ChassisOptionEnums::AutonChassisOptions chassisChosenOption = ChassisOptionEnums::AutonChassisOptions::NO_VISION;
             ChassisOptionEnums::HeadingOption chosenHeadingOption = ChassisOptionEnums::HeadingOption::IGNORE;
 
             ChassisOptionEnums::DriveStateType chosenUpdateOption = ChassisOptionEnums::STOP_DRIVE;
             ZoneParams::AllianceColor chosenAllianceColor = ZoneParams::AllianceColor::BOTH;
             ChassisOptionEnums::AutonAvoidOptions avoidChosenOption = ChassisOptionEnums::AutonAvoidOptions::NO_AVOID_OPTION;
+
+            Launcher::STATE_NAMES launcherState = Launcher::STATE_NAMES::STATE_OFF;
+            Intake::STATE_NAMES intakeState = Intake::STATE_NAMES::STATE_OFF;
+            Climber::STATE_NAMES climberState = Climber::STATE_NAMES::STATE_OFF;
+
+            auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
 
             // looping through the zone xml attributes to define the location of a given zone (based on 2 sets grid coordinates)
             for (xml_attribute attr = zonenode.first_attribute(); attr; attr = attr.next_attribute())
@@ -197,6 +209,63 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
                         hasError = true;
                     }
                 }
+                else if (strcmp(attr.name(), "launcherState") == 0)
+                {
+                    if (config != nullptr && config->GetMechanism(MechanismTypes::MECHANISM_TYPE::LAUNCHER) != nullptr)
+                    {
+                        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("PrimitiveParser"), string("Found launcher mechanism"), string(attr.value()));
+
+                        auto launcherStateItr = Launcher::stringToSTATE_NAMESEnumMap.find(attr.value());
+                        if (launcherStateItr != Launcher::stringToSTATE_NAMESEnumMap.end())
+                        {
+                            launcherState = launcherStateItr->second;
+                            isLauncherStateChanged = true;
+                        }
+                        else
+                        {
+                            Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("PrimitiveParser"), string("ParseXML invalid launcher state"), attr.value());
+                            hasError = true;
+                        }
+                    }
+                }
+                else if (strcmp(attr.name(), "intakeState") == 0)
+                {
+                    if (config != nullptr && config->GetMechanism(MechanismTypes::MECHANISM_TYPE::INTAKE) != nullptr)
+                    {
+                        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("PrimitiveParser"), string("Found intake mechanism"), string(attr.value()));
+
+                        auto intakeStateItr = Intake::stringToSTATE_NAMESEnumMap.find(attr.value());
+                        if (intakeStateItr != Intake::stringToSTATE_NAMESEnumMap.end())
+                        {
+                            intakeState = intakeStateItr->second;
+                            isIntakeStateChanged = true;
+                        }
+                        else
+                        {
+                            Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("PrimitiveParser"), string("ParseXML invalid intake state"), attr.value());
+                            hasError = true;
+                        }
+                    }
+                }
+                else if (strcmp(attr.name(), "climberState") == 0)
+                {
+                    if (config != nullptr && config->GetMechanism(MechanismTypes::MECHANISM_TYPE::CLIMBER) != nullptr)
+                    {
+                        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("PrimitiveParser"), string("Found climber mechanism"), string(attr.value()));
+
+                        auto climberStateItr = Climber::stringToSTATE_NAMESEnumMap.find(attr.value());
+                        if (climberStateItr != Climber::stringToSTATE_NAMESEnumMap.end())
+                        {
+                            climberState = climberStateItr->second;
+                            isClimberStateChanged = true;
+                        }
+                        else
+                        {
+                            Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("PrimitiveParser"), string("ParseXML invalid climber state"), attr.value());
+                            hasError = true;
+                        }
+                    }
+                }
             }
 
             if (!hasError) // if no error returns the zone parameters
@@ -214,7 +283,13 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
                                        chosenUpdateOption,
                                        avoidChosenOption,
                                        chosenAllianceColor,
-                                       zoneMode));
+                                       zoneMode,
+                                       isLauncherStateChanged,
+                                       isIntakeStateChanged,
+                                       isClimberStateChanged,
+                                       launcherState,
+                                       intakeState,
+                                       climberState));
             }
 
             Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("ZoneParser"), string("ParseXML"), string("Has Error"));
