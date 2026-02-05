@@ -25,26 +25,15 @@ PrimitiveParams::PrimitiveParams(PRIMITIVE_IDENTIFIER id,
 								 std::string choreoTrajectoryName,
 								 ZoneParamsVector zones,
 								 VISION_ALIGNMENT visionAlignment,
-								 ChassisOptionEnums::DriveStateType pathUpdateOption,
-								 bool launcherStateChanged,
-								 bool intakeStateChanged,
-								 bool climberStateChanged,
-								 Launcher::STATE_NAMES launcherState,
-								 Intake::STATE_NAMES intakeState,
-								 Climber::STATE_NAMES climberState) : m_id(id), // Primitive ID
-																	  m_time(time),
-																	  m_headingOption(headingOpt),
-																	  m_heading(heading),
-																	  m_choreoTrajectoryName(choreoTrajectoryName),
-																	  m_visionAlignment(visionAlignment),
-																	  m_zones(zones),
-																	  m_pathUpdateOption(pathUpdateOption),
-																	  m_isLauncherStateChanged(launcherStateChanged),
-																	  m_isIntakeStateChanged(intakeStateChanged),
-																	  m_isClimberStateChanged(climberStateChanged),
-																	  m_launcherState(launcherState),
-																	  m_intakeState(intakeState),
-																	  m_climberState(climberState)
+								 ChassisOptionEnums::DriveStateType pathUpdateOption) : m_id(id), // Primitive ID
+																						m_time(time),
+																						m_headingOption(headingOpt),
+																						m_heading(heading),
+																						m_choreoTrajectoryName(choreoTrajectoryName),
+																						m_visionAlignment(visionAlignment),
+																						m_zones(zones),
+																						m_pathUpdateOption(pathUpdateOption)
+
 // @ADDMECH initialize state mgr attribute
 {
 }

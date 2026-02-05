@@ -34,16 +34,7 @@ ZoneParams::ZoneParams(
 	ChassisOptionEnums::DriveStateType pathUpdateOption,
 	ChassisOptionEnums::AutonAvoidOptions autonavoidoption,
 	ZoneParams::AllianceColor allianceColor,
-	ZoneMode zoneMode,
-	bool isLauncherStateChanged,
-	bool isIntakeStateChanged,
-	bool isClimberStateChanged,
-	Launcher::STATE_NAMES launcherState,
-	Intake::STATE_NAMES intakeState,
-	Climber::STATE_NAMES climberState) : 
-						 m_circlePose(circlePose),
-						 m_radius(radius),
-						 m_xgrid1rect(xgrid1rect),
+	ZoneMode zoneMode) : m_xgrid1rect(xgrid1rect),
 						 m_xgrid2rect(xgrid2rect),
 						 m_ygrid1rect(ygrid1rect),
 						 m_ygrid2rect(ygrid2rect),
@@ -53,12 +44,8 @@ ZoneParams::ZoneParams(
 						 m_pathUpdateOption(pathUpdateOption),
 						 m_allianceColor(allianceColor),
 						 m_zoneMode(zoneMode),
-						 m_isLauncherStateChanged(isLauncherStateChanged),
-						 m_isIntakeStateChanged(isIntakeStateChanged),
-						 m_isClimberStateChanged(isClimberStateChanged),
-						 m_launcherState(launcherState),
-						 m_intakeState(intakeState),
-						 m_climberState(climberState)
+						 m_circlePose(circlePose),
+						 m_radius(radius)
 {
 }
 bool ZoneParams::IsPoseInZone(frc::Pose2d robotPose)

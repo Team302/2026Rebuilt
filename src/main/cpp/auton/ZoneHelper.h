@@ -14,20 +14,19 @@
 //====================================================================================================================================================
 
 #pragma once
-#include <frc/geometry/Pose2d.h>
-#include <frc/geometry/Pose2d.h>
-#include <utils/FMSData.h>
-#include <auton/AutonGrid.h>
-#include <utils/TargetCalculator.h>
-#include <chassis/generated/CommandSwerveDrivetrain.h>
-
+#include "frc/geometry/Pose2d.h"
+#include "frc/geometry/Pose2d.h"
+#include "utils/FMSData.h"
+#include "auton/AutonGrid.h"
+#include "auton/ZoneParams.h"
+#include "utils/TargetCalculator.h"
+#include "chassis/ChassisConfigMgr.h"
 // C++ Includes
 #include "vector"
 
 // FRC includes
 
 // Team 302 includes
-class ZoneParams; // Forward declaration
 
 // Third Party Includes
 

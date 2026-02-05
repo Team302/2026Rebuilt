@@ -36,11 +36,7 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "chassis/ChassisOptionEnums.h"
 
-#include "configs/MechanismConfigMgr.h"
-#include "mechanisms/MechanismTypes.h"
-#include "mechanisms/Launcher/Launcher.h"
-#include "mechanisms/Intake/Intake.h"
-#include "mechanisms/Climber/Climber.h"
+// #include "mechanisms/MechanismTypes.h"
 
 // Third Party Includes
 #include "ctre/phoenix6/SignalLogger.hpp"
@@ -199,13 +195,7 @@ void CyclePrimitives::RunDriveStop()
                                           string(), // ChoreoTrajectoryName
                                           ZoneParamsVector(),
                                           PrimitiveParams::VISION_ALIGNMENT::UNKNOWN,
-                                          ChassisOptionEnums::DriveStateType::STOP_DRIVE,
-                                          false, // launcherStateChanged
-                                          false, // intakeStateChanged
-                                          false, // climberStateChanged
-                                          Launcher::STATE_OFF,
-                                          Intake::STATE_OFF,
-                                          Climber::STATE_OFF);
+                                          ChassisOptionEnums::DriveStateType::STOP_DRIVE);
 
         m_driveStop = m_primFactory->GetIPrimitive(params);
         m_driveStop->Init(params);
@@ -216,59 +206,29 @@ void CyclePrimitives::RunDriveStop()
 void CyclePrimitives::SetMechanismStatesFromParam(PrimitiveParams *params)
 {
 
-    auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
-    if (params != nullptr && config != nullptr)
-    {
-        auto launcherStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::LAUNCHER);
-        auto intakeStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::INTAKE);
-        auto climberStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::CLIMBER);
+    // auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
+    // if (params != nullptr && config != nullptr)
+    // {
+    //     auto taleStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::DRAGON_TALE);
+    //     auto taleMgr = taleStateMgr != nullptr ? dynamic_cast<DragonTale *>(taleStateMgr) : nullptr;
 
-        auto launcherMgr = launcherStateMgr != nullptr ? dynamic_cast<Launcher *>(launcherStateMgr) : nullptr;
-        auto intakeMgr = intakeStateMgr != nullptr ? dynamic_cast<Intake *>(intakeStateMgr) : nullptr;
-        auto climberMgr = climberStateMgr != nullptr ? dynamic_cast<Climber *>(climberStateMgr) : nullptr;
-
-        if (launcherMgr != nullptr && params->IsLauncherStateChanging())
-        {
-            launcherMgr->SetCurrentState(params->GetLauncherState(), true);
-        }
-
-        if (intakeMgr != nullptr && params->IsIntakeStateChanging())
-        {
-            intakeMgr->SetCurrentState(params->GetIntakeState(), true);
-        }
-
-        if (climberMgr != nullptr && params->IsClimberStateChanging())
-        {
-            climberMgr->SetCurrentState(params->GetClimberState(), true);
-        }
-    }
+    //     if (taleMgr != nullptr && params->IsTaleStateChanging())
+    //     {
+    //         taleMgr->SetCurrentState(params->GetTaleState(), true);
+    //     }
+    // }
 }
 void CyclePrimitives::SetMechanismStatesFromZone(ZoneParams *params)
 {
-    auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
-    if (params != nullptr && config != nullptr)
-    {
-        auto launcherStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::LAUNCHER);
-        auto intakeStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::INTAKE);
-        auto climberStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::CLIMBER);
+    // auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
+    // if (params != nullptr && config != nullptr)
+    // {
+    //     auto taleStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::DRAGON_TALE);
+    //     auto taleMgr = taleStateMgr != nullptr ? dynamic_cast<DragonTale *>(taleStateMgr) : nullptr;
 
-        auto launcherMgr = launcherStateMgr != nullptr ? dynamic_cast<Launcher *>(launcherStateMgr) : nullptr;
-        auto intakeMgr = intakeStateMgr != nullptr ? dynamic_cast<Intake *>(intakeStateMgr) : nullptr;
-        auto climberMgr = climberStateMgr != nullptr ? dynamic_cast<Climber *>(climberStateMgr) : nullptr;
-
-        if (launcherMgr != nullptr && params->IsLauncherStateChanging())
-        {
-            launcherMgr->SetCurrentState(params->GetLauncherState(), true);
-        }
-
-        if (intakeMgr != nullptr && params->IsIntakeStateChanging())
-        {
-            intakeMgr->SetCurrentState(params->GetIntakeState(), true);
-        }
-
-        if (climberMgr != nullptr && params->IsClimberStateChanging())
-        {
-            climberMgr->SetCurrentState(params->GetClimberState(), true);
-        }
-    }
+    //     if (taleMgr != nullptr && params->IsTaleStateChanging())
+    //     {
+    //         taleMgr->SetCurrentState(params->GetTaleOption(), true);
+    //     }
+    // }
 }
