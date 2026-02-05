@@ -27,7 +27,7 @@ public:
 
 private:
     CameraConfigMgr();
-    ~CameraConfigMgr() = default;
+    ~CameraConfigMgr();
 
     static CameraConfigMgr *m_instance;
     CameraConfig *m_config;

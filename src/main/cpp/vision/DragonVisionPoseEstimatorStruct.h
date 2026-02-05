@@ -59,7 +59,7 @@ public:
     DragonVisionPoseEstimatorStruct() : m_confidenceLevel(ConfidenceLevel::NONE),
                                         m_visionPose(frc::Pose2d{}),
                                         m_timeStamp(units::time::second_t(0.0)),
-                                        m_stds(wpi::array(0.9, 0.9, 0.9)) {};
+                                        m_stds(wpi::array<double, 3>{0.9, 0.9, 0.9}) {}
     ~DragonVisionPoseEstimatorStruct() = default;
 
     // Confidence levels used by vision to indicate measurement quality.
