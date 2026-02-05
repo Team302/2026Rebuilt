@@ -148,7 +148,8 @@ void Intake::CreateCompBot302()
 	m_ntName = "Intake";
 	m_intake = new ctre::phoenix6::hardware::TalonFX(4, ctre::phoenix6::CANBus("canivore"));
 
-	m_extender = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 0);
+	m_extenderLeft = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 0);
+	m_extenderRight = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 1);
 
 	m_isIntakeExtended = new frc::DigitalInput(0);
 	m_isIntakeExtendedIsInverted = false;
@@ -299,11 +300,13 @@ void Intake::ManualControl()
 		bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE);
 		if (intakeOutPressed)
 		{
-			m_extender->Set(true);
+			m_extenderLeft->Set(true);
+			m_extenderRight->Set(true);
 		}
 		else if (intakeInPressed)
 		{
-			m_extender->Set(false);
+			m_extenderLeft->Set(false);
+			m_extenderRight->Set(false);
 		}
 	}
 }
