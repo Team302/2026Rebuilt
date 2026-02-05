@@ -15,7 +15,6 @@
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
 #include "chassis/commands/season_specific_commands/DriveToTowerHelper.h"
 #include "utils/PoseUtils.h"
-#include "utils/PoseUtils.cpp"
 
 //------------------------------------------------------------------
 /// @brief      Constructor for DriveToTower command

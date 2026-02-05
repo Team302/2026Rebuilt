@@ -19,7 +19,6 @@
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/geometry/Pose2d.h"
-#include "utils/PoseUtils.cpp"
 
 //====================================================================================================================================================
 /// @class DRiveToTowerHelper

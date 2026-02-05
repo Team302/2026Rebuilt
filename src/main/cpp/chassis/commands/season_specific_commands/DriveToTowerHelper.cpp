@@ -17,7 +17,6 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "frc/geometry/Pose2d.h"
 #include "utils/PoseUtils.h"
-#include "utils/PoseUtils.cpp"
 
 DriveToTowerHelper *DriveToTowerHelper::m_instance = nullptr;
 
