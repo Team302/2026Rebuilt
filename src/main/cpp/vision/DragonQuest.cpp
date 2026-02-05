@@ -77,12 +77,9 @@ void DragonQuest::Periodic()
 
     if (m_isNTInitialized)
     {
-        SetIsConnected();
+        // Parse frame data once per cycle and cache results
+        ProcessFrameData();
         HandleDashboard();
-        if (m_isConnected)
-        {
-            GetEstimatedPose();
-        }
     }
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kIsConnected, m_isConnected);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kIsNTInitialized, m_isNTInitialized);
@@ -134,31 +131,67 @@ void DragonQuest::InitNT()
 #endif
 }
 
-void DragonQuest::GetEstimatedPose()
+// Combined function that parses frame data once per cycle
+// This replaces separate GetEstimatedPose() and SetIsConnected() to avoid double parsing
+void DragonQuest::ProcessFrameData()
 {
 #ifdef __FRC_ROBORIO__
     if (!m_isNTInitialized)
     {
         m_lastCalculatedPose = frc::Pose2d{};
+        m_isConnected = false;
         return;
     }
-    auto rawData = m_frameDataSubscriber.Get();
+
+    auto atomicData = m_frameDataSubscriber.GetAtomic();
+    auto rawData = atomicData.value;
+
     if (rawData.empty())
     {
-        m_lastCalculatedPose = frc::Pose2d{}; // Set the last pose to a default pose if no data is available
+        m_lastCalculatedPose = frc::Pose2d{};
+        m_isConnected = false;
         return;
     }
 
     questnav::protos::data::ProtobufQuestNavFrameData frameData;
-    if (!frameData.ParseFromArray(rawData.data(), rawData.size()))
+    if (!frameData.ParseFromArray(rawData.data(), static_cast<int>(rawData.size())))
     {
-        m_lastCalculatedPose = frc::Pose2d{}; // Set the last pose to a default pose if no data is available
+        m_lastCalculatedPose = frc::Pose2d{};
+        m_isConnected = false;
+        return;
+    }
+
+    // Update connection status (previously in SetIsConnected)
+    int32_t currentFrameCount = frameData.frame_count();
+    m_loopCounter++;
+    if (m_loopCounter > 3)
+    {
+        if (currentFrameCount != m_prevFrameCount && frameData.istracking())
+        {
+            m_loopCounter = 0;
+            m_isConnected = true;
+        }
+        else
+        {
+            m_isConnected = false;
+        }
+        m_prevFrameCount = currentFrameCount;
+    }
+
+    // Cache timestamp for later use in GetPoseEstimate
+    m_lastFrameTimestamp = atomicData.serverTime;
+    m_cachedFrameCount = currentFrameCount;
+
+    // Only calculate pose if connected (previously in GetEstimatedPose)
+    if (!m_isConnected)
+    {
+        m_lastCalculatedPose = frc::Pose2d{};
         return;
     }
 
     if (!frameData.has_pose3d())
     {
-        m_lastCalculatedPose = frc::Pose2d{}; // Set the last pose to a default pose if no data is available
+        m_lastCalculatedPose = frc::Pose2d{};
         return;
     }
 
@@ -184,49 +217,6 @@ void DragonQuest::GetEstimatedPose()
     frc::Pose2d robotPose = questPose.TransformBy(m_questToRobotTransform.Inverse());
 
     m_lastCalculatedPose = robotPose;
-    // m_field->AddPose("QuestPose", robotPose);
-
-#endif
-}
-
-void DragonQuest::SetIsConnected()
-{
-#ifdef __FRC_ROBORIO__
-    if (!m_isNTInitialized)
-    {
-        m_isConnected = false;
-        return;
-    }
-    auto rawData = m_frameDataSubscriber.Get();
-    if (rawData.empty())
-    {
-        m_isConnected = false;
-        return;
-    }
-
-    questnav::protos::data::ProtobufQuestNavFrameData frameData;
-    if (!frameData.ParseFromArray(rawData.data(), rawData.size()))
-    {
-        m_isConnected = false;
-        return;
-    }
-
-    int32_t currentFrameCount = frameData.frame_count();
-
-    m_loopCounter++;
-    if (m_loopCounter > 3)
-    {
-        if (currentFrameCount != m_prevFrameCount && frameData.istracking())
-        {
-            m_loopCounter = 0;
-            m_isConnected = true;
-        }
-        else
-        {
-            m_isConnected = false;
-        }
-        m_prevFrameCount = currentFrameCount;
-    }
 #endif
 }
 
@@ -238,7 +228,7 @@ void DragonQuest::DataLog(uint64_t timestamp)
 void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
 {
 #ifdef __FRC_ROBORIO__
-    if (!m_hasReset)
+    if (!m_hasReset && m_isNTInitialized)
     {
         frc::Pose2d questPose = pose.TransformBy(m_questToRobotTransform);
 
@@ -311,7 +301,7 @@ DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
     // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_isQuestEnabled"), m_isQuestEnabled);
 
     DragonVisionPoseEstimatorStruct str;
-    if (!m_hasReset || !m_isConnected || !m_isQuestEnabled)
+    if (!m_hasReset || !m_isConnected || !m_isQuestEnabled || !m_isNTInitialized)
     {
         str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE;
         // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("confidence"), string("NONE"));
@@ -324,7 +314,8 @@ DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
         // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("y"), str.m_visionPose.Y().value());
         // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("rot"), str.m_visionPose.Rotation().Degrees().value());
         str.m_stds = wpi::array{m_stdxy, m_stdxy, m_stddeg};
-        str.m_timeStamp = units::time::second_t(m_frameDataSubscriber.GetAtomic().serverTime);
+        // Use cached timestamp instead of calling GetAtomic() again
+        str.m_timeStamp = units::time::second_t(static_cast<double>(m_lastFrameTimestamp) / 1000000.0);
         // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("confidence"), string("HIGH"));
     }
     return str;

@@ -63,7 +63,6 @@ DragonVisionPoseEstimator::DragonVisionPoseEstimator()
     m_vision = DragonVision::GetDragonVision();
     m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
     PeriodicLooper::GetInstance()->RegisterAll(this);
-    m_quest = m_vision->GetQuest();
 }
 void DragonVisionPoseEstimator::RunCommonTasks()
 {
@@ -90,11 +89,16 @@ void DragonVisionPoseEstimator::RunCurrentState()
     {
         return;
     }
-
-    if (m_quest != nullptr)
+    if (m_vision == nullptr)
     {
-        m_quest->Periodic();
+        m_vision = DragonVision::GetDragonVision();
     }
+    if (m_vision == nullptr)
+    {
+        return;
+    }
+
+    m_vision->RefreshQuestData();
 
     AddVisionMeasurements();
 }
@@ -144,10 +148,10 @@ void DragonVisionPoseEstimator::CalculateInitialPose()
         return;
     }
 
-    auto megaTag2Position = m_vision->GetRobotPositionMegaTag2();
-    if (megaTag2Position.has_value())
+    auto megaTag2Positions = m_vision->GetRobotPositionMegaTag2();
+    if (!megaTag2Positions.empty())
     {
-        ResetPosition(megaTag2Position.value().estimatedPose.ToPose2d());
+        ResetPosition(megaTag2Positions[0].estimatedPose.ToPose2d());
         m_initialPoseSet = true;
     }
 }
@@ -167,10 +171,10 @@ void DragonVisionPoseEstimator::AddVisionMeasurements()
             return;
         }
 
-        auto visPose = m_vision->GetRobotPositionMegaTag2();
-        if (visPose.has_value())
+        auto poses = m_vision->GetRobotPositionMegaTag2();
+        for (auto pose : poses)
         {
-            m_chassis->AddVisionMeasurement(visPose.value().estimatedPose.ToPose2d(), units::second_t{visPose.value().timeStamp}, visPose.value().visionMeasurementStdDevs);
+            m_chassis->AddVisionMeasurement(pose.estimatedPose.ToPose2d(), units::second_t{pose.timeStamp}, pose.visionMeasurementStdDevs);
         }
 
         auto questPose = m_vision->GetRobotPositionQuest();

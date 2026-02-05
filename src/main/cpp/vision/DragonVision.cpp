@@ -284,9 +284,8 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonVision::GetObjectDetectio
 }
 
 /// @brief Query all registered limelights for MegaTag1-based robot poses and choose the best.
-/// @return Optional VisionPose; std::nullopt if no valid poses were returned by cameras.
-/// @note Uses GetBestPose to pick the most reliable pose among candidates.
-std::optional<VisionPose> DragonVision::GetRobotPositionMegaTag1()
+/// @return std::vector<VisionPose>; empty if no valid poses were returned by cameras.
+std::vector<VisionPose> DragonVision::GetRobotPositionMegaTag1()
 {
 	std::vector<VisionPose> poses;
 	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
@@ -295,18 +294,15 @@ std::optional<VisionPose> DragonVision::GetRobotPositionMegaTag1()
 		auto pose = limelight->GetMegaTag1Pose();
 		if (pose.has_value())
 		{
-			return pose;
-			// poses.emplace_back(pose.value());
+			poses.emplace_back(pose.value());
 		}
 	}
-	return std::nullopt;
-	// return GetBestPose(poses);
+	return poses;
 }
 
 /// @brief Query all registered limelights for MegaTag2-based robot poses and choose the best.
-/// @return Optional VisionPose; std::nullopt if no valid poses were returned by cameras.
-/// @note Uses GetBestPose to pick the most reliable pose among candidates.
-std::optional<VisionPose> DragonVision::GetRobotPositionMegaTag2()
+/// @return std::vector<VisionPose>; empty if no valid poses were returned by cameras.
+std::vector<VisionPose> DragonVision::GetRobotPositionMegaTag2()
 {
 	std::vector<VisionPose> poses;
 	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
@@ -315,12 +311,10 @@ std::optional<VisionPose> DragonVision::GetRobotPositionMegaTag2()
 		auto pose = limelight->GetMegaTag2Pose();
 		if (pose.has_value())
 		{
-			return pose;
-			// poses.emplace_back(pose.value());
+			poses.emplace_back(pose.value());
 		}
 	}
-	return std::nullopt;
-	// return GetBestPose(poses);
+	return poses;
 }
 
 /// @brief Get robot pose estimate derived from Quest detections.
@@ -333,6 +327,15 @@ DragonVisionPoseEstimatorStruct DragonVision::GetRobotPositionQuest()
 		return quest->GetPoseEstimate();
 	}
 	return {};
+}
+
+void DragonVision::RefreshQuestData()
+{
+	auto quest = DragonVision::GetDragonVision()->GetQuest();
+	if (quest != nullptr && quest->HealthCheck())
+	{
+		quest->Periodic();
+	}
 }
 
 /// @brief Set a robot pose for all vision that consume robot pose information.

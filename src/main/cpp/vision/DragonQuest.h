@@ -59,9 +59,7 @@ public:
 private:
     DragonQuest() = delete;
 
-    void GetEstimatedPose();
-
-    void SetIsConnected();
+    void ProcessFrameData(); // Combined function that parses frame data once per cycle
 
     void HandleDashboard();
 
@@ -97,10 +95,12 @@ private:
     static constexpr double m_stdxy{0.02};
     static constexpr double m_stddeg{.035};
 
-    double m_prevFrameCount = 0;
+    int32_t m_prevFrameCount = 0;
+    int32_t m_cachedFrameCount = 0; // Cached frame count from latest valid parse
     int m_loopCounter = 0;
 
     int m_lastProcessedHeartbeatId = 0;
+    int64_t m_lastFrameTimestamp = 0; // Cached timestamp for pose estimate
 
     frc::Pose2d m_lastCalculatedPose;
 

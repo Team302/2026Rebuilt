@@ -174,20 +174,17 @@ public:
     void SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE position, DRAGON_LIMELIGHT_PIPELINE pipeline);
 
     /// @brief Get robot pose estimate derived from MegaTag1 detections across cameras.
-    /// @return Optional VisionPose; std::nullopt if no reliable estimation available.
-    std::optional<VisionPose> GetRobotPositionMegaTag1();
+    /// @return std::vector<VisionPose>; empty if no reliable estimation available.
+    std::vector<VisionPose> GetRobotPositionMegaTag1();
 
     /// @brief Get robot pose estimate derived from MegaTag2 detections across cameras.
-    /// @return Optional VisionPose; std::nullopt if no reliable estimation available.
-    std::optional<VisionPose> GetRobotPositionMegaTag2();
+    /// @return std::vector<VisionPose>; empty if no reliable estimation available.
+    std::vector<VisionPose> GetRobotPositionMegaTag2();
 
     /// @brief Get robot pose estimate derived from Quest detections.
     /// @return DragonVisionPoseEstimatorStruct - confidence level indicates the usefulness of the pose.
     DragonVisionPoseEstimatorStruct GetRobotPositionQuest();
-
-    /// @brief Return the registered DragonQuest instance (may be nullptr).
-    /// @return Raw pointer to DragonQuest (no ownership transfer).
-    DragonQuest *GetQuest() const { return m_dragonQuest.get(); };
+    void RefreshQuestData();
 
 private:
     /// @brief Constructor (private for singleton).
@@ -209,6 +206,10 @@ private:
     /// @param identifier Camera identifier to search for.
     /// @return Pointer to the DragonLimelight if found and running; nullptr otherwise.
     DragonLimelight *GetLimelightFromIdentifier(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier) const;
+
+    /// @brief Return the registered DragonQuest instance (may be nullptr).
+    /// @return Raw pointer to DragonQuest (no ownership transfer).
+    DragonQuest *GetQuest() const { return m_dragonQuest.get(); };
 
     /// @brief Singleton instance pointer.
     static DragonVision *m_dragonVision;
