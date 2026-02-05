@@ -51,14 +51,16 @@ void LauncherTuningState::Init()
 void LauncherTuningState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetLauncherVelocityRPS(m_launcherTarget);
+	m_mechanism->UpdateTargetTransferPercentOut(m_launcherPercentOut);
+	m_mechanism->UpdateTargetHoodPercentOut(m_hoodTarget);
 }
 
 void LauncherTuningState::Run()
 {
 	double manualHoodPercentOut = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_X) * .15;
-	if (abs(manualHoodPercentOut) > 0.075)
+	if (abs(manualHoodPercentOut) < 0.075)
 	{
-		m_mechanism->UpdateTargetHoodPercentOut(manualHoodPercentOut);
+		manualHoodPercentOut = 0;
 	}
 
 	if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_UP))
@@ -98,6 +100,8 @@ void LauncherTuningState::Run()
 	{
 		m_mechanism->UpdateTargetLauncherVelocityRPS(m_launcherTarget);
 	}
+
+	m_mechanism->UpdateTargetHoodPercentOut(manualHoodPercentOut);
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("LauncherTuningState"), string("Launcher Target RPM"), m_launcherTarget.value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("LauncherTuningState"), string("Launcher Percent Out"), m_launcherPercentOut);

@@ -193,9 +193,9 @@ std::map<std::string, Launcher::STATE_NAMES>
 void Launcher::CreateCompBot302()
 {
 	m_ntName = "Launcher";
-	m_launcher = new ctre::phoenix6::hardware::TalonFX(16, ctre::phoenix6::CANBus("canivore"));
-	m_hood = new ctre::phoenix6::hardware::TalonFXS(17, ctre::phoenix6::CANBus("canivore"));
-	m_transfer = new ctre::phoenix6::hardware::TalonFX(18, ctre::phoenix6::CANBus("canivore"));
+	m_launcher = new ctre::phoenix6::hardware::TalonFX(17, ctre::phoenix6::CANBus("canivore"));
+	m_hood = new ctre::phoenix6::hardware::TalonFXS(18, ctre::phoenix6::CANBus("canivore"));
+	m_transfer = new ctre::phoenix6::hardware::TalonFX(16, ctre::phoenix6::CANBus("canivore"));
 	m_turret = new ctre::phoenix6::hardware::TalonFXS(19, ctre::phoenix6::CANBus("canivore"));
 	m_indexer = new ctre::phoenix6::hardware::TalonFX(20, ctre::phoenix6::CANBus("canivore"));
 	m_agitator = new ctre::phoenix6::hardware::TalonFX(21, ctre::phoenix6::CANBus("canivore"));
@@ -379,14 +379,14 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
+	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 0;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
@@ -399,7 +399,7 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::radians_per_second_t(0);
 	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::radians_per_second_squared_t(0);
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
-	configs.Commutation.MotorArrangement = MotorArrangementValue::Disabled;
+	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.Slot0.kI = m_positionDegreesHood->GetI();
 	configs.Slot0.kD = m_positionDegreesHood->GetD();
@@ -450,7 +450,7 @@ void Launcher::InitializeTalonFXTransferCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
-	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
+	configs.MotorOutput.Inverted = InvertedValue::Clockwise_Positive;
 	configs.MotorOutput.NeutralMode = NeutralModeValue::Coast;
 	configs.MotorOutput.PeakForwardDutyCycle = 1;
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
@@ -719,14 +719,14 @@ bool Launcher::IsLauncherAtTarget()
 	units::angle::degree_t turretError = m_turret->GetPosition().GetValue() - m_targetTurretAngle;
 	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = m_launcher->GetVelocity().GetValue() - m_targetLauncherAngularVelocity;
 	bool inLaunchzone = IsInLaunchZone();
-	auto chassisSpeeds = m_chassis->GetState().Speeds;
+	auto chassisSpeeds = true; // m_chassis->GetState().Speeds;
 
-	auto Speed = units::math::sqrt(units::math::abs(chassisSpeeds.vx * chassisSpeeds.vx) + units::math::abs(chassisSpeeds.vy * chassisSpeeds.vy));
-	return ((units::math::abs(hoodError) < m_hoodAngleThreshold) &&
-			(units::math::abs(turretError) < m_turretAngleThreshold) &&
-			(units::math::abs(launcherSpeedError) < m_launcherVelocityThreshold) &&
-			(inLaunchzone) &&
-			(Speed < m_chassisSpeedThreshold));
+	// auto Speed = units::math::sqrt(units::math::abs(chassisSpeeds.vx * chassisSpeeds.vx) + units::math::abs(chassisSpeeds.vy * chassisSpeeds.vy));
+	return (units::math::abs(hoodError) < m_hoodAngleThreshold) &&
+		   (units::math::abs(turretError) < m_turretAngleThreshold) &&
+		   (units::math::abs(launcherSpeedError) < m_launcherVelocityThreshold) && inLaunchzone;
+	// (inLaunchzone) &&
+	// (Speed < m_chassisSpeedThreshold));
 }
 bool Launcher::IsInLaunchZone() const
 {
