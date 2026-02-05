@@ -378,14 +378,14 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 1;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(270);
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(0);
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 1;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(125);
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
@@ -486,16 +486,16 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 
 	// MECH_TODO: Set limit switches
 	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
-	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 1;
+	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(180);
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(270);
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 1;
+	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 0;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(125);
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
