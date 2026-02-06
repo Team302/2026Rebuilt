@@ -322,7 +322,7 @@ std::vector<VisionPose> DragonVision::GetRobotPositionMegaTag2()
 DragonVisionPoseEstimatorStruct DragonVision::GetRobotPositionQuest()
 {
 	auto quest = DragonVision::GetDragonVision()->GetQuest();
-	if (quest != nullptr && quest->HealthCheck())
+	if (quest != nullptr)
 	{
 		return quest->GetPoseEstimate();
 	}
@@ -332,7 +332,7 @@ DragonVisionPoseEstimatorStruct DragonVision::GetRobotPositionQuest()
 void DragonVision::RefreshQuestData()
 {
 	auto quest = DragonVision::GetDragonVision()->GetQuest();
-	if (quest != nullptr && quest->HealthCheck())
+	if (quest != nullptr)
 	{
 		quest->Periodic();
 	}
@@ -352,7 +352,7 @@ void DragonVision::SetRobotPose(const frc::Pose2d &pose)
 	auto quest = GetQuest();
 	if (quest != nullptr)
 	{
-		quest->SetRobotPose(pose);
+		quest->AttemptSetRobotPose(pose);
 	}
 }
 
