@@ -39,6 +39,7 @@
 #include "mechanisms/Launcher/EmptyHopperState.h"
 #include "mechanisms/Launcher/ClimbState.h"
 #include "mechanisms/Launcher/LauncherTuningState.h"
+#include "mechanisms/Launcher/ManualLaunchState.h"
 
 #include "teleopcontrol/TeleopControl.h"
 #include "utils/InterpolateUtils.h"
@@ -88,6 +89,9 @@ void Launcher::CreateAndRegisterStates()
 	LauncherTuningState *LauncherTuningStateInst = new LauncherTuningState(string("LauncherTuning"), 7, this, m_activeRobotId);
 	AddToStateVector(LauncherTuningStateInst);
 
+	ManualLaunchState *ManualLaunchStateInst = new ManualLaunchState(string("ManualLaunch"), 8, this, m_activeRobotId);
+	AddToStateVector(ManualLaunchStateInst);
+
 	OffStateInst->RegisterTransitionState(InitializeStateInst);
 	InitializeStateInst->RegisterTransitionState(IdleStateInst);
 	IdleStateInst->RegisterTransitionState(OffStateInst);
@@ -95,6 +99,7 @@ void Launcher::CreateAndRegisterStates()
 	IdleStateInst->RegisterTransitionState(EmptyHopperStateInst);
 	IdleStateInst->RegisterTransitionState(ClimbStateInst);
 	IdleStateInst->RegisterTransitionState(LauncherTuningStateInst);
+	IdleStateInst->RegisterTransitionState(ManualLaunchStateInst);
 	PrepareToLaunchStateInst->RegisterTransitionState(OffStateInst);
 	PrepareToLaunchStateInst->RegisterTransitionState(IdleStateInst);
 	PrepareToLaunchStateInst->RegisterTransitionState(LaunchStateInst);
@@ -111,6 +116,8 @@ void Launcher::CreateAndRegisterStates()
 	ClimbStateInst->RegisterTransitionState(PrepareToLaunchStateInst);
 	LauncherTuningStateInst->RegisterTransitionState(OffStateInst);
 	LauncherTuningStateInst->RegisterTransitionState(LaunchStateInst);
+	ManualLaunchStateInst->RegisterTransitionState(OffStateInst);
+	ManualLaunchStateInst->RegisterTransitionState(IdleStateInst);
 }
 
 Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANISM_TYPE::LAUNCHER, std::string("Launcher")),
@@ -188,7 +195,7 @@ std::map<std::string, Launcher::STATE_NAMES>
 		{"STATE_EMPTY_HOPPER", Launcher::STATE_NAMES::STATE_EMPTY_HOPPER},
 		{"STATE_CLIMB", Launcher::STATE_NAMES::STATE_CLIMB},
 		{"STATE_LAUNCHER_TUNING", Launcher::STATE_NAMES::STATE_LAUNCHER_TUNING},
-	};
+		{"STATE_MANUAL_LAUNCH", Launcher::STATE_NAMES::STATE_MANUAL_LAUNCH}};
 
 void Launcher::CreateCompBot302()
 {
@@ -758,7 +765,7 @@ void Launcher::UpdateLauncherTargets()
 {
 	int currentState = GetCurrentState();
 
-	if (currentState == STATE_NAMES::STATE_OFF || currentState == STATE_NAMES::STATE_INITIALIZE || currentState == STATE_NAMES::STATE_CLIMB)
+	if (currentState == STATE_NAMES::STATE_OFF || currentState == STATE_NAMES::STATE_INITIALIZE || currentState == STATE_NAMES::STATE_CLIMB || currentState == STATE_NAMES::STATE_MANUAL_LAUNCH)
 	{
 		return;
 	}

@@ -180,6 +180,7 @@ robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlB
     {TeleopControlFunctions::LAUNCH, copilotAButton},
     {TeleopControlFunctions::LAUNCHER_OFF, copilotStartButton},
     {TeleopControlFunctions::LAUNCH_OVERRIDE, copilotYButton},
+    {TeleopControlFunctions::MANUAL_LAUNCH, copilotXButton},
     {TeleopControlFunctions::INTAKE_IN, copilotLBumper},
     {TeleopControlFunctions::INTAKE_OUT, copilotRBumper}};
 
