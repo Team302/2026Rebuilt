@@ -151,11 +151,6 @@ public:
     ///-----------------------------------------------------------------------------------
     void SetRobotPose(const frc::Pose2d &pose);
 
-    ///-----------------------------------------------------------------------------------
-    /// @brief Get sanitized camera name used for network table operations.
-    ///-----------------------------------------------------------------------------------
-    std::string GetCameraName() const { return m_cameraName; }
-
 private:
     ///-----------------------------------------------------------------------------------
     /// @brief Set the priority AprilTag ID used by Limelight pose selection logic.
@@ -191,12 +186,11 @@ private:
     const double START_HB = -9999;     ///< initial heartbeat sentinel
     const double MAX_HB = 2000000000;  ///< safety max heartbeat (unused currently)
     double m_lastHeartbeat = START_HB; ///< last seen heartbeat value
-    frc::Timer *m_healthTimer;         ///< local timer used for heartbeat health checks
+    frc::Timer m_healthTimer;          ///< local timer used for heartbeat health checks (stack allocated)
 
     DRAGON_LIMELIGHT_PIPELINE m_pipeline; ///< currently selected pipeline
 
     // from old dragon camera
-    std::string m_cameraName;                            ///< sanitized camera name used with helpers
     subsystems::CommandSwerveDrivetrain *m_chassis;      ///< pointer to chassis for orientation/limits
     frc::Pose3d m_cameraPose;                            ///< camera transform relative to robot
     const double m_maxRotationRateDegreesPerSec = 720.0; ///< fallback limit if chassis not available

@@ -93,11 +93,6 @@ private:
     DragonVision *m_vision = DragonVision::GetDragonVision();
 
     /**
-     * Optional quest/goal tracker used by vision logic (may be nullptr until initialized).
-     */
-    DragonQuest *m_quest;
-
-    /**
      * @brief Convert and add vision-based pose measurements to the drivetrain estimator.
      *
      * Responsible for validating detections, applying coordinate transforms, and

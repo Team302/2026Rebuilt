@@ -21,7 +21,7 @@
 // FRC includes
 
 // Team 302 includes
-#include "mechanisms/Intake/IntakeState.h"
+#include "mechanisms/Launcher/ManualLaunchState.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "teleopcontrol/TeleopControlFunctions.h"
 #include "utils/logging/debug/Logger.h"
@@ -29,52 +29,57 @@
 // Third Party Includes
 
 using namespace std;
-using namespace IntakeStates;
+using namespace LauncherStates;
 
 /// @class ExampleForwardState
 /// @brief information about the control (open loop, closed loop position, closed loop velocity, etc.) for a mechanism state
-IntakeState::IntakeState(std::string stateName,
-						 int stateId,
-						 Intake *mech,
-						 RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId)
+ManualLaunchState::ManualLaunchState(std::string stateName,
+									 int stateId,
+									 Launcher *mech,
+									 RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId)
 {
 }
 
-void IntakeState::Init()
+void ManualLaunchState::Init()
 {
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("IntakeState"), string("Init"));
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("ManualLaunchState"), string("Init"));
+
+	m_mechanism->PublishLaunchMode(true);
 
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
 		InitCompBot302();
 }
 
-void IntakeState::InitCompBot302()
+void ManualLaunchState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
-	m_mechanism->GetExtenderLeft()->Set(m_extenderTarget);
-	m_mechanism->GetExtenderRight()->Set(m_extenderTarget);
+	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
+	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
+	m_mechanism->UpdateTargetAgitatorPercentOut(m_agitatorTarget);
+	m_mechanism->UpdateTargetTurretPositionDegreesTurret(m_turretTarget);
+	m_mechanism->UpdateTargetHoodPositionDegreesHood(m_hoodTarget);
+	m_mechanism->UpdateTargetLauncherVelocityRPS(m_launcherTarget);
 }
 
-void IntakeState::Run()
+void ManualLaunchState::Run()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("IntakeState"), string("Run"));
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("ManualLaunchState"), string("Run"));
 }
 
-void IntakeState::Exit()
+void ManualLaunchState::Exit()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("IntakeState"), string("Exit"));
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("ManualLaunchState"), string("Exit"));
 }
 
-bool IntakeState::AtTarget()
+bool ManualLaunchState::AtTarget()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("IntakeState"), string("AtTarget"));
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("ManualLaunchState"), string("AtTarget"));
 
 	bool atTarget = false;
 	return atTarget;
 }
 
-bool IntakeState::IsTransitionCondition(bool considerGamepadTransitions)
+bool ManualLaunchState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::INTAKE));
+	return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::MANUAL_LAUNCH));
 }

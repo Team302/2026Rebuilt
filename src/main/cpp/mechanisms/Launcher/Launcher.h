@@ -52,7 +52,8 @@ public:
 		STATE_LAUNCH,
 		STATE_EMPTY_HOPPER,
 		STATE_CLIMB,
-		STATE_LAUNCHER_TUNING
+		STATE_LAUNCHER_TUNING,
+		STATE_MANUAL_LAUNCH
 	};
 
 	Launcher(RobotIdentifier activeRobotId);
