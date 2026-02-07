@@ -59,9 +59,9 @@ public:
     /// @param identifier Identifier enum for multiple limelights on the robot.
     /// @param cameraType Type hint for camera hardware/configuration.
     /// @param cameraUsage How the camera will be used (odometry, driver camera, etc.).
-    /// @param mountingXOffset Forward offset (inches) from robot center.
-    /// @param mountingYOffset Left offset (inches) from robot center.
-    /// @param mountingZOffset Up offset (inches) from robot center.
+    /// @param mountingXOffset Forward offset (meters) from robot center.
+    /// @param mountingYOffset Left offset (meters) from robot center.
+    /// @param mountingZOffset Up offset (meters) from robot center.
     /// @param pitch Camera pitch in degrees.
     /// @param yaw Camera yaw in degrees.
     /// @param roll Camera roll in degrees.
@@ -72,9 +72,9 @@ public:
                     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier,
                     DRAGON_LIMELIGHT_CAMERA_TYPE cameraType,
                     DRAGON_LIMELIGHT_CAMERA_USAGE cameraUsage,
-                    units::length::inch_t mountingXOffset,     /// <I> x offset of cam from robot center (forward relative to robot)
-                    units::length::inch_t mountingYOffset,     /// <I> y offset of cam from robot center (left relative to robot)
-                    units::length::inch_t mountingZOffset,     /// <I> z offset of cam from robot center (up relative to robot)
+                    units::length::meter_t mountingXOffset,    /// <I> x offset of cam from robot center (forward relative to robot)
+                    units::length::meter_t mountingYOffset,    /// <I> y offset of cam from robot center (left relative to robot)
+                    units::length::meter_t mountingZOffset,    /// <I> z offset of cam from robot center (up relative to robot)
                     units::angle::degree_t pitch,              /// <I> - Pitch of camera
                     units::angle::degree_t yaw,                /// <I> - Yaw of camera
                     units::angle::degree_t roll,               /// <I> - Roll of camera
