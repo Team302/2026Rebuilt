@@ -97,7 +97,7 @@ private:
     bool m_isNTInitialized = false; // Track if subscribers were successfully initialized
     bool m_poseResetRequested = false;
 
-    frc::Transform2d m_questToRobotTransform; // <I> Transform from Quest to robot (used to calculate the robot pose from the quest pose)
+    frc::Transform3d m_questToRobotTransform; // <I> Transform from Quest to robot (used to calculate the robot pose from the quest pose)
 
     static constexpr double m_stdxy{0.02};
     static constexpr double m_stddeg{.035};
@@ -107,7 +107,7 @@ private:
 
     int m_lastProcessedHeartbeatId = 0;
 
-    frc::Pose2d m_lastCalculatedPose;
+    frc::Pose3d m_lastCalculatedPose;
 
     frc::Pose2d m_poseReset;
 

@@ -38,9 +38,9 @@ DragonQuest::DragonQuest(
         m_mountingRoll(mountingRoll)
 {
 
-    m_questToRobotTransform = frc::Transform2d{
-        frc::Translation2d(m_mountingXOffset, m_mountingYOffset),
-        frc::Rotation2d(m_mountingYaw)};
+    m_questToRobotTransform = frc::Transform3d{
+        frc::Translation3d(m_mountingXOffset, m_mountingYOffset, m_mountingZOffset),
+        frc::Rotation3d(m_mountingRoll, m_mountingPitch, m_mountingYaw)};
 
     m_questEnabledChooser.AddOption("ON", true);
     m_questEnabledChooser.AddOption("OFF", false);
@@ -132,26 +132,26 @@ void DragonQuest::GetEstimatedPose()
 #ifdef __FRC_ROBORIO__
     if (!m_isNTInitialized)
     {
-        m_lastCalculatedPose = frc::Pose2d{};
+        m_lastCalculatedPose = frc::Pose3d{};
         return;
     }
     auto rawData = m_frameDataSubscriber.Get();
     if (rawData.empty())
     {
-        m_lastCalculatedPose = frc::Pose2d{}; // Set the last pose to a default pose if no data is available
+        m_lastCalculatedPose = frc::Pose3d{}; // Set the last pose to a default pose if no data is available
         return;
     }
 
     questnav::protos::data::ProtobufQuestNavFrameData frameData;
     if (!frameData.ParseFromArray(rawData.data(), rawData.size()))
     {
-        m_lastCalculatedPose = frc::Pose2d{}; // Set the last pose to a default pose if no data is available
+        m_lastCalculatedPose = frc::Pose3d{}; // Set the last pose to a default pose if no data is available
         return;
     }
 
     if (!frameData.has_pose3d())
     {
-        m_lastCalculatedPose = frc::Pose2d{}; // Set the last pose to a default pose if no data is available
+        m_lastCalculatedPose = frc::Pose3d{}; // Set the last pose to a default pose if no data is available
         return;
     }
 
@@ -166,7 +166,25 @@ void DragonQuest::GetEstimatedPose()
     double qy = q.y();
     double qz = q.z();
 
-    // Full quaternion to yaw conversion (handles non-zero pitch/roll)
+    // Convert quaternion to Euler angles (roll, pitch, yaw)
+    // Roll (x-axis rotation)
+    double sinr_cosp = 2.0 * (qw * qx + qy * qz);
+    double cosr_cosp = 1.0 - 2.0 * (qx * qx + qy * qy);
+    double rollRadians = std::atan2(sinr_cosp, cosr_cosp);
+
+    // Pitch (y-axis rotation)
+    double sinp = 2.0 * (qw * qy - qz * qx);
+    double pitchRadians;
+    if (std::abs(sinp) >= 1.0)
+    {
+        pitchRadians = std::copysign(M_PI / 2.0, sinp); // Use 90 degrees if out of range
+    }
+    else
+    {
+        pitchRadians = std::asin(sinp);
+    }
+
+    // Yaw (z-axis rotation)
     double siny_cosp = 2.0 * (qw * qz + qx * qy);
     double cosy_cosp = 1.0 - 2.0 * (qy * qy + qz * qz);
     double yawRadians = std::atan2(siny_cosp, cosy_cosp);
@@ -174,13 +192,16 @@ void DragonQuest::GetEstimatedPose()
     // Convert from Quest coordinates to robot coordinates
     units::length::meter_t x{translation.x()};
     units::length::meter_t y{translation.y()};
+    units::length::meter_t z{translation.z()};
+    units::angle::radian_t roll{rollRadians};
+    units::angle::radian_t pitch{pitchRadians};
     units::angle::radian_t yaw{yawRadians};
 
-    frc::Pose2d questPose{x, y, yaw};
-    frc::Pose2d robotPose = questPose.TransformBy(m_questToRobotTransform.Inverse());
+    frc::Pose3d questPose{frc::Translation3d{x, y, z}, frc::Rotation3d{roll, pitch, yaw}};
+    frc::Pose3d robotPose = questPose.TransformBy(m_questToRobotTransform.Inverse());
 
     m_lastCalculatedPose = robotPose;
-    m_field->UpdateObject("QuestPose", robotPose);
+    m_field->UpdateObject("QuestPose", robotPose.ToPose2d());
 
 #endif
 }
@@ -228,7 +249,7 @@ void DragonQuest::SetIsConnected()
 
 void DragonQuest::DataLog(uint64_t timestamp)
 {
-    Log2DPoseData(timestamp, DragonDataLogger::PoseSingals::CURRENT_CHASSIS_QUEST_POSE2D, m_lastCalculatedPose);
+    Log2DPoseData(timestamp, DragonDataLogger::PoseSingals::CURRENT_CHASSIS_QUEST_POSE2D, m_lastCalculatedPose.ToPose2d());
 }
 
 void DragonQuest::AttemptSetRobotPose(const frc::Pose2d &pose)
@@ -249,10 +270,10 @@ void DragonQuest::AttemptSetRobotPose(const frc::Pose2d &pose)
 void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
 {
 #ifdef __FRC_ROBORIO__
-    frc::Pose2d newPose = pose.TransformBy(m_questToRobotTransform);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("SetRobotPoseX"), pose.X().value());
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("SetRobotPoseY"), pose.Y().value());
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("SetRobotPoseRot"), pose.Rotation().Degrees().value());
+    frc::Pose3d newPose = frc::Pose3d(pose).TransformBy(m_questToRobotTransform);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("SetRobotPoseX"), newPose.X().value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("SetRobotPoseY"), newPose.Y().value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("SetRobotPoseRot"), newPose.Rotation().Z().value());
 
     // Create pose reset command
     questnav::protos::commands::ProtobufQuestNavCommand command;
@@ -273,7 +294,7 @@ void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
     auto *quaternion = rotation->mutable_q();
 
     // Convert 2D rotation to quaternion (rotation around Z axis)
-    double yawRadians = newPose.Rotation().Radians().value();
+    double yawRadians = newPose.Rotation().Z().value();
     double halfYaw = yawRadians / 2.0;
 
     quaternion->set_w(std::cos(halfYaw)); // Real part
@@ -334,7 +355,7 @@ DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
     {
         // str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::HIGH;
         str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE;
-        str.m_visionPose = m_lastCalculatedPose;
+        str.m_visionPose = m_lastCalculatedPose.ToPose2d();
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("x"), str.m_visionPose.X().value());
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("y"), str.m_visionPose.Y().value());
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("rot"), str.m_visionPose.Rotation().Degrees().value());
