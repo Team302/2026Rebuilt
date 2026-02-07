@@ -581,7 +581,7 @@ void Launcher::InitializeTalonFXIndexerCompBot302()
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.Feedback.SensorToMechanismRatio = 1;
+	configs.Feedback.SensorToMechanismRatio = 3;
 
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
@@ -629,7 +629,7 @@ void Launcher::InitializeTalonFXAgitatorCompBot302()
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.Feedback.SensorToMechanismRatio = 1;
+	configs.Feedback.SensorToMechanismRatio = 3;
 
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
