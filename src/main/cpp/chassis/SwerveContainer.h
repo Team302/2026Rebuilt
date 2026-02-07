@@ -42,7 +42,7 @@
 /// - Providing access to trajectory drive commands for autonomous routines
 /// - Supporting system identification (SysID) for drivetrain characterization
 //====================================================================================================================================================
-class SwerveContainer : IRobotStateChangeSubscriber
+class SwerveContainer : public IRobotStateChangeSubscriber
 {
 public:
     //------------------------------------------------------------------

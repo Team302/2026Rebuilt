@@ -14,6 +14,8 @@
 //====================================================================================================================================================
 
 #include "chassis/commands/TeleopRobotDrive.h"
+#include "state/RobotState.h"
+#include "state/RobotStateChanges.h"
 #include "utils/logging/debug/Logger.h"
 
 // Note the simplified constructor and AddRequirements call
@@ -23,11 +25,29 @@ TeleopRobotDrive::TeleopRobotDrive(subsystems::CommandSwerveDrivetrain *chassis,
                                    units::angular_velocity::degrees_per_second_t maxAngularRate) : m_chassis(chassis),
                                                                                                    m_controller(controller),
                                                                                                    m_maxSpeed(maxSpeed),
-                                                                                                   m_maxAngularRate(maxAngularRate)
+                                                                                                   m_currentMaxSpeed(maxSpeed),
+                                                                                                   m_maxAngularRate(maxAngularRate),
+                                                                                                   m_currentMaxAngularRate(maxAngularRate)
 {
     AddRequirements(m_chassis);
+    RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsLaunching_Bool);
 }
 
+/**
+ * @brief Initializes the teleop robot drive command.
+ *
+ * Sets up initial state and registers for robot state change notifications.
+ */
+void TeleopRobotDrive::Initialize()
+{
+}
+
+/**
+ * @brief Executes the teleop robot drive command.
+ *
+ * Reads controller inputs for forward, strafe, and rotate axes, scales them by the
+ * current maximum speeds, and applies the robot-centric drive request to the chassis.
+ */
 void TeleopRobotDrive::Execute()
 {
     double forward = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_FORWARD);
@@ -35,9 +55,9 @@ void TeleopRobotDrive::Execute()
     double rotate = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE);
 
     m_chassis->SetControl(
-        m_RobotDriveRequest.WithVelocityX(forward * m_maxSpeed)
-            .WithVelocityY(strafe * m_maxSpeed)
-            .WithRotationalRate(rotate * m_maxAngularRate));
+        m_RobotDriveRequest.WithVelocityX(forward * m_currentMaxSpeed)
+            .WithVelocityY(strafe * m_currentMaxSpeed)
+            .WithRotationalRate(rotate * m_currentMaxAngularRate));
 }
 
 bool TeleopRobotDrive::IsFinished()
@@ -47,7 +67,36 @@ bool TeleopRobotDrive::IsFinished()
     return false;
 }
 
+/**
+ * @brief Ends the teleop robot drive command.
+ *
+ * Applies brake control to the chassis when the command ends or is interrupted.
+ *
+ * @param interrupted Whether the command was interrupted.
+ */
 void TeleopRobotDrive::End(bool interrupted)
 {
     m_chassis->SetControl(swerve::requests::SwerveDriveBrake{});
+}
+
+/**
+ * @brief Handles robot state change notifications.
+ *
+ * When the robot enters or exits launching state, scales the maximum speeds
+ * to reduce chassis movement during launching operations.
+ *
+ * @param change The type of state change.
+ * @param value The new state value (true for launching, false for normal).
+ */
+void TeleopRobotDrive::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value)
+{
+    if (change == RobotStateChanges::StateChange::IsLaunching_Bool)
+    {
+        m_currentMaxSpeed = value ? m_maxSpeed * m_launchingSpeedScale : m_maxSpeed;
+        m_currentMaxAngularRate = value ? m_maxAngularRate * m_launchingSpeedScale : m_maxAngularRate;
+
+        Logger::GetLogger()->LogDataDirectlyOverNT(std::string("TeleopRobotDrive"), std::string("Launching "), value);
+        Logger::GetLogger()->LogDataDirectlyOverNT(std::string("TeleopRobotDrive"), std::string("m_currentMaxSpeed "), m_currentMaxSpeed.value());
+        Logger::GetLogger()->LogDataDirectlyOverNT(std::string("TeleopRobotDrive"), std::string("m_currentMaxAngularRate "), m_currentMaxAngularRate.value());
+    }
 }

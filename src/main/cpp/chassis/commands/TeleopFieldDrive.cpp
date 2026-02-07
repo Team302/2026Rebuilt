@@ -15,7 +15,9 @@
 
 #include "chassis/commands/TeleopFieldDrive.h"
 #include "state/RobotState.h"
+#include "state/RobotStateChanges.h"
 #include "utils/FMSData.h"
+#include "utils/logging/debug/Logger.h"
 #include "vision/DragonVision.h"
 
 // Note the simplified constructor and AddRequirements call
@@ -25,11 +27,19 @@ TeleopFieldDrive::TeleopFieldDrive(subsystems::CommandSwerveDrivetrain *chassis,
                                    units::angular_velocity::degrees_per_second_t maxAngularRate) : m_chassis(chassis),
                                                                                                    m_controller(controller),
                                                                                                    m_maxSpeed(maxSpeed),
+                                                                                                   m_currentMaxSpeed(maxSpeed),
                                                                                                    m_maxAngularRate(maxAngularRate)
 {
     AddRequirements(m_chassis);
+    RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsLaunching_Bool);
 }
 
+/**
+ * @brief Initializes the teleop field drive command.
+ *
+ * Publishes that drive to field element is not done and sets the vision pipeline
+ * to April Tags for field element detection.
+ */
 void TeleopFieldDrive::Initialize()
 {
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElementIsDone_Bool, false);
@@ -41,6 +51,12 @@ void TeleopFieldDrive::Initialize()
     }
 }
 
+/**
+ * @brief Executes the teleop field drive command.
+ *
+ * Reads controller inputs for forward, strafe, and rotate axes, scales them by the
+ * current maximum speeds, and applies the field-centric drive request to the chassis.
+ */
 void TeleopFieldDrive::Execute()
 {
     double forward = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_FORWARD);
@@ -48,11 +64,18 @@ void TeleopFieldDrive::Execute()
     double rotate = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE);
 
     m_chassis->SetControl(
-        m_fieldDriveRequest.WithVelocityX(forward * m_maxSpeed)
-            .WithVelocityY(strafe * m_maxSpeed)
-            .WithRotationalRate(rotate * m_maxAngularRate));
+        m_fieldDriveRequest.WithVelocityX(forward * m_currentMaxSpeed)
+            .WithVelocityY(strafe * m_currentMaxSpeed)
+            .WithRotationalRate(rotate * m_currentMaxAngularRate));
 }
 
+/**
+ * @brief Checks if the command is finished.
+ *
+ * This command runs continuously until interrupted by another command.
+ *
+ * @return Always returns false.
+ */
 bool TeleopFieldDrive::IsFinished()
 {
     // A default drive command should never finish on its own.
@@ -60,7 +83,36 @@ bool TeleopFieldDrive::IsFinished()
     return false;
 }
 
+/**
+ * @brief Ends the teleop field drive command.
+ *
+ * Applies brake control to the chassis when the command ends or is interrupted.
+ *
+ * @param interrupted Whether the command was interrupted.
+ */
 void TeleopFieldDrive::End(bool interrupted)
 {
     m_chassis->SetControl(swerve::requests::SwerveDriveBrake{});
+}
+
+/**
+ * @brief Handles robot state change notifications.
+ *
+ * When the robot enters or exits launching state, scales the maximum speeds
+ * to reduce chassis movement during launching operations.
+ *
+ * @param change The type of state change.
+ * @param value The new state value (true for launching, false for normal).
+ */
+void TeleopFieldDrive::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value)
+{
+    if (change == RobotStateChanges::StateChange::IsLaunching_Bool)
+    {
+        m_currentMaxSpeed = value ? m_maxSpeed * m_launchingSpeedScale : m_maxSpeed;
+        m_currentMaxAngularRate = value ? m_maxAngularRate * m_launchingSpeedScale : m_maxAngularRate;
+
+        Logger::GetLogger()->LogDataDirectlyOverNT(std::string("TeleopFieldDrive"), std::string("Launching "), value);
+        Logger::GetLogger()->LogDataDirectlyOverNT(std::string("TeleopFieldDrive"), std::string("m_currentMaxSpeed "), m_currentMaxSpeed.value());
+        Logger::GetLogger()->LogDataDirectlyOverNT(std::string("TeleopFieldDrive"), std::string("m_currentMaxAngularRate "), m_currentMaxAngularRate.value());
+    }
 }

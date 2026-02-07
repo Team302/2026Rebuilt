@@ -17,9 +17,9 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "chassis/commands/TeleopFieldDrive.h"
 #include "chassis/commands/TeleopRobotDrive.h"
+#include "frc2/command/Commands.h"
 #include "frc2/command/ProxyCommand.h"
 #include "frc2/command/button/RobotModeTriggers.h"
-#include "frc2/command/Commands.h"
 #include "state/RobotState.h"
 #include "utils/logging/debug/Logger.h"
 
@@ -128,20 +128,14 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
         if (m_climbModeStatus) {
             // TODO: Replace with actual Drive To Tower Depot Side Command
         }
-        else
-        {
-            return m_driveToDepot.get();
-        } }));
+        return m_driveToDepot.get(); }));
 
     driveToOutpost.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::Command *
                                                       {
         if (m_climbModeStatus) {
             // TODO: Replace with actual Drive To Tower Outpost Side Command
         }
-        else
-        {
-            return m_driveToOutpost.get();
-        } }));
+        return m_driveToOutpost.get(); }));
 }
 
 //------------------------------------------------------------------
