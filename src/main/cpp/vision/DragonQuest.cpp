@@ -52,6 +52,7 @@ DragonQuest::DragonQuest(
       m_mountingPitch(mountingPitch),
       m_mountingYaw(mountingYaw),
       m_mountingRoll(mountingRoll)
+
 {
     // Build a 3D transform from robot centre to the Quest mounting location.
     m_robotToQuestTransform = frc::Transform3d{
@@ -81,7 +82,7 @@ DragonQuest::DragonQuest(
 
     // Field visualisation object
     m_field = DragonField::GetInstance();
-    m_field->AddObject("QuestRobotPose", frc::Pose2d{}, true);
+    m_field->AddObject("QuestRobotPose", frc::Pose2d{}, false);
     m_field->AddObject("QuestPose", frc::Pose2d{}, false);
 }
 
@@ -219,7 +220,7 @@ DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
     else
     {
         // TODO: switch to HIGH once Quest pose is validated on the robot
-        str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE;
+        str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::HIGH;
         str.m_visionPose = m_lastCalculatedPose;
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("x"), str.m_visionPose.X().value());
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("y"), str.m_visionPose.Y().value());
@@ -241,7 +242,7 @@ frc::Pose2d DragonQuest::QuestPoseToRobotPose2d(const frc::Pose3d &questPose) co
         questPose.X(), questPose.Y(),
         frc::Rotation2d{questPose.Rotation().Z()}};
     m_field->UpdateObject("QuestPose", questPose2d);
-    return questPose2d.TransformBy(m_questToRobotTransform2d);
+    return questPose2d.TransformBy(m_questToRobotTransform2d.Inverse());
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -251,5 +252,5 @@ frc::Pose3d DragonQuest::RobotPose2dToQuestPose(const frc::Pose2d &robotPose) co
 {
     // Lift the 2D robot pose to 3D and apply the robot→Quest transform
     frc::Pose3d robotPose3d{robotPose};
-    return robotPose3d.TransformBy(m_robotToQuestTransform.Inverse());
+    return robotPose3d.TransformBy(m_robotToQuestTransform);
 }
