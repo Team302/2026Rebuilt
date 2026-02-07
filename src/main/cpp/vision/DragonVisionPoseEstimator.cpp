@@ -80,7 +80,7 @@ void DragonVisionPoseEstimator::RunCurrentState()
     // Make sure we have a vision subsystem pointer.
     // If we don't, try to get one
     // If we still don't have one exit
-    if (!m_initialPoseSet)
+    if (!m_initialPoseSet || frc::DriverStation::IsDisabled())
     {
         CalculateInitialPose();
     }

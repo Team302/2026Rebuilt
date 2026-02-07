@@ -81,7 +81,8 @@ DragonQuest::DragonQuest(
 
     // Field visualisation object
     m_field = DragonField::GetInstance();
-    m_field->AddObject("QuestPose", frc::Pose2d{}, true);
+    m_field->AddObject("QuestRobotPose", frc::Pose2d{}, true);
+    m_field->AddObject("QuestPose", frc::Pose2d{}, false);
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -127,7 +128,7 @@ void DragonQuest::GetEstimatedPose()
 
     m_lastCalculatedPose = robotPose;
     m_lastPoseTimestamp = units::time::second_t{latest.dataTimestamp};
-    m_field->UpdateObject("QuestPose", robotPose);
+    m_field->UpdateObject("QuestRobotPose", robotPose);
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -239,8 +240,8 @@ frc::Pose2d DragonQuest::QuestPoseToRobotPose2d(const frc::Pose3d &questPose) co
     frc::Pose2d questPose2d{
         questPose.X(), questPose.Y(),
         frc::Rotation2d{questPose.Rotation().Z()}};
-
-    return questPose2d.TransformBy(m_questToRobotTransform2d.Inverse());
+    m_field->UpdateObject("QuestPose", questPose2d);
+    return questPose2d.TransformBy(m_questToRobotTransform2d);
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -250,5 +251,5 @@ frc::Pose3d DragonQuest::RobotPose2dToQuestPose(const frc::Pose2d &robotPose) co
 {
     // Lift the 2D robot pose to 3D and apply the robot→Quest transform
     frc::Pose3d robotPose3d{robotPose};
-    return robotPose3d.TransformBy(m_robotToQuestTransform);
+    return robotPose3d.TransformBy(m_robotToQuestTransform.Inverse());
 }
