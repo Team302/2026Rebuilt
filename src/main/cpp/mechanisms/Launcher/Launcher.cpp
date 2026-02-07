@@ -409,6 +409,9 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
+	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
+	configs.ExternalFeedback.SensorToMechanismRatio = 810;
+
 	configs.Slot0.kI = m_positionDegreesHood->GetI();
 	configs.Slot0.kD = m_positionDegreesHood->GetD();
 	configs.Slot0.kG = m_positionDegreesHood->GetF();
@@ -518,6 +521,9 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::radians_per_second_squared_t(0);
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
+
+	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
+	configs.ExternalFeedback.SensorToMechanismRatio = 100;
 
 	configs.Slot0.kI = m_positionDegreesTurret->GetI();
 	configs.Slot0.kD = m_positionDegreesTurret->GetD();
