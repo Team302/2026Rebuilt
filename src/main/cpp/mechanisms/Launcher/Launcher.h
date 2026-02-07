@@ -60,7 +60,13 @@ public:
 	Launcher() = delete;
 	~Launcher() = default;
 
-	void CreateBot(int launcherId, int hoodId, int transferId, int turretId, int indexerId, int agitatorId);
+	void CreateBot(
+		ctre::phoenix6::hardware::TalonFX *launcher,
+		ctre::phoenix6::hardware::TalonFXS *hood,
+		ctre::phoenix6::hardware::TalonFX *transfer,
+		ctre::phoenix6::hardware::TalonFXS *turret,
+		ctre::phoenix6::hardware::TalonFX *indexer,
+		ctre::phoenix6::hardware::TalonFX *agitator);
 	void InitializeBot();
 
 	/// @brief Set the control constants (e.g. PIDF values).

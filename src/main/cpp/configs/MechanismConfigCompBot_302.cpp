@@ -38,8 +38,15 @@ void MechanismConfigCompBot_302::DefineMechanisms()
 	m_mechanismMap[MechanismTypes::MECHANISM_TYPE::INTAKE] = m_theIntake;
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing mechanism"), string("Launcher"), "");
+	ctre::phoenix6::CANBus canivore("canivore");
 	m_theLauncher = new Launcher(RobotIdentifier::COMP_BOT_302);
-	m_theLauncher->CreateBot(16, 17, 18, 19, 20, 21);
+	m_theLauncher->CreateBot(
+		new ctre::phoenix6::hardware::TalonFX(16, canivore),
+		new ctre::phoenix6::hardware::TalonFXS(17, canivore),
+		new ctre::phoenix6::hardware::TalonFX(18, canivore),
+		new ctre::phoenix6::hardware::TalonFXS(19, canivore),
+		new ctre::phoenix6::hardware::TalonFX(20, canivore),
+		new ctre::phoenix6::hardware::TalonFX(21, canivore));
 	m_theLauncher->CreateAndRegisterStates();
 	m_theLauncher->InitializeBot();
 	m_theLauncher->Init(/*m_theLauncher*/);

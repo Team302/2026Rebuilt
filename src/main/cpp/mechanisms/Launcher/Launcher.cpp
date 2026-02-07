@@ -266,16 +266,22 @@ std::map<std::string, Launcher::STATE_NAMES>
 		{"STATE_LAUNCHER_TUNING", Launcher::STATE_NAMES::STATE_LAUNCHER_TUNING},
 		{"STATE_MANUAL_LAUNCH", Launcher::STATE_NAMES::STATE_MANUAL_LAUNCH}};
 
-void Launcher::CreateBot(int launcherId, int hoodId, int transferId, int turretId, int indexerId, int agitatorId)
+void Launcher::CreateBot(
+	ctre::phoenix6::hardware::TalonFX *launcher,
+	ctre::phoenix6::hardware::TalonFXS *hood,
+	ctre::phoenix6::hardware::TalonFX *transfer,
+	ctre::phoenix6::hardware::TalonFXS *turret,
+	ctre::phoenix6::hardware::TalonFX *indexer,
+	ctre::phoenix6::hardware::TalonFX *agitator)
 {
 	m_ntName = "Launcher";
-	ctre::phoenix6::CANBus canivore("canivore");
-	m_launcher = new ctre::phoenix6::hardware::TalonFX(launcherId, canivore);
-	m_hood = new ctre::phoenix6::hardware::TalonFXS(hoodId, canivore);
-	m_transfer = new ctre::phoenix6::hardware::TalonFX(transferId, canivore);
-	m_turret = new ctre::phoenix6::hardware::TalonFXS(turretId, canivore);
-	m_indexer = new ctre::phoenix6::hardware::TalonFX(indexerId, canivore);
-	m_agitator = new ctre::phoenix6::hardware::TalonFX(agitatorId, canivore);
+
+	m_launcher = launcher;
+	m_hood = hood;
+	m_transfer = transfer;
+	m_turret = turret;
+	m_indexer = indexer;
+	m_agitator = agitator;
 
 	m_percentOut = CreateZeroControlData(ControlModes::CONTROL_TYPE::PERCENT_OUTPUT, "m_percentOut");
 	m_velocityRPS = CreateZeroControlData(ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, "m_velocityRPS");
