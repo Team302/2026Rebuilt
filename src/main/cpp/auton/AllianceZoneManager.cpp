@@ -45,8 +45,6 @@ bool AllianceZoneManager::IsInAllianceZone()
     {
         return IsInZones(m_redAllianceZone);
     }
-    else
-    {
-        return IsInZones(m_blueAllianceZone);
-    }
+
+    return IsInZones(m_blueAllianceZone);
 }

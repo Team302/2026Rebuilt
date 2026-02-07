@@ -45,8 +45,6 @@ bool DeadZoneManager::IsInDeadZone()
     {
         return IsInZones(m_redDeadZone);
     }
-    else
-    {
-        return IsInZones(m_blueDeadZone);
-    }
+
+    return IsInZones(m_blueDeadZone);
 }
