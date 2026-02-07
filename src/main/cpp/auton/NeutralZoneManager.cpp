@@ -1,4 +1,4 @@
-//====================================================================================================================================================
+// //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
@@ -13,17 +13,32 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include <auton/NeutralZoneManager.h>
-#include <frc/DriverStation.h>
-#include <auton/ZoneParams.h>
+#include "ZoneParams.h"
 
 using frc::DriverStation;
 
-std::string NeutralZoneManager::GetZoneFile()
+NeutralZoneManager::NeutralZoneManager() : ZoneHelper()
 {
-    return "NeutralZone.xml";
+    ParseZoneFiles();
+    m_parsedNeutralZone = GetAllianceZones(ZoneAllianceColor::BOTH);
 }
 
-bool NeutralZoneManager::isInNeutralZone()
+NeutralZoneManager *NeutralZoneManager::m_instance = nullptr;
+NeutralZoneManager *NeutralZoneManager::GetInstance()
 {
-    return isInZone(GetZoneFile());
+    if (NeutralZoneManager::m_instance == nullptr)
+    {
+        NeutralZoneManager::m_instance = new NeutralZoneManager();
+    }
+    return NeutralZoneManager::m_instance;
+}
+
+std::vector<std::string> NeutralZoneManager::GetZoneFiles()
+{
+    return m_neutralZoneFile;
+};
+
+bool NeutralZoneManager::IsInNeutralZone()
+{
+    return IsInZones(m_parsedNeutralZone);
 }

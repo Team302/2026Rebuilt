@@ -19,6 +19,21 @@
 
 class AllianceZoneManager : public ZoneHelper
 {
-    std::string GetZoneFile() override;
-    bool isInAllianceZone();
+public:
+    static AllianceZoneManager *GetInstance();
+    bool IsInAllianceZone();
+
+private:
+    AllianceZoneManager();
+    ~AllianceZoneManager() = default;
+
+    std::vector<std::string> GetZoneFiles() override;
+
+    static AllianceZoneManager *m_instance;
+    std::vector<std::string> m_allianceZoneFiles = {
+        "RedAllianceZone.xml",
+        "BlueAllianceZone.xml"};
+
+    std::vector<ZoneParams *> m_blueAllianceZone;
+    std::vector<ZoneParams *> m_redAllianceZone;
 };
