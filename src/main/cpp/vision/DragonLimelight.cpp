@@ -57,9 +57,9 @@ namespace
 /// @param identifier enum identifying which physical limelight this represents
 /// @param cameraType limelight camera type (unused in current implementation)
 /// @param cameraUsage whether this camera is used for odometry, vision, etc. (unused here)
-/// @param mountingXOffset forward offset in inches from robot center
-/// @param mountingYOffset left offset in inches from robot center
-/// @param mountingZOffset up offset in inches from robot center
+/// @param mountingXOffset forward offset in meters from robot center
+/// @param mountingYOffset left offset in meters from robot center
+/// @param mountingZOffset up offset in meters from robot center
 /// @param pitch camera pitch in degrees
 /// @param yaw camera yaw in degrees
 /// @param roll camera roll in degrees
