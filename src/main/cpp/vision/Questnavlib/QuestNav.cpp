@@ -300,11 +300,11 @@ void QuestNav::CommandPeriodic()
             continue; // Skip unparseable responses
         }
 
-        if (!response.success())
-        {
-            std::string msg = "QuestNav command failed!\n" + response.error_message();
-            frc::DriverStation::ReportError(msg);
-        }
+        // if (!response.success())
+        // {
+        //     std::string msg = "QuestNav command failed!\n" + response.error_message();
+        //     frc::DriverStation::ReportError(msg);
+        // }
     }
 #endif
 }
@@ -353,14 +353,14 @@ void QuestNav::CheckVersionMatch()
     auto libVersion = GetLibVersion();
     auto questNavVersion = GetQuestNavVersion();
 
-    if (questNavVersion != libVersion)
-    {
-        std::string warningMessage =
-            "WARNING FROM QUESTNAV: QuestNavLib version (" + libVersion +
-            ") on your robot does not match QuestNav app version (" + questNavVersion +
-            ") on your headset. This may cause compatibility issues. Check the version of your vendordep and the app running on your headset.";
-        frc::DriverStation::ReportWarning(warningMessage);
-    }
+    // if (questNavVersion != libVersion)
+    // {
+    //     std::string warningMessage =
+    //         "WARNING FROM QUESTNAV: QuestNavLib version (" + libVersion +
+    //         ") on your robot does not match QuestNav app version (" + questNavVersion +
+    //         ") on your headset. This may cause compatibility issues. Check the version of your vendordep and the app running on your headset.";
+    //     frc::DriverStation::ReportWarning(warningMessage);
+    // }
 }
 
 // ──────────────────────────────────────────────────────────────────────────────

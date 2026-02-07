@@ -16,23 +16,18 @@
 
 #pragma once
 
+#include <memory>
+
+#include "frc/geometry/Pose2d.h"
+#include "frc/geometry/Pose3d.h"
+#include "frc/geometry/Transform3d.h"
 #include "frc/smartdashboard/SendableChooser.h"
 #include "frc/smartdashboard/SmartDashboard.h"
-#include "networktables/DoubleArrayTopic.h"
-#include "networktables/DoubleTopic.h"
-#include "networktables/IntegerTopic.h"
-#include "networktables/NetworkTable.h"
-#include "networktables/NetworkTableEntry.h"
-#include "networktables/NetworkTableInstance.h"
-#include "networktables/RawTopic.h"
 #include "state/IRobotStateChangeSubscriber.h"
+#include "utils/DragonField.h"
 #include "utils/logging/signals/DragonDataLogger.h"
 #include "vision/DragonVisionPoseEstimatorStruct.h"
-#include "utils/DragonField.h"
-#ifdef __FRC_ROBORIO__
-#include "vision/Questnavlib/commands.pb.h"
-#include "vision/Questnavlib/data.pb.h"
-#endif
+#include "vision/Questnavlib/QuestNav.h"
 
 class DragonQuest : public IRobotStateChangeSubscriber, public DragonDataLogger
 
@@ -48,7 +43,7 @@ public:
     );
     void DataLog(uint64_t timestamp) override;
 
-    bool HealthCheck() { return m_isConnected; };
+    bool HealthCheck() { return m_questNav.IsConnected(); };
 
     DragonVisionPoseEstimatorStruct GetPoseEstimate();
 
@@ -61,58 +56,59 @@ public:
 private:
     DragonQuest() = delete;
 
+    /// @brief Read new pose frames from QuestNav, apply mounting transform, and cache the latest 2D pose.
     void GetEstimatedPose();
 
-    void SetIsConnected();
-
+    /// @brief Read dashboard choosers and update m_isQuestEnabled.
     void HandleDashboard();
 
-    void InitNT();
-
+    /// @brief Apply the robot-to-Quest mounting offset and send a pose-reset command via QuestNav.
     void SetRobotPose(const frc::Pose2d &pose);
 
-    units::length::inch_t m_mountingXOffset; /// <I> x offset of Quest from robot center (forward relative to robot)
-    units::length::inch_t m_mountingYOffset; /// <I> y offset of Quest from robot center (left relative to robot)
-    units::length::inch_t m_mountingZOffset; /// <I> z offset of Quest from robot center (up relative to robot)
-    units::angle::degree_t m_mountingPitch;  /// <I> - Pitch of Quest
-    units::angle::degree_t m_mountingYaw;    /// <I> - Yaw of Quest
-    units::angle::degree_t m_mountingRoll;   /// <I> - Roll of Quest
+    /// @brief Convert a Quest frc::Pose3d to a robot frc::Pose2d by applying the inverse mounting transform.
+    frc::Pose2d QuestPoseToRobotPose2d(const frc::Pose3d &questPose) const;
 
-    // Replace array topics with raw topics for protobuf
-    nt::RawPublisher m_frameDataPublisher;
-    nt::RawSubscriber m_frameDataSubscriber;
-    nt::RawPublisher m_commandPublisher;
-    nt::RawSubscriber m_commandResponseSubscriber;
-    nt::RawPublisher m_deviceDataPublisher;
-    nt::RawSubscriber m_deviceDataSubscriber;
+    /// @brief Convert a robot frc::Pose2d to a Quest frc::Pose3d by applying the mounting transform.
+    frc::Pose3d RobotPose2dToQuestPose(const frc::Pose2d &robotPose) const;
 
-    // Add command ID tracking
-    uint32_t m_nextCommandId = 1;
+    // ── QuestNav library instance (handles all NT / protobuf communication) ──
+    QuestNav m_questNav;
 
+    // ── Mounting offsets ──
+    units::length::inch_t m_mountingXOffset;
+    units::length::inch_t m_mountingYOffset;
+    units::length::inch_t m_mountingZOffset;
+    units::angle::degree_t m_mountingPitch;
+    units::angle::degree_t m_mountingYaw;
+    units::angle::degree_t m_mountingRoll;
+
+    /// 3D transform from robot centre to Quest mounting location.
+    frc::Transform3d m_robotToQuestTransform;
+
+    /// 2D transform from Quest to robot (kept for the simple 2D path).
+    frc::Transform2d m_questToRobotTransform2d;
+
+    // ── Dashboard choosers ──
     frc::SendableChooser<bool> m_questEnabledChooser;
     frc::SendableChooser<bool> m_questEndgameEnabledChooser;
 
+    // ── State flags ──
     bool m_hasReset = false;
-    bool m_isConnected = false;
-    bool m_isNTInitialized = false; // Track if subscribers were successfully initialized
     bool m_poseResetRequested = false;
+    bool m_isQuestEnabled = false;
+    bool m_isClimbMode = false;
 
-    frc::Transform2d m_questToRobotTransform; // <I> Transform from Quest to robot (used to calculate the robot pose from the quest pose)
-
+    // ── Standard deviations for pose estimator ──
     static constexpr double m_stdxy{0.02};
-    static constexpr double m_stddeg{.035};
+    static constexpr double m_stddeg{0.035};
 
-    double m_prevFrameCount = 0;
-    int m_loopCounter = 0;
-
-    int m_lastProcessedHeartbeatId = 0;
-
+    // ── Cached latest pose ──
     frc::Pose2d m_lastCalculatedPose;
+    units::time::second_t m_lastPoseTimestamp{0.0};
 
+    /// Pose2d to reset to (held until connection is available).
     frc::Pose2d m_poseReset;
 
+    // ── Field visualisation ──
     DragonField *m_field = nullptr;
-
-    bool m_isQuestEnabled = false; // <I> Is the Quest enabled?
-    bool m_isClimbMode = false;
 };

@@ -13,35 +13,57 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include "vision/DragonQuest.h"
+
+#include <cmath>
+#include <string>
+
+#include "frc/geometry/Pose3d.h"
+#include "frc/geometry/Rotation3d.h"
+#include "frc/geometry/Transform3d.h"
+#include "frc/geometry/Translation3d.h"
 #include "state/IRobotStateChangeSubscriber.h"
 #include "state/RobotState.h"
 #include "state/RobotStateChanges.h"
+#include "units/length.h"
 #include "units/time.h"
-#include "utils/AngleUtils.h"
 #include "utils/DragonField.h"
 #include "utils/logging/debug/Logger.h"
+#include "vision/Questnavlib/PoseFrame.h"
 
+// Static strings to avoid repeated heap allocations in logging
+static const std::string kQuestNavDebug = "questnavdebug";
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Constructor
+// ──────────────────────────────────────────────────────────────────────────────
 DragonQuest::DragonQuest(
-    units::length::inch_t mountingXOffset, /// <I> x offset of Quest from robot center (forward relative to robot)
-    units::length::inch_t mountingYOffset, /// <I> y offset of Quest from robot center (left relative to robot)
-    units::length::inch_t mountingZOffset, /// <I> z offset of Quest from robot center (up relative to robot)
-    units::angle::degree_t mountingPitch,  /// <I> - Pitch of Quest
-    units::angle::degree_t mountingYaw,    /// <I> - Yaw of Quest
-    units::angle::degree_t mountingRoll    /// <I> - Roll of Quest
-    ) : IRobotStateChangeSubscriber(),
-        DragonDataLogger(),
-        m_mountingXOffset(mountingXOffset),
-        m_mountingYOffset(mountingYOffset),
-        m_mountingZOffset(mountingZOffset),
-        m_mountingPitch(mountingPitch),
-        m_mountingYaw(mountingYaw),
-        m_mountingRoll(mountingRoll)
+    units::length::inch_t mountingXOffset,
+    units::length::inch_t mountingYOffset,
+    units::length::inch_t mountingZOffset,
+    units::angle::degree_t mountingPitch,
+    units::angle::degree_t mountingYaw,
+    units::angle::degree_t mountingRoll)
+    : IRobotStateChangeSubscriber(),
+      DragonDataLogger(),
+      m_questNav(),
+      m_mountingXOffset(mountingXOffset),
+      m_mountingYOffset(mountingYOffset),
+      m_mountingZOffset(mountingZOffset),
+      m_mountingPitch(mountingPitch),
+      m_mountingYaw(mountingYaw),
+      m_mountingRoll(mountingRoll)
 {
+    // Build a 3D transform from robot centre to the Quest mounting location.
+    m_robotToQuestTransform = frc::Transform3d{
+        frc::Translation3d{m_mountingXOffset, m_mountingYOffset, m_mountingZOffset},
+        frc::Rotation3d{m_mountingRoll, m_mountingPitch, m_mountingYaw}};
 
-    m_questToRobotTransform = frc::Transform2d{
-        frc::Translation2d(m_mountingXOffset, m_mountingYOffset),
-        frc::Rotation2d(m_mountingYaw)};
+    // Keep a simple 2D version for the pose-to-robot conversion path.
+    m_questToRobotTransform2d = frc::Transform2d{
+        frc::Translation2d{m_mountingXOffset, m_mountingYOffset},
+        frc::Rotation2d{m_mountingYaw}};
 
+    // Dashboard choosers
     m_questEnabledChooser.AddOption("ON", true);
     m_questEnabledChooser.AddOption("OFF", false);
     m_questEnabledChooser.SetDefaultOption("ON", true);
@@ -52,190 +74,77 @@ DragonQuest::DragonQuest(
 
     frc::SmartDashboard::PutData("Quest ON/OFF", &m_questEnabledChooser);
     frc::SmartDashboard::PutData("Quest Endgame ONLY", &m_questEndgameEnabledChooser);
-    RobotState *RobotStates = RobotState::GetInstance();
-    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
+
+    // Subscribe to climb-mode state changes
+    RobotState *robotStates = RobotState::GetInstance();
+    robotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
+
+    // Field visualisation object
     m_field = DragonField::GetInstance();
     m_field->AddObject("QuestPose", frc::Pose2d{}, true);
 }
 
-// Static strings to avoid repeated heap allocations in logging
-static const std::string kQuestNavDebug = "questnavdebug";
-static const std::string kIsConnected = "m_isConnected";
-static const std::string kIsNTInitialized = "m_isNTInitialized";
-static const std::string kInitNT = "InitNT";
-static const std::string kNetworkTableObtained = "NetworkTable obtained";
-static const std::string kFailedToGetNT = "Failed to get NetworkTable";
-static const std::string kSuccessfullyInitialized = "Successfully initialized";
-static const std::string kBadAlloc = "InitNT bad_alloc";
-static const std::string kException = "InitNT exception";
-
+// ──────────────────────────────────────────────────────────────────────────────
+// Periodic – called every robot loop
+// ──────────────────────────────────────────────────────────────────────────────
 void DragonQuest::Periodic()
 {
-    if (!m_isNTInitialized)
+    // Let QuestNav process command responses & version checking
+    m_questNav.CommandPeriodic();
+
+    bool connected = m_questNav.IsConnected();
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("m_isConnected"), connected);
+
+    HandleDashboard();
+
+    // If a deferred pose reset is pending and we now have a connection, send it
+    if (m_poseResetRequested && connected)
     {
-        InitNT(); // Try to initialize if not already done
+        SetRobotPose(m_poseReset);
+        return; // Skip GetEstimatedPose this cycle to let reset propagate
     }
 
-    if (m_isNTInitialized)
+    if (connected)
     {
-        SetIsConnected();
-        HandleDashboard();
-        if (m_poseResetRequested && m_isConnected)
-        {
-            SetRobotPose(m_poseReset);
-            return; // Skip GetEstimatedPose this cycle to let reset propagate
-        }
-        if (m_isConnected)
-        {
-            GetEstimatedPose();
-        }
+        GetEstimatedPose();
     }
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kIsConnected, m_isConnected);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kIsNTInitialized, m_isNTInitialized);
 }
 
-void DragonQuest::InitNT()
-{
-#ifdef __FRC_ROBORIO__
-    // Initialize protobuf topics with error handling
-    if (m_isNTInitialized)
-    {
-        return; // Already initialized
-    }
-
-    auto networktable = nt::NetworkTableInstance::GetDefault().GetTable(std::string("QuestNav"));
-    if (networktable.get() == nullptr)
-    {
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, kQuestNavDebug, kInitNT, kFailedToGetNT);
-        return;
-    }
-
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kNetworkTableObtained, true);
-
-    // Create subscribers with reduced buffer sizes to minimize memory allocation
-    nt::PubSubOptions options;
-    options.keepDuplicates = false;
-    options.pollStorage = 1; // Minimal buffer size
-
-    m_frameDataSubscriber = networktable.get()->GetRawTopic("frameData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavFrameData", {}, options);
-    m_deviceDataSubscriber = networktable.get()->GetRawTopic("deviceData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavDeviceData", {}, options);
-    m_commandPublisher = networktable.get()->GetRawTopic("commands").Publish("proto:questnav.protos.commands.ProtobufQuestNavCommand");
-    m_commandResponseSubscriber = networktable.get()->GetRawTopic("response").Subscribe("proto:questnav.protos.commands.ProtobufQuestNavCommandResponse", {}, options);
-
-    m_isNTInitialized = true; // Mark as successfully initialized
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kInitNT, kSuccessfullyInitialized);
-#endif
-}
-
+// ──────────────────────────────────────────────────────────────────────────────
+// GetEstimatedPose – drain the QuestNav frame queue and cache the latest robot pose
+// ──────────────────────────────────────────────────────────────────────────────
 void DragonQuest::GetEstimatedPose()
 {
-#ifdef __FRC_ROBORIO__
-    if (!m_isNTInitialized)
+    auto frames = m_questNav.GetAllUnreadPoseFrames();
+    if (frames.empty())
     {
-        m_lastCalculatedPose = frc::Pose2d{};
-        return;
-    }
-    auto rawData = m_frameDataSubscriber.Get();
-    if (rawData.empty())
-    {
-        m_lastCalculatedPose = frc::Pose2d{}; // Set the last pose to a default pose if no data is available
-        return;
+        return; // No new data – keep the previous cached pose
     }
 
-    questnav::protos::data::ProtobufQuestNavFrameData frameData;
-    if (!frameData.ParseFromArray(rawData.data(), rawData.size()))
-    {
-        m_lastCalculatedPose = frc::Pose2d{}; // Set the last pose to a default pose if no data is available
-        return;
-    }
-
-    if (!frameData.has_pose3d())
-    {
-        m_lastCalculatedPose = frc::Pose2d{}; // Set the last pose to a default pose if no data is available
-        return;
-    }
-
-    const auto &pose3d = frameData.pose3d();
-    const auto &translation = pose3d.translation();
-    const auto &rotation = pose3d.rotation();
-
-    // Extract quaternion
-    const auto &q = rotation.q();
-    double qw = q.w();
-    double qx = q.x();
-    double qy = q.y();
-    double qz = q.z();
-
-    // Full quaternion to yaw conversion (handles non-zero pitch/roll)
-    double siny_cosp = 2.0 * (qw * qz + qx * qy);
-    double cosy_cosp = 1.0 - 2.0 * (qy * qy + qz * qz);
-    double yawRadians = std::atan2(siny_cosp, cosy_cosp);
-
-    // Convert from Quest coordinates to robot coordinates
-    units::length::meter_t x{translation.x()};
-    units::length::meter_t y{translation.y()};
-    units::angle::radian_t yaw{yawRadians};
-
-    frc::Pose2d questPose{x, y, yaw};
-    frc::Pose2d robotPose = questPose.TransformBy(m_questToRobotTransform.Inverse());
+    // Use the most recent frame
+    const PoseFrame &latest = frames.back();
+    frc::Pose2d robotPose = QuestPoseToRobotPose2d(latest.questPose3d);
 
     m_lastCalculatedPose = robotPose;
+    m_lastPoseTimestamp = units::time::second_t{latest.dataTimestamp};
     m_field->UpdateObject("QuestPose", robotPose);
-
-#endif
 }
 
-void DragonQuest::SetIsConnected()
-{
-#ifdef __FRC_ROBORIO__
-    if (!m_isNTInitialized)
-    {
-        m_isConnected = false;
-        return;
-    }
-    auto rawData = m_frameDataSubscriber.Get();
-    if (rawData.empty())
-    {
-        m_isConnected = false;
-        return;
-    }
-
-    questnav::protos::data::ProtobufQuestNavFrameData frameData;
-    if (!frameData.ParseFromArray(rawData.data(), rawData.size()))
-    {
-        m_isConnected = false;
-        return;
-    }
-
-    int32_t currentFrameCount = frameData.frame_count();
-
-    m_loopCounter++;
-    if (m_loopCounter > 5)
-    {
-        if (currentFrameCount != m_prevFrameCount && frameData.istracking())
-        {
-            m_loopCounter = 0;
-            m_isConnected = true;
-        }
-        else
-        {
-            m_isConnected = false;
-        }
-        m_prevFrameCount = currentFrameCount;
-    }
-#endif
-}
-
+// ──────────────────────────────────────────────────────────────────────────────
+// DataLog
+// ──────────────────────────────────────────────────────────────────────────────
 void DragonQuest::DataLog(uint64_t timestamp)
 {
     Log2DPoseData(timestamp, DragonDataLogger::PoseSingals::CURRENT_CHASSIS_QUEST_POSE2D, m_lastCalculatedPose);
 }
 
+// ──────────────────────────────────────────────────────────────────────────────
+// AttemptSetRobotPose – external entry point (from DragonVision::SetRobotPose)
+// ──────────────────────────────────────────────────────────────────────────────
 void DragonQuest::AttemptSetRobotPose(const frc::Pose2d &pose)
 {
-#ifdef __FRC_ROBORIO__
     m_poseReset = pose;
-    if (m_isConnected)
+    if (m_questNav.IsConnected())
     {
         SetRobotPose(m_poseReset);
     }
@@ -243,61 +152,29 @@ void DragonQuest::AttemptSetRobotPose(const frc::Pose2d &pose)
     {
         m_poseResetRequested = true;
     }
-#endif
 }
 
+// ──────────────────────────────────────────────────────────────────────────────
+// SetRobotPose – convert robot Pose2d to Quest Pose3d and delegate to QuestNav
+// ──────────────────────────────────────────────────────────────────────────────
 void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
 {
-#ifdef __FRC_ROBORIO__
-    frc::Pose2d newPose = pose.TransformBy(m_questToRobotTransform);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("SetRobotPoseX"), pose.X().value());
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("SetRobotPoseY"), pose.Y().value());
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("SetRobotPoseRot"), pose.Rotation().Degrees().value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("SetRobotPoseX"), pose.X().value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("SetRobotPoseY"), pose.Y().value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("SetRobotPoseRot"), pose.Rotation().Degrees().value());
 
-    // Create pose reset command
-    questnav::protos::commands::ProtobufQuestNavCommand command;
-    command.set_type(questnav::protos::commands::POSE_RESET);
-    command.set_command_id(m_nextCommandId++);
-
-    auto *payload = command.mutable_pose_reset_payload();
-    auto *targetPose = payload->mutable_target_pose();
-
-    // Set translation
-    auto *translation = targetPose->mutable_translation();
-    translation->set_x(newPose.X().value());
-    translation->set_y(newPose.Y().value());
-    translation->set_z(0.0); // Assuming flat field, so Z is 0
-
-    // Set rotation using quaternion
-    auto *rotation = targetPose->mutable_rotation();
-    auto *quaternion = rotation->mutable_q();
-
-    // Convert 2D rotation to quaternion (rotation around Z axis)
-    double yawRadians = newPose.Rotation().Radians().value();
-    double halfYaw = yawRadians / 2.0;
-
-    quaternion->set_w(std::cos(halfYaw)); // Real part
-    quaternion->set_x(0.0);               // X axis
-    quaternion->set_y(0.0);               // Y axis
-    quaternion->set_z(std::sin(halfYaw)); // Z axis (yaw rotation)
-
-    // Serialize and publish
-    std::string serialized;
-    command.SerializeToString(&serialized);
-    m_commandPublisher.Set(std::span<const uint8_t>(
-        reinterpret_cast<const uint8_t *>(serialized.data()),
-        serialized.size()));
+    frc::Pose3d questPose = RobotPose2dToQuestPose(pose);
+    m_questNav.SetPose(questPose);
 
     m_hasReset = true;
     m_poseResetRequested = false;
-#else
-    m_poseResetRequested = false;
-#endif
 }
 
+// ──────────────────────────────────────────────────────────────────────────────
+// HandleDashboard
+// ──────────────────────────────────────────────────────────────────────────────
 void DragonQuest::HandleDashboard()
 {
-
     if (m_questEnabledChooser.GetSelected() == true)
     {
         m_isQuestEnabled = true;
@@ -312,40 +189,66 @@ void DragonQuest::HandleDashboard()
     }
 }
 
+// ──────────────────────────────────────────────────────────────────────────────
+// NotifyStateUpdate
+// ──────────────────────────────────────────────────────────────────────────────
 void DragonQuest::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value)
 {
     if (RobotStateChanges::StateChange::ClimbModeStatus_Bool == change)
         m_isClimbMode = value;
 }
+
+// ──────────────────────────────────────────────────────────────────────────────
+// GetPoseEstimate – build the struct consumed by the pose estimator
+// ──────────────────────────────────────────────────────────────────────────────
 DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
 {
-#ifdef __FRC_ROBORIO__
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_hasReset"), m_hasReset);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_isConnected"), m_isConnected);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("m_isQuestEnabled"), m_isQuestEnabled);
+    bool connected = m_questNav.IsConnected();
+
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("m_hasReset"), m_hasReset);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("m_isConnected"), connected);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("m_isQuestEnabled"), m_isQuestEnabled);
 
     DragonVisionPoseEstimatorStruct str;
-    if (!m_hasReset || !m_isConnected || !m_isQuestEnabled)
+    if (!m_hasReset || !connected || !m_isQuestEnabled)
     {
         str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE;
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("confidence"), string("NONE"));
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("confidence"), std::string("NONE"));
     }
     else
     {
-        // str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::HIGH;
+        // TODO: switch to HIGH once Quest pose is validated on the robot
         str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE;
         str.m_visionPose = m_lastCalculatedPose;
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("x"), str.m_visionPose.X().value());
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("y"), str.m_visionPose.Y().value());
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("rot"), str.m_visionPose.Rotation().Degrees().value());
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("x"), str.m_visionPose.X().value());
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("y"), str.m_visionPose.Y().value());
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("rot"), str.m_visionPose.Rotation().Degrees().value());
         str.m_stds = wpi::array{m_stdxy, m_stdxy, m_stddeg};
-        str.m_timeStamp = units::time::second_t(m_frameDataSubscriber.GetAtomic().serverTime);
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("confidence"), string("HIGH"));
+        str.m_timeStamp = m_lastPoseTimestamp;
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("confidence"), std::string("HIGH"));
     }
     return str;
-#else
-    DragonVisionPoseEstimatorStruct str;
-    str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE;
-    return str;
-#endif
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// QuestPoseToRobotPose2d – Quest Pose3d → Robot Pose2d (apply inverse mounting offset)
+// ──────────────────────────────────────────────────────────────────────────────
+frc::Pose2d DragonQuest::QuestPoseToRobotPose2d(const frc::Pose3d &questPose) const
+{
+    // Project the 3D Quest pose down to 2D, then apply the inverse mounting transform
+    frc::Pose2d questPose2d{
+        questPose.X(), questPose.Y(),
+        frc::Rotation2d{questPose.Rotation().Z()}};
+
+    return questPose2d.TransformBy(m_questToRobotTransform2d.Inverse());
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// RobotPose2dToQuestPose – Robot Pose2d → Quest Pose3d (apply mounting offset)
+// ──────────────────────────────────────────────────────────────────────────────
+frc::Pose3d DragonQuest::RobotPose2dToQuestPose(const frc::Pose2d &robotPose) const
+{
+    // Lift the 2D robot pose to 3D and apply the robot→Quest transform
+    frc::Pose3d robotPose3d{robotPose};
+    return robotPose3d.TransformBy(m_robotToQuestTransform);
 }
