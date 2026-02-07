@@ -90,6 +90,7 @@ void DragonQuest::Periodic()
             GetEstimatedPose();
         }
     }
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("Periodic_reset_requested"), m_poseResetRequested);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kIsConnected, m_isConnected);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kIsNTInitialized, m_isNTInitialized);
 }
@@ -103,40 +104,27 @@ void DragonQuest::InitNT()
         return; // Already initialized
     }
 
-    try
+    auto networktable = nt::NetworkTableInstance::GetDefault().GetTable(std::string("QuestNav"));
+    if (networktable.get() == nullptr)
     {
-        auto networktable = nt::NetworkTableInstance::GetDefault().GetTable(std::string("QuestNav"));
-        if (networktable.get() == nullptr)
-        {
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, kQuestNavDebug, kInitNT, kFailedToGetNT);
-            return;
-        }
-
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kNetworkTableObtained, true);
-
-        // Create subscribers with reduced buffer sizes to minimize memory allocation
-        nt::PubSubOptions options;
-        options.keepDuplicates = false;
-        options.pollStorage = 1; // Minimal buffer size
-
-        m_frameDataSubscriber = networktable.get()->GetRawTopic("frameData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavFrameData", {}, options);
-        m_deviceDataSubscriber = networktable.get()->GetRawTopic("deviceData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavDeviceData", {}, options);
-        m_commandPublisher = networktable.get()->GetRawTopic("commands").Publish("proto:questnav.protos.commands.ProtobufQuestNavCommand");
-        m_commandResponseSubscriber = networktable.get()->GetRawTopic("response").Subscribe("proto:questnav.protos.commands.ProtobufQuestNavCommandResponse", {}, options);
-
-        m_isNTInitialized = true; // Mark as successfully initialized
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kInitNT, kSuccessfullyInitialized);
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, kQuestNavDebug, kInitNT, kFailedToGetNT);
+        return;
     }
-    catch (const std::bad_alloc &e)
-    {
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, kQuestNavDebug, kBadAlloc, std::string(e.what()));
-        m_isNTInitialized = false;
-    }
-    catch (const std::exception &e)
-    {
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, kQuestNavDebug, kException, std::string(e.what()));
-        m_isNTInitialized = false;
-    }
+
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kNetworkTableObtained, true);
+
+    // Create subscribers with reduced buffer sizes to minimize memory allocation
+    nt::PubSubOptions options;
+    options.keepDuplicates = false;
+    options.pollStorage = 1; // Minimal buffer size
+
+    m_frameDataSubscriber = networktable.get()->GetRawTopic("frameData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavFrameData", {}, options);
+    m_deviceDataSubscriber = networktable.get()->GetRawTopic("deviceData").Subscribe("proto:questnav.protos.data.ProtobufQuestNavDeviceData", {}, options);
+    m_commandPublisher = networktable.get()->GetRawTopic("commands").Publish("proto:questnav.protos.commands.ProtobufQuestNavCommand");
+    m_commandResponseSubscriber = networktable.get()->GetRawTopic("response").Subscribe("proto:questnav.protos.commands.ProtobufQuestNavCommandResponse", {}, options);
+
+    m_isNTInitialized = true; // Mark as successfully initialized
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kInitNT, kSuccessfullyInitialized);
 #endif
 }
 
@@ -220,9 +208,9 @@ void DragonQuest::SetIsConnected()
     int32_t currentFrameCount = frameData.frame_count();
 
     m_loopCounter++;
-    if (m_loopCounter > 3)
+    if (m_loopCounter > 5)
     {
-        if (currentFrameCount != m_prevFrameCount /*&& frameData.istracking()*/)
+        if (currentFrameCount != m_prevFrameCount && frameData.istracking())
         {
             m_loopCounter = 0;
             m_isConnected = true;
@@ -244,14 +232,17 @@ void DragonQuest::DataLog(uint64_t timestamp)
 void DragonQuest::AttemptSetRobotPose(const frc::Pose2d &pose)
 {
 #ifdef __FRC_ROBORIO__
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("AttemptSetRobotPose"), string("reached"));
     m_poseReset = pose;
     if (m_isConnected)
     {
         SetRobotPose(m_poseReset);
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("AttemptSetRobotPose_m_isconnected"), string("true"));
     }
     else
     {
         m_poseResetRequested = true;
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("AttemptSetRobotPose_m_isconnected"), string("false"));
     }
 #endif
 }
@@ -335,7 +326,8 @@ DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
     }
     else
     {
-        str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::HIGH;
+        // str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::HIGH;
+        str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE;
         str.m_visionPose = m_lastCalculatedPose;
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("x"), str.m_visionPose.X().value());
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("y"), str.m_visionPose.Y().value());
