@@ -60,8 +60,8 @@ public:
 	Launcher() = delete;
 	~Launcher() = default;
 
-	void CreateCompBot302();
-	void InitializeCompBot302();
+	void CreateBot(int launcherId, int hoodId, int transferId, int turretId, int indexerId, int agitatorId);
+	void InitializeBot();
 
 	/// @brief Set the control constants (e.g. PIDF values).
 	/// @param indentifier the motor controller usage to identify the motor
@@ -175,12 +175,12 @@ private:
 	ControlData *m_positionDegreesHood;
 	ControlData *m_positionDegreesTurret;
 
-	void InitializeTalonFXLauncherCompBot302();
-	void InitializeTalonFXSHoodCompBot302();
-	void InitializeTalonFXTransferCompBot302();
-	void InitializeTalonFXSTurretCompBot302();
-	void InitializeTalonFXIndexerCompBot302();
-	void InitializeTalonFXAgitatorCompBot302();
+	void InitializeTalonFXLauncher();
+	void InitializeTalonFXSHood();
+	void InitializeTalonFXTransfer();
+	void InitializeTalonFXSTurret();
+	void InitializeTalonFXIndexer();
+	void InitializeTalonFXAgitator();
 
 	ctre::phoenix6::controls::DutyCycleOut m_launcherPercentOut{0.0};
 	ctre::phoenix6::controls::DutyCycleOut m_hoodPercentOut{0.0};

@@ -63,6 +63,128 @@ using ctre::phoenix6::signals::StaticFeedforwardSignValue;
 using std::string;
 using namespace LauncherStates;
 
+namespace
+{
+	// Common current limit configuration used by all motors
+	struct CurrentLimitConfig
+	{
+		units::current::ampere_t statorLimit = units::current::ampere_t(100);
+		units::current::ampere_t supplyLimit = units::current::ampere_t(70);
+		units::current::ampere_t supplyLowerLimit = units::current::ampere_t(35);
+		units::time::second_t supplyLowerTime = units::time::second_t(0);
+	};
+
+	// Common voltage configuration used by all motors
+	struct VoltageConfig
+	{
+		units::voltage::volt_t peakForward = units::voltage::volt_t(11.0);
+		units::voltage::volt_t peakReverse = units::voltage::volt_t(-11.0);
+		units::time::second_t rampPeriod = units::time::second_t(0.25);
+	};
+
+	template <typename ConfigType>
+	void ApplyCurrentLimits(ConfigType &configs, const CurrentLimitConfig &limits = {})
+	{
+		configs.CurrentLimits.StatorCurrentLimit = limits.statorLimit;
+		configs.CurrentLimits.StatorCurrentLimitEnable = true;
+		configs.CurrentLimits.SupplyCurrentLimit = limits.supplyLimit;
+		configs.CurrentLimits.SupplyCurrentLimitEnable = true;
+		configs.CurrentLimits.SupplyCurrentLowerLimit = limits.supplyLowerLimit;
+		configs.CurrentLimits.SupplyCurrentLowerTime = limits.supplyLowerTime;
+	}
+
+	template <typename ConfigType>
+	void ApplyVoltageConfig(ConfigType &configs, const VoltageConfig &voltage = {})
+	{
+		configs.Voltage.PeakForwardVoltage = voltage.peakForward;
+		configs.Voltage.PeakReverseVoltage = voltage.peakReverse;
+		configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = voltage.rampPeriod;
+	}
+
+	template <typename ConfigType>
+	void ApplyDisabledLimitSwitches(ConfigType &configs)
+	{
+		configs.HardwareLimitSwitch.ForwardLimitEnable = false;
+		configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
+		configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
+		configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(0);
+		configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
+		configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
+
+		configs.HardwareLimitSwitch.ReverseLimitEnable = false;
+		configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 0;
+		configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
+		configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
+		configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
+		configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
+	}
+
+	void ApplyDefaultMotorOutput(TalonFXConfiguration &configs, InvertedValue inversion, NeutralModeValue neutralMode)
+	{
+		configs.MotorOutput.Inverted = inversion;
+		configs.MotorOutput.NeutralMode = neutralMode;
+		configs.MotorOutput.PeakForwardDutyCycle = 1;
+		configs.MotorOutput.PeakReverseDutyCycle = -1;
+		configs.MotorOutput.DutyCycleNeutralDeadband = 0;
+	}
+
+	void ApplyDefaultMotorOutput(TalonFXSConfiguration &configs, InvertedValue inversion, NeutralModeValue neutralMode)
+	{
+		configs.MotorOutput.Inverted = inversion;
+		configs.MotorOutput.NeutralMode = neutralMode;
+		configs.MotorOutput.PeakForwardDutyCycle = 1;
+		configs.MotorOutput.PeakReverseDutyCycle = -1;
+		configs.MotorOutput.DutyCycleNeutralDeadband = 0;
+	}
+
+	void ApplyDefaultFeedback(TalonFXConfiguration &configs)
+	{
+		configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
+		configs.Feedback.SensorToMechanismRatio = 1;
+	}
+
+	template <typename ConfigType>
+	void ApplySlot0FromControlData(ConfigType &configs, ControlData *controlData)
+	{
+		configs.Slot0.kI = controlData->GetI();
+		configs.Slot0.kD = controlData->GetD();
+		configs.Slot0.kG = controlData->GetF();
+		configs.Slot0.kS = controlData->GetS();
+		configs.Slot0.kV = controlData->GetV();
+		configs.Slot0.kP = controlData->GetP();
+		configs.Slot0.kA = controlData->GetA();
+		configs.Slot0.GravityType = controlData->GetGravityType();
+		configs.Slot0.StaticFeedforwardSign = controlData->GetStaticFeedforwardSign();
+	}
+
+	template <typename MotorType, typename ConfigType>
+	bool ApplyConfigWithRetry(MotorType *motor, ConfigType &configs, const char *motorName)
+	{
+		ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+		for (int i = 0; i < 5; ++i)
+		{
+			status = motor->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+			if (status.IsOK())
+				return true;
+		}
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, motorName, string(motorName) + " Status", status.GetName());
+		return false;
+	}
+
+	ControlData *CreateZeroControlData(ControlModes::CONTROL_TYPE type, const char *identifier)
+	{
+		return new ControlData(
+			type,
+			ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER,
+			identifier,
+			0, 0, 0, 0, 0, 0, 0,
+			ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,
+			0, 0, 0, 0, 0, false,
+			ControlData::GravityTypeValue::Elevator_Static,
+			ControlData::StaticFeedforwardSignValue::UseVelocitySign);
+	}
+} // anonymous namespace
+
 void Launcher::CreateAndRegisterStates()
 {
 	OffState *OffStateInst = new OffState(string("Off"), 0, this, m_activeRobotId);
@@ -130,60 +252,7 @@ Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MEC
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 
 	m_targetCalculator = RebuiltTargetCalculator::GetInstance();
-	// InitializeLogging();
 }
-
-/* void Launcher::InitializeLogging()
- {
-	wpi::log::DataLog &log = frc::DataLogManager::GetLog();
-
-	 m_LauncherTotalEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TotalEnergy");
-m_LauncherTotalEnergyLogEntry.Append(0.0);
-m_LauncherTotalWattHoursLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TotalWattHours");
-m_LauncherTotalWattHoursLogEntry.Append(0.0);
-m_LauncherLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/LauncherPosition");
-m_LauncherLogEntry.Append(0.0);
-m_launcherTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/LauncherTarget");
-m_launcherTargetLogEntry.Append(0.0);
-m_LauncherPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/LauncherPower");
-m_LauncherPowerLogEntry.Append(0.0);
-m_LauncherEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/LauncherEnergy");
-m_LauncherEnergyLogEntry.Append(0.0);
-m_HoodLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/HoodPosition");
-m_HoodLogEntry.Append(0.0);
-m_hoodTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/HoodTarget");
-m_hoodTargetLogEntry.Append(0.0);
-m_HoodPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/HoodPower");
-m_HoodPowerLogEntry.Append(0.0);
-m_HoodEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/HoodEnergy");
-m_HoodEnergyLogEntry.Append(0.0);
-m_TransferLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TransferPosition");
-m_TransferLogEntry.Append(0.0);
-m_transferTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TransferTarget");
-m_transferTargetLogEntry.Append(0.0);
-m_TransferPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TransferPower");
-m_TransferPowerLogEntry.Append(0.0);
-m_TransferEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TransferEnergy");
-m_TransferEnergyLogEntry.Append(0.0);
-m_TurretLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TurretPosition");
-m_TurretLogEntry.Append(0.0);
-m_turretTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TurretTarget");
-m_turretTargetLogEntry.Append(0.0);
-m_TurretPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TurretPower");
-m_TurretPowerLogEntry.Append(0.0);
-m_TurretEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TurretEnergy");
-m_TurretEnergyLogEntry.Append(0.0);
-m_IndexerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/IndexerPosition");
-m_IndexerLogEntry.Append(0.0);
-m_indexerTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/IndexerTarget");
-m_indexerTargetLogEntry.Append(0.0);
-m_IndexerPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/IndexerPower");
-m_IndexerPowerLogEntry.Append(0.0);
-m_IndexerEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/IndexerEnergy");
-m_IndexerEnergyLogEntry.Append(0.0);
-m_LauncherStateLogEntry = wpi::log::IntegerLogEntry(log, "mechanisms/Launcher/State");
-m_LauncherStateLogEntry.Append(0);
- }*/
 
 std::map<std::string, Launcher::STATE_NAMES>
 	Launcher::stringToSTATE_NAMESEnumMap{
@@ -197,191 +266,56 @@ std::map<std::string, Launcher::STATE_NAMES>
 		{"STATE_LAUNCHER_TUNING", Launcher::STATE_NAMES::STATE_LAUNCHER_TUNING},
 		{"STATE_MANUAL_LAUNCH", Launcher::STATE_NAMES::STATE_MANUAL_LAUNCH}};
 
-void Launcher::CreateCompBot302()
+void Launcher::CreateBot(int launcherId, int hoodId, int transferId, int turretId, int indexerId, int agitatorId)
 {
 	m_ntName = "Launcher";
-	m_launcher = new ctre::phoenix6::hardware::TalonFX(16, ctre::phoenix6::CANBus("canivore"));
-	m_hood = new ctre::phoenix6::hardware::TalonFXS(17, ctre::phoenix6::CANBus("canivore"));
-	m_transfer = new ctre::phoenix6::hardware::TalonFX(18, ctre::phoenix6::CANBus("canivore"));
-	m_turret = new ctre::phoenix6::hardware::TalonFXS(19, ctre::phoenix6::CANBus("canivore"));
-	m_indexer = new ctre::phoenix6::hardware::TalonFX(20, ctre::phoenix6::CANBus("canivore"));
-	m_agitator = new ctre::phoenix6::hardware::TalonFX(21, ctre::phoenix6::CANBus("canivore"));
+	ctre::phoenix6::CANBus canivore("canivore");
+	m_launcher = new ctre::phoenix6::hardware::TalonFX(launcherId, canivore);
+	m_hood = new ctre::phoenix6::hardware::TalonFXS(hoodId, canivore);
+	m_transfer = new ctre::phoenix6::hardware::TalonFX(transferId, canivore);
+	m_turret = new ctre::phoenix6::hardware::TalonFXS(turretId, canivore);
+	m_indexer = new ctre::phoenix6::hardware::TalonFX(indexerId, canivore);
+	m_agitator = new ctre::phoenix6::hardware::TalonFX(agitatorId, canivore);
 
-	m_percentOut = new ControlData(
-		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
-		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_percentOut",									  // std::string indentifier
-		0,												  // double proportional
-		0,												  // double integral
-		0,												  // double derivative
-		0,												  // double feedforward
-		0,												  // double velocityGain
-		0,												  // double accelartionGain
-		0,												  // double staticFrictionGain,
-
-		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
-		0,														 // double integralZone
-		0,														 // double maxAcceleration
-		0,														 // double cruiseVelocity
-		0,														 // double peakValue
-		0,														 // double nominalValue
-		false,													 // bool enableFOC
-		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
-		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
-	);
-	m_velocityRPS = new ControlData(
-		ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, // ControlModes::CONTROL_TYPE mode
-		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_velocityRPS",								  // std::string indentifier
-		0,												  // double proportional
-		0,												  // double integral
-		0,												  // double derivative
-		0,												  // double feedforward
-		0,												  // double velocityGain
-		0,												  // double accelartionGain
-		0,												  // double staticFrictionGain,
-
-		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
-		0,														 // double integralZone
-		0,														 // double maxAcceleration
-		0,														 // double cruiseVelocity
-		0,														 // double peakValue
-		0,														 // double nominalValue
-		false,													 // bool enableFOC
-		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
-		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
-	);
-	m_positionDegreesHood = new ControlData(
-		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
-		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_positionDegreesHood",						  // std::string indentifier
-		0,												  // double proportional
-		0,												  // double integral
-		0,												  // double derivative
-		0,												  // double feedforward
-		0,												  // double velocityGain
-		0,												  // double accelartionGain
-		0,												  // double staticFrictionGain,
-
-		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
-		0,														 // double integralZone
-		0,														 // double maxAcceleration
-		0,														 // double cruiseVelocity
-		0,														 // double peakValue
-		0,														 // double nominalValue
-		false,													 // bool enableFOC
-		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
-		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
-	);
-	m_positionDegreesTurret = new ControlData(
-		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
-		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_positionDegreesTurret",						  // std::string indentifier
-		0,												  // double proportional
-		0,												  // double integral
-		0,												  // double derivative
-		0,												  // double feedforward
-		0,												  // double velocityGain
-		0,												  // double accelartionGain
-		0,												  // double staticFrictionGain,
-
-		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
-		0,														 // double integralZone
-		0,														 // double maxAcceleration
-		0,														 // double cruiseVelocity
-		0,														 // double peakValue
-		0,														 // double nominalValue
-		false,													 // bool enableFOC
-		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
-		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
-	);
+	m_percentOut = CreateZeroControlData(ControlModes::CONTROL_TYPE::PERCENT_OUTPUT, "m_percentOut");
+	m_velocityRPS = CreateZeroControlData(ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, "m_velocityRPS");
+	m_positionDegreesHood = CreateZeroControlData(ControlModes::CONTROL_TYPE::POSITION_DEGREES, "m_positionDegreesHood");
+	m_positionDegreesTurret = CreateZeroControlData(ControlModes::CONTROL_TYPE::POSITION_DEGREES, "m_positionDegreesTurret");
 
 	ReadConstants("Launcher.xml", 302);
 }
 
-void Launcher::InitializeCompBot302()
+void Launcher::InitializeBot()
 {
-	InitializeTalonFXLauncherCompBot302();
-	InitializeTalonFXSHoodCompBot302();
-	InitializeTalonFXTransferCompBot302();
-	InitializeTalonFXSTurretCompBot302();
-	InitializeTalonFXIndexerCompBot302();
-	InitializeTalonFXAgitatorCompBot302();
+	InitializeTalonFXLauncher();
+	InitializeTalonFXSHood();
+	InitializeTalonFXTransfer();
+	InitializeTalonFXSTurret();
+	InitializeTalonFXIndexer();
+	InitializeTalonFXAgitator();
 }
 
-void Launcher::InitializeTalonFXLauncherCompBot302()
+void Launcher::InitializeTalonFXLauncher()
 {
 	TalonFXConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
-	configs.CurrentLimits.StatorCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
-	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLowerLimit = units::current::ampere_t(35);
-	configs.CurrentLimits.SupplyCurrentLowerTime = units::time::second_t(0);
+	ApplyCurrentLimits(configs);
+	ApplyVoltageConfig(configs);
+	ApplyDisabledLimitSwitches(configs);
+	ApplyDefaultMotorOutput(configs, InvertedValue::CounterClockwise_Positive, NeutralModeValue::Coast);
+	ApplyDefaultFeedback(configs);
+	ApplySlot0FromControlData(configs, m_velocityRPS);
 
-	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
-	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
-	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
-
-	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
-	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
-
-	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
-	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
-
-	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
-	configs.MotorOutput.NeutralMode = NeutralModeValue::Coast;
-	configs.MotorOutput.PeakForwardDutyCycle = 1;
-	configs.MotorOutput.PeakReverseDutyCycle = -1;
-	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
-
-	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.Feedback.SensorToMechanismRatio = 1;
-
-	configs.Slot0.kI = m_velocityRPS->GetI();
-	configs.Slot0.kD = m_velocityRPS->GetD();
-	configs.Slot0.kG = m_velocityRPS->GetF();
-	configs.Slot0.kS = m_velocityRPS->GetS();
-	configs.Slot0.kV = m_velocityRPS->GetV();
-	configs.Slot0.kP = m_velocityRPS->GetP();
-	configs.Slot0.kA = m_velocityRPS->GetA();
-	configs.Slot0.GravityType = m_velocityRPS->GetGravityType();
-	configs.Slot0.StaticFeedforwardSign = m_velocityRPS->GetStaticFeedforwardSign();
-
-	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
-	for (int i = 0; i < 5; ++i)
-	{
-		status = m_launcher->GetConfigurator().Apply(configs, units::time::second_t(0.25));
-		if (status.IsOK())
-			break;
-	}
-	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_launcher", "m_launcher Status", status.GetName());
+	ApplyConfigWithRetry(m_launcher, configs, "m_launcher");
 }
 
-void Launcher::InitializeTalonFXSHoodCompBot302()
+void Launcher::InitializeTalonFXSHood()
 {
 	TalonFXSConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
-	configs.CurrentLimits.StatorCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
-	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLowerLimit = units::current::ampere_t(35);
-	configs.CurrentLimits.SupplyCurrentLowerTime = units::time::second_t(0);
+	ApplyCurrentLimits(configs);
+	ApplyVoltageConfig(configs);
+	ApplyDefaultMotorOutput(configs, InvertedValue::CounterClockwise_Positive, NeutralModeValue::Brake);
 
-	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
-	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
-	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
-
-	// MECH_TODO: Set limit switches
+	// Hood-specific limit switch configuration (remote CANdi sensors)
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 1;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
@@ -396,102 +330,37 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
-	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
-	configs.MotorOutput.NeutralMode = NeutralModeValue::Brake;
-	configs.MotorOutput.PeakForwardDutyCycle = 1;
-	configs.MotorOutput.PeakReverseDutyCycle = -1;
-	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
-
-	// MECH_TODO: Set Motion Magic params
+	// TODO: Set Motion Magic params
 	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::radians_per_second_t(0);
 	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::radians_per_second_squared_t(0);
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
-	configs.Slot0.kI = m_positionDegreesHood->GetI();
-	configs.Slot0.kD = m_positionDegreesHood->GetD();
-	configs.Slot0.kG = m_positionDegreesHood->GetF();
-	configs.Slot0.kS = m_positionDegreesHood->GetS();
-	configs.Slot0.kV = m_positionDegreesHood->GetV();
-	configs.Slot0.kP = m_positionDegreesHood->GetP();
-	configs.Slot0.kA = m_positionDegreesHood->GetA();
-	configs.Slot0.GravityType = m_positionDegreesHood->GetGravityType();
-	configs.Slot0.StaticFeedforwardSign = m_positionDegreesHood->GetStaticFeedforwardSign();
+	ApplySlot0FromControlData(configs, m_positionDegreesHood);
 
-	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
-	for (int i = 0; i < 5; ++i)
-	{
-		status = m_hood->GetConfigurator().Apply(configs, units::time::second_t(0.25));
-		if (status.IsOK())
-			break;
-	}
-	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_hood", "m_hood Status", status.GetName());
+	ApplyConfigWithRetry(m_hood, configs, "m_hood");
 }
 
-void Launcher::InitializeTalonFXTransferCompBot302()
+void Launcher::InitializeTalonFXTransfer()
 {
 	TalonFXConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
-	configs.CurrentLimits.StatorCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
-	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLowerLimit = units::current::ampere_t(35);
-	configs.CurrentLimits.SupplyCurrentLowerTime = units::time::second_t(0);
+	ApplyCurrentLimits(configs);
+	ApplyVoltageConfig(configs);
+	ApplyDisabledLimitSwitches(configs);
+	ApplyDefaultMotorOutput(configs, InvertedValue::Clockwise_Positive, NeutralModeValue::Coast);
+	ApplyDefaultFeedback(configs);
 
-	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
-	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
-	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
-
-	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
-	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
-
-	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
-	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
-
-	configs.MotorOutput.Inverted = InvertedValue::Clockwise_Positive;
-	configs.MotorOutput.NeutralMode = NeutralModeValue::Coast;
-	configs.MotorOutput.PeakForwardDutyCycle = 1;
-	configs.MotorOutput.PeakReverseDutyCycle = -1;
-	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
-
-	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.Feedback.SensorToMechanismRatio = 1;
-
-	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
-	for (int i = 0; i < 5; ++i)
-	{
-		status = m_transfer->GetConfigurator().Apply(configs, units::time::second_t(0.25));
-		if (status.IsOK())
-			break;
-	}
-	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_transfer", "m_transfer Status", status.GetName());
+	ApplyConfigWithRetry(m_transfer, configs, "m_transfer");
 }
 
-void Launcher::InitializeTalonFXSTurretCompBot302()
+void Launcher::InitializeTalonFXSTurret()
 {
 	TalonFXSConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
-	configs.CurrentLimits.StatorCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
-	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLowerLimit = units::current::ampere_t(35);
-	configs.CurrentLimits.SupplyCurrentLowerTime = units::time::second_t(0);
+	ApplyCurrentLimits(configs);
+	ApplyVoltageConfig(configs);
+	ApplyDefaultMotorOutput(configs, InvertedValue::CounterClockwise_Positive, NeutralModeValue::Brake);
 
-	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
-	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
-	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
-
-	// MECH_TODO: Set limit switches
+	// Turret-specific limit switch configuration (remote CANdi sensors)
 	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
@@ -506,133 +375,39 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
-	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
-	configs.MotorOutput.NeutralMode = NeutralModeValue::Brake;
-	configs.MotorOutput.PeakForwardDutyCycle = 1;
-	configs.MotorOutput.PeakReverseDutyCycle = -1;
-	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
-
-	// MECH_TODO: Set Motion Magic params
+	// TODO: Set Motion Magic params
 	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::radians_per_second_t(0);
 	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::radians_per_second_squared_t(0);
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
-	configs.Slot0.kI = m_positionDegreesTurret->GetI();
-	configs.Slot0.kD = m_positionDegreesTurret->GetD();
-	configs.Slot0.kG = m_positionDegreesTurret->GetF();
-	configs.Slot0.kS = m_positionDegreesTurret->GetS();
-	configs.Slot0.kV = m_positionDegreesTurret->GetV();
-	configs.Slot0.kP = m_positionDegreesTurret->GetP();
-	configs.Slot0.kA = m_positionDegreesTurret->GetA();
-	configs.Slot0.GravityType = m_positionDegreesTurret->GetGravityType();
-	configs.Slot0.StaticFeedforwardSign = m_positionDegreesTurret->GetStaticFeedforwardSign();
+	ApplySlot0FromControlData(configs, m_positionDegreesTurret);
 
-	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
-	for (int i = 0; i < 5; ++i)
-	{
-		status = m_turret->GetConfigurator().Apply(configs, units::time::second_t(0.25));
-		if (status.IsOK())
-			break;
-	}
-	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_turret", "m_turret Status", status.GetName());
+	ApplyConfigWithRetry(m_turret, configs, "m_turret");
 }
 
-void Launcher::InitializeTalonFXIndexerCompBot302()
+void Launcher::InitializeTalonFXIndexer()
 {
 	TalonFXConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
-	configs.CurrentLimits.StatorCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
-	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLowerLimit = units::current::ampere_t(35);
-	configs.CurrentLimits.SupplyCurrentLowerTime = units::time::second_t(0);
+	ApplyCurrentLimits(configs);
+	ApplyVoltageConfig(configs);
+	ApplyDisabledLimitSwitches(configs);
+	ApplyDefaultMotorOutput(configs, InvertedValue::CounterClockwise_Positive, NeutralModeValue::Coast);
+	ApplyDefaultFeedback(configs);
 
-	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
-	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
-	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
-
-	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
-	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
-
-	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
-	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
-
-	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
-	configs.MotorOutput.NeutralMode = NeutralModeValue::Coast;
-	configs.MotorOutput.PeakForwardDutyCycle = 1;
-	configs.MotorOutput.PeakReverseDutyCycle = -1;
-	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
-
-	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.Feedback.SensorToMechanismRatio = 1;
-
-	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
-	for (int i = 0; i < 5; ++i)
-	{
-		status = m_indexer->GetConfigurator().Apply(configs, units::time::second_t(0.25));
-		if (status.IsOK())
-			break;
-	}
-	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_indexer", "m_indexer Status", status.GetName());
+	ApplyConfigWithRetry(m_indexer, configs, "m_indexer");
 }
 
-void Launcher::InitializeTalonFXAgitatorCompBot302()
+void Launcher::InitializeTalonFXAgitator()
 {
 	TalonFXConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
-	configs.CurrentLimits.StatorCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
-	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLowerLimit = units::current::ampere_t(35);
-	configs.CurrentLimits.SupplyCurrentLowerTime = units::time::second_t(0);
+	ApplyCurrentLimits(configs);
+	ApplyVoltageConfig(configs);
+	ApplyDisabledLimitSwitches(configs);
+	ApplyDefaultMotorOutput(configs, InvertedValue::CounterClockwise_Positive, NeutralModeValue::Coast);
+	ApplyDefaultFeedback(configs);
 
-	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
-	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
-	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
-
-	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
-	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
-
-	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
-	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
-
-	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
-	configs.MotorOutput.NeutralMode = NeutralModeValue::Coast;
-	configs.MotorOutput.PeakForwardDutyCycle = 1;
-	configs.MotorOutput.PeakReverseDutyCycle = -1;
-	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
-
-	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.Feedback.SensorToMechanismRatio = 1;
-
-	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
-	for (int i = 0; i < 5; ++i)
-	{
-		status = m_agitator->GetConfigurator().Apply(configs, units::time::second_t(0.25));
-		if (status.IsOK())
-			break;
-	}
-	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_agitator", "m_agitator Status", status.GetName());
+	ApplyConfigWithRetry(m_agitator, configs, "m_agitator");
 }
 
 void Launcher::SetCurrentState(int state, bool run)
@@ -772,7 +547,10 @@ void Launcher::UpdateLauncherTargets()
 {
 	int currentState = GetCurrentState();
 
-	if (currentState == STATE_NAMES::STATE_OFF || currentState == STATE_NAMES::STATE_INITIALIZE || currentState == STATE_NAMES::STATE_CLIMB || currentState == STATE_NAMES::STATE_MANUAL_LAUNCH || currentState == STATE_NAMES::STATE_MANUAL_LAUNCH)
+	if (currentState == STATE_NAMES::STATE_OFF ||
+		currentState == STATE_NAMES::STATE_INITIALIZE ||
+		currentState == STATE_NAMES::STATE_CLIMB ||
+		currentState == STATE_NAMES::STATE_MANUAL_LAUNCH)
 	{
 		return;
 	}
@@ -781,49 +559,3 @@ void Launcher::UpdateLauncherTargets()
 	UpdateTargetTurretPositionDegreesTurret(m_targetTurretAngle);
 	UpdateTargetLauncherVelocityRPS(m_targetLauncherAngularVelocity);
 }
-
-/* void Launcher::DataLog(uint64_t timestamp)
-{
-   auto currTime = m_powerTimer.Get();
-LogLauncher(timestamp, m_Launcher->GetPosition().GetValueAsDouble());
-auto LauncherPower = DragonPower::CalcPowerEnergy(currTime, m_Launcher->GetSupplyVoltage().GetValueAsDouble(), m_Launcher->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(LauncherPower);
-m_energy = get<1>(LauncherPower);
-m_totalEnergy += m_energy;
-LogLauncherPower(timestamp, m_power);
-LogLauncherEnergy(timestamp, m_energy);
-LogHood(timestamp, m_Hood->GetPosition().GetValueAsDouble());
-auto HoodPower = DragonPower::CalcPowerEnergy(currTime, m_Hood->GetSupplyVoltage().GetValueAsDouble(), m_Hood->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(HoodPower);
-m_energy = get<1>(HoodPower);
-m_totalEnergy += m_energy;
-LogHoodPower(timestamp, m_power);
-LogHoodEnergy(timestamp, m_energy);
-LogTransfer(timestamp, m_Transfer->GetPosition().GetValueAsDouble());
-auto TransferPower = DragonPower::CalcPowerEnergy(currTime, m_Transfer->GetSupplyVoltage().GetValueAsDouble(), m_Transfer->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(TransferPower);
-m_energy = get<1>(TransferPower);
-m_totalEnergy += m_energy;
-LogTransferPower(timestamp, m_power);
-LogTransferEnergy(timestamp, m_energy);
-LogTurret(timestamp, m_Turret->GetPosition().GetValueAsDouble());
-auto TurretPower = DragonPower::CalcPowerEnergy(currTime, m_Turret->GetSupplyVoltage().GetValueAsDouble(), m_Turret->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(TurretPower);
-m_energy = get<1>(TurretPower);
-m_totalEnergy += m_energy;
-LogTurretPower(timestamp, m_power);
-LogTurretEnergy(timestamp, m_energy);
-LogIndexer(timestamp, m_Indexer->GetPosition().GetValueAsDouble());
-auto IndexerPower = DragonPower::CalcPowerEnergy(currTime, m_Indexer->GetSupplyVoltage().GetValueAsDouble(), m_Indexer->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(IndexerPower);
-m_energy = get<1>(IndexerPower);
-m_totalEnergy += m_energy;
-LogIndexerPower(timestamp, m_power);
-LogIndexerEnergy(timestamp, m_energy);
-LogLauncherState(timestamp, GetCurrentState());
-m_totalWattHours += DragonPower::ConvertEnergyToWattHours(m_totalEnergy);
-LogLauncherTotalEnergy(timestamp, m_totalEnergy);
-LogLauncherTotalWattHours(timestamp, m_totalWattHours);
-m_powerTimer.Reset();
-m_powerTimer.Start();
- }*/
