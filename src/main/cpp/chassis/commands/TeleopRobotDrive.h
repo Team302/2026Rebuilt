@@ -88,8 +88,8 @@ private:
     static constexpr double m_launchingSpeedScale = 0.5;                   ///< Scale factor for speed reduction during launching.
 
     swerve::requests::RobotCentric m_RobotDriveRequest = swerve::requests::RobotCentric{}
-                                                             .WithDeadband(m_currentMaxSpeed * 0.1)
-                                                             .WithRotationalDeadband(m_currentMaxAngularRate * 0.1) // Add a 10% deadband
+                                                             .WithDeadband(m_maxSpeed * 0.1)
+                                                             .WithRotationalDeadband(m_maxAngularRate * 0.1) // Add a 10% deadband based on normal max values
                                                              .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage)
                                                              .WithDesaturateWheelSpeeds(true);
 
