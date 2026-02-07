@@ -39,6 +39,7 @@
 #include "mechanisms/Launcher/EmptyHopperState.h"
 #include "mechanisms/Launcher/ClimbState.h"
 #include "mechanisms/Launcher/LauncherTuningState.h"
+#include "auton/DeadZoneManager.h"
 #include "mechanisms/Launcher/ManualLaunchState.h"
 
 #include "teleopcontrol/TeleopControl.h"
@@ -746,8 +747,7 @@ bool Launcher::IsLauncherAtTarget()
 
 bool Launcher::IsInLaunchZone() const
 {
-	// call deadzone manager to see if we can or can't launch
-	return true;
+	return DeadZoneManager::GetInstance()->IsInDeadZone();
 }
 
 void Launcher::CalculateTargets()
