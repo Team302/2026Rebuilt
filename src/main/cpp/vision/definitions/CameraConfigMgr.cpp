@@ -37,8 +37,24 @@ CameraConfigMgr::CameraConfigMgr() : m_config(nullptr)
 {
 }
 
+CameraConfigMgr::~CameraConfigMgr()
+{
+    if (m_config != nullptr)
+    {
+        delete m_config;
+        m_config = nullptr;
+    }
+}
+
 void CameraConfigMgr::InitCameras(RobotIdentifier id)
 {
+    // Clean up previous config to prevent memory leak
+    if (m_config != nullptr)
+    {
+        delete m_config;
+        m_config = nullptr;
+    }
+
     switch (id)
     {
 

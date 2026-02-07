@@ -52,7 +52,8 @@ public:
 		STATE_LAUNCH,
 		STATE_EMPTY_HOPPER,
 		STATE_CLIMB,
-		STATE_LAUNCHER_TUNING
+		STATE_LAUNCHER_TUNING,
+		STATE_MANUAL_LAUNCH
 	};
 
 	Launcher(RobotIdentifier activeRobotId);
@@ -151,6 +152,7 @@ public:
 	void SetLauncherInitialized(bool initialized) { m_launcherInitialized = initialized; }
 	bool IsTuningLauncherMode() const { return m_tuningLauncher; }
 	void UpdateLauncherTargets();
+	units::angle::degree_t GetTargetTurretAngle() const { return m_targetTurretAngle; }
 
 protected:
 	RobotIdentifier m_activeRobotId;
