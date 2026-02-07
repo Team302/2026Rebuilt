@@ -343,12 +343,6 @@ void DragonVision::RefreshQuestData()
 /// @note Updates all running limelights and the DragonQuest instance (if present).
 void DragonVision::SetRobotPose(const frc::Pose2d &pose)
 {
-	// auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
-	// for (auto limelight : limelights)
-	// {
-	// 	limelight->SetRobotPose(pose);
-	// }
-
 	auto quest = GetQuest();
 	if (quest != nullptr)
 	{
