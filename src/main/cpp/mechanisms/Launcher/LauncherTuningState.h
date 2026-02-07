@@ -51,7 +51,10 @@ namespace LauncherStates
 		const double m_turretTarget = double(0);
 		const double m_indexerTarget = double(0);
 
+		double m_launcherPercentOut = 0.3;
+
 		bool m_speedUpButtonReleased = true;
 		bool m_speedDownButtonReleased = true;
+		bool m_tuningLauncherPercentOut = true;
 	};
 }
