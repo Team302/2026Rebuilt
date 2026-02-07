@@ -28,7 +28,8 @@ TeleopFieldDrive::TeleopFieldDrive(subsystems::CommandSwerveDrivetrain *chassis,
                                                                                                    m_controller(controller),
                                                                                                    m_maxSpeed(maxSpeed),
                                                                                                    m_currentMaxSpeed(maxSpeed),
-                                                                                                   m_maxAngularRate(maxAngularRate)
+                                                                                                   m_maxAngularRate(maxAngularRate),
+                                                                                                   m_currentMaxAngularRate(maxAngularRate)
 {
     AddRequirements(m_chassis);
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsLaunching_Bool);
