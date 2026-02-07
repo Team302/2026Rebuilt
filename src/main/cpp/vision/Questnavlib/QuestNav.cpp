@@ -368,6 +368,7 @@ void QuestNav::CheckVersionMatch()
 // ──────────────────────────────────────────────────────────────────────────────
 frc::Pose3d QuestNav::ProtobufToPose3d(const wpi::proto::ProtobufPose3d &proto)
 {
+#ifdef __FRC_ROBORIO__
     double tx = 0.0, ty = 0.0, tz = 0.0;
     if (proto.has_translation())
     {
@@ -388,6 +389,7 @@ frc::Pose3d QuestNav::ProtobufToPose3d(const wpi::proto::ProtobufPose3d &proto)
     return frc::Pose3d{
         frc::Translation3d{units::meter_t{tx}, units::meter_t{ty}, units::meter_t{tz}},
         frc::Rotation3d{frc::Quaternion{qw, qx, qy, qz}}};
+#endif
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -395,6 +397,8 @@ frc::Pose3d QuestNav::ProtobufToPose3d(const wpi::proto::ProtobufPose3d &proto)
 // ──────────────────────────────────────────────────────────────────────────────
 void QuestNav::Pose3dToProtobuf(const frc::Pose3d &pose, wpi::proto::ProtobufPose3d *proto)
 {
+#ifdef __FRC_ROBORIO__
+
     auto *translation = proto->mutable_translation();
     translation->set_x(pose.X().value());
     translation->set_y(pose.Y().value());
@@ -407,4 +411,5 @@ void QuestNav::Pose3dToProtobuf(const frc::Pose3d &pose, wpi::proto::ProtobufPos
     quaternion->set_x(q.X());
     quaternion->set_y(q.Y());
     quaternion->set_z(q.Z());
+#endif
 }
