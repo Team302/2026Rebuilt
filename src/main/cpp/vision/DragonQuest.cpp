@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -84,13 +83,13 @@ void DragonQuest::Periodic()
         if (m_poseResetRequested && m_isConnected)
         {
             SetRobotPose(m_poseReset);
+            return; // Skip GetEstimatedPose this cycle to let reset propagate
         }
         if (m_isConnected)
         {
             GetEstimatedPose();
         }
     }
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("Periodic_reset_requested"), m_poseResetRequested);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kIsConnected, m_isConnected);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kIsNTInitialized, m_isNTInitialized);
 }
@@ -163,11 +162,14 @@ void DragonQuest::GetEstimatedPose()
     // Extract quaternion
     const auto &q = rotation.q();
     double qw = q.w();
+    double qx = q.x();
+    double qy = q.y();
     double qz = q.z();
 
-    // Convert quaternion to yaw (rotation around Z-axis)
-    // For a quaternion representing rotation around Z: yaw = 2 * atan2(qz, qw)
-    double yawRadians = 2.0 * std::atan2(qz, qw);
+    // Full quaternion to yaw conversion (handles non-zero pitch/roll)
+    double siny_cosp = 2.0 * (qw * qz + qx * qy);
+    double cosy_cosp = 1.0 - 2.0 * (qy * qy + qz * qz);
+    double yawRadians = std::atan2(siny_cosp, cosy_cosp);
 
     // Convert from Quest coordinates to robot coordinates
     units::length::meter_t x{translation.x()};
@@ -232,24 +234,25 @@ void DragonQuest::DataLog(uint64_t timestamp)
 void DragonQuest::AttemptSetRobotPose(const frc::Pose2d &pose)
 {
 #ifdef __FRC_ROBORIO__
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("AttemptSetRobotPose"), string("reached"));
     m_poseReset = pose;
     if (m_isConnected)
     {
         SetRobotPose(m_poseReset);
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("AttemptSetRobotPose_m_isconnected"), string("true"));
     }
     else
     {
         m_poseResetRequested = true;
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("AttemptSetRobotPose_m_isconnected"), string("false"));
     }
 #endif
 }
 
 void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
 {
-    frc::Pose2d questPose = pose.TransformBy(m_questToRobotTransform);
+#ifdef __FRC_ROBORIO__
+    frc::Pose2d newPose = pose.TransformBy(m_questToRobotTransform);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("SetRobotPoseX"), pose.X().value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("SetRobotPoseY"), pose.Y().value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnavdebug"), string("SetRobotPoseRot"), pose.Rotation().Degrees().value());
 
     // Create pose reset command
     questnav::protos::commands::ProtobufQuestNavCommand command;
@@ -261,16 +264,16 @@ void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
 
     // Set translation
     auto *translation = targetPose->mutable_translation();
-    translation->set_x(questPose.X().value());
-    translation->set_y(questPose.Y().value());
-    translation->set_z(0.0);
+    translation->set_x(newPose.X().value());
+    translation->set_y(newPose.Y().value());
+    translation->set_z(0.0); // Assuming flat field, so Z is 0
 
     // Set rotation using quaternion
     auto *rotation = targetPose->mutable_rotation();
     auto *quaternion = rotation->mutable_q();
 
     // Convert 2D rotation to quaternion (rotation around Z axis)
-    double yawRadians = questPose.Rotation().Radians().value();
+    double yawRadians = newPose.Rotation().Radians().value();
     double halfYaw = yawRadians / 2.0;
 
     quaternion->set_w(std::cos(halfYaw)); // Real part
@@ -287,6 +290,9 @@ void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
 
     m_hasReset = true;
     m_poseResetRequested = false;
+#else
+    m_poseResetRequested = false;
+#endif
 }
 
 void DragonQuest::HandleDashboard()
