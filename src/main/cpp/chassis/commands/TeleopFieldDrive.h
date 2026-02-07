@@ -49,7 +49,7 @@ public:
     /**
      * @brief Initializes the command.
      *
-     * Sets up initial state and registers for robot state change notifications.
+     * Sets up initial state before command starts executing.
      */
     void Initialize() override;
 

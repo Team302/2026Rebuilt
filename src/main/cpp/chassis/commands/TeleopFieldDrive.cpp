@@ -111,9 +111,5 @@ void TeleopFieldDrive::NotifyStateUpdate(RobotStateChanges::StateChange change, 
     {
         m_currentMaxSpeed = value ? m_maxSpeed * m_launchingSpeedScale : m_maxSpeed;
         m_currentMaxAngularRate = value ? m_maxAngularRate * m_launchingSpeedScale : m_maxAngularRate;
-
-        Logger::GetLogger()->LogDataDirectlyOverNT(std::string("TeleopFieldDrive"), std::string("Launching "), value);
-        Logger::GetLogger()->LogDataDirectlyOverNT(std::string("TeleopFieldDrive"), std::string("m_currentMaxSpeed "), m_currentMaxSpeed.value());
-        Logger::GetLogger()->LogDataDirectlyOverNT(std::string("TeleopFieldDrive"), std::string("m_currentMaxAngularRate "), m_currentMaxAngularRate.value());
     }
 }
