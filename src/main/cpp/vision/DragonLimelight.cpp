@@ -71,9 +71,9 @@ DragonLimelight::DragonLimelight(std::string networkTableName,
                                  DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier,
                                  DRAGON_LIMELIGHT_CAMERA_TYPE cameraType,
                                  DRAGON_LIMELIGHT_CAMERA_USAGE cameraUsage,
-                                 units::length::inch_t mountingXOffset,
-                                 units::length::inch_t mountingYOffset,
-                                 units::length::inch_t mountingZOffset,
+                                 units::length::meter_t mountingXOffset,
+                                 units::length::meter_t mountingYOffset,
+                                 units::length::meter_t mountingZOffset,
                                  units::angle::degree_t pitch,
                                  units::angle::degree_t yaw,
                                  units::angle::degree_t roll,
@@ -85,7 +85,7 @@ DragonLimelight::DragonLimelight(std::string networkTableName,
 {
     SetLEDMode(ledMode);
     SetPipeline(initialPipeline);
-    SetCameraPose_RobotSpace(mountingXOffset.to<double>(), mountingYOffset.to<double>(), mountingZOffset.to<double>(), roll.to<double>(), pitch.to<double>(), yaw.to<double>());
+    SetCameraPose_RobotSpace(mountingXOffset.value(), mountingYOffset.value(), mountingZOffset.value(), roll.value(), pitch.value(), yaw.value());
     for (int port = 5800; port <= 5809; port++)
     {
         wpi::PortForwarder::GetInstance().Add(port + static_cast<int>(identifier), "limelight.local", port);
