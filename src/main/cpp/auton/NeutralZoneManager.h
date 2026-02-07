@@ -21,12 +21,17 @@ class NeutralZoneManager : public ZoneHelper
 {
 public:
     static NeutralZoneManager *GetInstance();
-    bool isInNeutralZone();
+    bool IsInNeutralZone();
 
 private:
-    AllianceZoneManager();
-    ~AllianceZoneManager();
-    static AllianceZoneManager *m_instance;
-    std::vector<std::string> m_neutralZoneFiles{
+    NeutralZoneManager();
+    ~NeutralZoneManager() = default;
+
+    std::vector<std::string> GetZoneFiles() override;
+
+    static NeutralZoneManager *m_instance;
+    std::vector<std::string> m_neutralZoneFile = {
         "NeutralZone.xml"};
+
+    std::vector<ZoneParams *> m_parsedNeutralZone;
 };
