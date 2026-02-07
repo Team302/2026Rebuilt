@@ -68,6 +68,7 @@ public:
         LAUNCHER_OFF,
         LAUNCH,
         LAUNCH_OVERRIDE,
+        MANUAL_LAUNCH,
 
         // TARGET OFFSETS
         UPDATE_TARGET_OFFSET_UP,
