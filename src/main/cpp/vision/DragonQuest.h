@@ -1,3 +1,4 @@
+
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -27,6 +28,7 @@
 #include "state/IRobotStateChangeSubscriber.h"
 #include "utils/logging/signals/DragonDataLogger.h"
 #include "vision/DragonVisionPoseEstimatorStruct.h"
+#include "utils/DragonField.h"
 #ifdef __FRC_ROBORIO__
 #include "vision/Questnavlib/commands.pb.h"
 #include "vision/Questnavlib/data.pb.h"
@@ -50,7 +52,7 @@ public:
 
     DragonVisionPoseEstimatorStruct GetPoseEstimate();
 
-    void SetRobotPose(const frc::Pose2d &pose);
+    void AttemptSetRobotPose(const frc::Pose2d &pose);
 
     void Periodic();
 
@@ -59,11 +61,15 @@ public:
 private:
     DragonQuest() = delete;
 
-    void ProcessFrameData(); // Combined function that parses frame data once per cycle
+    void GetEstimatedPose();
+
+    void SetIsConnected();
 
     void HandleDashboard();
 
     void InitNT();
+
+    void SetRobotPose(const frc::Pose2d &pose);
 
     units::length::inch_t m_mountingXOffset; /// <I> x offset of Quest from robot center (forward relative to robot)
     units::length::inch_t m_mountingYOffset; /// <I> y offset of Quest from robot center (left relative to robot)
@@ -89,20 +95,23 @@ private:
     bool m_hasReset = false;
     bool m_isConnected = false;
     bool m_isNTInitialized = false; // Track if subscribers were successfully initialized
+    bool m_poseResetRequested = false;
 
     frc::Transform2d m_questToRobotTransform; // <I> Transform from Quest to robot (used to calculate the robot pose from the quest pose)
 
     static constexpr double m_stdxy{0.02};
     static constexpr double m_stddeg{.035};
 
-    int32_t m_prevFrameCount = 0;
-    int32_t m_cachedFrameCount = 0; // Cached frame count from latest valid parse
+    double m_prevFrameCount = 0;
     int m_loopCounter = 0;
 
     int m_lastProcessedHeartbeatId = 0;
-    int64_t m_lastFrameTimestamp = 0; // Cached timestamp for pose estimate
 
     frc::Pose2d m_lastCalculatedPose;
+
+    frc::Pose2d m_poseReset;
+
+    DragonField *m_field = nullptr;
 
     bool m_isQuestEnabled = false; // <I> Is the Quest enabled?
     bool m_isClimbMode = false;

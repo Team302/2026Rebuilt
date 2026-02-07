@@ -151,7 +151,9 @@ void DragonVisionPoseEstimator::CalculateInitialPose()
     auto megaTag2Positions = m_vision->GetRobotPositionMegaTag2();
     if (!megaTag2Positions.empty())
     {
-        ResetPosition(megaTag2Positions[0].estimatedPose.ToPose2d());
+        auto pose = megaTag2Positions[0].estimatedPose.ToPose2d();
+        ResetPosition(pose);
+        m_vision->SetRobotPose(pose);
         m_initialPoseSet = true;
     }
 }

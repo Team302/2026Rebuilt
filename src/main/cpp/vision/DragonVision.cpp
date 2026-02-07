@@ -322,7 +322,7 @@ std::vector<VisionPose> DragonVision::GetRobotPositionMegaTag2()
 DragonVisionPoseEstimatorStruct DragonVision::GetRobotPositionQuest()
 {
 	auto quest = DragonVision::GetDragonVision()->GetQuest();
-	if (quest != nullptr && quest->HealthCheck())
+	if (quest != nullptr)
 	{
 		return quest->GetPoseEstimate();
 	}
@@ -332,7 +332,7 @@ DragonVisionPoseEstimatorStruct DragonVision::GetRobotPositionQuest()
 void DragonVision::RefreshQuestData()
 {
 	auto quest = DragonVision::GetDragonVision()->GetQuest();
-	if (quest != nullptr && quest->HealthCheck())
+	if (quest != nullptr)
 	{
 		quest->Periodic();
 	}
@@ -343,16 +343,16 @@ void DragonVision::RefreshQuestData()
 /// @note Updates all running limelights and the DragonQuest instance (if present).
 void DragonVision::SetRobotPose(const frc::Pose2d &pose)
 {
-	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
-	for (auto limelight : limelights)
-	{
-		limelight->SetRobotPose(pose);
-	}
+	// auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
+	// for (auto limelight : limelights)
+	// {
+	// 	limelight->SetRobotPose(pose);
+	// }
 
 	auto quest = GetQuest();
 	if (quest != nullptr)
 	{
-		quest->SetRobotPose(pose);
+		quest->AttemptSetRobotPose(pose);
 	}
 }
 
