@@ -59,9 +59,9 @@ public:
     /// @param identifier Identifier enum for multiple limelights on the robot.
     /// @param cameraType Type hint for camera hardware/configuration.
     /// @param cameraUsage How the camera will be used (odometry, driver camera, etc.).
-    /// @param mountingXOffset Forward offset (inches) from robot center.
-    /// @param mountingYOffset Left offset (inches) from robot center.
-    /// @param mountingZOffset Up offset (inches) from robot center.
+    /// @param mountingXOffset Forward offset (meters) from robot center.
+    /// @param mountingYOffset Left offset (meters) from robot center.
+    /// @param mountingZOffset Up offset (meters) from robot center.
     /// @param pitch Camera pitch in degrees.
     /// @param yaw Camera yaw in degrees.
     /// @param roll Camera roll in degrees.
