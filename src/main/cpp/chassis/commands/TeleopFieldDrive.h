@@ -88,8 +88,8 @@ private:
     static constexpr double m_launchingSpeedScale = 0.5;                   ///< Scale factor for speed reduction during launching.
 
     swerve::requests::FieldCentric m_fieldDriveRequest = swerve::requests::FieldCentric{}
-                                                             .WithDeadband(m_currentMaxSpeed * 0.1)                           // TODO: Investigate this deadband vs controller deadband
-                                                             .WithRotationalDeadband(m_currentMaxAngularRate * 0.1)           // TODO: Investigate this deadband vs controller deadband
+                                                             .WithDeadband(m_maxSpeed * 0.1)                                  // TODO: Investigate this deadband vs controller deadband
+                                                             .WithRotationalDeadband(m_maxAngularRate * 0.1)                  // TODO: Investigate this deadband vs controller deadband
                                                              .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage) // Use open-loop voltage for drive
                                                              .WithDesaturateWheelSpeeds(true);
 
