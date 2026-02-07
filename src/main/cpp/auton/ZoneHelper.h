@@ -22,25 +22,33 @@
 #include <chassis/generated/CommandSwerveDrivetrain.h>
 
 // C++ Includes
-#include <vector>
+#include "vector"
 
 // FRC includes
 
 // Team 302 includes
-class ZoneParams; // Forward declaration
+class ZoneParams;             // Forward declaration
+enum class ZoneAllianceColor; // Forward declaration
 
 // Third Party Includes
 
 class ZoneHelper
 {
 public:
-    void InitZones();
-    virtual std::string GetZoneFile() = 0;
-    bool isInZone();
-    bool isInZone(std::string zoneFile);
+    // void InitZones();
+    bool IsInZones(std::vector<ZoneParams *> zoneFiles);
+    bool IsInZone(ZoneParams *zoneFile);
+    void ParseZoneFiles();
 
 protected:
-    frc::Pose2d m_robotPose = m_chassis->GetPose();
     subsystems::CommandSwerveDrivetrain *m_chassis;
-    ZoneParams *m_zones;
+    std::vector<ZoneParams> *m_zones;
+    std::vector<std::string> m_zoneFiles;
+
+    virtual std::vector<std::string> GetZoneFiles() = 0;
+
+    ZoneHelper();
+    ~ZoneHelper();
+
+    std::vector<ZoneParams *> GetAllianceZones(ZoneAllianceColor alliance);
 };

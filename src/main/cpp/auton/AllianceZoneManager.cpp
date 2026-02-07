@@ -13,22 +13,40 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include <auton/AllianceZoneManager.h>
+#include "ZoneParams.h"
 
 using frc::DriverStation;
 
-std::string AllianceZoneManager::GetZoneFile()
+AllianceZoneManager::AllianceZoneManager() : ZoneHelper()
+{
+    ParseZoneFiles();
+    m_blueAllianceZone = GetAllianceZones(ZoneAllianceColor::BLUE);
+    m_redAllianceZone = GetAllianceZones(ZoneAllianceColor::RED);
+}
+
+AllianceZoneManager *AllianceZoneManager::m_instance = nullptr;
+AllianceZoneManager *AllianceZoneManager::GetInstance()
+{
+    if (AllianceZoneManager::m_instance == nullptr)
+    {
+        AllianceZoneManager::m_instance = new AllianceZoneManager();
+    }
+    return AllianceZoneManager::m_instance;
+}
+
+std::vector<std::string> AllianceZoneManager::GetZoneFiles()
+{
+    return m_allianceZoneFiles;
+};
+
+bool AllianceZoneManager::IsInAllianceZone()
 {
     if (DriverStation::GetAlliance() == DriverStation::Alliance::kRed)
     {
-        return "RedAllianceZone.xml";
+        return IsInZones(m_redAllianceZone);
     }
     else
     {
-        return "BlueAllianceZone.xml";
+        return IsInZones(m_blueAllianceZone);
     }
-}
-
-bool AllianceZoneManager::isInAllianceZone()
-{
-    return isInZone();
 }

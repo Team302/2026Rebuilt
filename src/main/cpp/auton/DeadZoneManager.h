@@ -20,9 +20,22 @@
 class DeadZoneManager : public ZoneHelper
 {
 public:
-    virtual std::string GetZoneFile() override;
-    bool isInDeadZone();
+    static DeadZoneManager *GetInstance();
+    bool IsInDeadZone();
 
 private:
-    std::string m_neutralZoneFile = "NZDeadZone.xml";
+    DeadZoneManager();
+    ~DeadZoneManager() = default;
+
+    std::vector<std::string> GetZoneFiles() override;
+
+    static DeadZoneManager *m_instance;
+    std::vector<std::string> m_deadZoneFiles = {
+        "BlueDeadZone.xml",
+        "BlueNZDeadZone.xml",
+        "RedDeadZone.xml",
+        "RedNZDeadZone.xml"};
+
+    std::vector<ZoneParams *> m_blueDeadZone;
+    std::vector<ZoneParams *> m_redDeadZone;
 };

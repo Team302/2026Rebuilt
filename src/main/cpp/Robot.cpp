@@ -95,6 +95,8 @@
 #include "utils/logging/debug/Logger.h"
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 
+#include "auton/NeutralZoneManager.h"
+
 /// @brief Constructor for the Robot class.
 /// Initializes all core subsystems, auton options, and drive-team feedback in sequence.
 /// Also warm-loads the data logger to avoid first-run delays.
@@ -135,6 +137,8 @@ void Robot::RobotPeriodic()
     }
 
     UpdateDriveTeamFeedback();
+
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Robot", "IsInNeutralZone", NeutralZoneManager::GetInstance()->IsInNeutralZone());
 }
 
 /// @brief Called periodically while the robot is disabled.

@@ -52,6 +52,7 @@ public:
     {
         NO_VISION
     };
+
     enum AutonAvoidOptions
     {
         ROBOT_COLLISION,
