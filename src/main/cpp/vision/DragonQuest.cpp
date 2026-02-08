@@ -89,8 +89,8 @@ DragonQuest::DragonQuest(
 
     // Field visualisation object
     m_field = DragonField::GetInstance();
-    m_field->AddObject("QuestRobotPose", frc::Pose2d{}, true);
-    m_field->AddObject("QuestPose", frc::Pose2d{}, true);
+    m_field->AddObject("QuestRobotPose", frc::Pose2d{}, false);
+    m_field->AddObject("QuestPose", frc::Pose2d{}, false);
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
