@@ -30,12 +30,14 @@ class RobotState;
 class DragonDataLoggerMgr;
 class DragonVisionPoseEstimatorContainer;
 class DragonQuest;
+class DragonVision;
 
 class Robot : public frc::TimedRobot
 {
 public:
     Robot();
     void RobotPeriodic() override;
+    void DisabledInit() override;
     void DisabledPeriodic() override;
     void AutonomousInit() override;
     void AutonomousPeriodic() override;
@@ -56,6 +58,7 @@ private:
     RobotState *m_robotState;
     DragonDataLoggerMgr *m_datalogger;
     bool isFMSAttached = false;
+    bool m_rewindActive = false; ///< Latch to track whether Rewind recording is active
     DragonVisionPoseEstimatorContainer *m_dragonVisionPoseEstimator;
     DragonQuest *m_quest;
 };

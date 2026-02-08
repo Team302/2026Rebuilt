@@ -186,6 +186,19 @@ public:
     DragonVisionPoseEstimatorStruct GetRobotPositionQuest();
     void RefreshQuestData();
 
+    /// @brief Enable rewind buffer recording on all registered limelights.
+    /// @note LL4 only feature. Call when entering a match.
+    void StartRewind();
+
+    /// @brief Trigger a rewind capture on all registered limelights, saving the last durationSeconds of video.
+    /// @param durationSeconds Number of seconds to capture (max 165).
+    /// @note LL4 only feature. Call when match ends.
+    void SaveRewind(double durationSeconds);
+
+    /// @brief Disable rewind buffer recording on all registered limelights.
+    /// @note LL4 only feature.
+    void StopRewind();
+
 private:
     /// @brief Constructor (private for singleton).
     DragonVision();

@@ -356,6 +356,58 @@ void DragonVision::SetRobotPose(const frc::Pose2d &pose)
 	}
 }
 
+/// @brief Enable rewind buffer recording on all registered limelights.
+/// @note Only sends to limelights that are currently running. LL4 only feature.
+void DragonVision::StartRewind()
+{
+	for (const auto &pair : m_dragonLimelightMap)
+	{
+		DragonLimelight *limelight = pair.second.get();
+		if (limelight != nullptr)
+		{
+			if (limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4 || limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4_W_HAILO8)
+			{
+				limelight->StartRewind();
+			}
+		}
+	}
+}
+
+/// @brief Trigger a rewind capture on all registered limelights, saving the last durationSeconds of video.
+/// @param durationSeconds Number of seconds to capture (max 165).
+/// @note LL4 only feature.
+void DragonVision::SaveRewind(double durationSeconds)
+{
+	for (const auto &pair : m_dragonLimelightMap)
+	{
+		DragonLimelight *limelight = pair.second.get();
+		if (limelight != nullptr)
+		{
+			if (limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4 || limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4_W_HAILO8)
+			{
+				limelight->SaveRewind(durationSeconds);
+			}
+		}
+	}
+}
+
+/// @brief Disable rewind buffer recording on all registered limelights.
+/// @note LL4 only feature.
+void DragonVision::StopRewind()
+{
+	for (const auto &pair : m_dragonLimelightMap)
+	{
+		DragonLimelight *limelight = pair.second.get();
+		if (limelight != nullptr)
+		{
+			if (limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4 || limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4_W_HAILO8)
+			{
+				limelight->StopRewind();
+			}
+		}
+	}
+}
+
 /// @brief Return limelights that match the provided usage/category and are running.
 /// @param usage The usage/category to filter by (e.g., APRIL_TAGS).
 /// @return Vector of pointers to running DragonLimelight instances that match the criteria.
