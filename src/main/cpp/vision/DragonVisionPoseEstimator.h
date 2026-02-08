@@ -101,11 +101,6 @@ private:
     void AddVisionMeasurements();
 
     /**
-     * @brief True when an initial pose has been successfully set from vision.
-     */
-    bool m_initialPoseSet = false;
-
-    /**
      * @brief Latch that is set true once the robot enters enabled mode.
      * Prevents recalculating initial pose after the robot has been enabled.
      */
