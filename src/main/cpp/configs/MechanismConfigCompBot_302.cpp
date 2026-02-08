@@ -22,8 +22,9 @@
 #include "configs/RobotElementNames.h"
 #include "utils/logging/debug/Logger.h"
 #include "utils/PeriodicLooper.h"
-
-#include <frc/Compressor.h>
+#include "frc/RobotBase.h"
+#include "frc/Compressor.h"
+#include "feedback/DragonLeds.h"
 
 using std::string;
 
@@ -66,6 +67,10 @@ StateMgr *MechanismConfigCompBot_302::GetMechanism(MechanismTypes::MECHANISM_TYP
 
 void MechanismConfigCompBot_302::DefineLEDs()
 {
+	if (frc::RobotBase::IsSimulation())
+	{
+		DragonLeds::GetInstance()->Initialize(9, 45);
+	}
 }
 
 void MechanismConfigCompBot_302::DefineCompressor()

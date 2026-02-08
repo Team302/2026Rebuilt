@@ -39,7 +39,7 @@ void DragonLeds::Initialize(int PWMport, int numLeds)
     {
         m_addressibleLeds = new frc::AddressableLED(PWMport);
         m_addressibleLeds->SetLength(numLeds);
-        // m_addressibleLeds->SetStart(0);
+        m_addressibleLeds->Start();
 
         m_ledBuffer.resize(numLeds);
 
