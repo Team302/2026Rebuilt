@@ -14,14 +14,14 @@
 //====================================================================================================================================================
 
 // Developer documentation:
-// Brief: High-level manager for vision subsystems (Limelight + QUEST).
+// Brief: High-level manager for vision (Limelight + QUEST).
 // Responsibilities:
 //  - Singleton access via DragonVision::GetDragonVision()
 //  - Manage multiple DragonLimelight instances and a DragonQuest instance
 //  - Query and aggregate AprilTag and object-detection targets across cameras
 //  - Select targets according to VisionTargetOption and return selected target data
 //  - Provide robot pose estimates fused/selected from camera poses
-//  - Configure per-camera pipelines and set robot pose for vision subsystems
+//  - Configure per-camera pipelines and set robot pose for vision
 //
 // Notes:
 //  - Not thread-safe; callers must synchronize if used from multiple threads concurrently.
@@ -44,6 +44,7 @@
 // FRC
 #include "frc/RobotController.h"
 #include "frc/Timer.h"
+#include "frc/apriltag/AprilTagFieldLayout.h"
 #include "frc/geometry/Pose2d.h"
 
 // Team 302 includes
@@ -84,6 +85,22 @@ DragonVision *DragonVision::GetDragonVision()
 	return DragonVision::m_dragonVision;
 }
 
+DragonVision::DragonVision()
+	: m_dragonLimelightMap(),
+	  m_dragonQuest()
+{
+}
+
+/// @brief Destructor - cleans up owned Limelight and Quest resources.
+/// @note unique_ptr members are automatically cleaned up.
+DragonVision::~DragonVision()
+{
+	// unique_ptr members (m_dragonLimelightMap values and m_dragonQuest) are
+	// automatically cleaned up when the object is destroyed
+	m_dragonLimelightMap.clear();
+	m_dragonQuest.reset();
+}
+
 /// @brief Check health for all limelights that match a usage.
 /// @param usage The camera usage category to check (e.g., APRIL_TAGS).
 /// @return true if all matching cameras that are considered return running; false otherwise.
@@ -122,7 +139,7 @@ std::vector<bool> DragonVision::HealthCheckAllLimelights()
 	std::vector<bool> healthStatuses;
 	for (const auto &pair : m_dragonLimelightMap)
 	{
-		DragonLimelight *limelight = pair.second;
+		DragonLimelight *limelight = pair.second.get();
 		if (limelight != nullptr)
 		{
 			healthStatuses.push_back(limelight->IsLimelightRunning());
@@ -184,20 +201,20 @@ void DragonVision::InitializeCameras()
 	CameraConfigMgr::GetInstance()->InitCameras(static_cast<RobotIdentifier>(teamNumber));
 }
 /// @brief Add a Limelight instance to the manager.
-/// @param camera Pointer to the DragonLimelight to add.
+/// @param camera Unique pointer to the DragonLimelight to add.
 /// @param usage The camera usage category for this camera.
-/// @note Ownership is not transferred here; this class stores the raw pointer.
-void DragonVision::AddLimelight(DragonLimelight *camera, DRAGON_LIMELIGHT_CAMERA_USAGE usage)
+/// @note Ownership is transferred; this class will delete the camera when appropriate.
+void DragonVision::AddLimelight(std::unique_ptr<DragonLimelight> camera, DRAGON_LIMELIGHT_CAMERA_USAGE usage)
 {
-	m_dragonLimelightMap.insert(std::pair<DRAGON_LIMELIGHT_CAMERA_USAGE, DragonLimelight *>(usage, camera));
+	m_dragonLimelightMap.insert(std::make_pair(usage, std::move(camera)));
 }
 
 /// @brief Register the DragonQuest instance with the manager.
-/// @param quest Pointer to the DragonQuest instance.
-/// @note Ownership not transferred; this class keeps the raw pointer.
-void DragonVision::AddQuest(DragonQuest *quest)
+/// @param quest Unique pointer to the DragonQuest instance.
+/// @note Ownership is transferred; this class will delete quest when appropriate.
+void DragonVision::AddQuest(std::unique_ptr<DragonQuest> quest)
 {
-	m_dragonQuest = quest;
+	m_dragonQuest = std::move(quest);
 }
 
 /// @brief Aggregate AprilTag targets from all relevant limelights and select according to option.
@@ -267,9 +284,8 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonVision::GetObjectDetectio
 }
 
 /// @brief Query all registered limelights for MegaTag1-based robot poses and choose the best.
-/// @return Optional VisionPose; std::nullopt if no valid poses were returned by cameras.
-/// @note Uses GetBestPose to pick the most reliable pose among candidates.
-std::optional<VisionPose> DragonVision::GetRobotPositionMegaTag1()
+/// @return std::vector<VisionPose>; empty if no valid poses were returned by cameras.
+std::vector<VisionPose> DragonVision::GetRobotPositionMegaTag1()
 {
 	std::vector<VisionPose> poses;
 	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
@@ -281,13 +297,12 @@ std::optional<VisionPose> DragonVision::GetRobotPositionMegaTag1()
 			poses.emplace_back(pose.value());
 		}
 	}
-	return GetBestPose(poses);
+	return poses;
 }
 
 /// @brief Query all registered limelights for MegaTag2-based robot poses and choose the best.
-/// @return Optional VisionPose; std::nullopt if no valid poses were returned by cameras.
-/// @note Uses GetBestPose to pick the most reliable pose among candidates.
-std::optional<VisionPose> DragonVision::GetRobotPositionMegaTag2()
+/// @return std::vector<VisionPose>; empty if no valid poses were returned by cameras.
+std::vector<VisionPose> DragonVision::GetRobotPositionMegaTag2()
 {
 	std::vector<VisionPose> poses;
 	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
@@ -299,7 +314,7 @@ std::optional<VisionPose> DragonVision::GetRobotPositionMegaTag2()
 			poses.emplace_back(pose.value());
 		}
 	}
-	return GetBestPose(poses);
+	return poses;
 }
 
 /// @brief Get robot pose estimate derived from Quest detections.
@@ -314,7 +329,16 @@ DragonVisionPoseEstimatorStruct DragonVision::GetRobotPositionQuest()
 	return {};
 }
 
-/// @brief Set a robot pose for all vision subsystems that consume robot pose information.
+void DragonVision::RefreshQuestData()
+{
+	auto quest = DragonVision::GetDragonVision()->GetQuest();
+	if (quest != nullptr && quest->HealthCheck())
+	{
+		quest->Periodic();
+	}
+}
+
+/// @brief Set a robot pose for all vision that consume robot pose information.
 /// @param pose The new robot pose (frc::Pose2d) to distribute.
 /// @note Updates all running limelights and the DragonQuest instance (if present).
 void DragonVision::SetRobotPose(const frc::Pose2d &pose)
@@ -339,44 +363,15 @@ void DragonVision::SetRobotPose(const frc::Pose2d &pose)
 std::vector<DragonLimelight *> DragonVision::GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE usage) const
 {
 	std::vector<DragonLimelight *> validLimelights;
-	for (auto it = m_dragonLimelightMap.begin(); it != m_dragonLimelightMap.end(); ++it)
+	for (const auto &it : m_dragonLimelightMap)
 	{
-		bool addCam = false;
-		auto limelight = (*it).second;
-		if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS)
-		{
-			if (limelight->IsLimelightRunning())
-			{
-				validLimelights.emplace_back(limelight);
-			}
-		}
-		else
-		{
+		auto thisUsage = it.first;
+		auto limelight = it.second.get();
 
-			addCam = (*it).first == usage;
-			if (!addCam)
-			{
-				if ((*it).first == DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS)
-				{
-					auto pipe = DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG;
-					if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS)
-					{
-						addCam = pipe == DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG;
-					}
-					else if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION)
-					{
-						addCam = pipe == DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL || pipe == DRAGON_LIMELIGHT_PIPELINE::COLOR_THRESHOLD;
-					}
-				}
-			}
-		}
-
+		auto addCam = thisUsage == usage && limelight->IsLimelightRunning();
 		if (addCam)
 		{
-			if (limelight->IsLimelightRunning())
-			{
-				validLimelights.emplace_back(limelight);
-			}
+			validLimelights.emplace_back(limelight);
 		}
 	}
 	return validLimelights;

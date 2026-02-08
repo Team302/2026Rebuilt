@@ -26,6 +26,7 @@ class TeleopControlFunctions
 public:
     enum FUNCTION
     {
+        // General Drive Commands
         ROBOT_ORIENTED_DRIVE,
         HOLONOMIC_DRIVE_FORWARD,
         HOLONOMIC_DRIVE_ROTATE,
@@ -39,15 +40,45 @@ public:
         SYSID_QUASISTATICREVERSE,
         SYSID_DYNAMICFORWARD,
         SYSID_DYNAMICREVERSE,
-
-        // tip correction controls
         TIPCORRECTION_TOGGLE,
 
+        // Season Specific Drive Commands
+        DRIVE_TO_DEPOT,
+        DRIVE_TO_OUTPOST,
+        DRIVE_TO_TOWER_LEFT,
+        DRIVE_TO_TOWER_RIGHT,
+
         // Mechanisms specific
-        STOP,
+        // Intake
         INTAKE,
         EXPEL,
+        INTAKE_OUT,
+        INTAKE_IN,
+
+        // Climber
+        CLIMB_MODE,
+        LEVEL1_CLIMB,
+        LEVEL3_CLIMB,
+        ALIGN_TO_LEFT_TOWER,
+        ALIGN_TO_RIGHT_TOWER,
+        CLIMB_MANUAL_ROTATE_DOWN,
+        CLIMB_MANUAL_ROTATE_UP,
+
+        // LAUNCHER
+        LAUNCHER_OFF,
         LAUNCH,
-        EMPTY_HOPPER
+        LAUNCH_OVERRIDE,
+        MANUAL_LAUNCH,
+
+        // TARGET OFFSETS
+        UPDATE_TARGET_OFFSET_UP,
+        UPDATE_TARGET_OFFSET_DOWN,
+        UPDATE_TARGET_OFFSET_LEFT,
+        UPDATE_TARGET_OFFSET_RIGHT,
+        UPDATE_DEPOT_PASSING_TARGET_X,
+        UPDATE_DEPOT_PASSING_TARGET_Y,
+        UPDATE_OUTPOST_PASSING_TARGET_X,
+        UPDATE_OUTPOST_PASSING_TARGET_Y
+
     };
 };

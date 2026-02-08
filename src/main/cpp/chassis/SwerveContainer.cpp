@@ -14,22 +14,23 @@
 //====================================================================================================================================================
 
 #include "chassis/SwerveContainer.h"
-#include "frc2/command/Commands.h"
-#include "frc2/command/button/RobotModeTriggers.h"
+#include "chassis/ChassisConfigMgr.h"
 #include "chassis/commands/TeleopFieldDrive.h"
 #include "chassis/commands/TeleopRobotDrive.h"
-#include "chassis/commands/DriveToPose.h"
-#include "chassis/commands/VisionDrive.h"
-#include "state/RobotState.h"
-#include "state/IRobotStateChangeSubscriber.h"
+#include "frc2/command/Commands.h"
 #include "frc2/command/ProxyCommand.h"
+#include "frc2/command/button/RobotModeTriggers.h"
+#include "state/RobotState.h"
 #include "utils/logging/debug/Logger.h"
-#include "fielddata/FieldConstants.h"
 
 // Season Specific Commands
+#include "chassis/commands/season_specific_commands/DriveToDepot.h"
+#include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 
+//------------------------------------------------------------------
+/// @brief      Static method to create or return the singleton instance
+//------------------------------------------------------------------
 SwerveContainer *SwerveContainer::m_instance = nullptr;
-
 SwerveContainer *SwerveContainer::GetInstance()
 {
     if (SwerveContainer::m_instance == nullptr)
@@ -39,13 +40,22 @@ SwerveContainer *SwerveContainer::GetInstance()
     return SwerveContainer::m_instance;
 }
 
+//------------------------------------------------------------------
+/// @brief      Constructor for SwerveContainer
+/// @details    Initializes the swerve chassis subsystem and creates all
+///             drive commands including field-oriented, robot-oriented,
+///             trajectory following, and season-specific commands.
+///             Also configures button bindings if chassis is available.
+//------------------------------------------------------------------
 SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
                                      m_maxSpeed(ChassisConfigMgr::GetInstance()->GetMaxSpeed()),
                                      m_fieldDrive(std::make_unique<TeleopFieldDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate)),
                                      m_robotDrive(std::make_unique<TeleopRobotDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate)),
-                                     m_trajectoryDrive(std::make_unique<TrajectoryDrive>(m_chassis))
-// TO DO: Decided how to do specified heading for telop drive(Either another child command of DriveToPose or potentially a child of TelopFieldDrive/RobotDrive dpending on what you need)
+                                     m_trajectoryDrive(std::make_unique<TrajectoryDrive>(m_chassis)),
+                                     m_driveToDepot(std::make_unique<DriveToDepot>(m_chassis)),
+                                     m_driveToOutpost(std::make_unique<DriveToOutpost>(m_chassis))
 {
+    RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 
     if (m_chassis != nullptr)
     {
@@ -53,11 +63,19 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
     }
 }
 
+//------------------------------------------------------------------
+/// @brief      Configures button bindings for chassis control
+/// @details    Sets up command bindings for the teleop controller,
+///             creates standard drive commands, and registers telemetry.
+///             Also provides commented-out SysID binding setup for
+///             system identification routines.
+//------------------------------------------------------------------
 void SwerveContainer::ConfigureBindings()
 {
     auto controller = TeleopControl::GetInstance();
 
     CreateStandardDriveCommands(controller);
+    CreateRebuiltDriveToCommands(controller);
 
     m_chassis->RegisterTelemetry([this](auto const &state)
                                  { logger.Telemeterize(state); });
@@ -66,6 +84,13 @@ void SwerveContainer::ConfigureBindings()
     // SetSysIDBinding(controller);
 }
 
+//------------------------------------------------------------------
+/// @brief      Creates and binds standard drive commands
+/// @param[in]  controller - Pointer to the teleop controller
+/// @details    Sets up field-oriented drive as default command,
+///             configures idle mode during disabled state,
+///             and binds reset yaw and robot-oriented drive triggers.
+//------------------------------------------------------------------
 void SwerveContainer::CreateStandardDriveCommands(TeleopControl *controller)
 {
     auto isResetYawSelected = controller->GetCommandTrigger(TeleopControlFunctions::RESET_POSITION);
@@ -86,10 +111,41 @@ void SwerveContainer::CreateStandardDriveCommands(TeleopControl *controller)
     isRobotOriented.WhileTrue(std::move(m_robotDrive));
 }
 
+//------------------------------------------------------------------
+/// @brief      Creates and binds rebuilt drive-to commands
+/// @param[in]  controller - Pointer to the teleop controller
+/// @details    Placeholder method for binding season-specific
+///             autonomous drive commands such as DriveToDepot.
+///             To be implemented as needed.
+//------------------------------------------------------------------
 void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
 {
+    auto driveToDepot = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_DEPOT);
+    auto driveToOutpost = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_OUTPOST);
+
+    driveToDepot.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::Command *
+                                                    {
+        if (m_climbModeStatus) {
+            // TODO: Replace with actual Drive To Tower Depot Side Command
+        }
+        return m_driveToDepot.get(); }));
+
+    driveToOutpost.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::Command *
+                                                      {
+        if (m_climbModeStatus) {
+            // TODO: Replace with actual Drive To Tower Outpost Side Command
+        }
+        return m_driveToOutpost.get(); }));
 }
 
+//------------------------------------------------------------------
+/// @brief      Configures button bindings for System Identification (SysID)
+/// @param[in]  controller - Pointer to the teleop controller
+/// @details    Binds SysID routines to controller buttons for characterization.
+///             Includes quasistatic and dynamic tests in both forward and
+///             reverse directions. Each routine should be run exactly once
+///             in a single log for proper characterization.
+//------------------------------------------------------------------
 void SwerveContainer::SetSysIDBinding(TeleopControl *controller)
 {
     if (controller != nullptr)
@@ -103,7 +159,19 @@ void SwerveContainer::SetSysIDBinding(TeleopControl *controller)
     }
 }
 
+//------------------------------------------------------------------
+/// @brief      Handles robot state change notifications
+/// @param[in]  change - The type of state change that occurred
+/// @param[in]  value - The new value associated with the state change
+/// @details    Implements IRobotStateChangeSubscriber interface.
+///             Can be used to react to robot state changes such as
+///             game mode transitions or mechanism state updates.
+///             Currently a placeholder for future implementation.
+//------------------------------------------------------------------
 void SwerveContainer::NotifyStateUpdate(RobotStateChanges::StateChange change, int value)
 {
-    // Fill in as needed
+    if (change == RobotStateChanges::StateChange::ClimbModeStatus_Bool)
+    {
+        m_climbModeStatus = value;
+    }
 }

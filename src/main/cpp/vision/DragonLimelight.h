@@ -32,6 +32,8 @@
 #include "units/time.h"
 
 // Team 302 includes
+#include "chassis/ChassisConfigMgr.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "fielddata/FieldAprilTagIDs.h"
 #include "vision/DragonVisionEnums.h"
 #include "vision/DragonVisionStruct.h"
@@ -57,30 +59,27 @@ public:
     /// @param identifier Identifier enum for multiple limelights on the robot.
     /// @param cameraType Type hint for camera hardware/configuration.
     /// @param cameraUsage How the camera will be used (odometry, driver camera, etc.).
-    /// @param mountingXOffset Forward offset (inches) from robot center.
-    /// @param mountingYOffset Left offset (inches) from robot center.
-    /// @param mountingZOffset Up offset (inches) from robot center.
+    /// @param mountingXOffset Forward offset (meters) from robot center.
+    /// @param mountingYOffset Left offset (meters) from robot center.
+    /// @param mountingZOffset Up offset (meters) from robot center.
     /// @param pitch Camera pitch in degrees.
     /// @param yaw Camera yaw in degrees.
     /// @param roll Camera roll in degrees.
     /// @param initialPipeline Pipeline enum to select on initialization.
     /// @param ledMode Initial LED mode to set.
-    /// @param camMode Initial camera mode to set.
     ///-----------------------------------------------------------------------------------
-    DragonLimelight(
-        std::string name, /// <I> - network table name
-        DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier,
-        DRAGON_LIMELIGHT_CAMERA_TYPE cameraType,
-        DRAGON_LIMELIGHT_CAMERA_USAGE cameraUsage,
-        units::length::inch_t mountingXOffset,     /// <I> x offset of cam from robot center (forward relative to robot)
-        units::length::inch_t mountingYOffset,     /// <I> y offset of cam from robot center (left relative to robot)
-        units::length::inch_t mountingZOffset,     /// <I> z offset of cam from robot center (up relative to robot)
-        units::angle::degree_t pitch,              /// <I> - Pitch of camera
-        units::angle::degree_t yaw,                /// <I> - Yaw of camera
-        units::angle::degree_t roll,               /// <I> - Roll of camera
-        DRAGON_LIMELIGHT_PIPELINE initialPipeline, /// <I> enum for starting pipeline
-        DRAGON_LIMELIGHT_LED_MODE ledMode,
-        DRAGON_LIMELIGHT_CAM_MODE camMode);
+    DragonLimelight(std::string name, /// <I> - network table name
+                    DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier,
+                    DRAGON_LIMELIGHT_CAMERA_TYPE cameraType,
+                    DRAGON_LIMELIGHT_CAMERA_USAGE cameraUsage,
+                    units::length::meter_t mountingXOffset,    /// <I> x offset of cam from robot center (forward relative to robot)
+                    units::length::meter_t mountingYOffset,    /// <I> y offset of cam from robot center (left relative to robot)
+                    units::length::meter_t mountingZOffset,    /// <I> z offset of cam from robot center (up relative to robot)
+                    units::angle::degree_t pitch,              /// <I> - Pitch of camera
+                    units::angle::degree_t yaw,                /// <I> - Yaw of camera
+                    units::angle::degree_t roll,               /// <I> - Roll of camera
+                    DRAGON_LIMELIGHT_PIPELINE initialPipeline, /// <I> enum for starting pipeline
+                    DRAGON_LIMELIGHT_LED_MODE ledMode);
 
     ///-----------------------------------------------------------------------------------
     /// @brief Default destructor.
@@ -115,12 +114,6 @@ public:
     /// @param mode LED mode enum controlling on/off/blink/pipeline control.
     ///-----------------------------------------------------------------------------------
     void SetLEDMode(DRAGON_LIMELIGHT_LED_MODE mode);
-
-    ///-----------------------------------------------------------------------------------
-    /// @brief Set the camera mode (vision vs driver camera).
-    /// @param mode Camera mode enum to write to the Limelight NT entry.
-    ///-----------------------------------------------------------------------------------
-    void SetCamMode(DRAGON_LIMELIGHT_CAM_MODE mode);
 
     ///-----------------------------------------------------------------------------------
     /// @brief Select the active Limelight pipeline index.
@@ -158,11 +151,6 @@ public:
     ///-----------------------------------------------------------------------------------
     void SetRobotPose(const frc::Pose2d &pose);
 
-    ///-----------------------------------------------------------------------------------
-    /// @brief Get sanitized camera name used for network table operations.
-    ///-----------------------------------------------------------------------------------
-    std::string GetCameraName() const { return m_cameraName; }
-
 private:
     ///-----------------------------------------------------------------------------------
     /// @brief Set the priority AprilTag ID used by Limelight pose selection logic.
@@ -193,18 +181,17 @@ private:
     /// @brief Important internal state used by Limelight wrapper.
     ///-----------------------------------------------------------------------------------
     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER m_identifier;
-    std::shared_ptr<nt::NetworkTable> m_limelightNT;
+    std::string m_networkTableName; ///< network table name for this Limelight
 
     const double START_HB = -9999;     ///< initial heartbeat sentinel
     const double MAX_HB = 2000000000;  ///< safety max heartbeat (unused currently)
     double m_lastHeartbeat = START_HB; ///< last seen heartbeat value
-    frc::Timer *m_healthTimer;         ///< local timer used for heartbeat health checks
+    frc::Timer m_healthTimer;          ///< local timer used for heartbeat health checks (stack allocated)
 
     DRAGON_LIMELIGHT_PIPELINE m_pipeline; ///< currently selected pipeline
 
     // from old dragon camera
-    std::string m_cameraName; ///< sanitized camera name used with helpers
-    // subsystems::CommandSwerveDrivetrain *m_chassis;      ///< pointer to chassis for orientation/limits
+    subsystems::CommandSwerveDrivetrain *m_chassis;      ///< pointer to chassis for orientation/limits
     frc::Pose3d m_cameraPose;                            ///< camera transform relative to robot
     const double m_maxRotationRateDegreesPerSec = 720.0; ///< fallback limit if chassis not available
     // Small orientation/yaw/pitch members used when setting robot orientation in Limelight

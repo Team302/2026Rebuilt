@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "auton.dtd">
+<auton>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueLDepotOutpost_A"
+time = "2.0"/>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueLDepotOutpost_B"
+time = "3.0"/>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueLDepotOutpost_C"
+time = "1.5"/>
+
+
+
+</auton>

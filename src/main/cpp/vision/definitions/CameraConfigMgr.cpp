@@ -16,11 +16,11 @@
 #include <string>
 
 #include "utils/logging/debug/Logger.h"
-#include "vision/definitions/CameraConfig_302.h"
-#include "vision/definitions/CameraConfig_9997.h"
 #include "vision/definitions/CameraConfig.h"
 #include "vision/definitions/CameraConfigMgr.h"
-
+#include "vision/definitions/CameraConfig_302.h"
+#include "vision/definitions/CameraConfig_9997.h"
+#include "vision/definitions/CameraConfig_9998.h"
 using namespace std;
 
 CameraConfigMgr *CameraConfigMgr::m_instance = nullptr;
@@ -37,8 +37,24 @@ CameraConfigMgr::CameraConfigMgr() : m_config(nullptr)
 {
 }
 
+CameraConfigMgr::~CameraConfigMgr()
+{
+    if (m_config != nullptr)
+    {
+        delete m_config;
+        m_config = nullptr;
+    }
+}
+
 void CameraConfigMgr::InitCameras(RobotIdentifier id)
 {
+    // Clean up previous config to prevent memory leak
+    if (m_config != nullptr)
+    {
+        delete m_config;
+        m_config = nullptr;
+    }
+
     switch (id)
     {
 
@@ -54,7 +70,7 @@ void CameraConfigMgr::InitCameras(RobotIdentifier id)
 
     case RobotIdentifier::CHASSIS_BOT_9998:
         Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR_ONCE, string("Camera Init"), string("Success"), static_cast<int>(id));
-        m_config = new CameraConfig_9997();
+        m_config = new CameraConfig_9998();
         break;
 
     case RobotIdentifier::SIM_BOT_0:

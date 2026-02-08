@@ -21,7 +21,7 @@ class CameraConfig
 {
 public:
     CameraConfig();
-    ~CameraConfig();
+    virtual ~CameraConfig();
 
     virtual void BuildCameraConfig();
 };
