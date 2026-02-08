@@ -32,6 +32,18 @@
 
 // Static strings to avoid repeated heap allocations in logging
 static const std::string kQuestNavDebug = "questnavdebug";
+static const std::string kLogIsConnected = "m_isConnected";
+static const std::string kLogSetRobotPoseX = "SetRobotPoseX";
+static const std::string kLogSetRobotPoseY = "SetRobotPoseY";
+static const std::string kLogSetRobotPoseRot = "SetRobotPoseRot";
+static const std::string kLogHasReset = "m_hasReset";
+static const std::string kLogIsQuestEnabled = "m_isQuestEnabled";
+static const std::string kLogConfidence = "confidence";
+static const std::string kLogConfidenceNone = "NONE";
+static const std::string kLogConfidenceHigh = "HIGH";
+static const std::string kLogX = "x";
+static const std::string kLogY = "y";
+static const std::string kLogRot = "rot";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Constructor
@@ -95,7 +107,7 @@ void DragonQuest::Periodic()
     m_questNav.CommandPeriodic();
 
     bool connected = m_questNav.IsConnected() && m_questNav.IsTracking();
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("m_isConnected"), connected);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogIsConnected, connected);
 
     HandleDashboard();
 
@@ -161,9 +173,9 @@ void DragonQuest::AttemptSetRobotPose(const frc::Pose2d &pose)
 // ──────────────────────────────────────────────────────────────────────────────
 void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
 {
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("SetRobotPoseX"), pose.X().value());
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("SetRobotPoseY"), pose.Y().value());
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("SetRobotPoseRot"), pose.Rotation().Degrees().value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogSetRobotPoseX, pose.X().value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogSetRobotPoseY, pose.Y().value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogSetRobotPoseRot, pose.Rotation().Degrees().value());
 
     frc::Pose3d questPose = RobotPose2dToQuestPose(pose);
     m_questNav.SetPose(questPose);
@@ -207,26 +219,26 @@ DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
 {
     bool connected = m_questNav.IsConnected();
 
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("m_hasReset"), m_hasReset);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("m_isConnected"), connected);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("m_isQuestEnabled"), m_isQuestEnabled);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogHasReset, m_hasReset);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogIsConnected, connected);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogIsQuestEnabled, m_isQuestEnabled);
 
     DragonVisionPoseEstimatorStruct str;
     if (!m_hasReset || !connected || !m_isQuestEnabled)
     {
         str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE;
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("confidence"), std::string("NONE"));
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogConfidence, kLogConfidenceNone);
     }
     else
     {
         str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::HIGH;
         str.m_visionPose = m_lastCalculatedPose;
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("x"), str.m_visionPose.X().value());
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("y"), str.m_visionPose.Y().value());
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("rot"), str.m_visionPose.Rotation().Degrees().value());
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogX, str.m_visionPose.X().value());
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogY, str.m_visionPose.Y().value());
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogRot, str.m_visionPose.Rotation().Degrees().value());
         str.m_stds = wpi::array{m_stdxy, m_stdxy, m_stddeg};
         str.m_timeStamp = m_lastPoseTimestamp;
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("confidence"), std::string("HIGH"));
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogConfidence, kLogConfidenceHigh);
     }
     return str;
 }
