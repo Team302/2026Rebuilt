@@ -107,6 +107,7 @@ public:
 	// Hand-created Methods
 
 	units::angle::degree_t GetPigeonPitch();
+	units::angular_velocity::degrees_per_second_t GetMaxAngularVelocity() const { return m_maxAngularVelocity; }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -133,6 +134,8 @@ private:
 	bool m_climbModeStatus;
 	bool m_allowedToClimb;
 	subsystems::CommandSwerveDrivetrain *m_chassis; ///< pointer to chassis for pitch
+
+	units::angular_velocity::degrees_per_second_t m_maxAngularVelocity = 360_deg_per_s;
 
 	// void InitializeLogging();
 };
