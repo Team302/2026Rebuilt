@@ -17,15 +17,14 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "chassis/commands/TeleopFieldDrive.h"
 #include "chassis/commands/TeleopRobotDrive.h"
+#include "chassis/commands/season_specific_commands/DriveToDepot.h"
+#include "chassis/commands/season_specific_commands/DriveToHub.h"
+#include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "frc2/command/Commands.h"
 #include "frc2/command/ProxyCommand.h"
 #include "frc2/command/button/RobotModeTriggers.h"
 #include "state/RobotState.h"
 #include "utils/logging/debug/Logger.h"
-
-// Season Specific Commands
-#include "chassis/commands/season_specific_commands/DriveToDepot.h"
-#include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 
 //------------------------------------------------------------------
 /// @brief      Static method to create or return the singleton instance
@@ -53,6 +52,7 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
                                      m_robotDrive(std::make_unique<TeleopRobotDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate)),
                                      m_trajectoryDrive(std::make_unique<TrajectoryDrive>(m_chassis)),
                                      m_driveToDepot(std::make_unique<DriveToDepot>(m_chassis)),
+                                     m_driveToHub(std::make_unique<DriveToHub>(m_chassis)),
                                      m_driveToOutpost(std::make_unique<DriveToOutpost>(m_chassis))
 {
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
@@ -121,21 +121,27 @@ void SwerveContainer::CreateStandardDriveCommands(TeleopControl *controller)
 void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
 {
     auto driveToDepot = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_DEPOT);
+    auto driveToHub = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_HUB);
     auto driveToOutpost = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_OUTPOST);
 
     driveToDepot.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::Command *
                                                     {
-        if (m_climbModeStatus) {
-            // TODO: Replace with actual Drive To Tower Depot Side Command
-        }
-        return m_driveToDepot.get(); }));
+                if (m_climbModeStatus) 
+                {
+                    // TODO: Replace with actual Drive To Tower Depot Side Command
+                }
+                return m_driveToDepot.get(); }));
+
+    driveToHub.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::Command *
+                                                  { return m_driveToHub.get(); }));
 
     driveToOutpost.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::Command *
                                                       {
-        if (m_climbModeStatus) {
-            // TODO: Replace with actual Drive To Tower Outpost Side Command
-        }
-        return m_driveToOutpost.get(); }));
+               if (m_climbModeStatus) 
+               {
+                    // TODO: Replace with actual Drive To Tower Outpost Side Command
+               }
+               return m_driveToOutpost.get(); }));
 }
 
 //------------------------------------------------------------------
