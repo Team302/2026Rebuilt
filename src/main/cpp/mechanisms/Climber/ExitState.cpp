@@ -50,14 +50,26 @@ void ExitState::Init()
 
 void ExitState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetClimberPositionDegree(m_climberTarget);
 	m_mechanism->GetAlignment()->Set(m_alignmentTarget);
 }
 
 void ExitState::Run()
 {
-	// MECH_TODO: Update Extender State when climber is below 5 deg?
-	//  Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("ExitState"), string("Run"));
+	double manualClimberPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::CLIMB_MANUAL_ROTATE_UP) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::CLIMB_MANUAL_ROTATE_DOWN);
+	if (manualClimberPercent > .075)
+	{
+		m_mechanism->ManualClimb(m_climberTarget, manualClimberPercent);
+	}
+	else
+	{
+		units::angle::degree_t currentPitch = m_mechanism->GetPigeonPitch();
+		units::angular_velocity::degrees_per_second_t calculatedAngularVelocity = units::angular_velocity::degrees_per_second_t(m_rotationPID.Calculate(currentPitch, m_climberTarget));
+		auto clampedAngularVelocity = std::clamp(calculatedAngularVelocity, -kMaxVelocity, kMaxVelocity);
+
+		double percentOut = (clampedAngularVelocity / m_mechanism->GetMaxAngularVelocity()).value();
+
+		m_mechanism->UpdateTargetClimberPercentOut(percentOut);
+	}
 }
 
 void ExitState::Exit()
