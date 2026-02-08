@@ -94,7 +94,7 @@ void DragonQuest::Periodic()
     // Let QuestNav process command responses & version checking
     m_questNav.CommandPeriodic();
 
-    bool connected = m_questNav.IsConnected();
+    bool connected = m_questNav.IsConnected() && m_questNav.IsTracking();
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("m_isConnected"), connected);
 
     HandleDashboard();
@@ -219,7 +219,6 @@ DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
     }
     else
     {
-        // TODO: switch to HIGH once Quest pose is validated on the robot
         str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::HIGH;
         str.m_visionPose = m_lastCalculatedPose;
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, std::string("x"), str.m_visionPose.X().value());

@@ -207,7 +207,7 @@ private:
      * DriverStation at an interval.
      */
     void CheckVersionMatch();
-
+#ifdef __FRC_ROBORIO__
     /**
      * Helper: convert a protobuf Pose3d into an frc::Pose3d.
      * Called from the roborio-only code paths.
@@ -218,7 +218,7 @@ private:
      * Helper: pack an frc::Pose3d into a protobuf Pose3d.
      */
     void Pose3dToProtobuf(const frc::Pose3d &pose, wpi::proto::ProtobufPose3d *proto);
-
+#endif
     /// Interval at which to check and log if the QuestNavLib version matches the QuestNav app version
     static constexpr double kVersionCheckIntervalSeconds = 5.0;
 

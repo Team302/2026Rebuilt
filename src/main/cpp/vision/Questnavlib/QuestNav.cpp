@@ -22,6 +22,7 @@
 #include "frc/geometry/Translation3d.h"
 #include "networktables/NetworkTableInstance.h"
 #include "units/time.h"
+#include "utils/logging/debug/Logger.h"
 
 #ifdef __FRC_ROBORIO__
 #include "vision/Questnavlib/commands.pb.h"
@@ -353,14 +354,11 @@ void QuestNav::CheckVersionMatch()
     auto libVersion = GetLibVersion();
     auto questNavVersion = GetQuestNavVersion();
 
-    // if (questNavVersion != libVersion)
-    // {
-    //     std::string warningMessage =
-    //         "WARNING FROM QUESTNAV: QuestNavLib version (" + libVersion +
-    //         ") on your robot does not match QuestNav app version (" + questNavVersion +
-    //         ") on your headset. This may cause compatibility issues. Check the version of your vendordep and the app running on your headset.";
-    //     frc::DriverStation::ReportWarning(warningMessage);
-    // }
+    if (questNavVersion != libVersion)
+    {
+        static const std::string msg = std::string("WARNING FROM QUESTNAV: QuestNavLib version (") + libVersion + ") on your robot does not match QuestNav app version (" + questNavVersion + ") on your headset. This may cause compatibility issues. Check the version of your vendordep and the app running on your headset.";
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "QuestNav", "m_hasReset", msg);
+    }
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
