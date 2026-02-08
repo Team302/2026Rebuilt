@@ -234,17 +234,39 @@ void DragonLeds::SetClosingInChaserPattern(frc::Color c)
     }
 }
 
-void DragonLeds::DiagnosticPattern(frc::DriverStation::Alliance alliance, bool questStatus, bool ll1Status)
+void DragonLeds::DiagnosticPattern(frc::DriverStation::Alliance alliance, bool questStatus, bool dataLoggerStatus, bool ll1Status, bool ll2Status, bool ll3Status,
+                                   bool intakeSensor, bool hoodSwitch, bool turretZero, bool turretEnd)
 {
     if (IsInitialized())
     {
         auto allianceColor = alliance == frc::DriverStation::Alliance::kBlue ? frc::Color::kBlue : frc::Color::kRed;
         SetSpecificLED(m_allianceColorLED, allianceColor);
 
-        auto questStatuscolor = questStatus ? frc::Color::kGreen : frc::Color::kDarkRed;
-        SetSpecificLED(m_questDiagnosticLED, questStatuscolor);
+        auto questStatusColor = questStatus ? frc::Color::kGreen : frc::Color::kDarkRed;
+        SetSpecificLED(m_questLED, questStatusColor);
 
-        auto ll1Statuscolor = ll1Status ? frc::Color::kGreen : frc::Color::kDarkRed;
-        SetSpecificLED(m_limeLight1diagnosticLED, ll1Statuscolor);
+        auto ll1StatusColor = ll1Status ? frc::Color::kGreen : frc::Color::kDarkRed;
+        SetSpecificLED(m_limeLight1LED, ll1StatusColor);
+
+        auto ll2StatusColor = ll2Status ? frc::Color::kGreen : frc::Color::kDarkRed;
+        SetSpecificLED(m_limeLight2LED, ll2StatusColor);
+
+        auto ll3StatusColor = ll3Status ? frc::Color::kGreen : frc::Color::kDarkRed;
+        SetSpecificLED(m_limeLight3LED, ll3StatusColor);
+
+        auto dataLoggerStatusColor = dataLoggerStatus ? frc::Color::kGreen : frc::Color::kDarkRed;
+        SetSpecificLED(m_dataLoggerLED, dataLoggerStatusColor);
+
+        auto intakeStatusColor = intakeSensor ? frc::Color::kYellow : frc::Color::kBlack;
+        SetSpecificLED(m_intakeSensorLED, intakeStatusColor);
+
+        auto hoodStatusColor = hoodSwitch ? frc::Color::kYellow : frc::Color::kBlack;
+        SetSpecificLED(m_hoodSwitchLED, hoodStatusColor);
+
+        auto turretZeroStatusColor = turretZero ? frc::Color::kYellow : frc::Color::kBlack;
+        SetSpecificLED(m_turretZeroLED, turretZeroStatusColor);
+
+        auto turretEndStatusColor = turretEnd ? frc::Color::kYellow : frc::Color::kBlack;
+        SetSpecificLED(m_turretEndLED, turretEndStatusColor);
     }
 }

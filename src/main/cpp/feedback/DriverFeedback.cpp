@@ -28,6 +28,11 @@
 #include "vision/DragonQuest.h"
 #include "vision/DragonVision.h"
 
+// Season Specific Includes
+#include "configs/MechanismConfigMgr.h"
+#include "mechanisms/Intake/Intake.h"
+#include "mechanisms/Launcher/Launcher.h"
+
 using frc::DriverStation;
 
 DriverFeedback *DriverFeedback::m_instance = nullptr;
@@ -71,19 +76,57 @@ void DriverFeedback::UpdateLEDStates()
 void DriverFeedback::UpdateDiagnosticLEDs()
 {
     bool questStatus = false;
-    bool ll1Status = false;
+    bool backLeftLL = false;
+    bool backRightLL = false;
+    bool climberLL = false;
+
+    bool dataLoggerConnected = false;
+
+    bool intakeSensor = false;
+    bool hoodZeroSwitch = false;
+    bool turretZero = false;
+    bool turretEnd = false;
 
     auto dragonVision = DragonVision::GetDragonVision();
     if (dragonVision != nullptr)
     {
         auto limelightRunning = dragonVision->HealthCheckAllLimelights();
-        ll1Status = limelightRunning.empty() ? false : limelightRunning[0];
+        if (limelightRunning.size() == 3)
+        {
+            backLeftLL = limelightRunning[0];
+            backRightLL = limelightRunning[1];
+            climberLL = limelightRunning[2];
+        }
+
         questStatus = dragonVision->HealthCheckQuest();
     }
 
-    m_LEDStates->DiagnosticPattern(FMSData::GetAllianceColor(), questStatus, ll1Status);
-}
+    // Add Data Logger Connection Status dataLoggerConnected = ...
 
+    auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
+    if (config != nullptr)
+    {
+        auto launcherStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::LAUNCHER);
+        auto intakeStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::INTAKE);
+
+        auto launcherMgr = launcherStateMgr != nullptr ? dynamic_cast<Launcher *>(launcherStateMgr) : nullptr;
+        auto intakeMgr = intakeStateMgr != nullptr ? dynamic_cast<Intake *>(intakeStateMgr) : nullptr;
+
+        if (launcherMgr != nullptr)
+        {
+            hoodZeroSwitch = launcherMgr->GetHood()->GetReverseLimit().GetValue().value;
+            turretZero = launcherMgr->GetTurret()->GetReverseLimit().GetValue().value;
+            turretEnd = launcherMgr->GetTurret()->GetForwardLimit().GetValue().value;
+        }
+
+        if (intakeMgr != nullptr)
+        {
+            intakeSensor = intakeMgr->IsIntakeExtended();
+        }
+    }
+
+    m_LEDStates->DiagnosticPattern(FMSData::GetAllianceColor(), questStatus, backLeftLL, backRightLL, climberLL, dataLoggerConnected, intakeSensor, hoodZeroSwitch, turretZero, turretEnd);
+}
 void DriverFeedback::ResetRequests(void)
 {
 }
@@ -95,12 +138,12 @@ DriverFeedback::DriverFeedback() : IRobotStateChangeSubscriber()
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DesiredScoringMode_Int);
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveToFieldElementIsDone_Bool);
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveStateType_Int);
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 }
 void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, int value)
 {
     if (RobotStateChanges::StateChange::DesiredScoringMode_Int == change)
         m_scoringMode = static_cast<RobotStateChanges::ScoringMode>(value);
-
     else if (RobotStateChanges::StateChange::DriveStateType_Int == change)
         m_driveStateType = static_cast<ChassisOptionEnums::DriveStateType>(value);
 }
@@ -109,6 +152,8 @@ void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, bo
 {
     if (RobotStateChanges::StateChange::DriveToFieldElementIsDone_Bool == change)
         m_driveToIsDone = value;
+    else if (RobotStateChanges::StateChange::ClimbModeStatus_Bool == change)
+        m_climbMode = value;
 }
 
 void DriverFeedback::CheckControllers()

@@ -68,6 +68,8 @@ private:
 
     static DriverFeedback *m_instance;
     RobotStateChanges::ScoringMode m_scoringMode = RobotStateChanges::ScoringMode::FUEL;
+
     bool m_driveToIsDone = false;
+    bool m_climbMode = false;
     ChassisOptionEnums::DriveStateType m_driveStateType = ChassisOptionEnums::DriveStateType::ROBOT_DRIVE;
 };
