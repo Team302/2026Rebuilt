@@ -189,7 +189,7 @@ public:
     /// @brief Distribute a Pose2d to vision that accept external robot pose.
     /// @param pose The pose to set (frc::Pose2d).
     /// @note Updates running the registered DragonQuest instance.
-    void SetRobotPose(const frc::Pose2d &pose);
+    void ResetQuestRobotPose(const frc::Pose2d &pose);
 
 private:
     /// @brief Constructor (private for singleton).

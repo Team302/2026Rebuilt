@@ -77,10 +77,17 @@ void DragonVisionPoseEstimator::RunCommonTasks()
  */
 void DragonVisionPoseEstimator::RunCurrentState()
 {
+    // Update the latch - once enabled, stay latched
+    if (!m_hasBeenEnabled && !frc::DriverStation::IsDisabled())
+    {
+        m_hasBeenEnabled = true;
+    }
+
     // Make sure we have a vision subsystem pointer.
     // If we don't, try to get one
     // If we still don't have one exit
-    if (!m_initialPoseSet || frc::DriverStation::IsDisabled())
+    // Only calculate initial pose if robot hasn't been enabled yet
+    if ((!m_initialPoseSet || frc::DriverStation::IsDisabled()) && !m_hasBeenEnabled)
     {
         CalculateInitialPose();
     }
@@ -153,7 +160,7 @@ void DragonVisionPoseEstimator::CalculateInitialPose()
     {
         auto pose = megaTag2Positions[0].estimatedPose.ToPose2d();
         ResetPosition(pose);
-        m_vision->SetRobotPose(pose);
+        m_vision->ResetQuestRobotPose(pose);
         m_initialPoseSet = true;
     }
 }
