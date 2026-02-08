@@ -301,11 +301,11 @@ void QuestNav::CommandPeriodic()
             continue; // Skip unparseable responses
         }
 
-        // if (!response.success())
-        // {
-        //     std::string msg = "QuestNav command failed!\n" + response.error_message();
-        //     frc::DriverStation::ReportError(msg);
-        // }
+        if (!response.success())
+        {
+            std::string msg = "QuestNav command failed!\n" + response.error_message();
+            Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "QuestNav", "questnavCommandFailed", msg);
+        }
     }
 #endif
 }
@@ -357,7 +357,7 @@ void QuestNav::CheckVersionMatch()
     if (questNavVersion != libVersion)
     {
         static const std::string msg = std::string("WARNING FROM QUESTNAV: QuestNavLib version (") + libVersion + ") on your robot does not match QuestNav app version (" + questNavVersion + ") on your headset. This may cause compatibility issues. Check the version of your vendordep and the app running on your headset.";
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "QuestNav", "m_hasReset", msg);
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "QuestNav", "questnavLibVersionMismatch", msg);
     }
 }
 
