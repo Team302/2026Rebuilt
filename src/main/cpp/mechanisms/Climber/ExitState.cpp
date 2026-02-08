@@ -58,12 +58,12 @@ void ExitState::Run()
 	double manualClimberPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::CLIMB_MANUAL_ROTATE_UP) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::CLIMB_MANUAL_ROTATE_DOWN);
 	if (manualClimberPercent > .075)
 	{
-		m_mechanism->ManualClimb(m_climberTargetDegree, manualClimberPercent);
+		m_mechanism->ManualClimb(m_climberTarget, manualClimberPercent);
 	}
 	else
 	{
 		units::angle::degree_t currentPitch = m_mechanism->GetPigeonPitch();
-		units::angular_velocity::degrees_per_second_t calculatedAngularVelocity = units::angular_velocity::degrees_per_second_t(m_rotationPID.Calculate(currentPitch, m_climberTargetDegree));
+		units::angular_velocity::degrees_per_second_t calculatedAngularVelocity = units::angular_velocity::degrees_per_second_t(m_rotationPID.Calculate(currentPitch, m_climberTarget));
 		auto clampedAngularVelocity = std::clamp(calculatedAngularVelocity, -kMaxVelocity, kMaxVelocity);
 
 		double percentOut = (clampedAngularVelocity / m_mechanism->GetMaxAngularVelocity()).value();
