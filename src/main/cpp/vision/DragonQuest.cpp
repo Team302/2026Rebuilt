@@ -71,11 +71,6 @@ DragonQuest::DragonQuest(
         frc::Translation3d{m_mountingXOffset, m_mountingYOffset, m_mountingZOffset},
         frc::Rotation3d{m_mountingRoll, m_mountingPitch, m_mountingYaw}};
 
-    // Keep a simple 2D version for the pose-to-robot conversion path.
-    m_questToRobotTransform2d = frc::Transform2d{
-        frc::Translation2d{m_mountingXOffset, m_mountingYOffset},
-        frc::Rotation2d{m_mountingYaw}};
-
     // Dashboard choosers
     m_questEnabledChooser.AddOption("ON", true);
     m_questEnabledChooser.AddOption("OFF", false);
@@ -130,11 +125,11 @@ void DragonQuest::GetEstimatedPose()
 
     // Use the most recent frame
     const PoseFrame &latest = frames.back();
-    frc::Pose2d robotPose = QuestPoseToRobotPose2d(latest.questPose3d);
+    frc::Pose3d robotPose = QuestPoseToRobotPose3d(latest.questPose3d);
 
     m_lastCalculatedPose = robotPose;
     m_lastPoseTimestamp = units::time::second_t{latest.dataTimestamp};
-    m_field->UpdateObject("QuestRobotPose", robotPose);
+    m_field->UpdateObject("QuestRobotPose", robotPose.ToPose2d());
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -142,7 +137,7 @@ void DragonQuest::GetEstimatedPose()
 // ──────────────────────────────────────────────────────────────────────────────
 void DragonQuest::DataLog(uint64_t timestamp)
 {
-    Log2DPoseData(timestamp, DragonDataLogger::PoseSingals::CURRENT_CHASSIS_QUEST_POSE2D, m_lastCalculatedPose);
+    Log2DPoseData(timestamp, DragonDataLogger::PoseSingals::CURRENT_CHASSIS_QUEST_POSE2D, m_lastCalculatedPose.ToPose2d());
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -177,7 +172,7 @@ void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogSetRobotPoseY, pose.Y().value());
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogSetRobotPoseRot, pose.Rotation().Degrees().value());
 
-    frc::Pose3d questPose = RobotPose2dToQuestPose(pose);
+    frc::Pose3d questPose = RobotPose3dToQuestPose(frc::Pose3d{pose});
     m_questNav.SetPose(questPose);
 
     m_hasReset = true;
@@ -231,7 +226,7 @@ DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
     else
     {
         str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::HIGH;
-        str.m_visionPose = m_lastCalculatedPose;
+        str.m_visionPose = m_lastCalculatedPose.ToPose2d();
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogX, str.m_visionPose.X().value());
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogY, str.m_visionPose.Y().value());
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogRot, str.m_visionPose.Rotation().Degrees().value());
@@ -243,24 +238,18 @@ DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// QuestPoseToRobotPose2d – Quest Pose3d → Robot Pose2d (apply inverse mounting offset)
+// QuestPoseToRobotPose3d – Quest Pose3d → Robot Pose3d (apply inverse mounting offset)
 // ──────────────────────────────────────────────────────────────────────────────
-frc::Pose2d DragonQuest::QuestPoseToRobotPose2d(const frc::Pose3d &questPose) const
+frc::Pose3d DragonQuest::QuestPoseToRobotPose3d(const frc::Pose3d &questPose) const
 {
-    // Project the 3D Quest pose down to 2D, then apply the inverse mounting transform
-    frc::Pose2d questPose2d{
-        questPose.X(), questPose.Y(),
-        frc::Rotation2d{questPose.Rotation().Z()}};
-    m_field->UpdateObject("QuestPose", questPose2d);
-    return questPose2d.TransformBy(m_questToRobotTransform2d.Inverse());
+    m_field->UpdateObject("QuestPose", questPose.ToPose2d());
+    return questPose.TransformBy(m_robotToQuestTransform.Inverse());
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// RobotPose2dToQuestPose – Robot Pose2d → Quest Pose3d (apply mounting offset)
+// RobotPose3dToQuestPose – Robot Pose3d → Quest Pose3d (apply mounting offset)
 // ──────────────────────────────────────────────────────────────────────────────
-frc::Pose3d DragonQuest::RobotPose2dToQuestPose(const frc::Pose2d &robotPose) const
+frc::Pose3d DragonQuest::RobotPose3dToQuestPose(const frc::Pose3d &robotPose) const
 {
-    // Lift the 2D robot pose to 3D and apply the robot→Quest transform
-    frc::Pose3d robotPose3d{robotPose};
-    return robotPose3d.TransformBy(m_robotToQuestTransform);
+    return robotPose.TransformBy(m_robotToQuestTransform);
 }

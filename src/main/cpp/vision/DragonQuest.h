@@ -65,11 +65,11 @@ private:
     /// @brief Apply the robot-to-Quest mounting offset and send a pose-reset command via QuestNav.
     void SetRobotPose(const frc::Pose2d &pose);
 
-    /// @brief Convert a Quest frc::Pose3d to a robot frc::Pose2d by applying the inverse mounting transform.
-    frc::Pose2d QuestPoseToRobotPose2d(const frc::Pose3d &questPose) const;
+    /// @brief Convert a Quest frc::Pose3d to a robot frc::Pose3d by applying the inverse mounting transform.
+    frc::Pose3d QuestPoseToRobotPose3d(const frc::Pose3d &questPose) const;
 
-    /// @brief Convert a robot frc::Pose2d to a Quest frc::Pose3d by applying the mounting transform.
-    frc::Pose3d RobotPose2dToQuestPose(const frc::Pose2d &robotPose) const;
+    /// @brief Convert a robot frc::Pose3d to a Quest frc::Pose3d by applying the mounting transform.
+    frc::Pose3d RobotPose3dToQuestPose(const frc::Pose3d &robotPose) const;
 
     // ── QuestNav library instance (handles all NT / protobuf communication) ──
     QuestNav m_questNav;
@@ -85,9 +85,6 @@ private:
     /// 3D transform from robot centre to Quest mounting location.
     frc::Transform3d m_robotToQuestTransform;
 
-    /// 2D transform from Quest to robot (kept for the simple 2D path).
-    frc::Transform2d m_questToRobotTransform2d;
-
     // ── Dashboard choosers ──
     frc::SendableChooser<bool> m_questEnabledChooser;
     frc::SendableChooser<bool> m_questEndgameEnabledChooser;
@@ -102,7 +99,7 @@ private:
     static constexpr double m_stddeg{0.035};
 
     // ── Cached latest pose ──
-    frc::Pose2d m_lastCalculatedPose;
+    frc::Pose3d m_lastCalculatedPose;
     units::time::second_t m_lastPoseTimestamp{0.0};
 
     /// Pose2d to reset to (held until connection is available).
