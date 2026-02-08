@@ -94,7 +94,6 @@ private:
 
     // ── State flags ──
     bool m_hasReset = false;
-    bool m_poseResetRequested = false;
     bool m_isQuestEnabled = false;
     bool m_isClimbMode = false;
 
@@ -108,6 +107,9 @@ private:
 
     /// Pose2d to reset to (held until connection is available).
     frc::Pose2d m_poseReset;
+
+    /// Counter for throttling pose resets (only set every 3rd call).
+    int m_poseResetCounter = 0;
 
     // ── Field visualisation ──
     DragonField *m_field = nullptr;

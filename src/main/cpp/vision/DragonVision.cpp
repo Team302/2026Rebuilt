@@ -338,10 +338,10 @@ void DragonVision::RefreshQuestData()
 	}
 }
 
-/// @brief Set a robot pose for all vision that consume robot pose information.
+/// @brief Set a robot pose for vision systems that consume robot pose information.
 /// @param pose The new robot pose (frc::Pose2d) to distribute.
-/// @note Updates all running limelights and the DragonQuest instance (if present).
-void DragonVision::SetRobotPose(const frc::Pose2d &pose)
+/// @note Currently only updates the DragonQuest instance (if present).
+void DragonVision::ResetQuestRobotPose(const frc::Pose2d &pose)
 {
 	auto quest = GetQuest();
 	if (quest != nullptr)

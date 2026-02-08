@@ -111,13 +111,6 @@ void DragonQuest::Periodic()
 
     HandleDashboard();
 
-    // If a deferred pose reset is pending and we now have a connection, send it
-    if (m_poseResetRequested && connected)
-    {
-        SetRobotPose(m_poseReset);
-        return; // Skip GetEstimatedPose this cycle to let reset propagate
-    }
-
     if (connected)
     {
         GetEstimatedPose();
@@ -158,13 +151,20 @@ void DragonQuest::DataLog(uint64_t timestamp)
 void DragonQuest::AttemptSetRobotPose(const frc::Pose2d &pose)
 {
     m_poseReset = pose;
+
+    // Throttle pose resets: only set every 3rd call
+    m_poseResetCounter++;
+    if (m_poseResetCounter < 3)
+    {
+        return; // Skip this reset
+    }
+
+    // Reset the counter
+    m_poseResetCounter = 0;
+
     if (m_questNav.IsConnected())
     {
         SetRobotPose(m_poseReset);
-    }
-    else
-    {
-        m_poseResetRequested = true;
     }
 }
 
@@ -181,7 +181,6 @@ void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
     m_questNav.SetPose(questPose);
 
     m_hasReset = true;
-    m_poseResetRequested = false;
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
