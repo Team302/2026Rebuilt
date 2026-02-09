@@ -112,4 +112,8 @@ private:
 	// Alternating pattern state
 	int m_alternatingTimer{0};
 	static constexpr int m_alternatingPeriod = 10;
+
+	// Limelight diagnostic blinking state
+	int m_limelightBlinkTimer{0};
+	static constexpr int m_limelightBlinkPeriod = 50; // Frames per limelight display
 };

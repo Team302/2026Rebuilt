@@ -231,40 +231,52 @@ void DragonCANdle::UpdateDiagnostics()
     // Set individual onboard LEDs for diagnostics
     // Alliance
     if (m_alliance == frc::DriverStation::Alliance::kBlue)
-        m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{0, 0, 255, 0}));
+        m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{frc::Color::kBlue}));
     else
-        m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{255, 0, 0, 0}));
+        m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{frc::Color::kRed}));
 
     // Quest
     if (m_questOK)
-        m_candle->SetControl(controls::SolidColor{1, 1}.WithColor(RGBWColor{0, 255, 0, 0}));
+        m_candle->SetControl(controls::SolidColor{1, 1}.WithColor(RGBWColor{frc::Color::kGreen}));
     else
-        m_candle->SetControl(controls::SolidColor{1, 1}.WithColor(RGBWColor{100, 0, 0, 0}));
+        m_candle->SetControl(controls::SolidColor{1, 1}.WithColor(RGBWColor{frc::Color::kRed}));
 
     // Limelights (aggregated)
     int llCount = (m_ll1 ? 1 : 0) + (m_ll2 ? 1 : 0) + (m_ll3 ? 1 : 0);
     if (llCount == 3)
-        m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{0, 255, 0, 0}));
+        m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{frc::Color::kGreen}));
     else if (llCount == 0)
-        m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{255, 0, 0, 0}));
+        m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{frc::Color::kRed}));
     else
     {
-        // Blink yellow/blue for partial limelight connection
-        if (static_cast<int>(m_diagTimer.Get().value()) % 2 == 0)
-            m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{255, 255, 0, 0}));
-        else
-            m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{0, 0, 255, 0}));
+        // Cycle through the 3 limelights, showing green for connected and red for missing
+        // Each limelight is displayed for m_limelightBlinkPeriod frames
+        m_limelightBlinkTimer++;
+        if (m_limelightBlinkTimer >= 3 * m_limelightBlinkPeriod)
+            m_limelightBlinkTimer = 0;
+
+        int currentLL = (m_limelightBlinkTimer / m_limelightBlinkPeriod) % 3;
+
+        frc::Color llColor = frc::Color::kRed;
+        if (currentLL == 0 && m_ll1)
+            llColor = frc::Color::kGreen;
+        else if (currentLL == 1 && m_ll2)
+            llColor = frc::Color::kGreen;
+        else if (currentLL == 2 && m_ll3)
+            llColor = frc::Color::kGreen;
+
+        m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{llColor}));
     }
 
     // Data Logger
     if (m_dataLoggerOK)
-        m_candle->SetControl(controls::SolidColor{3, 3}.WithColor(RGBWColor{0, 255, 0, 0}));
+        m_candle->SetControl(controls::SolidColor{3, 3}.WithColor(RGBWColor{frc::Color::kGreen}));
     else
-        m_candle->SetControl(controls::SolidColor{3, 3}.WithColor(RGBWColor{100, 0, 0, 0}));
+        m_candle->SetControl(controls::SolidColor{3, 3}.WithColor(RGBWColor{frc::Color::kRed}));
 
     // Sensors - show yellow when triggered, black when not
-    m_candle->SetControl(controls::SolidColor{4, 4}.WithColor(RGBWColor{static_cast<uint8_t>(m_intake ? 255 : 0), static_cast<uint8_t>(m_intake ? 255 : 0), 0, 0}));
-    m_candle->SetControl(controls::SolidColor{5, 5}.WithColor(RGBWColor{static_cast<uint8_t>(m_hood ? 255 : 0), static_cast<uint8_t>(m_hood ? 255 : 0), 0, 0}));
-    m_candle->SetControl(controls::SolidColor{6, 6}.WithColor(RGBWColor{static_cast<uint8_t>(m_turretZero ? 255 : 0), static_cast<uint8_t>(m_turretZero ? 255 : 0), 0, 0}));
-    m_candle->SetControl(controls::SolidColor{7, 7}.WithColor(RGBWColor{static_cast<uint8_t>(m_turretEnd ? 255 : 0), static_cast<uint8_t>(m_turretEnd ? 255 : 0), 0, 0}));
+    m_candle->SetControl(controls::SolidColor{4, 4}.WithColor(RGBWColor{m_intake ? frc::Color::kYellow : frc::Color::kBlack}));
+    m_candle->SetControl(controls::SolidColor{5, 5}.WithColor(RGBWColor{m_hood ? frc::Color::kYellow : frc::Color::kBlack}));
+    m_candle->SetControl(controls::SolidColor{6, 6}.WithColor(RGBWColor{m_turretZero ? frc::Color::kYellow : frc::Color::kBlack}));
+    m_candle->SetControl(controls::SolidColor{7, 7}.WithColor(RGBWColor{m_turretEnd ? frc::Color::kYellow : frc::Color::kBlack}));
 }
