@@ -50,7 +50,7 @@ void WantToClimbState::Init()
 
 void WantToClimbState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetClimberPositionDegree(m_climberTarget);
+	m_mechanism->UpdateTargetClimberPercentOut(m_climberTarget);
 }
 
 void WantToClimbState::Run()

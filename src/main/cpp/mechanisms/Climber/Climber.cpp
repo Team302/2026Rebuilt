@@ -214,8 +214,7 @@ void Climber::InitializeTalonFXClimberCompBot302()
 
 	// MECH_TODO: Define sensor to mechanism ratios
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.Feedback.SensorToMechanismRatio = 0;
-	configs.Feedback.RotorToSensorRatio = 0;
+	configs.Feedback.SensorToMechanismRatio = 437.5;
 
 	/*MECH_TODO: Define Motion Magic Params
 
