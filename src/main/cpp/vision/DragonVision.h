@@ -198,17 +198,17 @@ public:
     /// @brief Disable rewind buffer recording on all registered limelights.
     /// @note LL4 only feature.
     void StopRewind();
+    
+    /// @brief Distribute a Pose2d to vision that accept external robot pose.
+    /// @param pose The pose to set (frc::Pose2d).
+    /// @note Updates running the registered DragonQuest instance.
+    void ResetQuestRobotPose(const frc::Pose2d &pose);
 
 private:
     /// @brief Constructor (private for singleton).
     DragonVision();
     /// @brief Destructor - cleans up owned resources.
     ~DragonVision();
-
-    /// @brief Distribute a Pose2d to vision that accept external robot pose.
-    /// @param pose The pose to set (frc::Pose2d).
-    /// @note Updates running limelights and the registered DragonQuest instance.
-    void SetRobotPose(const frc::Pose2d &pose);
 
     /// @brief Return running limelights that match the provided usage/category.
     /// @param usage Usage/category to filter.
