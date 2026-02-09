@@ -15,6 +15,7 @@
 
 #include "feedback/DragonCANdle.h"
 #include "utils/logging/debug/Logger.h"
+#include "frc/RobotBase.h"
 
 using namespace ctre::phoenix6;
 using namespace ctre::phoenix6::controls;
@@ -62,6 +63,15 @@ void DragonCANdle::Periodic()
 
     UpdateDiagnostics();
     UpdateAnimation();
+
+    if (frc::RobotBase::IsSimulation() && m_candle != nullptr)
+    {
+        // Update simulated sensor states for testing
+        auto &simState = m_candle->GetSimState();
+        simState.SetSupplyVoltage(12_V);
+        simState.GetLastStatusCode();
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonCANdle", "AppliedControl", std::string(m_candle->GetAppliedControl().get()->GetName()));
+    }
 }
 
 // ================= Animation =================
