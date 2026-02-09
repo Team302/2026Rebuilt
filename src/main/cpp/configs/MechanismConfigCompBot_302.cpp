@@ -24,7 +24,7 @@
 #include "utils/PeriodicLooper.h"
 #include "frc/RobotBase.h"
 #include "frc/Compressor.h"
-#include "feedback/DragonLeds.h"
+#include "feedback/DragonCANdle.h"
 
 using std::string;
 
@@ -67,10 +67,8 @@ StateMgr *MechanismConfigCompBot_302::GetMechanism(MechanismTypes::MECHANISM_TYP
 
 void MechanismConfigCompBot_302::DefineLEDs()
 {
-	if (frc::RobotBase::IsSimulation())
-	{
-		DragonLeds::GetInstance()->Initialize(9, 45);
-	}
+	auto candle = DragonCANdle::GetInstance();
+	candle->Initialize(0, 45); // CAN ID 0, 45 LEDs external) Update with actual number of LEDs on the robot
 }
 
 void MechanismConfigCompBot_302::DefineCompressor()

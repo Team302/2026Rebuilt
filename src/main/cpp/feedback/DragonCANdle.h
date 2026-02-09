@@ -16,15 +16,22 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 #include <ctre/phoenix6/CANdle.hpp>
 
 #include <frc/DriverStation.h>
 #include <frc/Timer.h>
+#include <frc/AddressableLED.h>
+#include <frc/simulation/AddressableLEDSim.h>
+#include <frc/util/Color.h>
 
 class DragonCANdle
 {
 public:
+	using RGBWColor = ctre::phoenix6::signals::RGBWColor;
+	using StripTypeValue = ctre::phoenix6::signals::StripTypeValue;
+
 	enum class AnimationMode
 	{
 		Off,
@@ -39,27 +46,32 @@ public:
 
 	static DragonCANdle *GetInstance();
 
-	void Initialize(int canID, const std::string &canBus = "rio", signals::StripTypeValue type = signals::StripTypeValue::GRB);
+	void Initialize(int canID, int stripSize, const std::string &canBus = "rio", StripTypeValue type = StripTypeValue::GRB);
 	void Periodic();
+
+	// ===== Animation Control =====
+	void SetAnimation(AnimationMode mode);
+	void SetSolidColor(const frc::Color &color);
+	void SetAlternatingColors(const frc::Color &color1, const frc::Color &color2);
+	void SetBrightness(double brightness);
+	void TurnOff();
+	void SetBreathingFrequency(units::frequency::hertz_t frequency) { m_breathingFrequency = frequency; };
+	void SetBlinkingFrequency(units::frequency::hertz_t frequency) { m_blinkingFrequency = frequency; };
 
 	// ===== Diagnostic Inputs =====
 	void SetAlliance(frc::DriverStation::Alliance alliance);
-	void SetQuestStatus(bool ok);
-	void SetDataLoggerStatus(bool ok);
+	void SetQuestStatus(bool connected);
+	void SetDataLoggerStatus(bool connected);
 	void SetLimelightStatuses(bool ll1, bool ll2, bool ll3);
 	void SetIntakeSensor(bool triggered);
 	void SetHoodSwitch(bool triggered);
 	void SetTurretZero(bool triggered);
 	void SetTurretEnd(bool triggered);
 
-	// ===== Animation Control =====
-	void SetAnimation(AnimationMode mode);
-	void SetSolidColor(int r, int g, int b);
-	void SetAlternatingColors(int r1, int g1, int b1,
-							  int r2, int g2, int b2);
-
 private:
 	DragonCANdle() = default;
+	DragonCANdle(const DragonCANdle &) = delete;
+	DragonCANdle &operator=(const DragonCANdle &) = delete;
 
 	void UpdateDiagnostics();
 	void UpdateAnimation();
@@ -69,10 +81,10 @@ private:
 	ctre::phoenix6::hardware::CANdle *m_candle{nullptr};
 
 	// LED Layout
-	static constexpr int kOnboardStart = 0;
-	static constexpr int kOnboardCount = 8;
-	static constexpr int kExternalStart = 8;
-	static constexpr int kExternalCount = 120;
+	static constexpr int m_onboardStart = 0;
+	static constexpr int m_onboardCount = 8;
+	static constexpr int m_externalStart = 8;
+	int m_externalCount;
 
 	// Diagnostic State
 	frc::DriverStation::Alliance m_alliance{frc::DriverStation::Alliance::kBlue};
@@ -91,13 +103,9 @@ private:
 	// Animation State
 	AnimationMode m_animMode{AnimationMode::Off};
 
-	int m_primaryR{0}, m_primaryG{255}, m_primaryB{0};
-	int m_secondaryR{0}, m_secondaryG{0}, m_secondaryB{0};
-
-	// Animations
-	ctre::phoenix6::controls::RainbowAnimation m_rainbow;
-	ctre::phoenix6::controls::StrobeAnimation m_strobe;
-	ctre::phoenix6::controls::SingleFadeAnimation m_breathe;
-	ctre::phoenix6::controls::ColorFlowAnimation m_chaser;
-	ctre::phoenix6::controls::LarsonAnimation m_larson;
+	frc::Color m_primaryColor{frc::Color::kGreen};
+	frc::Color m_secondaryColor{frc::Color::kBlack};
+	double m_brightness{1.0};
+	units::frequency::hertz_t m_blinkingFrequency{0.5_Hz};
+	units::frequency::hertz_t m_breathingFrequency{1_Hz};
 };

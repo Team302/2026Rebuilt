@@ -30,7 +30,7 @@ DragonCANdle *DragonCANdle::GetInstance()
     return m_instance;
 }
 
-void DragonCANdle::Initialize(int canID, const std::string &canBus, signals::StripTypeValue type)
+void DragonCANdle::Initialize(int canID, int stripSize, const std::string &canBus, StripTypeValue type)
 {
     if (m_candle != nullptr)
     {
@@ -38,11 +38,11 @@ void DragonCANdle::Initialize(int canID, const std::string &canBus, signals::Str
             LOGGER_LEVEL::ERROR_ONCE,
             "DragonCANdle",
             "Already Initialized",
-            "Only one CANdle allowed");
+            "True");
         return;
     }
 
-    m_candle = new hardware::CANdle(canID, canBus);
+    m_candle = new hardware::CANdle(canID, canBus == "rio" ? CANBus::RoboRIO() : CANBus{canBus});
 
     configs::CANdleConfiguration configs{};
     configs.LED.BrightnessScalar = 1.0;
@@ -50,14 +50,9 @@ void DragonCANdle::Initialize(int canID, const std::string &canBus, signals::Str
     configs.CANdleFeatures.VBatOutputMode = signals::VBatOutputModeValue::On;
     m_candle->GetConfigurator().Apply(configs);
 
-    m_diagTimer.Start();
+    m_externalCount = stripSize;
 
-    m_rainbow = controls::RainbowAnimation(1.0, 0.6, kExternalCount);
-    m_strobe = StrobeAnimation(255, 255, 255, 0, 0.25, kExternalCount);
-    m_breathe = SingleFadeAnimation(0, 255, 0, 0, 0.8, kExternalCount);
-    m_chaser = ColorFlowAnimation(0, 255, 0, 0, 0.7, kExternalCount,
-                                  ColorFlowAnimation::Direction::Forward);
-    m_larson = LarsonAnimation(0, 255, 0, 0, 0.6, kExternalCount);
+    m_diagTimer.Start();
 }
 
 void DragonCANdle::Periodic()
@@ -69,6 +64,112 @@ void DragonCANdle::Periodic()
     UpdateAnimation();
 }
 
+// ================= Animation =================
+
+void DragonCANdle::SetAnimation(AnimationMode mode)
+{
+    m_animMode = mode;
+}
+
+void DragonCANdle::SetSolidColor(const frc::Color &color)
+{
+    m_primaryColor = color;
+    m_animMode = AnimationMode::Solid;
+}
+
+void DragonCANdle::SetAlternatingColors(const frc::Color &color1, const frc::Color &color2)
+{
+    m_primaryColor = color1;
+    m_secondaryColor = color2;
+    m_animMode = AnimationMode::Alternating;
+}
+
+void DragonCANdle::SetBrightness(double brightness)
+{
+    if (m_candle == nullptr)
+        return;
+
+    m_brightness = std::clamp(brightness, 0.0, 1.0);
+
+    configs::CANdleConfiguration configs{};
+    configs.LED.BrightnessScalar = m_brightness;
+    m_candle->GetConfigurator().Apply(configs);
+}
+
+void DragonCANdle::TurnOff()
+{
+    m_animMode = AnimationMode::Off;
+}
+
+void DragonCANdle::UpdateAnimation()
+{
+    using RGBWColor = signals::RGBWColor;
+
+    switch (m_animMode)
+    {
+    case AnimationMode::Off:
+    {
+        // Turn off external LEDs
+        m_candle->SetControl(controls::SolidColor{m_externalStart, m_externalStart + m_externalCount - 1}
+                                 .WithColor(RGBWColor{frc::Color::kBlack}));
+        break;
+    }
+
+    case AnimationMode::Solid:
+    {
+        m_candle->SetControl(controls::SolidColor{m_externalStart, m_externalStart + m_externalCount - 1}
+                                 .WithColor(RGBWColor{m_primaryColor}));
+        break;
+    }
+
+    case AnimationMode::Alternating:
+    {
+        int halfCount = m_externalCount / 2;
+        m_candle->SetControl(controls::SolidColor{m_externalStart, m_externalStart + halfCount - 1}
+                                 .WithColor(RGBWColor{m_primaryColor}));
+        m_candle->SetControl(controls::SolidColor{m_externalStart + halfCount, m_externalStart + m_externalCount - 1}
+                                 .WithColor(RGBWColor{m_secondaryColor}));
+        break;
+    }
+
+    case AnimationMode::Rainbow:
+    {
+        m_candle->SetControl(controls::RainbowAnimation{m_externalStart, m_externalStart + m_externalCount - 1});
+        break;
+    }
+
+    case AnimationMode::Breathing:
+    {
+        m_candle->SetControl(controls::SingleFadeAnimation{m_externalStart, m_externalStart + m_externalCount - 1}
+                                 .WithColor(RGBWColor{m_primaryColor})
+                                 .WithFrameRate(m_breathingFrequency));
+        break;
+    }
+
+    case AnimationMode::Blinking:
+    {
+        m_candle->SetControl(controls::StrobeAnimation{m_externalStart, m_externalStart + m_externalCount - 1}
+                                 .WithColor(RGBWColor{m_primaryColor})
+                                 .WithFrameRate(m_blinkingFrequency));
+        break;
+    }
+
+    case AnimationMode::Chaser:
+    {
+        m_candle->SetControl(controls::ColorFlowAnimation{m_externalStart, m_externalStart + m_externalCount - 1}
+                                 .WithColor(RGBWColor{m_primaryColor}));
+        break;
+    }
+
+    case AnimationMode::ClosingIn:
+    {
+        m_candle->SetControl(controls::LarsonAnimation{m_externalStart, m_externalStart + m_externalCount - 1}
+                                 .WithColor(RGBWColor{m_primaryColor}));
+        break;
+    }
+    }
+}
+
 // ================= Diagnostic Setters =================
 
 void DragonCANdle::SetAlliance(frc::DriverStation::Alliance alliance)
@@ -76,14 +177,14 @@ void DragonCANdle::SetAlliance(frc::DriverStation::Alliance alliance)
     m_alliance = alliance;
 }
 
-void DragonCANdle::SetQuestStatus(bool ok)
+void DragonCANdle::SetQuestStatus(bool connected)
 {
-    m_questOK = ok;
+    m_questOK = connected;
 }
 
-void DragonCANdle::SetDataLoggerStatus(bool ok)
+void DragonCANdle::SetDataLoggerStatus(bool connected)
 {
-    m_dataLoggerOK = ok;
+    m_dataLoggerOK = connected;
 }
 
 void DragonCANdle::SetLimelightStatuses(bool ll1, bool ll2, bool ll3)
@@ -117,167 +218,45 @@ void DragonCANdle::SetTurretEnd(bool triggered)
 
 void DragonCANdle::UpdateDiagnostics()
 {
-    auto setLED = [&](int index, int r, int g, int b)
-    {
-        LEDControl ctrl{r, g, b, index, 1};
-        m_candle->SetControl(ctrl);
-    };
+    using RGBWColor = signals::RGBWColor;
 
+    // Set individual onboard LEDs for diagnostics
     // Alliance
     if (m_alliance == frc::DriverStation::Alliance::kBlue)
-        setLED(0, 0, 0, 255);
+        m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{0, 0, 255, 0}));
     else
-        setLED(0, 255, 0, 0);
+        m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{255, 0, 0, 0}));
 
     // Quest
-    setLED(1, m_questOK ? 0 : 100, m_questOK ? 255 : 0, 0);
+    if (m_questOK)
+        m_candle->SetControl(controls::SolidColor{1, 1}.WithColor(RGBWColor{0, 255, 0, 0}));
+    else
+        m_candle->SetControl(controls::SolidColor{1, 1}.WithColor(RGBWColor{100, 0, 0, 0}));
 
     // Limelights (aggregated)
     int llCount = (m_ll1 ? 1 : 0) + (m_ll2 ? 1 : 0) + (m_ll3 ? 1 : 0);
     if (llCount == 3)
-        setLED(2, 0, 255, 0);
+        m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{0, 255, 0, 0}));
     else if (llCount == 0)
-        setLED(2, 255, 0, 0);
+        m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{255, 0, 0, 0}));
     else
     {
+        // Blink yellow/blue for partial limelight connection
         if (static_cast<int>(m_diagTimer.Get().value()) % 2 == 0)
-            setLED(2, 255, 255, 0);
+            m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{255, 255, 0, 0}));
         else
-            setLED(2, 0, 0, 255);
+            m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{0, 0, 255, 0}));
     }
 
     // Data Logger
-    setLED(3, m_dataLoggerOK ? 0 : 100, m_dataLoggerOK ? 255 : 0, 0);
+    if (m_dataLoggerOK)
+        m_candle->SetControl(controls::SolidColor{3, 3}.WithColor(RGBWColor{0, 255, 0, 0}));
+    else
+        m_candle->SetControl(controls::SolidColor{3, 3}.WithColor(RGBWColor{100, 0, 0, 0}));
 
-    // Sensors
-    setLED(4, m_intake ? 255 : 0, m_intake ? 255 : 0, 0);
-    setLED(5, m_hood ? 255 : 0, m_hood ? 255 : 0, 0);
-    setLED(6, m_turretZero ? 255 : 0, m_turretZero ? 255 : 0, 0);
-    setLED(7, m_turretEnd ? 255 : 0, m_turretEnd ? 255 : 0, 0);
-}
-
-// ================= Animation =================
-
-void DragonCANdle::SetAnimation(AnimationMode mode)
-{
-    m_animMode = mode;
-}
-
-void DragonCANdle::SetSolidColor(int r, int g, int b)
-{
-    m_primaryR = r;
-    m_primaryG = g;
-    m_primaryB = b;
-    m_animMode = AnimationMode::Solid;
-}
-
-void DragonCANdle::SetAlternatingColors(int r1, int g1, int b1,
-                                        int r2, int g2, int b2)
-{
-    m_primaryR = r1;
-    m_primaryG = g1;
-    m_primaryB = b1;
-    m_secondaryR = r2;
-    m_secondaryG = g2;
-    m_secondaryB = b2;
-    m_animMode = AnimationMode::Alternating;
-}
-
-void DragonCANdle::UpdateAnimation()
-{
-    switch (m_animMode)
-    {
-    case AnimationMode::Off:
-    {
-        LEDControl off{0, 0, 0, kExternalStart, kExternalCount};
-        m_candle->SetControl(off);
-        break;
-    }
-
-    case AnimationMode::Solid:
-    {
-        LEDControl solid{
-            m_primaryR, m_primaryG, m_primaryB,
-            kExternalStart, kExternalCount};
-        m_candle->SetControl(solid);
-        break;
-    }
-
-    case AnimationMode::Alternating:
-    {
-        LEDControl first{
-            m_primaryR, m_primaryG, m_primaryB,
-            kExternalStart, kExternalCount / 2};
-
-        LEDControl second{
-            m_secondaryR, m_secondaryG, m_secondaryB,
-            kExternalStart + kExternalCount / 2,
-            kExternalCount / 2};
-
-        m_candle->SetControl(first);
-        m_candle->SetControl(second);
-        break;
-    }
-
-    case AnimationMode::Rainbow:
-    {
-        AnimationControl ctrl{&m_rainbow};
-        ctrl.StartIndex = kExternalStart;
-        ctrl.NumLEDs = kExternalCount;
-        m_candle->SetControl(ctrl);
-        break;
-    }
-
-    case AnimationMode::Breathing:
-    {
-        m_breathe.Red = m_primaryR;
-        m_breathe.Green = m_primaryG;
-        m_breathe.Blue = m_primaryB;
-
-        AnimationControl ctrl{&m_breathe};
-        ctrl.StartIndex = kExternalStart;
-        ctrl.NumLEDs = kExternalCount;
-        m_candle->SetControl(ctrl);
-        break;
-    }
-
-    case AnimationMode::Blinking:
-    {
-        m_strobe.Red = m_primaryR;
-        m_strobe.Green = m_primaryG;
-        m_strobe.Blue = m_primaryB;
-
-        AnimationControl ctrl{&m_strobe};
-        ctrl.StartIndex = kExternalStart;
-        ctrl.NumLEDs = kExternalCount;
-        m_candle->SetControl(ctrl);
-        break;
-    }
-
-    case AnimationMode::Chaser:
-    {
-        m_chaser.Red = m_primaryR;
-        m_chaser.Green = m_primaryG;
-        m_chaser.Blue = m_primaryB;
-
-        AnimationControl ctrl{&m_chaser};
-        ctrl.StartIndex = kExternalStart;
-        ctrl.NumLEDs = kExternalCount;
-        m_candle->SetControl(ctrl);
-        break;
-    }
-
-    case AnimationMode::ClosingIn:
-    {
-        m_larson.Red = m_primaryR;
-        m_larson.Green = m_primaryG;
-        m_larson.Blue = m_primaryB;
-
-        AnimationControl ctrl{&m_larson};
-        ctrl.StartIndex = kExternalStart;
-        ctrl.NumLEDs = kExternalCount;
-        m_candle->SetControl(ctrl);
-        break;
-    }
-    }
+    // Sensors - show yellow when triggered, black when not
+    m_candle->SetControl(controls::SolidColor{4, 4}.WithColor(RGBWColor{static_cast<uint8_t>(m_intake ? 255 : 0), static_cast<uint8_t>(m_intake ? 255 : 0), 0, 0}));
+    m_candle->SetControl(controls::SolidColor{5, 5}.WithColor(RGBWColor{static_cast<uint8_t>(m_hood ? 255 : 0), static_cast<uint8_t>(m_hood ? 255 : 0), 0, 0}));
+    m_candle->SetControl(controls::SolidColor{6, 6}.WithColor(RGBWColor{static_cast<uint8_t>(m_turretZero ? 255 : 0), static_cast<uint8_t>(m_turretZero ? 255 : 0), 0, 0}));
+    m_candle->SetControl(controls::SolidColor{7, 7}.WithColor(RGBWColor{static_cast<uint8_t>(m_turretEnd ? 255 : 0), static_cast<uint8_t>(m_turretEnd ? 255 : 0), 0, 0}));
 }

@@ -51,7 +51,7 @@ void DriverFeedback::UpdateFeedback()
     UpdateLEDStates();
     UpdateDiagnosticLEDs();
     CheckControllers();
-    m_LEDStates->commitLedData();
+    m_LEDStates->Periodic();
 }
 
 void DriverFeedback::UpdateRumble()
@@ -60,16 +60,69 @@ void DriverFeedback::UpdateRumble()
 
 void DriverFeedback::UpdateLEDStates()
 {
+    DragonCANdle::AnimationMode desiredAnimation = m_prevAnimaiton;
+    frc::Color desiredPrimaryColor = m_prevPrimaryColorState;
+    frc::Color desiredSecondaryColor = m_prevSecondaryColorState;
+
     if (frc::DriverStation::IsDisabled())
     {
-        m_LEDStates->SetChaserPattern(frc::Color::kAqua);
+        desiredAnimation = DragonCANdle::AnimationMode::Chaser;
+        desiredPrimaryColor = m_isValidAutonFile ? frc::Color::kDarkGreen : frc::Color::kRed;
     }
     else
     {
     }
-    if (m_oldState != m_currentState)
+
+    UpdateLEDs(desiredAnimation, desiredPrimaryColor, desiredSecondaryColor);
+}
+
+void DriverFeedback::UpdateLEDs(DragonCANdle::AnimationMode desiredAnimation, frc::Color desiredPrimaryColor, frc::Color desiredSecondaryColor)
+{
+    if (desiredAnimation != m_prevAnimaiton || desiredPrimaryColor != m_prevPrimaryColorState || desiredSecondaryColor != m_prevSecondaryColorState)
     {
-        m_LEDStates->ResetVariables();
+        switch (desiredAnimation)
+        {
+        case DragonCANdle::AnimationMode::Solid:
+            m_LEDStates->SetSolidColor(desiredPrimaryColor);
+            m_LEDStates->SetAnimation(DragonCANdle::AnimationMode::Solid);
+            break;
+
+        case DragonCANdle::AnimationMode::Alternating:
+            m_LEDStates->SetAlternatingColors(desiredPrimaryColor, desiredSecondaryColor);
+            m_LEDStates->SetAnimation(DragonCANdle::AnimationMode::Alternating);
+            break;
+
+        case DragonCANdle::AnimationMode::Rainbow:
+            m_LEDStates->SetAnimation(DragonCANdle::AnimationMode::Rainbow);
+            break;
+
+        case DragonCANdle::AnimationMode::Breathing:
+            m_LEDStates->SetSolidColor(desiredPrimaryColor);
+            m_LEDStates->SetAnimation(DragonCANdle::AnimationMode::Breathing);
+            break;
+
+        case DragonCANdle::AnimationMode::Blinking:
+            m_LEDStates->SetSolidColor(desiredPrimaryColor);
+            m_LEDStates->SetAnimation(DragonCANdle::AnimationMode::Blinking);
+            break;
+
+        case DragonCANdle::AnimationMode::Chaser:
+            m_LEDStates->SetSolidColor(desiredPrimaryColor);
+            m_LEDStates->SetAnimation(DragonCANdle::AnimationMode::Chaser);
+            break;
+
+        case DragonCANdle::AnimationMode::ClosingIn:
+            m_LEDStates->SetSolidColor(desiredPrimaryColor);
+            m_LEDStates->SetAnimation(DragonCANdle::AnimationMode::ClosingIn);
+            break;
+
+        default:
+            m_LEDStates->TurnOff();
+            break;
+        }
+        m_prevAnimaiton = desiredAnimation;
+        m_prevPrimaryColorState = desiredPrimaryColor;
+        m_prevSecondaryColorState = desiredSecondaryColor;
     }
 }
 
@@ -99,9 +152,13 @@ void DriverFeedback::UpdateDiagnosticLEDs()
         }
 
         questStatus = dragonVision->HealthCheckQuest();
+
+        m_LEDStates->SetQuestStatus(questStatus);
+        m_LEDStates->SetLimelightStatuses(backLeftLL, backRightLL, climberLL);
     }
 
     // Add Data Logger Connection Status dataLoggerConnected = ...
+    m_LEDStates->SetDataLoggerStatus(dataLoggerConnected);
 
     auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
     if (config != nullptr)
@@ -123,9 +180,11 @@ void DriverFeedback::UpdateDiagnosticLEDs()
         {
             intakeSensor = intakeMgr->IsIntakeExtended();
         }
+        m_LEDStates->SetIntakeSensor(intakeSensor);
+        m_LEDStates->SetHoodSwitch(hoodZeroSwitch);
+        m_LEDStates->SetTurretZero(turretZero);
+        m_LEDStates->SetTurretEnd(turretEnd);
     }
-
-    m_LEDStates->DiagnosticPattern(FMSData::GetAllianceColor(), questStatus, backLeftLL, backRightLL, climberLL, dataLoggerConnected, intakeSensor, hoodZeroSwitch, turretZero, turretEnd);
 }
 void DriverFeedback::ResetRequests(void)
 {
