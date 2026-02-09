@@ -34,14 +34,14 @@ public:
 
 	enum class AnimationMode
 	{
-		Off,
-		Solid,
-		Alternating,
-		Rainbow,
-		Breathing,
-		Blinking,
-		Chaser,
-		ClosingIn
+		OFF,
+		SOLID,
+		ALTERNATING,
+		RAINBOW,
+		BREATHING,
+		BLINKING,
+		CHASER,
+		CLOSING_IN
 	};
 
 	static DragonCANdle *GetInstance();
@@ -101,11 +101,15 @@ private:
 	frc::Timer m_diagTimer;
 
 	// Animation State
-	AnimationMode m_animMode{AnimationMode::Off};
+	AnimationMode m_animMode{AnimationMode::OFF};
 
 	frc::Color m_primaryColor{frc::Color::kGreen};
 	frc::Color m_secondaryColor{frc::Color::kBlack};
 	double m_brightness{1.0};
 	units::frequency::hertz_t m_blinkingFrequency{0.5_Hz};
 	units::frequency::hertz_t m_breathingFrequency{1_Hz};
+
+	// Alternating pattern state
+	int m_alternatingTimer{0};
+	static constexpr int m_alternatingPeriod = 10;
 };

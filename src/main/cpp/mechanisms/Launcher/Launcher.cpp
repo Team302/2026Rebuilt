@@ -747,7 +747,7 @@ bool Launcher::IsLauncherAtTarget()
 
 bool Launcher::IsInLaunchZone() const
 {
-	return DeadZoneManager::GetInstance()->IsInDeadZone();
+	return !DeadZoneManager::GetInstance()->IsInDeadZone();
 }
 
 void Launcher::CalculateTargets()

@@ -74,14 +74,14 @@ void DragonCANdle::SetAnimation(AnimationMode mode)
 void DragonCANdle::SetSolidColor(const frc::Color &color)
 {
     m_primaryColor = color;
-    m_animMode = AnimationMode::Solid;
+    m_animMode = AnimationMode::SOLID;
 }
 
 void DragonCANdle::SetAlternatingColors(const frc::Color &color1, const frc::Color &color2)
 {
     m_primaryColor = color1;
     m_secondaryColor = color2;
-    m_animMode = AnimationMode::Alternating;
+    m_animMode = AnimationMode::ALTERNATING;
 }
 
 void DragonCANdle::SetBrightness(double brightness)
@@ -98,7 +98,7 @@ void DragonCANdle::SetBrightness(double brightness)
 
 void DragonCANdle::TurnOff()
 {
-    m_animMode = AnimationMode::Off;
+    m_animMode = AnimationMode::OFF;
 }
 
 void DragonCANdle::UpdateAnimation()
@@ -107,7 +107,7 @@ void DragonCANdle::UpdateAnimation()
 
     switch (m_animMode)
     {
-    case AnimationMode::Off:
+    case AnimationMode::OFF:
     {
         // Turn off external LEDs
         m_candle->SetControl(controls::SolidColor{m_externalStart, m_externalStart + m_externalCount - 1}
@@ -115,30 +115,36 @@ void DragonCANdle::UpdateAnimation()
         break;
     }
 
-    case AnimationMode::Solid:
+    case AnimationMode::SOLID:
     {
         m_candle->SetControl(controls::SolidColor{m_externalStart, m_externalStart + m_externalCount - 1}
                                  .WithColor(RGBWColor{m_primaryColor}));
         break;
     }
 
-    case AnimationMode::Alternating:
+    case AnimationMode::ALTERNATING: // Blinking pattern that swaps entire strip between two colors
+
     {
-        int halfCount = m_externalCount / 2;
-        m_candle->SetControl(controls::SolidColor{m_externalStart, m_externalStart + halfCount - 1}
-                                 .WithColor(RGBWColor{m_primaryColor}));
-        m_candle->SetControl(controls::SolidColor{m_externalStart + halfCount, m_externalStart + m_externalCount - 1}
-                                 .WithColor(RGBWColor{m_secondaryColor}));
+        if (m_alternatingTimer > 2 * m_alternatingPeriod)
+            m_alternatingTimer = 0;
+
+        int blinkState = (m_alternatingTimer / m_alternatingPeriod) % 2;
+        frc::Color currentColor = (blinkState == 0) ? m_primaryColor : m_secondaryColor;
+
+        m_candle->SetControl(controls::SolidColor{m_externalStart, m_externalStart + m_externalCount - 1}
+                                 .WithColor(RGBWColor{currentColor}));
+
+        m_alternatingTimer++;
         break;
     }
 
-    case AnimationMode::Rainbow:
+    case AnimationMode::RAINBOW:
     {
         m_candle->SetControl(controls::RainbowAnimation{m_externalStart, m_externalStart + m_externalCount - 1});
         break;
     }
 
-    case AnimationMode::Breathing:
+    case AnimationMode::BREATHING:
     {
         m_candle->SetControl(controls::SingleFadeAnimation{m_externalStart, m_externalStart + m_externalCount - 1}
                                  .WithColor(RGBWColor{m_primaryColor})
@@ -146,7 +152,7 @@ void DragonCANdle::UpdateAnimation()
         break;
     }
 
-    case AnimationMode::Blinking:
+    case AnimationMode::BLINKING:
     {
         m_candle->SetControl(controls::StrobeAnimation{m_externalStart, m_externalStart + m_externalCount - 1}
                                  .WithColor(RGBWColor{m_primaryColor})
@@ -154,19 +160,21 @@ void DragonCANdle::UpdateAnimation()
         break;
     }
 
-    case AnimationMode::Chaser:
+    case AnimationMode::CHASER:
     {
         m_candle->SetControl(controls::ColorFlowAnimation{m_externalStart, m_externalStart + m_externalCount - 1}
                                  .WithColor(RGBWColor{m_primaryColor}));
         break;
     }
 
-    case AnimationMode::ClosingIn:
+    case AnimationMode::CLOSING_IN:
     {
         m_candle->SetControl(controls::LarsonAnimation{m_externalStart, m_externalStart + m_externalCount - 1}
                                  .WithColor(RGBWColor{m_primaryColor}));
         break;
     }
+    default:
+        break;
     }
 }
 
