@@ -215,35 +215,6 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetObjectDetec
 }
 
 /// ----------------------------------------------------------------------------------
-/// @brief Get the Pose object for the current location of the robot.
-/// @details High-level entry to request a pose estimate from Limelight for odometry.
-/// @param useMegatag2 if true, request MegaTag2 pose estimation path; otherwise use MegaTag1 path.
-/// @return optional VisionPose when Limelight has a valid pose estimate; std::nullopt otherwise.
-/// @notes Adjusts Limelight IMU mode for best results depending on which MegaTag method is used.
-///        See: https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization
-/// ----------------------------------------------------------------------------------
-std::optional<VisionPose> DragonLimelight::EstimatePoseOdometryLimelight(bool useMegatag2)
-{
-    if (frc::RobotBase::IsSimulation())
-    {
-        return std::nullopt;
-    }
-
-    auto mode = static_cast<int>(LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_ONLY); // Chief Delphi answer says perfect portrait pose doesn't work with internal IMU
-    LimelightHelpers::SetIMUMode(m_networkTableName, mode);
-
-    if (useMegatag2)
-    {
-        return GetMegaTag2Pose();
-    }
-    else
-    {
-        return GetMegaTag1Pose();
-    }
-    return std::nullopt;
-}
-
-/// ----------------------------------------------------------------------------------
 /// @brief Get pose estimate using the MegaTag1/standard Limelight pose estimate API.
 /// @return optional VisionPose populated from Limelight pose if tagCount > 0 and valid deviations are computable.
 /// @sideeffects If robot pose has not been set, SetRobotPose will be invoked using the estimate's 2D pose.
