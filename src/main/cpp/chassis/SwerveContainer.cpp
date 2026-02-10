@@ -185,11 +185,8 @@ void SwerveContainer::SetSysIDBinding(TeleopControl *controller)
 //------------------------------------------------------------------
 void SwerveContainer::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value)
 {
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "SwerveContainer", "NotifyStateUpdate1", m_climbModeStatus);
-
     if (change == RobotStateChanges::StateChange::ClimbModeStatus_Bool)
     {
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "SwerveContainer", "NotifyStateUpdate2", m_climbModeStatus);
         m_climbModeStatus = value;
     }
 }
