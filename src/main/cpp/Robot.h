@@ -58,7 +58,6 @@ private:
     RobotState *m_robotState;
     DragonDataLoggerMgr *m_datalogger;
     bool isFMSAttached = false;
-    bool m_rewindActive = false; ///< Latch to track whether Rewind recording is active
     DragonVisionPoseEstimatorContainer *m_dragonVisionPoseEstimator;
     DragonQuest *m_quest;
 };

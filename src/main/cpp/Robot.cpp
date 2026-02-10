@@ -110,10 +110,17 @@ Robot::Robot()
     InitializeDriveteamFeedback();
 
     m_datalogger = DragonDataLoggerMgr::GetInstance();
+    auto vision = DragonVision::GetDragonVision();
 
+    if (frc::DriverStation::IsFMSAttached())
+    {
+        if (vision != nullptr)
+        {
+            vision->StartRewind();
+        }
+    }
     // auto path = AutonUtils::GetTrajectoryFromPathFile("BlueLeftInside_I"); // load choreo library so we don't get loop overruns during autonperiodic
 }
-
 /// @brief Called periodically while the robot is running, regardless of mode.
 /// Runs the CommandScheduler, manages logging (guarded by FMS attachment),
 /// updates RobotState, and refreshes drive-team feedback (vision, field position, HUD).
@@ -138,22 +145,18 @@ void Robot::RobotPeriodic()
     }
 
     UpdateDriveTeamFeedback();
-
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Robot", "IsInNeutralZone", NeutralZoneManager::GetInstance()->IsInNeutralZone());
 }
 
 /// @brief Called once while the robot is disabled.
 void Robot::DisabledInit()
 {
-    // If we were recording Rewind during a match, save and stop it now
-    if (m_rewindActive && frc::DriverStation::IsFMSAttached())
+    if (frc::DriverStation::IsFMSAttached())
     {
         auto vision = DragonVision::GetDragonVision();
         if (vision != nullptr)
         {
             vision->SaveRewind(165.0); // Save full buffer (max 165 seconds)
-            vision->StopRewind();
-            m_rewindActive = false;
+            vision->StartRewind();
         }
     }
 }
@@ -173,18 +176,6 @@ void Robot::DisabledPeriodic()
 void Robot::AutonomousInit()
 {
     frc::SetCurrentThreadPriority(true, 15);
-
-    // Start Limelight Rewind recording for match review (LL4 only)
-    // Only start once per match - not on subsequent calls during practice mode
-    if (frc::DriverStation::IsFMSAttached() && !m_rewindActive)
-    {
-        auto vision = DragonVision::GetDragonVision();
-        if (vision != nullptr)
-        {
-            vision->StartRewind();
-            m_rewindActive = true;
-        }
-    }
 
     if (m_cyclePrims != nullptr)
     {
