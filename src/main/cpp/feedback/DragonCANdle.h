@@ -59,14 +59,19 @@ public:
 	void SetBlinkingFrequency(units::frequency::hertz_t frequency) { m_blinkingFrequency = frequency; };
 
 	// ===== Diagnostic Inputs =====
-	void SetAlliance(frc::DriverStation::Alliance alliance);
-	void SetQuestStatus(bool connected);
-	void SetDataLoggerStatus(bool connected);
-	void SetLimelightStatuses(bool ll1, bool ll2, bool ll3);
-	void SetIntakeSensor(bool triggered);
-	void SetHoodSwitch(bool triggered);
-	void SetTurretZero(bool triggered);
-	void SetTurretEnd(bool triggered);
+	void SetAlliance(frc::DriverStation::Alliance alliance) { m_alliance = alliance; };
+	void SetQuestStatus(bool connected) { m_questOK = connected; };
+	void SetDataLoggerStatus(bool connected) { m_dataLoggerOK = connected; };
+	void SetLimelightStatuses(bool ll1, bool ll2, bool ll3)
+	{
+		m_ll1 = ll1;
+		m_ll2 = ll2;
+		m_ll3 = ll3;
+	};
+	void SetIntakeSensor(bool triggered) { m_intake = triggered; };
+	void SetHoodSwitch(bool triggered) { m_hood = triggered; };
+	void SetTurretZero(bool triggered) { m_turretZero = triggered; };
+	void SetTurretEnd(bool triggered) { m_turretEnd = triggered; };
 
 private:
 	DragonCANdle() = default;

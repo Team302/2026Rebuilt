@@ -188,50 +188,6 @@ void DragonCANdle::UpdateAnimation()
     }
 }
 
-// ================= Diagnostic Setters =================
-
-void DragonCANdle::SetAlliance(frc::DriverStation::Alliance alliance)
-{
-    m_alliance = alliance;
-}
-
-void DragonCANdle::SetQuestStatus(bool connected)
-{
-    m_questOK = connected;
-}
-
-void DragonCANdle::SetDataLoggerStatus(bool connected)
-{
-    m_dataLoggerOK = connected;
-}
-
-void DragonCANdle::SetLimelightStatuses(bool ll1, bool ll2, bool ll3)
-{
-    m_ll1 = ll1;
-    m_ll2 = ll2;
-    m_ll3 = ll3;
-}
-
-void DragonCANdle::SetIntakeSensor(bool triggered)
-{
-    m_intake = triggered;
-}
-
-void DragonCANdle::SetHoodSwitch(bool triggered)
-{
-    m_hood = triggered;
-}
-
-void DragonCANdle::SetTurretZero(bool triggered)
-{
-    m_turretZero = triggered;
-}
-
-void DragonCANdle::SetTurretEnd(bool triggered)
-{
-    m_turretEnd = triggered;
-}
-
 // ================= Diagnostics =================
 
 void DragonCANdle::UpdateDiagnostics()
