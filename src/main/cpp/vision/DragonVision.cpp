@@ -357,7 +357,7 @@ void DragonVision::StartRewind()
 	for (const auto &pair : m_dragonLimelightMap)
 	{
 		DragonLimelight *limelight = pair.second.get();
-		if (limelight != nullptr)
+		if (limelight != nullptr && limelight->IsLimelightRunning())
 		{
 			if (limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4 || limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4_W_HAILO8)
 			{
@@ -375,7 +375,7 @@ void DragonVision::SaveRewind(double durationSeconds)
 	for (const auto &pair : m_dragonLimelightMap)
 	{
 		DragonLimelight *limelight = pair.second.get();
-		if (limelight != nullptr)
+		if (limelight != nullptr && limelight->IsLimelightRunning())
 		{
 			if (limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4 || limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4_W_HAILO8)
 			{
@@ -392,7 +392,7 @@ void DragonVision::StopRewind()
 	for (const auto &pair : m_dragonLimelightMap)
 	{
 		DragonLimelight *limelight = pair.second.get();
-		if (limelight != nullptr)
+		if (limelight != nullptr && limelight->IsLimelightRunning())
 		{
 			if (limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4 || limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4_W_HAILO8)
 			{
