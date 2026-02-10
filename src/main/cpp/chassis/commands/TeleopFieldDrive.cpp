@@ -41,7 +41,7 @@ TeleopFieldDrive::TeleopFieldDrive(subsystems::CommandSwerveDrivetrain *chassis,
  */
 void TeleopFieldDrive::Initialize()
 {
-    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElementIsDone_Bool, false);
+    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElement_Bool, false);
 
     auto vision = DragonVision::GetDragonVision();
     if (vision != nullptr)

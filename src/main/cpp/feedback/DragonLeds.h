@@ -48,14 +48,15 @@ public:
 	void SetChaserPattern(frc::Color c);
 	void SetClosingInChaserPattern(frc::Color c);
 
-	void DiagnosticPattern(frc::DriverStation::Alliance alliance, bool questStatus, bool ll1Status);
+	void DiagnosticPattern(frc::DriverStation::Alliance alliance, bool questStatus, bool dataLoggerStatus, bool ll1Status, bool ll2Status, bool ll3Status,
+						   bool intakeSensor, bool hoodSwitch, bool turretZero, bool turretEnd);
 
 	static DragonLeds *GetInstance();
 
 private:
 	static DragonLeds *m_instance;
 	frc::AddressableLED *m_addressibleLeds;
-	int m_numberofDiagnosticLEDs = 6;
+	int m_numberofDiagnosticLEDs = 9;
 
 	int m_loopThroughIndividualLEDs = -1;
 	int m_colorLoop = 0;
@@ -65,8 +66,15 @@ private:
 
 	const int m_blinkPatternPeriod = 10;
 	const int m_allianceColorLED = 0;
-	const int m_questDiagnosticLED = 4;
-	const int m_limeLight1diagnosticLED = 5;
+	const int m_questLED = 1;
+	const int m_limeLight1LED = 2;
+	const int m_limeLight2LED = 3;
+	const int m_limeLight3LED = 4;
+	const int m_dataLoggerLED = 5;
+	const int m_intakeSensorLED = 6;
+	const int m_hoodSwitchLED = 7;
+	const int m_turretZeroLED = 8;
+	const int m_turretEndLED = 9;
 
 	DragonLeds();
 };
