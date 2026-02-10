@@ -45,6 +45,7 @@
 class SwerveContainer : IRobotStateChangeSubscriber
 {
 public:
+    // declaring classes
     //------------------------------------------------------------------
     /// @brief      Get the singleton instance of SwerveContainer
     /// @return     SwerveContainer* - Pointer to the singleton instance
@@ -58,6 +59,8 @@ public:
     TrajectoryDrive *GetTrajectoryDriveCommand() { return m_trajectoryDrive.get(); }
     DriveToDepot *GetDriveToDepotCommand() { return m_driveToDepot.get(); }
     DriveToOutpost *GetDriveToOutpostCommand() { return m_driveToOutpost.get(); }
+    DriveToTower *GetDriveToTowerCommand() { return m_driveToTower.get(); }
+    // filepath: src/main/cpp/commands/DriveToTowerOutpost.h
 
 private:
     //------------------------------------------------------------------
@@ -102,6 +105,8 @@ private:
     /// @brief Drive to outpost command for season-specific autonomous navigation
     std::unique_ptr<DriveToOutpost> m_driveToOutpost;
 
+    std::unique_ptr<DriveToTower> m_driveToTower;
+
     //------------------------------------------------------------------
     /// @brief      Configures button bindings for chassis control
     /// @details    Sets up controller bindings, telemetry, and SysID options
@@ -136,6 +141,8 @@ private:
     /// @details    Overrides IRobotStateChangeSubscriber interface method
     //------------------------------------------------------------------
     void NotifyStateUpdate(RobotStateChanges::StateChange change, int value) override;
+
+    std::unique_ptr<DriveToTower> m_driveToTower;
 
     bool m_climbModeStatus = false;
 };

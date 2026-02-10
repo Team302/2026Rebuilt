@@ -45,8 +45,8 @@ public:
         // Season Specific Drive Commands
         DRIVE_TO_DEPOT,
         DRIVE_TO_OUTPOST,
-        DRIVE_TO_TOWER_LEFT,
-        DRIVE_TO_TOWER_RIGHT,
+        DRIVE_TO_TOWER_DEPOT,
+        DRIVE_TO_TOWER_OUTPOST,
 
         // Mechanisms specific
         // Intake

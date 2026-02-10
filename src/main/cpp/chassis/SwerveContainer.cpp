@@ -26,6 +26,7 @@
 // Season Specific Commands
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
+#include "chassis/commands/season_specific_commands/DriveToTower.h"
 
 //------------------------------------------------------------------
 /// @brief      Static method to create or return the singleton instance
@@ -122,6 +123,8 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
 {
     auto driveToDepot = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_DEPOT);
     auto driveToOutpost = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_OUTPOST);
+    auto driveToTowerDepot = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_TOWER_DEPOT);
+    auto driveToTowerOutpost = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_TOWER_OUTPOST);
 
     driveToDepot.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::Command *
                                                     {

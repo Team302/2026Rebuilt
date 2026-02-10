@@ -118,65 +118,65 @@ units::length::meter_t FieldOffsetValues::GetXValue(bool isRedSide, FIELD_OFFSET
         return isRedSide ? m_redDepotX : m_blueDepotX;
     }
 }
-// //------------------------------------------------------------------
-// FieldOffsetValues::FieldOffsetValues()
-// {
-//     auto fieldConstants = FieldConstants::GetInstance();
+//------------------------------------------------------------------
+FieldOffsetValues::FieldOffsetValues()
+{
+    auto fieldConstants = FieldConstants::GetInstance();
 
-//     if (fieldConstants != nullptr)
-//     {
-//         m_redTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
-//         m_blueTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
-//     }
-//     else
-//     {
-//         // Fallback to safe default values if FieldConstants is unavailable
-//         m_redTowerOutpostX = units::length::meter_t{0.0};
-//         m_blueTowerOutpostX = units::length::meter_t{0.0};
-//     }
-//     if (fieldConstants != nullptr)
-//     {
-//         m_redTowerOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
-//         m_blueTowerOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
-//     }
-//     else
-//     {
-//         // Fallback to safe default values if FieldConstants is unavailable
-//         m_redTowerOutpostY = units::length::meter_t{0.0};
-//         m_blueTowerOutpostY = units::length::meter_t{0.0};
-//     }
+    if (fieldConstants != nullptr)
+    {
+        m_redTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
+        m_blueTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
+    }
+    else
+    {
+        // Fallback to safe default values if FieldConstants is unavailable
+        m_redTowerOutpostX = units::length::meter_t{0.0};
+        m_blueTowerOutpostX = units::length::meter_t{0.0};
+    }
+    if (fieldConstants != nullptr)
+    {
+        m_redTowerOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
+        m_blueTowerOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
+    }
+    else
+    {
+        // Fallback to safe default values if FieldConstants is unavailable
+        m_redTowerOutpostY = units::length::meter_t{0.0};
+        m_blueTowerOutpostY = units::length::meter_t{0.0};
+    }
 
-//     m_redTowerDepotX = m_redTowerOutpostX;
-//     m_blueTowerOutpostY = m_redTowerDepotY;
-// }
-// //-------------------------------------------------------------------------
-// FieldOffsetValues::FieldOffsetValues()
-// {
-//     auto fieldConstants = FieldConstants::GetInstance();
+    m_redTowerDepotX = m_redTowerOutpostX;
+    m_blueTowerOutpostY = m_redTowerDepotY;
+}
+//-------------------------------------------------------------------------
+FieldOffsetValues::FieldOffsetValues()
+{
+    auto fieldConstants = FieldConstants::GetInstance();
 
-//     if (fieldConstants != nullptr)
-//     {
-//         m_redTowerDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
-//         m_blueTowerDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
-//     }
-//     else
-//     {
-//         // Fallback to safe default values if FieldConstants is unavailable
-//         m_redTowerDepotX = units::length::meter_t{0.0};
-//         m_blueTowerDepotX = units::length::meter_t{0.0};
-//     }
-//     if (fieldConstants != nullptr)
-//     {
-//         m_redTowerDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
-//         m_blueTowerDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
-//     }
-//     else
-//     {
-//         // Fallback to safe default values if FieldConstants is unavailable
-//         m_redTowerDepotY = units::length::meter_t{0.0};
-//         m_blueTowerDepotY = units::length::meter_t{0.0};
-//     }
+    if (fieldConstants != nullptr)
+    {
+        m_redTowerDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
+        m_blueTowerDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
+    }
+    else
+    {
+        // Fallback to safe default values if FieldConstants is unavailable
+        m_redTowerDepotX = units::length::meter_t{0.0};
+        m_blueTowerDepotX = units::length::meter_t{0.0};
+    }
+    if (fieldConstants != nullptr)
+    {
+        m_redTowerDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
+        m_blueTowerDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
+    }
+    else
+    {
+        // Fallback to safe default values if FieldConstants is unavailable
+        m_redTowerDepotY = units::length::meter_t{0.0};
+        m_blueTowerDepotY = units::length::meter_t{0.0};
+    }
 
-//     m_redTowerOutpostX = m_blueTowerOutpostX;
-//     m_blueTowerOutpostY = m_redTowerOutpostY;
-// }
+    m_redTowerOutpostX = m_blueTowerOutpostX;
+    m_blueTowerOutpostY = m_redTowerOutpostY;
+}
