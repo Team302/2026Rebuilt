@@ -61,6 +61,8 @@ FieldOffsetValues::FieldOffsetValues()
         // Fallback to safe default values if FieldConstants is unavailable
         m_blueDepotX = units::length::meter_t{0.0};
         m_redDepotX = units::length::meter_t{0.0};
+        m_blueHubX = units::length::meter_t{0.0};
+        m_redHubX = units::length::meter_t{0.0};
     }
 
     m_blueOutpostX = m_blueDepotX;
