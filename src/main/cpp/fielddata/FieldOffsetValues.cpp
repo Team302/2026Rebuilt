@@ -52,12 +52,17 @@ FieldOffsetValues::FieldOffsetValues()
     {
         m_blueDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE).X();
         m_redDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE).X();
+
+        m_blueHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() - HUB_OFFSET;
+        m_redHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER).X() + HUB_OFFSET;
     }
     else
     {
         // Fallback to safe default values if FieldConstants is unavailable
         m_blueDepotX = units::length::meter_t{0.0};
         m_redDepotX = units::length::meter_t{0.0};
+        m_blueHubX = units::length::meter_t{0.0};
+        m_redHubX = units::length::meter_t{0.0};
     }
 
     m_blueOutpostX = m_blueDepotX;
@@ -81,8 +86,17 @@ units::length::meter_t FieldOffsetValues::GetXValue(bool isRedSide, FIELD_OFFSET
     {
         return isRedSide ? m_redOutpostX : m_blueOutpostX;
     }
-    else // item == FIELD_OFFSET_ITEMS::DEPOT_X
+    else if (item == FIELD_OFFSET_ITEMS::DEPOT_X)
     {
         return isRedSide ? m_redDepotX : m_blueDepotX;
+    }
+    else if (item == FIELD_OFFSET_ITEMS::HUB_X)
+    {
+        return isRedSide ? m_redHubX : m_blueHubX;
+    }
+    else
+    {
+        // Handle invalid item case (could throw an exception or return a default value)
+        return units::length::meter_t{0.0}; // Default fallback value
     }
 }

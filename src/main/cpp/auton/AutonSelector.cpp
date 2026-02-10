@@ -35,6 +35,7 @@
 #include "auton/AutonSelector.h"
 #include "utils/logging/debug/Logger.h"
 #include "utils/FMSData.h"
+#include "feedback/DriverFeedback.h"
 
 #include <pugixml/pugixml.hpp>
 
@@ -73,6 +74,8 @@ string AutonSelector::GetSelectedAutoFile()
 
 	bool fileExists = FileExists(autonfile);
 	bool fileValid = FileValid(autonfile);
+
+	DriverFeedback::GetInstance()->SetIsValidAutonFile(fileExists && fileValid);
 
 	table.get()->PutBoolean("File Exists", fileExists);
 	table.get()->PutBoolean("File Valid", fileValid);
