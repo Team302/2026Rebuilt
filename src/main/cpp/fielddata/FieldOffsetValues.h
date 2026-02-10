@@ -26,8 +26,9 @@
 //====================================================================================================================================================
 enum class FIELD_OFFSET_ITEMS
 {
-    OUTPOST_X, ///< X-coordinate offset of the outpost
-    DEPOT_X    ///< X-coordinate offset of the depot neutral side
+    OUTPOST_X, ///< X-coordinate offset from the outpost
+    DEPOT_X,   ///< X-coordinate offset from the depot neutral side
+    HUB_X      ///< X-coordinate offset from the hub center
 };
 
 //====================================================================================================================================================
@@ -85,15 +86,23 @@ private:
     /// @brief Singleton instance pointer
     static FieldOffsetValues *m_instance;
 
-    /// @brief X-coordinate offset of the blue alliance depot neutral side (meters)
+    /// @brief X-coordinate offset from the blue alliance depot neutral side (meters)
     units::length::meter_t m_blueDepotX;
 
-    /// @brief X-coordinate offset of the red alliance depot neutral side (meters)
+    /// @brief X-coordinate offset from the red alliance depot neutral side (meters)
     units::length::meter_t m_redDepotX;
 
-    /// @brief X-coordinate offset of the blue alliance outpost (meters)
+    /// @brief X-coordinate offset from the blue alliance hub center (meters)
+    units::length::meter_t m_blueHubX;
+
+    /// @brief X-coordinate offset from the red alliance hub center (meters)
+    units::length::meter_t m_redHubX;
+
+    /// @brief X-coordinate offset from the blue alliance outpost (meters)
     units::length::meter_t m_blueOutpostX;
 
-    /// @brief X-coordinate offset of the red alliance outpost (meters)
+    /// @brief X-coordinate offset from the red alliance outpost (meters)
     units::length::meter_t m_redOutpostX;
+
+    static constexpr units::length::meter_t HUB_OFFSET = 2.0_m;
 };
