@@ -48,6 +48,12 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
 
     static robin_hood::unordered_map<string, ChassisOptionEnums::DriveStateType> xmlStringToPathUpdateOptionMap{{"NOTHING", ChassisOptionEnums::STOP_DRIVE}};
 
+    static robin_hood::unordered_map<std::string, ZoneAllianceColor> xmlStringToAllianceColorMap{
+        {"RED", ZoneAllianceColor::RED},
+        {"BLUE", ZoneAllianceColor::BLUE},
+        {"BOTH", ZoneAllianceColor::BOTH},
+
+    };
     static robin_hood::unordered_map<std::string, ChassisOptionEnums::AutonAvoidOptions> xmlStringToAvoidOptionEnumMap{
         {"ROBOT_COLLISION", ChassisOptionEnums::AutonAvoidOptions::ROBOT_COLLISION},
         {"NO_AVOID_OPTION", ChassisOptionEnums::AutonAvoidOptions::NO_AVOID_OPTION},
@@ -88,6 +94,7 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
             ChassisOptionEnums::HeadingOption chosenHeadingOption = ChassisOptionEnums::HeadingOption::IGNORE;
 
             ChassisOptionEnums::DriveStateType chosenUpdateOption = ChassisOptionEnums::STOP_DRIVE;
+            ZoneAllianceColor chosenAllianceColor = ZoneAllianceColor::BOTH;
             ChassisOptionEnums::AutonAvoidOptions avoidChosenOption = ChassisOptionEnums::AutonAvoidOptions::NO_AVOID_OPTION;
 
             Launcher::STATE_NAMES launcherState = Launcher::STATE_NAMES::STATE_OFF;
@@ -171,6 +178,19 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
                     {
                         chosenUpdateOption = itr->second;
                         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "ZoneParser", "Update Option Parsed", chosenUpdateOption);
+                    }
+                    else
+                    {
+                        hasError = true;
+                    }
+                }
+                else if (strcmp(attr.name(), "allianceColor") == 0)
+                {
+                    auto itr = xmlStringToAllianceColorMap.find(attr.value());
+                    if (itr != xmlStringToAllianceColorMap.end())
+                    {
+                        chosenAllianceColor = itr->second;
+                        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "ZoneParser", "Alliance Color Parsed", int(chosenAllianceColor));
                     }
                     else
                     {
@@ -262,6 +282,7 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
                                        chosenHeadingOption,
                                        chosenUpdateOption,
                                        avoidChosenOption,
+                                       chosenAllianceColor,
                                        zoneMode,
                                        isLauncherStateChanged,
                                        isIntakeStateChanged,

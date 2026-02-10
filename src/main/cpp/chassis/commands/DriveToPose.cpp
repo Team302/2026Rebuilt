@@ -64,6 +64,7 @@ void DriveToPose::Initialize()
         m_translationPIDX.SetGoal(m_endPose.X());
         m_translationPIDY.SetGoal(m_endPose.Y());
     }
+    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElement_Bool, true);
 }
 
 //------------------------------------------------------------------
@@ -107,8 +108,6 @@ void DriveToPose::Execute()
             .WithHeadingPID(m_rotationKP, m_rotationKI, m_rotationKD)
             .WithForwardPerspective(ctre::phoenix6::swerve::requests::ForwardPerspectiveValue::BlueAlliance));
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Error", m_endPose.Translation().Distance(m_currentPose.Translation()).value());
-
-    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElementIsDone_Bool, IsFinished());
 }
 
 //------------------------------------------------------------------
@@ -147,6 +146,7 @@ bool DriveToPose::IsFinished()
 void DriveToPose::End(bool interrupted)
 {
     m_chassis->SetControl(swerve::requests::SwerveDriveBrake{});
+    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElement_Bool, false);
 }
 
 //------------------------------------------------------------------

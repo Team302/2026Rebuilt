@@ -16,22 +16,51 @@
 #include <auton/ZoneHelper.h>
 #include <auton/ZoneParams.h>
 #include <auton/ZoneParser.h>
+#include "utils/logging/debug/Logger.h"
+#include <algorithm>
 
 using frc::DriverStation;
 
-void ZoneHelper::InitZones()
+ZoneHelper::ZoneHelper()
 {
-    m_zones = ZoneParser::ParseXML(GetZoneFile());
+    m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
+    m_zones = new std::vector<ZoneParams>();
 }
 
-bool ZoneHelper::isInZone()
+void ZoneHelper::ParseZoneFiles()
 {
-    return m_zones->IsPoseInZone(m_robotPose);
+    for (auto file : GetZoneFiles())
+    {
+        m_zones->emplace_back(*ZoneParser::ParseXML(file));
+    }
 }
 
-// This function is mainly if you want to check a different zone file than the ones in the managers
-bool ZoneHelper::isInZone(std::string zoneFile)
+std::vector<ZoneParams *> ZoneHelper::GetAllianceZones(ZoneAllianceColor alliance)
 {
-    ZoneParams *zoneParams = ZoneParser::ParseXML(zoneFile);
-    return zoneParams->IsPoseInZone(m_robotPose);
+    std::vector<ZoneParams *> allianceZones;
+    for (auto &zone : *m_zones)
+    {
+        if (zone.GetAllianceColor() == alliance)
+        {
+            allianceZones.push_back(&zone);
+        }
+    }
+    return allianceZones;
+}
+
+bool ZoneHelper::IsInZones(std::vector<ZoneParams *> zoneFiles)
+{
+    return std::find_if(zoneFiles.begin(), zoneFiles.end(),
+                        [this](ZoneParams *zone)
+                        { return IsInZone(zone); }) != zoneFiles.end();
+}
+
+bool ZoneHelper::IsInZone(ZoneParams *zoneFile)
+{
+    return zoneFile->IsPoseInZone(m_chassis->GetPose());
+}
+
+ZoneHelper::~ZoneHelper()
+{
+    delete m_zones;
 }

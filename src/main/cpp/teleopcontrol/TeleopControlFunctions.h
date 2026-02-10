@@ -44,6 +44,7 @@ public:
 
         // Season Specific Drive Commands
         DRIVE_TO_DEPOT,
+        DRIVE_TO_HUB,
         DRIVE_TO_OUTPOST,
         DRIVE_TO_TOWER_DEPOT,
         DRIVE_TO_TOWER_OUTPOST,
@@ -68,6 +69,7 @@ public:
         LAUNCHER_OFF,
         LAUNCH,
         LAUNCH_OVERRIDE,
+        MANUAL_LAUNCH,
 
         // TARGET OFFSETS
         UPDATE_TARGET_OFFSET_UP,

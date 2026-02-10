@@ -164,9 +164,13 @@ robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlB
     {TeleopControlFunctions::INTAKE, driverRBumper},
     {TeleopControlFunctions::EXPEL, driverLBumper},
     {TeleopControlFunctions::DRIVE_TO_DEPOT, driverXButton},
+    {TeleopControlFunctions::DRIVE_TO_HUB, driverAButton},
     {TeleopControlFunctions::DRIVE_TO_OUTPOST, driverBButton},
     {TeleopControlFunctions::DRIVE_TO_TOWER_DEPOT, driverXButton},
     {TeleopControlFunctions::DRIVE_TO_TOWER_OUTPOST, driverBButton},
+    {TeleopControlFunctions::DRIVE_TO_TOWER_LEFT, driverXButton},
+    {TeleopControlFunctions::DRIVE_TO_TOWER_RIGHT, driverBButton},
+    {TeleopControlFunctions::CLIMB_MODE, driverStartButton},
     {TeleopControlFunctions::LEVEL1_CLIMB, driverAButton},
     {TeleopControlFunctions::LEVEL3_CLIMB, driverYButton},
     {TeleopControlFunctions::ALIGN_TO_LEFT_TOWER, driverXButton},
@@ -179,7 +183,9 @@ robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlB
     {TeleopControlFunctions::UPDATE_TARGET_OFFSET_LEFT, copilotDPad270},
     {TeleopControlFunctions::LAUNCH, copilotAButton},
     {TeleopControlFunctions::LAUNCHER_OFF, copilotStartButton},
-    {TeleopControlFunctions::LAUNCH_OVERRIDE, copilotYButton},
+    {TeleopControlFunctions::LAUNCH_OVERRIDE, copilotRTriggerPressed},
+    {TeleopControlFunctions::MANUAL_LAUNCH, copilotXButton},
+
     {TeleopControlFunctions::INTAKE_IN, copilotLBumper},
     {TeleopControlFunctions::INTAKE_OUT, copilotRBumper}};
 

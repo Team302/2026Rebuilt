@@ -148,12 +148,6 @@ void Climber::CreateCompBot302()
 	m_extender = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 2);
 	m_alignment = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 3);
 
-	ctre::phoenix6::configs::CANcoderConfiguration ClimberRotationConfigs{};
-	ClimberRotationConfigs.MagnetSensor.MagnetOffset = units::angle::turn_t(0);
-	ClimberRotationConfigs.MagnetSensor.SensorDirection = ctre::phoenix6::signals::SensorDirectionValue::CounterClockwise_Positive;
-	m_climberRotation = new ctre::phoenix6::hardware::CANcoder(11, ctre::phoenix6::CANBus("canivore"));
-	m_climberRotation->GetConfigurator().Apply(ClimberRotationConfigs);
-
 	m_positionDegree = new ControlData(
 		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
@@ -218,10 +212,9 @@ void Climber::InitializeTalonFXClimberCompBot302()
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
-	configs.Feedback.FeedbackRemoteSensorID = 12; // MECH_TODO: Verify CAN ID
-	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::FusedCANcoder;
-	configs.Feedback.SensorToMechanismRatio = 0;
-	configs.Feedback.RotorToSensorRatio = 0;
+	// MECH_TODO: Define sensor to mechanism ratios
+	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
+	configs.Feedback.SensorToMechanismRatio = 437.5;
 
 	/*MECH_TODO: Define Motion Magic Params
 

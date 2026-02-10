@@ -14,7 +14,7 @@
 //====================================================================================================================================================
 
 #pragma once
-#include <feedback/DragonLeds.h>
+#include <feedback/DragonCANdle.h>
 #include "chassis/ChassisOptionEnums.h"
 #include <state/IRobotStateChangeSubscriber.h>
 
@@ -29,45 +29,47 @@ public:
 
     static DriverFeedback *GetInstance();
 
-    void UpdateLEDStates();
-
-    void UpdateCompressorState();
-
     void NotifyStateUpdate(RobotStateChanges::StateChange change, int value) override;
     void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
+
+    void SetIsValidAutonFile(bool isValid) { m_isValidAutonFile = isValid; }
 
 private:
     void UpdateRumble();
     void UpdateDiagnosticLEDs();
     void CheckControllers();
     void DisplayPressure() const;
-    void DisplayDesiredGamePiece();
-    void ResetRequests(void);
-    void QueryNT();
+    void UpdateLEDStates();
+    void UpdateCompressorState();
+    void UpdateLEDs(DragonCANdle::AnimationMode desiredAnimation, frc::Color desiredPrimaryColor, frc::Color desiredSecondaryColor);
     DriverFeedback();
     ~DriverFeedback() = default;
 
     bool m_AutonomousEnabled = false;
     bool m_TeleopEnabled = false;
 
-    frc::Color m_oldState = frc::Color::kGhostWhite;
-    frc::Color m_currentState = frc::Color::kBlack;
+    frc::Color m_prevPrimaryColorState = frc::Color::kBlack;
+    frc::Color m_prevSecondaryColorState = frc::Color::kBlack;
+    DragonCANdle::AnimationMode m_prevAnimaiton = DragonCANdle::AnimationMode::OFF;
 
     enum DriverFeedbackStates
     {
         NONE
     };
 
-    DragonLeds *m_LEDStates = DragonLeds::GetInstance();
+    DragonCANdle *m_LEDStates = DragonCANdle::GetInstance();
     int m_controllerCounter = 0;
     int m_rumbleLoopCounter = 0;
     int m_firstloop = true;
 
-    units::time::second_t m_breathingPeriod{1.5};
-    units::time::millisecond_t m_blinkingPeriod{100};
+    units::frequency::hertz_t m_blinkingFrequency = 7.5_Hz;
 
     static DriverFeedback *m_instance;
     RobotStateChanges::ScoringMode m_scoringMode = RobotStateChanges::ScoringMode::FUEL;
-    bool m_driveToIsDone = false;
+
+    bool m_isInDriveTo = false;
+    bool m_climbMode = false;
+    bool m_isValidAutonFile = false;
+    bool m_isIntakeExtended = false;
     ChassisOptionEnums::DriveStateType m_driveStateType = ChassisOptionEnums::DriveStateType::ROBOT_DRIVE;
 };

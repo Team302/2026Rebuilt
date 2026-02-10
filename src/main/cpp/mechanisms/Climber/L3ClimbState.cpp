@@ -50,7 +50,6 @@ void L3ClimbState::Init()
 
 void L3ClimbState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetClimberPositionDegree(m_climberTarget);
 	m_mechanism->GetAlignment()->Set(m_alignmentTarget);
 }
 
@@ -63,7 +62,13 @@ void L3ClimbState::Run()
 	}
 	else
 	{
-		m_mechanism->UpdateTargetClimberPositionDegree(m_climberTarget);
+		units::angle::degree_t currentPitch = m_mechanism->GetPigeonPitch();
+		units::angular_velocity::degrees_per_second_t calculatedAngularVelocity = units::angular_velocity::degrees_per_second_t(m_rotationPID.Calculate(currentPitch, m_climberTarget));
+		auto clampedAngularVelocity = std::clamp(calculatedAngularVelocity, -kMaxVelocity, kMaxVelocity);
+
+		double percentOut = (clampedAngularVelocity / m_mechanism->GetMaxAngularVelocity()).value();
+
+		m_mechanism->UpdateTargetClimberPercentOut(percentOut);
 	}
 }
 

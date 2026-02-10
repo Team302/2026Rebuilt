@@ -93,11 +93,6 @@ private:
     DragonVision *m_vision = DragonVision::GetDragonVision();
 
     /**
-     * Optional quest/goal tracker used by vision logic (may be nullptr until initialized).
-     */
-    DragonQuest *m_quest;
-
-    /**
      * @brief Convert and add vision-based pose measurements to the drivetrain estimator.
      *
      * Responsible for validating detections, applying coordinate transforms, and
@@ -106,7 +101,8 @@ private:
     void AddVisionMeasurements();
 
     /**
-     * @brief True when an initial pose has been successfully set from vision.
+     * @brief Latch that is set true once the robot enters enabled mode.
+     * Prevents recalculating initial pose after the robot has been enabled.
      */
-    bool m_initialPoseSet = false;
+    bool m_hasBeenEnabled = false;
 };
