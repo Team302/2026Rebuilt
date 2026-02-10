@@ -128,8 +128,6 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     // Drive To Depot
     driveToDepot.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                     {
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "SwerveContainer", "CreateRebuiltDriveToCommands1", m_climbModeStatus);
-                                                        
     if (!m_climbModeStatus) {
         return frc2::ProxyCommand(m_driveToDepot.get()).ToPtr();
     } else {
@@ -139,9 +137,6 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     // Drive To Hub
     driveToHub.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                   {
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "SwerveContainer", "CreateRebuiltDriveToCommands2", m_climbModeStatus);
-
-
     if (!m_climbModeStatus) {
         return frc2::ProxyCommand(m_driveToHub.get()).ToPtr();
     } else {
@@ -151,9 +146,6 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     // Drive To Outpost
     driveToOutpost.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                       {
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "SwerveContainer", "CreateRebuiltDriveToCommands3", m_climbModeStatus);
-
-
     if (!m_climbModeStatus) {
         return frc2::ProxyCommand(m_driveToOutpost.get()).ToPtr();
     } else {
