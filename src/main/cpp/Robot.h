@@ -37,13 +37,13 @@ class Robot : public frc::TimedRobot
 public:
     Robot();
     void RobotPeriodic() override;
-    void DisabledInit() override;
     void DisabledPeriodic() override;
     void AutonomousInit() override;
     void AutonomousPeriodic() override;
     void TeleopInit() override;
     void TeleopPeriodic() override;
     void TestInit() override;
+    void TeleopExit() override;
 
 private:
     void InitializeRobot();
@@ -57,7 +57,8 @@ private:
     AutonPreviewer *m_previewer;
     RobotState *m_robotState;
     DragonDataLoggerMgr *m_datalogger;
-    bool isFMSAttached = false;
+    bool m_isFMSAttached = false;
+    bool m_rewindLatch = false;
     DragonVisionPoseEstimatorContainer *m_dragonVisionPoseEstimator;
     DragonQuest *m_quest;
 };

@@ -110,15 +110,6 @@ Robot::Robot()
     InitializeDriveteamFeedback();
 
     m_datalogger = DragonDataLoggerMgr::GetInstance();
-    auto vision = DragonVision::GetDragonVision();
-
-    if (frc::DriverStation::IsFMSAttached())
-    {
-        if (vision != nullptr)
-        {
-            vision->StartRewind();
-        }
-    }
     // auto path = AutonUtils::GetTrajectoryFromPathFile("BlueLeftInside_I"); // load choreo library so we don't get loop overruns during autonperiodic
 }
 /// @brief Called periodically while the robot is running, regardless of mode.
@@ -128,8 +119,8 @@ void Robot::RobotPeriodic()
 {
     frc2::CommandScheduler::GetInstance().Run();
 
-    isFMSAttached = frc::DriverStation::IsFMSAttached();
-    if (!isFMSAttached)
+    m_isFMSAttached = frc::DriverStation::IsFMSAttached();
+    if (!m_isFMSAttached)
     {
         Logger::GetLogger()->PeriodicLog();
     }
@@ -145,20 +136,6 @@ void Robot::RobotPeriodic()
     }
 
     UpdateDriveTeamFeedback();
-}
-
-/// @brief Called once while the robot is disabled.
-void Robot::DisabledInit()
-{
-    if (frc::DriverStation::IsFMSAttached())
-    {
-        auto vision = DragonVision::GetDragonVision();
-        if (vision != nullptr)
-        {
-            vision->SaveRewind(165.0); // Save full buffer (max 165 seconds)
-            vision->StartRewind();
-        }
-    }
 }
 
 /// @brief Called periodically while the robot is disabled.
@@ -182,6 +159,16 @@ void Robot::AutonomousInit()
         m_cyclePrims->Init();
     }
     PeriodicLooper::GetInstance()->AutonRunCurrentState();
+
+    if (m_isFMSAttached && !m_rewindLatch)
+    {
+        auto vision = DragonVision::GetDragonVision();
+        if (vision != nullptr)
+        {
+            vision->StartRewind();
+        }
+        m_rewindLatch = true;
+    }
 }
 
 /// @brief Called periodically while in autonomous mode.
@@ -201,6 +188,16 @@ void Robot::TeleopInit()
 {
     PeriodicLooper::GetInstance()->TeleopRunCurrentState();
     frc2::CommandScheduler::GetInstance().CancelAll();
+
+    if (m_isFMSAttached && !m_rewindLatch)
+    {
+        auto vision = DragonVision::GetDragonVision();
+        if (vision != nullptr)
+        {
+            vision->StartRewind();
+        }
+        m_rewindLatch = true;
+    }
 }
 
 /// @brief Called periodically while in teleop mode.
@@ -212,6 +209,19 @@ void Robot::TeleopPeriodic() { PeriodicLooper::GetInstance()->TeleopRunCurrentSt
 void Robot::TestInit()
 {
     frc2::CommandScheduler::GetInstance().CancelAll();
+}
+
+void Robot::TeleopExit()
+{
+    if (m_isFMSAttached)
+    {
+        auto vision = DragonVision::GetDragonVision();
+        if (vision != nullptr)
+        {
+            vision->SaveRewind(165.0); // Save full buffer (max 165 seconds)
+            vision->StartRewind();
+        }
+    }
 }
 
 /// @brief Initializes all core robot subsystems in the correct order.
