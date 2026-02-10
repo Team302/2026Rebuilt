@@ -21,6 +21,7 @@
 #include "chassis/commands/season_specific_commands/DriveToHub.h"
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "frc2/command/Commands.h"
+#include "frc2/command/DeferredCommand.h"
 #include "frc2/command/ProxyCommand.h"
 #include "frc2/command/button/RobotModeTriggers.h"
 #include "state/RobotState.h"
@@ -124,24 +125,40 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     auto driveToHub = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_HUB);
     auto driveToOutpost = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_OUTPOST);
 
-    driveToDepot.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::Command *
+    // Drive To Depot
+    driveToDepot.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                     {
-                if (m_climbModeStatus) 
-                {
-                    // TODO: Replace with actual Drive To Tower Depot Side Command
-                }
-                return m_driveToDepot.get(); }));
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "SwerveContainer", "CreateRebuiltDriveToCommands1", m_climbModeStatus);
+                                                        
+    if (!m_climbModeStatus) {
+        return frc2::ProxyCommand(m_driveToDepot.get()).ToPtr();
+    } else {
+        return frc2::cmd::None(); // TODO add drive to Tower for Climb mode
+    } }));
 
-    driveToHub.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::Command *
-                                                  { return m_driveToHub.get(); }));
+    // Drive To Hub
+    driveToHub.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
+                                                  {
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "SwerveContainer", "CreateRebuiltDriveToCommands2", m_climbModeStatus);
 
-    driveToOutpost.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::Command *
+
+    if (!m_climbModeStatus) {
+        return frc2::ProxyCommand(m_driveToHub.get()).ToPtr();
+    } else {
+        return frc2::cmd::None(); // TODO add drive to Tower for Climb mode
+    } }));
+
+    // Drive To Outpost
+    driveToOutpost.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                       {
-               if (m_climbModeStatus) 
-               {
-                    // TODO: Replace with actual Drive To Tower Outpost Side Command
-               }
-               return m_driveToOutpost.get(); }));
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "SwerveContainer", "CreateRebuiltDriveToCommands3", m_climbModeStatus);
+
+
+    if (!m_climbModeStatus) {
+        return frc2::ProxyCommand(m_driveToOutpost.get()).ToPtr();
+    } else {
+        return frc2::cmd::None(); // TODO add drive to Tower for Climb mode
+    } }));
 }
 
 //------------------------------------------------------------------
@@ -174,10 +191,13 @@ void SwerveContainer::SetSysIDBinding(TeleopControl *controller)
 ///             game mode transitions or mechanism state updates.
 ///             Currently a placeholder for future implementation.
 //------------------------------------------------------------------
-void SwerveContainer::NotifyStateUpdate(RobotStateChanges::StateChange change, int value)
+void SwerveContainer::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value)
 {
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "SwerveContainer", "NotifyStateUpdate1", m_climbModeStatus);
+
     if (change == RobotStateChanges::StateChange::ClimbModeStatus_Bool)
     {
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "SwerveContainer", "NotifyStateUpdate2", m_climbModeStatus);
         m_climbModeStatus = value;
     }
 }

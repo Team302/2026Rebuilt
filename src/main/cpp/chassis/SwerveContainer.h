@@ -140,7 +140,7 @@ private:
     /// @param[in]  value - The new value associated with the state change
     /// @details    Overrides IRobotStateChangeSubscriber interface method
     //------------------------------------------------------------------
-    void NotifyStateUpdate(RobotStateChanges::StateChange change, int value) override;
+    void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
 
     bool m_climbModeStatus = false;
 };
