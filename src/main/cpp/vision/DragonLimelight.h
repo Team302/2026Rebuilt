@@ -127,13 +127,6 @@ public:
     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER GetCameraIdentifier() { return m_identifier; }
 
     ///-----------------------------------------------------------------------------------
-    /// @brief Request a pose estimate from the Limelight for odometry fusion.
-    /// @param useMegatag2 If true use MegaTag2 based estimate, otherwise use MegaTag1.
-    /// @return optional VisionPose when valid; std::nullopt when unavailable.
-    ///-----------------------------------------------------------------------------------
-    std::optional<VisionPose> EstimatePoseOdometryLimelight(bool useMegatag2);
-
-    ///-----------------------------------------------------------------------------------
     /// @brief Retrieve MegaTag1 (standard) pose estimate.
     /// @return optional VisionPose when tags are sufficient and sigma can be computed.
     ///-----------------------------------------------------------------------------------

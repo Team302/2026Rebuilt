@@ -51,7 +51,7 @@
 
 #include "chassis/ChassisConfigMgr.h"
 #include "frc/RobotBase.h"
-
+#include "frc/RobotState.h"
 #include "utils/PeriodicLooper.h"
 #include "vision/DragonQuest.h"
 #include "vision/DragonVision.h"
@@ -167,7 +167,8 @@ void DragonVisionPoseEstimator::CalculateInitialPose()
  */
 void DragonVisionPoseEstimator::AddVisionMeasurements()
 {
-    if (!frc::RobotBase::IsSimulation())
+
+    if (!frc::RobotBase::IsSimulation() && !frc::RobotState::IsDisabled())
     {
         if (m_vision == nullptr || m_chassis == nullptr)
         {
