@@ -12,31 +12,31 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-#include "chassis/commands/season_specific_commands/DriveToOutpost.h"
+#include "chassis/commands/season_specific_commands/DriveToHub.h"
 #include "auton/NeutralZoneManager.h"
-#include "fielddata/OutpostHelper.h"
+#include "fielddata/HubHelper.h"
 #include "utils/PoseUtils.h"
 
 //------------------------------------------------------------------
-/// @brief      Constructor for DriveToOutpost command
+/// @brief      Constructor for DriveToHub command
 /// @param[in]  chassis - Pointer to the swerve drive subsystem
 /// @details    Initializes the base DriveToPose command with the chassis.
 ///             This command autonomously drives the robot to the nearest
-///             Outpost on the field.
+///             Hub on the field.
 //------------------------------------------------------------------
-DriveToOutpost::DriveToOutpost(subsystems::CommandSwerveDrivetrain *chassis)
+DriveToHub::DriveToHub(subsystems::CommandSwerveDrivetrain *chassis)
     : DriveToPose(chassis)
 {
 }
 
 //------------------------------------------------------------------
-/// @brief      Calculates the target end pose for the Outpost
-/// @return     frc::Pose2d - The target pose at the center of the nearest Outpost
-/// @details    Uses OutpostHelper to determine which Outpost (red or blue) is
+/// @brief      Calculates the target end pose for the Hub
+/// @return     frc::Pose2d - The target pose at the center of the nearest Hub
+/// @details    Uses HubHelper to determine which Hub (red or blue) is
 ///             closest to the robot and calculates the center pose of that
-///             Outpost. Returns a default pose if OutpostHelper is unavailable.
+///             Hub. Returns a default pose if HubHelper is unavailable.
 //------------------------------------------------------------------
-frc::Pose2d DriveToOutpost::GetEndPose()
+frc::Pose2d DriveToHub::GetEndPose()
 {
     frc::Pose2d endPose;
     if (NeutralZoneManager::GetInstance()->IsInNeutralZone())
@@ -48,16 +48,16 @@ frc::Pose2d DriveToOutpost::GetEndPose()
         }
         return endPose;
     }
-    auto outpostHelper = OutpostHelper::GetInstance();
-    if (outpostHelper != nullptr)
+    auto hubHelper = HubHelper::GetInstance();
+    if (hubHelper != nullptr)
     {
-        return outpostHelper->CalcOutpostPose();
+        return hubHelper->CalcHubPose();
     }
     return endPose;
 }
 
 //------------------------------------------------------------------
-/// @brief Checks if the DriveToOutpost command has finished execution.
+/// @brief Checks if the DriveToHub command has finished execution.
 ///
 /// @return true if the end pose is at the origin or if the base class's IsFinished
 ///         condition is met, false otherwise.
@@ -67,7 +67,7 @@ frc::Pose2d DriveToOutpost::GetEndPose()
 ///          target position) so we stop immediately.  Otherwise, it delegates to the base class's
 ///          IsFinished() method to determine completion.
 //------------------------------------------------------------------
-bool DriveToOutpost::IsFinished()
+bool DriveToHub::IsFinished()
 {
     auto endPose = GetEndPose();
     if (PoseUtils::IsPoseAtOrigin(endPose, units::length::centimeter_t{1.0}))
