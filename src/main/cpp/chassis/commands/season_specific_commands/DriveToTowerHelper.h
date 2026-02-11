@@ -84,4 +84,9 @@ private:
 
     /// @brief Pointer to the field constants singleton
     FieldConstants *m_fieldConstants;
+
+    units::length::inch_t m_towerDepotXOffset{12.0};
+    units::length::inch_t m_towerDepotYOffset{12.0};
+    units::length::inch_t m_towerOutpostXOffset{12.0};
+    units::length::inch_t m_towerOutpostYOffset{12.0};
 };

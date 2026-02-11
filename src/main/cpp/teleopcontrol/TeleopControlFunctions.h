@@ -46,8 +46,7 @@ public:
         DRIVE_TO_DEPOT,
         DRIVE_TO_HUB,
         DRIVE_TO_OUTPOST,
-        DRIVE_TO_TOWER_DEPOT,
-        DRIVE_TO_TOWER_OUTPOST,
+        DRIVE_TO_TOWER,
 
         // Mechanisms specific
         // Intake

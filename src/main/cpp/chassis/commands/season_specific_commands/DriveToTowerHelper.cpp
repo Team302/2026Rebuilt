@@ -13,7 +13,7 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include "chassis/commands/season_specific_commands/DriveToTowerHelper.h"
+#include "DriveToTowerHelper.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "frc/geometry/Pose2d.h"
 #include "utils/PoseUtils.h"
@@ -61,8 +61,21 @@ DriveToTowerHelper::DriveToTowerHelper() : m_chassis(ChassisConfigMgr::GetInstan
 ///             of the left, right, and neutral side poses. Uses the neutral
 ///             side's rotation for the resulting pose orientation.
 //------------------------------------------------------------------
-frc::Pose2d
-DriveToTowerHelper::CalcTowerPose() const
+bool DriveToTowerHelper::IsNearestTowerRed() const
+{
+    if (m_chassis == nullptr || m_fieldConstants == nullptr)
+    {
+        return false;
+    }
+
+    auto currentPose = m_chassis->GetPose();
+    auto nearestTower = PoseUtils::GetClosestFieldElement(currentPose,
+                                                          FieldConstants::FIELD_ELEMENT::RED_TOWER_DEPOT_STICK,
+                                                          FieldConstants::FIELD_ELEMENT::BLUE_TOWER_DEPOT_STICK);
+    return nearestTower == FieldConstants::FIELD_ELEMENT::RED_TOWER_DEPOT_STICK;
+}
+
+frc::Pose2d DriveToTowerHelper::CalcTowerPose() const
 {
     if (m_chassis == nullptr || m_fieldConstants == nullptr)
     {
@@ -74,29 +87,28 @@ DriveToTowerHelper::CalcTowerPose() const
                                          : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER);
     if (IsNearestTowerRed())
     {
-        auto closestFieldElement = PoseUtils::GetClosestFieldElement(neutralPose, FieldConstants::FIELD_ELEMENT::RED_DEPOT_LEFT_SIDE, FieldConstants::FIELD_ELEMENT::RED_OUTPOST_CENTER);
-        if (closestFieldElement == FieldConstants::FIELD_ELEMENT::RED_DEPOT_LEFT_SIDE)
+        auto closestFieldElement = PoseUtils::GetClosestFieldElement(neutralPose, FieldConstants::FIELD_ELEMENT::RED_TOWER_DEPOT_STICK, FieldConstants::FIELD_ELEMENT::RED_TOWER_DEPOT_STICK);
+        if (closestFieldElement == FieldConstants::FIELD_ELEMENT::RED_TOWER_DEPOT_STICK)
         {
-            // TODO: change the 12 to the actual thing
-            return frc::Pose2d(neutralPose.X(), neutralPose.Y() - units::length::inch_t(12.0), 0_deg);
+            return frc::Pose2d(neutralPose.X() - m_towerDepotXOffset, neutralPose.Y() - m_towerDepotYOffset, units::angle::degree_t(0.0));
         }
-        else
+        else if (closestFieldElement == FieldConstants::FIELD_ELEMENT::RED_TOWER_OUTPOST_STICK)
         {
-            return frc::Pose2d(neutralPose.X(), neutralPose.Y() + units::length::inch_t(12.0), 0_deg);
+            return frc::Pose2d(neutralPose.X() + m_towerOutpostXOffset, neutralPose.Y() + m_towerOutpostYOffset, units::angle::degree_t(0.0));
         }
 
         // equasion to position robot correctly with offset
     }
     else
     {
-        auto closestFieldElement = PoseUtils::GetClosestFieldElement(neutralPose, FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_LEFT_SIDE, FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_CENTER);
-        if (closestFieldElement == FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_LEFT_SIDE)
+        auto closestFieldElement = PoseUtils::GetClosestFieldElement(neutralPose, FieldConstants::FIELD_ELEMENT::BLUE_TOWER_DEPOT_STICK, FieldConstants::FIELD_ELEMENT::BLUE_TOWER_DEPOT_STICK);
+        if (closestFieldElement == FieldConstants::FIELD_ELEMENT::BLUE_TOWER_DEPOT_STICK)
         {
-            return frc::Pose2d(neutralPose.X(), neutralPose.Y() - units::length::inch_t(12.0), 180_deg);
+            return frc::Pose2d(neutralPose.X() - m_towerDepotXOffset, neutralPose.Y() - m_towerDepotYOffset, units::angle::degree_t(0.0));
         }
-        else
+        else if (closestFieldElement == FieldConstants::FIELD_ELEMENT::BLUE_TOWER_OUTPOST_STICK)
         {
-            return frc::Pose2d(neutralPose.X(), neutralPose.Y() + units::length::inch_t(12.0), 180_deg);
+            return frc::Pose2d(neutralPose.X() + m_towerOutpostXOffset, neutralPose.Y() + m_towerOutpostYOffset, units::angle::degree_t(0.0));
         }
     }
 }

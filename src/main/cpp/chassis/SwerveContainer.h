@@ -21,6 +21,7 @@
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"
 #include "chassis/commands/season_specific_commands/DriveToHub.h"
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
+#include "chassis/commands/season_specific_commands/DriveToTower.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "chassis/generated/Telemetry.h"
 #include "frc2/command/CommandPtr.h"
@@ -146,8 +147,6 @@ private:
     /// @details    Overrides IRobotStateChangeSubscriber interface method
     //------------------------------------------------------------------
     void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
-
-    std::unique_ptr<DriveToTower> m_driveToTower;
 
     bool m_climbModeStatus = false;
 };

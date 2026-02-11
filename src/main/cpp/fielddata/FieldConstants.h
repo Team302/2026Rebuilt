@@ -54,18 +54,18 @@ public:
         RED_TRENCH_ALLIANCE_OUTPOST,
         // 2026 - Blue Calculated Positions
         BLUE_HUB_CENTER,
-        BLUE_TOWER_LEFT_STICK,
-        BLUE_TOWER_RIGHT_STICK,
+        BLUE_TOWER_DEPOT_STICK,
+        BLUE_TOWER_OUTPOST_STICK,
         BLUE_DEPOT_NEUTRAL_SIDE,
         BLUE_DEPOT_LEFT_SIDE,
         BLUE_DEPOT_RIGHT_SIDE,
         BLUE_DEPOT_PASSING_TARGET,
         BLUE_OUTPOST_PASSING_TARGET,
 
-                // 2026 - Red Calculated Positions
+        // 2026 - Red Calculated Positions
         RED_HUB_CENTER,
-        RED_TOWER_LEFT_STICK,
-        RED_TOWER_RIGHT_STICK,
+        RED_TOWER_DEPOT_STICK,
+        RED_TOWER_OUTPOST_STICK,
         RED_DEPOT_NEUTRAL_SIDE,
         RED_DEPOT_LEFT_SIDE,
         RED_DEPOT_RIGHT_SIDE,
@@ -73,6 +73,7 @@ public:
         RED_OUTPOST_PASSING_TARGET
 
     };
+    // right is outpost left is depot
 
     frc::Pose3d GetFieldElementPose(FIELD_ELEMENT element);
     frc::Pose2d GetFieldElementPose2d(FIELD_ELEMENT element);

@@ -31,8 +31,8 @@ enum class FIELD_OFFSET_ITEMS
     TOWER_OUTPOST_X, ///< X-coordinate offset of the outpost
     TOWER_DEPOT_X,   ///< X-coordinate offset of the depot neutral side
     TOWER_OUTPOST_Y, ///< Y-coordinate offset of the outpost
-    TOWER_DEPOT_Y ,   ///< Y-coordinate offset of the depot neutral side
-    HUB_X 
+    TOWER_DEPOT_Y,   ///< Y-coordinate offset of the depot neutral side
+    HUB_X
 
 };
 
@@ -124,6 +124,6 @@ private:
     units::length::meter_t m_blueTowerOutpostY;
 
     units::length::meter_t m_blueTowerDepotY;
-    
+
     static constexpr units::length::meter_t HUB_OFFSET = 2.0_m;
 };
