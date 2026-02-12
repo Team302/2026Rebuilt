@@ -2,16 +2,32 @@
 <!DOCTYPE auton SYSTEM "auton.dtd">
 <auton>
 
+<primitive id = "DRIVE_STOP_MECH"
+launcherState = "STATE_LAUNCH"/>
+
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueLDepotOutpost_A"
-time = "4.0"/>
+time = "4.0"
+intakeState = "STATE_INTAKE">
+<zone filename = "BlueLaunchZone.xml"/>
+</primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueLDepotOutpost_B"
-time = "4.0"/>
+time = "4.0"
+intakeState = "STATE_INTAKE">
+<zone filename = "BlueLaunchZone.xml"/>
+</primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueLDepotOutpost_C"
-time = "4.0"/>
+time = "4.5"
+intakeState = "STATE_INTAKE"/>
+
+<primitive id = "DRIVE_STOP_MECH">
+<zone filename = "BlueClimbingZone.xml"/>
+</primitive>
+
+
 
 </auton>
