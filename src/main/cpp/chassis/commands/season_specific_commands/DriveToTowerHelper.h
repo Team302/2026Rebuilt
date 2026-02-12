@@ -19,6 +19,7 @@
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/geometry/Pose2d.h"
+#include "frc/DriverStation.h"
 
 //====================================================================================================================================================
 /// @class DRiveToTowerHelper
@@ -49,6 +50,8 @@ public:
     ///             coordinates of the left, right, and neutral side poses.
     //------------------------------------------------------------------
     frc::Pose2d CalcTowerPose() const;
+
+    units::length::meter_t CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose);
 
 private:
     //------------------------------------------------------------------
@@ -89,4 +92,6 @@ private:
     units::length::inch_t m_towerDepotYOffset{12.0};
     units::length::inch_t m_towerOutpostXOffset{12.0};
     units::length::inch_t m_towerOutpostYOffset{12.0};
+
+    frc::DriverStation::Alliance m_allianceColor;
 };

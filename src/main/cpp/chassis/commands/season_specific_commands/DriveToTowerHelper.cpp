@@ -18,6 +18,7 @@
 #include "frc/geometry/Pose2d.h"
 #include "utils/PoseUtils.h"
 #include "utils/FMSData.h"
+#include "auton/AllianceZoneManager.h"
 
 using frc::DriverStation;
 DriveToTowerHelper *DriveToTowerHelper::m_instance = nullptr;
@@ -43,15 +44,8 @@ DriveToTowerHelper *DriveToTowerHelper::GetInstance()
 DriveToTowerHelper::DriveToTowerHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
                                            m_fieldConstants(FieldConstants::GetInstance())
 {
-    FMSData::GetAllianceColor() == DriverStation::Alliance::kRed ? std::string("Red") : std::string("Blue");
+    m_allianceColor = FMSData::GetAllianceColor();
 }
-
-//------------------------------------------------------------------
-/// @brief      Determines which Tower (red or blue) is nearest to the robot
-/// @return     bool - true if the red Tower is nearest, false if blue Tower is nearest
-/// @details    Calculates the distance from the robot's current pose to both
-///             the blue and red Tower neutral sides, then compares them
-//------------------------------------------------------------------
 
 //------------------------------------------------------------------
 /// @brief      Calculates the center pose of the nearest Tower
@@ -61,19 +55,6 @@ DriveToTowerHelper::DriveToTowerHelper() : m_chassis(ChassisConfigMgr::GetInstan
 ///             of the left, right, and neutral side poses. Uses the neutral
 ///             side's rotation for the resulting pose orientation.
 //------------------------------------------------------------------
-bool DriveToTowerHelper::IsNearestTowerRed() const
-{
-    if (m_chassis == nullptr || m_fieldConstants == nullptr)
-    {
-        return false;
-    }
-
-    auto currentPose = m_chassis->GetPose();
-    auto nearestTower = PoseUtils::GetClosestFieldElement(currentPose,
-                                                          FieldConstants::FIELD_ELEMENT::RED_TOWER_DEPOT_STICK,
-                                                          FieldConstants::FIELD_ELEMENT::BLUE_TOWER_DEPOT_STICK);
-    return nearestTower == FieldConstants::FIELD_ELEMENT::RED_TOWER_DEPOT_STICK;
-}
 
 frc::Pose2d DriveToTowerHelper::CalcTowerPose() const
 {
@@ -111,13 +92,43 @@ frc::Pose2d DriveToTowerHelper::CalcTowerPose() const
             return frc::Pose2d(neutralPose.X() + m_towerOutpostXOffset, neutralPose.Y() + m_towerOutpostYOffset, units::angle::degree_t(0.0));
         }
     }
+
+    if (AllianceZoneManager::GetInstance()->IsInAllianceZone())
+        ;
+    {
+        if (DriverStation::GetAlliance() == DriverStation::Alliance::kRed)
+        {
+            auto redDepotPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_DEPOT_STICK);
+            auto redOutpostPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_OUTPOST_STICK);
+            auto distanceToDepot = CalcDistanceToObject(FieldConstants::FIELD_ELEMENT::RED_TOWER_DEPOT_STICK, neutralPose);
+            auto distanceToOutpost = CalcDistanceToObject(FieldConstants::FIELD_ELEMENT::RED_TOWER_OUTPOST_STICK, neutralPose);
+            if (distanceToDepot < distanceToOutpost)
+            {
+                return frc::Pose2d(redDepotPose.X() - m_towerDepotXOffset, redDepotPose.Y() - m_towerDepotYOffset, units::angle::degree_t(0.0));
+            }
+            else
+            {
+                return frc::Pose2d(redOutpostPose.X() + m_towerOutpostXOffset, redOutpostPose.Y() + m_towerOutpostYOffset, units::angle::degree_t(0.0));
+            }
+        }
+        else
+        {
+            auto blueDepotPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_DEPOT_STICK);
+            return frc::Pose2d(blueDepotPose.X() - m_towerDepotXOffset, blueDepotPose.Y() - m_towerDepotYOffset, units::angle::degree_t(0.0));
+        }
+        else
+        {
+            return frc::Pose2d(blueOutpostPose.X() + m_towerOutpostXOffset, blueOutpostPose.Y() + m_towerOutpostYOffset, units::angle::degree_t(0.0));
+        }
+    }
+
+    // return frc::Pose2d(neutralPose.X(), neutralPose.Y(), isNearestTowerRed ? 0_deg : 180_deg);
+
+    // neutralPose X accounts for half the robot on the intake side + bumpers + agitator/intake being extended
+    // neutralPose Y is center of the depot - no need to average with the side values
+    // rotation is based on the color
 }
 
-// return frc::Pose2d(neutralPose.X(), neutralPose.Y(), isNearestTowerRed ? 0_deg : 180_deg);
-
-// neutralPose X accounts for half the robot on the intake side + bumpers + agitator/intake being extended
-// neutralPose Y is center of the depot - no need to average with the side values
-// rotation is based on the color
 //------------------------------------------------------------------
 /// @brief      Calculates the distance from a given pose to a field element
 /// @param[in]  element - The field element to measure distance to
@@ -127,7 +138,7 @@ frc::Pose2d DriveToTowerHelper::CalcTowerPose() const
 ///             the Euclidean distance between them
 //------------------------------------------------------------------
 units::length::meter_t DriveToTowerHelper::CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element,
-                                                                frc::Pose2d currentPose) const
+                                                                frc::Pose2d currentPose)
 {
     if (m_fieldConstants == nullptr)
     {
