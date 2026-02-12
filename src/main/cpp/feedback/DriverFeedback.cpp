@@ -28,6 +28,11 @@
 #include "vision/DragonQuest.h"
 #include "vision/DragonVision.h"
 
+// Season Specific Includes
+#include "configs/MechanismConfigMgr.h"
+#include "mechanisms/Intake/Intake.h"
+#include "mechanisms/Launcher/Launcher.h"
+
 using frc::DriverStation;
 
 DriverFeedback *DriverFeedback::m_instance = nullptr;
@@ -41,12 +46,39 @@ DriverFeedback *DriverFeedback::GetInstance()
     return DriverFeedback::m_instance;
 }
 
+DriverFeedback::DriverFeedback() : IRobotStateChangeSubscriber()
+{
+
+    RobotState *RobotStates = RobotState::GetInstance();
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DesiredScoringMode_Int);
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveToFieldElement_Bool);
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveStateType_Int);
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
+
+    m_LEDStates->SetBlinkingFrequency(m_blinkingFrequency);
+}
+void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, int value)
+{
+    if (RobotStateChanges::StateChange::DesiredScoringMode_Int == change)
+        m_scoringMode = static_cast<RobotStateChanges::ScoringMode>(value);
+    else if (RobotStateChanges::StateChange::DriveStateType_Int == change)
+        m_driveStateType = static_cast<ChassisOptionEnums::DriveStateType>(value);
+}
+
+void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value)
+{
+    if (RobotStateChanges::StateChange::DriveToFieldElement_Bool == change)
+        m_isInDriveTo = value;
+    else if (RobotStateChanges::StateChange::ClimbModeStatus_Bool == change)
+        m_climbMode = value;
+}
+
 void DriverFeedback::UpdateFeedback()
 {
     UpdateLEDStates();
     UpdateDiagnosticLEDs();
     CheckControllers();
-    m_LEDStates->commitLedData();
+    m_LEDStates->Periodic();
 }
 
 void DriverFeedback::UpdateRumble()
@@ -55,60 +87,205 @@ void DriverFeedback::UpdateRumble()
 
 void DriverFeedback::UpdateLEDStates()
 {
+    DragonCANdle::AnimationMode desiredAnimation = m_prevAnimaiton;
+    frc::Color desiredPrimaryColor = m_prevPrimaryColorState;
+    frc::Color desiredSecondaryColor = m_prevSecondaryColorState;
+
+    auto currentLauncherState = Launcher::STATE_OFF;
+    bool isInLaunchZone = false;
+    auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
+    if (config != nullptr)
+    {
+        auto launcherStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::LAUNCHER);
+        auto launcherMgr = launcherStateMgr != nullptr ? dynamic_cast<Launcher *>(launcherStateMgr) : nullptr;
+
+        if (launcherMgr != nullptr)
+        {
+            currentLauncherState = static_cast<Launcher::STATE_NAMES>(launcherMgr->GetCurrentState());
+            isInLaunchZone = launcherMgr->IsInLaunchZone();
+        }
+    }
+
     if (frc::DriverStation::IsDisabled())
     {
-        m_LEDStates->SetChaserPattern(frc::Color::kAqua);
+        desiredAnimation = DragonCANdle::AnimationMode::CHASER;
+        desiredPrimaryColor = m_isValidAutonFile ? frc::Color::kDarkGreen : frc::Color::kRed;
     }
     else
     {
+        if (m_isInDriveTo)
+        {
+            desiredAnimation = DragonCANdle::AnimationMode::RAINBOW;
+        }
+        else if (m_climbMode)
+        {
+            desiredPrimaryColor = frc::Color::kCrimson;
+
+            if (m_isIntakeExtended)
+            {
+                desiredAnimation = DragonCANdle::AnimationMode::BLINKING;
+            }
+            else
+            {
+                desiredAnimation = DragonCANdle::AnimationMode::SOLID;
+            }
+        }
+        else
+        {
+            switch (currentLauncherState)
+            {
+            case Launcher::STATE_OFF:
+                desiredPrimaryColor = frc::Color::kBlack;
+                desiredAnimation = DragonCANdle::AnimationMode::SOLID;
+                break;
+
+            case Launcher::STATE_INITIALIZE:
+                desiredPrimaryColor = frc::Color::kGreen;
+                desiredAnimation = DragonCANdle::AnimationMode::CLOSING_IN;
+                break;
+
+            case Launcher::STATE_IDLE:
+            case Launcher::STATE_CLIMB:
+            case Launcher::STATE_EMPTY_HOPPER:
+            case Launcher::STATE_LAUNCHER_TUNING:
+            case Launcher::STATE_MANUAL_LAUNCH:
+                desiredPrimaryColor = frc::Color::kGreen;
+                desiredAnimation = DragonCANdle::AnimationMode::SOLID;
+                break;
+
+            case Launcher::STATE_PREPARE_TO_LAUNCH:
+                if (!isInLaunchZone)
+                {
+                    desiredPrimaryColor = frc::Color::kYellow;
+                    desiredSecondaryColor = frc::Color::kCyan;
+                    desiredAnimation = DragonCANdle::AnimationMode::ALTERNATING;
+                }
+                else
+                {
+                    desiredPrimaryColor = frc::Color::kYellow;
+                    desiredAnimation = DragonCANdle::AnimationMode::CLOSING_IN;
+                }
+                break;
+
+            case Launcher::STATE_LAUNCH:
+                desiredPrimaryColor = frc::Color::kGreen;
+                desiredAnimation = DragonCANdle::AnimationMode::BREATHING;
+                break;
+            }
+        }
     }
-    if (m_oldState != m_currentState)
+
+    UpdateLEDs(desiredAnimation, desiredPrimaryColor, desiredSecondaryColor);
+}
+
+void DriverFeedback::UpdateLEDs(DragonCANdle::AnimationMode desiredAnimation, frc::Color desiredPrimaryColor, frc::Color desiredSecondaryColor)
+{
+    if (desiredAnimation != m_prevAnimaiton || desiredPrimaryColor != m_prevPrimaryColorState || desiredSecondaryColor != m_prevSecondaryColorState)
     {
-        m_LEDStates->ResetVariables();
+        switch (desiredAnimation)
+        {
+        case DragonCANdle::AnimationMode::SOLID:
+            m_LEDStates->SetSolidColor(desiredPrimaryColor);
+            m_LEDStates->SetAnimation(desiredAnimation);
+            break;
+
+        case DragonCANdle::AnimationMode::ALTERNATING:
+            m_LEDStates->SetAlternatingColors(desiredPrimaryColor, desiredSecondaryColor);
+            m_LEDStates->SetAnimation(desiredAnimation);
+            break;
+
+        case DragonCANdle::AnimationMode::RAINBOW:
+            m_LEDStates->SetAnimation(desiredAnimation);
+            break;
+
+        case DragonCANdle::AnimationMode::BREATHING:
+            m_LEDStates->SetSolidColor(desiredPrimaryColor);
+            m_LEDStates->SetAnimation(desiredAnimation);
+            break;
+
+        case DragonCANdle::AnimationMode::BLINKING:
+            m_LEDStates->SetSolidColor(desiredPrimaryColor);
+            m_LEDStates->SetAnimation(desiredAnimation);
+            break;
+
+        case DragonCANdle::AnimationMode::CHASER:
+            m_LEDStates->SetSolidColor(desiredPrimaryColor);
+            m_LEDStates->SetAnimation(desiredAnimation);
+            break;
+
+        case DragonCANdle::AnimationMode::CLOSING_IN:
+            m_LEDStates->SetSolidColor(desiredPrimaryColor);
+            m_LEDStates->SetAnimation(desiredAnimation);
+            break;
+
+        default:
+            m_LEDStates->TurnOff();
+            break;
+        }
+        m_prevAnimaiton = desiredAnimation;
+        m_prevPrimaryColorState = desiredPrimaryColor;
+        m_prevSecondaryColorState = desiredSecondaryColor;
     }
 }
 
 void DriverFeedback::UpdateDiagnosticLEDs()
 {
     bool questStatus = false;
-    bool ll1Status = false;
+    bool backLeftLL = false;
+    bool backRightLL = false;
+    bool climberLL = false;
+
+    bool dataLoggerConnected = false;
+
+    bool hoodZeroSwitch = false;
+    bool turretZero = false;
+    bool turretEnd = false;
 
     auto dragonVision = DragonVision::GetDragonVision();
     if (dragonVision != nullptr)
     {
         auto limelightRunning = dragonVision->HealthCheckAllLimelights();
-        ll1Status = limelightRunning.empty() ? false : limelightRunning[0];
+        if (limelightRunning.size() == 3)
+        {
+            backLeftLL = limelightRunning[0];
+            backRightLL = limelightRunning[1];
+            climberLL = limelightRunning[2];
+        }
+
         questStatus = dragonVision->HealthCheckQuest();
+
+        m_LEDStates->SetQuestStatus(questStatus);
+        m_LEDStates->SetLimelightStatuses(backLeftLL, backRightLL, climberLL);
     }
 
-    m_LEDStates->DiagnosticPattern(FMSData::GetAllianceColor(), questStatus, ll1Status);
-}
+    // Add Data Logger Connection Status dataLoggerConnected = ...
+    m_LEDStates->SetDataLoggerStatus(dataLoggerConnected);
 
-void DriverFeedback::ResetRequests(void)
-{
-}
+    auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
+    if (config != nullptr)
+    {
+        auto launcherStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::LAUNCHER);
+        auto intakeStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::INTAKE);
 
-DriverFeedback::DriverFeedback() : IRobotStateChangeSubscriber()
-{
+        auto launcherMgr = launcherStateMgr != nullptr ? dynamic_cast<Launcher *>(launcherStateMgr) : nullptr;
+        auto intakeMgr = intakeStateMgr != nullptr ? dynamic_cast<Intake *>(intakeStateMgr) : nullptr;
 
-    RobotState *RobotStates = RobotState::GetInstance();
-    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DesiredScoringMode_Int);
-    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveToFieldElementIsDone_Bool);
-    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveStateType_Int);
-}
-void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, int value)
-{
-    if (RobotStateChanges::StateChange::DesiredScoringMode_Int == change)
-        m_scoringMode = static_cast<RobotStateChanges::ScoringMode>(value);
+        if (launcherMgr != nullptr)
+        {
+            hoodZeroSwitch = launcherMgr->GetHood()->GetReverseLimit().GetValue().value;
+            turretZero = launcherMgr->GetTurret()->GetReverseLimit().GetValue().value;
+            turretEnd = launcherMgr->GetTurret()->GetForwardLimit().GetValue().value;
+        }
 
-    else if (RobotStateChanges::StateChange::DriveStateType_Int == change)
-        m_driveStateType = static_cast<ChassisOptionEnums::DriveStateType>(value);
-}
-
-void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value)
-{
-    if (RobotStateChanges::StateChange::DriveToFieldElementIsDone_Bool == change)
-        m_driveToIsDone = value;
+        if (intakeMgr != nullptr)
+        {
+            m_isIntakeExtended = intakeMgr->IsIntakeExtended();
+        }
+        m_LEDStates->SetIntakeSensor(m_isIntakeExtended);
+        m_LEDStates->SetHoodSwitch(hoodZeroSwitch);
+        m_LEDStates->SetTurretZero(turretZero);
+        m_LEDStates->SetTurretEnd(turretEnd);
+    }
 }
 
 void DriverFeedback::CheckControllers()
