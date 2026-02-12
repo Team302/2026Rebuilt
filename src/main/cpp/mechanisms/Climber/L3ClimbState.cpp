@@ -50,13 +50,26 @@ void L3ClimbState::Init()
 
 void L3ClimbState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetClimberPositionDegree(m_climberTarget);
 	m_mechanism->GetAlignment()->Set(m_alignmentTarget);
 }
 
 void L3ClimbState::Run()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("L3ClimbState"), string("Run"));
+	double manualClimberPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::CLIMB_MANUAL_ROTATE_UP) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::CLIMB_MANUAL_ROTATE_DOWN);
+	if (manualClimberPercent > .075)
+	{
+		m_mechanism->ManualClimb(m_climberTarget, manualClimberPercent);
+	}
+	else
+	{
+		units::angle::degree_t currentPitch = m_mechanism->GetPigeonPitch();
+		units::angular_velocity::degrees_per_second_t calculatedAngularVelocity = units::angular_velocity::degrees_per_second_t(m_rotationPID.Calculate(currentPitch, m_climberTarget));
+		auto clampedAngularVelocity = std::clamp(calculatedAngularVelocity, -kMaxVelocity, kMaxVelocity);
+
+		double percentOut = (clampedAngularVelocity / m_mechanism->GetMaxAngularVelocity()).value();
+
+		m_mechanism->UpdateTargetClimberPercentOut(percentOut);
+	}
 }
 
 void L3ClimbState::Exit()
@@ -75,6 +88,5 @@ bool L3ClimbState::AtTarget()
 bool L3ClimbState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return false;
-	// return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXAMPLE_MECH_FORWARD));
+	return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LEVEL3_CLIMB));
 }

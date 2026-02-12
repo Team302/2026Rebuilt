@@ -13,6 +13,7 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
+#include "auton/NeutralZoneManager.h"
 #include "fielddata/OutpostHelper.h"
 #include "utils/PoseUtils.h"
 
@@ -38,10 +39,19 @@ DriveToOutpost::DriveToOutpost(subsystems::CommandSwerveDrivetrain *chassis)
 frc::Pose2d DriveToOutpost::GetEndPose()
 {
     frc::Pose2d endPose;
+    if (NeutralZoneManager::GetInstance()->IsInNeutralZone())
+    {
+        auto chassis = GetChassis();
+        if (chassis != nullptr)
+        {
+            return chassis->GetPose();
+        }
+        return endPose;
+    }
     auto outpostHelper = OutpostHelper::GetInstance();
     if (outpostHelper != nullptr)
     {
-        endPose = outpostHelper->CalcOutpostPose();
+        return outpostHelper->CalcOutpostPose();
     }
     return endPose;
 }

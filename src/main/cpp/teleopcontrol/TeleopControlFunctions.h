@@ -26,6 +26,7 @@ class TeleopControlFunctions
 public:
     enum FUNCTION
     {
+        // General Drive Commands
         ROBOT_ORIENTED_DRIVE,
         HOLONOMIC_DRIVE_FORWARD,
         HOLONOMIC_DRIVE_ROTATE,
@@ -39,19 +40,22 @@ public:
         SYSID_QUASISTATICREVERSE,
         SYSID_DYNAMICFORWARD,
         SYSID_DYNAMICREVERSE,
-        DRIVE_TO_DEPOT,
-        DRIVE_TO_OUTPOST,
-
-        // tip correction controls
         TIPCORRECTION_TOGGLE,
 
-        // Mechanisms specific
+        // Season Specific Drive Commands
+        DRIVE_TO_DEPOT,
+        DRIVE_TO_HUB,
+        DRIVE_TO_OUTPOST,
+        DRIVE_TO_TOWER_LEFT,
+        DRIVE_TO_TOWER_RIGHT,
 
+        // Mechanisms specific
         // Intake
         INTAKE,
         EXPEL,
         INTAKE_OUT,
         INTAKE_IN,
+
         // Climber
         CLIMB_MODE,
         LEVEL1_CLIMB,
@@ -64,16 +68,18 @@ public:
         // LAUNCHER
         LAUNCHER_OFF,
         LAUNCH,
+        LAUNCH_OVERRIDE,
+        MANUAL_LAUNCH,
 
-        // VIRTUAL TARGET
-        UPDATE_VIRTUAL_TARGET_OFFSET_UP,
-        UPDATE_VIRTUAL_TARGET_OFFSET_DOWN,
-        UPDATE_VIRTUAL_TARGET_OFFSET_LEFT,
-        UPDATE_VIRTUAL_TARGET_OFFSET_RIGHT,
-        UPDATE_VIRTUAL_LEFT_PASSING_TARGET_X,
-        UPDATE_VIRTUAL_RIGHT_PASSING_TARGET_Y,
-        UPDATE_VIRTUAL_LEFT_PASSING_TARGET_Y,
-        UPDATE_VIRTUAL_RIGHT_PASSING_TARGET_X
+        // TARGET OFFSETS
+        UPDATE_TARGET_OFFSET_UP,
+        UPDATE_TARGET_OFFSET_DOWN,
+        UPDATE_TARGET_OFFSET_LEFT,
+        UPDATE_TARGET_OFFSET_RIGHT,
+        UPDATE_DEPOT_PASSING_TARGET_X,
+        UPDATE_DEPOT_PASSING_TARGET_Y,
+        UPDATE_OUTPOST_PASSING_TARGET_X,
+        UPDATE_OUTPOST_PASSING_TARGET_Y
 
     };
 };

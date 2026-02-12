@@ -19,6 +19,7 @@
 
 #include "chassis/commands/TrajectoryDrive.h"
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"
+#include "chassis/commands/season_specific_commands/DriveToHub.h"
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "chassis/generated/Telemetry.h"
@@ -42,7 +43,7 @@
 /// - Providing access to trajectory drive commands for autonomous routines
 /// - Supporting system identification (SysID) for drivetrain characterization
 //====================================================================================================================================================
-class SwerveContainer : IRobotStateChangeSubscriber
+class SwerveContainer : public IRobotStateChangeSubscriber
 {
 public:
     //------------------------------------------------------------------
@@ -57,6 +58,7 @@ public:
     //------------------------------------------------------------------
     TrajectoryDrive *GetTrajectoryDriveCommand() { return m_trajectoryDrive.get(); }
     DriveToDepot *GetDriveToDepotCommand() { return m_driveToDepot.get(); }
+    DriveToHub *GetDriveToHubCommand() { return m_driveToHub.get(); }
     DriveToOutpost *GetDriveToOutpostCommand() { return m_driveToOutpost.get(); }
 
 private:
@@ -99,6 +101,9 @@ private:
     /// @brief Drive to depot command for season-specific autonomous navigation
     std::unique_ptr<DriveToDepot> m_driveToDepot;
 
+    /// @brief Drive to hub command for season-specific autonomous navigation
+    std::unique_ptr<DriveToHub> m_driveToHub;
+
     /// @brief Drive to outpost command for season-specific autonomous navigation
     std::unique_ptr<DriveToOutpost> m_driveToOutpost;
 
@@ -135,5 +140,7 @@ private:
     /// @param[in]  value - The new value associated with the state change
     /// @details    Overrides IRobotStateChangeSubscriber interface method
     //------------------------------------------------------------------
-    void NotifyStateUpdate(RobotStateChanges::StateChange change, int value) override;
+    void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
+
+    bool m_climbModeStatus = false;
 };

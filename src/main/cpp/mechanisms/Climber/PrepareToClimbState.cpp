@@ -50,7 +50,7 @@ void PrepareToClimbState::Init()
 
 void PrepareToClimbState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetClimberPositionDegree(m_climberTarget);
+	m_mechanism->UpdateTargetClimberPercentOut(m_climberTarget);
 	m_mechanism->GetExtender()->Set(m_extenderTarget);
 	m_mechanism->GetAlignment()->Set(m_alignmentTarget);
 }
@@ -76,6 +76,5 @@ bool PrepareToClimbState::AtTarget()
 bool PrepareToClimbState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return false;
-	// return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXAMPLE_MECH_FORWARD));
+	return (m_mechanism->IsAllowedToClimb());
 }

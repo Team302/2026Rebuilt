@@ -59,9 +59,9 @@ public:
     /// @param identifier Identifier enum for multiple limelights on the robot.
     /// @param cameraType Type hint for camera hardware/configuration.
     /// @param cameraUsage How the camera will be used (odometry, driver camera, etc.).
-    /// @param mountingXOffset Forward offset (inches) from robot center.
-    /// @param mountingYOffset Left offset (inches) from robot center.
-    /// @param mountingZOffset Up offset (inches) from robot center.
+    /// @param mountingXOffset Forward offset (meters) from robot center.
+    /// @param mountingYOffset Left offset (meters) from robot center.
+    /// @param mountingZOffset Up offset (meters) from robot center.
     /// @param pitch Camera pitch in degrees.
     /// @param yaw Camera yaw in degrees.
     /// @param roll Camera roll in degrees.
@@ -72,9 +72,9 @@ public:
                     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier,
                     DRAGON_LIMELIGHT_CAMERA_TYPE cameraType,
                     DRAGON_LIMELIGHT_CAMERA_USAGE cameraUsage,
-                    units::length::inch_t mountingXOffset,     /// <I> x offset of cam from robot center (forward relative to robot)
-                    units::length::inch_t mountingYOffset,     /// <I> y offset of cam from robot center (left relative to robot)
-                    units::length::inch_t mountingZOffset,     /// <I> z offset of cam from robot center (up relative to robot)
+                    units::length::meter_t mountingXOffset,    /// <I> x offset of cam from robot center (forward relative to robot)
+                    units::length::meter_t mountingYOffset,    /// <I> y offset of cam from robot center (left relative to robot)
+                    units::length::meter_t mountingZOffset,    /// <I> z offset of cam from robot center (up relative to robot)
                     units::angle::degree_t pitch,              /// <I> - Pitch of camera
                     units::angle::degree_t yaw,                /// <I> - Yaw of camera
                     units::angle::degree_t roll,               /// <I> - Roll of camera
@@ -127,13 +127,6 @@ public:
     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER GetCameraIdentifier() { return m_identifier; }
 
     ///-----------------------------------------------------------------------------------
-    /// @brief Request a pose estimate from the Limelight for odometry fusion.
-    /// @param useMegatag2 If true use MegaTag2 based estimate, otherwise use MegaTag1.
-    /// @return optional VisionPose when valid; std::nullopt when unavailable.
-    ///-----------------------------------------------------------------------------------
-    std::optional<VisionPose> EstimatePoseOdometryLimelight(bool useMegatag2);
-
-    ///-----------------------------------------------------------------------------------
     /// @brief Retrieve MegaTag1 (standard) pose estimate.
     /// @return optional VisionPose when tags are sufficient and sigma can be computed.
     ///-----------------------------------------------------------------------------------
@@ -151,10 +144,23 @@ public:
     ///-----------------------------------------------------------------------------------
     void SetRobotPose(const frc::Pose2d &pose);
 
+    DRAGON_LIMELIGHT_CAMERA_TYPE GetCameraType() { return m_cameraType; };
+
     ///-----------------------------------------------------------------------------------
-    /// @brief Get sanitized camera name used for network table operations.
+    /// @brief Enable rewind buffer recording on this Limelight (LL4 only).
     ///-----------------------------------------------------------------------------------
-    std::string GetCameraName() const { return m_cameraName; }
+    void StartRewind();
+
+    ///-----------------------------------------------------------------------------------
+    /// @brief Save the rewind buffer to disk, capturing the last durationSeconds of video.
+    /// @param durationSeconds Number of seconds to capture (max 165).
+    ///-----------------------------------------------------------------------------------
+    void SaveRewind(double durationSeconds);
+
+    ///-----------------------------------------------------------------------------------
+    /// @brief Disable rewind buffer recording on this Limelight (LL4 only).
+    ///-----------------------------------------------------------------------------------
+    void StopRewind();
 
 private:
     ///-----------------------------------------------------------------------------------
@@ -186,17 +192,17 @@ private:
     /// @brief Important internal state used by Limelight wrapper.
     ///-----------------------------------------------------------------------------------
     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER m_identifier;
-    std::string m_networkTableName; ///< network table name for this Limelight
+    DRAGON_LIMELIGHT_CAMERA_TYPE m_cameraType; ///< type hint for camera hardware/configuration
+    std::string m_networkTableName;            ///< network table name for this Limelight
 
     const double START_HB = -9999;     ///< initial heartbeat sentinel
     const double MAX_HB = 2000000000;  ///< safety max heartbeat (unused currently)
     double m_lastHeartbeat = START_HB; ///< last seen heartbeat value
-    frc::Timer *m_healthTimer;         ///< local timer used for heartbeat health checks
+    frc::Timer m_healthTimer;          ///< local timer used for heartbeat health checks (stack allocated)
 
     DRAGON_LIMELIGHT_PIPELINE m_pipeline; ///< currently selected pipeline
 
     // from old dragon camera
-    std::string m_cameraName;                            ///< sanitized camera name used with helpers
     subsystems::CommandSwerveDrivetrain *m_chassis;      ///< pointer to chassis for orientation/limits
     frc::Pose3d m_cameraPose;                            ///< camera transform relative to robot
     const double m_maxRotationRateDegreesPerSec = 720.0; ///< fallback limit if chassis not available

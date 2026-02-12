@@ -13,6 +13,7 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"
+#include "auton/NeutralZoneManager.h"
 #include "fielddata/DepotHelper.h"
 #include "utils/PoseUtils.h"
 
@@ -38,10 +39,19 @@ DriveToDepot::DriveToDepot(subsystems::CommandSwerveDrivetrain *chassis)
 frc::Pose2d DriveToDepot::GetEndPose()
 {
     frc::Pose2d endPose{};
+    if (NeutralZoneManager::GetInstance()->IsInNeutralZone())
+    {
+        auto chassis = GetChassis();
+        if (chassis != nullptr)
+        {
+            return chassis->GetPose();
+        }
+        return endPose;
+    }
     auto depotHelper = DepotHelper::GetInstance();
     if (depotHelper != nullptr)
     {
-        endPose = depotHelper->CalcDepotPose();
+        return depotHelper->CalcDepotPose();
     }
     return endPose;
 }

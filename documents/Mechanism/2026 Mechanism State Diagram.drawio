@@ -1,6 +1,6 @@
-<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36" version="29.3.6">
   <diagram name="Page-1" id="7JSrTSUAfBA1Y6AAACkT">
-    <mxGraphModel dx="1501" dy="3351" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1426" dy="3081" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -250,7 +250,7 @@
         <mxCell id="PYOB-nJ2pHGYUGnKFTw0-1" edge="1" parent="1" source="3anpqkeh_Q_En4ThZAmQ-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.25;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;entryPerimeter=0;" target="3anpqkeh_Q_En4ThZAmQ-2">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="PYOB-nJ2pHGYUGnKFTw0-2" connectable="0" parent="PYOB-nJ2pHGYUGnKFTw0-1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Not in Launch Zone" vertex="1">
+        <mxCell id="PYOB-nJ2pHGYUGnKFTw0-2" connectable="0" parent="PYOB-nJ2pHGYUGnKFTw0-1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Not in Launch Zone AND override button not pressed" vertex="1">
           <mxGeometry relative="1" x="0.0114" y="-4" as="geometry">
             <mxPoint as="offset" />
           </mxGeometry>
@@ -313,15 +313,15 @@
         <mxCell id="Ty8YiSnxNx9hPVbjDfk3-20" edge="1" parent="1" source="3anpqkeh_Q_En4ThZAmQ-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;entryPerimeter=0;" target="3C_QZJUxDfjJ-yIjOQ0U-25">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="3517" y="-1270" />
-              <mxPoint x="2670" y="-1270" />
-              <mxPoint x="2670" y="-1098" />
+              <mxPoint x="3518" y="-1230" />
+              <mxPoint x="2670" y="-1230" />
+              <mxPoint x="2670" y="-1097" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="Ty8YiSnxNx9hPVbjDfk3-21" connectable="0" parent="Ty8YiSnxNx9hPVbjDfk3-20" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Launcher Button Released" vertex="1">
+        <mxCell id="Ty8YiSnxNx9hPVbjDfk3-21" connectable="0" parent="Ty8YiSnxNx9hPVbjDfk3-20" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Launcher AND Override Button Released" vertex="1">
           <mxGeometry relative="1" x="-0.9029" y="4" as="geometry">
-            <mxPoint as="offset" />
+            <mxPoint y="16" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="Ty8YiSnxNx9hPVbjDfk3-22" edge="1" parent="1" source="3C_QZJUxDfjJ-yIjOQ0U-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" target="Ty8YiSnxNx9hPVbjDfk3-19">
@@ -341,7 +341,7 @@
         </mxCell>
         <mxCell id="Ty8YiSnxNx9hPVbjDfk3-24" connectable="0" parent="Ty8YiSnxNx9hPVbjDfk3-23" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Climb Mode&lt;div&gt;and&lt;/div&gt;&lt;div&gt;NotAllowedToClimb&lt;/div&gt;" vertex="1">
           <mxGeometry relative="1" x="-0.5454" y="-2" as="geometry">
-            <mxPoint as="offset" />
+            <mxPoint x="-146" y="107" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="Ty8YiSnxNx9hPVbjDfk3-26" parent="1" style="shape=mxgraph.sysml.simpleState;html=1;overflow=fill;whiteSpace=wrap;align=center;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;Climb&lt;/p&gt;&lt;hr&gt;&lt;p&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:8px;text-align:left;&quot;&gt;Init:&amp;nbsp; &amp;nbsp;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:8px;text-align:left;&quot;&gt;Publish Not Launching&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:8px;text-align:left;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:8px;text-align:left;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Run:&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Launcher: 0%&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Hood: 0%&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Turret: 0%&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Transfer: 0%&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Indexer: 0%&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;Agitator: 0%&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Exit:&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:8px;text-align:left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;" vertex="1">
@@ -364,11 +364,16 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="Ty8YiSnxNx9hPVbjDfk3-30" edge="1" parent="1" source="3anpqkeh_Q_En4ThZAmQ-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.75;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" target="Ty8YiSnxNx9hPVbjDfk3-26">
-          <mxGeometry relative="1" as="geometry" />
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2992" y="-580" />
+              <mxPoint x="2065" y="-580" />
+            </Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="Ty8YiSnxNx9hPVbjDfk3-32" connectable="0" parent="Ty8YiSnxNx9hPVbjDfk3-30" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Climb Mode&lt;div&gt;and&lt;/div&gt;&lt;div&gt;AllowedToClimb&lt;/div&gt;" vertex="1">
           <mxGeometry relative="1" x="-0.722" y="4" as="geometry">
-            <mxPoint x="1" as="offset" />
+            <mxPoint x="-266" y="175" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="Ty8YiSnxNx9hPVbjDfk3-35" edge="1" parent="1" source="Ty8YiSnxNx9hPVbjDfk3-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;entryPerimeter=0;" target="3C_QZJUxDfjJ-yIjOQ0U-25">
@@ -403,7 +408,7 @@
         </mxCell>
         <mxCell id="-S60cRgTOybfG1u5_C07-3" connectable="0" parent="-S60cRgTOybfG1u5_C07-2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Not&lt;div&gt;&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212)); color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Climb Mode&lt;/span&gt;&lt;div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry relative="1" x="0.0968" y="3" as="geometry">
-            <mxPoint x="-19" y="-14" as="offset" />
+            <mxPoint x="-19" y="6" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="Sa_A6AG47x4ug5xb6m2z-1" edge="1" parent="1" source="Ty8YiSnxNx9hPVbjDfk3-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;entryPerimeter=0;" target="3anpqkeh_Q_En4ThZAmQ-22">
@@ -425,6 +430,64 @@
         <mxCell id="Sa_A6AG47x4ug5xb6m2z-3" connectable="0" parent="Sa_A6AG47x4ug5xb6m2z-2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Climber &amp;lt; 1 Deg&lt;div&gt;AND&lt;br&gt;NOT In Climb Mode&lt;/div&gt;" vertex="1">
           <mxGeometry relative="1" x="0.3952" as="geometry">
             <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="L9jV3O5osog43X1GMUS6-2" parent="1" style="shape=mxgraph.sysml.simpleState;html=1;overflow=fill;whiteSpace=wrap;align=center;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;TuningLauncherState&lt;/p&gt;&lt;hr&gt;&lt;p&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:8px;text-align:left;&quot;&gt;Init:&amp;nbsp;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:8px;text-align:left;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Run:&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Launcher: 500&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Hood:&amp;nbsp;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Telop PercentOut&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Turret: Postion Control to Target&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Transfer: 0%&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Indexer: 0%&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;Agitator: 0%&lt;/p&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Exit:&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:8px;text-align:left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;" vertex="1">
+          <mxGeometry height="210" width="270" x="3354" y="-1488.5" as="geometry" />
+        </mxCell>
+        <mxCell id="L9jV3O5osog43X1GMUS6-4" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;entryPerimeter=0;" target="L9jV3O5osog43X1GMUS6-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2550" y="-1200" />
+              <mxPoint x="2630" y="-1200" />
+              <mxPoint x="2630" y="-1331" />
+            </Array>
+            <mxPoint x="2550" y="-1150" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="L9jV3O5osog43X1GMUS6-7" connectable="0" parent="L9jV3O5osog43X1GMUS6-4" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="m_tuningLauncher = true" vertex="1">
+          <mxGeometry relative="1" x="0.0563" y="-5" as="geometry">
+            <mxPoint x="-259" y="76" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="L9jV3O5osog43X1GMUS6-5" edge="1" parent="1" source="L9jV3O5osog43X1GMUS6-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" target="3anpqkeh_Q_En4ThZAmQ-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="L9jV3O5osog43X1GMUS6-6" connectable="0" parent="L9jV3O5osog43X1GMUS6-5" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Override Button Pressed" vertex="1">
+          <mxGeometry relative="1" x="0.109" y="7" as="geometry">
+            <mxPoint x="-9" y="24" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MXQtuFWAREtfbQIeyf1u-1" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;jumpStyle=arc;entryX=0.25;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;jumpSize=8;" target="MXQtuFWAREtfbQIeyf1u-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="2520" y="-850" />
+              <mxPoint x="3223" y="-850" />
+            </Array>
+            <mxPoint x="2520" y="-940" as="sourcePoint" />
+            <mxPoint x="3150" y="-800" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MXQtuFWAREtfbQIeyf1u-3" connectable="0" parent="MXQtuFWAREtfbQIeyf1u-1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Manual Launch Button Pressed" vertex="1">
+          <mxGeometry relative="1" x="-0.4337" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MXQtuFWAREtfbQIeyf1u-2" parent="1" style="shape=mxgraph.sysml.simpleState;html=1;overflow=fill;whiteSpace=wrap;align=center;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;Manual Launch&lt;/p&gt;&lt;hr&gt;&lt;p&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:8px;text-align:left;&quot;&gt;Init:&amp;nbsp; Publish Launching&amp;nbsp;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:8px;text-align:left;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Run:&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Launcher: Target Speed (Defined in state)&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Hood: Target Deg (Defined in state)&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Turret: 180 Deg&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Transfer: 100%&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Indexer: 100%&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;Agitator: 100%&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;p style=&quot;margin: 0px 0px 0px 8px; text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Exit:&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:8px;text-align:left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;" vertex="1">
+          <mxGeometry height="210" width="270" x="3155" y="-794" as="geometry" />
+        </mxCell>
+        <mxCell id="MXQtuFWAREtfbQIeyf1u-5" edge="1" parent="1" source="MXQtuFWAREtfbQIeyf1u-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;entryPerimeter=0;jumpStyle=arc;jumpSize=8;" target="3C_QZJUxDfjJ-yIjOQ0U-25">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="3358" y="-910" />
+              <mxPoint x="2670" y="-910" />
+              <mxPoint x="2670" y="-992" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="MXQtuFWAREtfbQIeyf1u-6" connectable="0" parent="MXQtuFWAREtfbQIeyf1u-5" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Manual Launch Button Released" vertex="1">
+          <mxGeometry relative="1" x="-0.4161" y="2" as="geometry">
+            <mxPoint x="180" y="38" as="offset" />
           </mxGeometry>
         </mxCell>
       </root>

@@ -39,6 +39,7 @@ public:
 
 protected:
     virtual frc::Pose2d GetEndPose() { return m_endPose; };
+    subsystems::CommandSwerveDrivetrain *GetChassis() const { return m_chassis; }
 
 private:
     void CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds);

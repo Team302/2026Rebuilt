@@ -39,6 +39,7 @@
 
 #include "configs/RobotElementNames.h"
 #include "configs/MechanismConfigMgr.h"
+#include "chassis/ChassisConfigMgr.h"
 
 #include "RobotIdentifier.h"
 
@@ -90,14 +91,23 @@ public:
 	ctre::phoenix6::hardware::TalonFX *GetClimber() const { return m_climber; }
 	frc::Solenoid *GetExtender() const { return m_extender; }
 	frc::Solenoid *GetAlignment() const { return m_alignment; }
-	ctre::phoenix6::hardware::CANcoder *GetClimberRotation() const { return m_climberRotation; }
 	ControlData *GetPositionDegree() const { return m_positionDegree; }
 
 	bool IsClimbMode() const { return m_climbModeStatus; }
 	bool IsAllowedToClimb() const { return m_allowedToClimb; };
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
-
 	void SetCurrentState(int state, bool run) override;
+	void UpdateTargetClimberPercentOut(double percentOut)
+	{
+		m_ClimberPercentOut.Output = percentOut;
+		m_climberActiveTarget = &m_ClimberPercentOut;
+	}
+	void ManualClimb(units::angle::degree_t climbTarget, double manualClimberPercent);
+
+	// Hand-created Methods
+
+	units::angle::degree_t GetPigeonPitch();
+	units::angular_velocity::degrees_per_second_t GetMaxAngularVelocity() const { return m_maxAngularVelocity; }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -111,16 +121,21 @@ private:
 	ctre::phoenix6::hardware::TalonFX *m_climber;
 	frc::Solenoid *m_extender;
 	frc::Solenoid *m_alignment;
-	ctre::phoenix6::hardware::CANcoder *m_climberRotation;
 	ControlData *m_positionDegree;
-
-	bool m_climbModeStatus;
-	bool m_allowedToClimb;
 
 	void InitializeTalonFXClimberCompBot302();
 
 	ctre::phoenix6::controls::MotionMagicExpoTorqueCurrentFOC m_climberPositionDegree{0_tr};
 	ctre::phoenix6::controls::ControlRequest *m_climberActiveTarget;
+	ctre::phoenix6::controls::DutyCycleOut m_ClimberPercentOut{0.0};
+	double m_percentOutScale = 0.5;
+	double m_holdPercentOut = 0;
+
+	bool m_climbModeStatus;
+	bool m_allowedToClimb;
+	subsystems::CommandSwerveDrivetrain *m_chassis; ///< pointer to chassis for pitch
+
+	units::angular_velocity::degrees_per_second_t m_maxAngularVelocity = 360_deg_per_s;
 
 	// void InitializeLogging();
 };

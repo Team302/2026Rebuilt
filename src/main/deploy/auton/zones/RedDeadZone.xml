@@ -3,9 +3,10 @@
 
 <auton>
 <zone
-x1_rect = "16.39"
+x1_rect = "12.58"
 y1_rect = "3.44"
-x2_rect = "12.58"
+x2_rect = "16.39"
 y2_rect = "4.52"
+allianceColor = "RED"
 />
 </auton>

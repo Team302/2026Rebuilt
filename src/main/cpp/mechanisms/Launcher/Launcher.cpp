@@ -38,7 +38,13 @@
 #include "mechanisms/Launcher/LaunchState.h"
 #include "mechanisms/Launcher/EmptyHopperState.h"
 #include "mechanisms/Launcher/ClimbState.h"
+#include "mechanisms/Launcher/LauncherTuningState.h"
+#include "auton/DeadZoneManager.h"
+#include "mechanisms/Launcher/ManualLaunchState.h"
+
 #include "teleopcontrol/TeleopControl.h"
+#include "utils/InterpolateUtils.h"
+#include "units/math.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -81,12 +87,20 @@ void Launcher::CreateAndRegisterStates()
 	ClimbState *ClimbStateInst = new ClimbState(string("Climb"), 6, this, m_activeRobotId);
 	AddToStateVector(ClimbStateInst);
 
+	LauncherTuningState *LauncherTuningStateInst = new LauncherTuningState(string("LauncherTuning"), 7, this, m_activeRobotId);
+	AddToStateVector(LauncherTuningStateInst);
+
+	ManualLaunchState *ManualLaunchStateInst = new ManualLaunchState(string("ManualLaunch"), 8, this, m_activeRobotId);
+	AddToStateVector(ManualLaunchStateInst);
+
 	OffStateInst->RegisterTransitionState(InitializeStateInst);
 	InitializeStateInst->RegisterTransitionState(IdleStateInst);
 	IdleStateInst->RegisterTransitionState(OffStateInst);
 	IdleStateInst->RegisterTransitionState(PrepareToLaunchStateInst);
 	IdleStateInst->RegisterTransitionState(EmptyHopperStateInst);
 	IdleStateInst->RegisterTransitionState(ClimbStateInst);
+	IdleStateInst->RegisterTransitionState(LauncherTuningStateInst);
+	IdleStateInst->RegisterTransitionState(ManualLaunchStateInst);
 	PrepareToLaunchStateInst->RegisterTransitionState(OffStateInst);
 	PrepareToLaunchStateInst->RegisterTransitionState(IdleStateInst);
 	PrepareToLaunchStateInst->RegisterTransitionState(LaunchStateInst);
@@ -100,16 +114,23 @@ void Launcher::CreateAndRegisterStates()
 	EmptyHopperStateInst->RegisterTransitionState(ClimbStateInst);
 	ClimbStateInst->RegisterTransitionState(OffStateInst);
 	ClimbStateInst->RegisterTransitionState(IdleStateInst);
+	ClimbStateInst->RegisterTransitionState(PrepareToLaunchStateInst);
+	LauncherTuningStateInst->RegisterTransitionState(OffStateInst);
+	LauncherTuningStateInst->RegisterTransitionState(LaunchStateInst);
+	ManualLaunchStateInst->RegisterTransitionState(OffStateInst);
+	ManualLaunchStateInst->RegisterTransitionState(IdleStateInst);
 }
 
 Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANISM_TYPE::LAUNCHER, std::string("Launcher")),
 													m_activeRobotId(activeRobotId),
-													m_stateMap()
+													m_stateMap(),
+													m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis())
 {
 	PeriodicLooper::GetInstance()->RegisterAll(this);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 
+	m_targetCalculator = RebuiltTargetCalculator::GetInstance();
 	// InitializeLogging();
 }
 
@@ -174,7 +195,8 @@ std::map<std::string, Launcher::STATE_NAMES>
 		{"STATE_LAUNCH", Launcher::STATE_NAMES::STATE_LAUNCH},
 		{"STATE_EMPTY_HOPPER", Launcher::STATE_NAMES::STATE_EMPTY_HOPPER},
 		{"STATE_CLIMB", Launcher::STATE_NAMES::STATE_CLIMB},
-	};
+		{"STATE_LAUNCHER_TUNING", Launcher::STATE_NAMES::STATE_LAUNCHER_TUNING},
+		{"STATE_MANUAL_LAUNCH", Launcher::STATE_NAMES::STATE_MANUAL_LAUNCH}};
 
 void Launcher::CreateCompBot302()
 {
@@ -184,7 +206,7 @@ void Launcher::CreateCompBot302()
 	m_transfer = new ctre::phoenix6::hardware::TalonFX(18, ctre::phoenix6::CANBus("canivore"));
 	m_turret = new ctre::phoenix6::hardware::TalonFXS(19, ctre::phoenix6::CANBus("canivore"));
 	m_indexer = new ctre::phoenix6::hardware::TalonFX(20, ctre::phoenix6::CANBus("canivore"));
-	m_agitator = new ctre::phoenix6::hardware::TalonFX(0, ctre::phoenix6::CANBus("canivore"));
+	m_agitator = new ctre::phoenix6::hardware::TalonFX(21, ctre::phoenix6::CANBus("canivore"));
 
 	m_percentOut = new ControlData(
 		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
@@ -361,16 +383,16 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
 
 	// MECH_TODO: Set limit switches
-	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
-	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
+	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
+	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 1;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(0);
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
+	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 1;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
@@ -385,7 +407,10 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::radians_per_second_t(0);
 	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::radians_per_second_squared_t(0);
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
-	configs.Commutation.MotorArrangement = MotorArrangementValue::Disabled;
+	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
+
+	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
+	configs.ExternalFeedback.SensorToMechanismRatio = 810;
 
 	configs.Slot0.kI = m_positionDegreesHood->GetI();
 	configs.Slot0.kD = m_positionDegreesHood->GetD();
@@ -436,7 +461,7 @@ void Launcher::InitializeTalonFXTransferCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
-	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
+	configs.MotorOutput.Inverted = InvertedValue::Clockwise_Positive;
 	configs.MotorOutput.NeutralMode = NeutralModeValue::Coast;
 	configs.MotorOutput.PeakForwardDutyCycle = 1;
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
@@ -472,16 +497,16 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 
 	// MECH_TODO: Set limit switches
 	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
-	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 1;
+	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(180);
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(270);
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 1;
+	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 0;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(125);
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
@@ -495,7 +520,10 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::radians_per_second_t(0);
 	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::radians_per_second_squared_t(0);
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
-	configs.Commutation.MotorArrangement = MotorArrangementValue::Disabled;
+	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
+
+	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
+	configs.ExternalFeedback.SensorToMechanismRatio = 100;
 
 	configs.Slot0.kI = m_positionDegreesTurret->GetI();
 	configs.Slot0.kD = m_positionDegreesTurret->GetD();
@@ -553,7 +581,7 @@ void Launcher::InitializeTalonFXIndexerCompBot302()
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.Feedback.SensorToMechanismRatio = 1;
+	configs.Feedback.SensorToMechanismRatio = 3;
 
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
@@ -601,7 +629,7 @@ void Launcher::InitializeTalonFXAgitatorCompBot302()
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.Feedback.SensorToMechanismRatio = 1;
+	configs.Feedback.SensorToMechanismRatio = 3;
 
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
@@ -623,6 +651,7 @@ void Launcher::RunCommonTasks()
 {
 	// This function is called once per loop before the current state Run()
 	Cyclic();
+
 	if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCHER_OFF))
 	{
 		if (m_launcherOffButtonReleased)
@@ -635,6 +664,13 @@ void Launcher::RunCommonTasks()
 	{
 		m_launcherOffButtonReleased = true;
 	}
+
+	// Update Launcher Targets/Field
+	m_targetCalculator->UpdateTargetOffset();
+	CalculateTargets();
+	UpdateLauncherTargets();
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Current State", GetCurrentState());
 }
 
 /// @brief  Set the control constants (e.g. PIDF values).
@@ -690,15 +726,66 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 		m_isAllowedToClimb = value;
 	}
 }
+
 bool Launcher::IsLauncherAtTarget()
 {
-	// TODO : POPULATE FUNCTION
-	return false;
+	// Launcher Speed error, Hood Angle error, Turret angle error are within a threshold, and if we are in launch zone. Also check chassis speed.
+	units::angle::degree_t hoodError = m_hood->GetPosition().GetValue() - m_targetHoodAngle;
+	units::angle::degree_t turretError = m_turret->GetPosition().GetValue() - m_targetTurretAngle;
+	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = m_launcher->GetVelocity().GetValue() - m_targetLauncherAngularVelocity;
+	bool inLaunchzone = IsInLaunchZone();
+	auto chassisSpeeds = m_chassis != nullptr ? m_chassis->GetState().Speeds : frc::ChassisSpeeds();
+
+	auto Speed = units::math::sqrt(units::math::abs(chassisSpeeds.vx * chassisSpeeds.vx) + units::math::abs(chassisSpeeds.vy * chassisSpeeds.vy));
+
+	return ((units::math::abs(hoodError) < m_hoodAngleThreshold) &&
+			(units::math::abs(turretError) < m_turretAngleThreshold) &&
+			(units::math::abs(launcherSpeedError) < m_launcherVelocityThreshold) &&
+			(inLaunchzone) &&
+			(Speed < m_chassisSpeedThreshold));
 }
-bool Launcher::IsAllowedToLaunch()
+
+bool Launcher::IsInLaunchZone() const
 {
-	// TODO : POPULATE FUNCTION
-	return false;
+	return !DeadZoneManager::GetInstance()->IsInDeadZone();
+}
+
+void Launcher::CalculateTargets()
+{
+	m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_launcher->GetPosition().GetValue());
+	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateDistanceToTarget(m_lookaheadTime);
+
+	// if (AllianceZoneManager::GetInstance()->IsInAllinaceZone())
+	if (true)
+	{
+		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_scoringDistanceArray, m_scoringHoodAngleArray, distanceToTarget);
+		m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_scoringDistanceArray, m_scoringLauncherVelocityArray, distanceToTarget);
+	}
+	else
+	{
+		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingHoodAngleArray, units::length::foot_t(distanceToTarget));
+		m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingLauncherVelocityArray, units::length::foot_t(distanceToTarget));
+	}
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Distance To Target", distanceToTarget.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Hood Angle Target", m_targetHoodAngle.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Launcher Speed Target", m_targetLauncherAngularVelocity.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Launcher Speed RPM", units::angular_velocity::revolutions_per_minute_t(m_launcher->GetVelocity().GetValue()).value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Hood Angle", units::angle::degree_t(m_hood->GetPosition().GetValue()).value());
+}
+
+void Launcher::UpdateLauncherTargets()
+{
+	int currentState = GetCurrentState();
+
+	if (currentState == STATE_NAMES::STATE_OFF || currentState == STATE_NAMES::STATE_INITIALIZE || currentState == STATE_NAMES::STATE_CLIMB || currentState == STATE_NAMES::STATE_MANUAL_LAUNCH || currentState == STATE_NAMES::STATE_MANUAL_LAUNCH)
+	{
+		return;
+	}
+
+	UpdateTargetHoodPositionDegreesHood(m_targetHoodAngle);
+	UpdateTargetTurretPositionDegreesTurret(m_targetTurretAngle);
+	UpdateTargetLauncherVelocityRPS(m_targetLauncherAngularVelocity);
 }
 
 /* void Launcher::DataLog(uint64_t timestamp)

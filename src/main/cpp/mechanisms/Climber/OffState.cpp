@@ -50,7 +50,7 @@ void OffState::Init()
 
 void OffState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetClimberPositionDegree(m_climberTarget);
+	m_mechanism->UpdateTargetClimberPercentOut(m_climberTarget);
 	m_mechanism->GetExtender()->Set(m_extenderTarget);
 }
 
@@ -75,6 +75,5 @@ bool OffState::AtTarget()
 bool OffState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return false;
-	// return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXAMPLE_MECH_FORWARD));
+	return (m_mechanism->GetPigeonPitch() < m_climberExitThreshold && !m_mechanism->IsClimbMode());
 }

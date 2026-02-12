@@ -25,6 +25,7 @@
 #include "teleopcontrol/TeleopControl.h"
 #include "teleopcontrol/TeleopControlFunctions.h"
 #include "utils/logging/debug/Logger.h"
+#include "frc/RobotBase.h"
 
 // Third Party Includes
 
@@ -46,7 +47,11 @@ void InitializeState::Init()
 
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
 		InitCompBot302();
+
 	m_mechanism->PublishLaunchMode(false);
+
+	if (frc::RobotBase::IsSimulation())
+		m_mechanism->SetLauncherInitialized(true);
 }
 
 void InitializeState::InitCompBot302()
@@ -85,5 +90,4 @@ bool InitializeState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
 	return !m_mechanism->IsLauncherInProtectedMode();
-	// return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXAMPLE_MECH_FORWARD));
 }

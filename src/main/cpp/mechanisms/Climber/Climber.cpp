@@ -41,6 +41,7 @@
 #include "mechanisms/Climber/L3ClimbState.h"
 #include "mechanisms/Climber/ExitState.h"
 #include "mechanisms/Climber/AutonL1ClimbState.h"
+#include "teleopcontrol/TeleopControl.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -99,7 +100,8 @@ Climber::Climber(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHA
 												  m_activeRobotId(activeRobotId),
 												  m_stateMap(),
 												  m_climbModeStatus(false),
-												  m_allowedToClimb(false)
+												  m_allowedToClimb(false),
+												  m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis())
 {
 	PeriodicLooper::GetInstance()->RegisterAll(this);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
@@ -141,16 +143,10 @@ std::map<std::string, Climber::STATE_NAMES>
 void Climber::CreateCompBot302()
 {
 	m_ntName = "Climber";
-	m_climber = new ctre::phoenix6::hardware::TalonFX(12, ctre::phoenix6::CANBus("canivore"));
+	m_climber = new ctre::phoenix6::hardware::TalonFX(11, ctre::phoenix6::CANBus("canivore"));
 
 	m_extender = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 2);
 	m_alignment = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 3);
-
-	ctre::phoenix6::configs::CANcoderConfiguration ClimberRotationConfigs{};
-	ClimberRotationConfigs.MagnetSensor.MagnetOffset = units::angle::turn_t(0);
-	ClimberRotationConfigs.MagnetSensor.SensorDirection = ctre::phoenix6::signals::SensorDirectionValue::CounterClockwise_Positive;
-	m_climberRotation = new ctre::phoenix6::hardware::CANcoder(12, ctre::phoenix6::CANBus("canivore"));
-	m_climberRotation->GetConfigurator().Apply(ClimberRotationConfigs);
 
 	m_positionDegree = new ControlData(
 		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
@@ -216,10 +212,9 @@ void Climber::InitializeTalonFXClimberCompBot302()
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
-	configs.Feedback.FeedbackRemoteSensorID = 12; // MECH_TODO: Verify CAN ID
-	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::FusedCANcoder;
-	configs.Feedback.SensorToMechanismRatio = 0;
-	configs.Feedback.RotorToSensorRatio = 0;
+	// MECH_TODO: Define sensor to mechanism ratios
+	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
+	configs.Feedback.SensorToMechanismRatio = 437.5;
 
 	/*MECH_TODO: Define Motion Magic Params
 
@@ -299,7 +294,23 @@ ControlData *Climber::GetControlData(string name)
 
 	return nullptr;
 }
-
+void Climber::ManualClimb(units::angle::degree_t climbTarget, double manualClimberPercent)
+{
+	auto climberPosition = GetPigeonPitch();
+	if (climberPosition > climbTarget)
+	{
+		UpdateTargetClimberPercentOut(m_holdPercentOut);
+	}
+	else
+	{
+		UpdateTargetClimberPercentOut(manualClimberPercent * m_percentOutScale);
+	}
+}
+units::angle::degree_t Climber::GetPigeonPitch()
+{
+	units::angle::degree_t pigeonPitch = m_chassis->GetPigeon2().GetPitch().GetValue();
+	return pigeonPitch;
+}
 /* void Climber::DataLog(uint64_t timestamp)
 {
    auto currTime = m_powerTimer.Get();
