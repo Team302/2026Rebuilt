@@ -21,7 +21,8 @@ intakeState = "STATE_INTAKE">
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueLDepotOutpost_C"
-time = "1.5"/>
+time = "1.5"
+intakeState = "STATE_INTAKE"/>
 
 <primitive id = "DRIVE_STOP_MECH">
 <zone filename = "BlueClimbingZone.xml"/>
