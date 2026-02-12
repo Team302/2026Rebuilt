@@ -15,10 +15,12 @@
 
 #include "feedback/GameDataHelper.h"
 #include "state/RobotState.h"
+#include "utils/PeriodicLooper.h"
 
 GameDataHelper::GameDataHelper()
 {
     m_timer.Start();
+    PeriodicLooper::GetInstance()->RegisterAll(this);
 }
 GameDataHelper *GameDataHelper::m_instance = nullptr;
 
@@ -46,7 +48,7 @@ void GameDataHelper::PublishShiftChangeIn3seconds(bool value)
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool, value);
 }
 
-void GameDataHelper::PublisherCyclcic()
+void GameDataHelper::RunCurrentState()
 {
     if (frc::DriverStation::GetGameSpecificMessage().length() == 0)
     {
@@ -59,11 +61,11 @@ void GameDataHelper::PublisherCyclcic()
     }
     if (m_hasGameSpecificMessageData)
     {
-        if (m_timer.Get().value() == 20.0) // 20 seconds
+        if (20.0 <= m_timer.Get().value() && m_timer.Get().value() < 22.0) // 20 seconds
         {
             PublishShiftChangeIn5seconds(true);
         }
-        else if (m_timer.Get().value() == 22.0) // 22 seconds
+        else if (22.0 <= m_timer.Get().value() && m_timer.Get().value() < 25.0) // 22 seconds
         {
             PublishShiftChangeIn3seconds(true);
         }

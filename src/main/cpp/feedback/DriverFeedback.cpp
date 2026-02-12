@@ -54,7 +54,9 @@ DriverFeedback::DriverFeedback() : IRobotStateChangeSubscriber()
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveToFieldElement_Bool);
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveStateType_Int);
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
-
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ShiftChange_Bool);
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool);
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool);
     m_LEDStates->SetBlinkingFrequency(m_blinkingFrequency);
 }
 void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, int value)
@@ -71,6 +73,12 @@ void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, bo
         m_isInDriveTo = value;
     else if (RobotStateChanges::StateChange::ClimbModeStatus_Bool == change)
         m_climbMode = value;
+    else if (RobotStateChanges::StateChange::ShiftChange_Bool == change)
+        m_shiftChange = value;
+    else if (RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool == change)
+        m_shiftChangeIn5Seconds = value;
+    else if (RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool == change)
+        m_shiftChangeIn3Seconds = value;
 }
 
 void DriverFeedback::UpdateFeedback()
@@ -129,6 +137,21 @@ void DriverFeedback::UpdateLEDStates()
             {
                 desiredAnimation = DragonCANdle::AnimationMode::SOLID;
             }
+        }
+        else if (m_shiftChange)
+        {
+            desiredPrimaryColor = frc::Color::kGreen;
+            desiredAnimation = DragonCANdle::AnimationMode::BLINKING;
+        }
+        else if (m_shiftChangeIn5Seconds)
+        {
+            desiredPrimaryColor = frc::Color::kRed;
+            desiredAnimation = DragonCANdle::AnimationMode::BLINKING;
+        }
+        else if (m_shiftChangeIn3Seconds)
+        {
+            desiredPrimaryColor = frc::Color::kYellow;
+            desiredAnimation = DragonCANdle::AnimationMode::BLINKING;
         }
         else
         {

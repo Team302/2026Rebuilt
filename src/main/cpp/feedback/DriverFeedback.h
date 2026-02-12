@@ -71,5 +71,8 @@ private:
     bool m_climbMode = false;
     bool m_isValidAutonFile = false;
     bool m_isIntakeExtended = false;
+    bool m_shiftChange = false;
+    bool m_shiftChangeIn5Seconds = false;
+    bool m_shiftChangeIn3Seconds = false;
     ChassisOptionEnums::DriveStateType m_driveStateType = ChassisOptionEnums::DriveStateType::ROBOT_DRIVE;
 };

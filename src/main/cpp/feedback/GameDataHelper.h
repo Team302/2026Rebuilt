@@ -16,18 +16,18 @@
 #pragma once
 #include <frc/DriverStation.h>
 #include "frc/Timer.h"
+#include "state/StateMgr.h"
 
-class GameDataHelper
+class GameDataHelper : StateMgr
 {
 
 public:
     static GameDataHelper *GetInstance();
 
-    void UpdateGameSpecificMessage();
     void PublishShiftChange(bool value);
     void PublishShiftChangeIn5seconds(bool value);
     void PublishShiftChangeIn3seconds(bool value);
-    void PublisherCyclcic();
+    void RunCurrentState() override;
 
 private:
     GameDataHelper();
