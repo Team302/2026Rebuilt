@@ -161,10 +161,10 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     // drive To Tower
     driveToTower.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                     {
-    if (!m_climbModeStatus) {
+    if (m_climbModeStatus) {
         return frc2::ProxyCommand(m_driveToTower.get()).ToPtr();
     } else {
-        return frc2::cmd::None(); 
+        return frc2::cmd::None();
     } }));
 }
 
