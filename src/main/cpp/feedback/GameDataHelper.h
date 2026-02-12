@@ -33,7 +33,7 @@ private:
     GameDataHelper();
     ~GameDataHelper() = default;
     frc::Timer m_timer;
-    char m_gameSpecificMessage = 'X';
+    bool m_hasGameSpecificMessageData = false;
     frc::DriverStation *m_driverStation;
 
     static GameDataHelper *m_instance;

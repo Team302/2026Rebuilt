@@ -31,12 +31,6 @@ GameDataHelper *GameDataHelper::GetInstance()
     return GameDataHelper::m_instance;
 }
 
-void GameDataHelper::UpdateGameSpecificMessage()
-{
-    auto test = frc::DriverStation::GetGameSpecificMessage();
-    m_gameSpecificMessage = test[0];
-}
-
 void GameDataHelper::PublishShiftChange(bool value)
 {
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::ShiftChange_Bool, value);
@@ -60,28 +54,29 @@ void GameDataHelper::PublisherCyclcic()
     }
     else
     {
-        if (m_gameSpecificMessage != frc::DriverStation::GetGameSpecificMessage()[0])
+        m_hasGameSpecificMessageData = true;
+        m_timer.Start();
+    }
+    if (m_hasGameSpecificMessageData)
+    {
+        if (m_timer.Get().value() == 20.0) // 20 seconds
+        {
+            PublishShiftChangeIn5seconds(true);
+        }
+        else if (m_timer.Get().value() == 22.0) // 22 seconds
+        {
+            PublishShiftChangeIn3seconds(true);
+        }
+        else if (m_timer.Get().value() == 25.0) // 25 seconds, the length of the shifts
         {
             PublishShiftChange(true);
             m_timer.Reset();
         }
         else
         {
-            if (m_timer.Get().value() == 20.0) // 20 seconds
-            {
-                PublishShiftChangeIn5seconds(true);
-            }
-            else if (m_timer.Get().value() == 22.0) // 22 seconds
-            {
-                PublishShiftChangeIn3seconds(true);
-            }
-            else
-            {
-                PublishShiftChangeIn5seconds(false);
-                PublishShiftChangeIn3seconds(false);
-                PublishShiftChange(false);
-            }
+            PublishShiftChangeIn5seconds(false);
+            PublishShiftChangeIn3seconds(false);
+            PublishShiftChange(false);
         }
     }
-    UpdateGameSpecificMessage();
 }
