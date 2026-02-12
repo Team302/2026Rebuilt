@@ -9,32 +9,32 @@ launcherState = "STATE_LAUNCH"/>
 choreoname = "BlueMLDepotOutpost_A"
 time = "3.0"
 intakeState = "STATE_INTAKE">
-<zone filename = "BlueLaunchZone.xml"/>
+<zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDepotOutpost_B"
 time = "3.0"
 intakeState = "STATE_INTAKE">
-<zone filename = "BlueLaunchZone.xml"/>
+<zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDepotOutpost_C"
 time = "3.0"
 intakeState = "STATE_INTAKE">
-<zone filename = "BlueLaunchZone.xml"/>
+<zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDepotOutpost_D"
 time = "3.0"
 intakeState = "STATE_INTAKE">
-<zone filename = "BlueLaunchZone.xml"/>
+<zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
 <primitive id = "DRIVE_STOP_MECH">
-<zone filename = "BlueClimbingZone.xml"/>
+<zone filename = "RedClimbingZone.xml"/>
 </primitive>
 <!--This path could honestly do a lot more, we could probably grab some pieces from our side if people are willing to pass-->
 
