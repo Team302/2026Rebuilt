@@ -205,8 +205,8 @@ void Launcher::CreateCompBot302()
 	m_hood = new ctre::phoenix6::hardware::TalonFXS(17, ctre::phoenix6::CANBus("canivore"));
 	m_transfer = new ctre::phoenix6::hardware::TalonFX(18, ctre::phoenix6::CANBus("canivore"));
 	m_turret = new ctre::phoenix6::hardware::TalonFXS(19, ctre::phoenix6::CANBus("canivore"));
-	m_indexer = new ctre::phoenix6::hardware::TalonFX(20, ctre::phoenix6::CANBus("canivore"));
-	m_agitator = new ctre::phoenix6::hardware::TalonFX(21, ctre::phoenix6::CANBus("canivore"));
+	m_indexer = new ctre::phoenix6::hardware::TalonFX(55, ctre::phoenix6::CANBus("canivore"));
+	m_agitator = new ctre::phoenix6::hardware::TalonFX(56, ctre::phoenix6::CANBus("canivore"));
 
 	m_percentOut = new ControlData(
 		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
