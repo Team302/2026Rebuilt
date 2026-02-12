@@ -79,6 +79,7 @@ DragonLimelight::DragonLimelight(std::string networkTableName,
                                  units::angle::degree_t roll,
                                  DRAGON_LIMELIGHT_PIPELINE initialPipeline,
                                  DRAGON_LIMELIGHT_LED_MODE ledMode) : m_identifier(identifier),
+                                                                      m_cameraType(cameraType),
                                                                       m_networkTableName(LimelightHelpers::sanitizeName(std::string(networkTableName))),
                                                                       m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
                                                                       m_cameraPose(frc::Pose3d(mountingXOffset, mountingYOffset, mountingZOffset, frc::Rotation3d(roll, pitch, yaw)))
@@ -472,4 +473,29 @@ void DragonLimelight::SetRobotPose(const frc::Pose2d &pose)
                                           roll,
                                           rollrate);
     m_robotPoseSet = true;
+}
+
+/// ----------------------------------------------------------------------------------
+/// @brief Enable rewind buffer recording on this Limelight (LL4 only).
+/// ----------------------------------------------------------------------------------
+void DragonLimelight::StartRewind()
+{
+    LimelightHelpers::setRewindEnabled(m_networkTableName, true);
+}
+
+/// ----------------------------------------------------------------------------------
+/// @brief Save the rewind buffer, capturing the last durationSeconds of video.
+/// @param durationSeconds Number of seconds to capture (max 165).
+/// ----------------------------------------------------------------------------------
+void DragonLimelight::SaveRewind(double durationSeconds)
+{
+    LimelightHelpers::triggerRewindCapture(m_networkTableName, durationSeconds);
+}
+
+/// ----------------------------------------------------------------------------------
+/// @brief Disable rewind buffer recording on this Limelight (LL4 only).
+/// ----------------------------------------------------------------------------------
+void DragonLimelight::StopRewind()
+{
+    LimelightHelpers::setRewindEnabled(m_networkTableName, false);
 }
