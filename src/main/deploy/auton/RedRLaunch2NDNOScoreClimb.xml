@@ -4,23 +4,22 @@
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueRightBumpNZNZ_A"
-time = "2.0"/>
+time = "5.0"/>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "RightToLeftNZ"
-time = "3.0"/>
+time = "5.0"/>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueRightBumpNZNZ_C"
-time = "1.5"/>
+time = "5.0"/>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "LeftToRightNZ"
-time = "3.0"/>
-
+time = "5.0"/>
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueRightBumpNZNZ_E"
-time = "2.0"/>
+time = "5.0"/>
 
 <!--This path could honestly do a lot more, we could probably grab some pieces from our side if people are willing to pass-->
 
