@@ -14,8 +14,9 @@
 //====================================================================================================================================================
 
 #include "feedback/GameDataHelper.h"
+#include "state/RobotState.h"
 
-GameDataHelper::GameDataHelper() : m_gameSpecificMessage(""), m_driverStation(frc::DriverStation::Get)
+GameDataHelper::GameDataHelper()
 {
 }
 
@@ -23,9 +24,55 @@ GameDataHelper *GameDataHelper::GetInstance()
 {
 }
 
-string GameDataHelper::GetGameSpecificMessage() const
+void GameDataHelper::UpdateGameSpecificMessage()
 {
-    auto test = m_driverStation->GetGameSpecificMessage()();
-    m_gameSpecificMessage = test;
-    return m_gameSpecificMessage;
+    auto test = frc::DriverStation::GetGameSpecificMessage();
+    m_gameSpecificMessage = test[0];
+}
+void GameDataHelper::PublishShiftChange(bool value)
+{
+    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::ShiftChange_Bool, value);
+}
+void GameDataHelper::PublishShiftChangeIn5seconds(bool value)
+{
+    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool, value);
+}
+void GameDataHelper::PublishShiftChangeIn3seconds(bool value)
+{
+    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool, value);
+}
+
+void GameDataHelper::PublisherCyclcic()
+{
+    if (frc::DriverStation::GetGameSpecificMessage().length() == 0)
+    {
+        return;
+    }
+    else
+    {
+        if (m_gameSpecificMessage != frc::DriverStation::GetGameSpecificMessage()[0])
+        {
+            PublishShiftChange(true);
+            m_timer = 0;
+        }
+        else
+        {
+            ++m_timer;
+            if (m_timer == 1000) // 20 seconds
+            {
+                PublishShiftChangeIn5seconds(true);
+            }
+            else if (m_timer == 1100) // 22 seconds
+            {
+                PublishShiftChangeIn3seconds(true);
+            }
+            else
+            {
+                PublishShiftChangeIn5seconds(false);
+                PublishShiftChangeIn3seconds(false);
+                PublishShiftChange(false);
+            }
+        }
+    }
+    UpdateGameSpecificMessage();
 }

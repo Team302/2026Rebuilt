@@ -32,7 +32,11 @@ public:
         ChassisPose_Pose2D,
         DriveToFieldElement_Bool,
         DriveStateType_Int,
+        ShiftChange_Bool,
+        ShiftChangeIn3Seconds_Bool,
+        ShiftChangeIn5Seconds_Bool,
         LoopCounterEnd // Must be last Enum for the loop counter
+
     };
 
     enum ScoringMode

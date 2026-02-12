@@ -15,9 +15,6 @@
 
 #pragma once
 #include <frc/DriverStation.h>
-#include <string>
-
-using namespace std;
 
 class GameDataHelper
 {
@@ -25,15 +22,16 @@ class GameDataHelper
 public:
     static GameDataHelper *GetInstance();
 
-    bool IsRedAlliance() const;
-    bool IsBlueAlliance() const;
-    string GetGameSpecificMessage() const;
-    bool IsAllianceHubEnabled() const;
+    void UpdateGameSpecificMessage();
+    void PublishShiftChange(bool value);
+    void PublishShiftChangeIn5seconds(bool value);
+    void PublishShiftChangeIn3seconds(bool value);
+    void PublisherCyclcic();
 
 private:
     GameDataHelper();
     ~GameDataHelper() = default;
-
-    string m_gameSpecificMessage;
+    int m_timer;
+    char m_gameSpecificMessage = 'X';
     frc::DriverStation *m_driverStation;
 };
