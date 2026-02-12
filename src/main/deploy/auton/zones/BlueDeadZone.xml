@@ -8,6 +8,6 @@ y1_rect = "3.46"
 x2_rect = "3.91"
 y2_rect = "4.58"
 allianceColor = "BLUE"
-launcherState = "STATE_OFF"
+launcherState = "STATE_IDLE"
 />
 </auton>
