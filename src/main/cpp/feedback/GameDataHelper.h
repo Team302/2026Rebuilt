@@ -15,6 +15,7 @@
 
 #pragma once
 #include <frc/DriverStation.h>
+#include "frc/Timer.h"
 
 class GameDataHelper
 {
@@ -31,7 +32,9 @@ public:
 private:
     GameDataHelper();
     ~GameDataHelper() = default;
-    int m_timer;
+    frc::Timer m_timer;
     char m_gameSpecificMessage = 'X';
     frc::DriverStation *m_driverStation;
+
+    static GameDataHelper *m_instance;
 };

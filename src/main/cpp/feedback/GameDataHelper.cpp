@@ -18,10 +18,17 @@
 
 GameDataHelper::GameDataHelper()
 {
+    m_timer.Start();
 }
+GameDataHelper *GameDataHelper::m_instance = nullptr;
 
 GameDataHelper *GameDataHelper::GetInstance()
 {
+    if (GameDataHelper::m_instance == nullptr)
+    {
+        GameDataHelper::m_instance = new GameDataHelper();
+    }
+    return GameDataHelper::m_instance;
 }
 
 void GameDataHelper::UpdateGameSpecificMessage()
@@ -29,14 +36,17 @@ void GameDataHelper::UpdateGameSpecificMessage()
     auto test = frc::DriverStation::GetGameSpecificMessage();
     m_gameSpecificMessage = test[0];
 }
+
 void GameDataHelper::PublishShiftChange(bool value)
 {
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::ShiftChange_Bool, value);
 }
+
 void GameDataHelper::PublishShiftChangeIn5seconds(bool value)
 {
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool, value);
 }
+
 void GameDataHelper::PublishShiftChangeIn3seconds(bool value)
 {
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool, value);
@@ -53,16 +63,15 @@ void GameDataHelper::PublisherCyclcic()
         if (m_gameSpecificMessage != frc::DriverStation::GetGameSpecificMessage()[0])
         {
             PublishShiftChange(true);
-            m_timer = 0;
+            m_timer.Reset();
         }
         else
         {
-            ++m_timer;
-            if (m_timer == 1000) // 20 seconds
+            if (m_timer.Get().value() == 20.0) // 20 seconds
             {
                 PublishShiftChangeIn5seconds(true);
             }
-            else if (m_timer == 1100) // 22 seconds
+            else if (m_timer.Get().value() == 22.0) // 22 seconds
             {
                 PublishShiftChangeIn3seconds(true);
             }
