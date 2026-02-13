@@ -28,7 +28,8 @@ enum class FIELD_OFFSET_ITEMS
 {
     OUTPOST_X, ///< X-coordinate offset from the outpost
     DEPOT_X,   ///< X-coordinate offset from the depot neutral side
-    HUB_X      ///< X-coordinate offset from the hub center
+    HUB_X,     ///< X-coordinate offset from the hub center
+    BUMP_X     ///< X-coordinate offset from the bump center
 };
 
 //====================================================================================================================================================
@@ -104,5 +105,12 @@ private:
     /// @brief X-coordinate offset from the red alliance outpost (meters)
     units::length::meter_t m_redOutpostX;
 
+    /// @brief X-coordinate offset from the bump edge (meters)
+    units::length::meter_t m_redAllianceBumpEdgeX;
+    units::length::meter_t m_redNeutralBumpEdgeX;
+    units::length::meter_t m_blueAllianceBumpEdgeX;
+    units::length::meter_t m_blueNeutralBumpEdgeX;
+
     static constexpr units::length::meter_t HUB_OFFSET = 2.0_m;
+    static constexpr units::length::meter_t BUMP_OFFSET = 1.1_m;
 };

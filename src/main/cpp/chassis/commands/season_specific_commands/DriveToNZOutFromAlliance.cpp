@@ -13,7 +13,7 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include "chassis/commands/season_specific_commands/DriveToNZOutFromAlliance.h"
-#include "chassis/commands/season_specific_commands/DriveToNZOutFromAllianceHelper.h"
+#include "chassis/commands/season_specific_commands/BumpHelper.h"
 
 #include "fielddata/DepotHelper.h"
 #include "utils/PoseUtils.h"
@@ -40,14 +40,14 @@ DriveToNZOutFromAlliance::DriveToNZOutFromAlliance(subsystems::CommandSwerveDriv
 frc::Pose2d DriveToNZOutFromAlliance::GetEndPose()
 {
     frc::Pose2d endPose{};
-    auto DriveToNZOutFromAllianceHelper = DriveToNZOutFromAllianceHelper::GetInstance();
-    if (DriveToNZOutFromAllianceHelper != nullptr)
+    auto BumpHelper = BumpHelper::GetInstance();
+    if (BumpHelper != nullptr)
     {
         // todo zones not yet pushed
     }
     return endPose;
 }
-// Check for allience when in nueteral zone
+// Check for alliance when in neutral zone
 
 //------------------------------------------------------------------
 /// @brief Checks if the DriveToDepot command has finished execution.

@@ -55,6 +55,16 @@ FieldOffsetValues::FieldOffsetValues()
 
         m_blueHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() - HUB_OFFSET;
         m_redHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER).X() + HUB_OFFSET;
+
+        units::length::meter_t m_redAllianceBumpEdgeX;
+        units::length::meter_t m_redNeutralBumpEdgeX;
+        units::length::meter_t m_blueAllianceBumpEdgeX;
+        units::length::meter_t m_blueNeutralBumpEdgeX;
+
+        m_redAllianceBumpEdgeX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER).X() + BUMP_OFFSET;
+        m_redNeutralBumpEdgeX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER).X() - BUMP_OFFSET;
+        m_blueAllianceBumpEdgeX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() - BUMP_OFFSET;
+        m_blueNeutralBumpEdgeX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() + BUMP_OFFSET;
     }
     else
     {
@@ -63,6 +73,10 @@ FieldOffsetValues::FieldOffsetValues()
         m_redDepotX = units::length::meter_t{0.0};
         m_blueHubX = units::length::meter_t{0.0};
         m_redHubX = units::length::meter_t{0.0};
+        m_redAllianceBumpEdgeX = units::length::meter_t{0.0};
+        m_redNeutralBumpEdgeX = units::length::meter_t{0.0};
+        m_blueAllianceBumpEdgeX = units::length::meter_t{0.0};
+        m_blueNeutralBumpEdgeX = units::length::meter_t{0.0};
     }
 
     m_blueOutpostX = m_blueDepotX;

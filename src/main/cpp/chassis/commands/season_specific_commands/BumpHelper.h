@@ -32,14 +32,14 @@
 /// The class uses the robot's current pose and field constants to make alliance-aware decisions
 /// about depot locations and navigation targets.
 //====================================================================================================================================================
-class DriveToNZOutFromAllianceHelper
+class BumpHelper
 {
 public:
     //------------------------------------------------------------------
     /// @brief      Get the singleton instance of DepotHelper
     /// @return     DepotHelper* - Pointer to the singleton instance
     //------------------------------------------------------------------
-    static DriveToNZOutFromAllianceHelper *GetInstance();
+    static BumpHelper *GetInstance();
     frc::Pose2d CalcNearestBump(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
 
 private:
@@ -48,15 +48,15 @@ private:
     /// @brief      Private constructor for singleton pattern
     /// @details    Initializes the chassis and field constants references
     //------------------------------------------------------------------
-    DriveToNZOutFromAllianceHelper();
+    BumpHelper();
 
     //------------------------------------------------------------------
     /// @brief      Destructor (default implementation)
     //------------------------------------------------------------------
-    ~DriveToNZOutFromAllianceHelper() = default;
+    ~BumpHelper() = default;
 
     /// @brief Singleton instance pointer
-    static DriveToNZOutFromAllianceHelper *m_instance;
+    static BumpHelper *m_instance;
 
     //------------------------------------------------------------------
     /// @brief      Calculates the distance from a given pose to a field element

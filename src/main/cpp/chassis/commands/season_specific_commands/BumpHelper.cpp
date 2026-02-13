@@ -13,24 +13,24 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include "chassis/commands/season_specific_commands/DriveToNZOutFromAllianceHelper.h"
 #include "chassis/ChassisConfigMgr.h"
+#include "chassis/commands/season_specific_commands/BumpHelper.h"
 #include "frc/geometry/Pose2d.h"
 #include "utils/PoseUtils.h"
 
-DriveToNZOutFromAllianceHelper *DriveToNZOutFromAllianceHelper::m_instance = nullptr;
+BumpHelper *BumpHelper::m_instance = nullptr;
 
 //------------------------------------------------------------------
 /// @brief      Get the singleton instance of DepotHelper
 /// @return     DepotHelper* - Pointer to the singleton instance
 //------------------------------------------------------------------
-DriveToNZOutFromAllianceHelper *DriveToNZOutFromAllianceHelper::GetInstance()
+BumpHelper *BumpHelper::GetInstance()
 {
-    if (DriveToNZOutFromAllianceHelper::m_instance == nullptr)
+    if (BumpHelper::m_instance == nullptr)
     {
-        DriveToNZOutFromAllianceHelper::m_instance = new DriveToNZOutFromAllianceHelper();
+        BumpHelper::m_instance = new BumpHelper();
     }
-    return DriveToNZOutFromAllianceHelper::m_instance;
+    return BumpHelper::m_instance;
 }
 
 //------------------------------------------------------------------
@@ -38,12 +38,12 @@ DriveToNZOutFromAllianceHelper *DriveToNZOutFromAllianceHelper::GetInstance()
 /// @details    Initializes the chassis and field constants references
 ///             Used by GetInstance() to create the singleton
 //------------------------------------------------------------------
-DriveToNZOutFromAllianceHelper::DriveToNZOutFromAllianceHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
-                                                                   m_fieldConstants(FieldConstants::GetInstance())
+BumpHelper::BumpHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
+                           m_fieldConstants(FieldConstants::GetInstance())
 {
 }
 
-frc::Pose2d DriveToNZOutFromAllianceHelper::CalcNearestBump(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const
+frc::Pose2d BumpHelper::CalcNearestBump(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const
 {
 
     units::length::meter_t blueOutpostDistance = PoseUtils::GetDeltaBetweenPoses(m_chassis->GetPose(), m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_OUTPOST_CENTER));
