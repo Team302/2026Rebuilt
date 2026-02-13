@@ -14,52 +14,27 @@
 //====================================================================================================================================================
 
 #pragma once
+#include <frc/DriverStation.h>
+#include "frc/Timer.h"
+#include "state/StateMgr.h"
 
-class RobotStateChanges
+class GameDataHelper : StateMgr
 {
+
 public:
-    enum StateChange
-    {
-        LoopCounterStart,
-        DesiredScoringMode_Int,
-        IsLaunching_Bool,
-        ClimbModeStatus_Bool,
-        AllowedToClimbStatus_Bool,
-        ChassisTipStatus_Int,
-        DriveAssistMode_Int,
-        GameState_Int,
-        CompressorChange_Int,
-        ChassisPose_Pose2D,
-        DriveToFieldElement_Bool,
-        DriveStateType_Int,
-        ShiftChange_Bool,
-        ShiftChangeIn3Seconds_Bool,
-        ShiftChangeIn5Seconds_Bool,
-        LoopCounterEnd // Must be last Enum for the loop counter
+    static GameDataHelper *GetInstance();
 
-    };
+    void PublishShiftChange(bool value);
+    void PublishShiftChangeIn5seconds(bool value);
+    void PublishShiftChangeIn3seconds(bool value);
+    void RunCurrentState() override;
 
-    enum ScoringMode
-    {
-        FUEL
-    };
+private:
+    GameDataHelper();
+    ~GameDataHelper() = default;
+    frc::Timer m_timer;
+    bool m_hasGameSpecificMessageData = false;
+    frc::DriverStation *m_driverStation;
 
-    enum ChassisTilt
-    {
-        NotTilted,
-        Tilted
-    };
-
-    enum DriveAssist
-    {
-        DriveAssistOff,
-        DriveAssistOn
-    };
-
-    enum GamePeriod
-    {
-        Auton,
-        Teleop,
-        Disabled
-    };
+    static GameDataHelper *m_instance;
 };
