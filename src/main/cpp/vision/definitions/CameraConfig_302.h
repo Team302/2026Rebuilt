@@ -27,14 +27,14 @@ public:
 
 private:
     static constexpr units::length::inch_t m_ll1MountingXOffset{-10.585};
-    static constexpr units::length::inch_t m_ll1MountingYOffset{10.257};
+    static constexpr units::length::inch_t m_ll1MountingYOffset{-10.257};
     static constexpr units::length::inch_t m_ll1MountingZOffset{9.231};
     static constexpr units::angle::degree_t m_ll1Pitch{5};
     static constexpr units::angle::degree_t m_ll1Yaw{-150};
     static constexpr units::angle::degree_t m_ll1Roll{0};
 
     static constexpr units::length::inch_t m_ll2MountingXOffset{-10.585};
-    static constexpr units::length::inch_t m_ll2MountingYOffset{-10.257};
+    static constexpr units::length::inch_t m_ll2MountingYOffset{10.257};
     static constexpr units::length::inch_t m_ll2MountingZOffset{9.231};
     static constexpr units::angle::degree_t m_ll2Pitch{5};
     static constexpr units::angle::degree_t m_ll2Yaw{150};

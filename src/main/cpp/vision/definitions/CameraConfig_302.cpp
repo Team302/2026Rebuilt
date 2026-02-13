@@ -43,7 +43,7 @@ void CameraConfig_302::BuildCameraConfig()
                                                       DRAGON_LIMELIGHT_LED_MODE::LED_OFF            // DRAGON_LIMELIGHT_LED_MODE ledMode,
 
     ); // additional parameter
-    // vision->AddLimelight(std::move(backLeft), DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
+    vision->AddLimelight(std::move(backLeft), DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
 
     auto backRight = std::make_unique<DragonLimelight>(std::string("limelight-right"), // networkTableName
                                                        DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::BACK_CAMERA,
@@ -60,7 +60,6 @@ void CameraConfig_302::BuildCameraConfig()
 
     ); // additional parameter
     vision->AddLimelight(std::move(backRight), DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
-    vision->AddLimelight(std::move(backLeft), DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
 
     auto climber = std::make_unique<DragonLimelight>(std::string("limelight-climber"), // networkTableName
                                                      DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::BACK_CAMERA,
