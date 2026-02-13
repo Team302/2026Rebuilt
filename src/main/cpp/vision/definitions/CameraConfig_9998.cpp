@@ -31,7 +31,7 @@ void CameraConfig_9998::BuildCameraConfig()
     }
 
     auto front = std::make_unique<DragonLimelight>(std::string("limelight-front"), // networkTableName
-                                                   DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::FRONT_CAMERA,
+                                                   DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::BACK_LEFT,
                                                    DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4,  // PIPELINE initialPipeline,
                                                    DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS, // PIPELINE initialPipeline,
                                                    units::length::meter_t(0.16),              // units::length::inch_t mountingXOffset, /// <I> x offset of cam from robot center (forward relative to robot)
