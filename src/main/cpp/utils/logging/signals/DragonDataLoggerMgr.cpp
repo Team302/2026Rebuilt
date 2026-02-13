@@ -36,17 +36,16 @@ DragonDataLoggerMgr *DragonDataLoggerMgr::GetInstance()
     return DragonDataLoggerMgr::m_instance;
 }
 
-DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items() 
+DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items()
 {
-
-    //m_logger = std::make_unique<CTRESignalLogger>();
+    CTRESignalLogger *ctreLogger = new CTRESignalLogger();
+    ctreLogger->DisableAutoLogging();
+    // m_logger = std::make_unique<CTRESignalLogger>();
     m_logger = std::make_unique<UDPSignalLogger>("127.0.0.1", 5900);
 
     m_logger->Start();
     m_timer.Start();
-
 }
-
 
 void DragonDataLoggerMgr::SetLogger(std::unique_ptr<ISignalLogger> logger)
 {

@@ -34,6 +34,7 @@ public:
 
     void Start() override;
     void Stop() override;
+    void DisableAutoLogging();
     std::string CreateLogFileName();
     std::string GetLoggingDir();
 };

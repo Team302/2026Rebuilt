@@ -22,8 +22,6 @@
 #include "utils/logging/signals/ISignalLogger.h"
 #include "utils/logging/signals/DragonDataLogger.h"
 
-
-
 enum class LoggerType
 {
     CTRE_SIGNAL_LOGGER,
@@ -49,11 +47,10 @@ public:
 private:
     DragonDataLoggerMgr();
     ~DragonDataLoggerMgr();
-    
+
     std::vector<DragonDataLogger *> m_items;
     frc::Timer m_timer;
     unsigned int m_lastIndex = 0;
-
 
     const units::time::second_t m_period{0.00075};
 
