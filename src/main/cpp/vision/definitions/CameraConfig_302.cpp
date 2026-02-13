@@ -29,7 +29,7 @@ void CameraConfig_302::BuildCameraConfig()
     {
         return;
     }
-    auto backLeft = std::make_unique<DragonLimelight>(std::string("limelight-backleft"), // networkTableName
+    auto backLeft = std::make_unique<DragonLimelight>(std::string("limelight-left"), // networkTableName
                                                       DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::FRONT_CAMERA,
                                                       DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4,     // PIPELINE initialPipeline,
                                                       DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS,    // PIPELINE initialPipeline,
@@ -45,7 +45,7 @@ void CameraConfig_302::BuildCameraConfig()
     ); // additional parameter
     vision->AddLimelight(std::move(backLeft), DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
 
-    auto backRight = std::make_unique<DragonLimelight>(std::string("limelight-backright"), // networkTableName
+    auto backRight = std::make_unique<DragonLimelight>(std::string("limelight-right"), // networkTableName
                                                        DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::BACK_CAMERA,
                                                        DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4,     // PIPELINE initialPipeline,
                                                        DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS,    // PIPELINE initialPipeline,
