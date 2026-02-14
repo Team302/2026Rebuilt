@@ -42,7 +42,6 @@ DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items()
     CTRESignalLogger ctreLogger;
     ctreLogger.SetAutoLogging(false);
 
-    //m_logger = std::make_unique<CTRESignalLogger>();
     m_logger = std::make_unique<UDPSignalLogger>("dragondataloggerz.local", 5900);
 
     m_logger->Start();
