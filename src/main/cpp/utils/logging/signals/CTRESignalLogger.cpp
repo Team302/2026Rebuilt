@@ -21,29 +21,29 @@
 
 using ctre::phoenix6::SignalLogger;
 
-void CTRESignalLogger::WriteBoolean(std::string signalID, bool value, units::time::second_t latency)
+void CTRESignalLogger::WriteBoolean(std::string signalID, bool value, units::time::millisecond_t timestamp)
 {
-    SignalLogger::WriteBoolean(signalID, value, latency);
+    SignalLogger::WriteBoolean(signalID, value, timestamp);
 }
 
-void CTRESignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, units::time::second_t latency)
+void CTRESignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, units::time::millisecond_t timestamp)
 {
-    SignalLogger::WriteDouble(signalID, value, units, latency);
+    SignalLogger::WriteDouble(signalID, value, units, timestamp);
 }
 
-void CTRESignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::second_t latency)
+void CTRESignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::millisecond_t timestamp)
 {
-    SignalLogger::WriteInteger(signalID, value, units, latency);
+    SignalLogger::WriteInteger(signalID, value, units, timestamp);
 }
 
-void CTRESignalLogger::WriteString(std::string signalID, const std::string &value, units::time::second_t latency)
+void CTRESignalLogger::WriteString(std::string signalID, const std::string &value, units::time::millisecond_t timestamp)
 {
-    SignalLogger::WriteString(signalID, value, latency);
+    SignalLogger::WriteString(signalID, value, timestamp);
 }
 
-void CTRESignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t latency)
+void CTRESignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::millisecond_t timestamp)
 {
-    SignalLogger::WriteDoubleArray(signalID, value, units, latency);
+    SignalLogger::WriteDoubleArray(signalID, value, units, timestamp);
 }
 
 void CTRESignalLogger::Start()

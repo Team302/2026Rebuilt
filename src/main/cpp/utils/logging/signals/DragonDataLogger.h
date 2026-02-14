@@ -293,17 +293,14 @@ public:
     string m_swerveModuleStateUnits = "Speed, Angle";
     string m_swerveChassisSpeedUnits = "Vx, Vy, Omega";
 
-    units::time::second_t m_latency = units::time::second_t(0);
-
 protected:
-    void LogBoolData(uint64_t timestamp, DragonDataLogger::BoolSignals signalID, bool value);
-    void LogDoubleData(uint64_t timestamp, DragonDataLogger::DoubleSignals signalID, double value);
-    void LogStringData(uint64_t timestamp, DragonDataLogger::StringSignals signalID, string value);
-    void Log2DPoseData(uint64_t timestamp, DragonDataLogger::PoseSingals signalID, frc::Pose2d value);
-    void Log3DPoseData(uint64_t timestamp, DragonDataLogger::PoseSingals signalID, frc::Pose3d value);
-
-    void LogSwerveModuleStateData(uint64_t timestamp, DragonDataLogger::SwerveStateSingals signalID, frc::SwerveModuleState value);
-    void LogChassisSpeedsData(uint64_t timestamp, DragonDataLogger::ChassisSpeedSignals signalID, frc::ChassisSpeeds value);
+    void LogBoolData(units::time::millisecond_t timestamp, DragonDataLogger::BoolSignals signalID, bool value);
+    void LogDoubleData(units::time::millisecond_t timestamp, DragonDataLogger::DoubleSignals signalID, double value);
+    void LogStringData(units::time::millisecond_t timestamp, DragonDataLogger::StringSignals signalID, string value);
+    void Log2DPoseData(units::time::millisecond_t timestamp, DragonDataLogger::PoseSingals signalID, frc::Pose2d value);
+    void Log3DPoseData(units::time::millisecond_t timestamp, DragonDataLogger::PoseSingals signalID, frc::Pose3d value);
+    void LogSwerveModuleStateData(units::time::millisecond_t timestamp, DragonDataLogger::SwerveStateSingals signalID, frc::SwerveModuleState value);
+    void LogChassisSpeedsData(units::time::millisecond_t timestamp, DragonDataLogger::ChassisSpeedSignals signalID, frc::ChassisSpeeds value);
 
     const double m_doubleTolerance = 0.001;
 };

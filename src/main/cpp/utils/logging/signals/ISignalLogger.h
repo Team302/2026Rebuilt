@@ -27,11 +27,11 @@ class ISignalLogger
 public:
     virtual ~ISignalLogger() = default;
 
-    virtual void WriteBoolean(std::string signalID, bool value, units::time::second_t latency) = 0;
-    virtual void WriteDouble(std::string signalID, double value, std::string_view units, units::time::second_t latency) = 0;
-    virtual void WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::second_t latency) = 0;
-    virtual void WriteString(std::string signalID, const std::string &value, units::time::second_t latency) = 0;
-    virtual void WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t latency) = 0;
+    virtual void WriteBoolean(std::string signalID, bool value, units::time::millisecond_t timestamp) = 0;
+    virtual void WriteDouble(std::string signalID, double value, std::string_view units, units::time::millisecond_t timestamp) = 0;
+    virtual void WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::millisecond_t timestamp) = 0;
+    virtual void WriteString(std::string signalID, const std::string &value, units::time::millisecond_t timestamp) = 0;
+    virtual void WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::millisecond_t timestamp) = 0;
 
     // Optional: methods for starting/stopping logging
     virtual void Start() = 0;

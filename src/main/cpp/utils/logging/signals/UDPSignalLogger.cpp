@@ -95,7 +95,7 @@ void UDPSignalLogger::Stop()
 }
 
 std::string UDPSignalLogger::FormatMessage(std::string signalID, std::string type,
-                                           std::string value, std::string_view units, units::time::second_t timestamp)
+                                           std::string value, std::string_view units, units::time::millisecond_t timestamp)
 {
     std::ostringstream oss;
     oss << timestamp.value() << "," << signalID << "," << type << "," << value << "," << units;
@@ -130,13 +130,13 @@ void UDPSignalLogger::SendData(const std::string& message)
 #endif
 }
 
-void UDPSignalLogger::WriteBoolean(std::string signalID, bool value, units::time::second_t timestamp)
+void UDPSignalLogger::WriteBoolean(std::string signalID, bool value, units::time::millisecond_t timestamp)
 {
     std::string message = FormatMessage(signalID, "bool", value ? "true" : "false", "bool", timestamp);
     SendData(message);
 }
 
-void UDPSignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, units::time::second_t timestamp)
+void UDPSignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, units::time::millisecond_t timestamp)
 {
     std::ostringstream oss;
     oss << value;
@@ -144,7 +144,7 @@ void UDPSignalLogger::WriteDouble(std::string signalID, double value, std::strin
     SendData(message);
 }
 
-void UDPSignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::second_t timestamp)
+void UDPSignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::millisecond_t timestamp)
 {
     std::ostringstream oss;
     oss << value;
@@ -152,13 +152,13 @@ void UDPSignalLogger::WriteInteger(std::string signalID, int64_t value, std::str
     SendData(message);
 }
 
-void UDPSignalLogger::WriteString(std::string signalID, const std::string &value, units::time::second_t timestamp)
+void UDPSignalLogger::WriteString(std::string signalID, const std::string &value, units::time::millisecond_t timestamp)
 {
     std::string message = FormatMessage(signalID, "string", value, "string", timestamp);
     SendData(message);
 }
 
-void UDPSignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t timestamp)
+void UDPSignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::millisecond_t timestamp)
 {
     std::ostringstream oss;
     for (size_t i = 0; i < value.size(); ++i)
