@@ -3,209 +3,6 @@
   "grid_size": 64,
   "tabs": [
     {
-      "name": "Teleoperated",
-      "grid_layout": {
-        "layouts": [
-          {
-            "title": "target pose",
-            "x": 0.0,
-            "y": 448.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "Rotation",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/target pose/Rotation",
-                  "period": 0.06,
-                  "data_type": "string",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "X",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/target pose/X",
-                  "period": 0.06,
-                  "data_type": "string",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "Y",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/target pose/Y",
-                  "period": 0.06,
-                  "data_type": "string",
-                  "show_submit_button": false
-                }
-              }
-            ]
-          },
-          {
-            "title": "questnav",
-            "x": 384.0,
-            "y": 64.0,
-            "width": 256.0,
-            "height": 384.0,
-            "type": "List Layout",
-            "properties": {
-              "label_position": "TOP"
-            },
-            "children": [
-              {
-                "title": "mosi",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/questnav/mosi",
-                  "period": 0.06,
-                  "data_type": "int",
-                  "show_submit_button": false
-                }
-              },
-              {
-                "title": "resetpose",
-                "x": 0.0,
-                "y": 0.0,
-                "width": 128.0,
-                "height": 128.0,
-                "type": "Text Display",
-                "properties": {
-                  "topic": "/questnav/resetpose",
-                  "period": 0.06,
-                  "data_type": "double[]",
-                  "show_submit_button": false
-                }
-              }
-            ]
-          }
-        ],
-        "containers": [
-          {
-            "title": "Target Game Piece",
-            "x": 0.0,
-            "y": 192.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/SmartDashboard/Target Game Piece",
-              "period": 0.06,
-              "sort_options": false
-            }
-          },
-          {
-            "title": "Target Face",
-            "x": 0.0,
-            "y": 320.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/SmartDashboard/Target Face",
-              "period": 0.06,
-              "sort_options": false
-            }
-          },
-          {
-            "title": "Desired Level",
-            "x": 0.0,
-            "y": 768.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/SmartDashboard/Desired Level",
-              "period": 0.06,
-              "sort_options": false
-            }
-          },
-          {
-            "title": "Logging Options",
-            "x": 0.0,
-            "y": 64.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/SmartDashboard/Logging Options",
-              "period": 0.06,
-              "sort_options": false
-            }
-          },
-          {
-            "title": "Logging Levels",
-            "x": 128.0,
-            "y": 64.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/SmartDashboard/Logging Levels",
-              "period": 0.06,
-              "sort_options": false
-            }
-          },
-          {
-            "title": "Field",
-            "x": 640.0,
-            "y": 0.0,
-            "width": 832.0,
-            "height": 704.0,
-            "type": "Field",
-            "properties": {
-              "topic": "/SmartDashboard/Field",
-              "period": 0.06,
-              "field_game": "Reefscape",
-              "robot_width": 0.85,
-              "robot_length": 0.85,
-              "show_other_objects": true,
-              "show_trajectories": true,
-              "field_rotation": 0.0,
-              "robot_color": 4294198070,
-              "trajectory_color": 4294967295
-            }
-          },
-          {
-            "title": "limelight",
-            "x": 256.0,
-            "y": 448.0,
-            "width": 256.0,
-            "height": 256.0,
-            "type": "Camera Stream",
-            "properties": {
-              "topic": "/CameraPublisher/limelight",
-              "period": 0.06,
-              "rotation_turns": 0
-            }
-          }
-        ]
-      }
-    },
-    {
       "name": "Autonomous",
       "grid_layout": {
         "layouts": [
@@ -397,26 +194,6 @@
         ],
         "containers": [
           {
-            "title": "Field",
-            "x": 512.0,
-            "y": 0.0,
-            "width": 448.0,
-            "height": 384.0,
-            "type": "Field",
-            "properties": {
-              "topic": "/SmartDashboard/Field",
-              "period": 0.06,
-              "field_game": "Reefscape",
-              "robot_width": 0.85,
-              "robot_length": 0.85,
-              "show_other_objects": true,
-              "show_trajectories": true,
-              "field_rotation": 0.0,
-              "robot_color": 4294198070,
-              "trajectory_color": 4294967295
-            }
-          },
-          {
             "title": "StartPos",
             "x": 256.0,
             "y": 896.0,
@@ -496,49 +273,10 @@
             }
           },
           {
-            "title": "Target Face",
-            "x": 128.0,
-            "y": 448.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/SmartDashboard/Target Face",
-              "period": 0.06,
-              "sort_options": false
-            }
-          },
-          {
-            "title": "Target Game Piece",
-            "x": 256.0,
-            "y": 448.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/SmartDashboard/Target Game Piece",
-              "period": 0.06,
-              "sort_options": false
-            }
-          },
-          {
-            "title": "Desired Level",
-            "x": 384.0,
-            "y": 448.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "ComboBox Chooser",
-            "properties": {
-              "topic": "/SmartDashboard/Desired Level",
-              "period": 0.06,
-              "sort_options": false
-            }
-          },
-          {
             "title": "StartPos",
             "x": 0.0,
-            "y": 448.0,
-            "width": 128.0,
+            "y": 320.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
             "properties": {
@@ -548,32 +286,750 @@
             }
           },
           {
-            "title": "Alliance If NO FMS",
-            "x": 0.0,
-            "y": 320.0,
-            "width": 192.0,
+            "title": "Logging Options",
+            "x": 1344.0,
+            "y": 128.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
             "properties": {
-              "topic": "/SmartDashboard/Alliance If NO FMS",
+              "topic": "/SmartDashboard/Logging Options",
               "period": 0.06,
               "sort_options": false
             }
           },
           {
-            "title": "limelight",
-            "x": 960.0,
+            "title": "Logging Levels",
+            "x": 1344.0,
             "y": 0.0,
-            "width": 576.0,
-            "height": 512.0,
-            "type": "Camera Stream",
+            "width": 128.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
             "properties": {
-              "topic": "/CameraPublisher/limelight",
+              "topic": "/SmartDashboard/Logging Levels",
               "period": 0.06,
-              "rotation_turns": 0
+              "sort_options": false
+            }
+          },
+          {
+            "title": "Climb?",
+            "x": 0.0,
+            "y": 448.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Climb?",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "Desired Preload",
+            "x": 0.0,
+            "y": 576.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Desired Preload",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "Desired Strategy",
+            "x": 256.0,
+            "y": 320.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Desired Strategy",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "Has Depot?",
+            "x": 128.0,
+            "y": 448.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Has Depot?",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "Has Outpost?",
+            "x": 256.0,
+            "y": 448.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Has Outpost?",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "Times in Neutral Zone",
+            "x": 384.0,
+            "y": 448.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Times in Neutral Zone",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "Current Target Position Enabled On Field",
+            "x": 192.0,
+            "y": 576.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Toggle Switch",
+            "properties": {
+              "topic": "/SmartDashboard/Current Target Position Enabled On Field",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "QuestPose Enabled On Field",
+            "x": 384.0,
+            "y": 576.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Toggle Switch",
+            "properties": {
+              "topic": "/SmartDashboard/QuestPose Enabled On Field",
+              "period": 0.06,
+              "data_type": "boolean"
+            }
+          },
+          {
+            "title": "Field",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 832.0,
+            "height": 448.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/SmartDashboard/Field",
+              "period": 0.06,
+              "field_game": "Rebuilt",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295,
+              "show_robot_outside_widget": true
+            }
+          },
+          {
+            "title": "QuestPose",
+            "x": 576.0,
+            "y": 448.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Field/QuestPose",
+              "period": 0.06,
+              "data_type": "double[]",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "QuestRobotPose",
+            "x": 704.0,
+            "y": 448.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Field/QuestRobotPose",
+              "period": 0.06,
+              "data_type": "double[]",
+              "show_submit_button": false
             }
           }
         ]
+      }
+    },
+    {
+      "name": "Tab 2",
+      "grid_layout": {
+        "layouts": [
+          {
+            "title": "SmartDashboard",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 640.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Alliance If NO FMS",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "ComboBox Chooser",
+                "properties": {
+                  "topic": "/SmartDashboard/Alliance If NO FMS",
+                  "period": 0.06,
+                  "sort_options": false
+                }
+              },
+              {
+                "title": "Desired Level",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "ComboBox Chooser",
+                "properties": {
+                  "topic": "/SmartDashboard/Desired Level",
+                  "period": 0.06,
+                  "sort_options": false
+                }
+              },
+              {
+                "title": "Field",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 256.0,
+                "height": 256.0,
+                "type": "Field",
+                "properties": {
+                  "topic": "/SmartDashboard/Field",
+                  "period": 0.06,
+                  "field_game": "Reefscape",
+                  "robot_width": 0.85,
+                  "robot_length": 0.85,
+                  "show_other_objects": true,
+                  "show_trajectories": true,
+                  "field_rotation": 0.0,
+                  "robot_color": 4294198070,
+                  "trajectory_color": 4294967295,
+                  "show_robot_outside_widget": true
+                }
+              },
+              {
+                "title": "Logging Levels",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "ComboBox Chooser",
+                "properties": {
+                  "topic": "/SmartDashboard/Logging Levels",
+                  "period": 0.06,
+                  "sort_options": false
+                }
+              },
+              {
+                "title": "Logging Options",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "ComboBox Chooser",
+                "properties": {
+                  "topic": "/SmartDashboard/Logging Options",
+                  "period": 0.06,
+                  "sort_options": false
+                }
+              },
+              {
+                "title": "StartPos",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "ComboBox Chooser",
+                "properties": {
+                  "topic": "/SmartDashboard/StartPos",
+                  "period": 0.06,
+                  "sort_options": false
+                }
+              },
+              {
+                "title": "Target Face",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "ComboBox Chooser",
+                "properties": {
+                  "topic": "/SmartDashboard/Target Face",
+                  "period": 0.06,
+                  "sort_options": false
+                }
+              },
+              {
+                "title": "Target Game Piece",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "ComboBox Chooser",
+                "properties": {
+                  "topic": "/SmartDashboard/Target Game Piece",
+                  "period": 0.06,
+                  "sort_options": false
+                }
+              },
+              {
+                "title": "Coral Station Delay",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Coral Station Delay",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Reef Delay",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Reef Delay",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "StartDelay",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/StartDelay",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "limelight-front_Interface",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/limelight-front_Interface",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "limelight-front_PipelineName",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/limelight-front_PipelineName",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "limelight-front_Stream",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/limelight-front_Stream",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "limelight_Interface",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/limelight_Interface",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "limelight_PipelineName",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/limelight_PipelineName",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "limelight_Stream",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/limelight_Stream",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          },
+          {
+            "title": "target pose",
+            "x": 0.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Rotation",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/target pose/Rotation",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "X",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/target pose/X",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Y",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/target pose/Y",
+                  "period": 0.06,
+                  "data_type": "string",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          },
+          {
+            "title": "swerve",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 384.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Omega",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/swerve/Omega",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Stored Heading",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/swerve/Stored Heading",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Vx",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/swerve/Vx",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Vy",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/swerve/Vy",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "current rotation position",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/swerve/current rotation position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "current x position",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/swerve/current x position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "current y position",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/swerve/current y position",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          }
+        ],
+        "containers": [
+          {
+            "title": "Field",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 832.0,
+            "height": 576.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/SmartDashboard/Field",
+              "period": 0.06,
+              "field_game": "Reefscape",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295,
+              "show_robot_outside_widget": true
+            }
+          },
+          {
+            "title": "Elevator Height Method",
+            "x": 512.0,
+            "y": 576.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/DragonTale/Elevator Height Method",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Climber Position",
+            "x": 640.0,
+            "y": 576.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/Climber/Climber Position",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Tab 3",
+      "grid_layout": {
+        "layouts": [
+          {
+            "title": "Launcher",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Launcher Bottom",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/Launcher/Launcher Bottom",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Launcher Top",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/Launcher/Launcher Top",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          },
+          {
+            "title": "ManualControlState",
+            "x": 768.0,
+            "y": 64.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Bottom Target",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/ManualControlState/Bottom Target",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Top Target",
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/ManualControlState/Top Target",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          }
+        ],
+        "containers": []
       }
     }
   ]
