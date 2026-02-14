@@ -36,8 +36,11 @@ DragonDataLoggerMgr *DragonDataLoggerMgr::GetInstance()
     return DragonDataLoggerMgr::m_instance;
 }
 
-DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items() 
+DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items()
 {
+    // This line needs to be removed if we want to run hoot logs
+    CTRESignalLogger ctreLogger;
+    ctreLogger.SetAutoLogging(false);
 
     SetLoggerType(m_defaultLoggerType);
 
