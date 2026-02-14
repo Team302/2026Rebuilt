@@ -24,11 +24,11 @@ public:
     UDPSignalLogger(const std::string& ipAddress, int port);
     ~UDPSignalLogger() override;
 
-    void WriteBoolean(std::string signalID, bool value, units::time::second_t timestamp) override;
-    void WriteDouble(std::string signalID, double value, std::string_view units, units::time::second_t timestamp) override;
-    void WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::second_t timestamp) override;
-    void WriteString(std::string signalID, const std::string &value, units::time::second_t timestamp) override;
-    void WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t timestamp) override;
+    void WriteBoolean(std::string signalID, bool value, uint64_t) override;
+    void WriteDouble(std::string signalID, double value, std::string_view units, uint64_t timestamp) override;
+    void WriteInteger(std::string signalID, int64_t value, std::string_view units, uint64_t timestamp) override;
+    void WriteString(std::string signalID, const std::string &value, uint64_t timestamp) override;
+    void WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp) override;
 
     void Start() override;
     void Stop() override;
@@ -36,7 +36,7 @@ public:
 private:
     void SendData(const std::string& message);
     std::string FormatMessage(std::string signalID, std::string type,
-                              std::string value, std::string_view units, units::time::second_t timestamp);
+                              std::string value, std::string_view units, uint64_t timestamp);
 
     std::string m_ipAddress;
     int m_port;

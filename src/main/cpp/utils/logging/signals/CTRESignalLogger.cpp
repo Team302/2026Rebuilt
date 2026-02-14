@@ -21,29 +21,34 @@
 
 using ctre::phoenix6::SignalLogger;
 
-void CTRESignalLogger::WriteBoolean(std::string signalID, bool value, units::time::second_t latency)
+void CTRESignalLogger::WriteBoolean(std::string signalID, bool value, uint64_t timestamp)
 {
-    SignalLogger::WriteBoolean(signalID, value, latency);
+    units::time::second_t timestampSec = units::time::second_t(static_cast<double>(timestamp) / 1e9);
+    SignalLogger::WriteBoolean(signalID, value, timestampSec);
 }
 
-void CTRESignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, units::time::second_t latency)
+void CTRESignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, uint64_t timestamp)
 {
-    SignalLogger::WriteDouble(signalID, value, units, latency);
+    units::time::second_t timestampSec = units::time::second_t(static_cast<double>(timestamp) / 1e9);
+    SignalLogger::WriteDouble(signalID, value, units, timestampSec);
 }
 
-void CTRESignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::second_t latency)
+void CTRESignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, uint64_t timestamp)
 {
-    SignalLogger::WriteInteger(signalID, value, units, latency);
+    units::time::second_t timestampSec = units::time::second_t(static_cast<double>(timestamp) / 1e9);
+    SignalLogger::WriteInteger(signalID, value, units, timestampSec);
 }
 
-void CTRESignalLogger::WriteString(std::string signalID, const std::string &value, units::time::second_t latency)
+void CTRESignalLogger::WriteString(std::string signalID, const std::string &value, uint64_t timestamp)
 {
-    SignalLogger::WriteString(signalID, value, latency);
+    units::time::second_t timestampSec = units::time::second_t(static_cast<double>(timestamp) / 1e9);
+    SignalLogger::WriteString(signalID, value, timestampSec);
 }
 
-void CTRESignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t latency)
+void CTRESignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
 {
-    SignalLogger::WriteDoubleArray(signalID, value, units, latency);
+    units::time::second_t timestampSec = units::time::second_t(static_cast<double>(timestamp) / 1e9);
+    SignalLogger::WriteDoubleArray(signalID, value, units, timestampSec);
 }
 
 void CTRESignalLogger::Start()
