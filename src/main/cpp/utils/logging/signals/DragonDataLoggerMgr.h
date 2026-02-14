@@ -53,7 +53,7 @@ private:
 
     const units::time::second_t m_period{0.00075};
     const LoggerType m_defaultLoggerType{LoggerType::UDP_LOGGER};
-    const std::string m_piLoggerAddress{"127.0.0.1"};
+    const std::string m_piLoggerAddress{"dragondataloggerz.local"};
     const int m_piLoggerPort{5900};
 
     static DragonDataLoggerMgr *m_instance;
