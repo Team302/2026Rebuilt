@@ -65,7 +65,10 @@ void DragonDataLoggerMgr::SetLoggerType(LoggerType type)
     if (m_logger)
     {
         m_logger->Start();
-        m_timer.Start();
+        if (!m_timer.IsRunning())
+        {
+            m_timer.Start();
+        }
     }
 }
 
