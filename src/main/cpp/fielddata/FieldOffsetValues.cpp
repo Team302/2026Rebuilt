@@ -61,22 +61,45 @@ FieldOffsetValues::FieldOffsetValues()
         units::length::meter_t m_blueAllianceBumpEdgeX;
         units::length::meter_t m_blueNeutralBumpEdgeX;
 
-        m_redAllianceBumpEdgeX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER).X() + BUMP_OFFSET;
-        m_redNeutralBumpEdgeX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER).X() - BUMP_OFFSET;
-        m_blueAllianceBumpEdgeX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() - BUMP_OFFSET;
-        m_blueNeutralBumpEdgeX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() + BUMP_OFFSET;
+        auto redHubCenter = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER);
+        auto blueHubCenter = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER);
+
+        m_redAllianceBumpEdgeX = redHubCenter.X() + BUMP_OFFSET;
+        m_redNeutralBumpEdgeX = redHubCenter.X() - BUMP_OFFSET;
+        m_blueAllianceBumpEdgeX = blueHubCenter.X() - BUMP_OFFSET;
+        m_blueNeutralBumpEdgeX = blueHubCenter.X() + BUMP_OFFSET;
+
+        m_redBumpDepotY = (redHubCenter.Y() +
+                           fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y()) /
+                          2.0;
+        m_redBumpOutpostY = (redHubCenter.Y() +
+                             fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y()) /
+                            2.0;
+        m_blueBumpDepotY = (blueHubCenter.Y() +
+                            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y()) /
+                           2.0;
+        m_blueBumpOutpostY = (blueHubCenter.Y() +
+                              fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_OUTPOST).Y()) /
+                             2.0;
     }
     else
     {
         // Fallback to safe default values if FieldConstants is unavailable
         m_blueDepotX = units::length::meter_t{0.0};
         m_redDepotX = units::length::meter_t{0.0};
+
         m_blueHubX = units::length::meter_t{0.0};
         m_redHubX = units::length::meter_t{0.0};
+
         m_redAllianceBumpEdgeX = units::length::meter_t{0.0};
         m_redNeutralBumpEdgeX = units::length::meter_t{0.0};
         m_blueAllianceBumpEdgeX = units::length::meter_t{0.0};
         m_blueNeutralBumpEdgeX = units::length::meter_t{0.0};
+
+        m_redBumpDepotY = units::length::meter_t{0.0};
+        m_redBumpOutpostY = units::length::meter_t{0.0};
+        m_blueBumpDepotY = units::length::meter_t{0.0};
+        m_blueBumpOutpostY = units::length::meter_t{0.0};
     }
 
     m_blueOutpostX = m_blueDepotX;
@@ -94,7 +117,7 @@ FieldOffsetValues::FieldOffsetValues()
 ///             - For OUTPOST_X: returns red outpost X if red side, else blue outpost X
 ///             - For DEPOT_X: returns red depot X if red side, else blue depot X
 //------------------------------------------------------------------
-units::length::meter_t FieldOffsetValues::GetXValue(bool isRedSide, FIELD_OFFSET_ITEMS item) const
+units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_ITEMS item) const
 {
     if (item == FIELD_OFFSET_ITEMS::OUTPOST_X)
     {
@@ -107,6 +130,22 @@ units::length::meter_t FieldOffsetValues::GetXValue(bool isRedSide, FIELD_OFFSET
     else if (item == FIELD_OFFSET_ITEMS::HUB_X)
     {
         return isRedSide ? m_redHubX : m_blueHubX;
+    }
+    else if (item == FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_X)
+    {
+        return isRedSide ? m_redAllianceBumpEdgeX : m_blueAllianceBumpEdgeX;
+    }
+    else if (item == FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_Y)
+    {
+        return isRedSide ? m_redBumpOutpostY : m_blueBumpOutpostY; // Assuming BUMP_Y corresponds to the outpost Y position for each alliance
+    }
+    else if (item == FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_X)
+    {
+        return isRedSide ? m_redNeutralBumpEdgeX : m_blueNeutralBumpEdgeX;
+    }
+    else if (item == FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_Y)
+    {
+        return isRedSide ? m_redBumpDepotY : m_blueBumpDepotY; // Assuming BUMP_Y corresponds to the depot Y position for each alliance
     }
     else
     {

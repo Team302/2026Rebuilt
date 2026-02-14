@@ -28,7 +28,7 @@
 /// The command uses PID control to drive the robot to the calculated bump center position,
 /// making it useful for autonomous routines or driver assistance features during matches.
 //====================================================================================================================================================
-class DriveToNZOutFromAlliance : public DriveToPose
+class DriveOverBump : public DriveToPose
 {
 public:
     //------------------------------------------------------------------
@@ -37,12 +37,12 @@ public:
     /// @details    Initializes the command with the chassis reference for
     ///             autonomous navigation to the nearest depot
     //------------------------------------------------------------------
-    DriveToNZOutFromAlliance(subsystems::CommandSwerveDrivetrain *chassis);
+    DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis);
 
     //------------------------------------------------------------------
     /// @brief      Destructor (default implementation)
     //------------------------------------------------------------------
-    ~DriveToNZOutFromAlliance() = default;
+    ~DriveOverBump() = default;
 
     //------------------------------------------------------------------
     /// @brief      Calculates the target end pose for the NZOutFromAllience

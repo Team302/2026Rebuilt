@@ -94,7 +94,7 @@ frc::Pose2d HubHelper::CalcHubPose() const
         // Fallback: use the hubpose directly if FieldOffsetValues is unavailable
         return hubPose;
     }
-    return frc::Pose2d(fieldOffsetValues->GetXValue(isNearestHubRed, FIELD_OFFSET_ITEMS::HUB_X), hubPose.Y(), isNearestHubRed ? 0_deg : 180_deg);
+    return frc::Pose2d(fieldOffsetValues->GetValue(isNearestHubRed, FIELD_OFFSET_ITEMS::HUB_X), hubPose.Y(), isNearestHubRed ? 0_deg : 180_deg);
 }
 
 //------------------------------------------------------------------

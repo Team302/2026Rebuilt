@@ -22,14 +22,17 @@
 /// @enum FIELD_OFFSET_ITEMS
 /// @brief Enumeration of field element offset items available for retrieval
 ///
-/// Specifies which type of field element offset to retrieve using GetXValue()
+/// Specifies which type of field element offset to retrieve using GetValue()
 //====================================================================================================================================================
 enum class FIELD_OFFSET_ITEMS
 {
-    OUTPOST_X, ///< X-coordinate offset from the outpost
-    DEPOT_X,   ///< X-coordinate offset from the depot neutral side
-    HUB_X,     ///< X-coordinate offset from the hub center
-    BUMP_X     ///< X-coordinate offset from the bump center
+    OUTPOST_X,       ///< X-coordinate offset from the outpost
+    DEPOT_X,         ///< X-coordinate offset from the depot neutral side
+    HUB_X,           ///< X-coordinate offset from the hub center
+    ALLIANCE_BUMP_X, ///< X-coordinate offset from the bump center
+    ALLIANCE_BUMP_Y, ///< Y-coordinate for bump
+    NEUTRAL_BUMP_X,  ///< X-coordinate offset from the bump center
+    NEUTRAL_BUMP_Y   ///< Y-coordinate for bump
 };
 
 //====================================================================================================================================================
@@ -67,7 +70,7 @@ public:
     ///             - When item is OUTPOST_X: returns red or blue outpost X position
     ///             - When item is DEPOT_X: returns red or blue depot neutral side X position
     //------------------------------------------------------------------
-    units::length::meter_t GetXValue(bool isRedSide, FIELD_OFFSET_ITEMS item) const;
+    units::length::meter_t GetValue(bool isRedSide, FIELD_OFFSET_ITEMS item) const;
 
 private:
     //------------------------------------------------------------------
@@ -110,6 +113,11 @@ private:
     units::length::meter_t m_redNeutralBumpEdgeX;
     units::length::meter_t m_blueAllianceBumpEdgeX;
     units::length::meter_t m_blueNeutralBumpEdgeX;
+
+    units::length::meter_t m_redBumpDepotY;
+    units::length::meter_t m_redBumpOutpostY;
+    units::length::meter_t m_blueBumpDepotY;
+    units::length::meter_t m_blueBumpOutpostY;
 
     static constexpr units::length::meter_t HUB_OFFSET = 2.0_m;
     static constexpr units::length::meter_t BUMP_OFFSET = 1.1_m;

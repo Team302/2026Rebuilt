@@ -12,10 +12,12 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-#include "chassis/commands/season_specific_commands/DriveToNZOutFromAlliance.h"
-#include "chassis/commands/season_specific_commands/BumpHelper.h"
+#include "chassis/commands/season_specific_commands/DriveOverBump.h"
+#include "fielddata/BumpHelper.h"
 
-#include "fielddata/DepotHelper.h"
+#include "auton/AllianceZoneManager.h"
+#include "auton/NeutralZoneManager.h"
+#include "fielddata/FieldOffsetValues.h"
 #include "utils/PoseUtils.h"
 
 //------------------------------------------------------------------
@@ -25,7 +27,7 @@
 ///             This command autonomously drives the robot to the nearest
 ///             depot on the field.
 //------------------------------------------------------------------
-DriveToNZOutFromAlliance::DriveToNZOutFromAlliance(subsystems::CommandSwerveDrivetrain *chassis)
+DriveOverBump::DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis)
     : DriveToPose(chassis)
 {
 }
@@ -37,13 +39,21 @@ DriveToNZOutFromAlliance::DriveToNZOutFromAlliance(subsystems::CommandSwerveDriv
 ///             closest to the robot and calculates the center pose of that
 ///             depot. Returns a default pose if DepotHelper is unavailable.
 //------------------------------------------------------------------
-frc::Pose2d DriveToNZOutFromAlliance::GetEndPose()
+frc::Pose2d DriveOverBump::GetEndPose()
 {
     frc::Pose2d endPose{};
-    auto BumpHelper = BumpHelper::GetInstance();
-    if (BumpHelper != nullptr)
+    auto bumpHelper = BumpHelper::GetInstance();
+    if (bumpHelper != nullptr)
     {
-        // todo zones not yet pushed
+        auto bump = bumpHelper->CalcNearestBump();
+        auto isRed = (bump == BUMP_ID::RED_DEPOT_BUMP || bump == BUMP_ID::RED_OUTPOST_BUMP);
+        auto isInNeutralZone = NeutralZoneManager::GetInstance()->IsInNeutralZone();
+
+        auto offsetVals = FieldOffsetValues::GetInstance();
+        auto neutralX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::BUMP_X);
+        auto neutralY = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::BUMP_Y);
+
+        auto bumpCenter = bumpHelper->CalcNearestBumpCenter();
     }
     return endPose;
 }
@@ -60,7 +70,7 @@ frc::Pose2d DriveToNZOutFromAlliance::GetEndPose()
 ///          target position) so we stop immediately.  Otherwise, it delegates to the base class's
 ///          IsFinished() method to determine completion.
 //------------------------------------------------------------------
-bool DriveToNZOutFromAlliance::IsFinished()
+bool DriveOverBump::IsFinished()
 {
     auto endPose = GetEndPose();
     if (PoseUtils::IsPoseAtOrigin(endPose, units::length::centimeter_t{1.0}))
@@ -71,7 +81,7 @@ bool DriveToNZOutFromAlliance::IsFinished()
     return DriveToPose::IsFinished(); // call base class's IsFinished method
 }
 
-frc::Pose2d DriveToNZOutFromAlliance::GetNearestBumpPose()
+frc::Pose2d DriveOverBump::GetNearestBumpPose()
 {
     // Implementation for determining the nearest bump pose
     // robot pose not defined yet

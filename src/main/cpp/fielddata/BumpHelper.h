@@ -32,6 +32,14 @@
 /// The class uses the robot's current pose and field constants to make alliance-aware decisions
 /// about depot locations and navigation targets.
 //====================================================================================================================================================
+enum class BUMP_ID
+{
+    BLUE_DEPOT_BUMP,
+    BLUE_OUTPOST_BUMP,
+    RED_DEPOT_BUMP,
+    RED_OUTPOST_BUMP
+};
+
 class BumpHelper
 {
 public:
@@ -40,7 +48,9 @@ public:
     /// @return     DepotHelper* - Pointer to the singleton instance
     //------------------------------------------------------------------
     static BumpHelper *GetInstance();
-    frc::Pose2d CalcNearestBump(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
+
+    BUMP_ID CalcNearestBump() const;
+    frc::Pose2d CalcNearestBumpCenter() const;
 
 private:
     FieldConstants *m_fieldConstants;
@@ -55,18 +65,9 @@ private:
     //------------------------------------------------------------------
     ~BumpHelper() = default;
 
-    /// @brief Singleton instance pointer
-    static BumpHelper *m_instance;
-
-    //------------------------------------------------------------------
-    /// @brief      Calculates the distance from a given pose to a field element
-    /// @param[in]  element - The field element to measure distance to
-    /// @param[in]  currentPose - The pose to measure distance from
-    /// @return     units::length::meter_t - The distance in meters
-    //------------------------------------------------------------------
-
     /// @brief Pointer to the swerve drivetrain subsystem
     subsystems::CommandSwerveDrivetrain *m_chassis;
 
-    /// @brief Pointer to the field constants singleton
+    /// @brief Singleton instance pointer
+    static BumpHelper *m_instance;
 };
