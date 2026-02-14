@@ -120,7 +120,6 @@ void Robot::RobotPeriodic()
     frc2::CommandScheduler::GetInstance().Run();
 
     m_isFMSAttached = frc::DriverStation::IsFMSAttached();
-    frc::DriverStation::SilenceJoystickConnectionWarning(!m_isFMSAttached);
     if (!m_isFMSAttached)
     {
         Logger::GetLogger()->PeriodicLog();
