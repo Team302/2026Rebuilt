@@ -40,6 +40,7 @@
 #include "mechanisms/Intake/LaunchState.h"
 #include "mechanisms/Intake/EmptyHopperState.h"
 #include "teleopcontrol/TeleopControl.h"
+#include "utils/logging/signals/DragonDataLogger.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -94,45 +95,49 @@ void Intake::CreateAndRegisterStates()
 
 Intake::Intake(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANISM_TYPE::INTAKE, std::string("Intake")),
 												m_activeRobotId(activeRobotId),
-												m_stateMap()
+												m_stateMap(),
+												DragonDataLogger()
 {
 	PeriodicLooper::GetInstance()->RegisterAll(this);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsLaunching_Bool);
 
-	// InitializeLogging();
+	InitializeLogging();
 }
 
-/* void Intake::InitializeLogging()
- {
-	wpi::log::DataLog &log = frc::DataLogManager::GetLog();
+void Intake::InitializeLogging()
+{
+	uint64_t timestamp = frc::Timer::GetFPGATimestamp().value();
+	DragonDataLogger::LogDoubleData(timestamp, DragonDataLogger::DoubleSignals::INTAKE_PERCENT_OUT, 0.0);
+}
+// wpi::log::DataLog &log = frc::DataLogManager::GetLog();
 
-	 m_IntakeTotalEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/TotalEnergy");
-m_IntakeTotalEnergyLogEntry.Append(0.0);
-m_IntakeTotalWattHoursLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/TotalWattHours");
-m_IntakeTotalWattHoursLogEntry.Append(0.0);
-m_IntakeLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakePosition");
-m_IntakeLogEntry.Append(0.0);
-m_intakeTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakeTarget");
-m_intakeTargetLogEntry.Append(0.0);
-m_IntakePowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakePower");
-m_IntakePowerLogEntry.Append(0.0);
-m_IntakeEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakeEnergy");
-m_IntakeEnergyLogEntry.Append(0.0);
-m_AgitatorLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorPosition");
-m_AgitatorLogEntry.Append(0.0);
-m_agitatorTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorTarget");
-m_agitatorTargetLogEntry.Append(0.0);
-m_AgitatorPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorPower");
-m_AgitatorPowerLogEntry.Append(0.0);
-m_AgitatorEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorEnergy");
-m_AgitatorEnergyLogEntry.Append(0.0);
-m_IsIntakeExtendedLogEntry = wpi::log::BooleanLogEntry(log, "mechanisms/Intake/IsIntakeExtended");
-m_IsIntakeExtendedLogEntry.Append(false);
+// 	 m_IntakeTotalEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/TotalEnergy");
+// m_IntakeTotalEnergyLogEntry.Append(0.0);
+// m_IntakeTotalWattHoursLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/TotalWattHours");
+// m_IntakeTotalWattHoursLogEntry.Append(0.0);
+// m_IntakeLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakePosition");
+// m_IntakeLogEntry.Append(0.0);
+// m_intakeTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakeTarget");
+// m_intakeTargetLogEntry.Append(0.0);
+// m_IntakePowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakePower");
+// m_IntakePowerLogEntry.Append(0.0);
+// m_IntakeEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakeEnergy");
+// m_IntakeEnergyLogEntry.Append(0.0);
+// m_AgitatorLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorPosition");
+// m_AgitatorLogEntry.Append(0.0);
+// m_agitatorTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorTarget");
+// m_agitatorTargetLogEntry.Append(0.0);
+// m_AgitatorPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorPower");
+// m_AgitatorPowerLogEntry.Append(0.0);
+// m_AgitatorEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorEnergy");
+// m_AgitatorEnergyLogEntry.Append(0.0);
+// m_IsIntakeExtendedLogEntry = wpi::log::BooleanLogEntry(log, "mechanisms/Intake/IsIntakeExtended");
+// m_IsIntakeExtendedLogEntry.Append(false);
 
-m_IntakeStateLogEntry = wpi::log::IntegerLogEntry(log, "mechanisms/Intake/State");
-m_IntakeStateLogEntry.Append(0);
- }*/
+// m_IntakeStateLogEntry = wpi::log::IntegerLogEntry(log, "mechanisms/Intake/State");
+// m_IntakeStateLogEntry.Append(0);
+//  }
 
 std::map<std::string, Intake::STATE_NAMES>
 	Intake::stringToSTATE_NAMESEnumMap{

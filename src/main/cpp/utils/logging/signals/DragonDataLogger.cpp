@@ -266,6 +266,8 @@ void DragonDataLogger::LogDoubleData(uint64_t timestamp, DragonDataLogger::Doubl
     case DragonDataLogger::DoubleSignals::CLIMBER_PERCENT_OUT:
         logger->WriteDouble(m_climberPercentOutPath, value, m_climberPercentOutUnits, m_latency);
         break;
+    case DragonDataLogger::DoubleSignals::INTAKE_PERCENT_OUT:
+        logger->WriteDouble(m_intakePercentOutPath, value, m_intakePercentOutUnits, m_latency);
     default:
         break;
     }

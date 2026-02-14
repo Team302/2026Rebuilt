@@ -97,7 +97,8 @@ public:
         SWERVE_CHASSIS_TOTAL_CURRENT,
         SWERVE_CHASSIS_WATT_HOURS,
         LIMELIGHT1_NUMBER_OF_TAGS,
-        CLIMBER_PERCENT_OUT
+        CLIMBER_PERCENT_OUT,
+        INTAKE_PERCENT_OUT
     };
 
     enum StringSignals
@@ -297,6 +298,10 @@ public:
     // CLIMBER
     string m_climberPercentOutPath = "/Climber/ClimberMotor/Target";
     string m_climberPercentOutUnits = "%";
+
+    // INTAKE
+    string m_intakePercentOutPath = "/Intake/IntakeMotor/Target";
+    string m_intakePercentOutUnits = "%";
 
     // need motor target and climb position target
 
