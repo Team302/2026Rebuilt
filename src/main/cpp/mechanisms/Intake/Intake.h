@@ -41,7 +41,7 @@
 
 #include "RobotIdentifier.h"
 
-class Intake : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber
+class Intake : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger
 {
 public:
 	enum STATE_NAMES
@@ -121,5 +121,5 @@ private:
 	bool m_isInClimbMode = false;
 	bool m_isLaunching = false;
 	bool m_isAllowedToClimb = false;
-	// void InitializeLogging();
+	void InitializeLogging();
 };
