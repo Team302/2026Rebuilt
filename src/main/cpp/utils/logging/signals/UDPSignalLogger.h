@@ -21,10 +21,10 @@
 class UDPSignalLogger : public ISignalLogger
 {
 public:
-    UDPSignalLogger(const std::string& ipAddress, int port);
+    UDPSignalLogger(const std::string& host, int port);
     ~UDPSignalLogger() override;
 
-    void WriteBoolean(std::string signalID, bool value, uint64_t) override;
+    void WriteBoolean(std::string signalID, bool value, uint64_t timestamp) override;
     void WriteDouble(std::string signalID, double value, std::string_view units, uint64_t timestamp) override;
     void WriteInteger(std::string signalID, int64_t value, std::string_view units, uint64_t timestamp) override;
     void WriteString(std::string signalID, const std::string &value, uint64_t timestamp) override;
@@ -38,7 +38,7 @@ private:
     std::string FormatMessage(std::string signalID, std::string type,
                               std::string value, std::string_view units, uint64_t timestamp);
 
-    std::string m_ipAddress;
+    std::string m_host;
     int m_port;
     std::atomic<bool> m_isRunning;
 #ifdef _WIN32
