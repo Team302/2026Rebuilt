@@ -95,6 +95,7 @@ public:
 
 	bool IsClimbMode() const { return m_climbModeStatus; }
 	bool IsAllowedToClimb() const { return m_allowedToClimb; };
+	bool IsDriveToDone() const { return m_driveToFinished; };
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
 	void SetCurrentState(int state, bool run) override;
 	void UpdateTargetClimberPercentOut(double percentOut)
@@ -133,6 +134,7 @@ private:
 
 	bool m_climbModeStatus;
 	bool m_allowedToClimb;
+	bool m_driveToFinished;
 	subsystems::CommandSwerveDrivetrain *m_chassis; ///< pointer to chassis for pitch
 
 	units::angular_velocity::degrees_per_second_t m_maxAngularVelocity = 360_deg_per_s;

@@ -90,7 +90,7 @@ private:
 
     DragonField *m_field; // Want to add targets and launcehr position
 
-    const units::degree_t m_minLauncherAngle = 90_deg;
+    const units::degree_t m_minLauncherAngle = 120_deg;
     const units::degree_t m_maxLauncherAngle = 270_deg;
 
     FieldConstants *m_fieldConstants;
