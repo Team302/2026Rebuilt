@@ -47,9 +47,9 @@ private:
     static constexpr units::angle::degree_t m_ll3Yaw{90};
     static constexpr units::angle::degree_t m_ll3Roll{0};
 
-    static constexpr units::length::inch_t m_questMountingXOffset{-11.171};
-    static constexpr units::length::inch_t m_questMountingYOffset{-9.924};
-    static constexpr units::length::inch_t m_questMountingZOffset{16.78};
+    static constexpr units::length::inch_t m_questMountingXOffset{-10.0};
+    static constexpr units::length::inch_t m_questMountingYOffset{12.0};
+    static constexpr units::length::inch_t m_questMountingZOffset{31.0};
     static constexpr units::angle::degree_t m_questPitch{0.0};
     static constexpr units::angle::degree_t m_questYaw{180.0};
     static constexpr units::angle::degree_t m_questRoll{0.0};
