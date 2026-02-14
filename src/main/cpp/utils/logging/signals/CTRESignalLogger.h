@@ -32,6 +32,11 @@ public:
     void WriteString(std::string signalID, const std::string &value, units::time::second_t latency) override;
     void WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t latency) override;
 
+    void WritePose2d(std::string signalID, const frc::Pose2d &value, units::time::second_t latency) override;
+    void WritePose3d(std::string signalID, const frc::Pose3d &value, units::time::second_t latency) override;
+    void WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, units::time::second_t latency) override;
+    void WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, units::time::second_t latency) override;
+
     void Start() override;
     void Stop() override;
     std::string CreateLogFileName();

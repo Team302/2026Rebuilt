@@ -46,12 +46,39 @@ void CTRESignalLogger::WriteDoubleArray(std::string signalID, const std::vector<
     SignalLogger::WriteDoubleArray(signalID, value, units, latency);
 }
 
+void CTRESignalLogger::WritePose2d(std::string signalID, const frc::Pose2d &value, units::time::second_t latency)
+{
+    std::vector<double> data = {value.X().value(), value.Y().value(), value.Rotation().Radians().value()};
+    SignalLogger::WriteDoubleArray(signalID, data, "X_m;Y_m;Rot_rad", latency);
+}
+
+void CTRESignalLogger::WritePose3d(std::string signalID, const frc::Pose3d &value, units::time::second_t latency)
+{
+    std::vector<double> data = {value.X().value(), value.Y().value(), value.Z().value(),
+                                value.Rotation().GetQuaternion().W(),
+                                value.Rotation().GetQuaternion().X(),
+                                value.Rotation().GetQuaternion().Y(),
+                                value.Rotation().GetQuaternion().Z()};
+    SignalLogger::WriteDoubleArray(signalID, data, "X_m;Y_m;Z_m;QW;QX;QY;QZ", latency);
+}
+
+void CTRESignalLogger::WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, units::time::second_t latency)
+{
+    std::vector<double> data = {value.vx.value(), value.vy.value(), value.omega.value()};
+    SignalLogger::WriteDoubleArray(signalID, data, "Vx_mps;Vy_mps;Omega_radps", latency);
+}
+
+void CTRESignalLogger::WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, units::time::second_t latency)
+{
+    std::vector<double> data = {value.speed.value(), value.angle.Radians().value()};
+    SignalLogger::WriteDoubleArray(signalID, data, "Speed_mps;Angle_rad", latency);
+}
+
 void CTRESignalLogger::Start()
 {
     SignalLogger::SetPath(GetLoggingDir().c_str());
     SignalLogger::EnableAutoLogging(true);
     SignalLogger::Start();
-
 }
 
 void CTRESignalLogger::Stop()

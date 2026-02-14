@@ -22,6 +22,11 @@
 #include <units/time.h>
 #include <vector>
 
+#include "frc/geometry/Pose2d.h"
+#include "frc/geometry/Pose3d.h"
+#include "frc/kinematics/ChassisSpeeds.h"
+#include "frc/kinematics/SwerveModuleState.h"
+
 class ISignalLogger
 {
 public:
@@ -32,6 +37,11 @@ public:
     virtual void WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::second_t latency) = 0;
     virtual void WriteString(std::string signalID, const std::string &value, units::time::second_t latency) = 0;
     virtual void WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t latency) = 0;
+
+    virtual void WritePose2d(std::string signalID, const frc::Pose2d &value, units::time::second_t latency) = 0;
+    virtual void WritePose3d(std::string signalID, const frc::Pose3d &value, units::time::second_t latency) = 0;
+    virtual void WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, units::time::second_t latency) = 0;
+    virtual void WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, units::time::second_t latency) = 0;
 
     // Optional: methods for starting/stopping logging
     virtual void Start() = 0;

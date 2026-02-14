@@ -22,6 +22,7 @@
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include "utils/logging/signals/CTRESignalLogger.h"
 #include "utils/logging/signals/UDPSignalLogger.h"
+#include "utils/logging/signals/WPISignalLogger.h"
 
 using namespace std;
 using ctre::phoenix6::SignalLogger;
@@ -36,17 +37,15 @@ DragonDataLoggerMgr *DragonDataLoggerMgr::GetInstance()
     return DragonDataLoggerMgr::m_instance;
 }
 
-DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items() 
+DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items()
 {
 
-    //m_logger = std::make_unique<CTRESignalLogger>();
+    // m_logger = std::make_unique<CTRESignalLogger>();
     m_logger = std::make_unique<UDPSignalLogger>("127.0.0.1", 5900);
 
     m_logger->Start();
     m_timer.Start();
-
 }
-
 
 void DragonDataLoggerMgr::SetLogger(std::unique_ptr<ISignalLogger> logger)
 {
@@ -90,6 +89,10 @@ void DragonDataLoggerMgr::SetLoggerType(LoggerType type, const std::string &ipAd
     case LoggerType::NETWORK_TABLES_LOGGER:
         // Future implementation
         // m_logger = std::make_unique<NetworkTablesLogger>();
+        break;
+
+    case LoggerType::WPILOGGER:
+        m_logger = std::make_unique<WPISignalLogger>();
         break;
 
     default:

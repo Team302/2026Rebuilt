@@ -102,7 +102,7 @@ std::string UDPSignalLogger::FormatMessage(std::string signalID, std::string typ
     return oss.str();
 }
 
-void UDPSignalLogger::SendData(const std::string& message)
+void UDPSignalLogger::SendData(const std::string &message)
 {
 #ifdef _WIN32
     if (!m_isRunning || m_socket == INVALID_SOCKET)
@@ -166,9 +166,45 @@ void UDPSignalLogger::WriteDoubleArray(std::string signalID, const std::vector<d
         oss << value[i];
         if (i < value.size() - 1)
         {
-            oss << ";"; 
+            oss << ";";
         }
     }
     std::string message = FormatMessage(signalID, "double_array", oss.str(), units, timestamp);
+    SendData(message);
+}
+
+void UDPSignalLogger::WritePose2d(std::string signalID, const frc::Pose2d &value, units::time::second_t latency)
+{
+    std::ostringstream oss;
+    oss << value.X().value() << ";" << value.Y().value() << ";" << value.Rotation().Radians().value();
+    std::string message = FormatMessage(signalID, "pose2d", oss.str(), "X_m;Y_m;Rot_rad", latency);
+    SendData(message);
+}
+
+void UDPSignalLogger::WritePose3d(std::string signalID, const frc::Pose3d &value, units::time::second_t latency)
+{
+    std::ostringstream oss;
+    oss << value.X().value() << ";" << value.Y().value() << ";" << value.Z().value() << ";"
+        << value.Rotation().GetQuaternion().W() << ";"
+        << value.Rotation().GetQuaternion().X() << ";"
+        << value.Rotation().GetQuaternion().Y() << ";"
+        << value.Rotation().GetQuaternion().Z();
+    std::string message = FormatMessage(signalID, "pose3d", oss.str(), "X_m;Y_m;Z_m;QW;QX;QY;QZ", latency);
+    SendData(message);
+}
+
+void UDPSignalLogger::WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, units::time::second_t latency)
+{
+    std::ostringstream oss;
+    oss << value.vx.value() << ";" << value.vy.value() << ";" << value.omega.value();
+    std::string message = FormatMessage(signalID, "chassis_speeds", oss.str(), "Vx_mps;Vy_mps;Omega_radps", latency);
+    SendData(message);
+}
+
+void UDPSignalLogger::WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, units::time::second_t latency)
+{
+    std::ostringstream oss;
+    oss << value.speed.value() << ";" << value.angle.Radians().value();
+    std::string message = FormatMessage(signalID, "swerve_module_state", oss.str(), "Speed_mps;Angle_rad", latency);
     SendData(message);
 }

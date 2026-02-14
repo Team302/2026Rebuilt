@@ -21,7 +21,7 @@
 class UDPSignalLogger : public ISignalLogger
 {
 public:
-    UDPSignalLogger(const std::string& ipAddress, int port);
+    UDPSignalLogger(const std::string &ipAddress, int port);
     ~UDPSignalLogger() override;
 
     void WriteBoolean(std::string signalID, bool value, units::time::second_t timestamp) override;
@@ -30,11 +30,16 @@ public:
     void WriteString(std::string signalID, const std::string &value, units::time::second_t timestamp) override;
     void WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t timestamp) override;
 
+    void WritePose2d(std::string signalID, const frc::Pose2d &value, units::time::second_t latency) override;
+    void WritePose3d(std::string signalID, const frc::Pose3d &value, units::time::second_t latency) override;
+    void WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, units::time::second_t latency) override;
+    void WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, units::time::second_t latency) override;
+
     void Start() override;
     void Stop() override;
 
 private:
-    void SendData(const std::string& message);
+    void SendData(const std::string &message);
     std::string FormatMessage(std::string signalID, std::string type,
                               std::string value, std::string_view units, units::time::second_t timestamp);
 
