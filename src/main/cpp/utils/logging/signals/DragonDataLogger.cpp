@@ -20,7 +20,6 @@
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include "utils/logging/signals/ISignalLogger.h"
 
-
 DragonDataLogger::DragonDataLogger()
 {
     DragonDataLoggerMgr::GetInstance()->RegisterItem(this);
@@ -39,7 +38,7 @@ void DragonDataLogger::LogBoolData(uint64_t timestamp, DragonDataLogger::BoolSig
     {
         return;
     }
-    
+
     switch (signalID)
     {
     case DragonDataLogger::BoolSignals::IS_BROWNOUT:
@@ -56,7 +55,7 @@ void DragonDataLogger::LogBoolData(uint64_t timestamp, DragonDataLogger::BoolSig
 void DragonDataLogger::LogDoubleData(uint64_t timestamp, DragonDataLogger::DoubleSignals signalID, double value)
 {
     auto dataMgr = DragonDataLoggerMgr::GetInstance();
-    
+
     if (dataMgr == nullptr)
     {
         return;
@@ -264,6 +263,9 @@ void DragonDataLogger::LogDoubleData(uint64_t timestamp, DragonDataLogger::Doubl
     case DragonDataLogger::DoubleSignals::LIMELIGHT1_NUMBER_OF_TAGS:
         logger->WriteDouble(m_limelight1NumberOfTagsPath, value, m_limelight1NumberOfTagsUnits, m_latency);
         break;
+    case DragonDataLogger::DoubleSignals::CLIMBER_PERCENT_OUT:
+        logger->WriteDouble(m_climberPercentOutPath, value, m_climberPercentOutUnits, m_latency);
+        break;
     default:
         break;
     }
@@ -467,13 +469,12 @@ void DragonDataLogger::LogSwerveModuleStateData(uint64_t timestamp, DragonDataLo
     default:
         break;
     }
-    
 }
 
 void DragonDataLogger::LogChassisSpeedsData(uint64_t timestamp, DragonDataLogger::ChassisSpeedSignals signalID, frc::ChassisSpeeds value)
 {
     auto dataMgr = DragonDataLoggerMgr::GetInstance();
-    
+
     if (dataMgr == nullptr)
     {
         return;

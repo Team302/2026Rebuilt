@@ -42,6 +42,7 @@
 #include "mechanisms/Climber/ExitState.h"
 #include "mechanisms/Climber/AutonL1ClimbState.h"
 #include "teleopcontrol/TeleopControl.h"
+#include "utils/logging/signals/DragonDataLogger.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -101,44 +102,44 @@ Climber::Climber(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHA
 												  m_stateMap(),
 												  m_climbModeStatus(false),
 												  m_allowedToClimb(false),
-												  m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis())
+												  m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
+												  DragonDataLogger()
 {
 	PeriodicLooper::GetInstance()->RegisterAll(this);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Bool);
 
-	// InitializeLogging();
+	InitializeLogging();
 }
 
-/* void Climber::InitializeLogging()
- {
-	wpi::log::DataLog &log = frc::DataLogManager::GetLog();
+void Climber::InitializeLogging()
+{
+	uint64_t timestamp = frc::Timer::GetFPGATimestamp().value();
+	DragonDataLogger::LogDoubleData(timestamp, DragonDataLogger::DoubleSignals::CLIMBER_PERCENT_OUT, 0.0);
+	//  m_ClimberTotalEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/TotalEnergy");
+	// m_ClimberTotalEnergyLogEntry.Append(0.0);
+	// m_ClimberTotalWattHoursLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/TotalWattHours");
+	// m_ClimberTotalWattHoursLogEntry.Append(0.0);
+	// m_ClimberLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberPosition");
+	// m_ClimberLogEntry.Append(0.0);
+	// m_climberTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberTarget");
+	// m_climberTargetLogEntry.Append(0.0);
+	// m_ClimberPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberPower");
+	// m_ClimberPowerLogEntry.Append(0.0);
+	// m_ClimberEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberEnergy");
+	// m_ClimberEnergyLogEntry.Append(0.0);
+	// m_ClimberStateLogEntry = wpi::log::IntegerLogEntry(log, "mechanisms/Climber/State");
+	// m_ClimberStateLogEntry.Append(0);
+}
 
-	 m_ClimberTotalEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/TotalEnergy");
-m_ClimberTotalEnergyLogEntry.Append(0.0);
-m_ClimberTotalWattHoursLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/TotalWattHours");
-m_ClimberTotalWattHoursLogEntry.Append(0.0);
-m_ClimberLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberPosition");
-m_ClimberLogEntry.Append(0.0);
-m_climberTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberTarget");
-m_climberTargetLogEntry.Append(0.0);
-m_ClimberPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberPower");
-m_ClimberPowerLogEntry.Append(0.0);
-m_ClimberEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberEnergy");
-m_ClimberEnergyLogEntry.Append(0.0);
-m_ClimberStateLogEntry = wpi::log::IntegerLogEntry(log, "mechanisms/Climber/State");
-m_ClimberStateLogEntry.Append(0);
- }*/
-
-std::map<std::string, Climber::STATE_NAMES>
-	Climber::stringToSTATE_NAMESEnumMap{
-		{"STATE_OFF", Climber::STATE_NAMES::STATE_OFF},
-		{"STATE_WANT_TO_CLIMB", Climber::STATE_NAMES::STATE_WANT_TO_CLIMB},
-		{"STATE_PREPARE_TO_CLIMB", Climber::STATE_NAMES::STATE_PREPARE_TO_CLIMB},
-		{"STATE_L1CLIMB", Climber::STATE_NAMES::STATE_L1CLIMB},
-		{"STATE_L3CLIMB", Climber::STATE_NAMES::STATE_L3CLIMB},
-		{"STATE_EXIT", Climber::STATE_NAMES::STATE_EXIT},
-		{"STATE_AUTON_L1CLIMB", Climber::STATE_NAMES::STATE_AUTON_L1CLIMB}};
+std::map<std::string, Climber::STATE_NAMES> Climber::stringToSTATE_NAMESEnumMap{
+	{"STATE_OFF", Climber::STATE_NAMES::STATE_OFF},
+	{"STATE_WANT_TO_CLIMB", Climber::STATE_NAMES::STATE_WANT_TO_CLIMB},
+	{"STATE_PREPARE_TO_CLIMB", Climber::STATE_NAMES::STATE_PREPARE_TO_CLIMB},
+	{"STATE_L1CLIMB", Climber::STATE_NAMES::STATE_L1CLIMB},
+	{"STATE_L3CLIMB", Climber::STATE_NAMES::STATE_L3CLIMB},
+	{"STATE_EXIT", Climber::STATE_NAMES::STATE_EXIT},
+	{"STATE_AUTON_L1CLIMB", Climber::STATE_NAMES::STATE_AUTON_L1CLIMB}};
 
 void Climber::CreateCompBot302()
 {

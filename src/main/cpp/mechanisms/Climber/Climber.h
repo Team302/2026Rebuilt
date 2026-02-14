@@ -43,7 +43,7 @@
 
 #include "RobotIdentifier.h"
 
-class Climber : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber
+class Climber : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger
 {
 public:
 	enum STATE_NAMES
@@ -137,5 +137,5 @@ private:
 
 	units::angular_velocity::degrees_per_second_t m_maxAngularVelocity = 360_deg_per_s;
 
-	// void InitializeLogging();
+	void InitializeLogging();
 };
