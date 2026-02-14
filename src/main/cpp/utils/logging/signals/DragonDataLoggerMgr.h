@@ -17,18 +17,16 @@
 #include <array>
 #include <vector>
 #include <memory>
+#include <string>
 
 #include "frc/Timer.h"
 #include "utils/logging/signals/ISignalLogger.h"
 #include "utils/logging/signals/DragonDataLogger.h"
 
-
-
 enum class LoggerType
 {
     CTRE_SIGNAL_LOGGER,
-    UDP_LOGGER,
-    NETWORK_TABLES_LOGGER
+    UDP_LOGGER
 };
 
 class DragonDataLoggerMgr
@@ -39,8 +37,7 @@ public:
     DragonDataLoggerMgr(const DragonDataLoggerMgr &) = delete;
     DragonDataLoggerMgr &operator=(const DragonDataLoggerMgr &) = delete;
 
-    void SetLogger(std::unique_ptr<ISignalLogger> logger);
-    void SetLoggerType(LoggerType type, const std::string &ipAddress = "", int port = 0);
+    void SetLoggerType(LoggerType type);
     ISignalLogger *GetLogger() const { return m_logger.get(); }
 
     void RegisterItem(DragonDataLogger *item);
@@ -49,13 +46,15 @@ public:
 private:
     DragonDataLoggerMgr();
     ~DragonDataLoggerMgr();
-    
+
     std::vector<DragonDataLogger *> m_items;
     frc::Timer m_timer;
     unsigned int m_lastIndex = 0;
 
-
     const units::time::second_t m_period{0.00075};
+    const LoggerType m_defaultLoggerType{LoggerType::UDP_LOGGER};
+    const std::string m_piLoggerAddress{"dragondataloggerz.local"};
+    const int m_piLoggerPort{5900};
 
     static DragonDataLoggerMgr *m_instance;
     std::unique_ptr<ISignalLogger> m_logger;
