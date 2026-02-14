@@ -105,4 +105,5 @@ private:
     units::length::meter_t m_redOutpostX;
 
     static constexpr units::length::meter_t HUB_OFFSET = 2.0_m;
+    static constexpr units::length::inch_t DEPOT_OFFSET = 3.0_in;
 };
