@@ -26,23 +26,30 @@ public:
     void BuildCameraConfig() override;
 
 private:
-    static constexpr units::length::meter_t m_ll1MountingXOffset{0.24765};  // 9.75 inches
-    static constexpr units::length::meter_t m_ll1MountingYOffset{-0.08255}; // -3.25 inches
-    static constexpr units::length::meter_t m_ll1MountingZOffset{0.8223};   // 32.4 inches
-    static constexpr units::angle::degree_t m_ll1Pitch{-32.0};              // -32 degrees
-    static constexpr units::angle::degree_t m_ll1Yaw{0};                    // 0 degrees
-    static constexpr units::angle::degree_t m_ll1Roll{0};                   // 0 degrees
+    static constexpr units::length::inch_t m_ll1MountingXOffset{-10.585};
+    static constexpr units::length::inch_t m_ll1MountingYOffset{-10.257};
+    static constexpr units::length::inch_t m_ll1MountingZOffset{9.231};
+    static constexpr units::angle::degree_t m_ll1Pitch{5};
+    static constexpr units::angle::degree_t m_ll1Yaw{-150};
+    static constexpr units::angle::degree_t m_ll1Roll{0};
 
-    static constexpr units::length::inch_t m_ll2MountingXOffset{9.663};  // 9.663 inches
-    static constexpr units::length::inch_t m_ll2MountingYOffset{11.101}; // 11.101 inches Left
-    static constexpr units::length::inch_t m_ll2MountingZOffset{9.639};  // 9.639 inches
-    static constexpr units::angle::degree_t m_ll2Pitch{6.8};             // 6.8 degrees up
-    static constexpr units::angle::degree_t m_ll2Yaw{-40};               // 40 degrees to the right
+    static constexpr units::length::inch_t m_ll2MountingXOffset{-10.585};
+    static constexpr units::length::inch_t m_ll2MountingYOffset{10.257};
+    static constexpr units::length::inch_t m_ll2MountingZOffset{9.231};
+    static constexpr units::angle::degree_t m_ll2Pitch{5};
+    static constexpr units::angle::degree_t m_ll2Yaw{150};
     static constexpr units::angle::degree_t m_ll2Roll{0};
 
-    static constexpr units::length::inch_t m_questMountingXOffset{-12.3};
-    static constexpr units::length::inch_t m_questMountingYOffset{-2.5};
-    static constexpr units::length::inch_t m_questMountingZOffset{12.574};
+    static constexpr units::length::inch_t m_ll3MountingXOffset{7.43};
+    static constexpr units::length::inch_t m_ll3MountingYOffset{14.359};
+    static constexpr units::length::inch_t m_ll3MountingZOffset{19.589};
+    static constexpr units::angle::degree_t m_ll3Pitch{0};
+    static constexpr units::angle::degree_t m_ll3Yaw{90};
+    static constexpr units::angle::degree_t m_ll3Roll{0};
+
+    static constexpr units::length::inch_t m_questMountingXOffset{-11.171};
+    static constexpr units::length::inch_t m_questMountingYOffset{-9.924};
+    static constexpr units::length::inch_t m_questMountingZOffset{16.78};
     static constexpr units::angle::degree_t m_questPitch{0.0};
     static constexpr units::angle::degree_t m_questYaw{180.0};
     static constexpr units::angle::degree_t m_questRoll{0.0};

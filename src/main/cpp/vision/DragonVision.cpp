@@ -322,7 +322,7 @@ std::vector<VisionPose> DragonVision::GetRobotPositionMegaTag2()
 DragonVisionPoseEstimatorStruct DragonVision::GetRobotPositionQuest()
 {
 	auto quest = DragonVision::GetDragonVision()->GetQuest();
-	if (quest != nullptr && quest->HealthCheck())
+	if (quest != nullptr)
 	{
 		return quest->GetPoseEstimate();
 	}
@@ -332,27 +332,73 @@ DragonVisionPoseEstimatorStruct DragonVision::GetRobotPositionQuest()
 void DragonVision::RefreshQuestData()
 {
 	auto quest = DragonVision::GetDragonVision()->GetQuest();
-	if (quest != nullptr && quest->HealthCheck())
+	if (quest != nullptr)
 	{
 		quest->Periodic();
 	}
 }
 
-/// @brief Set a robot pose for all vision that consume robot pose information.
+/// @brief Set a robot pose for vision systems that consume robot pose information.
 /// @param pose The new robot pose (frc::Pose2d) to distribute.
-/// @note Updates all running limelights and the DragonQuest instance (if present).
-void DragonVision::SetRobotPose(const frc::Pose2d &pose)
+/// @note Currently only updates the DragonQuest instance (if present).
+void DragonVision::ResetQuestRobotPose(const frc::Pose2d &pose)
 {
-	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
-	for (auto limelight : limelights)
-	{
-		limelight->SetRobotPose(pose);
-	}
-
 	auto quest = GetQuest();
 	if (quest != nullptr)
 	{
-		quest->SetRobotPose(pose);
+		quest->AttemptSetRobotPose(pose);
+	}
+}
+
+/// @brief Enable rewind buffer recording on all registered limelights.
+/// @note Only sends to limelights that are currently running. LL4 only feature.
+void DragonVision::StartRewind()
+{
+	for (const auto &pair : m_dragonLimelightMap)
+	{
+		DragonLimelight *limelight = pair.second.get();
+		if (limelight != nullptr && limelight->IsLimelightRunning())
+		{
+			if (limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4 || limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4_W_HAILO8)
+			{
+				limelight->StartRewind();
+			}
+		}
+	}
+}
+
+/// @brief Trigger a rewind capture on all registered limelights, saving the last durationSeconds of video.
+/// @param durationSeconds Number of seconds to capture (max 165).
+/// @note LL4 only feature.
+void DragonVision::SaveRewind(double durationSeconds)
+{
+	for (const auto &pair : m_dragonLimelightMap)
+	{
+		DragonLimelight *limelight = pair.second.get();
+		if (limelight != nullptr && limelight->IsLimelightRunning())
+		{
+			if (limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4 || limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4_W_HAILO8)
+			{
+				limelight->SaveRewind(durationSeconds);
+			}
+		}
+	}
+}
+
+/// @brief Disable rewind buffer recording on all registered limelights.
+/// @note LL4 only feature.
+void DragonVision::StopRewind()
+{
+	for (const auto &pair : m_dragonLimelightMap)
+	{
+		DragonLimelight *limelight = pair.second.get();
+		if (limelight != nullptr && limelight->IsLimelightRunning())
+		{
+			if (limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4 || limelight->GetCameraType() == DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4_W_HAILO8)
+			{
+				limelight->StopRewind();
+			}
+		}
 	}
 }
 

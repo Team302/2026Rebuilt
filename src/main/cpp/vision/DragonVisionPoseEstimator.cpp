@@ -51,7 +51,7 @@
 
 #include "chassis/ChassisConfigMgr.h"
 #include "frc/RobotBase.h"
-
+#include "frc/RobotState.h"
 #include "utils/PeriodicLooper.h"
 #include "vision/DragonQuest.h"
 #include "vision/DragonVision.h"
@@ -80,14 +80,15 @@ void DragonVisionPoseEstimator::RunCurrentState()
     // Make sure we have a vision subsystem pointer.
     // If we don't, try to get one
     // If we still don't have one exit
-    if (!m_initialPoseSet)
+    // Only calculate initial pose if robot hasn't been enabled yet
+    if (frc::DriverStation::IsDisabled() && !m_hasBeenEnabled)
     {
         CalculateInitialPose();
     }
-
-    if (m_initialPoseSet == false)
+    // Update the latch - once enabled, stay latched
+    if (!m_hasBeenEnabled && !frc::DriverStation::IsDisabled())
     {
-        return;
+        m_hasBeenEnabled = true;
     }
     if (m_vision == nullptr)
     {
@@ -151,8 +152,10 @@ void DragonVisionPoseEstimator::CalculateInitialPose()
     auto megaTag2Positions = m_vision->GetRobotPositionMegaTag2();
     if (!megaTag2Positions.empty())
     {
-        ResetPosition(megaTag2Positions[0].estimatedPose.ToPose2d());
-        m_initialPoseSet = true;
+        auto pose = megaTag2Positions[0].estimatedPose.ToPose2d();
+        ResetPosition(pose);
+        m_vision->ResetQuestRobotPose(pose);
+        // m_initialPoseSet = true;
     }
 }
 
@@ -164,7 +167,8 @@ void DragonVisionPoseEstimator::CalculateInitialPose()
  */
 void DragonVisionPoseEstimator::AddVisionMeasurements()
 {
-    if (!frc::RobotBase::IsSimulation())
+
+    if (!frc::RobotBase::IsSimulation() && !frc::RobotState::IsDisabled())
     {
         if (m_vision == nullptr || m_chassis == nullptr)
         {

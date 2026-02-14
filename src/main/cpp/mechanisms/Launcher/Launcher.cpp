@@ -39,6 +39,7 @@
 #include "mechanisms/Launcher/EmptyHopperState.h"
 #include "mechanisms/Launcher/ClimbState.h"
 #include "mechanisms/Launcher/LauncherTuningState.h"
+#include "auton/DeadZoneManager.h"
 #include "mechanisms/Launcher/ManualLaunchState.h"
 
 #include "teleopcontrol/TeleopControl.h"
@@ -408,6 +409,9 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
+	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
+	configs.ExternalFeedback.SensorToMechanismRatio = 810;
+
 	configs.Slot0.kI = m_positionDegreesHood->GetI();
 	configs.Slot0.kD = m_positionDegreesHood->GetD();
 	configs.Slot0.kG = m_positionDegreesHood->GetF();
@@ -518,6 +522,9 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
+	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
+	configs.ExternalFeedback.SensorToMechanismRatio = 100;
+
 	configs.Slot0.kI = m_positionDegreesTurret->GetI();
 	configs.Slot0.kD = m_positionDegreesTurret->GetD();
 	configs.Slot0.kG = m_positionDegreesTurret->GetF();
@@ -574,7 +581,7 @@ void Launcher::InitializeTalonFXIndexerCompBot302()
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.Feedback.SensorToMechanismRatio = 1;
+	configs.Feedback.SensorToMechanismRatio = 3;
 
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
@@ -622,7 +629,7 @@ void Launcher::InitializeTalonFXAgitatorCompBot302()
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.Feedback.SensorToMechanismRatio = 1;
+	configs.Feedback.SensorToMechanismRatio = 3;
 
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
@@ -740,8 +747,7 @@ bool Launcher::IsLauncherAtTarget()
 
 bool Launcher::IsInLaunchZone() const
 {
-	// call deadzone manager to see if we can or can't launch
-	return true;
+	return !DeadZoneManager::GetInstance()->IsInDeadZone();
 }
 
 void Launcher::CalculateTargets()

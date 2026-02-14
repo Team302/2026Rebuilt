@@ -2,5 +2,6 @@
 <!DOCTYPE auton SYSTEM "zone.dtd">
 
 <auton>
-<zone circlex="0.60" circley="3.68" radius="60.0"/>
+<zone circlex="0.60" circley="3.68" radius="60.0"
+climberState = "STATE_WANT_TO_CLIMB"/>
 </auton>

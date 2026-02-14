@@ -13,24 +13,38 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include <auton/DeadZoneManager.h>
-#include <frc/DriverStation.h>
-#include <auton/ZoneParams.h>
+#include "ZoneParams.h"
 
 using frc::DriverStation;
 
-std::string DeadZoneManager::GetZoneFile()
+DeadZoneManager::DeadZoneManager() : ZoneHelper()
+{
+    ParseZoneFiles();
+    m_blueDeadZone = GetAllianceZones(ZoneAllianceColor::BLUE);
+    m_redDeadZone = GetAllianceZones(ZoneAllianceColor::RED);
+}
+
+DeadZoneManager *DeadZoneManager::m_instance = nullptr;
+DeadZoneManager *DeadZoneManager::GetInstance()
+{
+    if (DeadZoneManager::m_instance == nullptr)
+    {
+        DeadZoneManager::m_instance = new DeadZoneManager();
+    }
+    return DeadZoneManager::m_instance;
+}
+
+std::vector<std::string> DeadZoneManager::GetZoneFiles()
+{
+    return m_deadZoneFiles;
+};
+
+bool DeadZoneManager::IsInDeadZone()
 {
     if (DriverStation::GetAlliance() == DriverStation::Alliance::kRed)
     {
-        return "RedDeadZone.xml";
+        return IsInZones(m_redDeadZone);
     }
-    else
-    {
-        return "BlueDeadZone.xml";
-    }
-}
 
-bool DeadZoneManager::isInDeadZone()
-{
-    return isInZone(GetZoneFile()) || isInZone(m_neutralZoneFile);
+    return IsInZones(m_blueDeadZone);
 }

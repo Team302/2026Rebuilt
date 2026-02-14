@@ -86,7 +86,7 @@ private:
 
     // Mechanism position offset from robot center in robot frame (meters)
     // Default: 5.5 inches (0.1397m) back, centered
-    frc::Translation2d m_mechanismOffset{-0.1397_m, 0_m};
+    frc::Translation2d m_mechanismOffset{-4.647_in, 3.256_in};
 
     DragonField *m_field; // Want to add targets and launcehr position
 

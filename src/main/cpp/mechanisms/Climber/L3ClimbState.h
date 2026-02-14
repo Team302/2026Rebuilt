@@ -20,6 +20,7 @@
 
 #include "state/State.h"
 #include "mechanisms/Climber/Climber.h"
+#include <frc/controller/ProfiledPIDController.h>
 
 using namespace std;
 
@@ -48,5 +49,16 @@ namespace ClimberStates
 		const units::angle::degree_t m_climberTarget = units::angle::degree_t(180);
 		const bool m_extenderTarget = false;
 		const bool m_alignmentTarget = false;
+
+		const double m_rotationKP = 0.0;
+		const double m_rotationKI = 0.0;
+		const double m_rotationKD = 0.0;
+
+		const units::angular_velocity::degrees_per_second_t kMaxVelocity = 4_deg_per_s;
+		const units::angular_acceleration::degrees_per_second_squared_t kMaxAcceleration = 4_deg_per_s_sq;
+
+		const frc::TrapezoidProfile<units::angle::degrees>::Constraints m_rotationConstraints{kMaxVelocity, kMaxAcceleration};
+
+		frc::ProfiledPIDController<units::angle::degrees> m_rotationPID{m_rotationKP, m_rotationKI, m_rotationKD, m_rotationConstraints, 20_ms};
 	};
 }
