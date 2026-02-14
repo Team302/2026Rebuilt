@@ -60,7 +60,7 @@ void DragonDataLoggerMgr::SetLoggerType(LoggerType type)
 
     case LoggerType::UDP_LOGGER:
     default:
-        m_logger = std::make_unique<UDPSignalLogger>(m_PiLoggerAddress, m_PiLoggerPort);
+        m_logger = std::make_unique<UDPSignalLogger>(m_piLoggerAddress, m_piLoggerPort);
         break;
     }
 
