@@ -4,13 +4,15 @@
 #include <cstring>
 #ifdef _WIN32
 // Windows-specific includes are in the header
+#include <ws2tcpip.h>
 #else
 #include <cerrno>
+#include <netdb.h>
 #endif
 #include <string>
 
-UDPSignalLogger::UDPSignalLogger(const std::string &ipAddress, int port)
-    : m_ipAddress(ipAddress), m_port(port), m_isRunning(false)
+UDPSignalLogger::UDPSignalLogger(const std::string &host, int port)
+    : m_host(host), m_port(port), m_isRunning(false)
 #ifdef _WIN32
       ,
       m_socket(INVALID_SOCKET)
@@ -41,19 +43,20 @@ UDPSignalLogger::UDPSignalLogger(const std::string &ipAddress, int port)
         return;
     }
 
-    // Configure server address
+    // Configure server address (support DNS or IP)
     memset(&m_serverAddr, 0, sizeof(m_serverAddr));
     m_serverAddr.sin_family = AF_INET;
     m_serverAddr.sin_port = htons(m_port);
 
-    // Convert IP address from string to binary form
-#ifdef _WIN32
-    if (inet_pton(AF_INET, m_ipAddress.c_str(), &m_serverAddr.sin_addr) <= 0)
-#else
-    if (inet_pton(AF_INET, m_ipAddress.c_str(), &m_serverAddr.sin_addr) <= 0)
-#endif
+    struct addrinfo hints = {};
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_protocol = IPPROTO_UDP;
+    struct addrinfo *result = nullptr;
+    int res = getaddrinfo(m_host.c_str(), nullptr, &hints, &result);
+    if (res != 0 || !result)
     {
-        std::cerr << "Invalid address / Address not supported: " << m_ipAddress << std::endl;
+        std::cerr << "Failed to resolve host: " << m_host << std::endl;
 #ifdef _WIN32
         closesocket(m_socket);
         m_socket = INVALID_SOCKET;
@@ -63,8 +66,11 @@ UDPSignalLogger::UDPSignalLogger(const std::string &ipAddress, int port)
 #endif
         return;
     }
+    // Copy resolved address
+    m_serverAddr.sin_addr = ((struct sockaddr_in *)result->ai_addr)->sin_addr;
+    freeaddrinfo(result);
 
-    std::cout << "UDP Logger initialized for " << m_ipAddress << ":" << m_port << std::endl;
+    std::cout << "UDP Logger initialized for " << m_host << ":" << m_port << std::endl;
 }
 
 UDPSignalLogger::~UDPSignalLogger()
@@ -95,14 +101,15 @@ void UDPSignalLogger::Stop()
 }
 
 std::string UDPSignalLogger::FormatMessage(std::string signalID, std::string type,
-                                           std::string value, std::string_view units, units::time::second_t timestamp)
+                                           std::string value, std::string_view units, uint64_t timestamp)
 {
     std::ostringstream oss;
-    oss << timestamp.value() << "," << signalID << "," << type << "," << value << "," << units;
+    std::string timestampStr = std::to_string(timestamp);
+    oss << timestamp << "," << signalID << "," << type << "," << value << "," << units;
     return oss.str();
 }
 
-void UDPSignalLogger::SendData(const std::string& message)
+void UDPSignalLogger::SendData(const std::string &message)
 {
 #ifdef _WIN32
     if (!m_isRunning || m_socket == INVALID_SOCKET)
@@ -130,13 +137,13 @@ void UDPSignalLogger::SendData(const std::string& message)
 #endif
 }
 
-void UDPSignalLogger::WriteBoolean(std::string signalID, bool value, units::time::second_t timestamp)
+void UDPSignalLogger::WriteBoolean(std::string signalID, bool value, uint64_t timestamp)
 {
     std::string message = FormatMessage(signalID, "bool", value ? "true" : "false", "bool", timestamp);
     SendData(message);
 }
 
-void UDPSignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, units::time::second_t timestamp)
+void UDPSignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, uint64_t timestamp)
 {
     std::ostringstream oss;
     oss << value;
@@ -144,7 +151,7 @@ void UDPSignalLogger::WriteDouble(std::string signalID, double value, std::strin
     SendData(message);
 }
 
-void UDPSignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::second_t timestamp)
+void UDPSignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, uint64_t timestamp)
 {
     std::ostringstream oss;
     oss << value;
@@ -152,13 +159,13 @@ void UDPSignalLogger::WriteInteger(std::string signalID, int64_t value, std::str
     SendData(message);
 }
 
-void UDPSignalLogger::WriteString(std::string signalID, const std::string &value, units::time::second_t timestamp)
+void UDPSignalLogger::WriteString(std::string signalID, const std::string &value, uint64_t timestamp)
 {
     std::string message = FormatMessage(signalID, "string", value, "string", timestamp);
     SendData(message);
 }
 
-void UDPSignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t timestamp)
+void UDPSignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
 {
     std::ostringstream oss;
     for (size_t i = 0; i < value.size(); ++i)
@@ -166,7 +173,7 @@ void UDPSignalLogger::WriteDoubleArray(std::string signalID, const std::vector<d
         oss << value[i];
         if (i < value.size() - 1)
         {
-            oss << ";"; 
+            oss << ";";
         }
     }
     std::string message = FormatMessage(signalID, "double_array", oss.str(), units, timestamp);
