@@ -41,8 +41,10 @@ namespace ClimberStates
 		bool AtTarget() override;
 		bool IsTransitionCondition(bool considerGamepadTransitions) override;
 
-	private:
+	protected:
 		Climber *m_mechanism;
+
+	private:
 		void InitCompBot302();
 		RobotIdentifier m_RobotId;
 

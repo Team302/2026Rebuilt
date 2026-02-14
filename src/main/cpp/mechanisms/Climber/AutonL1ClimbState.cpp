@@ -42,6 +42,5 @@ AutonL1ClimbState::AutonL1ClimbState(std::string stateName,
 bool AutonL1ClimbState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return false;
-	// return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXAMPLE_MECH_FORWARD));
+	return (frc::DriverStation::IsAutonomous() && m_mechanism->IsDriveToDone());
 }

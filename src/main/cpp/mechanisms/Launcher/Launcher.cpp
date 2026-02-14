@@ -689,6 +689,7 @@ void Launcher::Update()
 	m_transfer->SetControl(*m_transferActiveTarget);
 	m_turret->SetControl(*m_turretActiveTarget);
 	m_indexer->SetControl(*m_indexerActiveTarget);
+	m_agitator->SetControl(*m_agitatorActiveTarget);
 }
 
 void Launcher::Cyclic()

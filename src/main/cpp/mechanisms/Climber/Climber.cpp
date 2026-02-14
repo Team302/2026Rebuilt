@@ -101,11 +101,13 @@ Climber::Climber(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHA
 												  m_stateMap(),
 												  m_climbModeStatus(false),
 												  m_allowedToClimb(false),
+												  m_driveToFinished(false),
 												  m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis())
 {
 	PeriodicLooper::GetInstance()->RegisterAll(this);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Bool);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveToFinished_Bool);
 
 	// InitializeLogging();
 }
@@ -284,6 +286,10 @@ void Climber::NotifyStateUpdate(RobotStateChanges::StateChange statechange, bool
 	else if (statechange == RobotStateChanges::StateChange::AllowedToClimbStatus_Bool)
 	{
 		m_allowedToClimb = value;
+	}
+	else if (statechange == RobotStateChanges::StateChange::DriveToFinished_Bool)
+	{
+		m_driveToFinished = value;
 	}
 }
 
