@@ -93,6 +93,8 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueTowerDepotX = units::length::meter_t{0.0};
         m_redTowerDepotY = units::length::meter_t{0.0};
         m_blueTowerDepotY = units::length::meter_t{0.0};
+        m_blueHubX = units::length::meter_t{0.0};
+        m_redHubX = units::length::meter_t{0.0};
     }
 
     m_blueOutpostX = m_blueDepotX;
