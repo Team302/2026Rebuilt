@@ -38,8 +38,10 @@ DragonDataLoggerMgr *DragonDataLoggerMgr::GetInstance()
 
 DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items()
 {
+    // This line needs to be removed if we want to run hoot logs
     CTRESignalLogger *ctreLogger = new CTRESignalLogger();
-    ctreLogger->DisableAutoLogging();
+    ctreLogger->SetAutoLogging(false);
+
     // m_logger = std::make_unique<CTRESignalLogger>();
     m_logger = std::make_unique<UDPSignalLogger>("127.0.0.1", 5900);
 

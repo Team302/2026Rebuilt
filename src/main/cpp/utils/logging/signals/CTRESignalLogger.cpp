@@ -93,8 +93,7 @@ std::string CTRESignalLogger::GetLoggingDir()
     return std::string("");
 }
 
-void CTRESignalLogger::DisableAutoLogging()
+void CTRESignalLogger::SetAutoLogging(bool enable)
 {
-    SignalLogger::EnableAutoLogging(false);
-    // TODO: add debug logger
+    SignalLogger::EnableAutoLogging(enable);
 }
