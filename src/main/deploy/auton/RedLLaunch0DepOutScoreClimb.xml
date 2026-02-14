@@ -2,20 +2,15 @@
 <!DOCTYPE auton SYSTEM "auton.dtd">
 <auton>
 
-<primitive id = "DRIVE_STOP_MECH"
-launcherState = "STATE_LAUNCH"/>
-
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueLDepotOutpost_A"
-time = "3.0"
-intakeState = "STATE_INTAKE">
+time = "3.0"> 
 <zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueLDepotOutpost_B"
-time = "3.0"
-intakeState = "STATE_INTAKE">
+time = "3.0">
 <zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
