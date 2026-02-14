@@ -17,6 +17,7 @@
 #include <array>
 #include <vector>
 #include <memory>
+#include <string>
 
 #include "frc/Timer.h"
 #include "utils/logging/signals/ISignalLogger.h"
