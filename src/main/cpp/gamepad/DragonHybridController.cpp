@@ -14,10 +14,12 @@
 //====================================================================================================================================================
 
 #include "DragonHybridController.h"
+#include "frc/DriverStation.h"
 
 DragonHybridController::DragonHybridController(int port)
     : m_commandController(new frc2::CommandXboxController(port)), m_nonCommandController(new DragonXBox(port))
 {
+    frc::DriverStation::SilenceJoystickConnectionWarning(!frc::DriverStation::IsFMSAttached());
 }
 
 frc2::CommandXboxController *DragonHybridController::GetCommandController()
