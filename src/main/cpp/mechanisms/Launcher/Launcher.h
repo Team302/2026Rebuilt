@@ -152,6 +152,8 @@ public:
 	void SetLauncherInitialized(bool initialized) { m_launcherInitialized = initialized; }
 	bool IsTuningLauncherMode() const { return m_tuningLauncher; }
 	void UpdateLauncherTargets();
+	void InitilaizeLauncher();
+	void SetLauncherProtect();
 	units::angle::degree_t GetTargetTurretAngle() const { return m_targetTurretAngle; }
 
 protected:

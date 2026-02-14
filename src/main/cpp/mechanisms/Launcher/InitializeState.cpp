@@ -25,7 +25,6 @@
 #include "teleopcontrol/TeleopControl.h"
 #include "teleopcontrol/TeleopControlFunctions.h"
 #include "utils/logging/debug/Logger.h"
-#include "frc/RobotBase.h"
 
 // Third Party Includes
 
@@ -49,9 +48,6 @@ void InitializeState::Init()
 		InitCompBot302();
 
 	m_mechanism->PublishLaunchMode(false);
-
-	if (frc::RobotBase::IsSimulation())
-		m_mechanism->SetLauncherInitialized(true);
 }
 
 void InitializeState::InitCompBot302()
@@ -66,10 +62,7 @@ void InitializeState::InitCompBot302()
 
 void InitializeState::Run()
 {
-	if (m_mechanism->GetTurret()->GetReverseLimit().GetValue().ClosedToGround && m_mechanism->GetHood()->GetReverseLimit().GetValue().ClosedToGround)
-	{
-		m_mechanism->SetLauncherInitialized(true);
-	}
+	m_mechanism->InitilaizeLauncher();
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("InitializeState"), string("Run"));
 }
 
