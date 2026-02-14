@@ -41,8 +41,6 @@ DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items()
 
     SetLoggerType(m_defaultLoggerType);
 
-    m_timer.Start();
-
 }
 
 void DragonDataLoggerMgr::SetLoggerType(LoggerType type)
