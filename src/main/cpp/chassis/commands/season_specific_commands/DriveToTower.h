@@ -18,44 +18,49 @@
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 
 //====================================================================================================================================================
-/// @class DriveToDepot
-/// @brief Command to autonomously drive the robot to the nearest depot on the field
+/// @class DriveToTower
+/// @brief Command to autonomously drive the robot to the nearest Tower on the field
 ///
-/// This command extends DriveToPose to provide specific functionality for navigating to depots.
-/// It automatically determines which depot (red or blue) is closest to the robot's current position
-/// and calculates the target pose at the center of that depot using DepotHelper.
+/// This command extends DriveToPose to provide specific functionality for navigating to Towers.
+/// It automatically determines which Tower (red or blue) is closest to the robot's current position
+/// and calculates the target pose at the center of that Tower using DriveToTowerHelper.
 ///
-/// The command uses PID control to drive the robot to the calculated depot center position,
+/// The command uses PID control to drive the robot to the calculated Towercenter position,
 /// making it useful for autonomous routines or driver assistance features during matches.
 //====================================================================================================================================================
-class DriveToDepot : public DriveToPose
-
+class DriveToTower : public DriveToPose
 {
 public:
     //------------------------------------------------------------------
-    /// @brief      Constructor for DriveToDepot command
+    /// @brief      Get the singleton instance of TowerHelper
+    /// @return     DRiveToTowerHelper* - Pointer to the singleton instance
+    //------------------------------------------------------------------
+    static DriveToTower *GetInstance();
+
+    //------------------------------------------------------------------
+    /// @brief      Constructor for DriveToTower command
     /// @param[in]  chassis - Pointer to the swerve drive subsystem
     /// @details    Initializes the command with the chassis reference for
-    ///             autonomous navigation to the nearest depot
+    ///             autonomous navigation to the nearest Tower
     //------------------------------------------------------------------
-    DriveToDepot(subsystems::CommandSwerveDrivetrain *chassis);
+    DriveToTower(subsystems::CommandSwerveDrivetrain *chassis);
 
     //------------------------------------------------------------------
     /// @brief      Destructor (default implementation)
     //------------------------------------------------------------------
-    ~DriveToDepot() = default;
+    ~DriveToTower() = default;
 
     //------------------------------------------------------------------
-    /// @brief      Calculates the target end pose for the depot
-    /// @return     frc::Pose2d - The target pose at the center of the nearest depot
-    /// @details    Overrides the base class method to provide depot-specific
-    ///             target calculation using DepotHelper
+    /// @brief      Calculates the target end pose for the Tower
+    /// @return     frc::Pose2d - The target pose at the center of the nearest Tower
+    /// @details    Overrides the base class method to provide Tower-specific
+    ///             target calculation using TowerHelper
     //------------------------------------------------------------------
     frc::Pose2d GetEndPose() override;
 
     //------------------------------------------------------------------
-    /// @brief      Determines if the DriveToDepot command has finished execution
-    /// @return     true if the command has completed driving to the depot,
+    /// @brief      Determines if the DriveToTower command has finished execution
+    /// @return     true if the command has completed driving to the tower,
     ///             false if the command should continue running
     /// @details    Called repeatedly by the command scheduler to check completion status
     //------------------------------------------------------------------

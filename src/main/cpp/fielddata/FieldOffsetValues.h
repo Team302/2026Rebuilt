@@ -26,9 +26,14 @@
 //====================================================================================================================================================
 enum class FIELD_OFFSET_ITEMS
 {
-    OUTPOST_X, ///< X-coordinate offset from the outpost
-    DEPOT_X,   ///< X-coordinate offset from the depot neutral side
-    HUB_X      ///< X-coordinate offset from the hub center
+    OUTPOST_X,       ///< X-coordinate offset of the outpost
+    DEPOT_X,         ///< X-coordinate offset of the depot neutral side
+    TOWER_OUTPOST_X, ///< X-coordinate offset of the outpost
+    TOWER_DEPOT_X,   ///< X-coordinate offset of the depot neutral side
+    TOWER_OUTPOST_Y, ///< Y-coordinate offset of the outpost
+    TOWER_DEPOT_Y,   ///< Y-coordinate offset of the depot neutral side
+    HUB_X
+
 };
 
 //====================================================================================================================================================
@@ -103,6 +108,22 @@ private:
 
     /// @brief X-coordinate offset from the red alliance outpost (meters)
     units::length::meter_t m_redOutpostX;
+
+    units::length::meter_t m_redTowerOutpostX;
+
+    units::length::meter_t m_redTowerDepotX;
+
+    units::length::meter_t m_redTowerOutpostY;
+
+    units::length::meter_t m_redTowerDepotY;
+
+    units::length::meter_t m_blueTowerOutpostX;
+
+    units::length::meter_t m_blueTowerDepotX;
+
+    units::length::meter_t m_blueTowerOutpostY;
+
+    units::length::meter_t m_blueTowerDepotY;
 
     static constexpr units::length::meter_t HUB_OFFSET = 2.0_m;
 };
