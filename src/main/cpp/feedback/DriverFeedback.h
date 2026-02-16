@@ -63,6 +63,7 @@ private:
     int m_firstloop = true;
 
     units::frequency::hertz_t m_blinkingFrequency = 7.5_Hz;
+    units::frequency::hertz_t m_shiftBlinkingFrequency = 1_Hz;
 
     static DriverFeedback *m_instance;
     RobotStateChanges::ScoringMode m_scoringMode = RobotStateChanges::ScoringMode::FUEL;
@@ -71,8 +72,6 @@ private:
     bool m_climbMode = false;
     bool m_isValidAutonFile = false;
     bool m_isIntakeExtended = false;
-    bool m_shiftChange = false;
     bool m_shiftChangeIn5Seconds = false;
-    bool m_shiftChangeIn3Seconds = false;
     ChassisOptionEnums::DriveStateType m_driveStateType = ChassisOptionEnums::DriveStateType::ROBOT_DRIVE;
 };

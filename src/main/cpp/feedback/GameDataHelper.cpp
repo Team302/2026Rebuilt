@@ -19,7 +19,6 @@
 
 GameDataHelper::GameDataHelper()
 {
-    m_timer.Start();
     PeriodicLooper::GetInstance()->RegisterAll(this);
 }
 GameDataHelper *GameDataHelper::m_instance = nullptr;
@@ -33,52 +32,100 @@ GameDataHelper *GameDataHelper::GetInstance()
     return GameDataHelper::m_instance;
 }
 
-void GameDataHelper::PublishShiftChange(bool value)
+void GameDataHelper::PublishHubActive(bool value)
 {
-    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::ShiftChange_Bool, value);
-}
-
-void GameDataHelper::PublishShiftChangeIn5seconds(bool value)
-{
-    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool, value);
+    if (m_hubActive != value)
+    {
+        RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::HubActive_Bool, value);
+    }
 }
 
 void GameDataHelper::PublishShiftChangeIn3seconds(bool value)
 {
-    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool, value);
+    if (m_shiftChangeIn3seconds != value)
+    {
+        RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool, value);
+    }
+}
+
+void GameDataHelper::PublishShiftChangeIn5seconds(bool value)
+{
+    if (m_shiftChangeIn5seconds != value)
+    {
+        RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool, value);
+    }
 }
 
 void GameDataHelper::RunCurrentState()
 {
-    if (frc::DriverStation::GetGameSpecificMessage().length() == 0)
+
+    if (frc::DriverStation::IsAutonomousEnabled())
     {
-        return;
+        PublishHubActive(true);
+        PublishShiftChangeIn3seconds(false);
+        PublishShiftChangeIn5seconds(false);
     }
     else
     {
-        m_hasGameSpecificMessageData = true;
-        m_timer.Start();
-    }
-    if (m_hasGameSpecificMessageData)
-    {
-        if (20.0 <= m_timer.Get().value() && m_timer.Get().value() < 22.0) // 20 seconds
+        units::time::second_t matchTime = frc::DriverStation::GetMatchTime();
+        std::string gameData = frc::DriverStation::GetGameSpecificMessage();
+        bool redInactiveFirst = (gameData == "R");
+
+        int currentShift = 0;
+        if (matchTime > m_shift1Start)
+            currentShift = 0; // Transition period
+        else if (matchTime > m_shift2Start)
+            currentShift = 1;
+        else if (matchTime > m_shift3Start)
+            currentShift = 2;
+        else if (matchTime > m_shift4Start)
+            currentShift = 3;
+        else if (matchTime > m_endgameStart)
+            currentShift = 4;
+        else
+            currentShift = 5; // Endgame
+
+        // 2. Logic for Hub Activity (Alternates every shift)
+        // Shift 1, 3: Red inactive if redInactiveFirst is true
+        // Shift 2, 4: Red active if redInactiveFirst is true
+        bool isOddShift = (currentShift % 2 != 0);
+
+        if (currentShift >= 1 && currentShift <= 4)
         {
-            PublishShiftChangeIn5seconds(true);
-        }
-        else if (22.0 <= m_timer.Get().value() && m_timer.Get().value() < 25.0) // 22 seconds
-        {
-            PublishShiftChangeIn3seconds(true);
-        }
-        else if (m_timer.Get().value() == 25.0) // 25 seconds, the length of the shifts
-        {
-            PublishShiftChange(true);
-            m_timer.Reset();
+            // If it's an odd shift (1, 3) and red is supposed to be inactive first...
+            bool shouldBeInactive = (isOddShift == redInactiveFirst);
+
+            if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed)
+            {
+                PublishHubActive(!shouldBeInactive);
+            }
+            else // if it's an even shift (2, 4) and red was NOT inactive first...
+
+            {
+                PublishHubActive(shouldBeInactive);
+            }
         }
         else
         {
-            PublishShiftChangeIn5seconds(false);
-            PublishShiftChangeIn3seconds(false);
-            PublishShiftChange(false);
+            // In Transition or Endgame, both hubs usually active
+            PublishHubActive(true);
         }
+
+        // 3. Logic for Countdown Warnings
+        // Check if we are within 5 or 3 seconds of the NEXT shift boundary
+        units::time::second_t timeToNextBoundary = 0_s;
+        if (matchTime > m_shift1Start)
+            timeToNextBoundary = matchTime - m_shift1Start;
+        else if (matchTime > m_shift2Start)
+            timeToNextBoundary = matchTime - m_shift2Start;
+        else if (matchTime > m_shift3Start)
+            timeToNextBoundary = matchTime - m_shift3Start;
+        else if (matchTime > m_shift4Start)
+            timeToNextBoundary = matchTime - m_shift4Start;
+        else if (matchTime > m_endgameStart)
+            timeToNextBoundary = matchTime - m_endgameStart;
+
+        PublishShiftChangeIn5seconds(timeToNextBoundary <= 5.0_s && timeToNextBoundary > 0_s);
+        PublishShiftChangeIn3seconds(timeToNextBoundary <= 3.0_s && timeToNextBoundary > 0_s);
     }
 }
