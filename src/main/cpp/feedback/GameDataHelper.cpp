@@ -14,9 +14,11 @@
 //====================================================================================================================================================
 
 #include "feedback/GameDataHelper.h"
+#include "frc/smartdashboard/SmartDashboard.h"
 #include "state/RobotState.h"
 #include "utils/PeriodicLooper.h"
-#include "frc/smartdashboard/SmartDashboard.h"
+#include <algorithm>
+#include <array>
 
 GameDataHelper::GameDataHelper()
 {
@@ -68,20 +70,20 @@ void GameDataHelper::RunCurrentState()
         std::string gameData = frc::DriverStation::GetGameSpecificMessage();
         bool redInactiveFirst = (gameData == "R");
 
-        // Match Time Decreases
-        int currentShift = 0;
-        if (matchTime > m_shift1Start)
-            currentShift = 0; // Transition period
-        else if (matchTime > m_shift2Start)
-            currentShift = 1;
-        else if (matchTime > m_shift3Start)
-            currentShift = 2;
-        else if (matchTime > m_shift4Start)
-            currentShift = 3;
-        else if (matchTime > m_endgameStart)
-            currentShift = 4;
-        else
-            currentShift = 5; // Endgame
+        // Match Time Decreases - use array with upper_bound for cleaner logic
+        static const std::array<units::time::second_t, 5> shiftThresholds = {
+            m_shift1Start,
+            m_shift2Start,
+            m_shift3Start,
+            m_shift4Start,
+            m_endgameStart};
+
+        // Find which shift we're in by counting how many thresholds we've passed
+        int currentShift = std::distance(
+            shiftThresholds.begin(),
+            std::upper_bound(shiftThresholds.begin(), shiftThresholds.end(), matchTime,
+                             std::greater<units::time::second_t>()));
+        // currentShift: 0 = transition, 1-4 = shifts, 5 = endgame
 
         // Logic for Hub Activity (Alternates every shift)
         // Shift 1, 3: Red inactive if redInactiveFirst is true
@@ -112,16 +114,10 @@ void GameDataHelper::RunCurrentState()
         // Logic for Countdown Warnings
         // Check if we are within 5 or 3 seconds of the NEXT shift
         units::time::second_t timeToNextShift = 0_s;
-        if (matchTime > m_shift1Start)
-            timeToNextShift = matchTime - m_shift1Start;
-        else if (matchTime > m_shift2Start)
-            timeToNextShift = matchTime - m_shift2Start;
-        else if (matchTime > m_shift3Start)
-            timeToNextShift = matchTime - m_shift3Start;
-        else if (matchTime > m_shift4Start)
-            timeToNextShift = matchTime - m_shift4Start;
-        else if (matchTime > m_endgameStart)
-            timeToNextShift = matchTime - m_endgameStart;
+        if (currentShift < static_cast<int>(shiftThresholds.size()))
+        {
+            timeToNextShift = matchTime - shiftThresholds[currentShift];
+        }
 
         frc::SmartDashboard::PutNumber(m_allianceShiftTime, timeToNextShift.value());
         PublishShiftChangeIn5seconds(timeToNextShift <= 5.0_s && timeToNextShift > 0_s);
