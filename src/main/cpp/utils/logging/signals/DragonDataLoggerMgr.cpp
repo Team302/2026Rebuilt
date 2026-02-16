@@ -39,7 +39,6 @@ DragonDataLoggerMgr *DragonDataLoggerMgr::GetInstance()
 
 DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items()
 {
-
     SetLoggerType(m_defaultLoggerType);
 }
 
