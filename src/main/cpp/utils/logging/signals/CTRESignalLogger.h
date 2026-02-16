@@ -33,6 +33,9 @@ public:
     void WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp) override;
     void Start() override;
     void Stop() override;
+
+private:
     std::string CreateLogFileName();
     std::string GetLoggingDir();
+    units::time::second_t ConvertToSeconds(uint64_t timestamp);
 };

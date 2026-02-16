@@ -23,32 +23,27 @@ using ctre::phoenix6::SignalLogger;
 
 void CTRESignalLogger::WriteBoolean(std::string signalID, bool value, uint64_t timestamp)
 {
-    units::time::second_t timestampSec = units::time::second_t(static_cast<double>(timestamp) / 1e9);
-    SignalLogger::WriteBoolean(signalID, value, timestampSec);
+    SignalLogger::WriteBoolean(signalID, value, CTRESignalLogger::ConvertToSeconds(timestamp));
 }
 
 void CTRESignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, uint64_t timestamp)
 {
-    units::time::second_t timestampSec = units::time::second_t(static_cast<double>(timestamp) / 1e9);
-    SignalLogger::WriteDouble(signalID, value, units, timestampSec);
+    SignalLogger::WriteDouble(signalID, value, units, CTRESignalLogger::ConvertToSeconds(timestamp));
 }
 
 void CTRESignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, uint64_t timestamp)
 {
-    units::time::second_t timestampSec = units::time::second_t(static_cast<double>(timestamp) / 1e9);
-    SignalLogger::WriteInteger(signalID, value, units, timestampSec);
+    SignalLogger::WriteInteger(signalID, value, units, CTRESignalLogger::ConvertToSeconds(timestamp));
 }
 
 void CTRESignalLogger::WriteString(std::string signalID, const std::string &value, uint64_t timestamp)
 {
-    units::time::second_t timestampSec = units::time::second_t(static_cast<double>(timestamp) / 1e9);
-    SignalLogger::WriteString(signalID, value, timestampSec);
+    SignalLogger::WriteString(signalID, value, CTRESignalLogger::ConvertToSeconds(timestamp));
 }
 
 void CTRESignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
 {
-    units::time::second_t timestampSec = units::time::second_t(static_cast<double>(timestamp) / 1e9);
-    SignalLogger::WriteDoubleArray(signalID, value, units, timestampSec);
+    SignalLogger::WriteDoubleArray(signalID, value, units, CTRESignalLogger::ConvertToSeconds(timestamp));
 }
 
 void CTRESignalLogger::Start()
@@ -96,4 +91,9 @@ std::string CTRESignalLogger::GetLoggingDir()
     }
 
     return std::string("");
+}
+
+units::time::second_t CTRESignalLogger::ConvertToSeconds(uint64_t timestamp)
+{
+    return units::time::second_t(static_cast<double>(timestamp) / 1e9);
 }
