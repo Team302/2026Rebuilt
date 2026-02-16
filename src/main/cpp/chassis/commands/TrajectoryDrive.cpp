@@ -27,6 +27,7 @@
 // 302 includes
 #include "chassis/commands/TrajectoryDrive.h"
 #include "utils/logging/debug/Logger.h"
+#include "state/RobotState.h"
 // #include "auton/drivePrimitives/AutonUtils.h" TODO: Uncomment when auton get added back in
 
 TrajectoryDrive::TrajectoryDrive(
@@ -68,6 +69,8 @@ void TrajectoryDrive::Initialize()
     m_chassisSpeeds.vx = 0_mps;
     m_chassisSpeeds.vy = 0_mps;
     m_chassisSpeeds.omega = units::angular_velocity::radians_per_second_t(0);
+
+    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, false);
 }
 
 void TrajectoryDrive::SetPath(const std::string &pathName)
