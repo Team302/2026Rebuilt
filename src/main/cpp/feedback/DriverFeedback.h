@@ -62,7 +62,7 @@ private:
     int m_rumbleLoopCounter = 0;
     int m_firstloop = true;
 
-    units::frequency::hertz_t m_blinkingFrequency = 7.5_Hz;
+    units::frequency::hertz_t m_blinkingFrequency = 5_Hz;
     units::frequency::hertz_t m_shiftBlinkingFrequency = 1_Hz;
 
     static DriverFeedback *m_instance;
