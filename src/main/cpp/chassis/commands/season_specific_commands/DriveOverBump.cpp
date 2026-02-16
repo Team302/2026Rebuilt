@@ -27,8 +27,7 @@
 ///             This command autonomously drives the robot to the nearest
 ///             depot on the field.
 //------------------------------------------------------------------
-DriveOverBump::DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis)
-    : DriveToPose(chassis)
+DriveOverBump::DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis) : DriveToPose(chassis), m_midPose(), m_endPose()
 {
 }
 
@@ -42,22 +41,62 @@ DriveOverBump::DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis)
 frc::Pose2d DriveOverBump::GetEndPose()
 {
     frc::Pose2d endPose{};
+    frc::Pose2d midPose{};
+    units::angle::degree_t rotation{45_deg};
+
     auto bumpHelper = BumpHelper::GetInstance();
     if (bumpHelper != nullptr)
     {
         auto bump = bumpHelper->CalcNearestBump();
-        auto isRed = (bump == BUMP_ID::RED_DEPOT_BUMP || bump == BUMP_ID::RED_OUTPOST_BUMP);
         auto isInNeutralZone = NeutralZoneManager::GetInstance()->IsInNeutralZone();
 
-        auto offsetVals = FieldOffsetValues::GetInstance();
-        auto neutralX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::BUMP_X);
-        auto neutralY = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::BUMP_Y);
+        auto rotation = GetRotation(bump, isInNeutralZone);
 
-        auto bumpCenter = bumpHelper->CalcNearestBumpCenter();
+        auto isRed = (bump == BUMP_ID::RED_DEPOT_BUMP || bump == BUMP_ID::RED_OUTPOST_BUMP);
+
+        auto offsetVals = FieldOffsetValues::GetInstance();
+        auto neutralX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_X);
+        auto neutralY = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_Y);
+
+        auto allianceX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_X);
+        auto allianceY = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_Y);
+
+        if (isInNeutralZone) // Drive from neutral zone over bump to alliance zone
+        {
+            m_midPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
+            m_endPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
+        }
+        else // Drive from alliance zone over bump to neutral zone
+        {
+            m_midPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
+            m_endPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
+        }
     }
-    return endPose;
+
+    return m_midPose;
 }
-// Check for alliance when in neutral zone
+
+units::angle::degree_t DriveOverBump::GetRotation(BUMP_ID bump, bool isInNeutralZone) const
+{
+
+    // Blue alliance sees forward as 0 degrees (toward red alliance wall)
+    // Red alliance sees forward as 180 degrees (toward blue alliance wall)
+    // 90 degrees is toward red outpost / blue depot
+    // 270 degrees is toward blue outpost / red depot
+
+    switch (bump)
+    {
+    case BUMP_ID::RED_OUTPOST_BUMP:
+        return isInNeutralZone ? NeutralZoneTowardHubRedOutpost : RedAllianceOutpostWallTowardHub;
+    case BUMP_ID::BLUE_OUTPOST_BUMP:
+        return isInNeutralZone ? NeutralZoneTowardHubBlueOutpost : BlueAllianceOutpostWallTowardHub;
+    case BUMP_ID::RED_DEPOT_BUMP:
+        return isInNeutralZone ? NeutralZoneTowardHubRedDepot : RedAllianceDepotWallTowardHub;
+    case BUMP_ID::BLUE_DEPOT_BUMP:
+    default:
+        return isInNeutralZone ? NeutralZoneTowardHubBlueDepot : BlueAllianceDepotWallTowardHub;
+    }
+}
 
 //------------------------------------------------------------------
 /// @brief Checks if the DriveToDepot command has finished execution.
@@ -77,13 +116,12 @@ bool DriveOverBump::IsFinished()
     {
         return true;
     }
+    if (m_beforeMidPose && DriveToPose::IsFinished())
+    {
+        SetEndPose(m_endPose);
+        m_beforeMidPose = false;
+        return false;
+    }
 
     return DriveToPose::IsFinished(); // call base class's IsFinished method
-}
-
-frc::Pose2d DriveOverBump::GetNearestBumpPose()
-{
-    // Implementation for determining the nearest bump pose
-    // robot pose not defined yet
-    m_robotPose = m_chassis->GetPose();
 }

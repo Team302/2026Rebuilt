@@ -16,7 +16,10 @@
 
 #include "chassis/commands/DriveToPose.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "fielddata/BumpHelper.h"
 #include "fielddata/FieldConstants.h"
+#include "units/angle.h"
+
 //====================================================================================================================================================
 /// @class DriveToNZOutFromAllience
 /// @brief Command to autonomously drive the robot to the nearest bump on the field
@@ -60,37 +63,22 @@ public:
     //------------------------------------------------------------------
 
     bool IsFinished() override;
-    frc::Pose2d GetNearestBumpPose();
     frc::Pose2d m_robotPose;
     subsystems::CommandSwerveDrivetrain *m_chassis;
 
 private:
-    static constexpr units::degree_t RedBumpOutpostToNZ{45.0};
-    static constexpr units::degree_t RedBumpOutpostToAlliance{45.0};
-    static constexpr units::degree_t RedBumpDepotToNZ{45.0};
-    static constexpr units::degree_t RedBumpDepotToAlliance{45.0};
+    units::angle::degree_t GetRotation(BUMP_ID bump, bool isInNeutralZone) const;
 
-    static constexpr units::degree_t BlueBumpOutpostToNZ{45.0};
-    static constexpr units::degree_t BlueBumpOutpostToAlliance{45.0};
-    static constexpr units::degree_t BlueBumpDepotToNZ{45.0};
-    static constexpr units::degree_t BlueBumpDepotToAlliance{45.0};
+    frc::Pose2d m_midPose;
+    frc::Pose2d m_endPose;
+    bool m_beforeMidPose = true;
 
-    FieldConstants *m_fieldConstants;
-
-    units::length::meter_t m_bumpRedOutpostToNZY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y()) / 2;
-    units::length::meter_t m_bumpBlueOutpostToNZY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y()) / 2;
-    units::length::meter_t m_bumpBlueDepotToNY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y()) / 2;
-    units::length::meter_t m_bumpRedDeppotToNY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y()) / 2;
-
-    units::length::meter_t m_bumpRedNZToOutpostY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_NEUTRAL_OUTPOST).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_NEUTRAL_OUTPOST).Y()) / 2;
-    units::length::meter_t m_bumpBlueNZToOutpostY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_OUTPOST).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_OUTPOST).Y()) / 2;
-    units::length::meter_t m_bumpRedNZToDepotY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_NEUTRAL_DEPOT).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_NEUTRAL_DEPOT).Y()) / 2;
-    units::length::meter_t m_bumpBlueNZToDepotY = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_DEPOT).Y()) + (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_DEPOT).Y()) / 2;
-
-    frc::Pose2d m_bumpRedNZtoOutpostY;
-
-    units::length::meter_t m_bumpRedNZToAllianceX = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_ALLIANCE_CENTER).X());
-    units::length::meter_t m_bumpRedAllianceToNZX = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_OUTPOST_CENTER).X());
-    units::length::meter_t m_bumpBlueNZToAllianceX = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_ALLIANCE_CENTER).X());
-    units::length::meter_t m_bumpBlueAllianceToNZX = (m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_OUTPOST_CENTER).X());
+    static constexpr units::degree_t RedAllianceOutpostWallTowardHub{225.0};
+    static constexpr units::degree_t RedAllianceDepotWallTowardHub{135.0};
+    static constexpr units::degree_t BlueAllianceOutpostWallTowardHub{315.0};
+    static constexpr units::degree_t BlueAllianceDepotWallTowardHub{45.0};
+    static constexpr units::degree_t NeutralZoneTowardHubRedDepot{45.0};
+    static constexpr units::degree_t NeutralZoneTowardHubBlueDepot{225.0};
+    static constexpr units::degree_t NeutralZoneTowardHubRedOutpost{315.0};
+    static constexpr units::degree_t NeutralZoneTowardHubBlueOutpost{135.0};
 };

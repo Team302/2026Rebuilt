@@ -39,6 +39,7 @@ public:
 
 protected:
     virtual frc::Pose2d GetEndPose() { return m_endPose; };
+    void SetEndPose(const frc::Pose2d &endPose) { m_endPose = endPose; }
     subsystems::CommandSwerveDrivetrain *GetChassis() const { return m_chassis; }
 
 private:

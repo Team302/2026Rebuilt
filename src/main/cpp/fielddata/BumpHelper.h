@@ -49,11 +49,28 @@ public:
     //------------------------------------------------------------------
     static BumpHelper *GetInstance();
 
+    //------------------------------------------------------------------
+    /// @brief      Calculate the ID of the nearest bump to the robot
+    /// @details    Evaluates the robot's current pose relative to all four
+    ///             bump locations and returns the ID of the closest one using
+    ///             a hierarchical distance comparison algorithm:
+    ///             1. First determines which alliance side (red or blue) is 
+    ///                closer by comparing depot positions
+    ///             2. Then determines whether the outpost or depot bump is 
+    ///                closer on that side
+    /// @return     BUMP_ID - Enumeration indicating the nearest bump:
+    ///             - BLUE_DEPOT_BUMP: Blue alliance depot bump is nearest
+    ///             - BLUE_OUTPOST_BUMP: Blue alliance outpost bump is nearest
+    ///             - RED_DEPOT_BUMP: Red alliance depot bump is nearest
+    ///             - RED_OUTPOST_BUMP: Red alliance outpost bump is nearest
+    /// @note       If the chassis is unavailable, defaults to origin pose (0,0)
+    ///             for distance calculations
+    /// @see        BUMP_ID
+    /// @see        PoseUtils::GetClosestFieldElement()
+    //------------------------------------------------------------------
     BUMP_ID CalcNearestBump() const;
-    frc::Pose2d CalcNearestBumpCenter() const;
 
 private:
-    FieldConstants *m_fieldConstants;
     //------------------------------------------------------------------
     /// @brief      Private constructor for singleton pattern
     /// @details    Initializes the chassis and field constants references
@@ -68,6 +85,10 @@ private:
     /// @brief Pointer to the swerve drivetrain subsystem
     subsystems::CommandSwerveDrivetrain *m_chassis;
 
+    /// @brief Pointer to the field constants singleton
+    FieldConstants *m_fieldConstants;
+
     /// @brief Singleton instance pointer
     static BumpHelper *m_instance;
 };
+

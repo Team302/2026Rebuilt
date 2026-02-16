@@ -120,18 +120,25 @@ FieldOffsetValues::FieldOffsetValues()
 //------------------------------------------------------------------
 units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_ITEMS item) const
 {
+    // Outpost
     if (item == FIELD_OFFSET_ITEMS::OUTPOST_X)
     {
         return isRedSide ? m_redOutpostX : m_blueOutpostX;
     }
+
+    // Depot
     else if (item == FIELD_OFFSET_ITEMS::DEPOT_X)
     {
         return isRedSide ? m_redDepotX : m_blueDepotX;
     }
+
+    // Hub
     else if (item == FIELD_OFFSET_ITEMS::HUB_X)
     {
         return isRedSide ? m_redHubX : m_blueHubX;
     }
+
+    // Bump
     else if (item == FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_X)
     {
         return isRedSide ? m_redAllianceBumpEdgeX : m_blueAllianceBumpEdgeX;
@@ -157,6 +164,8 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
         }
         return m_blueBumpDepotY;
     }
+
+    // unknown item
     else
     {
         // Handle invalid item case (could throw an exception or return a default value)

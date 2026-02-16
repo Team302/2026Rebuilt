@@ -18,6 +18,7 @@
 #include <memory>
 
 #include "chassis/commands/TrajectoryDrive.h"
+#include "chassis/commands/season_specific_commands/DriveOverBump.h"
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"
 #include "chassis/commands/season_specific_commands/DriveToHub.h"
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
@@ -57,6 +58,7 @@ public:
     /// @return     TrajectoryDrive* - Pointer to the trajectory drive command
     //------------------------------------------------------------------
     TrajectoryDrive *GetTrajectoryDriveCommand() { return m_trajectoryDrive.get(); }
+    DriveOverBump *GetDriveOverBumpCommand() { return m_driveOverBump.get(); }
     DriveToDepot *GetDriveToDepotCommand() { return m_driveToDepot.get(); }
     DriveToHub *GetDriveToHubCommand() { return m_driveToHub.get(); }
     DriveToOutpost *GetDriveToOutpostCommand() { return m_driveToOutpost.get(); }
@@ -97,6 +99,9 @@ private:
 
     /// @brief Trajectory following command for autonomous paths
     std::unique_ptr<TrajectoryDrive> m_trajectoryDrive;
+
+    /// @brief Drive over bump command for season-specific autonomous navigation
+    std::unique_ptr<DriveOverBump> m_driveOverBump;
 
     /// @brief Drive to depot command for season-specific autonomous navigation
     std::unique_ptr<DriveToDepot> m_driveToDepot;
