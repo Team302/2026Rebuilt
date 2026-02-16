@@ -16,6 +16,7 @@
 #include "utils/logging/signals/WPISignalLogger.h"
 #include "frc/DataLogManager.h"
 #include "frc/RobotController.h"
+#include "frc/DriverStation.h"
 #include "wpi/DataLog.h"
 #include <filesystem>
 
@@ -85,6 +86,7 @@ void WPISignalLogger::WriteSwerveModuleState(std::string signalID, const frc::Sw
 void WPISignalLogger::Start()
 {
     frc::DataLogManager::Start(GetLoggingDir(), CreateLogFileName(), 0.25);
+    frc::DriverStation::StartDataLog(frc::DataLogManager::GetLog());
 }
 
 void WPISignalLogger::Stop()

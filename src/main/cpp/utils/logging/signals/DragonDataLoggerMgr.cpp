@@ -41,7 +41,8 @@ DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items()
 {
 
     // m_logger = std::make_unique<CTRESignalLogger>();
-    m_logger = std::make_unique<UDPSignalLogger>("127.0.0.1", 5900);
+    // m_logger = std::make_unique<UDPSignalLogger>("127.0.0.1", 5900);
+    m_logger = std::make_unique<WPISignalLogger>();
 
     m_logger->Start();
     m_timer.Start();
