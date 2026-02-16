@@ -82,7 +82,7 @@ void GameDataHelper::RunCurrentState()
         else
             currentShift = 5; // Endgame
 
-        // 2. Logic for Hub Activity (Alternates every shift)
+        // Logic for Hub Activity (Alternates every shift)
         // Shift 1, 3: Red inactive if redInactiveFirst is true
         // Shift 2, 4: Red active if redInactiveFirst is true
         bool isOddShift = (currentShift % 2 != 0);
@@ -108,7 +108,7 @@ void GameDataHelper::RunCurrentState()
             PublishHubActive(true);
         }
 
-        // 3. Logic for Countdown Warnings
+        // Logic for Countdown Warnings
         // Check if we are within 5 or 3 seconds of the NEXT shift boundary
         units::time::second_t timeToNextShift = 0_s;
         if (matchTime > m_shift1Start)
