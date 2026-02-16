@@ -79,6 +79,7 @@ DragonLimelight::DragonLimelight(std::string networkTableName,
                                  units::angle::degree_t roll,
                                  DRAGON_LIMELIGHT_PIPELINE initialPipeline,
                                  DRAGON_LIMELIGHT_LED_MODE ledMode) : m_identifier(identifier),
+                                                                      m_cameraType(cameraType),
                                                                       m_networkTableName(LimelightHelpers::sanitizeName(std::string(networkTableName))),
                                                                       m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
                                                                       m_cameraPose(frc::Pose3d(mountingXOffset, mountingYOffset, mountingZOffset, frc::Rotation3d(roll, pitch, yaw)))
@@ -215,35 +216,6 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetObjectDetec
 }
 
 /// ----------------------------------------------------------------------------------
-/// @brief Get the Pose object for the current location of the robot.
-/// @details High-level entry to request a pose estimate from Limelight for odometry.
-/// @param useMegatag2 if true, request MegaTag2 pose estimation path; otherwise use MegaTag1 path.
-/// @return optional VisionPose when Limelight has a valid pose estimate; std::nullopt otherwise.
-/// @notes Adjusts Limelight IMU mode for best results depending on which MegaTag method is used.
-///        See: https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization
-/// ----------------------------------------------------------------------------------
-std::optional<VisionPose> DragonLimelight::EstimatePoseOdometryLimelight(bool useMegatag2)
-{
-    if (frc::RobotBase::IsSimulation())
-    {
-        return std::nullopt;
-    }
-
-    auto mode = static_cast<int>(LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_ONLY); // Chief Delphi answer says perfect portrait pose doesn't work with internal IMU
-    LimelightHelpers::SetIMUMode(m_networkTableName, mode);
-
-    if (useMegatag2)
-    {
-        return GetMegaTag2Pose();
-    }
-    else
-    {
-        return GetMegaTag1Pose();
-    }
-    return std::nullopt;
-}
-
-/// ----------------------------------------------------------------------------------
 /// @brief Get pose estimate using the MegaTag1/standard Limelight pose estimate API.
 /// @return optional VisionPose populated from Limelight pose if tagCount > 0 and valid deviations are computable.
 /// @sideeffects If robot pose has not been set, SetRobotPose will be invoked using the estimate's 2D pose.
@@ -294,7 +266,8 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
     {
         return std::nullopt;
     }
-
+    auto mode = frc::DriverStation::IsDisabled() ? static_cast<int>(LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_AND_FUSE_WITH_INTERNAL_IMU) : static_cast<int>(LIMELIGHT_IMU_MODE::USE_INTERNAL_WITH_MT1_ASSISTED_CONVERGENCE);
+    LimelightHelpers::SetIMUMode(m_networkTableName, mode);
     if (!m_robotPoseSet)
     {
         auto megatag1pose = GetMegaTag1Pose();
@@ -304,8 +277,6 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
         }
     }
     // Get the pose estimate
-    auto mode = frc::DriverStation::IsDisabled() ? static_cast<int>(LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_AND_FUSE_WITH_INTERNAL_IMU) : static_cast<int>(LIMELIGHT_IMU_MODE::USE_INTERNAL_IMU);
-    LimelightHelpers::SetIMUMode(m_networkTableName, mode);
     auto poseEstimate = LimelightHelpers::getBotPoseEstimate_wpiBlue_MegaTag2(m_networkTableName);
 
     double xyStds = .7;
@@ -501,4 +472,29 @@ void DragonLimelight::SetRobotPose(const frc::Pose2d &pose)
                                           roll,
                                           rollrate);
     m_robotPoseSet = true;
+}
+
+/// ----------------------------------------------------------------------------------
+/// @brief Enable rewind buffer recording on this Limelight (LL4 only).
+/// ----------------------------------------------------------------------------------
+void DragonLimelight::StartRewind()
+{
+    LimelightHelpers::setRewindEnabled(m_networkTableName, true);
+}
+
+/// ----------------------------------------------------------------------------------
+/// @brief Save the rewind buffer, capturing the last durationSeconds of video.
+/// @param durationSeconds Number of seconds to capture (max 165).
+/// ----------------------------------------------------------------------------------
+void DragonLimelight::SaveRewind(double durationSeconds)
+{
+    LimelightHelpers::triggerRewindCapture(m_networkTableName, durationSeconds);
+}
+
+/// ----------------------------------------------------------------------------------
+/// @brief Disable rewind buffer recording on this Limelight (LL4 only).
+/// ----------------------------------------------------------------------------------
+void DragonLimelight::StopRewind()
+{
+    LimelightHelpers::setRewindEnabled(m_networkTableName, false);
 }

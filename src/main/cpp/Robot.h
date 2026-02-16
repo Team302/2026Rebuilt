@@ -30,6 +30,7 @@ class RobotState;
 class DragonDataLoggerMgr;
 class DragonVisionPoseEstimatorContainer;
 class DragonQuest;
+class DragonVision;
 
 class Robot : public frc::TimedRobot
 {
@@ -42,6 +43,7 @@ public:
     void TeleopInit() override;
     void TeleopPeriodic() override;
     void TestInit() override;
+    void TeleopExit() override;
 
 private:
     void InitializeRobot();
@@ -55,7 +57,8 @@ private:
     AutonPreviewer *m_previewer;
     RobotState *m_robotState;
     DragonDataLoggerMgr *m_datalogger;
-    bool isFMSAttached = false;
+    bool m_isFMSAttached = false;
+    bool m_rewindLatch = false;
     DragonVisionPoseEstimatorContainer *m_dragonVisionPoseEstimator;
     DragonQuest *m_quest;
 };

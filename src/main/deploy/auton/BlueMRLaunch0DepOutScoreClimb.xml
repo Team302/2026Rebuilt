@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE auton SYSTEM "auton.dtd">
 <auton>
+<primitive id = "DRIVE_STOP_MECH"
+launcherState = "STATE_LAUNCH"/>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMiddleRightToOutpost"
-time = "1.5"/>
+time = "2.5"
+intakeState = "STATE_INTAKE">
+<zone filename = "BlueLaunchZone.xml"/>
+</primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "RightToLeftAlliance"
-time = "2.5"/>
+time = "2.5"
+intakeState = "STATE_INTAKE">
+<zone filename = "BlueLaunchZone.xml"/>
+</primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "DepotToLaunchToClimb"
-time = "2.5"/>
+time = "2.5"
+intakeState = "STATE_INTAKE">
+<zone filename = "BlueLaunchZone.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH">
+<zone filename = "BlueClimbingZone.xml"/>
+</primitive>
 
 
 <!--This path could honestly do a lot more, we could probably grab some pieces from our side if people are willing to pass-->

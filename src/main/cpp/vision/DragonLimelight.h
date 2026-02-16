@@ -127,13 +127,6 @@ public:
     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER GetCameraIdentifier() { return m_identifier; }
 
     ///-----------------------------------------------------------------------------------
-    /// @brief Request a pose estimate from the Limelight for odometry fusion.
-    /// @param useMegatag2 If true use MegaTag2 based estimate, otherwise use MegaTag1.
-    /// @return optional VisionPose when valid; std::nullopt when unavailable.
-    ///-----------------------------------------------------------------------------------
-    std::optional<VisionPose> EstimatePoseOdometryLimelight(bool useMegatag2);
-
-    ///-----------------------------------------------------------------------------------
     /// @brief Retrieve MegaTag1 (standard) pose estimate.
     /// @return optional VisionPose when tags are sufficient and sigma can be computed.
     ///-----------------------------------------------------------------------------------
@@ -150,6 +143,24 @@ public:
     /// @param pose Pose2d used for initial yaw/orientation in the Limelight fusion.
     ///-----------------------------------------------------------------------------------
     void SetRobotPose(const frc::Pose2d &pose);
+
+    DRAGON_LIMELIGHT_CAMERA_TYPE GetCameraType() { return m_cameraType; };
+
+    ///-----------------------------------------------------------------------------------
+    /// @brief Enable rewind buffer recording on this Limelight (LL4 only).
+    ///-----------------------------------------------------------------------------------
+    void StartRewind();
+
+    ///-----------------------------------------------------------------------------------
+    /// @brief Save the rewind buffer to disk, capturing the last durationSeconds of video.
+    /// @param durationSeconds Number of seconds to capture (max 165).
+    ///-----------------------------------------------------------------------------------
+    void SaveRewind(double durationSeconds);
+
+    ///-----------------------------------------------------------------------------------
+    /// @brief Disable rewind buffer recording on this Limelight (LL4 only).
+    ///-----------------------------------------------------------------------------------
+    void StopRewind();
 
 private:
     ///-----------------------------------------------------------------------------------
@@ -181,7 +192,8 @@ private:
     /// @brief Important internal state used by Limelight wrapper.
     ///-----------------------------------------------------------------------------------
     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER m_identifier;
-    std::string m_networkTableName; ///< network table name for this Limelight
+    DRAGON_LIMELIGHT_CAMERA_TYPE m_cameraType; ///< type hint for camera hardware/configuration
+    std::string m_networkTableName;            ///< network table name for this Limelight
 
     const double START_HB = -9999;     ///< initial heartbeat sentinel
     const double MAX_HB = 2000000000;  ///< safety max heartbeat (unused currently)

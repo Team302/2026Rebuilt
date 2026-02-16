@@ -94,6 +94,7 @@
 #include "utils/RoboRio.h"
 #include "utils/logging/debug/Logger.h"
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
+#include "vision/DragonVision.h"
 
 #include "auton/NeutralZoneManager.h"
 
@@ -109,10 +110,8 @@ Robot::Robot()
     InitializeDriveteamFeedback();
 
     m_datalogger = DragonDataLoggerMgr::GetInstance();
-
     // auto path = AutonUtils::GetTrajectoryFromPathFile("BlueLeftInside_I"); // load choreo library so we don't get loop overruns during autonperiodic
 }
-
 /// @brief Called periodically while the robot is running, regardless of mode.
 /// Runs the CommandScheduler, manages logging (guarded by FMS attachment),
 /// updates RobotState, and refreshes drive-team feedback (vision, field position, HUD).
@@ -120,8 +119,8 @@ void Robot::RobotPeriodic()
 {
     frc2::CommandScheduler::GetInstance().Run();
 
-    isFMSAttached = frc::DriverStation::IsFMSAttached();
-    if (!isFMSAttached)
+    m_isFMSAttached = frc::DriverStation::IsFMSAttached();
+    if (!m_isFMSAttached)
     {
         Logger::GetLogger()->PeriodicLog();
     }
@@ -137,8 +136,6 @@ void Robot::RobotPeriodic()
     }
 
     UpdateDriveTeamFeedback();
-
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Robot", "IsInNeutralZone", NeutralZoneManager::GetInstance()->IsInNeutralZone());
 }
 
 /// @brief Called periodically while the robot is disabled.
@@ -152,7 +149,7 @@ void Robot::DisabledPeriodic()
 
 /// @brief Called once when autonomous mode begins.
 /// Elevates thread priority to reduce jitter, initializes cycle primitives,
-/// and transitions PeriodicLooper to autonomous state.
+/// starts Rewind recording if FMS-attached (first time only), and transitions PeriodicLooper to autonomous state.
 void Robot::AutonomousInit()
 {
     frc::SetCurrentThreadPriority(true, 15);
@@ -162,6 +159,16 @@ void Robot::AutonomousInit()
         m_cyclePrims->Init();
     }
     PeriodicLooper::GetInstance()->AutonRunCurrentState();
+
+    if (m_isFMSAttached && !m_rewindLatch)
+    {
+        auto vision = DragonVision::GetDragonVision();
+        if (vision != nullptr)
+        {
+            vision->StartRewind();
+        }
+        m_rewindLatch = true;
+    }
 }
 
 /// @brief Called periodically while in autonomous mode.
@@ -181,6 +188,16 @@ void Robot::TeleopInit()
 {
     PeriodicLooper::GetInstance()->TeleopRunCurrentState();
     frc2::CommandScheduler::GetInstance().CancelAll();
+
+    if (m_isFMSAttached && !m_rewindLatch)
+    {
+        auto vision = DragonVision::GetDragonVision();
+        if (vision != nullptr)
+        {
+            vision->StartRewind();
+        }
+        m_rewindLatch = true;
+    }
 }
 
 /// @brief Called periodically while in teleop mode.
@@ -192,6 +209,19 @@ void Robot::TeleopPeriodic() { PeriodicLooper::GetInstance()->TeleopRunCurrentSt
 void Robot::TestInit()
 {
     frc2::CommandScheduler::GetInstance().CancelAll();
+}
+
+void Robot::TeleopExit()
+{
+    if (m_isFMSAttached)
+    {
+        auto vision = DragonVision::GetDragonVision();
+        if (vision != nullptr)
+        {
+            vision->SaveRewind(165.0); // Save full buffer (max 165 seconds)
+            vision->StartRewind();
+        }
+    }
 }
 
 /// @brief Initializes all core robot subsystems in the correct order.
