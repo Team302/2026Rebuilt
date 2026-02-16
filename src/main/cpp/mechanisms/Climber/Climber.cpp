@@ -145,7 +145,7 @@ std::map<std::string, Climber::STATE_NAMES>
 void Climber::CreateCompBot302()
 {
 	m_ntName = "Climber";
-	m_climber = new ctre::phoenix6::hardware::TalonFX(11, ctre::phoenix6::CANBus("canivore"));
+	m_climber = new ctre::phoenix6::hardware::TalonFX(19, ctre::phoenix6::CANBus("canivore"));
 
 	m_extender = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 2);
 	m_alignment = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 3);

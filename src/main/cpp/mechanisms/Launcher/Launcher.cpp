@@ -202,12 +202,12 @@ std::map<std::string, Launcher::STATE_NAMES>
 void Launcher::CreateCompBot302()
 {
 	m_ntName = "Launcher";
-	m_launcher = new ctre::phoenix6::hardware::TalonFX(16, ctre::phoenix6::CANBus("canivore"));
-	m_hood = new ctre::phoenix6::hardware::TalonFXS(17, ctre::phoenix6::CANBus("canivore"));
-	m_transfer = new ctre::phoenix6::hardware::TalonFX(18, ctre::phoenix6::CANBus("canivore"));
-	m_turret = new ctre::phoenix6::hardware::TalonFXS(19, ctre::phoenix6::CANBus("canivore"));
-	m_indexer = new ctre::phoenix6::hardware::TalonFX(20, ctre::phoenix6::CANBus("canivore"));
-	m_agitator = new ctre::phoenix6::hardware::TalonFX(21, ctre::phoenix6::CANBus("canivore"));
+	m_launcher = new ctre::phoenix6::hardware::TalonFX(8, ctre::phoenix6::CANBus("canivore"));
+	m_hood = new ctre::phoenix6::hardware::TalonFXS(7, ctre::phoenix6::CANBus("canivore"));
+	m_transfer = new ctre::phoenix6::hardware::TalonFX(4, ctre::phoenix6::CANBus("canivore"));
+	m_turret = new ctre::phoenix6::hardware::TalonFXS(6, ctre::phoenix6::CANBus("canivore"));
+	m_indexer = new ctre::phoenix6::hardware::TalonFX(5, ctre::phoenix6::CANBus("canivore"));
+	m_agitator = new ctre::phoenix6::hardware::TalonFX(19, ctre::phoenix6::CANBus("canivore"));
 
 	m_percentOut = new ControlData(
 		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
