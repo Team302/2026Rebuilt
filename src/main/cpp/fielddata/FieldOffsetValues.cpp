@@ -13,6 +13,7 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include "fielddata/FieldOffsetValues.h"
+#include "fielddata/BumpHelper.h"
 #include "fielddata/FieldConstants.h"
 
 //------------------------------------------------------------------
@@ -135,17 +136,26 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
     {
         return isRedSide ? m_redAllianceBumpEdgeX : m_blueAllianceBumpEdgeX;
     }
-    else if (item == FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_Y)
-    {
-        return isRedSide ? m_redBumpOutpostY : m_blueBumpOutpostY; // Assuming BUMP_Y corresponds to the outpost Y position for each alliance
-    }
     else if (item == FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_X)
     {
         return isRedSide ? m_redNeutralBumpEdgeX : m_blueNeutralBumpEdgeX;
     }
-    else if (item == FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_Y)
+    else if (item == FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_Y)
     {
-        return isRedSide ? m_redBumpDepotY : m_blueBumpDepotY; // Assuming BUMP_Y corresponds to the depot Y position for each alliance
+        auto bump = BumpHelper::GetInstance()->CalcNearestBump(); // Ensure bump positions are calculated before accessing Y values
+        if (bump == BUMP_ID::RED_OUTPOST_BUMP)
+        {
+            return m_redBumpOutpostY;
+        }
+        else if (bump == BUMP_ID::RED_DEPOT_BUMP)
+        {
+            return m_redBumpDepotY;
+        }
+        else if (bump == BUMP_ID::BLUE_OUTPOST_BUMP)
+        {
+            return m_blueBumpOutpostY;
+        }
+        return m_blueBumpDepotY;
     }
     else
     {
