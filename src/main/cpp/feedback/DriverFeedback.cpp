@@ -54,7 +54,7 @@ DriverFeedback::DriverFeedback() : IRobotStateChangeSubscriber()
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveToFieldElement_Bool);
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveStateType_Int);
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
-
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool);
     m_LEDStates->SetBlinkingFrequency(m_blinkingFrequency);
 }
 void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, int value)
@@ -71,6 +71,8 @@ void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, bo
         m_isInDriveTo = value;
     else if (RobotStateChanges::StateChange::ClimbModeStatus_Bool == change)
         m_climbMode = value;
+    else if (RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool == change)
+        m_shiftChangeIn5Seconds = value;
 }
 
 void DriverFeedback::UpdateFeedback()
@@ -171,6 +173,16 @@ void DriverFeedback::UpdateLEDStates()
                 desiredPrimaryColor = frc::Color::kGreen;
                 desiredAnimation = DragonCANdle::AnimationMode::BREATHING;
                 break;
+            }
+
+            if (m_shiftChangeIn5Seconds)
+            {
+                desiredAnimation = DragonCANdle::AnimationMode::BLINKING;
+                m_LEDStates->SetBlinkingFrequency(m_shiftBlinkingFrequency);
+            }
+            else
+            {
+                m_LEDStates->SetBlinkingFrequency(m_blinkingFrequency);
             }
         }
     }
