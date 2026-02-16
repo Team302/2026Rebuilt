@@ -11,9 +11,10 @@
 #include <networktables/StructTopic.h>
 
 #include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "utils/logging/signals/DragonDataLoggerMgr.h"
 
 #include "chassis/ChassisConfigMgr.h"
-class Telemetry
+class Telemetry : public DragonDataLogger
 {
 private:
     units::meters_per_second_t MaxSpeed = 0_mps; // Maximum speed of the robot, set by chassis configuration manager
@@ -53,6 +54,14 @@ private:
         m_moduleMechanisms[3].GetRoot("RootDirection", 0.5, 0.5)->Append<frc::MechanismLigament2d>("Direction", 0.1, 0_deg, 0, frc::Color8Bit{frc::Color::kWhite}),
     };
 
+    /* Cached state data for periodic logging */
+    frc::Pose2d m_cachedPose;
+    frc::ChassisSpeeds m_cachedSpeeds;
+    std::array<frc::SwerveModuleState, 4> m_cachedModuleStates;
+    std::array<frc::SwerveModuleState, 4> m_cachedModuleTargets;
+    std::array<frc::SwerveModulePosition, 4> m_cachedModulePositions;
+    units::second_t m_cachedOdometryPeriod;
+
 public:
     /**
      * Construct a telemetry object with the specified max speed of the robot.
@@ -63,4 +72,7 @@ public:
 
     /** Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. */
     void Telemeterize(subsystems::CommandSwerveDrivetrain::SwerveDriveState const &state);
+
+    /** Periodic data logging implementation */
+    void DataLog(uint64_t timestamp) override;
 };

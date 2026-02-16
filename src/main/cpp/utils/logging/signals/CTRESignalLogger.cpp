@@ -15,6 +15,7 @@
 //====================================================================================================================================================
 
 #include "utils/logging/signals/CTRESignalLogger.h"
+#include "utils/logging/debug/Logger.h"
 #include <filesystem>
 #include <ctime>
 #include <string>
@@ -118,4 +119,9 @@ std::string CTRESignalLogger::GetLoggingDir()
     }
 
     return std::string("");
+}
+
+void CTRESignalLogger::SetAutoLogging(bool enable)
+{
+    SignalLogger::EnableAutoLogging(enable);
 }
