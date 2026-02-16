@@ -132,6 +132,12 @@ public:
         ACTUAL_RIGHT_BACK_STATE
     };
 
+    enum GamePadSignals
+    {
+        GAMEPAD_0,
+        GAMEPAD_1
+    };
+
     // initialize these signals in the constructor
 
     string m_brownOutPath = "/RoboRio/IsBrownOut";
@@ -304,6 +310,8 @@ protected:
 
     void LogSwerveModuleStateData(uint64_t timestamp, DragonDataLogger::SwerveStateSingals signalID, frc::SwerveModuleState value);
     void LogChassisSpeedsData(uint64_t timestamp, DragonDataLogger::ChassisSpeedSignals signalID, frc::ChassisSpeeds value);
+
+    void LogGamePadData(uint64_t timestamp, std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, int pov);
 
     const double m_doubleTolerance = 0.001;
 };

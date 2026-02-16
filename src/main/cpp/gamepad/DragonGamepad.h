@@ -19,8 +19,9 @@
 #include <vector>
 
 // Team 302 includes
-#include <gamepad/IDragonGamepad.h>
-#include <teleopcontrol/TeleopControlMappingEnums.h>
+#include "gamepad/IDragonGamepad.h"
+#include "teleopcontrol/TeleopControlMappingEnums.h"
+#include "utils/logging/signals/DragonDataLogger.h"
 
 // forward declares
 namespace frc
@@ -30,7 +31,7 @@ namespace frc
 class AnalogAxis;
 class IButton;
 
-class DragonGamepad : public IDragonGamepad
+class DragonGamepad : public IDragonGamepad, DragonDataLogger
 {
 public:
     DragonGamepad(
@@ -74,6 +75,9 @@ public:
         bool leftRumble, // <I> - rumble left
         bool rightRumble // <I> - rumble right
     ) const override;
+
+    /** Periodic data logging implementation */
+    void DataLog(uint64_t timestamp) override;
 
 private:
     frc::Joystick *m_gamepad;

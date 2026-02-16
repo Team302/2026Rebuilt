@@ -25,7 +25,6 @@
 #include "utils/logging/signals/WPISignalLogger.h"
 
 using namespace std;
-using ctre::phoenix6::SignalLogger;
 
 DragonDataLoggerMgr *DragonDataLoggerMgr::m_instance = nullptr;
 DragonDataLoggerMgr *DragonDataLoggerMgr::GetInstance()

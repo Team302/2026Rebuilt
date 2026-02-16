@@ -262,3 +262,18 @@ void DragonGamepad::SetRumble(
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT_ONCE, string("SetRumble"), "Game Pad", string("Nullptr"));
     }
 }
+
+void DragonGamepad::DataLog(uint64_t timestamp)
+{
+    std::array<double, 6> axes;
+    std::array<bool, 16> buttons;
+    for (int i = 0; i < 6; ++i)
+    {
+        axes[i] = GetAxisValue(static_cast<TeleopControlMappingEnums::AXIS_IDENTIFIER>(i));
+    }
+    for (int i = 0; i < 16; ++i)
+    {
+        buttons[i] = IsButtonPressed(static_cast<TeleopControlMappingEnums::BUTTON_IDENTIFIER>(i));
+    }
+    LogGamePadData(timestamp, "GamePad", axes, buttons, m_gamepad->GetPOV());
+}

@@ -208,3 +208,7 @@ void UDPSignalLogger::WriteSwerveModuleState(std::string signalID, const frc::Sw
     std::string message = FormatMessage(signalID, "swerve_module_state", oss.str(), "Speed_mps;Angle_rad", latency);
     SendData(message);
 }
+
+void UDPSignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, int pov)
+{
+}

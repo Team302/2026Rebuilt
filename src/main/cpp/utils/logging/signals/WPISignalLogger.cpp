@@ -83,10 +83,21 @@ void WPISignalLogger::WriteSwerveModuleState(std::string signalID, const frc::Sw
     entry.Append(value, timestamp);
 }
 
+void WPISignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, int pov)
+{
+    auto &entry = GetDoubleArrayEntry(signalID + "/axes");
+    auto &boolEntry = GetBoolArrayEntry(signalID + "/buttons");
+    auto &povEntry = GetIntegerEntry(signalID + "/pov");
+    int64_t timestamp = frc::RobotController::GetFPGATime();
+    entry.Append((axes), timestamp);
+    boolEntry.Append(buttons, timestamp);
+    povEntry.Append(pov, timestamp);
+}
+
 void WPISignalLogger::Start()
 {
-    frc::DataLogManager::Start(GetLoggingDir(), CreateLogFileName(), 0.25);
-    frc::DriverStation::StartDataLog(frc::DataLogManager::GetLog());
+    frc::DataLogManager::Start(GetLoggingDir(), CreateLogFileName(), .5);
+    // frc::DriverStation::StartDataLog(frc::DataLogManager::GetLog());
 }
 
 void WPISignalLogger::Stop()
@@ -188,6 +199,19 @@ wpi::log::DoubleArrayLogEntry &WPISignalLogger::GetDoubleArrayEntry(const std::s
         auto &log = frc::DataLogManager::GetLog();
         auto entry = std::make_unique<wpi::log::DoubleArrayLogEntry>(log, signalID);
         auto [inserted, success] = m_doubleArrayEntries.emplace(signalID, std::move(entry));
+        return *inserted->second;
+    }
+    return *it->second;
+}
+
+wpi::log::BooleanArrayLogEntry &WPISignalLogger::GetBoolArrayEntry(const std::string &signalID)
+{
+    auto it = m_boolArrayEntries.find(signalID);
+    if (it == m_boolArrayEntries.end())
+    {
+        auto &log = frc::DataLogManager::GetLog();
+        auto entry = std::make_unique<wpi::log::BooleanArrayLogEntry>(log, signalID);
+        auto [inserted, success] = m_boolArrayEntries.emplace(signalID, std::move(entry));
         return *inserted->second;
     }
     return *it->second;

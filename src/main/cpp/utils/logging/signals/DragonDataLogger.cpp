@@ -20,7 +20,6 @@
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include "utils/logging/signals/ISignalLogger.h"
 
-
 DragonDataLogger::DragonDataLogger()
 {
     DragonDataLoggerMgr::GetInstance()->RegisterItem(this);
@@ -39,7 +38,7 @@ void DragonDataLogger::LogBoolData(uint64_t timestamp, DragonDataLogger::BoolSig
     {
         return;
     }
-    
+
     switch (signalID)
     {
     case DragonDataLogger::BoolSignals::IS_BROWNOUT:
@@ -56,7 +55,7 @@ void DragonDataLogger::LogBoolData(uint64_t timestamp, DragonDataLogger::BoolSig
 void DragonDataLogger::LogDoubleData(uint64_t timestamp, DragonDataLogger::DoubleSignals signalID, double value)
 {
     auto dataMgr = DragonDataLoggerMgr::GetInstance();
-    
+
     if (dataMgr == nullptr)
     {
         return;
@@ -467,13 +466,12 @@ void DragonDataLogger::LogSwerveModuleStateData(uint64_t timestamp, DragonDataLo
     default:
         break;
     }
-    
 }
 
 void DragonDataLogger::LogChassisSpeedsData(uint64_t timestamp, DragonDataLogger::ChassisSpeedSignals signalID, frc::ChassisSpeeds value)
 {
     auto dataMgr = DragonDataLoggerMgr::GetInstance();
-    
+
     if (dataMgr == nullptr)
     {
         return;
@@ -510,4 +508,19 @@ void DragonDataLogger::LogChassisSpeedsData(uint64_t timestamp, DragonDataLogger
     default:
         break;
     }
+}
+
+void DragonDataLogger::LogGamePadData(uint64_t timestamp, std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, int pov)
+{
+    auto dataMgr = DragonDataLoggerMgr::GetInstance();
+    if (dataMgr == nullptr)
+    {
+        return;
+    }
+    auto logger = dataMgr->GetLogger();
+    if (logger == nullptr)
+    {
+        return;
+    }
+    logger->WriteGamePadState(signalID, axes, buttons, pov);
 }
