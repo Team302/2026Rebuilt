@@ -95,6 +95,7 @@
 #include "utils/logging/debug/Logger.h"
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include "vision/DragonVision.h"
+#include "feedback/GameDataHelper.h"
 
 #include "auton/NeutralZoneManager.h"
 
@@ -279,6 +280,8 @@ void Robot::UpdateDriveTeamFeedback()
     {
         feedback->UpdateFeedback();
     }
+
+    new GameDataHelper();
 }
 
 #ifndef RUNNING_FRC_TESTS

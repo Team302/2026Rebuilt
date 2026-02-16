@@ -22,18 +22,15 @@ class GameDataHelper : StateMgr
 {
 
 public:
-    static GameDataHelper *GetInstance();
+    void RunCurrentState() override;
 
+    GameDataHelper();
+    ~GameDataHelper() = default;
+
+private:
     void PublishHubActive(bool value);
     void PublishShiftChangeIn5seconds(bool value);
     void PublishShiftChangeIn3seconds(bool value);
-    void RunCurrentState() override;
-
-private:
-    GameDataHelper();
-    ~GameDataHelper() = default;
-    frc::DriverStation *m_driverStation;
-    static GameDataHelper *m_instance;
 
     bool m_hubActive = false;
     bool m_shiftChangeIn3seconds = true;
@@ -45,4 +42,7 @@ private:
     const units::time::second_t m_shift4Start = 55_s;  // 0:55
     const units::time::second_t m_endgameStart = 30_s; // 0:30
     units::time::second_t m_shiftLength = 25_s;
+
+    std::string m_hubActiveNT = "Hub Active";
+    std::string m_allianceShiftTime = "Time Left In Shift";
 };

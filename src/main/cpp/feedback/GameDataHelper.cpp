@@ -16,26 +16,20 @@
 #include "feedback/GameDataHelper.h"
 #include "state/RobotState.h"
 #include "utils/PeriodicLooper.h"
+#include "frc/smartdashboard/SmartDashboard.h"
 
 GameDataHelper::GameDataHelper()
 {
     PeriodicLooper::GetInstance()->RegisterAll(this);
-}
-GameDataHelper *GameDataHelper::m_instance = nullptr;
-
-GameDataHelper *GameDataHelper::GetInstance()
-{
-    if (GameDataHelper::m_instance == nullptr)
-    {
-        GameDataHelper::m_instance = new GameDataHelper();
-    }
-    return GameDataHelper::m_instance;
+    frc::SmartDashboard::PutBoolean(m_hubActiveNT, false);
+    frc::SmartDashboard::PutNumber(m_allianceShiftTime, 25.0);
 }
 
 void GameDataHelper::PublishHubActive(bool value)
 {
     if (m_hubActive != value)
     {
+        frc::SmartDashboard::PutBoolean(m_hubActiveNT, value);
         RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::HubActive_Bool, value);
     }
 }
@@ -125,6 +119,7 @@ void GameDataHelper::RunCurrentState()
         else if (matchTime > m_endgameStart)
             timeToNextBoundary = matchTime - m_endgameStart;
 
+        frc::SmartDashboard::PutNumber(m_allianceShiftTime, timeToNextBoundary.value());
         PublishShiftChangeIn5seconds(timeToNextBoundary <= 5.0_s && timeToNextBoundary > 0_s);
         PublishShiftChangeIn3seconds(timeToNextBoundary <= 3.0_s && timeToNextBoundary > 0_s);
     }
