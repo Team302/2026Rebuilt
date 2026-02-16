@@ -65,6 +65,7 @@ void DriveToPose::Initialize()
         m_translationPIDY.SetGoal(m_endPose.Y());
     }
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElement_Bool, true);
+    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, false);
 }
 
 //------------------------------------------------------------------
@@ -146,6 +147,7 @@ bool DriveToPose::IsFinished()
 void DriveToPose::End(bool interrupted)
 {
     m_chassis->SetControl(swerve::requests::SwerveDriveBrake{});
+    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, IsFinished());
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElement_Bool, false);
 }
 
