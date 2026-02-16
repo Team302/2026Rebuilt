@@ -41,7 +41,6 @@ DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items()
 {
 
     SetLoggerType(m_defaultLoggerType);
-
 }
 
 void DragonDataLoggerMgr::SetLoggerType(LoggerType type)
@@ -57,26 +56,11 @@ void DragonDataLoggerMgr::SetLoggerType(LoggerType type)
         m_logger = std::make_unique<CTRESignalLogger>();
         break;
 
-    case LoggerType::UDP_LOGGER:
-        if (!ipAddress.empty() && port > 0)
-        {
-            m_logger = std::make_unique<UDPSignalLogger>(ipAddress, port);
-        }
-        else
-        {
-            m_logger = std::make_unique<UDPSignalLogger>("127.0.0.1", 5800);
-        }
-        break;
-
-    case LoggerType::NETWORK_TABLES_LOGGER:
-        // Future implementation
-        // m_logger = std::make_unique<NetworkTablesLogger>();
-        break;
-
     case LoggerType::WPILOGGER:
         m_logger = std::make_unique<WPISignalLogger>();
         break;
 
+    case LoggerType::UDP_LOGGER:
     default:
         m_logger = std::make_unique<UDPSignalLogger>(m_piLoggerAddress, m_piLoggerPort);
         break;
