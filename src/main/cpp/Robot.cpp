@@ -258,6 +258,7 @@ void Robot::InitializeAutonOptions()
 void Robot::InitializeDriveteamFeedback()
 {
     m_field = DragonField::GetInstance(); // TODO: move to drive team feedback
+    new GameDataHelper();
 }
 
 /// @brief Updates all drive-team feedback and auton selection information.
@@ -280,8 +281,6 @@ void Robot::UpdateDriveTeamFeedback()
     {
         feedback->UpdateFeedback();
     }
-
-    new GameDataHelper();
 }
 
 #ifndef RUNNING_FRC_TESTS

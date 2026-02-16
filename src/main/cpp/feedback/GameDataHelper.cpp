@@ -30,6 +30,7 @@ void GameDataHelper::PublishHubActive(bool value)
     if (m_hubActive != value)
     {
         frc::SmartDashboard::PutBoolean(m_hubActiveNT, value);
+        m_hubActive = value;
         RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::HubActive_Bool, value);
     }
 }
@@ -38,6 +39,7 @@ void GameDataHelper::PublishShiftChangeIn3seconds(bool value)
 {
     if (m_shiftChangeIn3seconds != value)
     {
+        m_shiftChangeIn3seconds = value;
         RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool, value);
     }
 }
@@ -46,6 +48,7 @@ void GameDataHelper::PublishShiftChangeIn5seconds(bool value)
 {
     if (m_shiftChangeIn5seconds != value)
     {
+        m_shiftChangeIn5seconds = value;
         RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool, value);
     }
 }
@@ -107,20 +110,20 @@ void GameDataHelper::RunCurrentState()
 
         // 3. Logic for Countdown Warnings
         // Check if we are within 5 or 3 seconds of the NEXT shift boundary
-        units::time::second_t timeToNextBoundary = 0_s;
+        units::time::second_t timeToNextShift = 0_s;
         if (matchTime > m_shift1Start)
-            timeToNextBoundary = matchTime - m_shift1Start;
+            timeToNextShift = matchTime - m_shift1Start;
         else if (matchTime > m_shift2Start)
-            timeToNextBoundary = matchTime - m_shift2Start;
+            timeToNextShift = matchTime - m_shift2Start;
         else if (matchTime > m_shift3Start)
-            timeToNextBoundary = matchTime - m_shift3Start;
+            timeToNextShift = matchTime - m_shift3Start;
         else if (matchTime > m_shift4Start)
-            timeToNextBoundary = matchTime - m_shift4Start;
+            timeToNextShift = matchTime - m_shift4Start;
         else if (matchTime > m_endgameStart)
-            timeToNextBoundary = matchTime - m_endgameStart;
+            timeToNextShift = matchTime - m_endgameStart;
 
-        frc::SmartDashboard::PutNumber(m_allianceShiftTime, timeToNextBoundary.value());
-        PublishShiftChangeIn5seconds(timeToNextBoundary <= 5.0_s && timeToNextBoundary > 0_s);
-        PublishShiftChangeIn3seconds(timeToNextBoundary <= 3.0_s && timeToNextBoundary > 0_s);
+        frc::SmartDashboard::PutNumber(m_allianceShiftTime, timeToNextShift.value());
+        PublishShiftChangeIn5seconds(timeToNextShift <= 5.0_s && timeToNextShift > 0_s);
+        PublishShiftChangeIn3seconds(timeToNextShift <= 3.0_s && timeToNextShift > 0_s);
     }
 }
