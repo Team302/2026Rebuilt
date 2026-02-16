@@ -68,6 +68,7 @@ void GameDataHelper::RunCurrentState()
         std::string gameData = frc::DriverStation::GetGameSpecificMessage();
         bool redInactiveFirst = (gameData == "R");
 
+        // Match Time Decreases
         int currentShift = 0;
         if (matchTime > m_shift1Start)
             currentShift = 0; // Transition period
