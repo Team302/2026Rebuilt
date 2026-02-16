@@ -104,12 +104,12 @@ void GameDataHelper::RunCurrentState()
         }
         else
         {
-            // In Transition or Endgame, both hubs usually active
+            // In Transition or Endgame, both hubs active
             PublishHubActive(true);
         }
 
         // Logic for Countdown Warnings
-        // Check if we are within 5 or 3 seconds of the NEXT shift boundary
+        // Check if we are within 5 or 3 seconds of the NEXT shift
         units::time::second_t timeToNextShift = 0_s;
         if (matchTime > m_shift1Start)
             timeToNextShift = matchTime - m_shift1Start;
