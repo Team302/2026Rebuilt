@@ -19,6 +19,7 @@
 #include "utils/logging/signals/DragonDataLogger.h"
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include "utils/logging/signals/ISignalLogger.h"
+#include "utils/logging/debug/Logger.h"
 
 DragonDataLogger::DragonDataLogger()
 {
@@ -510,7 +511,7 @@ void DragonDataLogger::LogChassisSpeedsData(uint64_t timestamp, DragonDataLogger
     }
 }
 
-void DragonDataLogger::LogGamePadData(uint64_t timestamp, std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, int pov)
+void DragonDataLogger::LogGamePadData(uint64_t timestamp, DragonDataLogger::GamePadSignals signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, int pov)
 {
     auto dataMgr = DragonDataLoggerMgr::GetInstance();
     if (dataMgr == nullptr)
@@ -522,5 +523,15 @@ void DragonDataLogger::LogGamePadData(uint64_t timestamp, std::string signalID, 
     {
         return;
     }
-    logger->WriteGamePadState(signalID, axes, buttons, pov);
+    switch (signalID)
+    {
+    case DragonDataLogger::GamePadSignals::GAMEPAD_0:
+        logger->WriteGamePadState(m_gamePad0Path, axes, buttons, pov);
+        break;
+    case DragonDataLogger::GamePadSignals::GAMEPAD_1:
+        logger->WriteGamePadState(m_gamePad1Path, axes, buttons, pov);
+        break;
+    default:
+        break;
+    }
 }

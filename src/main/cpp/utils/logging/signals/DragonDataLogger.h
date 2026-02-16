@@ -299,6 +299,9 @@ public:
     string m_swerveModuleStateUnits = "Speed, Angle";
     string m_swerveChassisSpeedUnits = "Vx, Vy, Omega";
 
+    string m_gamePad0Path = "/GamePad0/";
+    string m_gamePad1Path = "/GamePad1/";
+
     units::time::second_t m_latency = units::time::second_t(0);
 
 protected:
@@ -311,7 +314,7 @@ protected:
     void LogSwerveModuleStateData(uint64_t timestamp, DragonDataLogger::SwerveStateSingals signalID, frc::SwerveModuleState value);
     void LogChassisSpeedsData(uint64_t timestamp, DragonDataLogger::ChassisSpeedSignals signalID, frc::ChassisSpeeds value);
 
-    void LogGamePadData(uint64_t timestamp, std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, int pov);
+    void LogGamePadData(uint64_t timestamp, DragonDataLogger::GamePadSignals signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, int pov);
 
     const double m_doubleTolerance = 0.001;
 };

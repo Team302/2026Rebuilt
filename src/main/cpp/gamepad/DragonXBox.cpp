@@ -290,3 +290,19 @@ void DragonXBox::SetRumble(
     m_xbox->SetRumble(GenericHID::RumbleType::kLeftRumble, lrum);
     m_xbox->SetRumble(GenericHID::RumbleType::kRightRumble, rrum);
 }
+
+void DragonXBox::DataLog(uint64_t timestamp)
+{
+    std::array<double, 6> axes;
+    std::array<bool, 16> buttons;
+    for (int i = 0; i < 6; ++i)
+    {
+        axes[i] = GetAxisValue(static_cast<TeleopControlMappingEnums::AXIS_IDENTIFIER>(i));
+    }
+    for (int i = 0; i < 16; ++i)
+    {
+        buttons[i] = IsButtonPressed(static_cast<TeleopControlMappingEnums::BUTTON_IDENTIFIER>(i));
+    }
+    int id = m_xbox->GetPort();
+    LogGamePadData(timestamp, static_cast<DragonDataLogger::GamePadSignals>(id), axes, buttons, m_xbox->GetPOV());
+}
