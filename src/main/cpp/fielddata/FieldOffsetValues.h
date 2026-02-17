@@ -120,5 +120,5 @@ private:
     units::length::meter_t m_blueBumpOutpostY;
 
     static constexpr units::length::meter_t HUB_OFFSET = 2.0_m;
-    static constexpr units::length::meter_t BUMP_OFFSET = 1.1_m;
+    static constexpr units::length::meter_t BUMP_OFFSET = 1.5_m;
 };

@@ -129,8 +129,8 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     auto driveToOutpost = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_OUTPOST);
 
     // Drive over Bump
-    driveToDepot.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
-                                                    {
+    driveOverBump.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
+                                                     {
     if (!m_climbModeStatus) {
         return frc2::ProxyCommand(m_driveOverBump.get()).ToPtr();
     } else {

@@ -50,10 +50,20 @@ DriveToPose::DriveToPose(
 //------------------------------------------------------------------
 void DriveToPose::Initialize()
 {
-    m_chassis->ResetSamePose();
-    auto speeds = m_chassis->GetState().Speeds;
-
     m_endPose = GetEndPose();
+    m_chassis->ResetSamePose();
+
+    SetEndPose(m_endPose);
+
+    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElement_Bool, true);
+    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, false);
+}
+
+void DriveToPose::SetEndPose(const frc::Pose2d &endPose)
+{
+    m_endPose = endPose;
+
+    auto speeds = m_chassis->GetState().Speeds;
 
     m_translationPIDX.Reset(m_currentPose.X(), speeds.vx);
     m_translationPIDY.Reset(m_currentPose.Y(), speeds.vy);
@@ -64,8 +74,6 @@ void DriveToPose::Initialize()
         m_translationPIDX.SetGoal(m_endPose.X());
         m_translationPIDY.SetGoal(m_endPose.Y());
     }
-    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElement_Bool, true);
-    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, false);
 }
 
 //------------------------------------------------------------------

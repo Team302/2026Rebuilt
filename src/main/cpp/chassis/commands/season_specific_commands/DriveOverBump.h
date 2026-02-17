@@ -21,45 +21,91 @@
 #include "units/angle.h"
 
 //====================================================================================================================================================
-/// @class DriveToNZOutFromAllience
-/// @brief Command to autonomously drive the robot to the nearest bump on the field
+/// @class DriveOverBump
+/// @brief Command to autonomously drive the robot over a field bump using a two-stage navigation approach
 ///
-/// This command extends DriveToPose to provide specific functionality for navigating to NZOutFromAllience.
-/// It automatically determines which bump (red or blue) is closest to the robot's current position
-/// and calculates the target pose at the center of that bump using DepotHelper.
+/// This command extends DriveToPose to provide specialized functionality for safely navigating over the bumps
+/// that separate the alliance zone from the neutral zone on the 2026 game field. The command intelligently
+/// determines which bump (Red/Blue, Depot/Outpost) is nearest and calculates an optimal path over it.
 ///
-/// The command uses PID control to drive the robot to the calculated bump center position,
-/// making it useful for autonomous routines or driver assistance features during matches.
+/// **Two-Stage Navigation:**
+/// The command uses a midpoint-to-endpoint strategy to ensure the robot successfully crosses the bump:
+/// 1. First, drive to the midpoint pose (top of the bump)
+/// 2. Then, drive to the endpoint pose (other side of the bump)
+///
+/// **Directional Intelligence:**
+/// - If starting in the neutral zone: Drive toward the alliance zone
+/// - If starting in the alliance zone: Drive toward the neutral zone
+///
+/// **Rotation Handling:**
+/// Each bump has predefined rotation angles (45° or 315°) that orient the robot toward the hub center
+/// while crossing, ensuring optimal positioning for game play after the transition.
+///
+/// The command uses BumpHelper for bump identification, FieldOffsetValues for coordinates, and
+/// NeutralZoneManager for zone detection, making it fully autonomous and field-aware.
+///
+/// @see DriveToPose Base class providing PID-controlled pose navigation
+/// @see BumpHelper Utility for identifying nearest bump
+/// @see FieldOffsetValues Field coordinate management
 //====================================================================================================================================================
 class DriveOverBump : public DriveToPose
 {
 public:
     //------------------------------------------------------------------
-    /// @brief      Constructor for DriveToNZOutFromAllience command
-    /// @param[in]  chassis - Pointer to the swerve drive subsystem
-    /// @details    Initializes the command with the chassis reference for
-    ///             autonomous navigation to the nearest depot
+    /// @brief      Constructor for DriveOverBump command
+    /// @param[in]  chassis - Pointer to the swerve drive subsystem that will execute the movement
+    /// @details    Initializes the command with the chassis reference for autonomous navigation.
+    ///             The constructor sets up the base DriveToPose functionality and initializes
+    ///             the midpoint and endpoint pose members to default values. Actual pose
+    ///             calculation occurs when GetEndPose() is called by the command scheduler.
     //------------------------------------------------------------------
     DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis);
 
     //------------------------------------------------------------------
     /// @brief      Destructor (default implementation)
+    /// @details    No cleanup required as all resources are managed by parent class or are value types
     //------------------------------------------------------------------
     ~DriveOverBump() = default;
 
     //------------------------------------------------------------------
-    /// @brief      Calculates the target end pose for the NZOutFromAllience
-    /// @return     frc::Pose2d - The target pose at the center of the nearest depot
-    /// @details    Overrides the base class method to provide NZOutFromAllience-specific
-    ///             target calculation using DepotHelper
+    /// @brief      Calculates the target poses for the two-stage bump crossing maneuver
+    /// @return     frc::Pose2d - The initial midpoint pose (top of bump) to navigate to first
+    /// @details    This method is called by the command scheduler to determine the robot's path.
+    ///             It performs the following operations:
+    ///             - Identifies the nearest bump using BumpHelper
+    ///             - Determines current zone (alliance or neutral) via NeutralZoneManager
+    ///             - Retrieves field coordinates for both sides of the bump from FieldOffsetValues
+    ///             - Calculates appropriate rotation angles based on bump type and direction
+    ///             - Sets m_midPose (returned value) and m_endPose (used after midpoint reached)
+    ///             - Configures distance threshold to 1 foot for completion detection
+    ///
+    ///             The two-stage approach ensures the robot follows a safe trajectory over
+    ///             the bump rather than attempting to drive straight through it.
+    ///
+    /// @note       If BumpHelper is unavailable, returns default origin pose
+    /// @see        GetRotation() for rotation angle calculation
     //------------------------------------------------------------------
     frc::Pose2d GetEndPose() override;
 
     //------------------------------------------------------------------
-    /// @brief      Determines if theDriveToNZOutFromAllience command has finished execution
-    /// @return     true if the command has completed driving to the depot,
-    ///             false if the command should continue running
-    /// @details    Called repeatedly by the command scheduler to check completion status
+    /// @brief      Checks if the DriveOverBump command has completed execution
+    /// @return     true if the command should terminate, false if it should continue running
+    /// @details    Implements two-stage completion logic:
+    ///
+    ///             **Stage 1 (Error Check):**
+    ///             Returns true immediately if m_endPose is at origin, indicating a calculation error
+    ///
+    ///             **Stage 2 (Two-Phase Navigation):**
+    ///             - Phase 1: Navigate to m_midPose (top of bump)
+    ///               * When reached, switches target to m_endPose and continues (returns false)
+    ///             - Phase 2: Navigate to m_endPose (other side of bump)
+    ///               * When reached, command completes (returns true)
+    ///
+    ///             The m_beforeMidPose flag tracks which phase is active. This ensures the robot
+    ///             successfully crosses the bump using waypoint navigation instead of direct path planning.
+    ///
+    /// @note       Delegates to base class DriveToPose::IsFinished() for actual distance threshold checking
+    /// @note       Called repeatedly by the command scheduler during command execution
     //------------------------------------------------------------------
 
     bool IsFinished() override;
@@ -73,12 +119,13 @@ private:
     frc::Pose2d m_endPose;
     bool m_beforeMidPose = true;
 
-    static constexpr units::degree_t RedAllianceOutpostWallTowardHub{225.0};
-    static constexpr units::degree_t RedAllianceDepotWallTowardHub{135.0};
     static constexpr units::degree_t BlueAllianceOutpostWallTowardHub{315.0};
+    static constexpr units::degree_t NeutralZoneTowardHubBlueOutpost{315.0};
     static constexpr units::degree_t BlueAllianceDepotWallTowardHub{45.0};
-    static constexpr units::degree_t NeutralZoneTowardHubRedDepot{45.0};
-    static constexpr units::degree_t NeutralZoneTowardHubBlueDepot{225.0};
-    static constexpr units::degree_t NeutralZoneTowardHubRedOutpost{315.0};
-    static constexpr units::degree_t NeutralZoneTowardHubBlueOutpost{135.0};
+    static constexpr units::degree_t NeutralZoneTowardHubBlueDepot{45.0};
+
+    static constexpr units::degree_t RedAllianceDepotWallTowardHub{315.0};
+    static constexpr units::degree_t NeutralZoneTowardHubRedDepot{315.0};
+    static constexpr units::degree_t RedAllianceOutpostWallTowardHub{45.0};
+    static constexpr units::degree_t NeutralZoneTowardHubRedOutpost{45.0};
 };

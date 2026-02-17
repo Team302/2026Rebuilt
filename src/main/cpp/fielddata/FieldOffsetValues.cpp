@@ -15,6 +15,7 @@
 #include "fielddata/FieldOffsetValues.h"
 #include "fielddata/BumpHelper.h"
 #include "fielddata/FieldConstants.h"
+#include "utils/logging/debug/Logger.h"
 
 //------------------------------------------------------------------
 /// @brief Singleton instance pointer - initialized to nullptr
@@ -57,11 +58,6 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() - HUB_OFFSET;
         m_redHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER).X() + HUB_OFFSET;
 
-        units::length::meter_t m_redAllianceBumpEdgeX;
-        units::length::meter_t m_redNeutralBumpEdgeX;
-        units::length::meter_t m_blueAllianceBumpEdgeX;
-        units::length::meter_t m_blueNeutralBumpEdgeX;
-
         auto redHubCenter = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER);
         auto blueHubCenter = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER);
 
@@ -82,6 +78,15 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueBumpOutpostY = (blueHubCenter.Y() +
                               fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_OUTPOST).Y()) /
                              2.0;
+
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("bump offsets"), std::string("m_redAllianceBumpEdgeX"), m_redAllianceBumpEdgeX.value());
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("bump offsets"), std::string("m_redNeutralBumpEdgeX"), m_redNeutralBumpEdgeX.value());
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("bump offsets"), std::string("m_blueAllianceBumpEdgeX"), m_blueAllianceBumpEdgeX.value());
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("bump offsets"), std::string("m_blueNeutralBumpEdgeX"), m_blueNeutralBumpEdgeX.value());
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("bump offsets"), std::string("m_redBumpDepotY"), m_redBumpDepotY.value());
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("bump offsets"), std::string("m_redBumpOutpostY"), m_redBumpOutpostY.value());
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("bump offsets"), std::string("m_blueBumpDepotY"), m_blueBumpDepotY.value());
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("bump offsets"), std::string("m_blueBumpOutpostY"), m_blueBumpOutpostY.value());
     }
     else
     {
@@ -147,7 +152,7 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
     {
         return isRedSide ? m_redNeutralBumpEdgeX : m_blueNeutralBumpEdgeX;
     }
-    else if (item == FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_Y)
+    else if (item == FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_Y || item == FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_Y)
     {
         auto bump = BumpHelper::GetInstance()->CalcNearestBump(); // Ensure bump positions are calculated before accessing Y values
         if (bump == BUMP_ID::RED_OUTPOST_BUMP)

@@ -39,7 +39,8 @@ public:
 
 protected:
     virtual frc::Pose2d GetEndPose() { return m_endPose; };
-    void SetEndPose(const frc::Pose2d &endPose) { m_endPose = endPose; }
+    void SetEndPose(const frc::Pose2d &endPose);
+    void SetDistanceThreshold(const units::length::inch_t &distanceThreshold) { m_distanceThreshold = distanceThreshold; }
     subsystems::CommandSwerveDrivetrain *GetChassis() const { return m_chassis; }
 
 private:
@@ -54,7 +55,7 @@ private:
     frc::Pose2d m_currentPose;
     frc::Pose2d m_endPose;
 
-    const units::length::inch_t m_distanceThreshold{0.25};
+    units::length::inch_t m_distanceThreshold{0.25};
     const units::length::inch_t m_regenerationDistanceThreshold{2.0};
     const units::length::meter_t m_ffMinRadius{0.0};
     const units::length::meter_t m_ffMaxRadius{1.25};
