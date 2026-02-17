@@ -32,6 +32,8 @@
 //------------------------------------------------------------------
 DriveOverBump::DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis) : DriveToPose(chassis), m_midPose(), m_endPose()
 {
+    // Set distance threshold for pose completion detection (1 foot tolerance)
+    SetDistanceThreshold(1_ft);
 }
 
 //------------------------------------------------------------------
@@ -47,7 +49,6 @@ DriveOverBump::DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis) : Dri
 ///             - Checks if robot is in neutral zone or alliance zone
 ///             - Retrieves field-relative X/Y coordinates from FieldOffsetValues
 ///             - Determines appropriate rotation angle based on bump location and direction
-///             - Sets distance threshold to 1 foot for completion detection
 ///
 ///             Direction logic:
 ///             - If in neutral zone: Drive toward alliance zone over bump
@@ -96,9 +97,6 @@ frc::Pose2d DriveOverBump::GetEndPose()
             m_midPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
             m_endPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
         }
-
-        // Set distance threshold for pose completion detection (1 foot tolerance)
-        SetDistanceThreshold(1_ft);
     }
 
     return m_midPose;

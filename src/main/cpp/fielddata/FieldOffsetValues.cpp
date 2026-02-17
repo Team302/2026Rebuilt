@@ -27,7 +27,6 @@
 #include "fielddata/FieldOffsetValues.h"
 #include "fielddata/BumpHelper.h"
 #include "fielddata/FieldConstants.h"
-#include "utils/logging/debug/Logger.h"
 
 /// @brief Singleton instance pointer - initialized to nullptr for lazy instantiation
 FieldOffsetValues *FieldOffsetValues::m_instance = nullptr;
@@ -124,16 +123,6 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueBumpOutpostY = (blueHubCenter.Y() +
                               fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y()) /
                              2.0;
-
-        // Log all bump positions for field verification and debugging
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("bump offsets"), std::string("m_redAllianceBumpEdgeX"), m_redAllianceBumpEdgeX.value());
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("bump offsets"), std::string("m_redNeutralBumpEdgeX"), m_redNeutralBumpEdgeX.value());
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("bump offsets"), std::string("m_blueAllianceBumpEdgeX"), m_blueAllianceBumpEdgeX.value());
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("bump offsets"), std::string("m_blueNeutralBumpEdgeX"), m_blueNeutralBumpEdgeX.value());
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("bump offsets"), std::string("m_redBumpDepotY"), m_redBumpDepotY.value());
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("bump offsets"), std::string("m_redBumpOutpostY"), m_redBumpOutpostY.value());
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("bump offsets"), std::string("m_blueBumpDepotY"), m_blueBumpDepotY.value());
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("bump offsets"), std::string("m_blueBumpOutpostY"), m_blueBumpOutpostY.value());
     }
     else
     {
