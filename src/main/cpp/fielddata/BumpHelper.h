@@ -21,74 +21,125 @@
 #include "frc/geometry/Pose2d.h"
 
 //====================================================================================================================================================
-/// @class DepotHelper
-/// @brief Helper class for depot-related calculations and navigation
+/// @enum BUMP_ID
+/// @brief Enumeration identifying the four field bumps that separate alliance and neutral zones
 ///
-/// This singleton class provides utilities for interacting with depots on the field, including:
-/// - Determining which depot (red or blue) is closest to the robot
-/// - Calculating the center pose of the nearest depot
-/// - Computing distances to field elements
-///
-/// The class uses the robot's current pose and field constants to make alliance-aware decisions
-/// about depot locations and navigation targets.
+/// The 2026 game field has bumps at the boundaries between alliance zones and the neutral zone.
+/// There are four bumps total - one on each side (red/blue) at both the depot and outpost positions.
+/// These bumps are physical field obstacles that robots must navigate over when transitioning between zones.
 //====================================================================================================================================================
 enum class BUMP_ID
 {
-    BLUE_DEPOT_BUMP,
-    BLUE_OUTPOST_BUMP,
-    RED_DEPOT_BUMP,
-    RED_OUTPOST_BUMP
+    BLUE_DEPOT_BUMP,   ///< Bump at the blue alliance depot, separating blue alliance zone from neutral zone
+    BLUE_OUTPOST_BUMP, ///< Bump at the blue alliance outpost, separating blue alliance zone from neutral zone
+    RED_DEPOT_BUMP,    ///< Bump at the red alliance depot, separating red alliance zone from neutral zone
+    RED_OUTPOST_BUMP   ///< Bump at the red alliance outpost, separating red alliance zone from neutral zone
 };
 
+//====================================================================================================================================================
+/// @class BumpHelper
+/// @brief Singleton helper class for bump-related calculations and identification
+///
+/// This utility class provides services for determining which field bump is nearest to the robot's
+/// current position. It's primarily used by navigation commands that need to cross between the
+/// alliance zone and neutral zone, such as DriveOverBump.
+///
+/// **Key Functionality:**
+/// - Identifies the nearest bump among the four field bumps using a two-stage comparison algorithm
+/// - First determines which alliance side (red or blue) is closer
+/// - Then determines whether depot or outpost is closer on that side
+///
+/// **Usage Pattern:**
+/// ```cpp
+/// auto bumpHelper = BumpHelper::GetInstance();
+/// BUMP_ID nearestBump = bumpHelper->CalcNearestBump();
+/// // Use nearestBump to determine navigation strategy
+/// ```
+///
+/// **Integration:**
+/// The class works in conjunction with:
+/// - FieldConstants: For bump position reference points
+/// - PoseUtils: For distance calculations
+/// - DriveOverBump: Primary consumer for bump crossing navigation
+/// - FieldOffsetValues: For retrieving bump coordinates
+///
+/// @note This is a singleton class - use GetInstance() to access
+/// @see BUMP_ID for the four possible bump identifications
+/// @see DriveOverBump for primary usage example
+//====================================================================================================================================================
 class BumpHelper
 {
 public:
     //------------------------------------------------------------------
-    /// @brief      Get the singleton instance of DepotHelper
-    /// @return     DepotHelper* - Pointer to the singleton instance
+    /// @brief      Get the singleton instance of BumpHelper
+    /// @return     BumpHelper* - Pointer to the singleton instance
+    /// @details    Creates the instance on first call using lazy initialization.
+    ///             Subsequent calls return the same instance. Thread-safe in
+    ///             single-threaded robot code execution context.
     //------------------------------------------------------------------
     static BumpHelper *GetInstance();
 
     //------------------------------------------------------------------
     /// @brief      Calculate the ID of the nearest bump to the robot
-    /// @details    Evaluates the robot's current pose relative to all four
-    ///             bump locations and returns the ID of the closest one using
-    ///             a hierarchical distance comparison algorithm:
-    ///             1. First determines which alliance side (red or blue) is 
-    ///                closer by comparing depot positions
-    ///             2. Then determines whether the outpost or depot bump is 
-    ///                closer on that side
-    /// @return     BUMP_ID - Enumeration indicating the nearest bump:
-    ///             - BLUE_DEPOT_BUMP: Blue alliance depot bump is nearest
-    ///             - BLUE_OUTPOST_BUMP: Blue alliance outpost bump is nearest
-    ///             - RED_DEPOT_BUMP: Red alliance depot bump is nearest
-    ///             - RED_OUTPOST_BUMP: Red alliance outpost bump is nearest
-    /// @note       If the chassis is unavailable, defaults to origin pose (0,0)
-    ///             for distance calculations
-    /// @see        BUMP_ID
-    /// @see        PoseUtils::GetClosestFieldElement()
+    /// @return     BUMP_ID - Enumeration indicating which of the four bumps is closest
+    /// @details    Uses a two-stage hierarchical comparison algorithm to efficiently
+    ///             determine the nearest bump:
+    ///
+    ///             **Stage 1: Alliance Side Determination**
+    ///             - Compares robot distance to blue depot vs red depot neutral sides
+    ///             - This determines which half of the field the robot is on
+    ///
+    ///             **Stage 2: Depot vs Outpost Selection**
+    ///             - On the identified alliance side, compares distances to depot and outpost
+    ///             - Returns the corresponding BUMP_ID for the closest combination
+    ///
+    ///             **Distance Calculation:**
+    ///             Uses Euclidean distance from current robot pose to field element reference points:
+    ///             - BLUE_DEPOT_NEUTRAL_SIDE
+    ///             - RED_DEPOT_NEUTRAL_SIDE
+    ///             - BLUE_OUTPOST_CENTER
+    ///             - RED_OUTPOST_CENTER
+    ///
+    ///             **Return Values:**
+    ///             - BLUE_DEPOT_BUMP: Robot closest to blue alliance depot area
+    ///             - BLUE_OUTPOST_BUMP: Robot closest to blue alliance outpost area
+    ///             - RED_DEPOT_BUMP: Robot closest to red alliance depot area
+    ///             - RED_OUTPOST_BUMP: Robot closest to red alliance outpost area
+    ///
+    /// @note       If chassis is unavailable, uses default origin pose (0,0) for calculations
+    /// @note       Method is const - does not modify BumpHelper state
+    /// @see        PoseUtils::GetClosestFieldElement() for distance comparison implementation
     //------------------------------------------------------------------
     BUMP_ID CalcNearestBump() const;
 
 private:
     //------------------------------------------------------------------
     /// @brief      Private constructor for singleton pattern
-    /// @details    Initializes the chassis and field constants references
+    /// @details    Initializes member pointers by retrieving singleton instances:
+    ///             - ChassisConfigMgr: For access to swerve drivetrain and robot pose
+    ///             - FieldConstants: For field element position reference data
+    ///
+    ///             Called only by GetInstance() on first access to create the singleton.
     //------------------------------------------------------------------
     BumpHelper();
 
     //------------------------------------------------------------------
     /// @brief      Destructor (default implementation)
+    /// @details    No special cleanup required as member pointers reference
+    ///             other singleton objects managed elsewhere
     //------------------------------------------------------------------
     ~BumpHelper() = default;
 
-    /// @brief Pointer to the swerve drivetrain subsystem
+    //------------------------------------------------------------------
+    // Member Variables
+    //------------------------------------------------------------------
+
+    /// @brief Pointer to the swerve drivetrain subsystem for robot pose queries
     subsystems::CommandSwerveDrivetrain *m_chassis;
 
-    /// @brief Pointer to the field constants singleton
+    /// @brief Pointer to field constants singleton for field element positions
     FieldConstants *m_fieldConstants;
 
-    /// @brief Singleton instance pointer
+    /// @brief Singleton instance pointer (lazy initialization)
     static BumpHelper *m_instance;
 };
-

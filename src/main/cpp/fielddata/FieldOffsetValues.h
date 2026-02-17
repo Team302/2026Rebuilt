@@ -20,36 +20,63 @@
 
 //====================================================================================================================================================
 /// @enum FIELD_OFFSET_ITEMS
-/// @brief Enumeration of field element offset items available for retrieval
+/// @brief Enumeration of all field element offset coordinate types available for retrieval
 ///
-/// Specifies which type of field element offset to retrieve using GetValue()
+/// Defines the different types of field element position data that can be queried from FieldOffsetValues.
+/// Each enum value represents a specific X or Y coordinate for alliance-specific field elements like
+/// outposts, depots, hubs, and bumps. Used as parameters to GetValue() to specify which coordinate to retrieve.
 //====================================================================================================================================================
 enum class FIELD_OFFSET_ITEMS
 {
-    OUTPOST_X,       ///< X-coordinate offset from the outpost
-    DEPOT_X,         ///< X-coordinate offset from the depot neutral side
-    HUB_X,           ///< X-coordinate offset from the hub center
-    ALLIANCE_BUMP_X, ///< X-coordinate offset from the bump center
-    ALLIANCE_BUMP_Y, ///< Y-coordinate for bump
-    NEUTRAL_BUMP_X,  ///< X-coordinate offset from the bump center
-    NEUTRAL_BUMP_Y   ///< Y-coordinate for bump
+    OUTPOST_X,       ///< X-coordinate of the outpost position (meters)
+    DEPOT_X,         ///< X-coordinate of the depot neutral side position (meters)
+    HUB_X,           ///< X-coordinate of the hub center with offset applied (meters)
+    ALLIANCE_BUMP_X, ///< X-coordinate of the bump on the alliance zone side (meters)
+    ALLIANCE_BUMP_Y, ///< Y-coordinate of the bump on the alliance zone side (meters)
+    NEUTRAL_BUMP_X,  ///< X-coordinate of the bump on the neutral zone side (meters)
+    NEUTRAL_BUMP_Y   ///< Y-coordinate of the bump on the neutral zone side (meters)
 };
 
 //====================================================================================================================================================
 /// @class FieldOffsetValues
-/// @brief Singleton class for managing field element offset values (depots and outposts)
+/// @brief Singleton class providing alliance-aware access to field element positions and offsets
 ///
-/// This singleton class provides alliance-aware access to X-coordinate offsets for field elements
-/// on the 2026 game field, specifically depots and outposts. It stores and retrieves position
-/// data for both the red and blue alliance variants of these field elements.
+/// This singleton manages position data for key 2026 game field elements, providing alliance-specific
+/// coordinate retrieval for navigation and positioning. The class stores X and Y coordinates for:
+/// - Depots (both red and blue alliance)
+/// - Outposts (both red and blue alliance)
+/// - Hubs (both red and blue alliance, with navigation offsets)
+/// - Bumps (all four bumps, both X and Y coordinates)
 ///
-/// Key responsibilities:
-/// - Store X-coordinate offsets for blue and red depot neutral sides
-/// - Store X-coordinate offsets for blue and red outposts
-/// - Provide alliance-aware getter methods to retrieve offsets for navigation and positioning
+/// **Key Features:**
+/// - Alliance-aware queries: Pass isRedSide boolean to get correct alliance coordinates
+/// - Comprehensive field coverage: Supports all major navigation targets
+/// - Singleton pattern: Single source of truth for field positions
+/// - Initialization from FieldConstants: Automatically loaded at startup
 ///
-/// The offsets are initialized from FieldConstants during object construction and used throughout
-/// the robot code for autonomous and teleop navigation to field elements.
+/// **Offset Strategy:**
+/// The class applies strategic offsets to certain field elements:
+/// - Hub positions: Offset by 2.0m toward neutral zone for optimal navigation positioning
+/// - Bump positions: Offset by 1.5m on each side for accurate bump crossing waypoints
+///
+/// **Usage Pattern:**
+/// ```cpp
+/// auto offsets = FieldOffsetValues::GetInstance();
+/// bool isRed = true;
+/// auto hubX = offsets->GetValue(isRed, FIELD_OFFSET_ITEMS::HUB_X);
+/// auto bumpX = offsets->GetValue(isRed, FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_X);
+/// ```
+///
+/// **Primary Consumers:**
+/// - DriveOverBump: Uses bump X/Y coordinates for waypoint navigation
+/// - Navigation commands: Use hub, depot, and outpost positions for targeting
+/// - Autonomous routines: Alliance-specific positioning for game strategy
+///
+/// @note Coordinates are in meters using WPILib units system
+/// @note All positions are field-relative (blue alliance perspective by default)
+/// @see FIELD_OFFSET_ITEMS for available coordinate types
+/// @see FieldConstants for source field element data
+/// @see BumpHelper for bump identification before retrieving bump coordinates
 //====================================================================================================================================================
 class FieldOffsetValues
 {
@@ -57,68 +84,146 @@ public:
     //------------------------------------------------------------------
     /// @brief      Get the singleton instance of FieldOffsetValues
     /// @return     FieldOffsetValues* - Pointer to the singleton instance
+    /// @details    Implements lazy initialization. Creates instance on first call,
+    ///             returns existing instance on subsequent calls. Ensures single
+    ///             source of truth for field offset values throughout the program.
     //------------------------------------------------------------------
     static FieldOffsetValues *GetInstance();
 
     //------------------------------------------------------------------
-    /// @brief      Get the X offset value for a specific field element
-    /// @param      isRedSide - true to get red alliance value, false for blue alliance
-    /// @param      item - The field offset item to retrieve (OUTPOST_X or DEPOT_X)
-    /// @return     units::length::meter_t - The X-coordinate offset in meters
-    /// @details    Returns alliance-specific X-coordinate offsets for either the
-    ///             outpost or depot based on the isRedSide parameter and item type.
-    ///             - When item is OUTPOST_X: returns red or blue outpost X position
-    ///             - When item is DEPOT_X: returns red or blue depot neutral side X position
+    /// @brief      Get the position value for a specific field element
+    /// @param[in]  isRedSide - true to retrieve red alliance value, false for blue alliance
+    /// @param[in]  item - The field offset item type to retrieve (from FIELD_OFFSET_ITEMS enum)
+    /// @return     units::length::meter_t - The coordinate value in meters
+    /// @details    Returns alliance-specific position data based on the item type:
+    ///
+    ///             **X-Coordinate Queries:**
+    ///             - OUTPOST_X: Returns red or blue outpost X position
+    ///             - DEPOT_X: Returns red or blue depot neutral side X position
+    ///             - HUB_X: Returns red or blue hub X position with 2.0m offset toward neutral zone
+    ///             - ALLIANCE_BUMP_X: Returns alliance side bump X position (1.5m offset from hub)
+    ///             - NEUTRAL_BUMP_X: Returns neutral side bump X position (1.5m offset from hub)
+    ///
+    ///             **Y-Coordinate Queries:**
+    ///             - ALLIANCE_BUMP_Y or NEUTRAL_BUMP_Y:
+    ///               * Dynamically calculates Y position based on nearest bump (uses BumpHelper)
+    ///               * Returns midpoint between hub center and corresponding trench
+    ///               * Same Y value for both alliance and neutral side of the same bump
+    ///
+    ///             **Fallback:**
+    ///             Returns 0.0m for unknown/invalid item types
+    ///
+    /// @note       For BUMP_Y queries, the method calls BumpHelper to determine which bump,
+    ///             then returns the appropriate depot or outpost Y coordinate
+    /// @see        FIELD_OFFSET_ITEMS for all available item types
+    /// @see        BumpHelper::CalcNearestBump() for bump identification logic
     //------------------------------------------------------------------
     units::length::meter_t GetValue(bool isRedSide, FIELD_OFFSET_ITEMS item) const;
 
 private:
     //------------------------------------------------------------------
     /// @brief      Private constructor for singleton pattern
-    /// @details    Initializes the offset values by querying FieldConstants
-    ///             for the positions of both blue and red depot neutral sides.
-    ///             Sets outpost offsets equal to depot offsets since they are
-    ///             aligned on the X-axis on the 2026 game field.
+    /// @details    Initializes all field offset values by querying FieldConstants:
+    ///
+    ///             **Depot and Outpost Positions:**
+    ///             - Retrieves neutral side X positions for both alliances
+    ///             - Sets outpost X equal to depot X (aligned on X-axis)
+    ///
+    ///             **Hub Positions with Offsets:**
+    ///             - Red hub: Base position + 2.0m (toward neutral zone)
+    ///             - Blue hub: Base position - 2.0m (toward neutral zone)
+    ///
+    ///             **Bump Positions:**
+    ///             - Alliance side: Hub center ± 1.5m
+    ///             - Neutral side: Hub center ∓ 1.5m
+    ///             - Y coordinates: Midpoint between hub and corresponding trench
+    ///
+    ///             **Fallback:**
+    ///             If FieldConstants unavailable, initializes all values to 0.0m
+    ///
+    ///             **Debug Logging:**
+    ///             Logs all calculated bump positions to NetworkTables for verification
     //------------------------------------------------------------------
     FieldOffsetValues();
 
     //------------------------------------------------------------------
     /// @brief      Destructor (default implementation)
+    /// @details    No cleanup required - all members are value types
     //------------------------------------------------------------------
     ~FieldOffsetValues() = default;
 
-    /// @brief Singleton instance pointer
+    //------------------------------------------------------------------
+    // Singleton Instance
+    //------------------------------------------------------------------
+
+    /// @brief Singleton instance pointer (lazy initialization)
     static FieldOffsetValues *m_instance;
 
-    /// @brief X-coordinate offset from the blue alliance depot neutral side (meters)
+    //------------------------------------------------------------------
+    // Depot and Outpost X-Coordinates
+    //------------------------------------------------------------------
+
+    /// @brief X-coordinate of blue alliance depot neutral side (meters)
     units::length::meter_t m_blueDepotX;
 
-    /// @brief X-coordinate offset from the red alliance depot neutral side (meters)
+    /// @brief X-coordinate of red alliance depot neutral side (meters)
     units::length::meter_t m_redDepotX;
 
-    /// @brief X-coordinate offset from the blue alliance hub center (meters)
-    units::length::meter_t m_blueHubX;
-
-    /// @brief X-coordinate offset from the red alliance hub center (meters)
-    units::length::meter_t m_redHubX;
-
-    /// @brief X-coordinate offset from the blue alliance outpost (meters)
+    /// @brief X-coordinate of blue alliance outpost (meters, equal to depot X)
     units::length::meter_t m_blueOutpostX;
 
-    /// @brief X-coordinate offset from the red alliance outpost (meters)
+    /// @brief X-coordinate of red alliance outpost (meters, equal to depot X)
     units::length::meter_t m_redOutpostX;
 
-    /// @brief X-coordinate offset from the bump edge (meters)
+    //------------------------------------------------------------------
+    // Hub X-Coordinates with Offsets
+    //------------------------------------------------------------------
+
+    /// @brief X-coordinate of blue hub center minus 2.0m offset (toward neutral zone)
+    units::length::meter_t m_blueHubX;
+
+    /// @brief X-coordinate of red hub center plus 2.0m offset (toward neutral zone)
+    units::length::meter_t m_redHubX;
+
+    //------------------------------------------------------------------
+    // Bump X-Coordinates
+    //------------------------------------------------------------------
+
+    /// @brief X-coordinate of red alliance side bump edge (hub + 1.5m)
     units::length::meter_t m_redAllianceBumpEdgeX;
+
+    /// @brief X-coordinate of red neutral side bump edge (hub - 1.5m)
     units::length::meter_t m_redNeutralBumpEdgeX;
+
+    /// @brief X-coordinate of blue alliance side bump edge (hub - 1.5m)
     units::length::meter_t m_blueAllianceBumpEdgeX;
+
+    /// @brief X-coordinate of blue neutral side bump edge (hub + 1.5m)
     units::length::meter_t m_blueNeutralBumpEdgeX;
 
+    //------------------------------------------------------------------
+    // Bump Y-Coordinates
+    //------------------------------------------------------------------
+
+    /// @brief Y-coordinate of red depot bump (midpoint between hub and depot trench)
     units::length::meter_t m_redBumpDepotY;
+
+    /// @brief Y-coordinate of red outpost bump (midpoint between hub and outpost trench)
     units::length::meter_t m_redBumpOutpostY;
+
+    /// @brief Y-coordinate of blue depot bump (midpoint between hub and depot trench)
     units::length::meter_t m_blueBumpDepotY;
+
+    /// @brief Y-coordinate of blue outpost bump (midpoint between hub and outpost trench)
     units::length::meter_t m_blueBumpOutpostY;
 
+    //------------------------------------------------------------------
+    // Offset Constants
+    //------------------------------------------------------------------
+
+    /// @brief Hub offset distance for navigation positioning (2.0 meters toward neutral zone)
     static constexpr units::length::meter_t HUB_OFFSET = 2.0_m;
+
+    /// @brief Bump offset distance from hub center (1.5 meters on each side)
     static constexpr units::length::meter_t BUMP_OFFSET = 1.5_m;
 };
