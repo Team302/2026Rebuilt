@@ -17,6 +17,7 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "chassis/commands/TeleopFieldDrive.h"
 #include "chassis/commands/TeleopRobotDrive.h"
+#include "chassis/commands/season_specific_commands/DriveOverBump.h"
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"
 #include "chassis/commands/season_specific_commands/DriveToHub.h"
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
@@ -46,12 +47,15 @@ SwerveContainer *SwerveContainer::GetInstance()
 ///             drive commands including field-oriented, robot-oriented,
 ///             trajectory following, and season-specific commands.
 ///             Also configures button bindings if chassis is available.
+///             Registers for robot state change notifications to track
+///             climb mode status.
 //------------------------------------------------------------------
 SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
                                      m_maxSpeed(ChassisConfigMgr::GetInstance()->GetMaxSpeed()),
                                      m_fieldDrive(std::make_unique<TeleopFieldDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate)),
                                      m_robotDrive(std::make_unique<TeleopRobotDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate)),
                                      m_trajectoryDrive(std::make_unique<TrajectoryDrive>(m_chassis)),
+                                     m_driveOverBump(std::make_unique<DriveOverBump>(m_chassis)),
                                      m_driveToDepot(std::make_unique<DriveToDepot>(m_chassis)),
                                      m_driveToHub(std::make_unique<DriveToHub>(m_chassis)),
                                      m_driveToOutpost(std::make_unique<DriveToOutpost>(m_chassis))
@@ -115,17 +119,34 @@ void SwerveContainer::CreateStandardDriveCommands(TeleopControl *controller)
 //------------------------------------------------------------------
 /// @brief      Creates and binds rebuilt drive-to commands
 /// @param[in]  controller - Pointer to the teleop controller
-/// @details    Placeholder method for binding season-specific
-///             autonomous drive commands such as DriveToDepot.
-///             To be implemented as needed.
+/// @details    Configures season-specific autonomous drive commands with
+///             deferred command proxies that check climb mode status.
+///             When not in climb mode, executes the appropriate drive-to
+///             command (DriveOverBump, DriveToDepot, DriveToHub, DriveToOutpost).
+///             When in climb mode, these commands are disabled and reserved
+///             for future climb-specific navigation (e.g., drive to tower).
+///             Each command is bound to a controller trigger using WhileTrue
+///             semantics, meaning they execute continuously while held.
 //------------------------------------------------------------------
 void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
 {
+    auto driveOverBump = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_OVER_BUMP);
     auto driveToDepot = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_DEPOT);
     auto driveToHub = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_HUB);
     auto driveToOutpost = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_OUTPOST);
 
-    // Drive To Depot
+    // Drive over Bump - Navigates over field obstacles/bumps
+    // Uses DeferredProxy to check climb mode status at execution time
+    driveOverBump.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
+                                                     {
+    if (!m_climbModeStatus) {
+        return frc2::ProxyCommand(m_driveOverBump.get()).ToPtr();
+    } else {
+        return frc2::cmd::None(); // TODO add drive to Tower for Climb mode
+    } }));
+
+    // Drive To Depot - Autonomous navigation to depot scoring location
+    // Disabled during climb mode in favor of future climb navigation
     driveToDepot.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                     {
     if (!m_climbModeStatus) {
@@ -134,7 +155,8 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
         return frc2::cmd::None(); // TODO add drive to Tower for Climb mode
     } }));
 
-    // Drive To Hub
+    // Drive To Hub - Autonomous navigation to hub scoring location
+    // Disabled during climb mode in favor of future climb navigation
     driveToHub.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                   {
     if (!m_climbModeStatus) {
@@ -143,7 +165,8 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
         return frc2::cmd::None(); // TODO add drive to Tower for Climb mode
     } }));
 
-    // Drive To Outpost
+    // Drive To Outpost - Autonomous navigation to outpost location
+    // Disabled during climb mode in favor of future climb navigation
     driveToOutpost.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                       {
     if (!m_climbModeStatus) {
@@ -179,9 +202,11 @@ void SwerveContainer::SetSysIDBinding(TeleopControl *controller)
 /// @param[in]  change - The type of state change that occurred
 /// @param[in]  value - The new value associated with the state change
 /// @details    Implements IRobotStateChangeSubscriber interface.
-///             Can be used to react to robot state changes such as
-///             game mode transitions or mechanism state updates.
-///             Currently a placeholder for future implementation.
+///             Monitors for ClimbModeStatus changes and updates the
+///             internal climb mode flag accordingly. This flag affects
+///             which drive commands are available - standard navigation
+///             commands are active when not climbing, while climb-specific
+///             navigation will be enabled during climb mode.
 //------------------------------------------------------------------
 void SwerveContainer::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value)
 {

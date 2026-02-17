@@ -18,34 +18,34 @@
 #include <string>
 
 // FRC Includes
-#include <networktables/NetworkTableInstance.h>
 #include <frc/Timer.h>
+#include <networktables/NetworkTableInstance.h>
 
 #include "Launcher.h"
-#include "utils/logging/debug/Logger.h"
-#include "utils/PeriodicLooper.h"
 #include "state/RobotState.h"
 #include "utils/DragonPower.h"
+#include "utils/PeriodicLooper.h"
+#include "utils/logging/debug/Logger.h"
 
-#include "ctre/phoenix6/TalonFX.hpp"
-#include "ctre/phoenix6/controls/Follower.hpp"
-#include "ctre/phoenix6/configs/Configuration.hpp"
-#include "ctre/phoenix6/TalonFXS.hpp"
-#include "mechanisms/Launcher/OffState.h"
-#include "mechanisms/Launcher/InitializeState.h"
-#include "mechanisms/Launcher/IdleState.h"
-#include "mechanisms/Launcher/PrepareToLaunchState.h"
-#include "mechanisms/Launcher/LaunchState.h"
-#include "mechanisms/Launcher/EmptyHopperState.h"
-#include "mechanisms/Launcher/ClimbState.h"
-#include "mechanisms/Launcher/LauncherTuningState.h"
 #include "auton/DeadZoneManager.h"
+#include "ctre/phoenix6/TalonFX.hpp"
+#include "ctre/phoenix6/TalonFXS.hpp"
+#include "ctre/phoenix6/configs/Configuration.hpp"
+#include "ctre/phoenix6/controls/Follower.hpp"
+#include "mechanisms/Launcher/ClimbState.h"
+#include "mechanisms/Launcher/EmptyHopperState.h"
+#include "mechanisms/Launcher/IdleState.h"
+#include "mechanisms/Launcher/InitializeState.h"
+#include "mechanisms/Launcher/LaunchState.h"
+#include "mechanisms/Launcher/LauncherTuningState.h"
 #include "mechanisms/Launcher/ManualLaunchState.h"
+#include "mechanisms/Launcher/OffState.h"
+#include "mechanisms/Launcher/PrepareToLaunchState.h"
 
-#include "teleopcontrol/TeleopControl.h"
-#include "utils/InterpolateUtils.h"
-#include "units/math.h"
 #include "frc/RobotBase.h"
+#include "teleopcontrol/TeleopControl.h"
+#include "units/math.h"
+#include "utils/InterpolateUtils.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -721,7 +721,7 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 bool Launcher::IsLauncherAtTarget()
 {
 
-	if (frc::RobotBase::IsSimulation)
+	if (frc::RobotBase::IsSimulation())
 	{
 		return true;
 	}

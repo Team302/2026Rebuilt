@@ -92,5 +92,5 @@ frc::Pose2d DepotHelper::CalcDepotPose() const
         // Fallback: use the neutralPose directly if FieldOffsetValues is unavailable
         return neutralPose;
     }
-    return frc::Pose2d(fieldOffsetValues->GetXValue(isNearestDepotRed, FIELD_OFFSET_ITEMS::DEPOT_X), neutralPose.Y(), isNearestDepotRed ? 0_deg : 180_deg);
+    return frc::Pose2d(fieldOffsetValues->GetValue(isNearestDepotRed, FIELD_OFFSET_ITEMS::DEPOT_X), neutralPose.Y(), isNearestDepotRed ? 0_deg : 180_deg);
 }
