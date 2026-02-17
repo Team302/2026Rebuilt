@@ -511,7 +511,7 @@ void DragonDataLogger::LogChassisSpeedsData(uint64_t timestamp, DragonDataLogger
     }
 }
 
-void DragonDataLogger::LogGamePadData(uint64_t timestamp, DragonDataLogger::GamePadSignals signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, int pov)
+void DragonDataLogger::LogGamePadData(uint64_t timestamp, DragonDataLogger::GamePadSignals signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, const std::array<int, 1> povs)
 {
     auto dataMgr = DragonDataLoggerMgr::GetInstance();
     if (dataMgr == nullptr)
@@ -526,10 +526,10 @@ void DragonDataLogger::LogGamePadData(uint64_t timestamp, DragonDataLogger::Game
     switch (signalID)
     {
     case DragonDataLogger::GamePadSignals::GAMEPAD_0:
-        logger->WriteGamePadState(m_gamePad0Path, axes, buttons, pov);
+        logger->WriteGamePadState(m_gamePad0Path, axes, buttons, povs);
         break;
     case DragonDataLogger::GamePadSignals::GAMEPAD_1:
-        logger->WriteGamePadState(m_gamePad1Path, axes, buttons, pov);
+        logger->WriteGamePadState(m_gamePad1Path, axes, buttons, povs);
         break;
     default:
         break;

@@ -304,5 +304,5 @@ void DragonXBox::DataLog(uint64_t timestamp)
         buttons[i] = IsButtonPressed(static_cast<TeleopControlMappingEnums::BUTTON_IDENTIFIER>(i));
     }
     int id = m_xbox->GetPort();
-    LogGamePadData(timestamp, static_cast<DragonDataLogger::GamePadSignals>(id), axes, buttons, m_xbox->GetPOV());
+    LogGamePadData(timestamp, static_cast<DragonDataLogger::GamePadSignals>(id), axes, buttons, std::array<int, 1>{m_xbox->GetPOV()});
 }

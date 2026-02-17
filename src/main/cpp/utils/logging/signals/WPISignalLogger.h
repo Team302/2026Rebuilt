@@ -45,7 +45,7 @@ public:
     void WritePose3d(std::string signalID, const frc::Pose3d &value, units::time::second_t latency) override;
     void WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, units::time::second_t latency) override;
     void WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, units::time::second_t latency) override;
-    void WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, int pov) override;
+    void WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, const std::array<int, 1> povs) override;
 
     void Start() override;
     void Stop() override;
@@ -72,6 +72,12 @@ private:
     /// Get or create a GamePadStateLogEntry for the given signal path
     wpi::log::BooleanArrayLogEntry &GetBoolArrayEntry(const std::string &signalID);
 
+    /// Get or create an IntegerArrayLogEntry for the given signal path
+    wpi::log::IntegerArrayLogEntry &GetIntegerArrayEntry(const std::string &signalID);
+
+    /// Get or create a FloatArrayLogEntry for the given signal path
+    wpi::log::FloatArrayLogEntry &GetFloatArrayEntry(const std::string &signalID);
+
     /// Get or create a StructLogEntry<Pose2d> for the given signal path
     wpi::log::StructLogEntry<frc::Pose2d> &GetPose2dEntry(const std::string &signalID);
 
@@ -90,6 +96,8 @@ private:
     std::unordered_map<std::string, std::unique_ptr<wpi::log::StringLogEntry>> m_stringEntries;
     std::unordered_map<std::string, std::unique_ptr<wpi::log::DoubleArrayLogEntry>> m_doubleArrayEntries;
     std::unordered_map<std::string, std::unique_ptr<wpi::log::BooleanArrayLogEntry>> m_boolArrayEntries;
+    std::unordered_map<std::string, std::unique_ptr<wpi::log::IntegerArrayLogEntry>> m_intArrayEntries;
+    std::unordered_map<std::string, std::unique_ptr<wpi::log::FloatArrayLogEntry>> m_floatArrayEntries;
     std::unordered_map<std::string, std::unique_ptr<wpi::log::StructLogEntry<frc::Pose2d>>> m_pose2dEntries;
     std::unordered_map<std::string, std::unique_ptr<wpi::log::StructLogEntry<frc::Pose3d>>> m_pose3dEntries;
     std::unordered_map<std::string, std::unique_ptr<wpi::log::StructLogEntry<frc::ChassisSpeeds>>> m_chassisSpeedsEntries;

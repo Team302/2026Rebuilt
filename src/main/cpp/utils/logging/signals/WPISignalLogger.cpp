@@ -83,15 +83,21 @@ void WPISignalLogger::WriteSwerveModuleState(std::string signalID, const frc::Sw
     entry.Append(value, timestamp);
 }
 
-void WPISignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, int pov)
+void WPISignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, const std::array<int, 1> povs)
 {
-    auto &entry = GetDoubleArrayEntry(signalID + "/axes");
+    auto &entry = GetFloatArrayEntry(signalID + "/axes");
     auto &boolEntry = GetBoolArrayEntry(signalID + "/buttons");
-    auto &povEntry = GetIntegerEntry(signalID + "/pov");
+    auto &povEntry = GetIntegerArrayEntry(signalID + "/povs");
     int64_t timestamp = frc::RobotController::GetFPGATime();
-    entry.Append((axes), timestamp);
+    std::array<float, 6> axesFloat;
+    for (size_t i = 0; i < axes.size(); ++i)
+    {
+        axesFloat[i] = static_cast<float>(axes[i]);
+    }
+    entry.Append(axesFloat, timestamp);
     boolEntry.Append(buttons, timestamp);
-    povEntry.Append(pov, timestamp);
+    std::array<int64_t, 1> povs64 = {static_cast<int64_t>(povs[0])};
+    povEntry.Append(povs64, timestamp);
 }
 
 void WPISignalLogger::Start()
@@ -212,6 +218,32 @@ wpi::log::BooleanArrayLogEntry &WPISignalLogger::GetBoolArrayEntry(const std::st
         auto &log = frc::DataLogManager::GetLog();
         auto entry = std::make_unique<wpi::log::BooleanArrayLogEntry>(log, signalID);
         auto [inserted, success] = m_boolArrayEntries.emplace(signalID, std::move(entry));
+        return *inserted->second;
+    }
+    return *it->second;
+}
+
+wpi::log::IntegerArrayLogEntry &WPISignalLogger::GetIntegerArrayEntry(const std::string &signalID)
+{
+    auto it = m_intArrayEntries.find(signalID);
+    if (it == m_intArrayEntries.end())
+    {
+        auto &log = frc::DataLogManager::GetLog();
+        auto entry = std::make_unique<wpi::log::IntegerArrayLogEntry>(log, signalID);
+        auto [inserted, success] = m_intArrayEntries.emplace(signalID, std::move(entry));
+        return *inserted->second;
+    }
+    return *it->second;
+}
+
+wpi::log::FloatArrayLogEntry &WPISignalLogger::GetFloatArrayEntry(const std::string &signalID)
+{
+    auto it = m_floatArrayEntries.find(signalID);
+    if (it == m_floatArrayEntries.end())
+    {
+        auto &log = frc::DataLogManager::GetLog();
+        auto entry = std::make_unique<wpi::log::FloatArrayLogEntry>(log, signalID);
+        auto [inserted, success] = m_floatArrayEntries.emplace(signalID, std::move(entry));
         return *inserted->second;
     }
     return *it->second;
