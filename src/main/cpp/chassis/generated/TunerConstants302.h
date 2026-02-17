@@ -141,48 +141,48 @@ private:
             .WithDriveFrictionVoltage(kDriveFrictionVoltage);
 
     // Front Left
-    static constexpr int kFrontLeftDriveMotorId = 12;
-    static constexpr int kFrontLeftSteerMotorId = 13;
-    static constexpr int kFrontLeftEncoderId = 13;
-    static constexpr units::turn_t kFrontLeftEncoderOffset = 0.298583984375_tr;
+    static constexpr int kFrontLeftDriveMotorId = 20;
+    static constexpr int kFrontLeftSteerMotorId = 21;
+    static constexpr int kFrontLeftEncoderId = 21;
+    static constexpr units::turn_t kFrontLeftEncoderOffset = -0.219970703125_tr;
     static constexpr bool kFrontLeftSteerMotorInverted = false;
     static constexpr bool kFrontLeftEncoderInverted = false;
 
-    static constexpr units::inch_t kFrontLeftXPos = 9.375_in;
-    static constexpr units::inch_t kFrontLeftYPos = 12.375_in;
+    static constexpr units::inch_t kFrontLeftXPos = 9.25_in;
+    static constexpr units::inch_t kFrontLeftYPos = 12.625_in;
 
     // Front Right
     static constexpr int kFrontRightDriveMotorId = 3;
     static constexpr int kFrontRightSteerMotorId = 2;
     static constexpr int kFrontRightEncoderId = 2;
-    static constexpr units::turn_t kFrontRightEncoderOffset = -0.397216796875_tr;
+    static constexpr units::turn_t kFrontRightEncoderOffset = 0.2646484375_tr;
     static constexpr bool kFrontRightSteerMotorInverted = false;
     static constexpr bool kFrontRightEncoderInverted = false;
 
-    static constexpr units::inch_t kFrontRightXPos = 9.375_in;
-    static constexpr units::inch_t kFrontRightYPos = -12.375_in;
+    static constexpr units::inch_t kFrontRightXPos = 9.25_in;
+    static constexpr units::inch_t kFrontRightYPos = -12.625_in;
 
     // Back Left
-    static constexpr int kBackLeftDriveMotorId = 15;
-    static constexpr int kBackLeftSteerMotorId = 14;
-    static constexpr int kBackLeftEncoderId = 14;
-    static constexpr units::turn_t kBackLeftEncoderOffset = 0.37939453125_tr;
+    static constexpr int kBackLeftDriveMotorId = 23;
+    static constexpr int kBackLeftSteerMotorId = 22;
+    static constexpr int kBackLeftEncoderId = 22;
+    static constexpr units::turn_t kBackLeftEncoderOffset = -0.31103515625_tr;
     static constexpr bool kBackLeftSteerMotorInverted = false;
     static constexpr bool kBackLeftEncoderInverted = false;
 
-    static constexpr units::inch_t kBackLeftXPos = -9.375_in;
-    static constexpr units::inch_t kBackLeftYPos = 12.375_in;
+    static constexpr units::inch_t kBackLeftXPos = -9.25_in;
+    static constexpr units::inch_t kBackLeftYPos = 12.625_in;
 
     // Back Right
-    static constexpr int kBackRightDriveMotorId = 0;
-    static constexpr int kBackRightSteerMotorId = 1;
-    static constexpr int kBackRightEncoderId = 1;
-    static constexpr units::turn_t kBackRightEncoderOffset = 0.30322265625_tr;
+    static constexpr int kBackRightDriveMotorId = 1;
+    static constexpr int kBackRightSteerMotorId = 0;
+    static constexpr int kBackRightEncoderId = 0;
+    static constexpr units::turn_t kBackRightEncoderOffset = -0.31787109375_tr;
     static constexpr bool kBackRightSteerMotorInverted = false;
     static constexpr bool kBackRightEncoderInverted = false;
 
-    static constexpr units::inch_t kBackRightXPos = -9.375_in;
-    static constexpr units::inch_t kBackRightYPos = -12.375_in;
+    static constexpr units::inch_t kBackRightXPos = -9.25_in;
+    static constexpr units::inch_t kBackRightYPos = -12.625_in;
 
 public:
     static constexpr swerve::SwerveModuleConstants FrontLeft = ConstantCreator.CreateModuleConstants(
