@@ -32,7 +32,7 @@
 // TODO:
 //  - Implement fusion logic for fused target/pose selection (FUSED_TARGET_INFO).
 //  - Consider adding internal synchronization or atomics if concurrent access is required.
-//  - Improve selection heuristics and add unit tests for ProcessOutputOption and GetBestPose.
+//  - Improve selection heuristics and add unit tests for ProcessOutputOption.
 
 // C++ Includes
 #include <algorithm> // <<-- added for std::max_element / std::distance
@@ -65,7 +65,10 @@ namespace
 {
 	std::vector<int> ProcessOutputOption(VisionTargetOption option, std::vector<std::unique_ptr<DragonVisionStruct>> &targets);
 
+#if 0
 	std::optional<VisionPose> GetBestPose(const std::vector<VisionPose> &poses);
+#endif
+
 } // namespace
 
 DragonVision *DragonVision::m_dragonVision = nullptr;
@@ -492,6 +495,9 @@ namespace
 		return selectedIndices;
 	}
 
+#if 0
+	// remove this code temporarily
+
 	/// @brief From a list of candidate VisionPose objects, return the one with the best (lowest) stddevs.
 	/// @param poses The candidate poses to evaluate.
 	/// @return Optional VisionPose chosen as best; std::nullopt if empty input.
@@ -531,3 +537,5 @@ namespace
 		return poses[bestfit];
 	}
 }
+
+#endif

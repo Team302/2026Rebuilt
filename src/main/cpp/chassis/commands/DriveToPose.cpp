@@ -140,16 +140,16 @@ void DriveToPose::Initialize()
 void DriveToPose::SetEndPose(const frc::Pose2d &endPose)
 {
     m_endPose = endPose;
-
-    // Get current robot velocities for smooth controller reset
-    auto speeds = m_chassis->GetState().Speeds;
-
-    // Reset PID controllers with current state to prevent discontinuities
-    m_translationPIDX.Reset(m_currentPose.X(), speeds.vx);
-    m_translationPIDY.Reset(m_currentPose.Y(), speeds.vy);
-
     if (m_chassis != nullptr)
     {
+
+        // Get current robot velocities for smooth controller reset
+        auto speeds = m_chassis->GetState().Speeds;
+
+        // Reset PID controllers with current state to prevent discontinuities
+        m_translationPIDX.Reset(m_currentPose.X(), speeds.vx);
+        m_translationPIDY.Reset(m_currentPose.Y(), speeds.vy);
+
         // Update current pose and set new controller goals
         m_currentPose = m_chassis->GetPose();
         m_translationPIDX.SetGoal(m_endPose.X());
@@ -218,15 +218,15 @@ void DriveToPose::Execute()
             chassisSpeeds.vx = std::clamp(chassisSpeeds.vx, -kMaxVelocity, kMaxVelocity);
             chassisSpeeds.vy = std::clamp(chassisSpeeds.vy, -kMaxVelocity, kMaxVelocity);
         }
-    }
 
-    // Send control request to drivetrain with heading control
-    m_chassis->SetControl(
-        m_driveRequest.WithVelocityX(chassisSpeeds.vx)
-            .WithVelocityY(chassisSpeeds.vy)
-            .WithTargetDirection(m_endPose.Rotation().Degrees())
-            .WithHeadingPID(m_rotationKP, m_rotationKI, m_rotationKD)
-            .WithForwardPerspective(ctre::phoenix6::swerve::requests::ForwardPerspectiveValue::BlueAlliance));
+        // Send control request to drivetrain with heading control
+        m_chassis->SetControl(
+            m_driveRequest.WithVelocityX(chassisSpeeds.vx)
+                .WithVelocityY(chassisSpeeds.vy)
+                .WithTargetDirection(m_endPose.Rotation().Degrees())
+                .WithHeadingPID(m_rotationKP, m_rotationKI, m_rotationKD)
+                .WithForwardPerspective(ctre::phoenix6::swerve::requests::ForwardPerspectiveValue::BlueAlliance));
+    }
 
     // Log current error for debugging and tuning
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Error", m_endPose.Translation().Distance(m_currentPose.Translation()).value());
@@ -310,7 +310,10 @@ bool DriveToPose::IsFinished()
 void DriveToPose::End(bool interrupted)
 {
     // Immediately stop the robot
-    m_chassis->SetControl(swerve::requests::SwerveDriveBrake{});
+    if (m_chassis != nullptr)
+    {
+        m_chassis->SetControl(swerve::requests::SwerveDriveBrake{});
+    }
 
     // Publish completion status to robot state
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, IsFinished());

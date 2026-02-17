@@ -109,8 +109,6 @@ public:
     //------------------------------------------------------------------
 
     bool IsFinished() override;
-    frc::Pose2d m_robotPose;
-    subsystems::CommandSwerveDrivetrain *m_chassis;
 
 private:
     units::angle::degree_t GetRotation(BUMP_ID bump, bool isInNeutralZone) const;

@@ -122,7 +122,7 @@ FieldOffsetValues::FieldOffsetValues()
                             fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y()) /
                            2.0;
         m_blueBumpOutpostY = (blueHubCenter.Y() +
-                              fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_OUTPOST).Y()) /
+                              fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y()) /
                              2.0;
 
         // Log all bump positions for field verification and debugging
