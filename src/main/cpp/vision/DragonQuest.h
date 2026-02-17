@@ -78,7 +78,7 @@ private:
     QuestNav m_questNav;
 
     /// @brief NetworkTables instance for logging debug data to the dashboard.
-    nt::NetworkTableInstance m_DebugData;
+    std::shared_ptr<nt::NetworkTable> m_debugData;
 
     // ── Mounting offsets ──
     units::length::inch_t m_mountingXOffset;

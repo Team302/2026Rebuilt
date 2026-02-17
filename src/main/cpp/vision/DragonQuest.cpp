@@ -83,6 +83,8 @@ DragonQuest::DragonQuest(
     frc::SmartDashboard::PutData("Quest ON/OFF", &m_questEnabledChooser);
     frc::SmartDashboard::PutData("Quest Endgame ONLY", &m_questEndgameEnabledChooser);
 
+    m_debugData = nt::NetworkTableInstance::GetDefault().GetTable("QuestNavDebug");
+
     // Subscribe to climb-mode state changes
     RobotState *robotStates = RobotState::GetInstance();
     robotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
@@ -102,7 +104,6 @@ void DragonQuest::Periodic()
     m_questNav.CommandPeriodic();
 
     bool connected = m_questNav.IsConnected() && m_questNav.IsTracking();
-    
 
     HandleDashboard();
 
@@ -199,16 +200,9 @@ void DragonQuest::HandleDashboard()
 
 void DragonQuest::LogDashboardData()
 {
-    bool connected = m_questNav.IsConnected();
-    bool tracking = m_questNav.IsTracking();
-    int batteryPercent = m_questNav.GetBatteryPercent().value_or(-1);
-   
-    
-    auto m_DebugData = nt::NetworkTableInstance::GetDefault().GetTable("Debug/DragonQuest");
-    m_DebugData.get()->PutBoolean("IsConnected", connected);
-    m_DebugData.get()->PutBoolean("IsTracking", tracking);
-    m_DebugData.get()->PutNumber("BatteryPercent", batteryPercent);
-
+    m_debugData->PutBoolean("IsConnected", m_questNav.IsConnected());
+    m_debugData->PutBoolean("IsTracking", m_questNav.IsTracking());
+    m_debugData->PutNumber("BatteryPercent", m_questNav.GetBatteryPercent().value_or(-1));
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
