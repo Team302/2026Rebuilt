@@ -86,8 +86,9 @@ public:
     ///             determine the nearest bump:
     ///
     ///             **Stage 1: Alliance Side Determination**
-    ///             - Compares robot distance to blue depot vs red depot neutral sides
+    ///             - Compares robot distance to blue hub center vs red hub center
     ///             - This determines which half of the field the robot is on
+    ///             - Hub centers provide the most accurate alliance side determination
     ///
     ///             **Stage 2: Depot vs Outpost Selection**
     ///             - On the identified alliance side, compares distances to depot and outpost
@@ -95,10 +96,12 @@ public:
     ///
     ///             **Distance Calculation:**
     ///             Uses Euclidean distance from current robot pose to field element reference points:
-    ///             - BLUE_DEPOT_NEUTRAL_SIDE
-    ///             - RED_DEPOT_NEUTRAL_SIDE
-    ///             - BLUE_OUTPOST_CENTER
-    ///             - RED_OUTPOST_CENTER
+    ///             - BLUE_HUB_CENTER (Stage 1)
+    ///             - RED_HUB_CENTER (Stage 1)
+    ///             - BLUE_DEPOT_NEUTRAL_SIDE (Stage 2)
+    ///             - BLUE_OUTPOST_CENTER (Stage 2)
+    ///             - RED_DEPOT_NEUTRAL_SIDE (Stage 2)
+    ///             - RED_OUTPOST_CENTER (Stage 2)
     ///
     ///             **Return Values:**
     ///             - BLUE_DEPOT_BUMP: Robot closest to blue alliance depot area

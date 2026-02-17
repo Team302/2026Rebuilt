@@ -73,8 +73,8 @@ BumpHelper::BumpHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveC
 ///
 ///             **Stage 1: Determine Alliance Side (Red vs Blue)**
 ///             - Gets current robot pose from chassis (or origin if chassis unavailable)
-///             - Compares distance to BLUE_DEPOT_NEUTRAL_SIDE vs RED_DEPOT_NEUTRAL_SIDE
-///             - Uses depot positions as reference points because they're centrally located on each side
+///             - Compares distance to BLUE_HUB_CENTER vs RED_HUB_CENTER
+///             - Uses hub centers as reference points for more accurate alliance side determination
 ///             - Result: Identifies which half of the field the robot is on
 ///
 ///             **Stage 2: Determine Position on Side (Depot vs Outpost)**
@@ -95,10 +95,12 @@ BumpHelper::BumpHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveC
 ///             evaluating all 4 bumps, reducing computation time by 50%.
 ///
 ///             **Field Element References:**
-///             - BLUE_DEPOT_NEUTRAL_SIDE: Neutral zone side of blue depot
-///             - RED_DEPOT_NEUTRAL_SIDE: Neutral zone side of red depot
-///             - BLUE_OUTPOST_CENTER: Center of blue outpost area
-///             - RED_OUTPOST_CENTER: Center of red outpost area
+///             - BLUE_HUB_CENTER: Center of blue alliance hub (Stage 1)
+///             - RED_HUB_CENTER: Center of red alliance hub (Stage 1)
+///             - BLUE_DEPOT_NEUTRAL_SIDE: Neutral zone side of blue depot (Stage 2)
+///             - RED_DEPOT_NEUTRAL_SIDE: Neutral zone side of red depot (Stage 2)
+///             - BLUE_OUTPOST_CENTER: Center of blue outpost area (Stage 2)
+///             - RED_OUTPOST_CENTER: Center of red outpost area (Stage 2)
 ///
 /// @note       Returns a valid BUMP_ID even if chassis is unavailable (uses origin pose)
 /// @note       Method is const - safe to call from multiple contexts without side effects
@@ -113,12 +115,12 @@ BUMP_ID BumpHelper::CalcNearestBump() const
     auto currentPose = (chassis != nullptr) ? chassis->GetPose() : frc::Pose2d();
 
     // Stage 1: Determine which alliance side (blue or red) is closer
-    // Compare distance to depot neutral sides as reference points for each side
+    // Compare distance to hub centers as reference points for each side
     auto closestDepot = PoseUtils::GetClosestFieldElement(currentPose,
-                                                          FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE,
-                                                          FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE);
+                                                          FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER,
+                                                          FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER);
 
-    if (closestDepot == FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE) // Robot is closer to blue side
+    if (closestDepot == FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER) // Robot is closer to blue side
     {
         // Stage 2: On blue side, determine if depot or outpost is closer
         auto blueElement = PoseUtils::GetClosestFieldElement(currentPose,
