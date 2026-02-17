@@ -526,10 +526,10 @@ void DragonDataLogger::LogGamePadData(uint64_t timestamp, DragonDataLogger::Game
     switch (signalID)
     {
     case DragonDataLogger::GamePadSignals::GAMEPAD_0:
-        logger->WriteGamePadState(m_gamePad0Path, axes, buttons, povs, m_latency);
+        logger->WriteGamePadState(m_gamePad0Path, axes, buttons, povs, timestamp);
         break;
     case DragonDataLogger::GamePadSignals::GAMEPAD_1:
-        logger->WriteGamePadState(m_gamePad1Path, axes, buttons, povs, m_latency);
+        logger->WriteGamePadState(m_gamePad1Path, axes, buttons, povs, timestamp);
         break;
     default:
         break;

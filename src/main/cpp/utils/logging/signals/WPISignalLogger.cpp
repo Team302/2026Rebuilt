@@ -21,73 +21,62 @@
 #include <filesystem>
 #include <span>
 
-void WPISignalLogger::WriteBoolean(std::string signalID, bool value, units::time::second_t latency)
+void WPISignalLogger::WriteBoolean(std::string signalID, bool value, uint64_t timestamp)
 {
     auto &entry = GetBooleanEntry(signalID);
-    int64_t timestamp = frc::RobotController::GetFPGATime();
-    entry.Append(value, timestamp);
+    entry.Append(value, static_cast<int64_t>(timestamp));
 }
 
-void WPISignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, units::time::second_t latency)
+void WPISignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, uint64_t timestamp)
 {
     auto &entry = GetDoubleEntry(signalID);
-    int64_t timestamp = frc::RobotController::GetFPGATime();
-    entry.Append(value, timestamp);
+    entry.Append(value, static_cast<int64_t>(timestamp));
 }
 
-void WPISignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::second_t latency)
+void WPISignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, uint64_t timestamp)
 {
     auto &entry = GetIntegerEntry(signalID);
-    int64_t timestamp = frc::RobotController::GetFPGATime();
-    entry.Append(value, timestamp);
+    entry.Append(value, static_cast<int64_t>(timestamp));
 }
 
-void WPISignalLogger::WriteString(std::string signalID, const std::string &value, units::time::second_t latency)
+void WPISignalLogger::WriteString(std::string signalID, const std::string &value, uint64_t timestamp)
 {
     auto &entry = GetStringEntry(signalID);
-    int64_t timestamp = frc::RobotController::GetFPGATime();
-    entry.Append(value, timestamp);
+    entry.Append(value, static_cast<int64_t>(timestamp));
 }
 
-void WPISignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t latency)
+void WPISignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
 {
     auto &entry = GetDoubleArrayEntry(signalID);
-    int64_t timestamp = frc::RobotController::GetFPGATime();
-    entry.Append(value, timestamp);
+    entry.Append(value, static_cast<int64_t>(timestamp));
 }
 
-void WPISignalLogger::WritePose2d(std::string signalID, const frc::Pose2d &value, units::time::second_t latency)
+void WPISignalLogger::WritePose2d(std::string signalID, const frc::Pose2d &value, uint64_t timestamp)
 {
     auto &entry = GetPose2dEntry(signalID);
-    int64_t timestamp = frc::RobotController::GetFPGATime();
     entry.Append(value, timestamp);
 }
 
-void WPISignalLogger::WritePose3d(std::string signalID, const frc::Pose3d &value, units::time::second_t latency)
+void WPISignalLogger::WritePose3d(std::string signalID, const frc::Pose3d &value, uint64_t timestamp)
 {
     auto &entry = GetPose3dEntry(signalID);
-    int64_t timestamp = frc::RobotController::GetFPGATime();
     entry.Append(value, timestamp);
 }
 
-void WPISignalLogger::WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, units::time::second_t latency)
+void WPISignalLogger::WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, uint64_t timestamp)
 {
     auto &entry = GetChassisSpeedsEntry(signalID);
-    int64_t timestamp = frc::RobotController::GetFPGATime();
     entry.Append(value, timestamp);
 }
 
-void WPISignalLogger::WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, units::time::second_t latency)
+void WPISignalLogger::WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, uint64_t timestamp)
 {
     auto &entry = GetSwerveModuleStateEntry(signalID);
-    int64_t timestamp = frc::RobotController::GetFPGATime();
     entry.Append(value, timestamp);
 }
 
-void WPISignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, const std::array<int, 1> povs, units::time::second_t latency)
+void WPISignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, const std::array<int, 1> povs, uint64_t timestamp)
 {
-    int64_t timestamp = frc::RobotController::GetFPGATime();
-
     // Log axes as float span (matching DriverStation format)
     {
         auto &entry = GetFloatArrayEntry(signalID + "/axes");

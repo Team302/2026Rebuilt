@@ -37,13 +37,12 @@ public:
     virtual void WriteInteger(std::string signalID, int64_t value, std::string_view units, uint64_t timestamp) = 0;
     virtual void WriteString(std::string signalID, const std::string &value, uint64_t timestamp) = 0;
     virtual void WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp) = 0;
-    
-    virtual void WritePose2d(std::string signalID, const frc::Pose2d &value, units::time::second_t latency) = 0;
-    virtual void WritePose3d(std::string signalID, const frc::Pose3d &value, units::time::second_t latency) = 0;
-    virtual void WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, units::time::second_t latency) = 0;
-    virtual void WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, units::time::second_t latency) = 0;
-    virtual void WriteGamePadState(std::string signalID, const std::array<double, 6>, const std::array<bool, 16>, const std::array<int, 1>, units::time::second_t latency) = 0;
 
+    virtual void WritePose2d(std::string signalID, const frc::Pose2d &value, uint64_t timestamp) = 0;
+    virtual void WritePose3d(std::string signalID, const frc::Pose3d &value, uint64_t timestamp) = 0;
+    virtual void WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, uint64_t timestamp) = 0;
+    virtual void WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, uint64_t timestamp) = 0;
+    virtual void WriteGamePadState(std::string signalID, const std::array<double, 6>, const std::array<bool, 16>, const std::array<int, 1>, uint64_t timestamp) = 0;
     // Optional: methods for starting/stopping logging
     virtual void Start() = 0;
     virtual void Stop() = 0;

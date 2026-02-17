@@ -56,7 +56,7 @@ UDPSignalLogger::UDPSignalLogger(const std::string &host, int port)
     int res = getaddrinfo(m_host.c_str(), nullptr, &hints, &result);
     if (res != 0 || !result || !result->ai_addr)
     {
-        std::cerr << "!!! Failed to resolve host: " << m_host << "!!!" <<std::endl;
+        std::cerr << "!!! Failed to resolve host: " << m_host << "!!!" << std::endl;
 #ifdef _WIN32
         closesocket(m_socket);
         m_socket = INVALID_SOCKET;
@@ -179,15 +179,15 @@ void UDPSignalLogger::WriteDoubleArray(std::string signalID, const std::vector<d
     SendData(message);
 }
 
-void UDPSignalLogger::WritePose2d(std::string signalID, const frc::Pose2d &value, units::time::second_t latency)
+void UDPSignalLogger::WritePose2d(std::string signalID, const frc::Pose2d &value, uint64_t timestamp)
 {
     std::ostringstream oss;
     oss << value.X().value() << ";" << value.Y().value() << ";" << value.Rotation().Radians().value();
-    std::string message = FormatMessage(signalID, "pose2d", oss.str(), "X_m;Y_m;Rot_rad", latency);
+    std::string message = FormatMessage(signalID, "pose2d", oss.str(), "X_m;Y_m;Rot_rad", timestamp);
     SendData(message);
 }
 
-void UDPSignalLogger::WritePose3d(std::string signalID, const frc::Pose3d &value, units::time::second_t latency)
+void UDPSignalLogger::WritePose3d(std::string signalID, const frc::Pose3d &value, uint64_t timestamp)
 {
     std::ostringstream oss;
     oss << value.X().value() << ";" << value.Y().value() << ";" << value.Z().value() << ";"
@@ -195,27 +195,27 @@ void UDPSignalLogger::WritePose3d(std::string signalID, const frc::Pose3d &value
         << value.Rotation().GetQuaternion().X() << ";"
         << value.Rotation().GetQuaternion().Y() << ";"
         << value.Rotation().GetQuaternion().Z();
-    std::string message = FormatMessage(signalID, "pose3d", oss.str(), "X_m;Y_m;Z_m;QW;QX;QY;QZ", latency);
+    std::string message = FormatMessage(signalID, "pose3d", oss.str(), "X_m;Y_m;Z_m;QW;QX;QY;QZ", timestamp);
     SendData(message);
 }
 
-void UDPSignalLogger::WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, units::time::second_t latency)
+void UDPSignalLogger::WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, uint64_t timestamp)
 {
     std::ostringstream oss;
     oss << value.vx.value() << ";" << value.vy.value() << ";" << value.omega.value();
-    std::string message = FormatMessage(signalID, "chassis_speeds", oss.str(), "Vx_mps;Vy_mps;Omega_radps", latency);
+    std::string message = FormatMessage(signalID, "chassis_speeds", oss.str(), "Vx_mps;Vy_mps;Omega_radps", timestamp);
     SendData(message);
 }
 
-void UDPSignalLogger::WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, units::time::second_t latency)
+void UDPSignalLogger::WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, uint64_t timestamp)
 {
     std::ostringstream oss;
     oss << value.speed.value() << ";" << value.angle.Radians().value();
-    std::string message = FormatMessage(signalID, "swerve_module_state", oss.str(), "Speed_mps;Angle_rad", latency);
+    std::string message = FormatMessage(signalID, "swerve_module_state", oss.str(), "Speed_mps;Angle_rad", timestamp);
     SendData(message);
 }
 
-void UDPSignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, const std::array<int, 1> povs, units::time::second_t latency)
+void UDPSignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, const std::array<int, 1> povs, uint64_t timestamp)
 {
     // Log axes
     {
@@ -228,7 +228,7 @@ void UDPSignalLogger::WriteGamePadState(std::string signalID, const std::array<d
                 oss << ";";
             }
         }
-        std::string message = FormatMessage(signalID + "/axes", "float_array", oss.str(), "", latency);
+        std::string message = FormatMessage(signalID + "/axes", "float_array", oss.str(), "", timestamp);
         SendData(message);
     }
 
@@ -243,7 +243,7 @@ void UDPSignalLogger::WriteGamePadState(std::string signalID, const std::array<d
                 oss << ";";
             }
         }
-        std::string message = FormatMessage(signalID + "/buttons", "bool_array", oss.str(), "", latency);
+        std::string message = FormatMessage(signalID + "/buttons", "bool_array", oss.str(), "", timestamp);
         SendData(message);
     }
 
@@ -258,7 +258,7 @@ void UDPSignalLogger::WriteGamePadState(std::string signalID, const std::array<d
                 oss << ";";
             }
         }
-        std::string message = FormatMessage(signalID + "/povs", "int_array", oss.str(), "", latency);
+        std::string message = FormatMessage(signalID + "/povs", "int_array", oss.str(), "", timestamp);
         SendData(message);
     }
 }
