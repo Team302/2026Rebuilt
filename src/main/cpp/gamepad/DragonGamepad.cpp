@@ -15,17 +15,16 @@
 
 #include <string>
 
-#include <frc/GenericHID.h>
-#include <frc/Joystick.h>
-#include <gamepad/axis/AnalogAxis.h>
-#include <gamepad/axis/IDeadband.h>
-#include <gamepad/axis/IProfile.h>
-#include <gamepad/button/AnalogButton.h>
-#include <gamepad/button/DigitalButton.h>
-#include <gamepad/button/ToggleButton.h>
-#include <gamepad/DragonGamepad.h>
-#include <teleopcontrol/TeleopControlMappingEnums.h>
-
+#include "frc/GenericHID.h"
+#include "frc/Joystick.h"
+#include "gamepad/axis/AnalogAxis.h"
+#include "gamepad/axis/IDeadband.h"
+#include "gamepad/axis/IProfile.h"
+#include "gamepad/button/AnalogButton.h"
+#include "gamepad/button/DigitalButton.h"
+#include "gamepad/button/ToggleButton.h"
+#include "gamepad/DragonGamepad.h"
+#include "teleopcontrol/TeleopControlMappingEnums.h"
 #include "utils/logging/debug/Logger.h"
 
 using namespace std;
