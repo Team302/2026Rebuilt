@@ -26,12 +26,11 @@ public:
     CTRESignalLogger() = default;
     ~CTRESignalLogger() override = default;
 
-    void WriteBoolean(std::string signalID, bool value, units::time::second_t latency) override;
-    void WriteDouble(std::string signalID, double value, std::string_view units, units::time::second_t latency) override;
-    void WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::second_t latency) override;
-    void WriteString(std::string signalID, const std::string &value, units::time::second_t latency) override;
-    void WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t latency) override;
-
+    void WriteBoolean(std::string signalID, bool value, uint64_t timestamp) override;
+    void WriteDouble(std::string signalID, double value, std::string_view units, uint64_t timestamp) override;
+    void WriteInteger(std::string signalID, int64_t value, std::string_view units, uint64_t timestamp) override;
+    void WriteString(std::string signalID, const std::string &value, uint64_t timestamp) override;
+    void WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp) override;
     void Start() override;
     void Stop() override;
     void SetAutoLogging(bool enable);
@@ -39,4 +38,5 @@ public:
 private:
     std::string CreateLogFileName();
     std::string GetLoggingDir();
+    units::time::second_t ConvertToSeconds(uint64_t timestamp);
 };
