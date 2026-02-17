@@ -54,9 +54,9 @@ UDPSignalLogger::UDPSignalLogger(const std::string &host, int port)
     hints.ai_protocol = IPPROTO_UDP;
     struct addrinfo *result = nullptr;
     int res = getaddrinfo(m_host.c_str(), nullptr, &hints, &result);
-    if (res != 0 || !result)
+    if (res != 0 || !result || !result->ai_addr)
     {
-        std::cerr << "Failed to resolve host: " << m_host << std::endl;
+        std::cerr << "!!! Failed to resolve host: " << m_host << "!!!" <<std::endl;
 #ifdef _WIN32
         closesocket(m_socket);
         m_socket = INVALID_SOCKET;
