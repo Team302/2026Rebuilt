@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -36,7 +35,7 @@ public:
     void WritePose3d(std::string signalID, const frc::Pose3d &value, units::time::second_t latency) override;
     void WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, units::time::second_t latency) override;
     void WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, units::time::second_t latency) override;
-    void WriteGamePadState(std::string signalID, const std::array<double, 6>, const std::array<bool, 16>, const std::array<int, 1>) override;
+    void WriteGamePadState(std::string signalID, const std::array<double, 6>, const std::array<bool, 16>, const std::array<int, 1>, units::time::second_t latency) override;
 
     void Start() override;
     void Stop() override;

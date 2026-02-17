@@ -209,6 +209,50 @@ void UDPSignalLogger::WriteSwerveModuleState(std::string signalID, const frc::Sw
     SendData(message);
 }
 
-void UDPSignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, const std::array<int, 1> povs)
+void UDPSignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, const std::array<int, 1> povs, units::time::second_t latency)
 {
+    // Log axes
+    {
+        std::ostringstream oss;
+        for (size_t i = 0; i < axes.size(); ++i)
+        {
+            oss << axes[i];
+            if (i < axes.size() - 1)
+            {
+                oss << ";";
+            }
+        }
+        std::string message = FormatMessage(signalID + "/axes", "float_array", oss.str(), "", latency);
+        SendData(message);
+    }
+
+    // Log buttons
+    {
+        std::ostringstream oss;
+        for (size_t i = 0; i < buttons.size(); ++i)
+        {
+            oss << (buttons[i] ? "1" : "0");
+            if (i < buttons.size() - 1)
+            {
+                oss << ";";
+            }
+        }
+        std::string message = FormatMessage(signalID + "/buttons", "bool_array", oss.str(), "", latency);
+        SendData(message);
+    }
+
+    // Log POVs
+    {
+        std::ostringstream oss;
+        for (size_t i = 0; i < povs.size(); ++i)
+        {
+            oss << povs[i];
+            if (i < povs.size() - 1)
+            {
+                oss << ";";
+            }
+        }
+        std::string message = FormatMessage(signalID + "/povs", "int_array", oss.str(), "", latency);
+        SendData(message);
+    }
 }
