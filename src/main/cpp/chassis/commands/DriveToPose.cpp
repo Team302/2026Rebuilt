@@ -103,7 +103,18 @@ DriveToPose::DriveToPose(
 void DriveToPose::Initialize()
 {
     // Get the target pose (may be overridden by derived classes)
-    m_endPose = GetEndPose();
+    auto poses = GetDriveToPoses();
+    m_endPose = poses.endPose;
+    m_hasMidPose = poses.hasMidPose;
+    if (poses.hasMidPose)
+    {
+        m_midPose = poses.midPose;
+        m_beforeMidPose = true;
+    }
+    else
+    {
+        m_beforeMidPose = false;
+    }
 
     // Reset movement detection to start fresh
     m_chassis->ResetSamePose();
@@ -278,17 +289,22 @@ bool DriveToPose::IsFinished()
     bool isDone = PoseUtils::IsSamePose(m_currentPose, m_endPose, m_distanceThreshold);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Is Done", isDone);
 
-    if (isDone)
-    {
-        return true; // Successfully reached target
-    }
-
     // Check if robot has stopped moving (stuck or blocked)
     auto isSamePose = m_chassis->IsSamePose();
     m_prevPose = m_currentPose; // Update for next cycle
 
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Is SamePose", isSamePose);
-    return isSamePose; // End command if robot is stuck
+
+    if ((isDone || isSamePose) && m_beforeMidPose && m_hasMidPose)
+    {
+        // Just finished reaching the midpoint
+        // Now update the target to the final endpoint
+        SetEndPose(m_endPose);
+        m_beforeMidPose = false;
+        return false; // Continue to second stage
+    }
+
+    return isDone || isSamePose; // End command if target reached or robot is stuck
 }
 
 //------------------------------------------------------------------

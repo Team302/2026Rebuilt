@@ -55,3 +55,10 @@ frc::Pose2d DriveToHub::GetEndPose()
     }
     return endPose;
 }
+
+struct DriveToPoses DriveToHub::GetDriveToPoses()
+{
+    struct DriveToPoses poses;
+    poses.endPose = GetEndPose();
+    return poses;
+}

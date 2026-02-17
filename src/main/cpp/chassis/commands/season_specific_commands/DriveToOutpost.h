@@ -51,4 +51,7 @@ public:
     ///             target calculation using OutpostHelper
     //------------------------------------------------------------------
     frc::Pose2d GetEndPose() override;
+
+protected:
+    struct DriveToPoses GetDriveToPoses() override;
 };

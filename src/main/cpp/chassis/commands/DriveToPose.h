@@ -20,6 +20,13 @@
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/geometry/Pose2d.h>
 
+struct DriveToPoses
+{
+    frc::Pose2d endPose{};
+    bool hasMidPose = false;
+    frc::Pose2d midPose{};
+};
+
 //====================================================================================================================================================
 /// @class DriveToPose
 /// @brief Base command class for autonomous navigation to field poses using hybrid feedforward+PID control
@@ -117,6 +124,8 @@ public:
     void End(bool interrupted) override;
 
 protected:
+    virtual struct DriveToPoses GetDriveToPoses() { return DriveToPoses{}; };
+
     //------------------------------------------------------------------
     /// @brief      Gets the target pose for navigation
     /// @return     frc::Pose2d - The target field pose to navigate to
@@ -129,7 +138,10 @@ protected:
     /// @note       Override this in derived classes for custom targeting
     /// @see        DriveOverBump::GetEndPose() for multi-waypoint example
     //------------------------------------------------------------------
-    virtual frc::Pose2d GetEndPose() { return m_endPose; };
+    virtual frc::Pose2d GetEndPose()
+    {
+        return m_endPose;
+    };
 
     //------------------------------------------------------------------
     /// @brief      Updates the target pose during execution
@@ -201,6 +213,9 @@ private:
 
     /// @brief Target pose to navigate to
     frc::Pose2d m_endPose;
+    frc::Pose2d m_midPose;
+    bool m_hasMidPose = false;
+    bool m_beforeMidPose = true;
 
     //------------------------------------------------------------------
     // Threshold and Range Constants

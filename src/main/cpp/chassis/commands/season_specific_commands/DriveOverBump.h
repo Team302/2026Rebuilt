@@ -110,6 +110,9 @@ public:
 
     bool IsFinished() override;
 
+protected:
+    struct DriveToPoses GetDriveToPoses() override;
+
 private:
     units::angle::degree_t GetRotation(BUMP_ID bump, bool isInNeutralZone) const;
 
