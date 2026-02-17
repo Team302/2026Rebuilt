@@ -111,7 +111,6 @@ void WPISignalLogger::WriteGamePadState(std::string signalID, const std::array<d
 void WPISignalLogger::Start()
 {
     frc::DataLogManager::Start(GetLoggingDir(), CreateLogFileName(), .5);
-    // frc::DriverStation::StartDataLog(frc::DataLogManager::GetLog());
 }
 
 void WPISignalLogger::Stop()
