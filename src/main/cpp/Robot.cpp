@@ -95,6 +95,7 @@
 #include "utils/logging/debug/Logger.h"
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include "vision/DragonVision.h"
+#include "feedback/GameDataHelper.h"
 
 #include "auton/NeutralZoneManager.h"
 
@@ -257,6 +258,7 @@ void Robot::InitializeAutonOptions()
 void Robot::InitializeDriveteamFeedback()
 {
     m_field = DragonField::GetInstance(); // TODO: move to drive team feedback
+    new GameDataHelper();
 }
 
 /// @brief Updates all drive-team feedback and auton selection information.
