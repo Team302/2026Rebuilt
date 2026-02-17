@@ -25,7 +25,6 @@
 //====================================================================================================================================================
 
 #include "fielddata/BumpHelper.h"
-#include "auton/NeutralZoneManager.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "frc/geometry/Pose2d.h"
 #include "utils/PoseUtils.h"
@@ -116,11 +115,11 @@ BUMP_ID BumpHelper::CalcNearestBump() const
 
     // Stage 1: Determine which alliance side (blue or red) is closer
     // Compare distance to hub centers as reference points for each side
-    auto closestDepot = PoseUtils::GetClosestFieldElement(currentPose,
-                                                          FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER,
-                                                          FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER);
+    auto closestHub = PoseUtils::GetClosestFieldElement(currentPose,
+                                                        FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER,
+                                                        FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER);
 
-    if (closestDepot == FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER) // Robot is closer to blue side
+    if (closestHub == FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER) // Robot is closer to blue side
     {
         // Stage 2: On blue side, determine if depot or outpost is closer
         auto blueElement = PoseUtils::GetClosestFieldElement(currentPose,

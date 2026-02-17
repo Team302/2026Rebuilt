@@ -59,9 +59,6 @@ DriveOverBump::DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis) : Dri
 frc::Pose2d DriveOverBump::GetEndPose()
 {
     m_beforeMidPose = true;
-    frc::Pose2d endPose{};
-    frc::Pose2d midPose{};
-    units::angle::degree_t rotation{45_deg};
 
     // Get the BumpHelper singleton to determine which bump to drive over
     auto bumpHelper = BumpHelper::GetInstance();
@@ -85,7 +82,7 @@ frc::Pose2d DriveOverBump::GetEndPose()
         auto neutralY = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_Y);
 
         auto allianceX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_X);
-        auto allianceY = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_Y);
+        auto allianceY = neutralY; // Y coordinate is the same for both sides of the same bump
 
         if (isInNeutralZone) // Drive from neutral zone over bump to alliance zone
         {
