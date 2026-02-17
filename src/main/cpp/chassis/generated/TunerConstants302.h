@@ -170,8 +170,8 @@ private:
     static constexpr bool kBackLeftSteerMotorInverted = false;
     static constexpr bool kBackLeftEncoderInverted = false;
 
-    static constexpr units::inch_t kBackLeftXPos = -9.25_in;
-    static constexpr units::inch_t kBackLeftYPos = 12.625_in;
+    static constexpr units::inch_t kBackLeftXPos = -9.375_in;
+    static constexpr units::inch_t kBackLeftYPos = 12.375_in;
 
     // Back Right
     static constexpr int kBackRightDriveMotorId = 1;
@@ -181,8 +181,8 @@ private:
     static constexpr bool kBackRightSteerMotorInverted = false;
     static constexpr bool kBackRightEncoderInverted = false;
 
-    static constexpr units::inch_t kBackRightXPos = -9.25_in;
-    static constexpr units::inch_t kBackRightYPos = -12.625_in;
+    static constexpr units::inch_t kBackRightXPos = -9.375_in;
+    static constexpr units::inch_t kBackRightYPos = -12.375_in;
 
 public:
     static constexpr swerve::SwerveModuleConstants FrontLeft = ConstantCreator.CreateModuleConstants(
