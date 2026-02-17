@@ -33,6 +33,7 @@ public:
     void WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp) override;
     void Start() override;
     void Stop() override;
+    void SetAutoLogging(bool enable);
 
 private:
     std::string CreateLogFileName();
