@@ -23,7 +23,6 @@
 #include "utils/logging/signals/CTRESignalLogger.h"
 #include "utils/logging/signals/UDPSignalLogger.h"
 #include "utils/logging/signals/WPISignalLogger.h"
-#include "utils/logging/debug/Logger.h"
 
 using namespace std;
 
@@ -44,7 +43,6 @@ DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items()
     ctreLogger.SetAutoLogging(false);
 
     SetLoggerType(m_defaultLoggerType);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("A"), string("2"), string("run"));
 }
 
 void DragonDataLoggerMgr::SetLoggerType(LoggerType type)
@@ -98,11 +96,9 @@ void DragonDataLoggerMgr::PeriodicDataLog()
         item->DataLog(timestamp);
         m_lastIndex += ((m_lastIndex >= (m_items.size() - 1)) ? -m_lastIndex : 1);
     }
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("A"), string("3"), string("run"));
 }
 
 void DragonDataLoggerMgr::RegisterItem(DragonDataLogger *item)
 {
     m_items.emplace_back(item);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("A"), string("3"), string("run"));
 }
