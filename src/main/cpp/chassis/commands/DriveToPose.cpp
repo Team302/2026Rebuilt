@@ -238,12 +238,17 @@ void DriveToPose::Execute()
 /// @details    Implements a two-condition completion check to handle both successful completion
 ///             and stuck robot detection:
 ///
-///             **Condition 1: Target Reached**
+///             **Condtion 1: Target is at the origin**
+///             - Checks if the end pose is at the origin (0,0) with a small tolerance
+///             - Returns true if end pose is at origin, indicating an error in target calculation (physically the robot
+///               center cannot be at the origin of the field).
+///
+///             **Condition 2: Target Reached**
 ///             - Compares current pose to target pose using m_distanceThreshold (default 0.25 inches)
 ///             - Returns true if robot is within tolerance of target position
 ///             - Indicates successful navigation completion
 ///
-///             **Condition 2: Robot Stopped Moving**
+///             **Condition 3: Robot Stopped Moving**
 ///             - Uses chassis IsSamePose() to detect if robot hasn't moved between cycles
 ///             - Returns true if robot is stuck or unable to make progress
 ///             - Prevents command from running indefinitely if blocked
@@ -258,11 +263,17 @@ void DriveToPose::Execute()
 ///             eventually timeout rather than running indefinitely.
 ///
 /// @note       Updates m_prevPose each cycle for next iteration's comparison
-/// @note       Distance threshold can be customized via SetDistanceThreshold()
-/// @see        SetDistanceThreshold() for adjusting completion tolerance
+/// @note       Distance threshold (m_distanceThreshold) defaults to 0.25 inches and can be customized via SetDistanceThreshold()
+/// @see        SetDistanceThreshold() for adjusting the completion distance threshold
 //------------------------------------------------------------------
 bool DriveToPose::IsFinished()
 {
+    // Safety check: If end pose wasn't calculated properly, stop immediately
+    if (PoseUtils::IsPoseAtOrigin(m_endPose, units::length::centimeter_t{1.0}))
+    {
+        return true;
+    }
+
     // Check if we've reached the target pose within tolerance
     bool isDone = PoseUtils::IsSamePose(m_currentPose, m_endPose, m_distanceThreshold);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Is Done", isDone);

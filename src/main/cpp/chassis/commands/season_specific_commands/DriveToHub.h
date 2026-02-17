@@ -51,12 +51,4 @@ public:
     ///             target calculation using HubHelper
     //------------------------------------------------------------------
     frc::Pose2d GetEndPose() override;
-
-    //------------------------------------------------------------------
-    /// @brief      Determines if the DriveToHub command has finished execution
-    /// @return     true if the command has completed driving to the hub,
-    ///             false if the command should continue running
-    /// @details    Called repeatedly by the command scheduler to check completion status
-    //------------------------------------------------------------------
-    bool IsFinished() override;
 };

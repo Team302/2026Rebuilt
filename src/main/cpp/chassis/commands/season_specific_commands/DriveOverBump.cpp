@@ -168,12 +168,6 @@ units::angle::degree_t DriveOverBump::GetRotation(BUMP_ID bump, bool isInNeutral
 //------------------------------------------------------------------
 bool DriveOverBump::IsFinished()
 {
-    // Safety check: If end pose wasn't calculated properly, stop immediately
-    if (PoseUtils::IsPoseAtOrigin(m_endPose, units::length::centimeter_t{1.0}))
-    {
-        return true;
-    }
-
     // Check if we've reached the current target pose (either mid or end)
     auto finished = DriveToPose::IsFinished();
 
