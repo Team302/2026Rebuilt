@@ -302,17 +302,20 @@ void DriverFeedback::UpdateDiagnosticLEDs()
 
 void DriverFeedback::CheckControllers()
 {
-    if (m_controllerCounter == 0)
+    if (frc::DriverStation::IsDisabled())
     {
-        auto table = nt::NetworkTableInstance::GetDefault().GetTable("XBOX Controller");
-        for (auto i = 0; i < DriverStation::kJoystickPorts; ++i)
+        if (m_controllerCounter == 0)
         {
-            table.get()->PutBoolean(std::string("Controller") + std::to_string(i), DriverStation::GetJoystickIsXbox(i));
+            auto table = nt::NetworkTableInstance::GetDefault().GetTable("XBOX Controller");
+            for (auto i = 0; i < DriverStation::kJoystickPorts; ++i)
+            {
+                table.get()->PutBoolean(std::string("Controller") + std::to_string(i), DriverStation::GetJoystickIsXbox(i));
+            }
         }
-    }
-    m_controllerCounter++;
-    if (m_controllerCounter > 25)
-    {
-        m_controllerCounter = 0;
+        m_controllerCounter++;
+        if (m_controllerCounter > 25)
+        {
+            m_controllerCounter = 0;
+        }
     }
 }
