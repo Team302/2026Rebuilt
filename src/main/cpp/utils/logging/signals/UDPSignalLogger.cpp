@@ -104,8 +104,7 @@ std::string UDPSignalLogger::FormatMessage(std::string signalID, std::string typ
                                            std::string value, std::string_view units, uint64_t timestamp)
 {
     std::ostringstream oss;
-    std::string timestampStr = std::to_string(timestamp);
-    oss << timestamp << "," << signalID << "," << type << "," << value << "," << units;
+    oss << std::to_string(timestamp) << "," << signalID << "," << type << "," << value << "," << units;
     return oss.str();
 }
 
