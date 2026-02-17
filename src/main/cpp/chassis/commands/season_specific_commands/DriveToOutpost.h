@@ -44,14 +44,6 @@ public:
     //------------------------------------------------------------------
     ~DriveToOutpost() = default;
 
-    //------------------------------------------------------------------
-    /// @brief      Calculates the target end pose for the Outpost
-    /// @return     frc::Pose2d - The target pose at the center of the nearest Outpost
-    /// @details    Overrides the base class method to provide Outpost-specific
-    ///             target calculation using OutpostHelper
-    //------------------------------------------------------------------
-    frc::Pose2d GetEndPose() override;
-
 protected:
     struct DriveToPoses GetDriveToPoses() override;
 };

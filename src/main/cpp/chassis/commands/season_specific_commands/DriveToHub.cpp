@@ -29,36 +29,26 @@ DriveToHub::DriveToHub(subsystems::CommandSwerveDrivetrain *chassis)
 {
 }
 
-//------------------------------------------------------------------
-/// @brief      Calculates the target end pose for the Hub
-/// @return     frc::Pose2d - The target pose at the center of the nearest Hub
-/// @details    Uses HubHelper to determine which Hub (red or blue) is
-///             closest to the robot and calculates the center pose of that
-///             Hub. Returns a default pose if HubHelper is unavailable.
-//------------------------------------------------------------------
-frc::Pose2d DriveToHub::GetEndPose()
+struct DriveToPoses DriveToHub::GetDriveToPoses()
 {
-    frc::Pose2d endPose;
+    struct DriveToPoses poses;
+    poses.hasMidPose = false;
     if (NeutralZoneManager::GetInstance()->IsInNeutralZone())
     {
         auto chassis = GetChassis();
         if (chassis != nullptr)
         {
-            return chassis->GetPose();
+            poses.endPose = chassis->GetPose();
+            return poses;
         }
-        return endPose;
+        return poses; // if in the neutral zone but chassis is unavailable, return default poses with hasMidPose=false
     }
     auto hubHelper = HubHelper::GetInstance();
     if (hubHelper != nullptr)
     {
-        return hubHelper->CalcHubPose();
+        poses.endPose = hubHelper->CalcHubPose();
+        return poses;
     }
-    return endPose;
-}
 
-struct DriveToPoses DriveToHub::GetDriveToPoses()
-{
-    struct DriveToPoses poses;
-    poses.endPose = GetEndPose();
     return poses;
 }

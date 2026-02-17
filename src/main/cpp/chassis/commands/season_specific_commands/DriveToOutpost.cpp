@@ -29,36 +29,26 @@ DriveToOutpost::DriveToOutpost(subsystems::CommandSwerveDrivetrain *chassis)
 {
 }
 
-//------------------------------------------------------------------
-/// @brief      Calculates the target end pose for the Outpost
-/// @return     frc::Pose2d - The target pose at the center of the nearest Outpost
-/// @details    Uses OutpostHelper to determine which Outpost (red or blue) is
-///             closest to the robot and calculates the center pose of that
-///             Outpost. Returns a default pose if OutpostHelper is unavailable.
-//------------------------------------------------------------------
-frc::Pose2d DriveToOutpost::GetEndPose()
+struct DriveToPoses DriveToOutpost::GetDriveToPoses()
 {
-    frc::Pose2d endPose;
+    struct DriveToPoses poses;
+    poses.hasMidPose = false;
+
     if (NeutralZoneManager::GetInstance()->IsInNeutralZone())
     {
         auto chassis = GetChassis();
         if (chassis != nullptr)
         {
-            return chassis->GetPose();
+            poses.endPose = chassis->GetPose();
         }
-        return endPose;
+        return poses;
     }
     auto outpostHelper = OutpostHelper::GetInstance();
     if (outpostHelper != nullptr)
     {
-        return outpostHelper->CalcOutpostPose();
+        poses.endPose = outpostHelper->CalcOutpostPose();
+        return poses;
     }
-    return endPose;
-}
 
-struct DriveToPoses DriveToOutpost::GetDriveToPoses()
-{
-    struct DriveToPoses poses;
-    poses.endPose = GetEndPose();
     return poses;
 }

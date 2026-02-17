@@ -44,14 +44,6 @@ public:
     //------------------------------------------------------------------
     ~DriveToDepot() = default;
 
-    //------------------------------------------------------------------
-    /// @brief      Calculates the target end pose for the depot
-    /// @return     frc::Pose2d - The target pose at the center of the nearest depot
-    /// @details    Overrides the base class method to provide depot-specific
-    ///             target calculation using DepotHelper
-    //------------------------------------------------------------------
-    frc::Pose2d GetEndPose() override;
-
 protected:
     struct DriveToPoses GetDriveToPoses() override;
 };

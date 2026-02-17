@@ -29,36 +29,26 @@ DriveToDepot::DriveToDepot(subsystems::CommandSwerveDrivetrain *chassis)
 {
 }
 
-//------------------------------------------------------------------
-/// @brief      Calculates the target end pose for the depot
-/// @return     frc::Pose2d - The target pose at the center of the nearest depot
-/// @details    Uses DepotHelper to determine which depot (red or blue) is
-///             closest to the robot and calculates the center pose of that
-///             depot. Returns a default pose if DepotHelper is unavailable.
-//------------------------------------------------------------------
-frc::Pose2d DriveToDepot::GetEndPose()
+struct DriveToPoses DriveToDepot::GetDriveToPoses()
 {
-    frc::Pose2d endPose{};
+    struct DriveToPoses poses;
+    poses.hasMidPose = false;
+
     if (NeutralZoneManager::GetInstance()->IsInNeutralZone())
     {
         auto chassis = GetChassis();
         if (chassis != nullptr)
         {
-            return chassis->GetPose();
+            poses.endPose = chassis->GetPose();
+            return poses;
         }
-        return endPose;
     }
     auto depotHelper = DepotHelper::GetInstance();
     if (depotHelper != nullptr)
     {
-        return depotHelper->CalcDepotPose();
+        poses.endPose = depotHelper->CalcDepotPose();
+        return poses;
     }
-    return endPose;
-}
 
-struct DriveToPoses DriveToDepot::GetDriveToPoses()
-{
-    struct DriveToPoses poses;
-    poses.endPose = GetEndPose();
     return poses;
 }

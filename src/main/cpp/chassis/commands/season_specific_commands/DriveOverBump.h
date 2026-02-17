@@ -68,26 +68,6 @@ public:
     ~DriveOverBump() = default;
 
     //------------------------------------------------------------------
-    /// @brief      Calculates the target poses for the two-stage bump crossing maneuver
-    /// @return     frc::Pose2d - The initial midpoint pose (top of bump) to navigate to first
-    /// @details    This method is called by the command scheduler to determine the robot's path.
-    ///             It performs the following operations:
-    ///             - Identifies the nearest bump using BumpHelper
-    ///             - Determines current zone (alliance or neutral) via NeutralZoneManager
-    ///             - Retrieves field coordinates for both sides of the bump from FieldOffsetValues
-    ///             - Calculates appropriate rotation angles based on bump type and direction
-    ///             - Sets m_midPose (returned value) and m_endPose (used after midpoint reached)
-    ///             - Configures distance threshold to 1 foot for completion detection
-    ///
-    ///             The two-stage approach ensures the robot follows a safe trajectory over
-    ///             the bump rather than attempting to drive straight through it.
-    ///
-    /// @note       If BumpHelper is unavailable, returns default origin pose
-    /// @see        GetRotation() for rotation angle calculation
-    //------------------------------------------------------------------
-    frc::Pose2d GetEndPose() override;
-
-    //------------------------------------------------------------------
     /// @brief      Checks if the DriveOverBump command has completed execution
     /// @return     true if the command should terminate, false if it should continue running
     /// @details    Implements two-stage completion logic:

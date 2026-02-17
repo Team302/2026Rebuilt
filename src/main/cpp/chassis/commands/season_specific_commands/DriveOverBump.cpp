@@ -37,72 +37,6 @@ DriveOverBump::DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis) : Dri
 }
 
 //------------------------------------------------------------------
-/// @brief      Calculates the target poses for driving over the bump
-/// @return     frc::Pose2d - The initial midpoint pose to drive to first
-/// @details    This method determines the robot's path over the nearest bump
-///             by calculating two key poses:
-///             1. m_midPose: The position at the top of the bump (returned)
-///             2. m_endPose: The final destination on the other side
-///
-///             The calculation process:
-///             - Uses BumpHelper to identify the nearest bump (Red/Blue, Depot/Outpost)
-///             - Checks if robot is in neutral zone or alliance zone
-///             - Retrieves field-relative X/Y coordinates from FieldOffsetValues
-///             - Determines appropriate rotation angle based on bump location and direction
-///
-///             Direction logic:
-///             - If in neutral zone: Drive toward alliance zone over bump
-///             - If in alliance zone: Drive toward neutral zone over bump
-///
-/// @note       Sets m_beforeMidPose flag to true to enable two-stage navigation
-/// @note       Returns default origin pose if BumpHelper is unavailable
-//------------------------------------------------------------------
-frc::Pose2d DriveOverBump::GetEndPose()
-{
-    m_beforeMidPose = true;
-
-    // Get the BumpHelper singleton to determine which bump to drive over
-    auto bumpHelper = BumpHelper::GetInstance();
-    if (bumpHelper != nullptr)
-    {
-        // Identify the nearest bump based on robot's current position
-        auto bump = bumpHelper->CalcNearestBump();
-
-        // Determine if robot is currently in the neutral zone
-        auto isInNeutralZone = NeutralZoneManager::GetInstance()->IsInNeutralZone();
-
-        // Calculate the appropriate rotation angle for the bump and direction
-        auto rotation = GetRotation(bump, isInNeutralZone);
-
-        // Determine if this is a red alliance bump (depot or outpost)
-        auto isRed = (bump == BUMP_ID::RED_DEPOT_BUMP || bump == BUMP_ID::RED_OUTPOST_BUMP);
-
-        // Retrieve field coordinates for both sides of the bump
-        auto offsetVals = FieldOffsetValues::GetInstance();
-        auto neutralX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_X);
-        auto neutralY = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_Y);
-
-        auto allianceX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_X);
-        auto allianceY = neutralY; // Y coordinate is the same for both sides of the same bump
-
-        if (isInNeutralZone) // Drive from neutral zone over bump to alliance zone
-        {
-            // First go to neutral side of bump, then to alliance side
-            m_midPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
-            m_endPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
-        }
-        else // Drive from alliance zone over bump to neutral zone
-        {
-            // First go to alliance side of bump, then to neutral side
-            m_midPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
-            m_endPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
-        }
-    }
-
-    return m_midPose;
-}
-
-//------------------------------------------------------------------
 /// @brief      Determines the appropriate rotation angle for driving over a bump
 /// @param[in]  bump - The identifier for which bump (Red/Blue, Depot/Outpost)
 /// @param[in]  isInNeutralZone - True if robot is in neutral zone, false if in alliance zone
@@ -183,8 +117,46 @@ bool DriveOverBump::IsFinished()
 struct DriveToPoses DriveOverBump::GetDriveToPoses()
 {
     struct DriveToPoses poses;
-    poses.endPose = GetEndPose();
     poses.hasMidPose = true;
-    poses.midPose = m_midPose;
+
+    m_beforeMidPose = true;
+
+    // Get the BumpHelper singleton to determine which bump to drive over
+    auto bumpHelper = BumpHelper::GetInstance();
+    if (bumpHelper != nullptr)
+    {
+        // Identify the nearest bump based on robot's current position
+        auto bump = bumpHelper->CalcNearestBump();
+
+        // Determine if robot is currently in the neutral zone
+        auto isInNeutralZone = NeutralZoneManager::GetInstance()->IsInNeutralZone();
+
+        // Calculate the appropriate rotation angle for the bump and direction
+        auto rotation = GetRotation(bump, isInNeutralZone);
+
+        // Determine if this is a red alliance bump (depot or outpost)
+        auto isRed = (bump == BUMP_ID::RED_DEPOT_BUMP || bump == BUMP_ID::RED_OUTPOST_BUMP);
+
+        // Retrieve field coordinates for both sides of the bump
+        auto offsetVals = FieldOffsetValues::GetInstance();
+        auto neutralX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_X);
+        auto neutralY = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_Y);
+
+        auto allianceX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_X);
+        auto allianceY = neutralY; // Y coordinate is the same for both sides of the same bump
+
+        if (isInNeutralZone) // Drive from neutral zone over bump to alliance zone
+        {
+            // First go to neutral side of bump, then to alliance side
+            poses.midPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
+            poses.endPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
+        }
+        else // Drive from alliance zone over bump to neutral zone
+        {
+            // First go to alliance side of bump, then to neutral side
+            poses.midPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
+            poses.endPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
+        }
+    }
     return poses;
 }

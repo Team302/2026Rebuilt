@@ -51,6 +51,7 @@ public:
     ///             - Rotation based on the nearest alliance (0° for red, 180° for blue)
     //------------------------------------------------------------------
     frc::Pose2d CalcOutpostPose() const;
+    frc::Pose2d CalcOutpostOffsetPose() const;
 
 private:
     //------------------------------------------------------------------

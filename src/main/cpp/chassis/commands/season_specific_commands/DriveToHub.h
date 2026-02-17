@@ -44,14 +44,6 @@ public:
     //------------------------------------------------------------------
     ~DriveToHub() = default;
 
-    //------------------------------------------------------------------
-    /// @brief      Calculates the target end pose for the Hub
-    /// @return     frc::Pose2d - The target pose at the center of the nearest Hub
-    /// @details    Overrides the base class method to provide Hub-specific
-    ///             target calculation using HubHelper
-    //------------------------------------------------------------------
-    frc::Pose2d GetEndPose() override;
-
 protected:
     struct DriveToPoses GetDriveToPoses() override;
 };
