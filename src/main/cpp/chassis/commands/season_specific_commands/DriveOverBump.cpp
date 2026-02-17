@@ -151,7 +151,7 @@ units::angle::degree_t DriveOverBump::GetRotation(BUMP_ID bump, bool isInNeutral
 ///             - Returns true immediately if m_endPose is at origin (calculation error)
 ///
 ///             Stage 2: Two-phase navigation
-///             - First phase: Drive to m_midPose (top of bump)
+///             - First phase: Drive to m_midPose (closest side of bump)
 ///               * When reached, updates target to m_endPose and continues
 ///             - Second phase: Drive to m_endPose (other side of bump)
 ///               * When reached, command completes
