@@ -32,7 +32,7 @@
 // TODO:
 //  - Implement fusion logic for fused target/pose selection (FUSED_TARGET_INFO).
 //  - Consider adding internal synchronization or atomics if concurrent access is required.
-//  - Improve selection heuristics and add unit tests for ProcessOutputOption and GetBestPose.
+//  - Improve selection heuristics and add unit tests for ProcessOutputOption.
 
 // C++ Includes
 #include <algorithm> // <<-- added for std::max_element / std::distance
@@ -64,8 +64,6 @@
 namespace
 {
 	std::vector<int> ProcessOutputOption(VisionTargetOption option, std::vector<std::unique_ptr<DragonVisionStruct>> &targets);
-
-	std::optional<VisionPose> GetBestPose(const std::vector<VisionPose> &poses);
 } // namespace
 
 DragonVision *DragonVision::m_dragonVision = nullptr;
@@ -490,44 +488,5 @@ namespace
 			break;
 		}
 		return selectedIndices;
-	}
-
-	/// @brief From a list of candidate VisionPose objects, return the one with the best (lowest) stddevs.
-	/// @param poses The candidate poses to evaluate.
-	/// @return Optional VisionPose chosen as best; std::nullopt if empty input.
-	/// @note Compares visionMeasurementStdDevs [x, y, rot] and returns the pose with smallest combined deviations.
-	std::optional<VisionPose> GetBestPose(const std::vector<VisionPose> &poses)
-	{
-		if (poses.empty())
-		{
-			return std::nullopt;
-		}
-
-		if (poses.size() == 1)
-		{
-			return poses[0];
-		}
-
-		auto bestfit = 0;
-		auto stddevX = poses[0].visionMeasurementStdDevs[0];
-		auto stddevY = poses[0].visionMeasurementStdDevs[1];
-		auto stddevRot = poses[0].visionMeasurementStdDevs[2];
-
-		auto slot = 0;
-		for (auto thispose : poses)
-		{
-			auto thisStddevX = thispose.visionMeasurementStdDevs[0];
-			auto thisStddevY = thispose.visionMeasurementStdDevs[1];
-			auto thisStddevRot = thispose.visionMeasurementStdDevs[2];
-			if (thisStddevX < stddevX && thisStddevY < stddevY && thisStddevRot < stddevRot)
-			{
-				bestfit = slot;
-				stddevX = thisStddevX;
-				stddevY = thisStddevY;
-				stddevRot = thisStddevRot;
-			}
-			slot++;
-		}
-		return poses[bestfit];
 	}
 }

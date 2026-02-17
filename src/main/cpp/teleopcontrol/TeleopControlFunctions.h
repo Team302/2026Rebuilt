@@ -43,6 +43,7 @@ public:
         TIPCORRECTION_TOGGLE,
 
         // Season Specific Drive Commands
+        DRIVE_OVER_BUMP,
         DRIVE_TO_DEPOT,
         DRIVE_TO_HUB,
         DRIVE_TO_OUTPOST,
