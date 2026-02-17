@@ -10,6 +10,7 @@ choreoname = "BlueLDepotOutpost_A"
 time = "2.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "RedLaunchZone.xml"/>
+<zone filename = "RedDepotZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
@@ -17,6 +18,7 @@ choreoname = "BlueLDepotOutpost_B"
 time = "3.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "RedLaunchZone.xml"/>
+<zone filename = "RedOutpostZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
