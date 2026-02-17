@@ -19,6 +19,7 @@
 #include <string_view>
 #include <unordered_map>
 #include <memory>
+#include <span>
 
 #include "utils/logging/signals/ISignalLogger.h"
 #include "frc/DataLogManager.h"

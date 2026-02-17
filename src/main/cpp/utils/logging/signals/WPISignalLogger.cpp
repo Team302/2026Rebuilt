@@ -19,6 +19,7 @@
 #include "frc/DriverStation.h"
 #include "wpi/DataLog.h"
 #include <filesystem>
+#include <span>
 
 void WPISignalLogger::WriteBoolean(std::string signalID, bool value, units::time::second_t latency)
 {
@@ -85,19 +86,37 @@ void WPISignalLogger::WriteSwerveModuleState(std::string signalID, const frc::Sw
 
 void WPISignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, const std::array<int, 1> povs)
 {
-    auto &entry = GetFloatArrayEntry(signalID + "/axes");
-    auto &boolEntry = GetBoolArrayEntry(signalID + "/buttons");
-    auto &povEntry = GetIntegerArrayEntry(signalID + "/povs");
     int64_t timestamp = frc::RobotController::GetFPGATime();
-    std::array<float, 6> axesFloat;
-    for (size_t i = 0; i < axes.size(); ++i)
+
+    // Log axes as float span (matching DriverStation format)
     {
-        axesFloat[i] = static_cast<float>(axes[i]);
+        auto &entry = GetFloatArrayEntry(signalID + "/axes");
+        std::array<float, 6> axesFloat;
+        // Determine actual axis count (trim trailing zeros could be done, but log all 6 for safety)
+        for (size_t i = 0; i < axes.size(); ++i)
+        {
+            axesFloat[i] = static_cast<float>(axes[i]);
+        }
+        entry.Append(std::span<const float>{axesFloat.data(), axesFloat.size()}, timestamp);
     }
-    entry.Append(axesFloat, timestamp);
-    boolEntry.Append(buttons, timestamp);
-    std::array<int64_t, 1> povs64 = {static_cast<int64_t>(povs[0])};
-    povEntry.Append(povs64, timestamp);
+
+    // Log buttons as uint8_t span (matching DriverStation format: one byte per button)
+    {
+        auto &entry = GetBoolArrayEntry(signalID + "/buttons");
+        uint8_t buttonsArr[16];
+        for (size_t i = 0; i < buttons.size(); ++i)
+        {
+            buttonsArr[i] = buttons[i] ? 1 : 0;
+        }
+        entry.Append(std::span<const uint8_t>{buttonsArr, buttons.size()}, timestamp);
+    }
+
+    // Log POVs as int64_t span (matching DriverStation format)
+    {
+        auto &entry = GetIntegerArrayEntry(signalID + "/povs");
+        std::array<int64_t, 1> povs64 = {static_cast<int64_t>(povs[0])};
+        entry.Append(std::span<const int64_t>{povs64.data(), povs64.size()}, timestamp);
+    }
 }
 
 void WPISignalLogger::Start()

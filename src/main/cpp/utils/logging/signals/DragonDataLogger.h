@@ -299,8 +299,8 @@ public:
     string m_swerveModuleStateUnits = "Speed, Angle";
     string m_swerveChassisSpeedUnits = "Vx, Vy, Omega";
 
-    string m_gamePad0Path = "DS:joystick0/";
-    string m_gamePad1Path = "DS:joystick1/";
+    string m_gamePad0Path = "DS:joystick0";
+    string m_gamePad1Path = "DS:joystick1";
 
     units::time::second_t m_latency = units::time::second_t(0);
 
