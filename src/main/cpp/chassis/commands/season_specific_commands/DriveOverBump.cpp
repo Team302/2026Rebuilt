@@ -125,24 +125,6 @@ frc::Pose2d DriveOverBump::GetEndPose()
 ///             These angles ensure the robot approaches and crosses the bump
 ///             at the optimal heading toward the hub center.
 //------------------------------------------------------------------
-//------------------------------------------------------------------
-/// @brief      Determines the appropriate rotation angle for driving over a bump
-/// @param[in]  bump - The identifier for which bump (Red/Blue, Depot/Outpost)
-/// @param[in]  isInNeutralZone - True if robot is in neutral zone, false if in alliance zone
-/// @return     units::angle::degree_t - The rotation angle in degrees for the robot heading
-/// @details    This method returns the correct robot heading based on:
-///             - Which bump is being crossed (4 possibilities)
-///             - Direction of travel (neutral->alliance or alliance->neutral)
-///
-///             Rotation angles are defined as static constexpr members:
-///             - Red Depot: 315° from alliance, 315° from neutral
-///             - Red Outpost: 45° from alliance, 45° from neutral
-///             - Blue Depot: 45° from alliance, 45° from neutral
-///             - Blue Outpost: 315° from alliance, 315° from neutral
-///
-///             These angles ensure the robot approaches and crosses the bump
-///             at the optimal heading toward the hub center.
-//------------------------------------------------------------------
 units::angle::degree_t DriveOverBump::GetRotation(BUMP_ID bump, bool isInNeutralZone) const
 {
     switch (bump)
