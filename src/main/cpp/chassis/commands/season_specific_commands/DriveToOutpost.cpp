@@ -27,6 +27,7 @@
 DriveToOutpost::DriveToOutpost(subsystems::CommandSwerveDrivetrain *chassis)
     : DriveToPose(chassis)
 {
+    SetDistanceThreshold(0.1_ft);
 }
 
 struct DriveToPoses DriveToOutpost::GetDriveToPoses()
@@ -47,6 +48,9 @@ struct DriveToPoses DriveToOutpost::GetDriveToPoses()
     if (outpostHelper != nullptr)
     {
         poses.endPose = outpostHelper->CalcOutpostPose();
+        poses.hasMidPose = true;
+        poses.midPose = outpostHelper->CalcOutpostOffsetPose();
+
         return poses;
     }
 

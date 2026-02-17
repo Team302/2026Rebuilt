@@ -16,6 +16,7 @@
 
 #include "chassis/commands/DriveToPose.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "utils/DragonField.h"
 
 //====================================================================================================================================================
 /// @class DriveToOutpost
@@ -46,4 +47,7 @@ public:
 
 protected:
     struct DriveToPoses GetDriveToPoses() override;
+
+private:
+    DragonField *m_field;
 };

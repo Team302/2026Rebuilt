@@ -59,7 +59,7 @@ struct DriveToPoses
 /// The command publishes state changes to RobotState for coordination with other subsystems
 /// and provides logging for debugging and performance analysis.
 ///
-/// @see DriveOverBump Example of multi-waypoint navigation using SetEndPose()
+/// @see DriveOverBump Example of multi-waypoint navigation using SetTargetPose()
 /// @see CommandSwerveDrivetrain The swerve drive subsystem controlled by this command
 //====================================================================================================================================================
 class DriveToPose : public frc2::CommandHelper<frc2::Command, DriveToPose>
@@ -124,7 +124,7 @@ public:
     void End(bool interrupted) override;
 
 protected:
-    virtual struct DriveToPoses GetDriveToPoses() { return DriveToPoses{}; };
+    virtual struct DriveToPoses GetDriveToPoses() { return DriveToPoses{}; }
 
     //------------------------------------------------------------------
     /// @brief      Gets the target pose for navigation
@@ -154,7 +154,7 @@ protected:
     /// @note       PID controllers are reset to prevent control discontinuities
     /// @see        DriveOverBump::IsFinished() for example usage
     //------------------------------------------------------------------
-    void SetEndPose(const frc::Pose2d &endPose);
+    void SetTargetPose(const frc::Pose2d &endPose);
 
     //------------------------------------------------------------------
     /// @brief      Sets the distance threshold for completion detection
@@ -212,6 +212,7 @@ private:
     frc::Pose2d m_currentPose;
 
     /// @brief Target pose to navigate to
+    frc::Pose2d m_targetPose;
     frc::Pose2d m_endPose;
     frc::Pose2d m_midPose;
     bool m_hasMidPose = false;

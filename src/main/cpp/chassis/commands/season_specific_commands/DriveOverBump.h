@@ -67,29 +67,6 @@ public:
     //------------------------------------------------------------------
     ~DriveOverBump() = default;
 
-    //------------------------------------------------------------------
-    /// @brief      Checks if the DriveOverBump command has completed execution
-    /// @return     true if the command should terminate, false if it should continue running
-    /// @details    Implements two-stage completion logic:
-    ///
-    ///             **Stage 1 (Error Check):**
-    ///             Returns true immediately if m_endPose is at origin, indicating a calculation error
-    ///
-    ///             **Stage 2 (Two-Phase Navigation):**
-    ///             - Phase 1: Navigate to m_midPose (top of bump)
-    ///               * When reached, switches target to m_endPose and continues (returns false)
-    ///             - Phase 2: Navigate to m_endPose (other side of bump)
-    ///               * When reached, command completes (returns true)
-    ///
-    ///             The m_beforeMidPose flag tracks which phase is active. This ensures the robot
-    ///             successfully crosses the bump using waypoint navigation instead of direct path planning.
-    ///
-    /// @note       Delegates to base class DriveToPose::IsFinished() for actual distance threshold checking
-    /// @note       Called repeatedly by the command scheduler during command execution
-    //------------------------------------------------------------------
-
-    bool IsFinished() override;
-
 protected:
     struct DriveToPoses GetDriveToPoses() override;
 

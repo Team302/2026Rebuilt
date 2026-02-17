@@ -74,46 +74,6 @@ units::angle::degree_t DriveOverBump::GetRotation(BUMP_ID bump, bool isInNeutral
     }
 }
 
-//------------------------------------------------------------------
-/// @brief      Checks if the DriveOverBump command has finished execution
-/// @return     true if the command should terminate, false if it should continue
-/// @details    This method implements a two-stage completion check:
-///
-///             Two-phase navigation
-///             - First phase: Drive to m_midPose (front of bump)
-///               * When reached, updates target to m_endPose and continues
-///             - Second phase: Drive to m_endPose (other side of bump)
-///               * When reached, command completes
-///
-///             The m_beforeMidPose flag tracks which phase we're in:
-///             - true: Still navigating to midpoint
-///             - false: Navigating to final endpoint
-///
-///             This two-stage approach ensures the robot successfully crosses
-///             the bump rather than trying to drive directly through it.
-///
-/// @note       Uses PoseUtils::IsPoseAtOrigin with 1cm tolerance for error detection
-/// @note       Delegates to base class DriveToPose::IsFinished() for actual completion check
-//------------------------------------------------------------------
-bool DriveOverBump::IsFinished()
-{
-    // Check if we've reached the current target pose (either mid or end)
-    auto finished = DriveToPose::IsFinished();
-
-    // Two-stage navigation logic
-    if (m_beforeMidPose && finished)
-    {
-        // Just finished reaching the midpoint (top of bump)
-        // Now update the target to the final endpoint
-        SetEndPose(m_endPose);
-        m_beforeMidPose = false;
-        return false; // Continue to second stage
-    }
-
-    // Either still driving to first pose, or finished with second pose
-    return finished;
-}
-
 struct DriveToPoses DriveOverBump::GetDriveToPoses()
 {
     struct DriveToPoses poses;
