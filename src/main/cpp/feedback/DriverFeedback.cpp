@@ -55,6 +55,7 @@ DriverFeedback::DriverFeedback() : IRobotStateChangeSubscriber()
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveStateType_Int);
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool);
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool);
     m_LEDStates->SetBlinkingFrequency(m_blinkingFrequency);
 }
 void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, int value)
@@ -73,18 +74,33 @@ void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, bo
         m_climbMode = value;
     else if (RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool == change)
         m_shiftChangeIn5Seconds = value;
+    else if (RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool == change)
+        m_shiftChangeIn3Seconds = value;
 }
 
 void DriverFeedback::UpdateFeedback()
 {
     UpdateLEDStates();
     UpdateDiagnosticLEDs();
+    UpdateRumble();
     CheckControllers();
     m_LEDStates->Periodic();
 }
 
 void DriverFeedback::UpdateRumble()
 {
+
+    if (m_shiftChangeIn3Seconds)
+    {
+        TeleopControl::GetInstance()->SetRumble(0, true, true);
+        TeleopControl::GetInstance()->SetRumble(1, true, true);
+    }
+    else
+    {
+        m_rumbleLoopCounter = 0;
+        TeleopControl::GetInstance()->SetRumble(0, false, false);
+        TeleopControl::GetInstance()->SetRumble(1, false, false);
+    }
 }
 
 void DriverFeedback::UpdateLEDStates()
