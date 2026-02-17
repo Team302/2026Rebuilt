@@ -102,7 +102,7 @@ void DragonQuest::Periodic()
     m_questNav.CommandPeriodic();
 
     bool connected = m_questNav.IsConnected() && m_questNav.IsTracking();
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogIsConnected, connected);
+    
 
     HandleDashboard();
 
@@ -195,6 +195,20 @@ void DragonQuest::HandleDashboard()
     {
         m_isQuestEnabled = false;
     }
+}
+
+void DragonQuest::LogDashboardData()
+{
+    bool connected = m_questNav.IsConnected();
+    bool tracking = m_questNav.IsTracking();
+    int batteryPercent = m_questNav.GetBatteryPercent().value_or(-1);
+   
+    
+    auto m_DebugData = nt::NetworkTableInstance::GetDefault().GetTable("Debug/DragonQuest");
+    m_DebugData.get()->PutBoolean("IsConnected", connected);
+    m_DebugData.get()->PutBoolean("IsTracking", tracking);
+    m_DebugData.get()->PutNumber("BatteryPercent", batteryPercent);
+
 }
 
 // ──────────────────────────────────────────────────────────────────────────────

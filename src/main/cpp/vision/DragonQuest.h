@@ -65,6 +65,9 @@ private:
     /// @brief Apply the robot-to-Quest mounting offset and send a pose-reset command via QuestNav.
     void SetRobotPose(const frc::Pose2d &pose);
 
+    /// @brief Log status data to the dashboard for debugging and diagnostics.
+    void LogDashboardData();
+
     /// @brief Convert a Quest frc::Pose3d to a robot frc::Pose3d by applying the inverse mounting transform.
     frc::Pose3d QuestPoseToRobotPose3d(const frc::Pose3d &questPose) const;
 
@@ -73,6 +76,9 @@ private:
 
     // ── QuestNav library instance (handles all NT / protobuf communication) ──
     QuestNav m_questNav;
+
+    /// @brief NetworkTables instance for logging debug data to the dashboard.
+    nt::NetworkTableInstance m_DebugData;
 
     // ── Mounting offsets ──
     units::length::inch_t m_mountingXOffset;
