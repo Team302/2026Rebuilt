@@ -145,11 +145,8 @@ units::angle::degree_t DriveOverBump::GetRotation(BUMP_ID bump, bool isInNeutral
 /// @return     true if the command should terminate, false if it should continue
 /// @details    This method implements a two-stage completion check:
 ///
-///             Stage 1: Error checking
-///             - Returns true immediately if m_endPose is at origin (calculation error)
-///
-///             Stage 2: Two-phase navigation
-///             - First phase: Drive to m_midPose (closest side of bump)
+///             Two-phase navigation
+///             - First phase: Drive to m_midPose (front of bump)
 ///               * When reached, updates target to m_endPose and continues
 ///             - Second phase: Drive to m_endPose (other side of bump)
 ///               * When reached, command completes
@@ -181,4 +178,13 @@ bool DriveOverBump::IsFinished()
 
     // Either still driving to first pose, or finished with second pose
     return finished;
+}
+
+struct DriveToPoses DriveOverBump::GetDriveToPoses()
+{
+    struct DriveToPoses poses;
+    poses.endPose = GetEndPose();
+    poses.hasMidPose = true;
+    poses.midPose = m_midPose;
+    return poses;
 }
