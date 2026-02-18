@@ -144,8 +144,14 @@ public:
     ///-----------------------------------------------------------------------------------
     void SetRobotPose(const frc::Pose2d &pose);
 
+    ///-----------------------------------------------------------------------------------
+    /// @brief Set the robot pose on this Limelight using its current MegaTag1 estimate.
+    ///-----------------------------------------------------------------------------------
     void SetRobotPoseWithMegaTag1();
 
+    ///-----------------------------------------------------------------------------------
+    /// @brief Update the IMU configuration for this Limelight.
+    ///-----------------------------------------------------------------------------------
     void UpdateIMUConfiguration();
 
     DRAGON_LIMELIGHT_CAMERA_TYPE GetCameraType() { return m_cameraType; };

@@ -185,10 +185,14 @@ public:
     /// @return DragonVisionPoseEstimatorStruct - confidence level indicates the usefulness of the pose.
     DragonVisionPoseEstimatorStruct GetRobotPositionQuest();
 
+    /// @brief Set the Limelight robot pose (Yaw) on all AprilTag limelights using MegaTag1 localization.
     void SetRobotPositionMegaTag1();
 
+    /// @brief Set the Limelight robot pose (Yaw) on all AprilTag limelights using the chassis pose.
+    /// @param pose The robot's current pose (position and rotation) on the field.
     void SetLimeLightYaw(frc::Pose2d pose);
 
+    /// @brief Update the IMU configuration for all AprilTag limelights.
     void SetIMUConfig();
 
     void RefreshQuestData();

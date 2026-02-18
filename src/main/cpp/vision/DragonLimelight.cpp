@@ -251,15 +251,6 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag1Pose()
     return m_megatag1Pos;
 }
 
-void DragonLimelight::SetRobotPoseWithMegaTag1()
-{
-    auto visionPose = GetMegaTag1Pose();
-    if (frc::DriverStation::IsDisabled() && visionPose.has_value())
-    {
-        SetRobotPose(visionPose.value().estimatedPose.ToPose2d());
-    }
-}
-
 /// ----------------------------------------------------------------------------------
 /// @brief Get pose estimate using the MegaTag2 specialized API.
 /// @details Requires an initial robot pose to be set (will attempt to get MegaTag1 pose first if needed).
@@ -495,6 +486,14 @@ void DragonLimelight::StopRewind()
     LimelightHelpers::setRewindEnabled(m_networkTableName, false);
 }
 
+/// ----------------------------------------------------------------------------------
+/// @brief Update the IMU configuration mode for this Limelight based on robot state.
+/// @details Selects the appropriate IMU mode based on whether the robot is disabled:
+///          - When disabled: Uses external IMU fused with internal IMU (sets the Limelight to trust the robot's IMU for orientation)
+///          - When enabled: Uses internal IMU with external IMU assisted convergence
+///          Only updates the Limelight if the required mode has changed to avoid
+///          unnecessary network table writes.
+/// ----------------------------------------------------------------------------------
 void DragonLimelight::UpdateIMUConfiguration()
 {
     LIMELIGHT_IMU_MODE requiredMode = frc::DriverStation::IsDisabled() ? LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_AND_FUSE_WITH_INTERNAL_IMU : LIMELIGHT_IMU_MODE::USE_INTERNAL_IMU_WITH_EXTERNAL_IMU_ASSISTED_CONVERGENCE;
@@ -503,5 +502,21 @@ void DragonLimelight::UpdateIMUConfiguration()
     {
         LimelightHelpers::SetIMUMode(m_networkTableName, static_cast<int>(requiredMode));
         m_lastIMUMode = requiredMode;
+    }
+}
+
+/// ----------------------------------------------------------------------------------
+/// @brief Set the robot pose on this Limelight using its MegaTag1 pose estimate.
+/// @details Retrieves the current MegaTag1 pose from the Limelight and uses it to
+///          update the robot's orientation. This operation only occurs when the robot
+///          is disabled and a valid MegaTag1 pose is available. Useful for initializing
+///          or correcting the robot's pose estimate during calibration or setup.
+/// ----------------------------------------------------------------------------------
+void DragonLimelight::SetRobotPoseWithMegaTag1()
+{
+    auto visionPose = GetMegaTag1Pose();
+    if (frc::DriverStation::IsDisabled() && visionPose.has_value())
+    {
+        SetRobotPose(visionPose.value().estimatedPose.ToPose2d());
     }
 }
