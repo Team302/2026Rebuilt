@@ -146,10 +146,7 @@ public:
 
     void SetRobotPoseWithMegaTag1();
 
-    DRAGON_LIMELIGHT_CAMERA_TYPE GetCameraType()
-    {
-        return m_cameraType;
-    };
+    DRAGON_LIMELIGHT_CAMERA_TYPE GetCameraType() { return m_cameraType; };
 
     ///-----------------------------------------------------------------------------------
     /// @brief Enable rewind buffer recording on this Limelight (LL4 only).
