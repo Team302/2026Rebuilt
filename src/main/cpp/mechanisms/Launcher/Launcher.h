@@ -105,6 +105,7 @@ public:
 	}
 	void UpdateTargetTurretPositionDegreesTurret(units::angle::turn_t position)
 	{
+		position = std::clamp(position, m_minTurretAngle, m_maxTurretAngle);
 		m_turretPositionDegreesTurret.Position = position;
 		m_turretActiveTarget = &m_turretPositionDegreesTurret.WithSlot(0);
 	}
@@ -213,6 +214,8 @@ private:
 	units::angle::degree_t m_targetHoodAngle = 0.0_tr;
 	units::angle::turn_t m_minHoodAngle = 0.0_tr;
 	units::angle::turn_t m_maxHoodAngle = 45.0_tr;
+	units::angle::turn_t m_minTurretAngle = 90_tr;
+	units::angle::turn_t m_maxTurretAngle = 270_tr;
 
 	units::angle::turn_t m_turretAngleThreshold = 5.0_tr;
 	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 25.0_rpm;
