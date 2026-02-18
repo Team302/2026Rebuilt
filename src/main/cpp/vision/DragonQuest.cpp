@@ -106,6 +106,7 @@ void DragonQuest::Periodic()
     bool connected = m_questNav.IsConnected() && m_questNav.IsTracking();
 
     HandleDashboard();
+    LogDashboardData();
 
     if (connected)
     {
