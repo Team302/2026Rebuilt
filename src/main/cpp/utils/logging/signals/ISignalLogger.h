@@ -42,7 +42,7 @@ public:
     virtual void WritePose3d(std::string signalID, const frc::Pose3d &value, uint64_t timestamp) = 0;
     virtual void WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, uint64_t timestamp) = 0;
     virtual void WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, uint64_t timestamp) = 0;
-    virtual void WriteGamePadState(std::string signalID, const std::array<double, 6>, const std::array<bool, 16>, const std::array<int, 1>, uint64_t timestamp) = 0;
+    virtual void WriteGamePadState(std::string signalID, const std::array<double, 6>, const std::array<bool, 10>, const std::array<int, 1>, uint64_t timestamp) = 0;
     // Optional: methods for starting/stopping logging
     virtual void Start() = 0;
     virtual void Stop() = 0;

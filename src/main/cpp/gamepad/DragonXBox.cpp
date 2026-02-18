@@ -294,7 +294,7 @@ void DragonXBox::SetRumble(
 void DragonXBox::DataLog(uint64_t timestamp)
 {
     std::array<double, 6> axes;
-    std::array<bool, 16> buttons;
+    std::array<bool, 10> buttons;
     axes[0] = GetAxisValue(TeleopControlMappingEnums::LEFT_JOYSTICK_X);
     axes[1] = GetAxisValue(TeleopControlMappingEnums::LEFT_JOYSTICK_Y);
     axes[2] = GetAxisValue(TeleopControlMappingEnums::LEFT_TRIGGER);

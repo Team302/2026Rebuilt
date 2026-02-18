@@ -75,7 +75,7 @@ void WPISignalLogger::WriteSwerveModuleState(std::string signalID, const frc::Sw
     entry.Append(value, timestamp);
 }
 
-void WPISignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, const std::array<int, 1> povs, uint64_t timestamp)
+void WPISignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs, uint64_t timestamp)
 {
     // Log axes as float span (matching DriverStation format)
     {

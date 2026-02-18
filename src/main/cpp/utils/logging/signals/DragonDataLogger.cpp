@@ -511,7 +511,7 @@ void DragonDataLogger::LogChassisSpeedsData(uint64_t timestamp, DragonDataLogger
     }
 }
 
-void DragonDataLogger::LogGamePadData(uint64_t timestamp, DragonDataLogger::GamePadSignals signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, const std::array<int, 1> povs)
+void DragonDataLogger::LogGamePadData(uint64_t timestamp, DragonDataLogger::GamePadSignals signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs)
 {
     auto dataMgr = DragonDataLoggerMgr::GetInstance();
     if (dataMgr == nullptr)

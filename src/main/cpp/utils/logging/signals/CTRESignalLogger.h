@@ -35,7 +35,7 @@ public:
     void WritePose3d(std::string signalID, const frc::Pose3d &value, uint64_t timestamp) override;
     void WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, uint64_t timestamp) override;
     void WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, uint64_t timestamp) override;
-    void WriteGamePadState(std::string signalID, const std::array<double, 6>, const std::array<bool, 16>, const std::array<int, 1>, uint64_t timestamp) override;
+    void WriteGamePadState(std::string signalID, const std::array<double, 6>, const std::array<bool, 10>, const std::array<int, 1>, uint64_t timestamp) override;
     void Start() override;
     void Stop() override;
     void SetAutoLogging(bool enable);

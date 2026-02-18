@@ -74,7 +74,7 @@ void CTRESignalLogger::WriteSwerveModuleState(std::string signalID, const frc::S
     SignalLogger::WriteDoubleArray(signalID, data, "Speed_mps;Angle_rad", ConvertMicrosecondsToSeconds(timestamp));
 }
 
-void CTRESignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 16> buttons, const std::array<int, 1> povs, uint64_t timestamp)
+void CTRESignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs, uint64_t timestamp)
 {
     // Log axes
     {
