@@ -18,33 +18,34 @@
 #include <string>
 
 // FRC Includes
-#include <networktables/NetworkTableInstance.h>
 #include <frc/Timer.h>
+#include <networktables/NetworkTableInstance.h>
 
 #include "Launcher.h"
-#include "utils/logging/debug/Logger.h"
-#include "utils/PeriodicLooper.h"
 #include "state/RobotState.h"
 #include "utils/DragonPower.h"
+#include "utils/PeriodicLooper.h"
+#include "utils/logging/debug/Logger.h"
 
-#include "ctre/phoenix6/TalonFX.hpp"
-#include "ctre/phoenix6/controls/Follower.hpp"
-#include "ctre/phoenix6/configs/Configuration.hpp"
-#include "ctre/phoenix6/TalonFXS.hpp"
-#include "mechanisms/Launcher/OffState.h"
-#include "mechanisms/Launcher/InitializeState.h"
-#include "mechanisms/Launcher/IdleState.h"
-#include "mechanisms/Launcher/PrepareToLaunchState.h"
-#include "mechanisms/Launcher/LaunchState.h"
-#include "mechanisms/Launcher/EmptyHopperState.h"
-#include "mechanisms/Launcher/ClimbState.h"
-#include "mechanisms/Launcher/LauncherTuningState.h"
 #include "auton/DeadZoneManager.h"
+#include "ctre/phoenix6/TalonFX.hpp"
+#include "ctre/phoenix6/TalonFXS.hpp"
+#include "ctre/phoenix6/configs/Configuration.hpp"
+#include "ctre/phoenix6/controls/Follower.hpp"
+#include "mechanisms/Launcher/ClimbState.h"
+#include "mechanisms/Launcher/EmptyHopperState.h"
+#include "mechanisms/Launcher/IdleState.h"
+#include "mechanisms/Launcher/InitializeState.h"
+#include "mechanisms/Launcher/LaunchState.h"
+#include "mechanisms/Launcher/LauncherTuningState.h"
 #include "mechanisms/Launcher/ManualLaunchState.h"
+#include "mechanisms/Launcher/OffState.h"
+#include "mechanisms/Launcher/PrepareToLaunchState.h"
 
+#include "frc/RobotBase.h"
 #include "teleopcontrol/TeleopControl.h"
-#include "utils/InterpolateUtils.h"
 #include "units/math.h"
+#include "utils/InterpolateUtils.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -651,19 +652,8 @@ void Launcher::RunCommonTasks()
 {
 	// This function is called once per loop before the current state Run()
 	Cyclic();
-
-	if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCHER_OFF))
-	{
-		if (m_launcherOffButtonReleased)
-		{
-			m_launcherProtectedMode = !m_launcherProtectedMode;
-		}
-		m_launcherOffButtonReleased = false;
-	}
-	else
-	{
-		m_launcherOffButtonReleased = true;
-	}
+	InitilaizeLauncher();
+	SetLauncherProtect();
 
 	// Update Launcher Targets/Field
 	m_targetCalculator->UpdateTargetOffset();
@@ -689,6 +679,7 @@ void Launcher::Update()
 	m_transfer->SetControl(*m_transferActiveTarget);
 	m_turret->SetControl(*m_turretActiveTarget);
 	m_indexer->SetControl(*m_indexerActiveTarget);
+	m_agitator->SetControl(*m_agitatorActiveTarget);
 }
 
 void Launcher::Cyclic()
@@ -729,6 +720,11 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 
 bool Launcher::IsLauncherAtTarget()
 {
+
+	if (frc::RobotBase::IsSimulation())
+	{
+		return true;
+	}
 	// Launcher Speed error, Hood Angle error, Turret angle error are within a threshold, and if we are in launch zone. Also check chassis speed.
 	units::angle::degree_t hoodError = m_hood->GetPosition().GetValue() - m_targetHoodAngle;
 	units::angle::degree_t turretError = m_turret->GetPosition().GetValue() - m_targetTurretAngle;
@@ -786,6 +782,33 @@ void Launcher::UpdateLauncherTargets()
 	UpdateTargetHoodPositionDegreesHood(m_targetHoodAngle);
 	UpdateTargetTurretPositionDegreesTurret(m_targetTurretAngle);
 	UpdateTargetLauncherVelocityRPS(m_targetLauncherAngularVelocity);
+}
+
+void Launcher::InitilaizeLauncher()
+{
+	if (((m_turret->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround ||
+		  m_turret->GetForwardLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround) &&
+		 (m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)) ||
+		frc::RobotBase::IsSimulation())
+	{
+		m_launcherInitialized = true;
+	}
+}
+
+void Launcher::SetLauncherProtect()
+{
+	if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCHER_OFF))
+	{
+		if (m_launcherOffButtonReleased)
+		{
+			m_launcherProtectedMode = !m_launcherProtectedMode;
+		}
+		m_launcherOffButtonReleased = false;
+	}
+	else
+	{
+		m_launcherOffButtonReleased = true;
+	}
 }
 
 /* void Launcher::DataLog(uint64_t timestamp)

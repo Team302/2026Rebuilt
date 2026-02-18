@@ -1,0 +1,129 @@
+//====================================================================================================================================================
+// Copyright 2026 Lake Orion Robotics FIRST Team 302
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+// OR OTHER DEALINGS IN THE SOFTWARE.
+//====================================================================================================================================================
+#pragma once
+
+#include "chassis/commands/DriveToPose.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "fielddata/BumpHelper.h"
+#include "fielddata/FieldConstants.h"
+#include "units/angle.h"
+
+//====================================================================================================================================================
+/// @class DriveOverBump
+/// @brief Command to autonomously drive the robot over a field bump using a two-stage navigation approach
+///
+/// This command extends DriveToPose to provide specialized functionality for safely navigating over the bumps
+/// that separate the alliance zone from the neutral zone on the 2026 game field. The command intelligently
+/// determines which bump (Red/Blue, Depot/Outpost) is nearest and calculates an optimal path over it.
+///
+/// **Two-Stage Navigation:**
+/// The command uses a midpoint-to-endpoint strategy to ensure the robot successfully crosses the bump:
+/// 1. First, drive to the midpoint pose (top of the bump)
+/// 2. Then, drive to the endpoint pose (other side of the bump)
+///
+/// **Directional Intelligence:**
+/// - If starting in the neutral zone: Drive toward the alliance zone
+/// - If starting in the alliance zone: Drive toward the neutral zone
+///
+/// **Rotation Handling:**
+/// Each bump has predefined rotation angles (45° or 315°) that orient the robot toward the hub center
+/// while crossing, ensuring optimal positioning for game play after the transition.
+///
+/// The command uses BumpHelper for bump identification, FieldOffsetValues for coordinates, and
+/// NeutralZoneManager for zone detection, making it fully autonomous and field-aware.
+///
+/// @see DriveToPose Base class providing PID-controlled pose navigation
+/// @see BumpHelper Utility for identifying nearest bump
+/// @see FieldOffsetValues Field coordinate management
+//====================================================================================================================================================
+class DriveOverBump : public DriveToPose
+{
+public:
+    //------------------------------------------------------------------
+    /// @brief      Constructor for DriveOverBump command
+    /// @param[in]  chassis - Pointer to the swerve drive subsystem that will execute the movement
+    /// @details    Initializes the command with the chassis reference for autonomous navigation.
+    ///             The constructor sets up the base DriveToPose functionality and initializes
+    ///             the midpoint and endpoint pose members to default values. Actual pose
+    ///             calculation occurs when GetEndPose() is called by the command scheduler.
+    //------------------------------------------------------------------
+    DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis);
+
+    //------------------------------------------------------------------
+    /// @brief      Destructor (default implementation)
+    /// @details    No cleanup required as all resources are managed by parent class or are value types
+    //------------------------------------------------------------------
+    ~DriveOverBump() = default;
+
+    //------------------------------------------------------------------
+    /// @brief      Calculates the target poses for the two-stage bump crossing maneuver
+    /// @return     frc::Pose2d - The initial midpoint pose (top of bump) to navigate to first
+    /// @details    This method is called by the command scheduler to determine the robot's path.
+    ///             It performs the following operations:
+    ///             - Identifies the nearest bump using BumpHelper
+    ///             - Determines current zone (alliance or neutral) via NeutralZoneManager
+    ///             - Retrieves field coordinates for both sides of the bump from FieldOffsetValues
+    ///             - Calculates appropriate rotation angles based on bump type and direction
+    ///             - Sets m_midPose (returned value) and m_endPose (used after midpoint reached)
+    ///             - Configures distance threshold to 1 foot for completion detection
+    ///
+    ///             The two-stage approach ensures the robot follows a safe trajectory over
+    ///             the bump rather than attempting to drive straight through it.
+    ///
+    /// @note       If BumpHelper is unavailable, returns default origin pose
+    /// @see        GetRotation() for rotation angle calculation
+    //------------------------------------------------------------------
+    frc::Pose2d GetEndPose() override;
+
+    //------------------------------------------------------------------
+    /// @brief      Checks if the DriveOverBump command has completed execution
+    /// @return     true if the command should terminate, false if it should continue running
+    /// @details    Implements two-stage completion logic:
+    ///
+    ///             **Stage 1 (Error Check):**
+    ///             Returns true immediately if m_endPose is at origin, indicating a calculation error
+    ///
+    ///             **Stage 2 (Two-Phase Navigation):**
+    ///             - Phase 1: Navigate to m_midPose (top of bump)
+    ///               * When reached, switches target to m_endPose and continues (returns false)
+    ///             - Phase 2: Navigate to m_endPose (other side of bump)
+    ///               * When reached, command completes (returns true)
+    ///
+    ///             The m_beforeMidPose flag tracks which phase is active. This ensures the robot
+    ///             successfully crosses the bump using waypoint navigation instead of direct path planning.
+    ///
+    /// @note       Delegates to base class DriveToPose::IsFinished() for actual distance threshold checking
+    /// @note       Called repeatedly by the command scheduler during command execution
+    //------------------------------------------------------------------
+
+    bool IsFinished() override;
+
+private:
+    units::angle::degree_t GetRotation(BUMP_ID bump, bool isInNeutralZone) const;
+
+    frc::Pose2d m_midPose;
+    frc::Pose2d m_endPose;
+    bool m_beforeMidPose = true;
+
+    static constexpr units::degree_t BlueAllianceOutpostWallTowardHub{315.0};
+    static constexpr units::degree_t NeutralZoneTowardHubBlueOutpost{315.0};
+    static constexpr units::degree_t BlueAllianceDepotWallTowardHub{45.0};
+    static constexpr units::degree_t NeutralZoneTowardHubBlueDepot{45.0};
+
+    static constexpr units::degree_t RedAllianceDepotWallTowardHub{315.0};
+    static constexpr units::degree_t NeutralZoneTowardHubRedDepot{315.0};
+    static constexpr units::degree_t RedAllianceOutpostWallTowardHub{45.0};
+    static constexpr units::degree_t NeutralZoneTowardHubRedOutpost{45.0};
+};

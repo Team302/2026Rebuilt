@@ -98,8 +98,8 @@
           },
           {
             "title": "Logging Options",
-            "x": 1344.0,
-            "y": 128.0,
+            "x": 128.0,
+            "y": 896.0,
             "width": 128.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
@@ -111,8 +111,8 @@
           },
           {
             "title": "Logging Levels",
-            "x": 1344.0,
-            "y": 0.0,
+            "x": 0.0,
+            "y": 896.0,
             "width": 128.0,
             "height": 128.0,
             "type": "ComboBox Chooser",
@@ -230,8 +230,8 @@
             "title": "Field",
             "x": 512.0,
             "y": 0.0,
-            "width": 832.0,
-            "height": 448.0,
+            "width": 1408.0,
+            "height": 576.0,
             "type": "Field",
             "properties": {
               "topic": "/SmartDashboard/Field",
@@ -245,6 +245,39 @@
               "robot_color": 4294198070,
               "trajectory_color": 4294967295,
               "show_robot_outside_widget": true
+            }
+          },
+          {
+            "title": "Time Left In Shift",
+            "x": 896.0,
+            "y": 576.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Match Time",
+            "properties": {
+              "topic": "/SmartDashboard/Time Left In Shift",
+              "period": 0.06,
+              "data_type": "double",
+              "time_display_mode": "Minutes and Seconds",
+              "red_start_time": 20,
+              "yellow_start_time": 30
+            }
+          },
+          {
+            "title": "Hub Active",
+            "x": 512.0,
+            "y": 576.0,
+            "width": 384.0,
+            "height": 256.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Hub Active",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           }
         ]

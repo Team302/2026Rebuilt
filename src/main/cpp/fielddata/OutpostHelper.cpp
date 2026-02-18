@@ -90,7 +90,7 @@ frc::Pose2d OutpostHelper::CalcOutpostPose() const
     auto outpostPose = isNearestOutpostRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_OUTPOST_CENTER)
                                            : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_CENTER);
 
-    return frc::Pose2d(FieldOffsetValues::GetInstance()->GetXValue(isNearestOutpostRed, FIELD_OFFSET_ITEMS::OUTPOST_X), outpostPose.Y(), isNearestOutpostRed ? 0_deg : 180_deg);
+    return frc::Pose2d(FieldOffsetValues::GetInstance()->GetValue(isNearestOutpostRed, FIELD_OFFSET_ITEMS::OUTPOST_X), outpostPose.Y(), isNearestOutpostRed ? 0_deg : 180_deg);
 }
 
 //------------------------------------------------------------------

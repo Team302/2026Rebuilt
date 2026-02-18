@@ -20,69 +20,282 @@
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/geometry/Pose2d.h>
 
+//====================================================================================================================================================
+/// @class DriveToPose
+/// @brief Base command class for autonomous navigation to field poses using hybrid feedforward+PID control
+///
+/// This command implements a sophisticated control strategy for driving a swerve drivetrain to specific
+/// field poses with high accuracy and smooth motion profiles. It serves as a base class that can be
+/// extended for navigation to specific field elements or game pieces.
+///
+/// **Control Architecture:**
+/// The command uses a hybrid control approach combining:
+/// - **Feedforward Control:** Distance-based velocity scaling for efficient long-range travel
+/// - **PID Feedback:** Separate ProfiledPIDControllers for X and Y translation for precise positioning
+/// - **Heading Control:** Independent rotation control to face target direction
+/// - **Adaptive Reset:** Automatic PID reset when error exceeds threshold to prevent windup
+///
+/// **Motion Profile:**
+/// - Maximum velocity: 4 m/s
+/// - Maximum acceleration: 4 m/s² (trapezoidal profile)
+/// - Feedforward ramp: 0-1.25m from target (linear scaling)
+/// - PID active when error < 0.25m
+/// - Completion threshold: 0.25 inches (customizable)
+///
+/// **Extensibility:**
+/// Derived classes override GetEndPose() to provide specific target calculations:
+/// - DriveToDepot: Navigate to depot zones
+/// - DriveOverBump: Multi-stage bump crossing
+/// - DriveToGamePiece: Vision-based game piece targeting
+///
+/// **State Management:**
+/// The command publishes state changes to RobotState for coordination with other subsystems
+/// and provides logging for debugging and performance analysis.
+///
+/// @see DriveOverBump Example of multi-waypoint navigation using SetEndPose()
+/// @see CommandSwerveDrivetrain The swerve drive subsystem controlled by this command
+//====================================================================================================================================================
 class DriveToPose : public frc2::CommandHelper<frc2::Command, DriveToPose>
 {
 public:
-    /**
-     * @brief Creates a command to drive to a specified field element using vision and odometry.
-     *
-     * @param chassis A pointer to the swerve drive subsystem.
-     * @param target The specific field element to target.
-     */
+    //------------------------------------------------------------------
+    /// @brief      Constructs a DriveToPose command for autonomous navigation
+    /// @param[in]  chassis - Pointer to the swerve drive subsystem that will execute the motion
+    /// @details    Initializes the command with ProfiledPID controllers for X and Y translation,
+    ///             configures I-Zone to prevent integral windup, and captures initial robot state.
+    ///             The command requires exclusive access to the chassis subsystem during execution.
+    ///
+    ///             **Controller Configuration:**
+    ///             - X/Y PID gains: kP=4.5, kI=0.0, kD=0.5
+    ///             - Trapezoidal constraints: 4 m/s max velocity, 4 m/s² max acceleration
+    ///             - I-Zone: 0.20m (prevents integral accumulation when far from target)
+    ///             - Update rate: 20ms (50 Hz)
+    ///
+    /// @note       Derived classes should call this constructor via initializer list
+    /// @see        Initialize() for per-execution setup
+    //------------------------------------------------------------------
     DriveToPose(subsystems::CommandSwerveDrivetrain *chassis);
 
-    // FRC Command Lifecycle methods
+    //------------------------------------------------------------------
+    // FRC Command Lifecycle Methods
+    //------------------------------------------------------------------
+
+    //------------------------------------------------------------------
+    /// @brief      Initializes the command when scheduled
+    /// @details    Called once when the command starts. Gets the target pose,
+    ///             resets movement detection, configures controllers, and publishes
+    ///             state changes to notify other subsystems that navigation is active.
+    /// @see        GetEndPose() for target determination
+    //------------------------------------------------------------------
     void Initialize() override;
+
+    //------------------------------------------------------------------
+    /// @brief      Executes the command periodically (every 20ms)
+    /// @details    Updates robot pose, calculates feedforward and PID corrections,
+    ///             applies velocity clamping, and sends control requests to the drivetrain.
+    ///             Implements adaptive PID reset when error exceeds threshold.
+    /// @see        CalculateFeedForward() for velocity calculation
+    /// @see        IsFinished() for completion detection
+    //------------------------------------------------------------------
     void Execute() override;
+
+    //------------------------------------------------------------------
+    /// @brief      Checks if navigation is complete
+    /// @return     true if target reached or robot is stuck, false to continue
+    /// @details    Returns true when robot is within distance threshold of target
+    ///             or when robot has stopped moving (stuck detection).
+    /// @see        SetDistanceThreshold() to adjust completion tolerance
+    //------------------------------------------------------------------
     bool IsFinished() override;
+
+    //------------------------------------------------------------------
+    /// @brief      Cleans up when command ends
+    /// @param[in]  interrupted - true if interrupted, false if finished normally
+    /// @details    Stops the robot with brake control and publishes state changes
+    ///             to notify other subsystems that navigation has ended.
+    //------------------------------------------------------------------
     void End(bool interrupted) override;
 
 protected:
+    //------------------------------------------------------------------
+    /// @brief      Gets the target pose for navigation
+    /// @return     frc::Pose2d - The target field pose to navigate to
+    /// @details    Virtual method that derived classes override to provide
+    ///             specific target calculations based on field elements,
+    ///             vision data, or game strategy. Base implementation returns
+    ///             the current m_endPose value.
+    ///
+    /// @note       Called by Initialize() at command start
+    /// @note       Override this in derived classes for custom targeting
+    /// @see        DriveOverBump::GetEndPose() for multi-waypoint example
+    //------------------------------------------------------------------
     virtual frc::Pose2d GetEndPose() { return m_endPose; };
+
+    //------------------------------------------------------------------
+    /// @brief      Updates the target pose during execution
+    /// @param[in]  endPose - The new target pose to navigate to
+    /// @details    Allows dynamic target changes during command execution.
+    ///             Resets PID controllers with current state to ensure smooth
+    ///             transition to the new target. Used for multi-stage navigation
+    ///             or reactive path planning.
+    ///
+    /// @note       PID controllers are reset to prevent control discontinuities
+    /// @see        DriveOverBump::IsFinished() for example usage
+    //------------------------------------------------------------------
+    void SetEndPose(const frc::Pose2d &endPose);
+
+    //------------------------------------------------------------------
+    /// @brief      Sets the distance threshold for completion detection
+    /// @param[in]  distanceThreshold - Distance tolerance in inches for considering target reached
+    /// @details    Customizes how close the robot must be to the target before
+    ///             IsFinished() returns true. Smaller values provide higher precision
+    ///             but may increase settling time. Default is 0.25 inches.
+    ///
+    /// @note       Typically called by derived classes in GetEndPose()
+    //------------------------------------------------------------------
+    void SetDistanceThreshold(const units::length::inch_t &distanceThreshold) { m_distanceThreshold = distanceThreshold; }
+
+    //------------------------------------------------------------------
+    /// @brief      Gets the chassis subsystem pointer
+    /// @return     Pointer to the swerve drive subsystem
+    /// @details    Provides protected access to the chassis for derived classes
+    ///             that need to query robot state or modify control behavior.
+    //------------------------------------------------------------------
     subsystems::CommandSwerveDrivetrain *GetChassis() const { return m_chassis; }
 
 private:
+    //------------------------------------------------------------------
+    /// @brief      Calculates feedforward velocity component toward target
+    /// @param[out] chassisSpeeds - Reference to populate with feedforward velocities
+    /// @details    Implements distance-based velocity scaling with three zones:
+    ///             - Near (<0m): 0 m/s (PID only)
+    ///             - Ramping (0-1.25m): Linear scaling 0 to 4 m/s
+    ///             - Far (>1.25m): Full 4 m/s
+    ///             Velocity is decomposed into X/Y components along angle to target.
+    /// @see        Execute() for how feedforward combines with PID
+    //------------------------------------------------------------------
     void CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds);
 
+    //------------------------------------------------------------------
+    // Subsystem and Control Request Members
+    //------------------------------------------------------------------
+
+    /// @brief Pointer to the swerve drive subsystem controlled by this command
     subsystems::CommandSwerveDrivetrain *m_chassis;
 
+    /// @brief Field-centric drive request with heading control capability
     swerve::requests::FieldCentricFacingAngle m_driveRequest;
 
+    //------------------------------------------------------------------
+    // Pose Tracking Members
+    //------------------------------------------------------------------
+
+    /// @brief Flag indicating if robot pose hasn't changed (for stuck detection)
     bool m_isSamePose = false;
+
+    /// @brief Robot pose from previous cycle for movement detection
     frc::Pose2d m_prevPose;
+
+    /// @brief Current robot pose from odometry/vision fusion
     frc::Pose2d m_currentPose;
+
+    /// @brief Target pose to navigate to
     frc::Pose2d m_endPose;
 
-    const units::length::inch_t m_distanceThreshold{0.25};
+    //------------------------------------------------------------------
+    // Threshold and Range Constants
+    //------------------------------------------------------------------
+
+    /// @brief Distance threshold for considering target reached (default 0.25 inches)
+    units::length::inch_t m_distanceThreshold{0.25};
+
+    /// @brief Distance threshold for target regeneration (unused, legacy member)
     const units::length::inch_t m_regenerationDistanceThreshold{2.0};
+
+    /// @brief Minimum radius for feedforward activation (0m = always active)
     const units::length::meter_t m_ffMinRadius{0.0};
     const units::length::meter_t m_ffMaxRadius{1.65};
 
+    //------------------------------------------------------------------
+    // Velocity and Acceleration Limits
+    //------------------------------------------------------------------
+
+    /// @brief Maximum translational velocity for the robot (4 m/s)
     const units::velocity::meters_per_second_t kMaxVelocity = 4_mps;
     const units::acceleration::meters_per_second_squared_t kMaxAcceleration = 3_mps_sq;
 
+    /// @brief Maximum rotational velocity (540°/s, not actively used in current implementation)
     const units::angular_velocity::degrees_per_second_t kMaxAngularVelocity = 540_deg_per_s;
 
+    //------------------------------------------------------------------
+    // NetworkTables Keys (Legacy)
+    //------------------------------------------------------------------
+
+    /// @brief NetworkTables key for integral gain tuning (not actively used)
     std::string m_iGainKey = "I_Gain";
+
+    /// @brief NetworkTables key for proportional gain tuning (not actively used)
     std::string m_pGainKey = "P_Gain";
+
+    /// @brief Latch for run-once operations (not actively used)
     bool runOnceLatch = false;
 
+    //------------------------------------------------------------------
+    // Translation PID Gains
+    //------------------------------------------------------------------
+
+    /// @brief Proportional gain for X and Y translation controllers
     const double m_translationKP = 4.5;
+
+    /// @brief Integral gain for X and Y translation controllers (disabled)
     const double m_translationKI = 0.0;
+
+    /// @brief Derivative gain for X and Y translation controllers
     const double m_translationKD = 0.5;
 
+    //------------------------------------------------------------------
+    // Rotation PID Gains
+    //------------------------------------------------------------------
+
+    /// @brief Proportional gain for heading controller
     const double m_rotationKP = 6.0;
+
+    /// @brief Integral gain for heading controller (disabled)
     const double m_rotationKI = 0.0;
+
+    /// @brief Derivative gain for heading controller (disabled)
     const double m_rotationKD = 0.0;
 
+    //------------------------------------------------------------------
+    // Sweep and Error Tracking (Legacy/Unused)
+    //------------------------------------------------------------------
+
+    /// @brief Angular sweep delta for vision search patterns (not actively used)
     units::angle::degree_t m_sweepDelta{90.0};
 
+    //------------------------------------------------------------------
+    // Runtime State Variables
+    //------------------------------------------------------------------
+
+    /// @brief Current distance error from robot to target (updated in CalculateFeedForward)
     units::length::meter_t m_distanceError{0.0};
+
+    /// @brief Threshold for PID reset - when error exceeds this, PID resets to prevent windup
     units::length::meter_t m_pidResetThreshold{0.25};
+
+    /// @brief Precomputed feedforward range (m_ffMaxRadius - m_ffMinRadius) for scaling calculations
     units::length::meter_t m_feedForwardRange;
 
+    //------------------------------------------------------------------
+    // PID Controllers
+    //------------------------------------------------------------------
+
+    /// @brief Trapezoidal motion profile constraints for both X and Y controllers
     frc::TrapezoidProfile<units::length::meters>::Constraints m_translationConstraints{kMaxVelocity, kMaxAcceleration};
 
+    /// @brief Profiled PID controller for X-axis translation with trapezoidal velocity profiles
     frc::ProfiledPIDController<units::length::meters> m_translationPIDX{m_translationKP, m_translationKI, m_translationKD, m_translationConstraints, 20_ms};
+
+    /// @brief Profiled PID controller for Y-axis translation with trapezoidal velocity profiles
     frc::ProfiledPIDController<units::length::meters> m_translationPIDY{m_translationKP, m_translationKI, m_translationKD, m_translationConstraints, 20_ms};
 };

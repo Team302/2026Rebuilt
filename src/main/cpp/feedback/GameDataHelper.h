@@ -14,60 +14,35 @@
 //====================================================================================================================================================
 
 #pragma once
+#include <frc/DriverStation.h>
+#include "frc/Timer.h"
+#include "state/StateMgr.h"
 
-class ChassisOptionEnums
+class GameDataHelper : StateMgr
 {
+
 public:
-    enum HeadingOption
-    {
-        MAINTAIN,
-        SPECIFIED_ANGLE,
-        FACE_GAME_PIECE,
-        IGNORE
-    };
+    void RunCurrentState() override;
 
-    enum DriveStateType
-    {
-        ROBOT_DRIVE,
-        FIELD_DRIVE,
-        TRAJECTORY_DRIVE,
-        HOLD_DRIVE,
-        POLAR_DRIVE,
-        STOP_DRIVE,
-        DRIVE_TO_HUB,
-        DRIVE_TO_BUMP,
-        DRIVE_TO_DEPOT,
-        DRIVE_TO_OUTPOST
-    };
+    GameDataHelper();
+    ~GameDataHelper() = default;
 
-    enum NoMovementOption
-    {
-        STOP,
-        HOLD_POSITION
-    };
+private:
+    void PublishHubActive(bool value);
+    void PublishShiftChangeIn5seconds(bool value);
+    void PublishShiftChangeIn3seconds(bool value);
 
-    enum AutonControllerType
-    {
-        RAMSETE,
-        HOLONOMIC
-    };
+    bool m_hubActive = false;
+    bool m_shiftChangeIn3seconds = true;
+    bool m_shiftChangeIn5seconds = true;
 
-    enum AutonChassisOptions
-    {
-        NO_VISION
-    };
+    const units::time::second_t m_shift1Start = 130_s; // 2:10
+    const units::time::second_t m_shift2Start = 105_s; // 1:45
+    const units::time::second_t m_shift3Start = 80_s;  // 1:20
+    const units::time::second_t m_shift4Start = 55_s;  // 0:55
+    const units::time::second_t m_endgameStart = 30_s; // 0:30
+    units::time::second_t m_shiftLength = 25_s;
 
-    enum AutonAvoidOptions
-    {
-        ROBOT_COLLISION,
-        NO_AVOID_OPTION
-    };
-
-    enum PathUpdateOption
-    {
-        NONE
-    };
-
-    ChassisOptionEnums() = delete;
-    ~ChassisOptionEnums() = delete;
+    std::string m_hubActiveNT = "Hub Active";
+    std::string m_allianceShiftTime = "Time Left In Shift";
 };
