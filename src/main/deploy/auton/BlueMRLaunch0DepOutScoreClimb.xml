@@ -9,6 +9,7 @@ choreoname = "BlueMiddleRightToOutpost"
 time = "2.5"
 intakeState = "STATE_INTAKE">
 <zone filename = "BlueLaunchZone.xml"/>
+<zone filename = "BlueOutpostZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
@@ -23,6 +24,7 @@ choreoname = "DepotToLaunchToClimb"
 time = "2.5"
 intakeState = "STATE_INTAKE">
 <zone filename = "BlueLaunchZone.xml"/>
+<zone filename = "BlueDepotZone.xml"/>
 </primitive>
 
 <primitive id = "DRIVE_STOP_MECH">

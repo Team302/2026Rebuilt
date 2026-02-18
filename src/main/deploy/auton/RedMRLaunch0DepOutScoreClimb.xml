@@ -9,6 +9,7 @@ choreoname = "BlueMiddleRightToOutpost"
 time = "2.5"
 intakeState = "STATE_INTAKE">
 <zone filename = "RedLaunchZone.xml"/>
+<zone filename = "RedOutpostZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
@@ -16,6 +17,7 @@ choreoname = "RightToLeftAlliance"
 time = "2.5"
 intakeState = "STATE_INTAKE">
 <zone filename = "RedLaunchZone.xml"/>
+<zone filename = "RedDepotZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"

@@ -147,12 +147,20 @@ bool AutonDrivePrimitive::IsInZone()
 
 frc2::CommandPtr AutonDrivePrimitive::CreateDriveToPoseCommand(ChassisOptionEnums::DriveStateType driveToType)
 {
-    // TODO: add drive to types here as added
-    // auto container = SwerveContainer::GetInstance();
-    // switch (driveToType)
-    // {
+    auto container = SwerveContainer::GetInstance();
+    switch (driveToType)
+    {
+    case ChassisOptionEnums::DRIVE_TO_HUB:
+        return frc2::ProxyCommand(container->GetDriveToHubCommand()).ToPtr();
 
-    // default:
-    return frc2::cmd::None();
-    // }
+    case ChassisOptionEnums::DRIVE_TO_DEPOT:
+        return frc2::ProxyCommand(container->GetDriveToDepotCommand()).ToPtr();
+
+    case ChassisOptionEnums::DRIVE_TO_OUTPOST:
+        return frc2::ProxyCommand(container->GetDriveToOutpostCommand()).ToPtr();
+
+        // TODO: add drive to bump and drive to tower commands when implemented
+    default:
+        return frc2::cmd::None();
+    }
 }
