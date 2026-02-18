@@ -46,7 +46,12 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
         {"FACE_GAME_PIECE", ChassisOptionEnums::HeadingOption::FACE_GAME_PIECE},
         {"IGNORE", ChassisOptionEnums::HeadingOption::IGNORE}};
 
-    static robin_hood::unordered_map<string, ChassisOptionEnums::DriveStateType> xmlStringToPathUpdateOptionMap{{"NOTHING", ChassisOptionEnums::STOP_DRIVE}};
+    static robin_hood::unordered_map<string, ChassisOptionEnums::DriveStateType> xmlStringToPathUpdateOptionMap{
+        {"DRIVE_TO_HUB", ChassisOptionEnums::DRIVE_TO_HUB},
+        {"DRIVE_TO_BUMP", ChassisOptionEnums::DRIVE_TO_BUMP},
+        {"DRIVE_TO_DEPOT", ChassisOptionEnums::DRIVE_TO_DEPOT},
+        {"DRIVE_TO_OUTPOST", ChassisOptionEnums::DRIVE_TO_OUTPOST},
+        {"NOTHING", ChassisOptionEnums::STOP_DRIVE}};
 
     static robin_hood::unordered_map<std::string, ZoneAllianceColor> xmlStringToAllianceColorMap{
         {"RED", ZoneAllianceColor::RED},

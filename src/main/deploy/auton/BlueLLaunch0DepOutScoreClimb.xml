@@ -2,27 +2,30 @@
 <!DOCTYPE auton SYSTEM "auton.dtd">
 <auton>
 
-<primitive id = "DRIVE_STOP_MECH"
-launcherState = "STATE_LAUNCH"/>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueLDepotOutpost_A"
 time = "2.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "BlueLaunchZone.xml"/>
+<!-- <zone filename = "BlueDepotZone.xml"/> -->
+<!--This is only commented out because I like the swoop, but up to testing-->
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueLDepotOutpost_B"
-time = "3.0"
+time = "4.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "BlueLaunchZone.xml"/>
+<zone filename = "BlueOutpostZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueLDepotOutpost_C"
-time = "1.5"
-intakeState = "STATE_INTAKE"/>
+time = "4.0"
+intakeState = "STATE_INTAKE">
+<zone filename = "BlueLaunchZone.xml"/>
+</primitive>
 
 <primitive id = "DRIVE_STOP_MECH">
 <zone filename = "BlueClimbingZone.xml"/>
