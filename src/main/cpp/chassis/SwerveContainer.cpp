@@ -76,7 +76,11 @@ void SwerveContainer::ConfigureBindings()
     auto controller = TeleopControl::GetInstance();
 
     CreateStandardDriveCommands(controller);
+#ifdef ENABLE_SYSID
+    ConfigureSysIDBindings(controller);
+#else
     CreateRebuiltDriveToCommands(controller);
+#endif
 
     m_chassis->RegisterTelemetry([this](auto const &state)
                                  { logger.Telemeterize(state); });
