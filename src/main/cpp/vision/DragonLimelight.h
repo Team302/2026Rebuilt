@@ -144,7 +144,12 @@ public:
     ///-----------------------------------------------------------------------------------
     void SetRobotPose(const frc::Pose2d &pose);
 
-    DRAGON_LIMELIGHT_CAMERA_TYPE GetCameraType() { return m_cameraType; };
+    void SetRobotPoseWithMegaTag1();
+
+    DRAGON_LIMELIGHT_CAMERA_TYPE GetCameraType()
+    {
+        return m_cameraType;
+    };
 
     ///-----------------------------------------------------------------------------------
     /// @brief Enable rewind buffer recording on this Limelight (LL4 only).
@@ -218,5 +223,4 @@ private:
     VisionPose m_megatag1Pos;       ///< last MegaTag1 pose
     bool m_megatag2PosBool = false; ///< flag: have MegaTag2 estimate
     VisionPose m_megatag2Pos;       ///< last MegaTag2 pose
-    bool m_robotPoseSet = false;    ///< true after SetRobotPose has been called
 };

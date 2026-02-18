@@ -247,11 +247,17 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag1Pose()
 
     m_megatag1PosBool = true;
     m_megatag1Pos = {pose3d, timestamp, {xyStds, xyStds, degStds}, PoseEstimationStrategy::MEGA_TAG};
-    if (!m_robotPoseSet)
-    {
-        SetRobotPose(pose3d.ToPose2d());
-    }
+
     return m_megatag1Pos;
+}
+
+void DragonLimelight::SetRobotPoseWithMegaTag1()
+{
+    auto visionPose = GetMegaTag1Pose();
+    if (frc::DriverStation::IsDisabled() && visionPose.has_value())
+    {
+        SetRobotPose(visionPose.value().estimatedPose.ToPose2d());
+    }
 }
 
 /// ----------------------------------------------------------------------------------
@@ -266,16 +272,9 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
     {
         return std::nullopt;
     }
-    auto mode = static_cast<int>(LIMELIGHT_IMU_MODE::USE_INTERNAL_WITH_MT1_ASSISTED_CONVERGENCE);
-    LimelightHelpers::SetIMUMode(m_networkTableName, mode);
-    if (!m_robotPoseSet)
-    {
-        auto megatag1pose = GetMegaTag1Pose();
-        if (!megatag1pose.has_value())
-        {
-            return std::nullopt;
-        }
-    }
+    auto mode = frc::DriverStation::IsDisabled() ? LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_AND_FUSE_WITH_INTERNAL_IMU : LIMELIGHT_IMU_MODE::USE_INTERNAL_IMU_WITH_EXTERNAL_IMU_ASSISTED_CONVERGENCE;
+    LimelightHelpers::SetIMUMode(m_networkTableName, static_cast<int>(mode));
+
     // Get the pose estimate
     auto poseEstimate = LimelightHelpers::getBotPoseEstimate_wpiBlue_MegaTag2(m_networkTableName);
 
@@ -471,7 +470,6 @@ void DragonLimelight::SetRobotPose(const frc::Pose2d &pose)
                                           pitchrate,
                                           roll,
                                           rollrate);
-    m_robotPoseSet = true;
 }
 
 /// ----------------------------------------------------------------------------------

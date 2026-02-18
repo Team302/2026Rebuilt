@@ -184,6 +184,9 @@ public:
     /// @brief Get robot pose estimate derived from Quest detections.
     /// @return DragonVisionPoseEstimatorStruct - confidence level indicates the usefulness of the pose.
     DragonVisionPoseEstimatorStruct GetRobotPositionQuest();
+
+    void SetRobotPositionMegaTag1();
+
     void RefreshQuestData();
 
     /// @brief Enable rewind buffer recording on all registered limelights.
@@ -198,7 +201,7 @@ public:
     /// @brief Disable rewind buffer recording on all registered limelights.
     /// @note LL4 only feature.
     void StopRewind();
-    
+
     /// @brief Distribute a Pose2d to vision that accept external robot pose.
     /// @param pose The pose to set (frc::Pose2d).
     /// @note Updates running the registered DragonQuest instance.

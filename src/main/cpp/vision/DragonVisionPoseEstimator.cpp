@@ -85,6 +85,9 @@ void DragonVisionPoseEstimator::RunCurrentState()
     {
         CalculateInitialPose();
     }
+    else
+    {
+    }
     // Update the latch - once enabled, stay latched
     if (!m_hasBeenEnabled && !frc::DriverStation::IsDisabled())
     {
@@ -149,13 +152,14 @@ void DragonVisionPoseEstimator::CalculateInitialPose()
         return;
     }
 
+    m_vision->SetRobotPositionMegaTag1();
+
     auto megaTag2Positions = m_vision->GetRobotPositionMegaTag2();
     if (!megaTag2Positions.empty())
     {
         auto pose = megaTag2Positions[0].estimatedPose.ToPose2d();
         ResetPosition(pose);
         m_vision->ResetQuestRobotPose(pose);
-        // m_initialPoseSet = true;
     }
 }
 

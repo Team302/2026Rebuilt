@@ -298,6 +298,15 @@ std::vector<VisionPose> DragonVision::GetRobotPositionMegaTag1()
 	return poses;
 }
 
+void DragonVision::SetRobotPositionMegaTag1()
+{
+	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
+	for (auto limelight : limelights)
+	{
+		limelight->SetRobotPoseWithMegaTag1();
+	}
+}
+
 /// @brief Query all registered limelights for MegaTag2-based robot poses and choose the best.
 /// @return std::vector<VisionPose>; empty if no valid poses were returned by cameras.
 std::vector<VisionPose> DragonVision::GetRobotPositionMegaTag2()
