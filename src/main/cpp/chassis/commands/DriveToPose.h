@@ -206,15 +206,12 @@ private:
     // Threshold and Range Constants
     //------------------------------------------------------------------
 
-    /// @brief Distance threshold for considering target reached (default 0.25 inches)
+    /// @brief Distance threshold for considering target reached (default 1.0 inches)
     units::length::inch_t m_distanceThreshold{0.25};
 
-    /// @brief Distance threshold for target regeneration (unused, legacy member)
-    const units::length::inch_t m_regenerationDistanceThreshold{2.0};
-
-    /// @brief Minimum radius for feedforward activation (0m = always active)
-    const units::length::meter_t m_ffMinRadius{0.0};
-    const units::length::meter_t m_ffMaxRadius{1.65};
+    /// @brief Minimum radius for feedforward activation
+    const units::length::inch_t m_ffMinRadius{0.0};
+    const units::length::meter_t m_ffMaxRadius{1.0};
 
     //------------------------------------------------------------------
     // Velocity and Acceleration Limits
@@ -245,13 +242,13 @@ private:
     //------------------------------------------------------------------
 
     /// @brief Proportional gain for X and Y translation controllers
-    const double m_translationKP = 4.5;
+    const double m_translationKP = 5.0;
 
     /// @brief Integral gain for X and Y translation controllers (disabled)
-    const double m_translationKI = 0.0;
+    const double m_translationKI = 2.5;
 
     /// @brief Derivative gain for X and Y translation controllers
-    const double m_translationKD = 0.5;
+    const double m_translationKD = 0.0;
 
     //------------------------------------------------------------------
     // Rotation PID Gains
@@ -265,13 +262,6 @@ private:
 
     /// @brief Derivative gain for heading controller (disabled)
     const double m_rotationKD = 0.0;
-
-    //------------------------------------------------------------------
-    // Sweep and Error Tracking (Legacy/Unused)
-    //------------------------------------------------------------------
-
-    /// @brief Angular sweep delta for vision search patterns (not actively used)
-    units::angle::degree_t m_sweepDelta{90.0};
 
     //------------------------------------------------------------------
     // Runtime State Variables
