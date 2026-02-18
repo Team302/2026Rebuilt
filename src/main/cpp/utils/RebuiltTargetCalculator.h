@@ -50,7 +50,7 @@ public:
      * \brief Get the launcher angle target to hit the current target within launcher limits
      * \return Angle in degrees
      */
-    units::angle::degree_t GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle);
+    units::angle::turn_t GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle);
 
     /**
      * \brief Update the target offset based on driver input
