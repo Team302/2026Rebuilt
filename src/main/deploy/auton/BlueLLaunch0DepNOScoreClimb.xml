@@ -5,24 +5,14 @@
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueLDepotOutpost_A"
-time = "4.0"
+time = "3.5"
 intakeState = "STATE_INTAKE">
 <zone filename = "BlueLaunchZone.xml"/>
-<!-- <zone filename = "BlueDepotZone.xml"/> -->
-<!--This is only commented out because I like the swoop, but up to testing-->
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueLDepotOutpost_B"
+choreoname = "BlueLDepNO_b"
 time = "4.0"
-intakeState = "STATE_INTAKE">
-<zone filename = "BlueLaunchZone.xml"/>
-<zone filename = "BlueOutpostZone.xml"/>
-</primitive>
-
-<primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueLDepotOutpost_C"
-time = "4.5"
 intakeState = "STATE_INTAKE">
 <zone filename = "BlueLaunchZone.xml"/>
 </primitive>
