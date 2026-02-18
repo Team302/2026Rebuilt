@@ -28,6 +28,8 @@
 #include "state/State.h"
 #include "auton/ZoneParams.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "utils/logging/signals/DragonDataLoggerMgr.h"
+
 // Third Party Includes
 
 class AutonSelector;

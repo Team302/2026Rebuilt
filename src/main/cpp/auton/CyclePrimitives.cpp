@@ -42,7 +42,6 @@
 #include "mechanisms/Climber/Climber.h"
 
 // Third Party Includes
-#include "utils/logging/signals/DragonDataLoggerMgr.h"
 
 using frc::DriverStation;
 using frc::Timer;
