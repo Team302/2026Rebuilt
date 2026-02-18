@@ -85,8 +85,9 @@ void DragonVisionPoseEstimator::RunCurrentState()
     {
         CalculateInitialPose();
     }
-    else
+    else // Set the limelight yaw using chassis yaw
     {
+        SetLimeLightYaw();
     }
     // Update the latch - once enabled, stay latched
     if (!m_hasBeenEnabled && !frc::DriverStation::IsDisabled())
@@ -191,4 +192,17 @@ void DragonVisionPoseEstimator::AddVisionMeasurements()
             m_chassis->AddVisionMeasurement(questPose.m_visionPose, questPose.m_timeStamp, questPose.m_stds);
         }
     }
+}
+
+void DragonVisionPoseEstimator::SetLimeLightYaw()
+{
+    if (m_vision == nullptr)
+    {
+        m_vision = DragonVision::GetDragonVision();
+    }
+    if (m_vision == nullptr && m_chassis == nullptr)
+    {
+        return;
+    }
+    m_vision->SetLimeLightYaw(m_chassis->GetPose());
 }

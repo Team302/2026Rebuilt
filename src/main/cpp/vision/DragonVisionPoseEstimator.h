@@ -100,6 +100,8 @@ private:
      */
     void AddVisionMeasurements();
 
+    void SetLimeLightYaw();
+
     /**
      * @brief Latch that is set true once the robot enters enabled mode.
      * Prevents recalculating initial pose after the robot has been enabled.

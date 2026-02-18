@@ -187,6 +187,8 @@ public:
 
     void SetRobotPositionMegaTag1();
 
+    void SetLimeLightYaw(frc::Pose2d pose);
+
     void RefreshQuestData();
 
     /// @brief Enable rewind buffer recording on all registered limelights.
