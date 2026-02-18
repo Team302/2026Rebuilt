@@ -189,6 +189,8 @@ public:
 
     void SetLimeLightYaw(frc::Pose2d pose);
 
+    void SetIMUConfig();
+
     void RefreshQuestData();
 
     /// @brief Enable rewind buffer recording on all registered limelights.

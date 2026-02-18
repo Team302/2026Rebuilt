@@ -272,8 +272,6 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
     {
         return std::nullopt;
     }
-    auto mode = frc::DriverStation::IsDisabled() ? LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_AND_FUSE_WITH_INTERNAL_IMU : LIMELIGHT_IMU_MODE::USE_INTERNAL_IMU_WITH_EXTERNAL_IMU_ASSISTED_CONVERGENCE;
-    LimelightHelpers::SetIMUMode(m_networkTableName, static_cast<int>(mode));
 
     // Get the pose estimate
     auto poseEstimate = LimelightHelpers::getBotPoseEstimate_wpiBlue_MegaTag2(m_networkTableName);
@@ -495,4 +493,15 @@ void DragonLimelight::SaveRewind(double durationSeconds)
 void DragonLimelight::StopRewind()
 {
     LimelightHelpers::setRewindEnabled(m_networkTableName, false);
+}
+
+void DragonLimelight::UpdateIMUConfiguration()
+{
+    LIMELIGHT_IMU_MODE requiredMode = frc::DriverStation::IsDisabled() ? LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_AND_FUSE_WITH_INTERNAL_IMU : LIMELIGHT_IMU_MODE::USE_INTERNAL_IMU_WITH_EXTERNAL_IMU_ASSISTED_CONVERGENCE;
+
+    if (requiredMode != m_lastIMUMode)
+    {
+        LimelightHelpers::SetIMUMode(m_networkTableName, static_cast<int>(requiredMode));
+        m_lastIMUMode = requiredMode;
+    }
 }

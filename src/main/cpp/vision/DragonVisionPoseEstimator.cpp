@@ -80,20 +80,6 @@ void DragonVisionPoseEstimator::RunCurrentState()
     // Make sure we have a vision subsystem pointer.
     // If we don't, try to get one
     // If we still don't have one exit
-    // Only calculate initial pose if robot hasn't been enabled yet
-    if (frc::DriverStation::IsDisabled() && !m_hasBeenEnabled)
-    {
-        CalculateInitialPose();
-    }
-    else // Set the limelight yaw using chassis yaw
-    {
-        SetLimeLightYaw();
-    }
-    // Update the latch - once enabled, stay latched
-    if (!m_hasBeenEnabled && !frc::DriverStation::IsDisabled())
-    {
-        m_hasBeenEnabled = true;
-    }
     if (m_vision == nullptr)
     {
         m_vision = DragonVision::GetDragonVision();
@@ -101,6 +87,26 @@ void DragonVisionPoseEstimator::RunCurrentState()
     if (m_vision == nullptr)
     {
         return;
+    }
+
+    m_vision->SetIMUConfig();
+
+    // Only calculate initial pose if robot hasn't been enabled yet
+    if (frc::DriverStation::IsDisabled() && !m_hasBeenEnabled)
+    {
+        CalculateInitialPose();
+    }
+    else // Set the limelight yaw using chassis yaw
+    {
+        if (m_chassis != nullptr)
+        {
+            m_vision->SetLimeLightYaw(m_chassis->GetPose());
+        }
+    }
+    // Update the latch - once enabled, stay latched
+    if (!m_hasBeenEnabled && !frc::DriverStation::IsDisabled())
+    {
+        m_hasBeenEnabled = true;
     }
 
     m_vision->RefreshQuestData();
@@ -144,15 +150,6 @@ void DragonVisionPoseEstimator::ResetPosition(const frc::Pose2d &pose)
  */
 void DragonVisionPoseEstimator::CalculateInitialPose()
 {
-    if (m_vision == nullptr)
-    {
-        m_vision = DragonVision::GetDragonVision();
-    }
-    if (m_vision == nullptr)
-    {
-        return;
-    }
-
     m_vision->SetRobotPositionMegaTag1();
 
     auto megaTag2Positions = m_vision->GetRobotPositionMegaTag2();
@@ -192,17 +189,4 @@ void DragonVisionPoseEstimator::AddVisionMeasurements()
             m_chassis->AddVisionMeasurement(questPose.m_visionPose, questPose.m_timeStamp, questPose.m_stds);
         }
     }
-}
-
-void DragonVisionPoseEstimator::SetLimeLightYaw()
-{
-    if (m_vision == nullptr)
-    {
-        m_vision = DragonVision::GetDragonVision();
-    }
-    if (m_vision == nullptr && m_chassis == nullptr)
-    {
-        return;
-    }
-    m_vision->SetLimeLightYaw(m_chassis->GetPose());
 }

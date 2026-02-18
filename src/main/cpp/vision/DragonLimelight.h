@@ -146,6 +146,8 @@ public:
 
     void SetRobotPoseWithMegaTag1();
 
+    void UpdateIMUConfiguration();
+
     DRAGON_LIMELIGHT_CAMERA_TYPE GetCameraType() { return m_cameraType; };
 
     ///-----------------------------------------------------------------------------------
@@ -220,4 +222,6 @@ private:
     VisionPose m_megatag1Pos;       ///< last MegaTag1 pose
     bool m_megatag2PosBool = false; ///< flag: have MegaTag2 estimate
     VisionPose m_megatag2Pos;       ///< last MegaTag2 pose
+
+    LIMELIGHT_IMU_MODE m_lastIMUMode = LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_ONLY;
 };
