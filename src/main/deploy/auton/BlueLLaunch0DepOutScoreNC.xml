@@ -20,11 +20,5 @@ intakeState = "STATE_INTAKE">
 <zone filename = "BlueOutpostZone.xml"/>
 </primitive>
 
-<primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueLDepotOutpost_C"
-time = "4.5"
-intakeState = "STATE_INTAKE">
-<zone filename = "BlueLaunchZone.xml"/>
-</primitive>
 
 </auton>
