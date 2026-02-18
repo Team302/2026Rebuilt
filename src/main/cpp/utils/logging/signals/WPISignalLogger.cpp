@@ -24,31 +24,31 @@
 void WPISignalLogger::WriteBoolean(std::string signalID, bool value, uint64_t timestamp)
 {
     auto &entry = GetBooleanEntry(signalID);
-    entry.Append(value, static_cast<int64_t>(timestamp));
+    entry.Append(value, timestamp);
 }
 
 void WPISignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, uint64_t timestamp)
 {
     auto &entry = GetDoubleEntry(signalID);
-    entry.Append(value, static_cast<int64_t>(timestamp));
+    entry.Append(value, timestamp);
 }
 
 void WPISignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, uint64_t timestamp)
 {
     auto &entry = GetIntegerEntry(signalID);
-    entry.Append(value, static_cast<int64_t>(timestamp));
+    entry.Append(value, timestamp);
 }
 
 void WPISignalLogger::WriteString(std::string signalID, const std::string &value, uint64_t timestamp)
 {
     auto &entry = GetStringEntry(signalID);
-    entry.Append(value, static_cast<int64_t>(timestamp));
+    entry.Append(value, timestamp);
 }
 
 void WPISignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
 {
     auto &entry = GetDoubleArrayEntry(signalID);
-    entry.Append(value, static_cast<int64_t>(timestamp));
+    entry.Append(value, timestamp);
 }
 
 void WPISignalLogger::WritePose2d(std::string signalID, const frc::Pose2d &value, uint64_t timestamp)
