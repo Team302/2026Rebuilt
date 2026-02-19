@@ -21,6 +21,7 @@
 #include "frc/geometry/Rotation3d.h"
 #include "frc/geometry/Transform3d.h"
 #include "frc/geometry/Translation3d.h"
+#include "networktables/NetworkTableInstance.h"
 #include "state/IRobotStateChangeSubscriber.h"
 #include "state/RobotState.h"
 #include "state/RobotStateChanges.h"
