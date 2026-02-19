@@ -17,18 +17,19 @@
 #include <string>
 #include <utility>
 
-#include <frc/GenericHID.h>
-#include <frc/XboxController.h>
-#include <gamepad/axis/AnalogAxis.h>
-#include <gamepad/axis/IDeadband.h>
-#include <gamepad/axis/IProfile.h>
-#include <gamepad/button/AnalogButton.h>
-#include <gamepad/button/ButtonDecorator.h>
-#include <gamepad/button/DigitalButton.h>
-#include <gamepad/button/POVButton.h>
-#include <gamepad/button/ToggleButton.h>
-#include <gamepad/DragonXBox.h>
-#include <teleopcontrol/TeleopControlMappingEnums.h>
+#include "frc/GenericHID.h"
+#include "frc/XboxController.h"
+#include "frc/DriverStation.h"
+#include "gamepad/axis/AnalogAxis.h"
+#include "gamepad/axis/IDeadband.h"
+#include "gamepad/axis/IProfile.h"
+#include "gamepad/button/AnalogButton.h"
+#include "gamepad/button/ButtonDecorator.h"
+#include "gamepad/button/DigitalButton.h"
+#include "gamepad/button/POVButton.h"
+#include "gamepad/button/ToggleButton.h"
+#include "gamepad/DragonXBox.h"
+#include "teleopcontrol/TeleopControlMappingEnums.h"
 
 #include "utils/logging/debug/Logger.h"
 
@@ -289,4 +290,30 @@ void DragonXBox::SetRumble(
 
     m_xbox->SetRumble(GenericHID::RumbleType::kLeftRumble, lrum);
     m_xbox->SetRumble(GenericHID::RumbleType::kRightRumble, rrum);
+}
+
+void DragonXBox::DataLog(uint64_t timestamp)
+{
+    std::array<double, 6> axes;
+    std::array<bool, 10> buttons;
+    // axes[0] = GetAxisValue(TeleopControlMappingEnums::LEFT_JOYSTICK_X);
+    axes[frc::XboxController::Axis::kLeftX] = GetAxisValue(TeleopControlMappingEnums::LEFT_JOYSTICK_X);
+    axes[frc::XboxController::Axis::kLeftY] = GetAxisValue(TeleopControlMappingEnums::LEFT_JOYSTICK_Y);
+    axes[frc::XboxController::Axis::kLeftTrigger] = GetAxisValue(TeleopControlMappingEnums::LEFT_TRIGGER);
+    axes[frc::XboxController::Axis::kRightTrigger] = GetAxisValue(TeleopControlMappingEnums::RIGHT_TRIGGER);
+    axes[frc::XboxController::Axis::kRightX] = GetAxisValue(TeleopControlMappingEnums::RIGHT_JOYSTICK_X);
+    axes[frc::XboxController::Axis::kRightY] = GetAxisValue(TeleopControlMappingEnums::RIGHT_JOYSTICK_Y);
+
+    buttons[frc::XboxController::Button::kA] = IsButtonPressed(TeleopControlMappingEnums::A_BUTTON);
+    buttons[frc::XboxController::Button::kB] = IsButtonPressed(TeleopControlMappingEnums::B_BUTTON);
+    buttons[frc::XboxController::Button::kX] = IsButtonPressed(TeleopControlMappingEnums::X_BUTTON);
+    buttons[frc::XboxController::Button::kY] = IsButtonPressed(TeleopControlMappingEnums::Y_BUTTON);
+    buttons[frc::XboxController::Button::kLeftBumper] = IsButtonPressed(TeleopControlMappingEnums::LEFT_BUMPER);
+    buttons[frc::XboxController::Button::kRightBumper] = IsButtonPressed(TeleopControlMappingEnums::RIGHT_BUMPER);
+    buttons[frc::XboxController::Button::kBack] = IsButtonPressed(TeleopControlMappingEnums::SELECT_BUTTON);
+    buttons[frc::XboxController::Button::kStart] = IsButtonPressed(TeleopControlMappingEnums::START_BUTTON);
+    buttons[frc::XboxController::Button::kLeftStick] = IsButtonPressed(TeleopControlMappingEnums::LEFT_STICK_PRESSED);
+    buttons[frc::XboxController::Button::kRightStick] = IsButtonPressed(TeleopControlMappingEnums::RIGHT_STICK_PRESSED);
+    int id = m_xbox->GetPort();
+    LogGamePadData(timestamp, static_cast<DragonDataLogger::GamePadSignals>(id), axes, buttons, std::array<int, 1>{m_xbox->GetPOV()});
 }

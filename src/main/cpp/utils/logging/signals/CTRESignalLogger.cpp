@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -16,6 +15,7 @@
 
 #include "utils/logging/signals/CTRESignalLogger.h"
 #include "utils/logging/debug/Logger.h"
+#include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include <filesystem>
 #include <ctime>
 #include <string>
@@ -24,32 +24,91 @@ using ctre::phoenix6::SignalLogger;
 
 void CTRESignalLogger::WriteBoolean(std::string signalID, bool value, uint64_t timestamp)
 {
-    SignalLogger::WriteBoolean(signalID, value, CTRESignalLogger::ConvertToSeconds(timestamp));
+    SignalLogger::WriteBoolean(signalID, value, units::time::second_t(timestamp));
 }
 
 void CTRESignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, uint64_t timestamp)
 {
-    SignalLogger::WriteDouble(signalID, value, units, CTRESignalLogger::ConvertToSeconds(timestamp));
+    SignalLogger::WriteDouble(signalID, value, units, units::time::second_t(timestamp));
 }
 
 void CTRESignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, uint64_t timestamp)
 {
-    SignalLogger::WriteInteger(signalID, value, units, CTRESignalLogger::ConvertToSeconds(timestamp));
+    SignalLogger::WriteInteger(signalID, value, units, units::time::second_t(timestamp));
 }
 
 void CTRESignalLogger::WriteString(std::string signalID, const std::string &value, uint64_t timestamp)
 {
-    SignalLogger::WriteString(signalID, value, CTRESignalLogger::ConvertToSeconds(timestamp));
+    SignalLogger::WriteString(signalID, value, units::time::second_t(timestamp));
 }
 
 void CTRESignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
 {
-    SignalLogger::WriteDoubleArray(signalID, value, units, CTRESignalLogger::ConvertToSeconds(timestamp));
+    SignalLogger::WriteDoubleArray(signalID, value, units, units::time::second_t(timestamp));
+}
+
+void CTRESignalLogger::WritePose2d(std::string signalID, const frc::Pose2d &value, uint64_t timestamp)
+{
+    std::vector<double> data = {value.X().value(), value.Y().value(), value.Rotation().Radians().value()};
+    SignalLogger::WriteDoubleArray(signalID, data, "X_m;Y_m;Rot_rad", units::time::second_t(timestamp));
+}
+
+void CTRESignalLogger::WritePose3d(std::string signalID, const frc::Pose3d &value, uint64_t timestamp)
+{
+    std::vector<double> data = {value.X().value(), value.Y().value(), value.Z().value(),
+                                value.Rotation().GetQuaternion().W(),
+                                value.Rotation().GetQuaternion().X(),
+                                value.Rotation().GetQuaternion().Y(),
+                                value.Rotation().GetQuaternion().Z()};
+    SignalLogger::WriteDoubleArray(signalID, data, "X_m;Y_m;Z_m;QW;QX;QY;QZ", units::time::second_t(timestamp));
+}
+
+void CTRESignalLogger::WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, uint64_t timestamp)
+{
+    std::vector<double> data = {value.vx.value(), value.vy.value(), value.omega.value()};
+    SignalLogger::WriteDoubleArray(signalID, data, "Vx_mps;Vy_mps;Omega_radps", units::time::second_t(timestamp));
+}
+
+void CTRESignalLogger::WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, uint64_t timestamp)
+{
+    std::vector<double> data = {value.speed.value(), value.angle.Radians().value()};
+    SignalLogger::WriteDoubleArray(signalID, data, "Speed_mps;Angle_rad", units::time::second_t(timestamp));
+}
+
+void CTRESignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs, uint64_t timestamp)
+{
+    // Log axes
+    {
+        std::vector<double> axesVec(axes.begin(), axes.end());
+        SignalLogger::WriteDoubleArray(signalID + "/axes", axesVec, "", units::time::second_t(timestamp));
+    }
+
+    // Log buttons as doubles (0.0 or 1.0)
+    {
+        std::vector<double> buttonsVec;
+        buttonsVec.reserve(buttons.size());
+        for (bool b : buttons)
+        {
+            buttonsVec.push_back(b ? 1.0 : 0.0);
+        }
+        SignalLogger::WriteDoubleArray(signalID + "/buttons", buttonsVec, "", units::time::second_t(timestamp));
+    }
+
+    // Log POVs
+    {
+        std::vector<double> povsVec;
+        povsVec.reserve(povs.size());
+        for (int p : povs)
+        {
+            povsVec.push_back(static_cast<double>(p));
+        }
+        SignalLogger::WriteDoubleArray(signalID + "/povs", povsVec, "", units::time::second_t(timestamp));
+    }
 }
 
 void CTRESignalLogger::Start()
 {
-    SignalLogger::SetPath(GetLoggingDir().c_str());
+    SignalLogger::SetPath(DragonDataLoggerMgr::GetInstance()->GetLoggingDirectory().c_str());
     SignalLogger::EnableAutoLogging(true);
     SignalLogger::Start();
 }
@@ -72,25 +131,6 @@ std::string CTRESignalLogger::CreateLogFileName()
 
     std::string filename = "frc302-" + time + ".wpilog";
     return filename;
-}
-
-std::string CTRESignalLogger::GetLoggingDir()
-{
-    // check if usb log directory exists
-    if (std::filesystem::exists("/media/sda1/logs/"))
-    {
-        return std::filesystem::path("/media/sda1/logs/").string();
-    }
-    else if (std::filesystem::exists("/home/lvuser/logs/"))
-    {
-        return std::filesystem::path("/home/lvuser/logs/").string();
-    }
-    else if (std::filesystem::exists("/home/systemcore/logs/"))
-    {
-        return std::filesystem::path("/home/systemcore/logs/").string();
-    }
-
-    return std::string("");
 }
 
 units::time::second_t CTRESignalLogger::ConvertToSeconds(uint64_t timestamp)
