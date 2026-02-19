@@ -200,6 +200,9 @@ void DragonQuest::HandleDashboard()
     }
 }
 
+// ──────────────────────────────────────────────────────────────────────────────
+// LogDashboardData
+// ──────────────────────────────────────────────────────────────────────────────
 void DragonQuest::LogDashboardData()
 {
     m_debugData->PutBoolean("IsConnected", m_questNav.IsConnected());
