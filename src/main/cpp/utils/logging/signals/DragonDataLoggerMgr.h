@@ -44,6 +44,8 @@ public:
     void RegisterItem(DragonDataLogger *item);
     void PeriodicDataLog();
 
+    std::string GetLoggingDirectory() const;
+
 private:
     DragonDataLoggerMgr();
     ~DragonDataLoggerMgr();

@@ -17,6 +17,7 @@
 #include "frc/DataLogManager.h"
 #include "frc/RobotController.h"
 #include "frc/DriverStation.h"
+#include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include "wpi/DataLog.h"
 #include <filesystem>
 #include <span>
@@ -110,7 +111,7 @@ void WPISignalLogger::WriteGamePadState(std::string signalID, const std::array<d
 
 void WPISignalLogger::Start()
 {
-    frc::DataLogManager::Start(GetLoggingDir(), CreateLogFileName(), .5);
+    frc::DataLogManager::Start(DragonDataLoggerMgr::GetInstance()->GetLoggingDirectory(), CreateLogFileName(), .5);
 }
 
 void WPISignalLogger::Stop()
@@ -131,25 +132,6 @@ std::string WPISignalLogger::CreateLogFileName()
 
     std::string filename = "frc302-" + time + ".wpilog";
     return filename;
-}
-
-std::string WPISignalLogger::GetLoggingDir()
-{
-    // check if usb log directory exists
-    if (std::filesystem::exists("/media/sda1/logs/"))
-    {
-        return std::filesystem::path("/media/sda1/logs/").string();
-    }
-    else if (std::filesystem::exists("/home/lvuser/logs/"))
-    {
-        return std::filesystem::path("/home/lvuser/logs/").string();
-    }
-    else if (std::filesystem::exists("/home/systemcore/logs/"))
-    {
-        return std::filesystem::path("/home/systemcore/logs/").string();
-    }
-
-    return std::string("");
 }
 
 wpi::log::BooleanLogEntry &WPISignalLogger::GetBooleanEntry(const std::string &signalID)

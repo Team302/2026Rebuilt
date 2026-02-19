@@ -15,6 +15,7 @@
 
 #include "utils/logging/signals/CTRESignalLogger.h"
 #include "utils/logging/debug/Logger.h"
+#include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include <filesystem>
 #include <ctime>
 #include <string>
@@ -107,7 +108,7 @@ void CTRESignalLogger::WriteGamePadState(std::string signalID, const std::array<
 
 void CTRESignalLogger::Start()
 {
-    SignalLogger::SetPath(GetLoggingDir().c_str());
+    SignalLogger::SetPath(DragonDataLoggerMgr::GetInstance()->GetLoggingDirectory().c_str());
     SignalLogger::EnableAutoLogging(true);
     SignalLogger::Start();
 }
@@ -130,25 +131,6 @@ std::string CTRESignalLogger::CreateLogFileName()
 
     std::string filename = "frc302-" + time + ".wpilog";
     return filename;
-}
-
-std::string CTRESignalLogger::GetLoggingDir()
-{
-    // check if usb log directory exists
-    if (std::filesystem::exists("/media/sda1/logs/"))
-    {
-        return std::filesystem::path("/media/sda1/logs/").string();
-    }
-    else if (std::filesystem::exists("/home/lvuser/logs/"))
-    {
-        return std::filesystem::path("/home/lvuser/logs/").string();
-    }
-    else if (std::filesystem::exists("/home/systemcore/logs/"))
-    {
-        return std::filesystem::path("/home/systemcore/logs/").string();
-    }
-
-    return std::string("");
 }
 
 units::time::second_t CTRESignalLogger::ConvertToSeconds(uint64_t timestamp)
