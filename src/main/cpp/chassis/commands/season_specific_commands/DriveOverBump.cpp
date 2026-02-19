@@ -104,8 +104,6 @@ struct DriveToPoses DriveOverBump::GetDriveToPoses()
     struct DriveToPoses poses;
     poses.hasMidPose = true;
 
-    m_beforeMidPose = true;
-
     // Get the BumpHelper singleton to determine which bump to drive over
     auto bumpHelper = BumpHelper::GetInstance();
     if (bumpHelper != nullptr)
