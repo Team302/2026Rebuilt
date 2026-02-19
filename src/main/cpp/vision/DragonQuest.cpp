@@ -205,9 +205,9 @@ void DragonQuest::HandleDashboard()
 // ──────────────────────────────────────────────────────────────────────────────
 void DragonQuest::LogDashboardData()
 {
-    m_debugData->PutBoolean("IsConnected", m_questNav.IsConnected());
-    m_debugData->PutBoolean("IsTracking", m_questNav.IsTracking());
-    m_debugData->PutNumber("BatteryPercent", m_questNav.GetBatteryPercent().value_or(-1));
+    m_debugData->PutBoolean("IsQuestConnected", m_questNav.IsConnected());
+    m_debugData->PutBoolean("IsQuestTracking", m_questNav.IsTracking());
+    m_debugData->PutNumber("QuestBatteryPercent", m_questNav.GetBatteryPercent().value_or(-1));
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
