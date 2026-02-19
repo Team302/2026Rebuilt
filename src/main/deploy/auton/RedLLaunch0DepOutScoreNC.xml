@@ -18,14 +18,5 @@ intakeState = "STATE_INTAKE">
 <zone filename = "RedOutpostZone.xml"/>
 </primitive>
 
-<primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueLDepotOutpost_C"
-time = "4.0"/>
-
-<primitive id = "DRIVE_STOP_MECH">
-<zone filename = "RedClimbingZone.xml"/>
-</primitive>
-
-
 
 </auton>
