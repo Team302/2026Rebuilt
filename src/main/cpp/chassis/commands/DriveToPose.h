@@ -206,7 +206,7 @@ private:
     // Threshold and Range Constants
     //------------------------------------------------------------------
 
-    /// @brief Distance threshold for considering target reached (default 1.0 inches)
+    /// @brief Distance threshold for considering target reached
     units::length::inch_t m_distanceThreshold{0.25};
 
     /// @brief Minimum radius for feedforward activation
@@ -217,12 +217,9 @@ private:
     // Velocity and Acceleration Limits
     //------------------------------------------------------------------
 
-    /// @brief Maximum translational velocity for the robot (4 m/s)
+    /// @brief Maximum translational velocity for the robot
     const units::velocity::meters_per_second_t kMaxVelocity = 4_mps;
     const units::acceleration::meters_per_second_squared_t kMaxAcceleration = 3_mps_sq;
-
-    /// @brief Maximum rotational velocity (540°/s, not actively used in current implementation)
-    const units::angular_velocity::degrees_per_second_t kMaxAngularVelocity = 540_deg_per_s;
 
     //------------------------------------------------------------------
     // NetworkTables Keys (Legacy)
@@ -233,9 +230,6 @@ private:
 
     /// @brief NetworkTables key for proportional gain tuning (not actively used)
     std::string m_pGainKey = "P_Gain";
-
-    /// @brief Latch for run-once operations (not actively used)
-    bool runOnceLatch = false;
 
     //------------------------------------------------------------------
     // Translation PID Gains
