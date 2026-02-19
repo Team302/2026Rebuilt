@@ -46,13 +46,13 @@ void MechanismConfigCompBot_302::DefineMechanisms()
 	m_theLauncher->Init(/*m_theLauncher*/);
 	m_mechanismMap[MechanismTypes::MECHANISM_TYPE::LAUNCHER] = m_theLauncher;
 
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing mechanism"), string("Climber"), "");
-	m_theClimber = new Climber(RobotIdentifier::COMP_BOT_302);
-	m_theClimber->CreateCompBot302();
-	m_theClimber->CreateAndRegisterStates();
-	m_theClimber->InitializeCompBot302();
-	m_theClimber->Init(/*m_theClimber*/);
-	m_mechanismMap[MechanismTypes::MECHANISM_TYPE::CLIMBER] = m_theClimber;
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing mechanism"), string("Climber"), "");
+	// m_theClimber = new Climber(RobotIdentifier::COMP_BOT_302);
+	// m_theClimber->CreateCompBot302();
+	// m_theClimber->CreateAndRegisterStates();
+	// m_theClimber->InitializeCompBot302();
+	// m_theClimber->Init(/*m_theClimber*/);
+	// m_mechanismMap[MechanismTypes::MECHANISM_TYPE::CLIMBER] = m_theClimber;
 }
 
 StateMgr *MechanismConfigCompBot_302::GetMechanism(MechanismTypes::MECHANISM_TYPE mechType)

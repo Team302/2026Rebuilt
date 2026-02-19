@@ -266,7 +266,7 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
     {
         return std::nullopt;
     }
-    auto mode = frc::DriverStation::IsDisabled() ? static_cast<int>(LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_AND_FUSE_WITH_INTERNAL_IMU) : static_cast<int>(LIMELIGHT_IMU_MODE::USE_INTERNAL_WITH_MT1_ASSISTED_CONVERGENCE);
+    auto mode = static_cast<int>(LIMELIGHT_IMU_MODE::USE_INTERNAL_WITH_MT1_ASSISTED_CONVERGENCE);
     LimelightHelpers::SetIMUMode(m_networkTableName, mode);
     if (!m_robotPoseSet)
     {

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "zone.dtd">
+
+<auton>
+<zone circlex="40.0" circley="0.60" radius="40.0"
+pathUpdateOption = "DRIVE_TO_OUTPOST"/>
+</auton>

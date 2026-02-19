@@ -33,7 +33,11 @@ public:
         TRAJECTORY_DRIVE,
         HOLD_DRIVE,
         POLAR_DRIVE,
-        STOP_DRIVE
+        STOP_DRIVE,
+        DRIVE_TO_HUB,
+        DRIVE_TO_BUMP,
+        DRIVE_TO_DEPOT,
+        DRIVE_TO_OUTPOST
     };
 
     enum NoMovementOption

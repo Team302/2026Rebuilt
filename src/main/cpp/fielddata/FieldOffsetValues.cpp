@@ -12,20 +12,32 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
+
+//====================================================================================================================================================
+/// @file FieldOffsetValues.cpp
+/// @brief Implementation of FieldOffsetValues singleton for field element position management
+/// @details This file implements the storage and retrieval of alliance-specific field element positions
+///          for the 2026 game field. It calculates strategic offsets for navigation targets like hubs
+///          and bumps, and provides a unified interface for querying field coordinates throughout the codebase.
+///
+///          The implementation queries FieldConstants for base positions and applies game-specific offsets
+///          to optimize navigation paths and bump crossing trajectories.
+//====================================================================================================================================================
+
 #include "fielddata/FieldOffsetValues.h"
+#include "fielddata/BumpHelper.h"
 #include "fielddata/FieldConstants.h"
 
-//------------------------------------------------------------------
-/// @brief Singleton instance pointer - initialized to nullptr
-//------------------------------------------------------------------
+/// @brief Singleton instance pointer - initialized to nullptr for lazy instantiation
 FieldOffsetValues *FieldOffsetValues::m_instance = nullptr;
 
 //------------------------------------------------------------------
 /// @brief      Get the singleton instance of FieldOffsetValues
 /// @return     FieldOffsetValues* - Pointer to the singleton instance
-/// @details    Creates the instance on first call. Subsequent calls return
-///             the same instance, ensuring only one FieldOffsetValues object
-///             exists throughout the program lifetime
+/// @details    Implements lazy initialization singleton pattern. Creates the
+///             instance on first call and returns it. Subsequent calls return
+///             the existing instance, ensuring a single source of truth for
+///             field position data throughout program execution.
 //------------------------------------------------------------------
 FieldOffsetValues *FieldOffsetValues::GetInstance()
 {
@@ -38,11 +50,41 @@ FieldOffsetValues *FieldOffsetValues::GetInstance()
 
 //------------------------------------------------------------------
 /// @brief      Constructor for FieldOffsetValues
-/// @details    Initializes the X-coordinate offsets for both alliance depots
-///             and outposts by retrieving their positions from field constants.
-///             - Retrieves blue and red depot neutral side X positions
-///             - Sets outpost X positions equal to depot X positions
-///             (indicating outposts are aligned with depots along the X axis)
+/// @details    Initializes all field position offsets by querying FieldConstants and applying
+///             strategic offsets for navigation optimization:
+///
+///             **Depot and Outpost Positions:**
+///             - Retrieves X coordinates from depot neutral side positions
+///             - Sets outpost X equal to depot X (aligned on the 2026 field)
+///
+///             **Hub Positions with Navigation Offsets:**
+///             - Applies 2.0m offset toward neutral zone for optimal approach angles
+///             - Red hub: Base X + 2.0m (moves toward center)
+///             - Blue hub: Base X - 2.0m (moves toward center)
+///
+///             **Bump Edge Positions:**
+///             Calculates bump locations 1.5m from hub centers on both sides:
+///             - Red alliance bump: Hub X + 1.5m
+///             - Red neutral bump: Hub X - 1.5m
+///             - Blue alliance bump: Hub X - 1.5m
+///             - Blue neutral bump: Hub X + 1.5m
+///
+///             **Bump Y-Coordinates:**
+///             Calculates Y positions as midpoints between hub and corresponding trenches:
+///             - Depot bumps: Midpoint of (hub Y, depot trench Y)
+///             - Outpost bumps: Midpoint of (hub Y, outpost trench Y)
+///             - Ensures bumps align with trench entrances
+///
+///             **Debug Logging:**
+///             Logs all calculated bump positions to NetworkTables for field verification
+///             and tuning during testing.
+///
+///             **Fallback Behavior:**
+///             If FieldConstants is unavailable (initialization error), sets all values
+///             to 0.0m to prevent undefined behavior.
+///
+/// @note       This constructor is private and called only by GetInstance()
+/// @note       All calculations use WPILib units for type safety
 //------------------------------------------------------------------
 FieldOffsetValues::FieldOffsetValues()
 {
@@ -50,53 +92,172 @@ FieldOffsetValues::FieldOffsetValues()
 
     if (fieldConstants != nullptr)
     {
+        m_blueDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE).X() + units::length::meter_t{DEPOT_OFFSET};
+        m_redDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE).X() - units::length::meter_t{DEPOT_OFFSET};
+        // Retrieve depot positions from field constants
         m_blueDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE).X();
         m_redDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE).X();
 
+        // Calculate hub positions with 2.0m offset toward neutral zone for navigation
         m_blueHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() - HUB_OFFSET;
         m_redHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER).X() + HUB_OFFSET;
+
+        // Get hub center poses for bump calculations
+        auto redHubCenter = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER);
+        auto blueHubCenter = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER);
+
+        // Calculate bump X positions 1.5m from hub centers
+        m_redAllianceBumpEdgeX = redHubCenter.X() + BUMP_OFFSET;   // Alliance side of red bump
+        m_redNeutralBumpEdgeX = redHubCenter.X() - BUMP_OFFSET;    // Neutral side of red bump
+        m_blueAllianceBumpEdgeX = blueHubCenter.X() - BUMP_OFFSET; // Alliance side of blue bump
+        m_blueNeutralBumpEdgeX = blueHubCenter.X() + BUMP_OFFSET;  // Neutral side of blue bump
+
+        // Calculate bump Y positions as midpoints between hub and trenches
+        m_redBumpDepotY = (redHubCenter.Y() +
+                           fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y()) /
+                          2.0;
+        m_redBumpOutpostY = (redHubCenter.Y() +
+                             fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y()) /
+                            2.0;
+        m_blueBumpDepotY = (blueHubCenter.Y() +
+                            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y()) /
+                           2.0;
+        m_blueBumpOutpostY = (blueHubCenter.Y() +
+                              fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y()) /
+                             2.0;
     }
     else
     {
-        // Fallback to safe default values if FieldConstants is unavailable
+        // Fallback: Initialize all values to zero if FieldConstants unavailable
         m_blueDepotX = units::length::meter_t{0.0};
         m_redDepotX = units::length::meter_t{0.0};
+
         m_blueHubX = units::length::meter_t{0.0};
         m_redHubX = units::length::meter_t{0.0};
+
+        m_redAllianceBumpEdgeX = units::length::meter_t{0.0};
+        m_redNeutralBumpEdgeX = units::length::meter_t{0.0};
+        m_blueAllianceBumpEdgeX = units::length::meter_t{0.0};
+        m_blueNeutralBumpEdgeX = units::length::meter_t{0.0};
+
+        m_redBumpDepotY = units::length::meter_t{0.0};
+        m_redBumpOutpostY = units::length::meter_t{0.0};
+        m_blueBumpDepotY = units::length::meter_t{0.0};
+        m_blueBumpOutpostY = units::length::meter_t{0.0};
     }
 
+    // Set outpost X coordinates equal to depot X (aligned on 2026 field)
     m_blueOutpostX = m_blueDepotX;
     m_redOutpostX = m_redDepotX;
 }
 
 //------------------------------------------------------------------
-/// @brief      Get the X offset value for a specific field item
-/// @param      isRedSide - true for red alliance, false for blue alliance
-/// @param      item - The field offset item to retrieve (OUTPOST_X or DEPOT_X)
-/// @return     units::length::meter_t - The X-coordinate offset in meters
-/// @details    Returns alliance-specific X-coordinate offsets for either
-///             the outpost or depot. The function uses ternary operators to
-///             select the correct value based on the alliance side:
-///             - For OUTPOST_X: returns red outpost X if red side, else blue outpost X
-///             - For DEPOT_X: returns red depot X if red side, else blue depot X
+/// @brief      Retrieves alliance-specific position value for a field element
+/// @param[in]  isRedSide - true for red alliance, false for blue alliance
+/// @param[in]  item - The type of field offset coordinate to retrieve
+/// @return     units::length::meter_t - The coordinate value in meters
+/// @details    Provides a unified interface for querying field element positions with
+///             alliance awareness. Handles both X and Y coordinates for various element types.
+///
+///             **Switch Logic by Item Type:**
+///
+///             **OUTPOST_X:**
+///             Returns X-coordinate of outpost position for specified alliance
+///
+///             **DEPOT_X:**
+///             Returns X-coordinate of depot neutral side for specified alliance
+///
+///             **HUB_X:**
+///             Returns X-coordinate of hub with 2.0m navigation offset applied:
+///             - Red: Hub center + 2.0m
+///             - Blue: Hub center - 2.0m
+///
+///             **ALLIANCE_BUMP_X:**
+///             Returns X-coordinate of bump edge on alliance zone side:
+///             - Red: Hub center + 1.5m
+///             - Blue: Hub center - 1.5m
+///
+///             **NEUTRAL_BUMP_X:**
+///             Returns X-coordinate of bump edge on neutral zone side:
+///             - Red: Hub center - 1.5m
+///             - Blue: Hub center + 1.5m
+///
+///             **ALLIANCE_BUMP_Y or NEUTRAL_BUMP_Y:**
+///             Dynamically determines Y-coordinate based on nearest bump:
+///             1. Calls BumpHelper::CalcNearestBump() to identify which bump
+///             2. Returns corresponding Y position:
+///                - RED_OUTPOST_BUMP → m_redBumpOutpostY
+///                - RED_DEPOT_BUMP → m_redBumpDepotY
+///                - BLUE_OUTPOST_BUMP → m_blueBumpOutpostY
+///                - BLUE_DEPOT_BUMP → m_blueBumpDepotY (default)
+///             Note: Same Y value for both alliance and neutral sides of the same bump
+///
+///             **Unknown Item:**
+///             Returns 0.0m as safe fallback for invalid item types
+///
+/// @note       For bump Y queries, the nearest bump is determined dynamically each call
+/// @note       Method is const - does not modify object state
+/// @see        FIELD_OFFSET_ITEMS for available item types
+/// @see        BumpHelper::CalcNearestBump() for bump identification
 //------------------------------------------------------------------
-units::length::meter_t FieldOffsetValues::GetXValue(bool isRedSide, FIELD_OFFSET_ITEMS item) const
+units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_ITEMS item) const
 {
+    // Outpost X-coordinate query
     if (item == FIELD_OFFSET_ITEMS::OUTPOST_X)
     {
         return isRedSide ? m_redOutpostX : m_blueOutpostX;
     }
+
+    // Depot X-coordinate query
     else if (item == FIELD_OFFSET_ITEMS::DEPOT_X)
     {
         return isRedSide ? m_redDepotX : m_blueDepotX;
     }
+
+    // Hub X-coordinate query (with 2.0m navigation offset)
     else if (item == FIELD_OFFSET_ITEMS::HUB_X)
     {
         return isRedSide ? m_redHubX : m_blueHubX;
     }
+
+    // Alliance-side bump X-coordinate query
+    else if (item == FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_X)
+    {
+        return isRedSide ? m_redAllianceBumpEdgeX : m_blueAllianceBumpEdgeX;
+    }
+
+    // Neutral-side bump X-coordinate query
+    else if (item == FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_X)
+    {
+        return isRedSide ? m_redNeutralBumpEdgeX : m_blueNeutralBumpEdgeX;
+    }
+
+    // Bump Y-coordinate query (dynamic based on nearest bump)
+    else if (item == FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_Y || item == FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_Y)
+    {
+        // Identify which of the four bumps is nearest to robot
+        auto bump = BumpHelper::GetInstance()->CalcNearestBump();
+
+        // Return corresponding Y-coordinate for the identified bump
+        if (bump == BUMP_ID::RED_OUTPOST_BUMP)
+        {
+            return m_redBumpOutpostY;
+        }
+        else if (bump == BUMP_ID::RED_DEPOT_BUMP)
+        {
+            return m_redBumpDepotY;
+        }
+        else if (bump == BUMP_ID::BLUE_OUTPOST_BUMP)
+        {
+            return m_blueBumpOutpostY;
+        }
+        // Default to blue depot bump
+        return m_blueBumpDepotY;
+    }
+
+    // Unknown item type - return safe default
     else
     {
-        // Handle invalid item case (could throw an exception or return a default value)
-        return units::length::meter_t{0.0}; // Default fallback value
+        return units::length::meter_t{0.0}; // Fallback for invalid queries
     }
 }

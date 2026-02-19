@@ -28,12 +28,12 @@
 #include "chassis/commands/TrajectoryDrive.h"
 #include "utils/logging/debug/Logger.h"
 #include "state/RobotState.h"
-// #include "auton/drivePrimitives/AutonUtils.h" TODO: Uncomment when auton get added back in
+#include "auton/drivePrimitives/AutonUtils.h"
 
 TrajectoryDrive::TrajectoryDrive(
     subsystems::CommandSwerveDrivetrain *chassis) : m_chassis(chassis),
                                                     m_pathName(""),
-                                                    // m_trajectoryStates(),
+                                                    m_trajectoryStates(),
                                                     m_prevPose(),
                                                     m_wasMoving(false),
                                                     m_timer(std::make_unique<frc::Timer>()),
@@ -48,7 +48,7 @@ TrajectoryDrive::TrajectoryDrive(
 
 void TrajectoryDrive::Initialize()
 {
-    // m_trajectory = AutonUtils::GetTrajectoryFromPathFile(m_pathName); TODO: Uncomment when auton get added back in
+    m_trajectory = AutonUtils::GetTrajectoryFromPathFile(m_pathName);
     if (m_trajectory.has_value())
     {
         m_trajectoryStates = m_trajectory.value().samples;
