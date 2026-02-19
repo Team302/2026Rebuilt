@@ -252,7 +252,7 @@ void DriveToPose::Execute()
 /// @details    Implements a two-condition completion check to handle both successful completion
 ///             and stuck robot detection:
 ///
-///             **Condtion 1: Target is at the origin**
+///             **Condition 1: Target is at the origin**
 ///             - Checks if the end pose is at the origin (0,0) with a small tolerance
 ///             - Returns true if end pose is at origin, indicating an error in target calculation (physically the robot
 ///               center cannot be at the origin of the field).
