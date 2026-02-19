@@ -50,7 +50,6 @@ void L3ClimbState::Init()
 
 void L3ClimbState::InitCompBot302()
 {
-	m_mechanism->GetAlignment()->Set(m_alignmentTarget);
 }
 
 void L3ClimbState::Run()
@@ -88,5 +87,5 @@ bool L3ClimbState::AtTarget()
 bool L3ClimbState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LEVEL3_CLIMB));
+	return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LEVEL3_CLIMB) && m_mechanism->IsClimberExtended());
 }
