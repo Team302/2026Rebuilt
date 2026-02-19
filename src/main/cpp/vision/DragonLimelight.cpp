@@ -498,6 +498,7 @@ void DragonLimelight::UpdateIMUConfiguration()
     if (requiredMode != m_lastIMUMode)
     {
         LimelightHelpers::SetIMUMode(m_networkTableName, static_cast<int>(requiredMode));
+        LimelightHelpers::SetIMUAssistAlpha(m_networkTableName, 0.01); // Higher values: Faster tracking of the reference source (MT1 or external IMU).(From Limelight docs)
         m_lastIMUMode = requiredMode;
     }
 }
