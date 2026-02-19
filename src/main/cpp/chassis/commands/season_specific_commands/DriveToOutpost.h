@@ -57,5 +57,4 @@ protected:
     struct DriveToPoses GetDriveToPoses() override;
 
 private:
-    DragonField *m_field;
 };
