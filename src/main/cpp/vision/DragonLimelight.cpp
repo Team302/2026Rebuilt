@@ -242,9 +242,6 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag1Pose()
     double xyStds = deviations.value().first;
     double degStds = deviations.value().second;
 
-    // double xyStds = 0.1;
-    // double degStds = 0.1;
-
     m_megatag1PosBool = true;
     m_megatag1Pos = {pose3d, timestamp, {xyStds, xyStds, degStds}, PoseEstimationStrategy::MEGA_TAG};
 
