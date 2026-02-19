@@ -29,7 +29,7 @@
 #include "utils/DragonField.h"
 #include "utils/logging/debug/Logger.h"
 #include "vision/Questnavlib/PoseFrame.h"
-#include "networktables/NetworkTable.h"
+#include "networktables/NetworkTableInstance.h"
 
 // Static strings to avoid repeated heap allocations in logging
 static const std::string kQuestNavDebug = "questnavdebug";
