@@ -223,6 +223,7 @@ private:
 
     /// @brief Hub offset distance for navigation positioning (2.0 meters toward neutral zone)
     static constexpr units::length::meter_t HUB_OFFSET = 2.0_m;
+    static constexpr units::length::inch_t DEPOT_OFFSET = 3.0_in;
 
     /// @brief Bump offset distance from hub center (1.5 meters on each side)
     static constexpr units::length::meter_t BUMP_OFFSET = 1.5_m;

@@ -245,9 +245,7 @@ private:
 
     /// @brief Minimum radius for feedforward activation (0m = always active)
     const units::length::meter_t m_ffMinRadius{0.0};
-
-    /// @brief Maximum radius for feedforward ramping (1.25m = full speed beyond this)
-    const units::length::meter_t m_ffMaxRadius{1.25};
+    const units::length::meter_t m_ffMaxRadius{1.65};
 
     //------------------------------------------------------------------
     // Velocity and Acceleration Limits
@@ -255,9 +253,7 @@ private:
 
     /// @brief Maximum translational velocity for the robot (4 m/s)
     const units::velocity::meters_per_second_t kMaxVelocity = 4_mps;
-
-    /// @brief Maximum translational acceleration for trapezoidal profiles (4 m/s²)
-    const units::acceleration::meters_per_second_squared_t kMaxAcceleration = 4_mps_sq;
+    const units::acceleration::meters_per_second_squared_t kMaxAcceleration = 3_mps_sq;
 
     /// @brief Maximum rotational velocity (540°/s, not actively used in current implementation)
     const units::angular_velocity::degrees_per_second_t kMaxAngularVelocity = 540_deg_per_s;

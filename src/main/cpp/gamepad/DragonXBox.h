@@ -19,17 +19,18 @@
 // #include <map>
 
 // FRC includes
-#include <frc/XboxController.h>
+#include "frc/XboxController.h"
 
 // Team 302 includes
-#include <gamepad/IDragonGamepad.h>
-#include <teleopcontrol/TeleopControlMappingEnums.h>
+#include "gamepad/IDragonGamepad.h"
+#include "teleopcontrol/TeleopControlMappingEnums.h"
+#include "utils/logging/signals/DragonDataLogger.h"
 
 // forward declares
 class AnalogAxis;
 class IButton;
 
-class DragonXBox : public IDragonGamepad
+class DragonXBox : public IDragonGamepad, DragonDataLogger
 {
 public:
     DragonXBox(
@@ -147,6 +148,8 @@ public:
         bool leftRumble, // <I> - rumble left
         bool rightRumble // <I> - rumble right
     ) const override;
+
+    void DataLog(uint64_t timestamp) override;
 
 private:
     frc::XboxController *m_xbox;

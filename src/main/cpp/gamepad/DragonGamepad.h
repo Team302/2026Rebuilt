@@ -19,8 +19,8 @@
 #include <vector>
 
 // Team 302 includes
-#include <gamepad/IDragonGamepad.h>
-#include <teleopcontrol/TeleopControlMappingEnums.h>
+#include "gamepad/IDragonGamepad.h"
+#include "teleopcontrol/TeleopControlMappingEnums.h"
 
 // forward declares
 namespace frc

@@ -22,9 +22,9 @@
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include "utils/logging/signals/CTRESignalLogger.h"
 #include "utils/logging/signals/UDPSignalLogger.h"
+#include "utils/logging/signals/WPISignalLogger.h"
 
 using namespace std;
-using ctre::phoenix6::SignalLogger;
 
 DragonDataLoggerMgr *DragonDataLoggerMgr::m_instance = nullptr;
 DragonDataLoggerMgr *DragonDataLoggerMgr::GetInstance()
@@ -43,7 +43,6 @@ DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items()
     ctreLogger.SetAutoLogging(false);
 
     SetLoggerType(m_defaultLoggerType);
-
 }
 
 void DragonDataLoggerMgr::SetLoggerType(LoggerType type)
@@ -57,6 +56,10 @@ void DragonDataLoggerMgr::SetLoggerType(LoggerType type)
     {
     case LoggerType::CTRE_SIGNAL_LOGGER:
         m_logger = std::make_unique<CTRESignalLogger>();
+        break;
+
+    case LoggerType::WPILOGGER:
+        m_logger = std::make_unique<WPISignalLogger>();
         break;
 
     case LoggerType::UDP_LOGGER:
@@ -82,12 +85,6 @@ DragonDataLoggerMgr::~DragonDataLoggerMgr()
         m_logger->Stop();
     }
 }
-
-void DragonDataLoggerMgr::RegisterItem(DragonDataLogger *item)
-{
-    m_items.emplace_back(item);
-}
-
 void DragonDataLoggerMgr::PeriodicDataLog()
 {
     uint64_t timestamp = frc::RobotController::GetFPGATime();
@@ -99,4 +96,28 @@ void DragonDataLoggerMgr::PeriodicDataLog()
         item->DataLog(timestamp);
         m_lastIndex += ((m_lastIndex >= (m_items.size() - 1)) ? -m_lastIndex : 1);
     }
+}
+
+void DragonDataLoggerMgr::RegisterItem(DragonDataLogger *item)
+{
+    m_items.emplace_back(item);
+}
+
+std::string DragonDataLoggerMgr::GetLoggingDirectory() const
+{
+    // check if usb log directory exists
+    if (std::filesystem::exists("/media/sda1/logs/"))
+    {
+        return std::filesystem::path("/media/sda1/logs/").string();
+    }
+    else if (std::filesystem::exists("/home/lvuser/logs/"))
+    {
+        return std::filesystem::path("/home/lvuser/logs/").string();
+    }
+    else if (std::filesystem::exists("/home/systemcore/logs/"))
+    {
+        return std::filesystem::path("/home/systemcore/logs/").string();
+    }
+
+    return std::string("");
 }
