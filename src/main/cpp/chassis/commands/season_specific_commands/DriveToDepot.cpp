@@ -56,8 +56,8 @@ struct DriveToPoses DriveToDepot::GetDriveToPoses()
         if (chassis != nullptr)
         {
             poses.endPose = chassis->GetPose();
-            return poses;
         }
+        return poses;
     }
     auto depotHelper = DepotHelper::GetInstance();
     if (depotHelper != nullptr)
