@@ -163,15 +163,25 @@ robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlB
     // Season Specific Driver Controls
     {TeleopControlFunctions::INTAKE, driverRBumper},
     {TeleopControlFunctions::EXPEL, driverLBumper},
-    {TeleopControlFunctions::DRIVE_TO_DEPOT, driverXButton},
+
     {TeleopControlFunctions::DRIVE_TO_HUB, driverAButton},
     {TeleopControlFunctions::DRIVE_TO_OUTPOST, driverBButton},
     {TeleopControlFunctions::DRIVE_TO_TOWER, driverXButton},
     {TeleopControlFunctions::CLIMB_MODE, driverStartButton},
     {TeleopControlFunctions::LEVEL1_CLIMB, driverAButton},
-    {TeleopControlFunctions::LEVEL3_CLIMB, driverYButton},
-    {TeleopControlFunctions::ALIGN_TO_LEFT_TOWER, driverXButton},
+
+    {TeleopControlFunctions::DRIVE_TO_OUTPOST, driverBButton},
+    {TeleopControlFunctions::DRIVE_TO_TOWER_RIGHT, driverBButton},
     {TeleopControlFunctions::ALIGN_TO_RIGHT_TOWER, driverBButton},
+
+    {TeleopControlFunctions::DRIVE_TO_DEPOT, driverXButton},
+    {TeleopControlFunctions::DRIVE_TO_TOWER_LEFT, driverXButton},
+    {TeleopControlFunctions::ALIGN_TO_LEFT_TOWER, driverXButton},
+
+    {TeleopControlFunctions::DRIVE_OVER_BUMP, driverYButton},
+    {TeleopControlFunctions::LEVEL3_CLIMB, driverYButton},
+
+    {TeleopControlFunctions::CLIMB_MODE, driverStartButton},
 
     // Season Specific Co-Pilot Controls
     {TeleopControlFunctions::UPDATE_TARGET_OFFSET_DOWN, copilotDPad180},

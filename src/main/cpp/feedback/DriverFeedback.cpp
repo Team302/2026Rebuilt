@@ -54,7 +54,8 @@ DriverFeedback::DriverFeedback() : IRobotStateChangeSubscriber()
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveToFieldElement_Bool);
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveStateType_Int);
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
-
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool);
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool);
     m_LEDStates->SetBlinkingFrequency(m_blinkingFrequency);
 }
 void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, int value)
@@ -71,18 +72,35 @@ void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, bo
         m_isInDriveTo = value;
     else if (RobotStateChanges::StateChange::ClimbModeStatus_Bool == change)
         m_climbMode = value;
+    else if (RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool == change)
+        m_shiftChangeIn5Seconds = value;
+    else if (RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool == change)
+        m_shiftChangeIn3Seconds = value;
 }
 
 void DriverFeedback::UpdateFeedback()
 {
     UpdateLEDStates();
     UpdateDiagnosticLEDs();
+    UpdateRumble();
     CheckControllers();
     m_LEDStates->Periodic();
 }
 
 void DriverFeedback::UpdateRumble()
 {
+
+    if (m_shiftChangeIn3Seconds)
+    {
+        TeleopControl::GetInstance()->SetRumble(0, true, true);
+        TeleopControl::GetInstance()->SetRumble(1, true, true);
+    }
+    else
+    {
+        m_rumbleLoopCounter = 0;
+        TeleopControl::GetInstance()->SetRumble(0, false, false);
+        TeleopControl::GetInstance()->SetRumble(1, false, false);
+    }
 }
 
 void DriverFeedback::UpdateLEDStates()
@@ -171,6 +189,16 @@ void DriverFeedback::UpdateLEDStates()
                 desiredPrimaryColor = frc::Color::kGreen;
                 desiredAnimation = DragonCANdle::AnimationMode::BREATHING;
                 break;
+            }
+
+            if (m_shiftChangeIn5Seconds)
+            {
+                desiredAnimation = DragonCANdle::AnimationMode::BLINKING;
+                m_LEDStates->SetBlinkingFrequency(m_shiftBlinkingFrequency);
+            }
+            else
+            {
+                m_LEDStates->SetBlinkingFrequency(m_blinkingFrequency);
             }
         }
     }
@@ -290,17 +318,20 @@ void DriverFeedback::UpdateDiagnosticLEDs()
 
 void DriverFeedback::CheckControllers()
 {
-    if (m_controllerCounter == 0)
+    if (frc::DriverStation::IsDisabled())
     {
-        auto table = nt::NetworkTableInstance::GetDefault().GetTable("XBOX Controller");
-        for (auto i = 0; i < DriverStation::kJoystickPorts; ++i)
+        if (m_controllerCounter == 0)
         {
-            table.get()->PutBoolean(std::string("Controller") + std::to_string(i), DriverStation::GetJoystickIsXbox(i));
+            auto table = nt::NetworkTableInstance::GetDefault().GetTable("XBOX Controller");
+            for (auto i = 0; i < DriverStation::kJoystickPorts; ++i)
+            {
+                table.get()->PutBoolean(std::string("Controller") + std::to_string(i), DriverStation::GetJoystickIsXbox(i));
+            }
         }
-    }
-    m_controllerCounter++;
-    if (m_controllerCounter > 25)
-    {
-        m_controllerCounter = 0;
+        m_controllerCounter++;
+        if (m_controllerCounter > 25)
+        {
+            m_controllerCounter = 0;
+        }
     }
 }

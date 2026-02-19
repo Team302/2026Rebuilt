@@ -28,13 +28,6 @@
 class DragonField
 {
 public:
-    /// @brief Constructor for DragonField.
-    /// @details Initializes the Field2d object and registers it with SmartDashboard.
-    DragonField();
-
-    /// @brief Destructor for DragonField.
-    ~DragonField() = default;
-
     /// @brief Update the robot's position on the field display.
     /// @param robotPose The current pose of the robot (position and rotation).
     void UpdateRobotPosition(frc::Pose2d robotPose);
@@ -71,6 +64,13 @@ public:
     void ResetField();
 
 private:
+    /// @brief Constructor for DragonField.
+    /// @details Initializes the Field2d object and registers it with SmartDashboard.
+    DragonField();
+
+    /// @brief Destructor for DragonField.
+    ~DragonField() = default;
+
     frc::Field2d m_field;                                          ///< The Field2d object used for visualization
     std::vector<frc::FieldObject2d *> m_objects;                   ///< List of field objects for trajectories
     std::vector<std::pair<std::string, bool>> m_objectNameEnabled; ///< Map of object names to their enabled state

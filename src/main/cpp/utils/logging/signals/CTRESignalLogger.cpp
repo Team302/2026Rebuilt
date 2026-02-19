@@ -15,35 +15,36 @@
 //====================================================================================================================================================
 
 #include "utils/logging/signals/CTRESignalLogger.h"
+#include "utils/logging/debug/Logger.h"
 #include <filesystem>
 #include <ctime>
 #include <string>
 
 using ctre::phoenix6::SignalLogger;
 
-void CTRESignalLogger::WriteBoolean(std::string signalID, bool value, units::time::second_t latency)
+void CTRESignalLogger::WriteBoolean(std::string signalID, bool value, uint64_t timestamp)
 {
-    SignalLogger::WriteBoolean(signalID, value, latency);
+    SignalLogger::WriteBoolean(signalID, value, CTRESignalLogger::ConvertToSeconds(timestamp));
 }
 
-void CTRESignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, units::time::second_t latency)
+void CTRESignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, uint64_t timestamp)
 {
-    SignalLogger::WriteDouble(signalID, value, units, latency);
+    SignalLogger::WriteDouble(signalID, value, units, CTRESignalLogger::ConvertToSeconds(timestamp));
 }
 
-void CTRESignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, units::time::second_t latency)
+void CTRESignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, uint64_t timestamp)
 {
-    SignalLogger::WriteInteger(signalID, value, units, latency);
+    SignalLogger::WriteInteger(signalID, value, units, CTRESignalLogger::ConvertToSeconds(timestamp));
 }
 
-void CTRESignalLogger::WriteString(std::string signalID, const std::string &value, units::time::second_t latency)
+void CTRESignalLogger::WriteString(std::string signalID, const std::string &value, uint64_t timestamp)
 {
-    SignalLogger::WriteString(signalID, value, latency);
+    SignalLogger::WriteString(signalID, value, CTRESignalLogger::ConvertToSeconds(timestamp));
 }
 
-void CTRESignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, units::time::second_t latency)
+void CTRESignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
 {
-    SignalLogger::WriteDoubleArray(signalID, value, units, latency);
+    SignalLogger::WriteDoubleArray(signalID, value, units, CTRESignalLogger::ConvertToSeconds(timestamp));
 }
 
 void CTRESignalLogger::Start()
@@ -51,7 +52,6 @@ void CTRESignalLogger::Start()
     SignalLogger::SetPath(GetLoggingDir().c_str());
     SignalLogger::EnableAutoLogging(true);
     SignalLogger::Start();
-
 }
 
 void CTRESignalLogger::Stop()
@@ -91,4 +91,14 @@ std::string CTRESignalLogger::GetLoggingDir()
     }
 
     return std::string("");
+}
+
+units::time::second_t CTRESignalLogger::ConvertToSeconds(uint64_t timestamp)
+{
+    return units::time::second_t(static_cast<double>(timestamp) / 1e9);
+}
+
+void CTRESignalLogger::SetAutoLogging(bool enable)
+{
+    SignalLogger::EnableAutoLogging(enable);
 }

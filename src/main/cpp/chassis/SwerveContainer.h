@@ -18,6 +18,7 @@
 #include <memory>
 
 #include "chassis/commands/TrajectoryDrive.h"
+#include "chassis/commands/season_specific_commands/DriveOverBump.h"
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"
 #include "chassis/commands/season_specific_commands/DriveToHub.h"
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
@@ -57,10 +58,41 @@ public:
     //------------------------------------------------------------------
     /// @brief      Get the trajectory drive command for autonomous routines
     /// @return     TrajectoryDrive* - Pointer to the trajectory drive command
+    /// @details    Provides access to the trajectory following command for
+    ///             executing pre-planned autonomous paths
     //------------------------------------------------------------------
     TrajectoryDrive *GetTrajectoryDriveCommand() { return m_trajectoryDrive.get(); }
+
+    //------------------------------------------------------------------
+    /// @brief      Get the drive over bump command for autonomous navigation
+    /// @return     DriveOverBump* - Pointer to the drive over bump command
+    /// @details    Provides access to the command that navigates over bumps
+    ///             or obstacles on the field
+    //------------------------------------------------------------------
+    DriveOverBump *GetDriveOverBumpCommand() { return m_driveOverBump.get(); }
+
+    //------------------------------------------------------------------
+    /// @brief      Get the drive to depot command for autonomous navigation
+    /// @return     DriveToDepot* - Pointer to the drive to depot command
+    /// @details    Provides access to the command that autonomously drives
+    ///             the robot to the depot location
+    //------------------------------------------------------------------
     DriveToDepot *GetDriveToDepotCommand() { return m_driveToDepot.get(); }
+
+    //------------------------------------------------------------------
+    /// @brief      Get the drive to hub command for autonomous navigation
+    /// @return     DriveToHub* - Pointer to the drive to hub command
+    /// @details    Provides access to the command that autonomously drives
+    ///             the robot to the hub location
+    //------------------------------------------------------------------
     DriveToHub *GetDriveToHubCommand() { return m_driveToHub.get(); }
+
+    //------------------------------------------------------------------
+    /// @brief      Get the drive to outpost command for autonomous navigation
+    /// @return     DriveToOutpost* - Pointer to the drive to outpost command
+    /// @details    Provides access to the command that autonomously drives
+    ///             the robot to the outpost location
+    //------------------------------------------------------------------
     DriveToOutpost *GetDriveToOutpostCommand() { return m_driveToOutpost.get(); }
     DriveToTower *GetDriveToTowerCommand() { return m_driveToTower.get(); }
     // filepath: src/main/cpp/commands/DriveToTowerOutpost.h
@@ -102,6 +134,9 @@ private:
     /// @brief Trajectory following command for autonomous paths
     std::unique_ptr<TrajectoryDrive> m_trajectoryDrive;
 
+    /// @brief Drive over bump command for season-specific autonomous navigation
+    std::unique_ptr<DriveOverBump> m_driveOverBump;
+
     /// @brief Drive to depot command for season-specific autonomous navigation
     std::unique_ptr<DriveToDepot> m_driveToDepot;
 
@@ -115,7 +150,9 @@ private:
 
     //------------------------------------------------------------------
     /// @brief      Configures button bindings for chassis control
-    /// @details    Sets up controller bindings, telemetry, and SysID options
+    /// @details    Sets up controller bindings, telemetry, and SysID options.
+    ///             Calls helper methods to configure standard drive commands
+    ///             and season-specific drive-to commands.
     //------------------------------------------------------------------
     void ConfigureBindings();
 
@@ -136,7 +173,10 @@ private:
     //------------------------------------------------------------------
     /// @brief      Creates and binds season-specific drive commands
     /// @param[in]  controller - Pointer to the teleop controller
-    /// @details    Placeholder for binding autonomous drive commands
+    /// @details    Sets up autonomous navigation commands for drive-to
+    ///             locations (depot, hub, outpost) and obstacle navigation
+    ///             (drive over bump). Commands are conditionally enabled
+    ///             based on climb mode status.
     //------------------------------------------------------------------
     void CreateRebuiltDriveToCommands(TeleopControl *controller);
 
@@ -144,9 +184,16 @@ private:
     /// @brief      Handles robot state change notifications
     /// @param[in]  change - The type of state change that occurred
     /// @param[in]  value - The new value associated with the state change
-    /// @details    Overrides IRobotStateChangeSubscriber interface method
+    /// @details    Overrides IRobotStateChangeSubscriber interface method.
+    ///             Currently monitors climb mode status changes to adjust
+    ///             drive command behavior accordingly.
     //------------------------------------------------------------------
     void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
 
+    //------------------------------------------------------------------
+    /// @brief      Tracks whether the robot is currently in climb mode
+    /// @details    When true, certain drive-to commands are disabled and
+    ///             alternative climb-specific navigation is enabled
+    //------------------------------------------------------------------
     bool m_climbModeStatus = false;
 };
