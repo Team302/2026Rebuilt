@@ -29,6 +29,22 @@ DriveToDepot::DriveToDepot(subsystems::CommandSwerveDrivetrain *chassis)
 {
 }
 
+//------------------------------------------------------------------
+/// @brief      Calculates the target pose for driving to a depot
+/// @return     DriveToPoses struct containing the depot target pose
+/// @details    Determines the nearest depot and returns its center position.
+///
+///             **Behavior:**
+///             - If in neutral zone: Returns current pose (no movement)
+///             - If in alliance zone: Calculates nearest depot pose using DepotHelper
+///
+///             The command uses DepotHelper to identify which depot (red or blue)
+///             is closest based on the robot's current position and returns
+///             the center coordinates of that depot.
+///
+/// @note       This is a single-stage navigation (no midpoint)
+/// @see        DepotHelper::CalcDepotPose() for depot position calculation
+//------------------------------------------------------------------
 struct DriveToPoses DriveToDepot::GetDriveToPoses()
 {
     struct DriveToPoses poses;

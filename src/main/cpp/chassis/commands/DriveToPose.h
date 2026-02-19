@@ -50,7 +50,7 @@ struct DriveToPoses
 /// - Completion threshold: 0.25 inches (customizable)
 ///
 /// **Extensibility:**
-/// Derived classes override GetEndPose() to provide specific target calculations:
+/// Derived classes override GetDriveToPoses() to provide specific target calculations:
 /// - DriveToDepot: Navigate to depot zones
 /// - DriveOverBump: Multi-stage bump crossing
 /// - DriveToGamePiece: Vision-based game piece targeting
@@ -92,7 +92,7 @@ public:
     /// @details    Called once when the command starts. Gets the target pose,
     ///             resets movement detection, configures controllers, and publishes
     ///             state changes to notify other subsystems that navigation is active.
-    /// @see        GetEndPose() for target determination
+    /// @see        GetDriveToPoses() for target determination
     //------------------------------------------------------------------
     void Initialize() override;
 
@@ -124,24 +124,23 @@ public:
     void End(bool interrupted) override;
 
 protected:
-    virtual struct DriveToPoses GetDriveToPoses() { return DriveToPoses{}; }
-
     //------------------------------------------------------------------
-    /// @brief      Gets the target pose for navigation
-    /// @return     frc::Pose2d - The target field pose to navigate to
+    /// @brief      Gets the target pose(s) for navigation
+    /// @return     DriveToPoses struct containing endpoint and optional midpoint
     /// @details    Virtual method that derived classes override to provide
-    ///             specific target calculations based on field elements,
-    ///             vision data, or game strategy. Base implementation returns
-    ///             the current m_endPose value.
+    ///             specific target pose calculations. The base implementation
+    ///             returns an empty DriveToPoses struct.
     ///
-    /// @note       Called by Initialize() at command start
-    /// @note       Override this in derived classes for custom targeting
-    /// @see        DriveOverBump::GetEndPose() for multi-waypoint example
+    ///             **Usage Pattern:**
+    ///             - Override in derived classes to provide field element targets
+    ///             - Set hasMidPose=true for two-stage navigation
+    ///             - Called during Initialize() to determine navigation goals
+    ///
+    /// @note       Derived classes should implement this to specify their targets
+    /// @see        DriveOverBump::GetDriveToPoses() for multi-waypoint example
+    /// @see        DriveToDepot::GetDriveToPoses() for single-target example
     //------------------------------------------------------------------
-    virtual frc::Pose2d GetEndPose()
-    {
-        return m_endPose;
-    };
+    virtual struct DriveToPoses GetDriveToPoses() { return DriveToPoses{}; }
 
     //------------------------------------------------------------------
     /// @brief      Updates the target pose during execution
@@ -163,9 +162,22 @@ protected:
     ///             IsFinished() returns true. Smaller values provide higher precision
     ///             but may increase settling time. Default is 0.25 inches.
     ///
-    /// @note       Typically called by derived classes in GetEndPose()
+    /// @note       Derived classes should call this in their constructors or
+    ///  initialization methods
     //------------------------------------------------------------------
     void SetDistanceThreshold(const units::length::inch_t &distanceThreshold) { m_distanceThreshold = distanceThreshold; }
+
+    //------------------------------------------------------------------
+    /// @brief      Sets the angle tolerance for completion detection
+    /// @param[in]  angleTolerance - Angular tolerance in degrees for considering target rotation reached
+    /// @details    Customizes how close the robot's heading must be to the target angle before
+    ///             IsFinished() returns true. Smaller values provide higher rotational precision
+    ///             but may increase settling time. Default is 20 degrees.
+    ///
+    /// @note       Derived classes should call this in their constructors or
+    ///             initialization methods to override the default tolerance
+    //------------------------------------------------------------------
+    void SetAngleTolerance(const units::angle::degree_t &angleTolerance) { m_angleTolerance = angleTolerance; }
 
     //------------------------------------------------------------------
     /// @brief      Gets the chassis subsystem pointer
@@ -176,6 +188,8 @@ protected:
     subsystems::CommandSwerveDrivetrain *GetChassis() const { return m_chassis; }
 
 private:
+    bool ShouldSkipMidPoint() const;
+
     //------------------------------------------------------------------
     /// @brief      Calculates feedforward velocity component toward target
     /// @param[out] chassisSpeeds - Reference to populate with feedforward velocities
@@ -217,6 +231,7 @@ private:
     frc::Pose2d m_midPose;
     bool m_hasMidPose = false;
     bool m_beforeMidPose = true;
+    units::angle::degree_t m_angleTolerance{20.0};
 
     //------------------------------------------------------------------
     // Threshold and Range Constants

@@ -24,9 +24,10 @@
 ///
 /// This command extends DriveToPose to provide specific functionality for navigating to Outposts.
 /// It automatically determines which Outpost (red or blue) is closest to the robot's current position
-/// and calculates the target pose at the center of that Outpost using OutpostHelper.
+/// and calculates the target pose using OutpostHelper. The command uses a two-stage approach with a
+/// midpoint pose (offset from outpost) and endpoint pose (at the outpost center).
 ///
-/// The command uses path following to drive the robot to the calculated Outpost center position,
+/// The command uses PID control to drive the robot to the calculated Outpost positions,
 /// making it useful for autonomous routines or driver assistance features during matches.
 //====================================================================================================================================================
 class DriveToOutpost : public DriveToPose
@@ -46,6 +47,13 @@ public:
     ~DriveToOutpost() = default;
 
 protected:
+    //------------------------------------------------------------------
+    /// @brief      Calculates target poses for outpost navigation
+    /// @return     DriveToPoses struct with offset approach pose (midpoint) and outpost center (endpoint)
+    /// @details    Overrides base class to provide outpost-specific two-stage navigation.
+    ///             Returns current pose if in neutral zone, otherwise calculates nearest outpost path.
+    /// @see        DriveToOutpost.cpp for full implementation details
+    //------------------------------------------------------------------
     struct DriveToPoses GetDriveToPoses() override;
 
 private:

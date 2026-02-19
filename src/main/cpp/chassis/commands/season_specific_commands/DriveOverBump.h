@@ -56,8 +56,7 @@ public:
     /// @param[in]  chassis - Pointer to the swerve drive subsystem that will execute the movement
     /// @details    Initializes the command with the chassis reference for autonomous navigation.
     ///             The constructor sets up the base DriveToPose functionality and initializes
-    ///             the midpoint and endpoint pose members to default values. Actual pose
-    ///             calculation occurs when GetEndPose() is called by the command scheduler.
+    ///             the midpoint and endpoint pose members to default values.
     //------------------------------------------------------------------
     DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis);
 
@@ -68,6 +67,13 @@ public:
     ~DriveOverBump() = default;
 
 protected:
+    //------------------------------------------------------------------
+    /// @brief      Calculates target poses for two-stage bump crossing
+    /// @return     DriveToPoses struct with midpoint (bump side) and endpoint (opposite side)
+    /// @details    Overrides base class to provide bump-specific navigation.
+    ///             See implementation for detailed pose calculation logic.
+    /// @see        DriveOverBump.cpp for full implementation details
+    //------------------------------------------------------------------
     struct DriveToPoses GetDriveToPoses() override;
 
 private:

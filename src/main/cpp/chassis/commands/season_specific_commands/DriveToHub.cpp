@@ -29,6 +29,22 @@ DriveToHub::DriveToHub(subsystems::CommandSwerveDrivetrain *chassis)
 {
 }
 
+//------------------------------------------------------------------
+/// @brief      Calculates the target pose for driving to the hub
+/// @return     DriveToPoses struct containing the hub target pose
+/// @details    Determines the nearest hub and returns its center position.
+///
+///             **Behavior:**
+///             - If in neutral zone: Returns current pose (no movement)
+///             - If in alliance zone: Calculates nearest hub pose using HubHelper
+///
+///             The command uses HubHelper to identify which hub (red or blue)
+///             is closest based on the robot's current position and returns
+///             the center coordinates of that hub.
+///
+/// @note       This is a single-stage navigation (no midpoint)
+/// @see        HubHelper::CalcHubPose() for hub position calculation
+//------------------------------------------------------------------
 struct DriveToPoses DriveToHub::GetDriveToPoses()
 {
     struct DriveToPoses poses;

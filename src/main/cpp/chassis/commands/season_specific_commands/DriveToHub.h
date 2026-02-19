@@ -25,7 +25,7 @@
 /// It automatically determines which Hub (red or blue) is closest to the robot's current position
 /// and calculates the target pose at the center of that Hub using HubHelper.
 ///
-/// The command uses path following to drive the robot to the calculated Hub center position,
+/// The command uses PID control to drive the robot to the calculated Hub center position,
 /// making it useful for autonomous routines or driver assistance features during matches.
 //====================================================================================================================================================
 class DriveToHub : public DriveToPose
@@ -45,5 +45,12 @@ public:
     ~DriveToHub() = default;
 
 protected:
+    //------------------------------------------------------------------
+    /// @brief      Calculates target pose for hub navigation
+    /// @return     DriveToPoses struct with hub center as endpoint
+    /// @details    Overrides base class to provide hub-specific navigation.
+    ///             Returns current pose if in neutral zone, otherwise calculates nearest hub.
+    /// @see        DriveToHub.cpp for full implementation details
+    //------------------------------------------------------------------
     struct DriveToPoses GetDriveToPoses() override;
 };

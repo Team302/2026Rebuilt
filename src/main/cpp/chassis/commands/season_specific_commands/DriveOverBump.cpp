@@ -34,6 +34,7 @@ DriveOverBump::DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis) : Dri
 {
     // Set distance threshold for pose completion detection (1 foot tolerance)
     SetDistanceThreshold(1_ft);
+    SetAngleTolerance(15.0_deg);
 }
 
 //------------------------------------------------------------------
@@ -74,6 +75,30 @@ units::angle::degree_t DriveOverBump::GetRotation(BUMP_ID bump, bool isInNeutral
     }
 }
 
+//------------------------------------------------------------------
+/// @brief      Calculates the target poses for driving over a bump
+/// @return     DriveToPoses struct containing midpoint and endpoint poses
+/// @details    Determines which bump is nearest and calculates a two-stage path:
+///
+///             **Stage 1 (Mid Pose):**
+///             - If in neutral zone: Target is neutral side of bump
+///             - If in alliance zone: Target is alliance side of bump
+///
+///             **Stage 2 (End Pose):**
+///             - If in neutral zone: Target is alliance side of bump
+///             - If in alliance zone: Target is neutral side of bump
+///
+///             The method uses BumpHelper to identify the nearest bump,
+///             NeutralZoneManager to determine current zone, and
+///             FieldOffsetValues to retrieve the exact field coordinates.
+///
+///             Rotation angles are set to point toward the hub center
+///             (45° or 315° depending on which bump is being crossed).
+///
+/// @note       This override enables the two-stage navigation required
+///             to safely cross over field bumps
+/// @see        GetRotation() for rotation angle calculation
+//------------------------------------------------------------------
 struct DriveToPoses DriveOverBump::GetDriveToPoses()
 {
     struct DriveToPoses poses;

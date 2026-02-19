@@ -59,9 +59,7 @@
 /// @note       The command requires exclusive access to the chassis subsystem
 /// @see        Initialize() for per-run setup when command is scheduled
 //------------------------------------------------------------------
-DriveToPose::DriveToPose(
-    subsystems::CommandSwerveDrivetrain *chassis) : m_chassis(chassis)
-
+DriveToPose::DriveToPose(subsystems::CommandSwerveDrivetrain *chassis) : m_chassis(chassis)
 {
     AddRequirements(m_chassis);
 
@@ -82,8 +80,8 @@ DriveToPose::DriveToPose(
 ///             Performs the following initialization steps:
 ///
 ///             **Target Acquisition:**
-///             - Calls GetEndPose() to determine the target pose (overridable by derived classes)
-///             - Sets the target pose as the navigation goal
+///             - Calls GetDriveToPoses() to determine the target pose(s) (overridable by derived classes)
+///             - Sets the end pose and optional mid pose as navigation goals
 ///
 ///             **State Preparation:**
 ///             - Resets the "same pose" tracker to detect when robot stops moving
@@ -96,8 +94,8 @@ DriveToPose::DriveToPose(
 ///             These state changes notify other subsystems that autonomous navigation is in progress,
 ///             which may trigger coordinated behaviors or safety interlocks.
 ///
-/// @note       Derived classes can override GetEndPose() to provide custom target calculations
-/// @see        GetEndPose() for target pose determination
+/// @note       Derived classes can override GetDriveToPoses() to provide custom target calculations
+/// @see        GetDriveToPoses() for target pose determination
 /// @see        SetTargetPose() for controller configuration
 //------------------------------------------------------------------
 void DriveToPose::Initialize()
@@ -110,6 +108,11 @@ void DriveToPose::Initialize()
     {
         m_midPose = poses.midPose;
         m_beforeMidPose = true;
+        if (ShouldSkipMidPoint())
+        {
+            m_beforeMidPose = false;
+            m_targetPose = m_endPose;
+        }
     }
     else
     {
@@ -120,7 +123,7 @@ void DriveToPose::Initialize()
     m_chassis->ResetSamePose();
 
     // Configure controllers with the target pose
-    SetTargetPose(m_hasMidPose ? m_midPose : m_endPose);
+    SetTargetPose(m_beforeMidPose ? m_midPose : m_endPose);
 
     // Notify robot state that navigation has started
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElement_Bool, true);
@@ -408,4 +411,10 @@ void DriveToPose::CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds)
         chassisSpeeds.vx = feedforwardSpeed * angleToTarget.Cos();
         chassisSpeeds.vy = feedforwardSpeed * angleToTarget.Sin();
     }
+}
+
+bool DriveToPose::ShouldSkipMidPoint() const
+{
+    auto currentPose = m_chassis->GetPose();
+    return PoseUtils::GetAngleBetweenPoses(currentPose, m_endPose, m_midPose) < m_angleTolerance;
 }

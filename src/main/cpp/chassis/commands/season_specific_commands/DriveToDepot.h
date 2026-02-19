@@ -45,5 +45,12 @@ public:
     ~DriveToDepot() = default;
 
 protected:
+    //------------------------------------------------------------------
+    /// @brief      Calculates target pose for depot navigation
+    /// @return     DriveToPoses struct with depot center as endpoint
+    /// @details    Overrides base class to provide depot-specific navigation.
+    ///             Returns current pose if in neutral zone, otherwise calculates nearest depot.
+    /// @see        DriveToDepot.cpp for full implementation details
+    //------------------------------------------------------------------
     struct DriveToPoses GetDriveToPoses() override;
 };
