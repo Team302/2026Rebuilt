@@ -2,7 +2,7 @@
 #pragma once
 
 #include "frc2/command/button/CommandXboxController.h"
-#include <gamepad/DragonXBox.h>
+#include "gamepad/DragonXBox.h"
 
 class DragonHybridController
 {

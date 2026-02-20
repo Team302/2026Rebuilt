@@ -5,6 +5,7 @@
 #include <frc/DriverStation.h>
 #include <frc/Notifier.h>
 #include <frc2/command/CommandPtr.h>
+#include <frc2/command/Commands.h>
 #include <frc2/command/SubsystemBase.h>
 #include <frc2/command/sysid/SysIdRoutine.h>
 #include <ctre/phoenix6/swerve/SwerveDrivetrain.hpp>
@@ -13,6 +14,11 @@
 #include <frc/geometry/Pose2d.h>
 
 using namespace ctre::phoenix6;
+
+/**
+ * Uncomment the following line to enable SysId characterization routines
+ */
+// #define ENABLE_SYSID
 
 namespace subsystems
 {
@@ -37,6 +43,7 @@ namespace subsystems
         /* Keep track if we've ever applied the operator perspective before or not */
         bool m_hasAppliedOperatorPerspective = false;
 
+#ifdef ENABLE_SYSID
         /* Swerve requests to apply during SysId characterization */
         swerve::requests::SysIdSwerveTranslation m_translationCharacterization;
         swerve::requests::SysIdSwerveSteerGains m_steerCharacterization;
@@ -45,67 +52,60 @@ namespace subsystems
         /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
         frc2::sysid::SysIdRoutine m_sysIdRoutineTranslation{
             frc2::sysid::Config{
-                std::nullopt, // Use default ramp rate (1 V/s)
-                4_V,          // Reduce dynamic step voltage to 4 V to prevent brownout
-                std::nullopt, // Use default timeout (10 s)
-                // Log state with SignalLogger class
+                std::nullopt,
+                4_V,
+                std::nullopt,
                 [](frc::sysid::State state)
                 {
                     SignalLogger::WriteString("SysIdTranslation_State", frc::sysid::SysIdRoutineLog::StateEnumToString(state));
                 }},
-            frc2::sysid::Mechanism{
+            frc2::sysid::Mechanism {
                 [this](units::volt_t output)
                 { SetControl(m_translationCharacterization.WithVolts(output)); },
                 {},
-                this}};
+                this
+            }};
 
         /* SysId routine for characterizing steer. This is used to find PID gains for the steer motors. */
         frc2::sysid::SysIdRoutine m_sysIdRoutineSteer{
             frc2::sysid::Config{
-                std::nullopt, // Use default ramp rate (1 V/s)
-                7_V,          // Use dynamic voltage of 7 V
-                std::nullopt, // Use default timeout (10 s)
-                // Log state with SignalLogger class
+                std::nullopt,
+                7_V,
+                std::nullopt,
                 [](frc::sysid::State state)
                 {
                     SignalLogger::WriteString("SysIdSteer_State", frc::sysid::SysIdRoutineLog::StateEnumToString(state));
                 }},
-            frc2::sysid::Mechanism{
+            frc2::sysid::Mechanism {
                 [this](units::volt_t output)
                 { SetControl(m_steerCharacterization.WithVolts(output)); },
                 {},
-                this}};
+                this
+            }};
 
-        /*
-         * SysId routine for characterizing rotation.
-         * This is used to find PID gains for the FieldCentricFacingAngle HeadingController.
-         * See the documentation of swerve::requests::SysIdSwerveRotation for info on importing the log to SysId.
-         */
+        /* SysId routine for characterizing rotation. */
         frc2::sysid::SysIdRoutine m_sysIdRoutineRotation{
             frc2::sysid::Config{
-                /* This is in radians per second², but SysId only supports "volts per second" */
                 units::constants::detail::PI_VAL / 6 * (1_V / 1_s),
-                /* This is in radians per second, but SysId only supports "volts" */
                 units::constants::detail::PI_VAL * 1_V,
-                std::nullopt, // Use default timeout (10 s)
-                // Log state with SignalLogger class
+                std::nullopt,
                 [](frc::sysid::State state)
                 {
                     SignalLogger::WriteString("SysIdRotation_State", frc::sysid::SysIdRoutineLog::StateEnumToString(state));
                 }},
-            frc2::sysid::Mechanism{
+            frc2::sysid::Mechanism {
                 [this](units::volt_t output)
                 {
-                    /* output is actually radians per second, but SysId only supports "volts" */
                     SetControl(m_rotationCharacterization.WithRotationalRate(output * (1_rad_per_s / 1_V)));
-                    /* also log the requested output for SysId */
                     SignalLogger::WriteValue("Rotational_Rate", output * (1_rad_per_s / 1_V));
                 },
                 {},
-                this}};
+                this
+            }};
 
         /* The SysId routine to test */
         frc2::sysid::SysIdRoutine *m_sysIdRoutineToApply = &m_sysIdRoutineTranslation;
+#endif // ENABLE_SYSID
 
     public:
         /**
@@ -226,6 +226,7 @@ namespace subsystems
          * \param direction Direction of the SysId Quasistatic test
          * \returns Command to run
          */
+#ifdef ENABLE_SYSID
         frc2::CommandPtr SysIdQuasistatic(frc2::sysid::Direction direction)
         {
             return m_sysIdRoutineToApply->Quasistatic(direction);
@@ -242,6 +243,17 @@ namespace subsystems
         {
             return m_sysIdRoutineToApply->Dynamic(direction);
         }
+#else
+        frc2::CommandPtr SysIdQuasistatic(frc2::sysid::Direction direction)
+        {
+            return frc2::cmd::None();
+        }
+
+        frc2::CommandPtr SysIdDynamic(frc2::sysid::Direction direction)
+        {
+            return frc2::cmd::None();
+        }
+#endif // ENABLE_SYSID
 
         /**
          * \brief Adds a vision measurement to the Kalman Filter. This will correct the
