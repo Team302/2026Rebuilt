@@ -34,11 +34,7 @@ enum class FIELD_OFFSET_ITEMS
     TOWER_DEPOT_X,   ///< X-coordinate offset of the depot neutral side
     TOWER_OUTPOST_Y, ///< Y-coordinate offset of the outpost
     TOWER_DEPOT_Y,   ///< Y-coordinate offset of the depot neutral side
-    HUB_X
-
-    OUTPOST_X,       ///< X-coordinate of the outpost position (meters)
-    DEPOT_X,         ///< X-coordinate of the depot neutral side position (meters)
-    HUB_X,           ///< X-coordinate of the hub center with offset applied (meters)
+    HUB_X,
     ALLIANCE_BUMP_X, ///< X-coordinate of the bump on the alliance zone side (meters)
     ALLIANCE_BUMP_Y, ///< Y-coordinate of the bump on the alliance zone side (meters)
     NEUTRAL_BUMP_X,  ///< X-coordinate of the bump on the neutral zone side (meters)

@@ -35,7 +35,6 @@ public:
     /// @brief      Get the singleton instance of TowerHelper
     /// @return     DRiveToTowerHelper* - Pointer to the singleton instance
     //------------------------------------------------------------------
-    static DriveToTower *GetInstance();
 
     //------------------------------------------------------------------
     /// @brief      Constructor for DriveToTower command

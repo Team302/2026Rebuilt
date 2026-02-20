@@ -15,7 +15,10 @@
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
 #include "chassis/commands/season_specific_commands/DriveToTowerHelper.h"
 #include "utils/PoseUtils.h"
-
+DriveToTower::DriveToTower(subsystems::CommandSwerveDrivetrain *chassis)
+    : DriveToPose(chassis)
+{
+}
 //------------------------------------------------------------------
 /// @brief      Constructor for DriveToTower command
 /// @param[in]  chassis - Pointer to the swerve drive subsystem
@@ -23,10 +26,6 @@
 ///             This command autonomously drives the robot to the nearest
 ///             Tower on the field.
 //------------------------------------------------------------------
-DriveToTower::DriveToTower(subsystems::CommandSwerveDrivetrain *chassis)
-    : DriveToPose(chassis)
-{
-}
 
 //------------------------------------------------------------------
 /// @brief      Calculates the target end pose for the Tower

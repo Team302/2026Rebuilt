@@ -22,7 +22,7 @@
 #include "frc/DriverStation.h"
 
 //====================================================================================================================================================
-/// @class DRiveToTowerHelper
+/// @class DriveToTowerHelper
 /// @brief Helper class for Tower-related calculations and navigation
 ///
 /// This singleton class provides utilities for interacting with Towers on the field, including:
@@ -51,7 +51,7 @@ public:
     //------------------------------------------------------------------
     frc::Pose2d CalcTowerPose() const;
 
-    units::length::meter_t CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose);
+    units::length::meter_t CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
 
 private:
     //------------------------------------------------------------------
@@ -67,20 +67,6 @@ private:
 
     /// @brief Singleton instance pointer
     static DriveToTowerHelper *m_instance;
-
-    //------------------------------------------------------------------
-    /// @brief      Determines which Tower (red or blue) is nearest to the robot
-    /// @return     bool - true if the red Tower is nearest, false if blue Tower is nearest
-    //------------------------------------------------------------------
-    bool IsNearestTowerRed() const;
-
-    //------------------------------------------------------------------
-    /// @brief      Calculates the distance from a given pose to a field element
-    /// @param[in]  element - The field element to measure distance to
-    /// @param[in]  currentPose - The pose to measure distance from
-    /// @return     units::length::meter_t - The distance in meters
-    //------------------------------------------------------------------
-    units::length::meter_t CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
 
     /// @brief Pointer to the swerve drivetrain subsystem
     subsystems::CommandSwerveDrivetrain *m_chassis;
