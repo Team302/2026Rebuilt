@@ -131,4 +131,7 @@ private:
 	bool m_isLaunching = false;
 	bool m_isAllowedToClimb = false;
 	// void InitializeLogging();
+
+	units::angle::turn_t m_intakeRetractedPositionTarget{0.0};
+	units::angle::turn_t m_intakeExtendedPositionTarget{0.0};
 };

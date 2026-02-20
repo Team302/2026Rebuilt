@@ -380,13 +380,13 @@ void Intake::ManualControl()
 		bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE);
 		if (intakeOutPressed)
 		{
-			m_extenderLeft->Set(true);
-			m_extenderRight->Set(true);
+			m_intakeRetractedPositionTarget = units ::angle::turn_t{0.0};
+			m_intakeExtendedPositionTarget = units::angle::turn_t{1.0};
 		}
 		else if (intakeInPressed)
 		{
-			m_extenderLeft->Set(false);
-			m_extenderRight->Set(false);
+			m_intakeRetractedPositionTarget = units::angle::turn_t{1.0};
+			m_intakeExtendedPositionTarget = units::angle::turn_t{0.0};
 		}
 	}
 }
