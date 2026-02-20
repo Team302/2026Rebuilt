@@ -51,8 +51,6 @@ void IntakeState::Init()
 void IntakeState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
-	m_mechanism->GetExtenderLeft()->Set(m_extenderTarget);
-	m_mechanism->GetExtenderRight()->Set(m_extenderTarget);
 }
 
 void IntakeState::Run()

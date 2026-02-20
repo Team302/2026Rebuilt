@@ -73,6 +73,4 @@ void MechanismConfigCompBot_302::DefineLEDs()
 
 void MechanismConfigCompBot_302::DefineCompressor()
 {
-	auto Compressor = new frc::Compressor(1, frc::PneumaticsModuleType::REVPH);
-	Compressor->EnableAnalog(95_psi, 119.5_psi);
 }

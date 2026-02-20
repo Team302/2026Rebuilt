@@ -10,1248 +10,8 @@
       <value>0</value>
     </canID>
   </PowerDistributionPanel>
-  <Compressor>
-    <compressor>
-      <name>Compressor</name>
-      <canID>
-        <unitsFamily>none</unitsFamily>
-        <name>uintParameter</name>
-        <__units__ />
-        <type>UInt32</type>
-        <value>1</value>
-      </canID>
-      <minPressure>
-        <unitsFamily>pressure</unitsFamily>
-        <name>doubleParameter</name>
-        <__units__>PSI</__units__>
-        <type>Double</type>
-        <value>95</value>
-      </minPressure>
-      <maxPressure>
-        <unitsFamily>pressure</unitsFamily>
-        <name>doubleParameter</name>
-        <__units__>PSI</__units__>
-        <type>Double</type>
-        <value>119.5</value>
-      </maxPressure>
-    </compressor>
-  </Compressor>
+  <PneumaticControlModules />
   <mechanismInstances>
-    <mechanismInstance>
-      <name>Intake</name>
-      <mechanism>
-        <GUID>cea1dfe8-5c25-49c7-97cd-9b59e6e149f3</GUID>
-        <name>Intake</name>
-        <MotorControllers>
-          <MotorController xsi:type="TalonFX">
-            <name>Intake</name>
-            <ControllerEnabled>Yes</ControllerEnabled>
-            <theDistanceAngleCalcInfo>
-              <gearRatio>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>1</value>
-              </gearRatio>
-              <diameter>
-                <unitsFamily>length</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>m</__units__>
-                <type>Double</type>
-                <value>1</value>
-              </diameter>
-              <isDistance>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>false</value>
-              </isDistance>
-            </theDistanceAngleCalcInfo>
-            <voltageRamping>
-              <openLoopRampTime>
-                <unitsFamily>time</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>s</__units__>
-                <type>Double</type>
-                <value>0.25</value>
-              </openLoopRampTime>
-              <closedLoopRampTime>
-                <unitsFamily>time</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>s</__units__>
-                <type>Double</type>
-                <value>0.25</value>
-              </closedLoopRampTime>
-              <enableClosedLoop>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>true</value>
-              </enableClosedLoop>
-            </voltageRamping>
-            <canID>
-              <unitsFamily>none</unitsFamily>
-              <name>uintParameter</name>
-              <__units__ />
-              <type>UInt32</type>
-              <value>4</value>
-            </canID>
-            <canBusName>canivore</canBusName>
-            <pdpID>
-              <unitsFamily>none</unitsFamily>
-              <name>uintParameter</name>
-              <__units__ />
-              <type>UInt32</type>
-              <value>0</value>
-            </pdpID>
-            <followID>
-              <unitsFamily>none</unitsFamily>
-              <name>uintParameter</name>
-              <__units__ />
-              <type>UInt32</type>
-              <value>0</value>
-            </followID>
-            <enableFollowID>
-              <unitsFamily>none</unitsFamily>
-              <name>boolParameter</name>
-              <__units__ />
-              <type>Boolean</type>
-              <value>false</value>
-            </enableFollowID>
-            <remoteSensor>
-              <CanID>
-                <unitsFamily>none</unitsFamily>
-                <name>uintParameter</name>
-                <__units__ />
-                <type>UInt32</type>
-                <value>0</value>
-              </CanID>
-              <sensorToMechanismRatio>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>0</value>
-              </sensorToMechanismRatio>
-            </remoteSensor>
-            <fusedSyncCANcoder>
-              <enable>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>false</value>
-              </enable>
-              <fusedCANcoder>
-                <name>CANcoderInstance</name>
-              </fusedCANcoder>
-              <sensorToMechanismRatio>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>0</value>
-              </sensorToMechanismRatio>
-              <rotorToSensorRatio>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>0</value>
-              </rotorToSensorRatio>
-              <fusedSyncChoice>FUSED</fusedSyncChoice>
-            </fusedSyncCANcoder>
-            <sensorIsInverted>
-              <unitsFamily>none</unitsFamily>
-              <name>boolParameter</name>
-              <__units__ />
-              <type>Boolean</type>
-              <value>false</value>
-            </sensorIsInverted>
-            <theCurrentLimits>
-              <enableStatorCurrentLimit>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>true</value>
-              </enableStatorCurrentLimit>
-              <statorCurrentLimit>
-                <unitsFamily>current</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>A</__units__>
-                <type>Double</type>
-                <value>100</value>
-              </statorCurrentLimit>
-              <enableSupplyCurrentLimit>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>true</value>
-              </enableSupplyCurrentLimit>
-              <supplyCurrentLimit>
-                <unitsFamily>current</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>A</__units__>
-                <type>Double</type>
-                <value>70</value>
-              </supplyCurrentLimit>
-              <supplyCurrentThreshold>
-                <unitsFamily>current</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>A</__units__>
-                <type>Double</type>
-                <value>35</value>
-              </supplyCurrentThreshold>
-              <supplyTimeThreshold>
-                <unitsFamily>time</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>s</__units__>
-                <type>Double</type>
-                <value>0</value>
-              </supplyTimeThreshold>
-            </theCurrentLimits>
-            <PIDFs />
-            <theConfigHWLimitSW>
-              <enableForward>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>false</value>
-              </enableForward>
-              <remoteForwardSensorID>
-                <unitsFamily>none</unitsFamily>
-                <name>intParameter</name>
-                <__units__ />
-                <type>Int32</type>
-                <value>0</value>
-              </remoteForwardSensorID>
-              <forwardResetPosition>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>false</value>
-              </forwardResetPosition>
-              <forwardPosition>
-                <unitsFamily>angle</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>deg</__units__>
-                <type>Double</type>
-                <value>0</value>
-              </forwardPosition>
-              <forwardType>LimitSwitchPin</forwardType>
-              <forwardOpenClose>NormallyOpen</forwardOpenClose>
-              <enableReverse>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>false</value>
-              </enableReverse>
-              <remoteReverseSensorID>
-                <unitsFamily>none</unitsFamily>
-                <name>intParameter</name>
-                <__units__ />
-                <type>Int32</type>
-                <value>0</value>
-              </remoteReverseSensorID>
-              <reverseResetPosition>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>false</value>
-              </reverseResetPosition>
-              <reversePosition>
-                <unitsFamily>angle</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>deg</__units__>
-                <type>Double</type>
-                <value>0</value>
-              </reversePosition>
-              <revType>LimitSwitchPin</revType>
-              <revOpenClose>NormallyOpen</revOpenClose>
-            </theConfigHWLimitSW>
-            <theConfigMotorSettings>
-              <deadbandPercent>
-                <unitsFamily>percent</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>%</__units__>
-                <type>Double</type>
-                <value>0</value>
-              </deadbandPercent>
-              <peakForwardDutyCycle>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>1</value>
-              </peakForwardDutyCycle>
-              <peakReverseDutyCycle>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>-1</value>
-              </peakReverseDutyCycle>
-            </theConfigMotorSettings>
-            <MotionMagicSettings>
-              <CruiseVelocity>
-                <unitsFamily>angularVelocity</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>rad/s</__units__>
-                <type>Double</type>
-                <value>0</value>
-              </CruiseVelocity>
-              <Acceleration>
-                <unitsFamily>angularAcceleration</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>rad/s^2</__units__>
-                <type>Double</type>
-                <value>0</value>
-              </Acceleration>
-              <Jerk>
-                <unitsFamily>angularJerk</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>rad/s^3</__units__>
-                <type>Double</type>
-                <value>0</value>
-              </Jerk>
-            </MotionMagicSettings>
-          </MotorController>
-          <MotorController xsi:type="TalonFX">
-            <name>Agitator</name>
-            <ControllerEnabled>Yes</ControllerEnabled>
-            <theDistanceAngleCalcInfo>
-              <gearRatio>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>1</value>
-              </gearRatio>
-              <diameter>
-                <unitsFamily>length</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>m</__units__>
-                <type>Double</type>
-                <value>1</value>
-              </diameter>
-              <isDistance>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>false</value>
-              </isDistance>
-            </theDistanceAngleCalcInfo>
-            <voltageRamping>
-              <openLoopRampTime>
-                <unitsFamily>time</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>s</__units__>
-                <type>Double</type>
-                <value>0.25</value>
-              </openLoopRampTime>
-              <closedLoopRampTime>
-                <unitsFamily>time</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>s</__units__>
-                <type>Double</type>
-                <value>0.25</value>
-              </closedLoopRampTime>
-              <enableClosedLoop>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>true</value>
-              </enableClosedLoop>
-            </voltageRamping>
-            <canID>
-              <unitsFamily>none</unitsFamily>
-              <name>uintParameter</name>
-              <__units__ />
-              <type>UInt32</type>
-              <value>0</value>
-            </canID>
-            <canBusName>canivore</canBusName>
-            <pdpID>
-              <unitsFamily>none</unitsFamily>
-              <name>uintParameter</name>
-              <__units__ />
-              <type>UInt32</type>
-              <value>0</value>
-            </pdpID>
-            <followID>
-              <unitsFamily>none</unitsFamily>
-              <name>uintParameter</name>
-              <__units__ />
-              <type>UInt32</type>
-              <value>0</value>
-            </followID>
-            <enableFollowID>
-              <unitsFamily>none</unitsFamily>
-              <name>boolParameter</name>
-              <__units__ />
-              <type>Boolean</type>
-              <value>false</value>
-            </enableFollowID>
-            <remoteSensor>
-              <CanID>
-                <unitsFamily>none</unitsFamily>
-                <name>uintParameter</name>
-                <__units__ />
-                <type>UInt32</type>
-                <value>0</value>
-              </CanID>
-              <sensorToMechanismRatio>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>0</value>
-              </sensorToMechanismRatio>
-            </remoteSensor>
-            <fusedSyncCANcoder>
-              <enable>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>false</value>
-              </enable>
-              <fusedCANcoder>
-                <name>CANcoderInstance</name>
-              </fusedCANcoder>
-              <sensorToMechanismRatio>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>0</value>
-              </sensorToMechanismRatio>
-              <rotorToSensorRatio>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>0</value>
-              </rotorToSensorRatio>
-              <fusedSyncChoice>FUSED</fusedSyncChoice>
-            </fusedSyncCANcoder>
-            <sensorIsInverted>
-              <unitsFamily>none</unitsFamily>
-              <name>boolParameter</name>
-              <__units__ />
-              <type>Boolean</type>
-              <value>false</value>
-            </sensorIsInverted>
-            <theCurrentLimits>
-              <enableStatorCurrentLimit>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>true</value>
-              </enableStatorCurrentLimit>
-              <statorCurrentLimit>
-                <unitsFamily>current</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>A</__units__>
-                <type>Double</type>
-                <value>100</value>
-              </statorCurrentLimit>
-              <enableSupplyCurrentLimit>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>true</value>
-              </enableSupplyCurrentLimit>
-              <supplyCurrentLimit>
-                <unitsFamily>current</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>A</__units__>
-                <type>Double</type>
-                <value>70</value>
-              </supplyCurrentLimit>
-              <supplyCurrentThreshold>
-                <unitsFamily>current</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>A</__units__>
-                <type>Double</type>
-                <value>35</value>
-              </supplyCurrentThreshold>
-              <supplyTimeThreshold>
-                <unitsFamily>time</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>s</__units__>
-                <type>Double</type>
-                <value>0</value>
-              </supplyTimeThreshold>
-            </theCurrentLimits>
-            <PIDFs />
-            <theConfigHWLimitSW>
-              <enableForward>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>false</value>
-              </enableForward>
-              <remoteForwardSensorID>
-                <unitsFamily>none</unitsFamily>
-                <name>intParameter</name>
-                <__units__ />
-                <type>Int32</type>
-                <value>0</value>
-              </remoteForwardSensorID>
-              <forwardResetPosition>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>false</value>
-              </forwardResetPosition>
-              <forwardPosition>
-                <unitsFamily>angle</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>deg</__units__>
-                <type>Double</type>
-                <value>0</value>
-              </forwardPosition>
-              <forwardType>LimitSwitchPin</forwardType>
-              <forwardOpenClose>NormallyOpen</forwardOpenClose>
-              <enableReverse>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>false</value>
-              </enableReverse>
-              <remoteReverseSensorID>
-                <unitsFamily>none</unitsFamily>
-                <name>intParameter</name>
-                <__units__ />
-                <type>Int32</type>
-                <value>0</value>
-              </remoteReverseSensorID>
-              <reverseResetPosition>
-                <unitsFamily>none</unitsFamily>
-                <name>boolParameter</name>
-                <__units__ />
-                <type>Boolean</type>
-                <value>false</value>
-              </reverseResetPosition>
-              <reversePosition>
-                <unitsFamily>angle</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>deg</__units__>
-                <type>Double</type>
-                <value>0</value>
-              </reversePosition>
-              <revType>LimitSwitchPin</revType>
-              <revOpenClose>NormallyOpen</revOpenClose>
-            </theConfigHWLimitSW>
-            <theConfigMotorSettings>
-              <deadbandPercent>
-                <unitsFamily>percent</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>%</__units__>
-                <type>Double</type>
-                <value>0</value>
-              </deadbandPercent>
-              <peakForwardDutyCycle>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>1</value>
-              </peakForwardDutyCycle>
-              <peakReverseDutyCycle>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>-1</value>
-              </peakReverseDutyCycle>
-            </theConfigMotorSettings>
-            <MotionMagicSettings>
-              <CruiseVelocity>
-                <unitsFamily>angularVelocity</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>rad/s</__units__>
-                <type>Double</type>
-                <value>0</value>
-              </CruiseVelocity>
-              <Acceleration>
-                <unitsFamily>angularAcceleration</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>rad/s^2</__units__>
-                <type>Double</type>
-                <value>0</value>
-              </Acceleration>
-              <Jerk>
-                <unitsFamily>angularJerk</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__>rad/s^3</__units__>
-                <type>Double</type>
-                <value>0</value>
-              </Jerk>
-            </MotionMagicSettings>
-          </MotorController>
-        </MotorControllers>
-        <closedLoopControlParameters />
-        <solenoid>
-          <solenoid>
-            <name>Extender</name>
-            <CAN_ID>
-              <unitsFamily>none</unitsFamily>
-              <name>uintParameter</name>
-              <__units__ />
-              <type>UInt32</type>
-              <value>1</value>
-            </CAN_ID>
-            <channel>
-              <unitsFamily>none</unitsFamily>
-              <name>uintParameter</name>
-              <__units__ />
-              <type>UInt32</type>
-              <value>0</value>
-            </channel>
-            <enableDualChannel>
-              <unitsFamily>none</unitsFamily>
-              <name>boolParameter</name>
-              <__units__ />
-              <type>Boolean</type>
-              <value>false</value>
-            </enableDualChannel>
-            <forwardChannel>
-              <unitsFamily>none</unitsFamily>
-              <name>uintParameter</name>
-              <__units__ />
-              <type>UInt32</type>
-              <value>0</value>
-            </forwardChannel>
-            <reverseChannel>
-              <unitsFamily>none</unitsFamily>
-              <name>uintParameter</name>
-              <__units__ />
-              <type>UInt32</type>
-              <value>0</value>
-            </reverseChannel>
-            <reversed>
-              <unitsFamily>none</unitsFamily>
-              <name>boolParameter</name>
-              <__units__ />
-              <type>Boolean</type>
-              <value>false</value>
-            </reversed>
-          </solenoid>
-        </solenoid>
-        <servo />
-        <analogInput />
-        <digitalInput>
-          <digitalInput>
-            <name>IsIntakeExtended</name>
-            <digitalId>
-              <unitsFamily>none</unitsFamily>
-              <name>uintParameter</name>
-              <__units__ />
-              <type>UInt32</type>
-              <value>0</value>
-            </digitalId>
-            <reversed>
-              <unitsFamily>none</unitsFamily>
-              <name>boolParameter</name>
-              <__units__ />
-              <type>Boolean</type>
-              <value>false</value>
-            </reversed>
-            <debouncetime>
-              <unitsFamily>time</unitsFamily>
-              <name>doubleParameter</name>
-              <__units__>s</__units__>
-              <type>Double</type>
-              <value>0</value>
-            </debouncetime>
-          </digitalInput>
-        </digitalInput>
-        <cancoder />
-        <stateMotorControlData>
-          <motorControlData>
-            <name>PercentOut</name>
-            <PID>
-              <name>PIDFZ</name>
-              <pGain>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>0</value>
-              </pGain>
-              <iGain>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>0</value>
-              </iGain>
-              <dGain>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>0</value>
-              </dGain>
-              <fGain>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>0</value>
-              </fGain>
-              <iZone>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>0</value>
-              </iZone>
-              <sGain>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>0</value>
-              </sGain>
-              <vGain>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>0</value>
-              </vGain>
-              <aGain>
-                <unitsFamily>none</unitsFamily>
-                <name>doubleParameter</name>
-                <__units__ />
-                <type>Double</type>
-                <value>0</value>
-              </aGain>
-            </PID>
-            <SlotIndex>
-              <unitsFamily>none</unitsFamily>
-              <name>intParameter</name>
-              <__units__ />
-              <type>Int32</type>
-              <value>0</value>
-            </SlotIndex>
-            <peakValue>
-              <unitsFamily>none</unitsFamily>
-              <name>doubleParameter</name>
-              <__units__ />
-              <type>Double</type>
-              <value>0</value>
-            </peakValue>
-            <nominalValue>
-              <unitsFamily>none</unitsFamily>
-              <name>doubleParameter</name>
-              <__units__ />
-              <type>Double</type>
-              <value>0</value>
-            </nominalValue>
-            <maxAcceleration>
-              <unitsFamily>none</unitsFamily>
-              <name>doubleParameter</name>
-              <__units__ />
-              <type>Double</type>
-              <value>0</value>
-            </maxAcceleration>
-            <cruiseVelocity>
-              <unitsFamily>none</unitsFamily>
-              <name>doubleParameter</name>
-              <__units__ />
-              <type>Double</type>
-              <value>0</value>
-            </cruiseVelocity>
-            <enableFOC>
-              <unitsFamily>none</unitsFamily>
-              <name>boolParameter</name>
-              <__units__ />
-              <type>Boolean</type>
-              <value>false</value>
-            </enableFOC>
-            <feedForwardType>DUTY_CYCLE</feedForwardType>
-          </motorControlData>
-        </stateMotorControlData>
-        <states>
-          <state>
-            <name>Off</name>
-            <transitionsTo>
-              <stringParameterConstInMechInstance>
-                <unitsFamily>none</unitsFamily>
-                <name>stringParameterConstInMechInstance</name>
-                <__units__ />
-                <type>String</type>
-                <value>Intake</value>
-              </stringParameterConstInMechInstance>
-              <stringParameterConstInMechInstance>
-                <unitsFamily>none</unitsFamily>
-                <name>stringParameterConstInMechInstance</name>
-                <__units__ />
-                <type>String</type>
-                <value>Expel</value>
-              </stringParameterConstInMechInstance>
-              <stringParameterConstInMechInstance>
-                <unitsFamily>none</unitsFamily>
-                <name>stringParameterConstInMechInstance</name>
-                <__units__ />
-                <type>String</type>
-                <value>Launch</value>
-              </stringParameterConstInMechInstance>
-              <stringParameterConstInMechInstance>
-                <unitsFamily>none</unitsFamily>
-                <name>stringParameterConstInMechInstance</name>
-                <__units__ />
-                <type>String</type>
-                <value>EmptyHopper</value>
-              </stringParameterConstInMechInstance>
-            </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
-            <motorTargets>
-              <motorTarget>
-                <name>Intake</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Double</type>
-                </target>
-                <motorName>Intake</motorName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-                <controlDataName>PercentOut</controlDataName>
-              </motorTarget>
-              <motorTarget>
-                <name>Agitator</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Double</type>
-                </target>
-                <motorName>Agitator</motorName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-                <controlDataName>PercentOut</controlDataName>
-              </motorTarget>
-            </motorTargets>
-            <solenoidTarget>
-              <solenoidTarget>
-                <name>Extender</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                </target>
-                <solenoidName>Extender</solenoidName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>false</value>
-                </Enabled>
-              </solenoidTarget>
-            </solenoidTarget>
-          </state>
-          <state>
-            <name>Intake</name>
-            <transitionsTo>
-              <stringParameterConstInMechInstance>
-                <unitsFamily>none</unitsFamily>
-                <name>stringParameterConstInMechInstance</name>
-                <__units__ />
-                <type>String</type>
-                <value>Off</value>
-              </stringParameterConstInMechInstance>
-              <stringParameterConstInMechInstance>
-                <unitsFamily>none</unitsFamily>
-                <name>stringParameterConstInMechInstance</name>
-                <__units__ />
-                <type>String</type>
-                <value>Launch</value>
-              </stringParameterConstInMechInstance>
-              <stringParameterConstInMechInstance>
-                <unitsFamily>none</unitsFamily>
-                <name>stringParameterConstInMechInstance</name>
-                <__units__ />
-                <type>String</type>
-                <value>EmptyHopper</value>
-              </stringParameterConstInMechInstance>
-            </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
-            <motorTargets>
-              <motorTarget>
-                <name>Intake</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Double</type>
-                  <value>1</value>
-                </target>
-                <motorName>Intake</motorName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-                <controlDataName>PercentOut</controlDataName>
-              </motorTarget>
-              <motorTarget>
-                <name>Agitator</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Double</type>
-                  <value>1</value>
-                </target>
-                <motorName>Agitator</motorName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-                <controlDataName>PercentOut</controlDataName>
-              </motorTarget>
-            </motorTargets>
-            <solenoidTarget>
-              <solenoidTarget>
-                <name>Extender</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </target>
-                <solenoidName>Extender</solenoidName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-              </solenoidTarget>
-            </solenoidTarget>
-          </state>
-          <state>
-            <name>Expel</name>
-            <transitionsTo>
-              <stringParameterConstInMechInstance>
-                <unitsFamily>none</unitsFamily>
-                <name>stringParameterConstInMechInstance</name>
-                <__units__ />
-                <type>String</type>
-                <value>Off</value>
-              </stringParameterConstInMechInstance>
-              <stringParameterConstInMechInstance>
-                <unitsFamily>none</unitsFamily>
-                <name>stringParameterConstInMechInstance</name>
-                <__units__ />
-                <type>String</type>
-                <value>Launch</value>
-              </stringParameterConstInMechInstance>
-              <stringParameterConstInMechInstance>
-                <unitsFamily>none</unitsFamily>
-                <name>stringParameterConstInMechInstance</name>
-                <__units__ />
-                <type>String</type>
-                <value>EmptyHopper</value>
-              </stringParameterConstInMechInstance>
-            </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
-            <motorTargets>
-              <motorTarget>
-                <name>Intake</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Double</type>
-                  <value>-1</value>
-                </target>
-                <motorName>Intake</motorName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-                <controlDataName>PercentOut</controlDataName>
-              </motorTarget>
-              <motorTarget>
-                <name>Agitator</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Double</type>
-                  <value>-1</value>
-                </target>
-                <motorName>Agitator</motorName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-                <controlDataName>PercentOut</controlDataName>
-              </motorTarget>
-            </motorTargets>
-            <solenoidTarget>
-              <solenoidTarget>
-                <name>Extender</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </target>
-                <solenoidName>Extender</solenoidName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-              </solenoidTarget>
-            </solenoidTarget>
-          </state>
-          <state>
-            <name>Launch</name>
-            <transitionsTo>
-              <stringParameterConstInMechInstance>
-                <unitsFamily>none</unitsFamily>
-                <name>stringParameterConstInMechInstance</name>
-                <__units__ />
-                <type>String</type>
-                <value>Off</value>
-              </stringParameterConstInMechInstance>
-              <stringParameterConstInMechInstance>
-                <unitsFamily>none</unitsFamily>
-                <name>stringParameterConstInMechInstance</name>
-                <__units__ />
-                <type>String</type>
-                <value>Intake</value>
-              </stringParameterConstInMechInstance>
-              <stringParameterConstInMechInstance>
-                <unitsFamily>none</unitsFamily>
-                <name>stringParameterConstInMechInstance</name>
-                <__units__ />
-                <type>String</type>
-                <value>Expel</value>
-              </stringParameterConstInMechInstance>
-              <stringParameterConstInMechInstance>
-                <unitsFamily>none</unitsFamily>
-                <name>stringParameterConstInMechInstance</name>
-                <__units__ />
-                <type>String</type>
-                <value>EmptyHopper</value>
-              </stringParameterConstInMechInstance>
-            </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
-            <motorTargets>
-              <motorTarget>
-                <name>Intake</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Double</type>
-                  <value>1</value>
-                </target>
-                <motorName>Intake</motorName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-                <controlDataName>PercentOut</controlDataName>
-              </motorTarget>
-              <motorTarget>
-                <name>Agitator</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Double</type>
-                  <value>1</value>
-                </target>
-                <motorName>Agitator</motorName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-                <controlDataName>PercentOut</controlDataName>
-              </motorTarget>
-            </motorTargets>
-            <solenoidTarget>
-              <solenoidTarget>
-                <name>Extender</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                </target>
-                <solenoidName>Extender</solenoidName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>false</value>
-                </Enabled>
-              </solenoidTarget>
-            </solenoidTarget>
-          </state>
-          <state>
-            <name>EmptyHopper</name>
-            <transitionsTo>
-              <stringParameterConstInMechInstance>
-                <unitsFamily>none</unitsFamily>
-                <name>stringParameterConstInMechInstance</name>
-                <__units__ />
-                <type>String</type>
-                <value>Off</value>
-              </stringParameterConstInMechInstance>
-              <stringParameterConstInMechInstance>
-                <unitsFamily>none</unitsFamily>
-                <name>stringParameterConstInMechInstance</name>
-                <__units__ />
-                <type>String</type>
-                <value>Intake</value>
-              </stringParameterConstInMechInstance>
-            </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
-            <motorTargets>
-              <motorTarget>
-                <name>Intake</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Double</type>
-                  <value>-1</value>
-                </target>
-                <motorName>Intake</motorName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-                <controlDataName>PercentOut</controlDataName>
-              </motorTarget>
-              <motorTarget>
-                <name>Agitator</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Double</type>
-                  <value>1</value>
-                </target>
-                <motorName>Agitator</motorName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-                <controlDataName>PercentOut</controlDataName>
-              </motorTarget>
-            </motorTargets>
-            <solenoidTarget>
-              <solenoidTarget>
-                <name>Extender</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                </target>
-                <solenoidName>Extender</solenoidName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-              </solenoidTarget>
-            </solenoidTarget>
-          </state>
-        </states>
-        <doubleParameters />
-        <boolParameters />
-        <constDoubleParameters />
-        <constBoolParameters />
-      </mechanism>
-    </mechanismInstance>
     <mechanismInstance>
       <name>Launcher</name>
       <mechanism>
@@ -3116,10 +1876,6 @@
                 <value>Initialize</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
             <motorTargets>
               <motorTarget>
                 <name>Launcher</name>
@@ -3212,15 +1968,10 @@
                 <controlDataName>PercentOut</controlDataName>
               </motorTarget>
             </motorTargets>
-            <solenoidTarget />
           </state>
           <state>
             <name>Initialize</name>
             <transitionsTo />
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
             <motorTargets>
               <motorTarget>
                 <name>Launcher</name>
@@ -3315,7 +2066,6 @@
                 <controlDataName>PercentOut</controlDataName>
               </motorTarget>
             </motorTargets>
-            <solenoidTarget />
           </state>
           <state>
             <name>Idle</name>
@@ -3356,10 +2106,6 @@
                 <value>LauncherTuning</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
             <motorTargets>
               <motorTarget>
                 <name>Launcher</name>
@@ -3453,7 +2199,6 @@
                 <controlDataName>PercentOut</controlDataName>
               </motorTarget>
             </motorTargets>
-            <solenoidTarget />
           </state>
           <state>
             <name>PrepareToLaunch</name>
@@ -3494,10 +2239,6 @@
                 <value>Climb</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
             <motorTargets>
               <motorTarget>
                 <name>Launcher</name>
@@ -3591,7 +2332,6 @@
                 <controlDataName>PercentOut</controlDataName>
               </motorTarget>
             </motorTargets>
-            <solenoidTarget />
           </state>
           <state>
             <name>Launch</name>
@@ -3618,10 +2358,6 @@
                 <value>PrepareToLaunch</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
             <motorTargets>
               <motorTarget>
                 <name>Launcher</name>
@@ -3716,7 +2452,6 @@
                 <controlDataName>PercentOut</controlDataName>
               </motorTarget>
             </motorTargets>
-            <solenoidTarget />
           </state>
           <state>
             <name>EmptyHopper</name>
@@ -3743,10 +2478,6 @@
                 <value>Climb</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
             <motorTargets>
               <motorTarget>
                 <name>Launcher</name>
@@ -3841,7 +2572,6 @@
                 <controlDataName>PercentOut</controlDataName>
               </motorTarget>
             </motorTargets>
-            <solenoidTarget />
           </state>
           <state>
             <name>Climb</name>
@@ -3861,10 +2591,6 @@
                 <value>Idle</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
             <motorTargets>
               <motorTarget>
                 <name>Launcher</name>
@@ -3957,7 +2683,6 @@
                 <controlDataName>PercentOut</controlDataName>
               </motorTarget>
             </motorTargets>
-            <solenoidTarget />
           </state>
           <state>
             <name>LauncherTuning</name>
@@ -3977,17 +2702,13 @@
                 <value>Launch</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
             <motorTargets>
               <motorTarget>
                 <name>Launcher</name>
                 <target>
                   <unitsFamily>angularVelocity</unitsFamily>
                   <name>Target</name>
-                  <__units__ />
+                  <__units__>rad/s</__units__>
                   <type>Double</type>
                 </target>
                 <motorName>Launcher</motorName>
@@ -4073,7 +2794,6 @@
                 <controlDataName>PercentOut</controlDataName>
               </motorTarget>
             </motorTargets>
-            <solenoidTarget />
           </state>
         </states>
         <doubleParameters />
@@ -4616,10 +3336,6 @@
                 <value>WantToClimb</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
             <motorTargets>
               <motorTarget>
                 <name>Climber</name>
@@ -4640,42 +3356,6 @@
                 <controlDataName>PositionDegree</controlDataName>
               </motorTarget>
             </motorTargets>
-            <solenoidTarget>
-              <solenoidTarget>
-                <name>Extender</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                </target>
-                <solenoidName>Extender</solenoidName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-              </solenoidTarget>
-              <solenoidTarget>
-                <name>Alignment</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                </target>
-                <solenoidName>Alignment</solenoidName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>false</value>
-                </Enabled>
-              </solenoidTarget>
-            </solenoidTarget>
           </state>
           <state>
             <name>WantToClimb</name>
@@ -4695,10 +3375,6 @@
                 <value>PrepareToClimb</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
             <motorTargets>
               <motorTarget>
                 <name>Climber</name>
@@ -4719,42 +3395,6 @@
                 <controlDataName>PositionDegree</controlDataName>
               </motorTarget>
             </motorTargets>
-            <solenoidTarget>
-              <solenoidTarget>
-                <name>Extender</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                </target>
-                <solenoidName>Extender</solenoidName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>false</value>
-                </Enabled>
-              </solenoidTarget>
-              <solenoidTarget>
-                <name>Alignment</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                </target>
-                <solenoidName>Alignment</solenoidName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>false</value>
-                </Enabled>
-              </solenoidTarget>
-            </solenoidTarget>
           </state>
           <state>
             <name>PrepareToClimb</name>
@@ -4781,10 +3421,6 @@
                 <value>L3Climb</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
             <motorTargets>
               <motorTarget>
                 <name>Climber</name>
@@ -4805,44 +3441,6 @@
                 <controlDataName>PositionDegree</controlDataName>
               </motorTarget>
             </motorTargets>
-            <solenoidTarget>
-              <solenoidTarget>
-                <name>Extender</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </target>
-                <solenoidName>Extender</solenoidName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-              </solenoidTarget>
-              <solenoidTarget>
-                <name>Alignment</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </target>
-                <solenoidName>Alignment</solenoidName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-              </solenoidTarget>
-            </solenoidTarget>
           </state>
           <state>
             <name>L1Climb</name>
@@ -4862,10 +3460,6 @@
                 <value>Exit</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
             <motorTargets>
               <motorTarget>
                 <name>Climber</name>
@@ -4887,42 +3481,6 @@
                 <controlDataName>PositionDegree</controlDataName>
               </motorTarget>
             </motorTargets>
-            <solenoidTarget>
-              <solenoidTarget>
-                <name>Extender</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                </target>
-                <solenoidName>Extender</solenoidName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>false</value>
-                </Enabled>
-              </solenoidTarget>
-              <solenoidTarget>
-                <name>Alignment</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                </target>
-                <solenoidName>Alignment</solenoidName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-              </solenoidTarget>
-            </solenoidTarget>
           </state>
           <state>
             <name>L3Climb</name>
@@ -4942,10 +3500,6 @@
                 <value>Exit</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
             <motorTargets>
               <motorTarget>
                 <name>Climber</name>
@@ -4967,42 +3521,6 @@
                 <controlDataName>PositionDegree</controlDataName>
               </motorTarget>
             </motorTargets>
-            <solenoidTarget>
-              <solenoidTarget>
-                <name>Extender</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                </target>
-                <solenoidName>Extender</solenoidName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>false</value>
-                </Enabled>
-              </solenoidTarget>
-              <solenoidTarget>
-                <name>Alignment</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                </target>
-                <solenoidName>Alignment</solenoidName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>true</value>
-                </Enabled>
-              </solenoidTarget>
-            </solenoidTarget>
           </state>
           <state>
             <name>Exit</name>
@@ -5015,10 +3533,6 @@
                 <value>Off</value>
               </stringParameterConstInMechInstance>
             </transitionsTo>
-            <doubleParameters />
-            <boolParameters />
-            <constDoubleParameters />
-            <constBoolParameters />
             <motorTargets>
               <motorTarget>
                 <name>Climber</name>
@@ -5039,33 +3553,869 @@
                 <controlDataName>PositionDegree</controlDataName>
               </motorTarget>
             </motorTargets>
-            <solenoidTarget>
-              <solenoidTarget>
-                <name>Extender</name>
+          </state>
+        </states>
+        <doubleParameters />
+        <boolParameters />
+        <constDoubleParameters />
+        <constBoolParameters />
+      </mechanism>
+    </mechanismInstance>
+    <mechanismInstance>
+      <name>Intake</name>
+      <mechanism>
+        <GUID>cea1dfe8-5c25-49c7-97cd-9b59e6e149f3</GUID>
+        <name>Intake</name>
+        <MotorControllers>
+          <MotorController xsi:type="TalonFX">
+            <name>Intake</name>
+            <ControllerEnabled>Yes</ControllerEnabled>
+            <theDistanceAngleCalcInfo>
+              <gearRatio>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>1</value>
+              </gearRatio>
+              <diameter>
+                <unitsFamily>length</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>m</__units__>
+                <type>Double</type>
+                <value>1</value>
+              </diameter>
+              <isDistance>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>false</value>
+              </isDistance>
+            </theDistanceAngleCalcInfo>
+            <voltageRamping>
+              <openLoopRampTime>
+                <unitsFamily>time</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>s</__units__>
+                <type>Double</type>
+                <value>0.25</value>
+              </openLoopRampTime>
+              <closedLoopRampTime>
+                <unitsFamily>time</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>s</__units__>
+                <type>Double</type>
+                <value>0.25</value>
+              </closedLoopRampTime>
+              <enableClosedLoop>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>true</value>
+              </enableClosedLoop>
+            </voltageRamping>
+            <canID>
+              <unitsFamily>none</unitsFamily>
+              <name>uintParameter</name>
+              <__units__ />
+              <type>UInt32</type>
+              <value>0</value>
+            </canID>
+            <pdpID>
+              <unitsFamily>none</unitsFamily>
+              <name>uintParameter</name>
+              <__units__ />
+              <type>UInt32</type>
+              <value>0</value>
+            </pdpID>
+            <followID>
+              <unitsFamily>none</unitsFamily>
+              <name>uintParameter</name>
+              <__units__ />
+              <type>UInt32</type>
+              <value>0</value>
+            </followID>
+            <enableFollowID>
+              <unitsFamily>none</unitsFamily>
+              <name>boolParameter</name>
+              <__units__ />
+              <type>Boolean</type>
+              <value>false</value>
+            </enableFollowID>
+            <remoteSensor>
+              <CanID>
+                <unitsFamily>none</unitsFamily>
+                <name>uintParameter</name>
+                <__units__ />
+                <type>UInt32</type>
+                <value>0</value>
+              </CanID>
+              <sensorToMechanismRatio>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </sensorToMechanismRatio>
+            </remoteSensor>
+            <fusedSyncCANcoder>
+              <enable>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>false</value>
+              </enable>
+              <fusedCANcoder>
+                <name>CANcoderInstance</name>
+              </fusedCANcoder>
+              <sensorToMechanismRatio>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </sensorToMechanismRatio>
+              <rotorToSensorRatio>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </rotorToSensorRatio>
+              <fusedSyncChoice>FUSED</fusedSyncChoice>
+            </fusedSyncCANcoder>
+            <sensorIsInverted>
+              <unitsFamily>none</unitsFamily>
+              <name>boolParameter</name>
+              <__units__ />
+              <type>Boolean</type>
+              <value>false</value>
+            </sensorIsInverted>
+            <theCurrentLimits>
+              <enableStatorCurrentLimit>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>true</value>
+              </enableStatorCurrentLimit>
+              <statorCurrentLimit>
+                <unitsFamily>current</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>A</__units__>
+                <type>Double</type>
+                <value>100</value>
+              </statorCurrentLimit>
+              <enableSupplyCurrentLimit>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>true</value>
+              </enableSupplyCurrentLimit>
+              <supplyCurrentLimit>
+                <unitsFamily>current</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>A</__units__>
+                <type>Double</type>
+                <value>70</value>
+              </supplyCurrentLimit>
+              <supplyCurrentThreshold>
+                <unitsFamily>current</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>A</__units__>
+                <type>Double</type>
+                <value>35</value>
+              </supplyCurrentThreshold>
+              <supplyTimeThreshold>
+                <unitsFamily>time</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>s</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </supplyTimeThreshold>
+            </theCurrentLimits>
+            <PIDFs />
+            <theConfigHWLimitSW>
+              <enableForward>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>false</value>
+              </enableForward>
+              <remoteForwardSensorID>
+                <unitsFamily>none</unitsFamily>
+                <name>intParameter</name>
+                <__units__ />
+                <type>Int32</type>
+                <value>0</value>
+              </remoteForwardSensorID>
+              <forwardResetPosition>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>false</value>
+              </forwardResetPosition>
+              <forwardPosition>
+                <unitsFamily>angle</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>deg</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </forwardPosition>
+              <forwardType>LimitSwitchPin</forwardType>
+              <forwardOpenClose>NormallyOpen</forwardOpenClose>
+              <enableReverse>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>false</value>
+              </enableReverse>
+              <remoteReverseSensorID>
+                <unitsFamily>none</unitsFamily>
+                <name>intParameter</name>
+                <__units__ />
+                <type>Int32</type>
+                <value>0</value>
+              </remoteReverseSensorID>
+              <reverseResetPosition>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>false</value>
+              </reverseResetPosition>
+              <reversePosition>
+                <unitsFamily>angle</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>deg</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </reversePosition>
+              <revType>LimitSwitchPin</revType>
+              <revOpenClose>NormallyOpen</revOpenClose>
+            </theConfigHWLimitSW>
+            <theConfigMotorSettings>
+              <deadbandPercent>
+                <unitsFamily>percent</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>%</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </deadbandPercent>
+              <peakForwardDutyCycle>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>1</value>
+              </peakForwardDutyCycle>
+              <peakReverseDutyCycle>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>-1</value>
+              </peakReverseDutyCycle>
+            </theConfigMotorSettings>
+            <MotionMagicSettings>
+              <CruiseVelocity>
+                <unitsFamily>angularVelocity</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>rad/s</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </CruiseVelocity>
+              <Acceleration>
+                <unitsFamily>angularAcceleration</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>rad/s^2</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </Acceleration>
+              <Jerk>
+                <unitsFamily>angularJerk</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>rad/s^3</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </Jerk>
+            </MotionMagicSettings>
+          </MotorController>
+          <MotorController xsi:type="TalonFXS">
+            <name>Extender</name>
+            <ControllerEnabled>Yes</ControllerEnabled>
+            <theDistanceAngleCalcInfo>
+              <gearRatio>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>1</value>
+              </gearRatio>
+              <diameter>
+                <unitsFamily>length</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>m</__units__>
+                <type>Double</type>
+                <value>1</value>
+              </diameter>
+              <isDistance>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>false</value>
+              </isDistance>
+            </theDistanceAngleCalcInfo>
+            <voltageRamping>
+              <openLoopRampTime>
+                <unitsFamily>time</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>s</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </openLoopRampTime>
+              <closedLoopRampTime>
+                <unitsFamily>time</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>s</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </closedLoopRampTime>
+              <enableClosedLoop>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>false</value>
+              </enableClosedLoop>
+            </voltageRamping>
+            <canID>
+              <unitsFamily>none</unitsFamily>
+              <name>uintParameter</name>
+              <__units__ />
+              <type>UInt32</type>
+              <value>0</value>
+            </canID>
+            <pdpID>
+              <unitsFamily>none</unitsFamily>
+              <name>uintParameter</name>
+              <__units__ />
+              <type>UInt32</type>
+              <value>0</value>
+            </pdpID>
+            <followID>
+              <unitsFamily>none</unitsFamily>
+              <name>uintParameter</name>
+              <__units__ />
+              <type>UInt32</type>
+              <value>0</value>
+            </followID>
+            <enableFollowID>
+              <unitsFamily>none</unitsFamily>
+              <name>boolParameter</name>
+              <__units__ />
+              <type>Boolean</type>
+              <value>false</value>
+            </enableFollowID>
+            <remoteSensor>
+              <CanID>
+                <unitsFamily>none</unitsFamily>
+                <name>uintParameter</name>
+                <__units__ />
+                <type>UInt32</type>
+                <value>0</value>
+              </CanID>
+              <sensorToMechanismRatio>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </sensorToMechanismRatio>
+            </remoteSensor>
+            <fusedSyncCANcoder>
+              <enable>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>false</value>
+              </enable>
+              <fusedCANcoder>
+                <name>CANcoderInstance</name>
+              </fusedCANcoder>
+              <sensorToMechanismRatio>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </sensorToMechanismRatio>
+              <rotorToSensorRatio>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </rotorToSensorRatio>
+              <fusedSyncChoice>FUSED</fusedSyncChoice>
+            </fusedSyncCANcoder>
+            <sensorIsInverted>
+              <unitsFamily>none</unitsFamily>
+              <name>boolParameter</name>
+              <__units__ />
+              <type>Boolean</type>
+              <value>false</value>
+            </sensorIsInverted>
+            <theCurrentLimits>
+              <enableStatorCurrentLimit>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>false</value>
+              </enableStatorCurrentLimit>
+              <statorCurrentLimit>
+                <unitsFamily>current</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>A</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </statorCurrentLimit>
+              <enableSupplyCurrentLimit>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>false</value>
+              </enableSupplyCurrentLimit>
+              <supplyCurrentLimit>
+                <unitsFamily>current</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>A</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </supplyCurrentLimit>
+              <supplyCurrentThreshold>
+                <unitsFamily>current</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>A</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </supplyCurrentThreshold>
+              <supplyTimeThreshold>
+                <unitsFamily>time</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>s</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </supplyTimeThreshold>
+            </theCurrentLimits>
+            <PIDFs />
+            <theConfigHWLimitSW>
+              <enableForward>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>false</value>
+              </enableForward>
+              <remoteForwardSensorID>
+                <unitsFamily>none</unitsFamily>
+                <name>intParameter</name>
+                <__units__ />
+                <type>Int32</type>
+                <value>0</value>
+              </remoteForwardSensorID>
+              <forwardResetPosition>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>false</value>
+              </forwardResetPosition>
+              <forwardPosition>
+                <unitsFamily>angle</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>deg</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </forwardPosition>
+              <forwardType>LimitSwitchPin</forwardType>
+              <forwardOpenClose>NormallyOpen</forwardOpenClose>
+              <enableReverse>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>false</value>
+              </enableReverse>
+              <remoteReverseSensorID>
+                <unitsFamily>none</unitsFamily>
+                <name>intParameter</name>
+                <__units__ />
+                <type>Int32</type>
+                <value>0</value>
+              </remoteReverseSensorID>
+              <reverseResetPosition>
+                <unitsFamily>none</unitsFamily>
+                <name>boolParameter</name>
+                <__units__ />
+                <type>Boolean</type>
+                <value>false</value>
+              </reverseResetPosition>
+              <reversePosition>
+                <unitsFamily>angle</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>deg</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </reversePosition>
+              <revType>LimitSwitchPin</revType>
+              <revOpenClose>NormallyOpen</revOpenClose>
+            </theConfigHWLimitSW>
+            <theConfigMotorSettings>
+              <deadbandPercent>
+                <unitsFamily>percent</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>%</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </deadbandPercent>
+              <peakForwardDutyCycle>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>1</value>
+              </peakForwardDutyCycle>
+              <peakReverseDutyCycle>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>-1</value>
+              </peakReverseDutyCycle>
+            </theConfigMotorSettings>
+            <MotionMagicSettings>
+              <CruiseVelocity>
+                <unitsFamily>angularVelocity</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>rad/s</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </CruiseVelocity>
+              <Acceleration>
+                <unitsFamily>angularAcceleration</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>rad/s^2</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </Acceleration>
+              <Jerk>
+                <unitsFamily>angularJerk</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__>rad/s^3</__units__>
+                <type>Double</type>
+                <value>0</value>
+              </Jerk>
+            </MotionMagicSettings>
+          </MotorController>
+        </MotorControllers>
+        <closedLoopControlParameters />
+        <solenoid />
+        <servo />
+        <analogInput />
+        <digitalInput>
+          <digitalInput>
+            <name>IsIntakeExtended</name>
+            <digitalId>
+              <unitsFamily>none</unitsFamily>
+              <name>uintParameter</name>
+              <__units__ />
+              <type>UInt32</type>
+              <value>0</value>
+            </digitalId>
+            <reversed>
+              <unitsFamily>none</unitsFamily>
+              <name>boolParameter</name>
+              <__units__ />
+              <type>Boolean</type>
+              <value>false</value>
+            </reversed>
+            <debouncetime>
+              <unitsFamily>time</unitsFamily>
+              <name>doubleParameter</name>
+              <__units__>s</__units__>
+              <type>Double</type>
+              <value>0</value>
+            </debouncetime>
+          </digitalInput>
+        </digitalInput>
+        <cancoder />
+        <stateMotorControlData>
+          <motorControlData>
+            <name>PercentOut</name>
+            <PID>
+              <name>PIDFZ</name>
+              <pGain>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </pGain>
+              <iGain>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </iGain>
+              <dGain>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </dGain>
+              <fGain>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </fGain>
+              <iZone>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </iZone>
+              <sGain>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </sGain>
+              <vGain>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </vGain>
+              <aGain>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </aGain>
+            </PID>
+            <SlotIndex>
+              <unitsFamily>none</unitsFamily>
+              <name>intParameter</name>
+              <__units__ />
+              <type>Int32</type>
+              <value>0</value>
+            </SlotIndex>
+            <peakValue>
+              <unitsFamily>none</unitsFamily>
+              <name>doubleParameter</name>
+              <__units__ />
+              <type>Double</type>
+              <value>0</value>
+            </peakValue>
+            <nominalValue>
+              <unitsFamily>none</unitsFamily>
+              <name>doubleParameter</name>
+              <__units__ />
+              <type>Double</type>
+              <value>0</value>
+            </nominalValue>
+            <maxAcceleration>
+              <unitsFamily>none</unitsFamily>
+              <name>doubleParameter</name>
+              <__units__ />
+              <type>Double</type>
+              <value>0</value>
+            </maxAcceleration>
+            <cruiseVelocity>
+              <unitsFamily>none</unitsFamily>
+              <name>doubleParameter</name>
+              <__units__ />
+              <type>Double</type>
+              <value>0</value>
+            </cruiseVelocity>
+            <enableFOC>
+              <unitsFamily>none</unitsFamily>
+              <name>boolParameter</name>
+              <__units__ />
+              <type>Boolean</type>
+              <value>false</value>
+            </enableFOC>
+            <feedForwardType>DUTY_CYCLE</feedForwardType>
+          </motorControlData>
+          <motorControlData>
+            <name>PositionDeg</name>
+            <PID>
+              <name>PIDFZ</name>
+              <pGain>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </pGain>
+              <iGain>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </iGain>
+              <dGain>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </dGain>
+              <fGain>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </fGain>
+              <iZone>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </iZone>
+              <sGain>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </sGain>
+              <vGain>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </vGain>
+              <aGain>
+                <unitsFamily>none</unitsFamily>
+                <name>doubleParameter</name>
+                <__units__ />
+                <type>Double</type>
+                <value>0</value>
+              </aGain>
+            </PID>
+            <SlotIndex>
+              <unitsFamily>none</unitsFamily>
+              <name>intParameter</name>
+              <__units__ />
+              <type>Int32</type>
+              <value>0</value>
+            </SlotIndex>
+            <peakValue>
+              <unitsFamily>none</unitsFamily>
+              <name>doubleParameter</name>
+              <__units__ />
+              <type>Double</type>
+              <value>0</value>
+            </peakValue>
+            <nominalValue>
+              <unitsFamily>none</unitsFamily>
+              <name>doubleParameter</name>
+              <__units__ />
+              <type>Double</type>
+              <value>0</value>
+            </nominalValue>
+            <maxAcceleration>
+              <unitsFamily>none</unitsFamily>
+              <name>doubleParameter</name>
+              <__units__ />
+              <type>Double</type>
+              <value>0</value>
+            </maxAcceleration>
+            <cruiseVelocity>
+              <unitsFamily>none</unitsFamily>
+              <name>doubleParameter</name>
+              <__units__ />
+              <type>Double</type>
+              <value>0</value>
+            </cruiseVelocity>
+            <enableFOC>
+              <unitsFamily>none</unitsFamily>
+              <name>boolParameter</name>
+              <__units__ />
+              <type>Boolean</type>
+              <value>false</value>
+            </enableFOC>
+            <controlType>POSITION_DEGREES</controlType>
+          </motorControlData>
+        </stateMotorControlData>
+        <states>
+          <state>
+            <name>Off</name>
+            <transitionsTo>
+              <stringParameterConstInMechInstance>
+                <unitsFamily>none</unitsFamily>
+                <name>stringParameterConstInMechInstance</name>
+                <__units__ />
+                <type>String</type>
+                <value>Intake</value>
+              </stringParameterConstInMechInstance>
+              <stringParameterConstInMechInstance>
+                <unitsFamily>none</unitsFamily>
+                <name>stringParameterConstInMechInstance</name>
+                <__units__ />
+                <type>String</type>
+                <value>Expel</value>
+              </stringParameterConstInMechInstance>
+              <stringParameterConstInMechInstance>
+                <unitsFamily>none</unitsFamily>
+                <name>stringParameterConstInMechInstance</name>
+                <__units__ />
+                <type>String</type>
+                <value>Launch</value>
+              </stringParameterConstInMechInstance>
+              <stringParameterConstInMechInstance>
+                <unitsFamily>none</unitsFamily>
+                <name>stringParameterConstInMechInstance</name>
+                <__units__ />
+                <type>String</type>
+                <value>EmptyHopper</value>
+              </stringParameterConstInMechInstance>
+            </transitionsTo>
+            <motorTargets>
+              <motorTarget>
+                <name>Intake</name>
                 <target>
                   <unitsFamily>none</unitsFamily>
                   <name>Target</name>
                   <__units__ />
-                  <type>Boolean</type>
+                  <type>Double</type>
                 </target>
-                <solenoidName>Extender</solenoidName>
-                <Enabled>
-                  <unitsFamily>none</unitsFamily>
-                  <name>boolParameter</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                  <value>false</value>
-                </Enabled>
-              </solenoidTarget>
-              <solenoidTarget>
-                <name>Alignment</name>
-                <target>
-                  <unitsFamily>none</unitsFamily>
-                  <name>Target</name>
-                  <__units__ />
-                  <type>Boolean</type>
-                </target>
-                <solenoidName>Alignment</solenoidName>
+                <motorName>Intake</motorName>
                 <Enabled>
                   <unitsFamily>none</unitsFamily>
                   <name>boolParameter</name>
@@ -5073,8 +4423,283 @@
                   <type>Boolean</type>
                   <value>true</value>
                 </Enabled>
-              </solenoidTarget>
-            </solenoidTarget>
+                <controlDataName>PercentOut</controlDataName>
+              </motorTarget>
+              <motorTarget>
+                <name>Extender</name>
+                <target>
+                  <unitsFamily>angle</unitsFamily>
+                  <name>Target</name>
+                  <__units__>deg</__units__>
+                  <type>Double</type>
+                </target>
+                <motorName>Extender</motorName>
+                <Enabled>
+                  <unitsFamily>none</unitsFamily>
+                  <name>boolParameter</name>
+                  <__units__ />
+                  <type>Boolean</type>
+                  <value>false</value>
+                </Enabled>
+                <controlDataName>PositionDeg</controlDataName>
+              </motorTarget>
+            </motorTargets>
+          </state>
+          <state>
+            <name>Intake</name>
+            <transitionsTo>
+              <stringParameterConstInMechInstance>
+                <unitsFamily>none</unitsFamily>
+                <name>stringParameterConstInMechInstance</name>
+                <__units__ />
+                <type>String</type>
+                <value>Off</value>
+              </stringParameterConstInMechInstance>
+              <stringParameterConstInMechInstance>
+                <unitsFamily>none</unitsFamily>
+                <name>stringParameterConstInMechInstance</name>
+                <__units__ />
+                <type>String</type>
+                <value>Launch</value>
+              </stringParameterConstInMechInstance>
+              <stringParameterConstInMechInstance>
+                <unitsFamily>none</unitsFamily>
+                <name>stringParameterConstInMechInstance</name>
+                <__units__ />
+                <type>String</type>
+                <value>EmptyHopper</value>
+              </stringParameterConstInMechInstance>
+            </transitionsTo>
+            <motorTargets>
+              <motorTarget>
+                <name>Intake</name>
+                <target>
+                  <unitsFamily>none</unitsFamily>
+                  <name>Target</name>
+                  <__units__ />
+                  <type>Double</type>
+                </target>
+                <motorName>Intake</motorName>
+                <Enabled>
+                  <unitsFamily>none</unitsFamily>
+                  <name>boolParameter</name>
+                  <__units__ />
+                  <type>Boolean</type>
+                  <value>true</value>
+                </Enabled>
+                <controlDataName>PercentOut</controlDataName>
+              </motorTarget>
+              <motorTarget>
+                <name>Extender</name>
+                <target>
+                  <unitsFamily>angle</unitsFamily>
+                  <name>Target</name>
+                  <__units__>deg</__units__>
+                  <type>Double</type>
+                </target>
+                <motorName>Extender</motorName>
+                <Enabled>
+                  <unitsFamily>none</unitsFamily>
+                  <name>boolParameter</name>
+                  <__units__ />
+                  <type>Boolean</type>
+                  <value>true</value>
+                </Enabled>
+                <controlDataName>PositionDeg</controlDataName>
+              </motorTarget>
+            </motorTargets>
+          </state>
+          <state>
+            <name>Expel</name>
+            <transitionsTo>
+              <stringParameterConstInMechInstance>
+                <unitsFamily>none</unitsFamily>
+                <name>stringParameterConstInMechInstance</name>
+                <__units__ />
+                <type>String</type>
+                <value>Off</value>
+              </stringParameterConstInMechInstance>
+              <stringParameterConstInMechInstance>
+                <unitsFamily>none</unitsFamily>
+                <name>stringParameterConstInMechInstance</name>
+                <__units__ />
+                <type>String</type>
+                <value>Launch</value>
+              </stringParameterConstInMechInstance>
+              <stringParameterConstInMechInstance>
+                <unitsFamily>none</unitsFamily>
+                <name>stringParameterConstInMechInstance</name>
+                <__units__ />
+                <type>String</type>
+                <value>EmptyHopper</value>
+              </stringParameterConstInMechInstance>
+            </transitionsTo>
+            <motorTargets>
+              <motorTarget>
+                <name>Intake</name>
+                <target>
+                  <unitsFamily>none</unitsFamily>
+                  <name>Target</name>
+                  <__units__ />
+                  <type>Double</type>
+                </target>
+                <motorName>Intake</motorName>
+                <Enabled>
+                  <unitsFamily>none</unitsFamily>
+                  <name>boolParameter</name>
+                  <__units__ />
+                  <type>Boolean</type>
+                  <value>true</value>
+                </Enabled>
+                <controlDataName>PercentOut</controlDataName>
+              </motorTarget>
+              <motorTarget>
+                <name>Extender</name>
+                <target>
+                  <unitsFamily>angle</unitsFamily>
+                  <name>Target</name>
+                  <__units__>deg</__units__>
+                  <type>Double</type>
+                </target>
+                <motorName>Extender</motorName>
+                <Enabled>
+                  <unitsFamily>none</unitsFamily>
+                  <name>boolParameter</name>
+                  <__units__ />
+                  <type>Boolean</type>
+                  <value>true</value>
+                </Enabled>
+                <controlDataName>PositionDeg</controlDataName>
+              </motorTarget>
+            </motorTargets>
+          </state>
+          <state>
+            <name>Launch</name>
+            <transitionsTo>
+              <stringParameterConstInMechInstance>
+                <unitsFamily>none</unitsFamily>
+                <name>stringParameterConstInMechInstance</name>
+                <__units__ />
+                <type>String</type>
+                <value>Off</value>
+              </stringParameterConstInMechInstance>
+              <stringParameterConstInMechInstance>
+                <unitsFamily>none</unitsFamily>
+                <name>stringParameterConstInMechInstance</name>
+                <__units__ />
+                <type>String</type>
+                <value>Intake</value>
+              </stringParameterConstInMechInstance>
+              <stringParameterConstInMechInstance>
+                <unitsFamily>none</unitsFamily>
+                <name>stringParameterConstInMechInstance</name>
+                <__units__ />
+                <type>String</type>
+                <value>Expel</value>
+              </stringParameterConstInMechInstance>
+              <stringParameterConstInMechInstance>
+                <unitsFamily>none</unitsFamily>
+                <name>stringParameterConstInMechInstance</name>
+                <__units__ />
+                <type>String</type>
+                <value>EmptyHopper</value>
+              </stringParameterConstInMechInstance>
+            </transitionsTo>
+            <motorTargets>
+              <motorTarget>
+                <name>Intake</name>
+                <target>
+                  <unitsFamily>none</unitsFamily>
+                  <name>Target</name>
+                  <__units__ />
+                  <type>Double</type>
+                </target>
+                <motorName>Intake</motorName>
+                <Enabled>
+                  <unitsFamily>none</unitsFamily>
+                  <name>boolParameter</name>
+                  <__units__ />
+                  <type>Boolean</type>
+                  <value>true</value>
+                </Enabled>
+                <controlDataName>PercentOut</controlDataName>
+              </motorTarget>
+              <motorTarget>
+                <name>Extender</name>
+                <target>
+                  <unitsFamily>angle</unitsFamily>
+                  <name>Target</name>
+                  <__units__>deg</__units__>
+                  <type>Double</type>
+                </target>
+                <motorName>Extender</motorName>
+                <Enabled>
+                  <unitsFamily>none</unitsFamily>
+                  <name>boolParameter</name>
+                  <__units__ />
+                  <type>Boolean</type>
+                  <value>false</value>
+                </Enabled>
+                <controlDataName>PositionDeg</controlDataName>
+              </motorTarget>
+            </motorTargets>
+          </state>
+          <state>
+            <name>EmptyHopper</name>
+            <transitionsTo>
+              <stringParameterConstInMechInstance>
+                <unitsFamily>none</unitsFamily>
+                <name>stringParameterConstInMechInstance</name>
+                <__units__ />
+                <type>String</type>
+                <value>Off</value>
+              </stringParameterConstInMechInstance>
+              <stringParameterConstInMechInstance>
+                <unitsFamily>none</unitsFamily>
+                <name>stringParameterConstInMechInstance</name>
+                <__units__ />
+                <type>String</type>
+                <value>Intake</value>
+              </stringParameterConstInMechInstance>
+            </transitionsTo>
+            <motorTargets>
+              <motorTarget>
+                <name>Intake</name>
+                <target>
+                  <unitsFamily>none</unitsFamily>
+                  <name>Target</name>
+                  <__units__ />
+                  <type>Double</type>
+                </target>
+                <motorName>Intake</motorName>
+                <Enabled>
+                  <unitsFamily>none</unitsFamily>
+                  <name>boolParameter</name>
+                  <__units__ />
+                  <type>Boolean</type>
+                  <value>true</value>
+                </Enabled>
+                <controlDataName>PercentOut</controlDataName>
+              </motorTarget>
+              <motorTarget>
+                <name>Extender</name>
+                <target>
+                  <unitsFamily>angle</unitsFamily>
+                  <name>Target</name>
+                  <__units__>deg</__units__>
+                  <type>Double</type>
+                </target>
+                <motorName>Extender</motorName>
+                <Enabled>
+                  <unitsFamily>none</unitsFamily>
+                  <name>boolParameter</name>
+                  <__units__ />
+                  <type>Boolean</type>
+                  <value>true</value>
+                </Enabled>
+                <controlDataName>PositionDeg</controlDataName>
+              </motorTarget>
+            </motorTargets>
           </state>
         </states>
         <doubleParameters />

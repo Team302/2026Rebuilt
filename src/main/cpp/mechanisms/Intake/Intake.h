@@ -26,7 +26,6 @@
 #include "ctre/phoenix6/TalonFX.hpp"
 #include "ctre/phoenix6/controls/Follower.hpp"
 #include "ctre/phoenix6/configs/Configuration.hpp"
-#include "frc/Solenoid.h"
 #include "utils/logging/signals/DragonDataLogger.h"
 #include <frc/DigitalInput.h>
 #include <frc/filter/Debouncer.h>
@@ -83,8 +82,6 @@ public:
 	RobotIdentifier getActiveRobotId() { return m_activeRobotId; }
 
 	ctre::phoenix6::hardware::TalonFX *GetIntake() const { return m_intake; }
-	frc::Solenoid *GetExtenderLeft() const { return m_extenderLeft; }
-	frc::Solenoid *GetExtenderRight() const { return m_extenderRight; }
 	bool GetIsIntakeExtendedState() const { return m_isIntakeExtendedIsInverted ? !m_isIntakeExtended->Get() : m_isIntakeExtended->Get(); }
 	ControlData *GetPercentOut() const { return m_percentOut; }
 
@@ -107,8 +104,6 @@ private:
 	std::unordered_map<std::string, STATE_NAMES> m_stateMap;
 
 	ctre::phoenix6::hardware::TalonFX *m_intake;
-	frc::Solenoid *m_extenderLeft;
-	frc::Solenoid *m_extenderRight;
 	frc::DigitalInput *m_isIntakeExtended;
 	bool m_isIntakeExtendedIsInverted;
 	ControlData *m_percentOut;
