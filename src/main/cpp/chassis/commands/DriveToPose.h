@@ -178,6 +178,8 @@ protected:
     ///             initialization methods to override the default tolerance
     //------------------------------------------------------------------
     void SetAngleTolerance(const units::angle::degree_t &angleTolerance) { m_angleTolerance = angleTolerance; }
+    void SetXTransitionToEndPointTolerance(const units::length::inch_t &xTolerance) { m_xtoleranceForTransitionToEndPoint = xTolerance; }
+    void SetYTransitionToEndPointTolerance(const units::length::inch_t &yTolerance) { m_yToleranceForTransitionToEndPoint = yTolerance; }
 
     //------------------------------------------------------------------
     /// @brief      Gets the chassis subsystem pointer
@@ -232,6 +234,8 @@ private:
     bool m_hasMidPose = false;
     bool m_beforeMidPose = true;
     units::angle::degree_t m_angleTolerance{20.0};
+    units::length::inch_t m_xtoleranceForTransitionToEndPoint{0.25};
+    units::length::inch_t m_yToleranceForTransitionToEndPoint{0.25};
 
     //------------------------------------------------------------------
     // Threshold and Range Constants

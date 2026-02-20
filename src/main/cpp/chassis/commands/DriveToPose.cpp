@@ -111,7 +111,6 @@ void DriveToPose::Initialize()
         if (ShouldSkipMidPoint())
         {
             m_beforeMidPose = false;
-            m_targetPose = m_endPose;
         }
     }
     else
@@ -292,20 +291,26 @@ bool DriveToPose::IsFinished()
     bool isDone = PoseUtils::IsSamePose(m_currentPose, m_targetPose, m_distanceThreshold);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Is Done", isDone);
 
+    if (m_hasMidPose && m_beforeMidPose)
+    {
+        // Reached MidPose or withing the tolerance to transition to the end pose
+        auto transitionToEndPose = (isDone || // reached the mid pose
+                                    (m_translationPIDX.GetPositionError() < m_xtoleranceForTransitionToEndPoint && m_translationPIDY.GetPositionError() < m_yToleranceForTransitionToEndPoint));
+
+        if (transitionToEndPose)
+        {
+            // Transition to the final target pose
+            SetTargetPose(m_endPose);
+            m_beforeMidPose = false;
+            return false; // Continue execution to reach end pose
+        }
+    }
+
     // Check if robot has stopped moving (stuck or blocked)
     auto isSamePose = m_chassis->IsSamePose();
-    m_prevPose = m_currentPose; // Update for next cycle
-
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Is SamePose", isSamePose);
 
-    if ((isDone || isSamePose) && m_beforeMidPose && m_hasMidPose)
-    {
-        // Just finished reaching the midpoint
-        // Now update the target to the final endpoint
-        SetTargetPose(m_endPose);
-        m_beforeMidPose = false;
-        return false; // Continue to second stage
-    }
+    m_prevPose = m_currentPose; // Update for next cycle
 
     return isDone || isSamePose; // End command if target reached or robot is stuck
 }
