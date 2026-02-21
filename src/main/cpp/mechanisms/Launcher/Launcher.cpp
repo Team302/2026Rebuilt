@@ -207,7 +207,9 @@ void Launcher::CreateCompBot302()
 	m_transfer = new ctre::phoenix6::hardware::TalonFX(4, ctre::phoenix6::CANBus("canivore"));
 	m_turret = new ctre::phoenix6::hardware::TalonFXS(6, ctre::phoenix6::CANBus("canivore"));
 	m_indexer = new ctre::phoenix6::hardware::TalonFX(5, ctre::phoenix6::CANBus("canivore"));
-	m_agitator = new ctre::phoenix6::hardware::TalonFX(19, ctre::phoenix6::CANBus("canivore"));
+	m_agitator = new ctre::phoenix6::hardware::TalonFX(18, ctre::phoenix6::CANBus("canivore"));
+	m_hoodCANdi = new ctre::phoenix6::hardware::CANdi(7, ctre::phoenix6::CANBus("canivore"));
+	m_turretCANdi = new ctre::phoenix6::hardware::CANdi(6, ctre::phoenix6::CANBus("canivore"));
 
 	m_percentOut = new ControlData(
 		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
@@ -511,7 +513,7 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
-	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
+	configs.MotorOutput.Inverted = InvertedValue::Clockwise_Positive;
 	configs.MotorOutput.NeutralMode = NeutralModeValue::Brake;
 	configs.MotorOutput.PeakForwardDutyCycle = 1;
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
