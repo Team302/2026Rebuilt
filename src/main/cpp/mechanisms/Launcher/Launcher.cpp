@@ -385,14 +385,14 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 
 	// MECH_TODO: Set limit switches
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 1;
+	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 7;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(0);
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 1;
+	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 7;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::turn_t(0);
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
@@ -498,14 +498,14 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 
 	// MECH_TODO: Set limit switches
 	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
-	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
+	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 6;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(270);
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 0;
+	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 6;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::turn_t(90);
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
