@@ -56,4 +56,7 @@ protected:
     struct DriveToPoses GetDriveToPoses() override;
 
 private:
+    static constexpr units::length::foot_t kDistanceThreshold = 0.1_ft;
+    static constexpr units::angle::degree_t kAngleTolerance = 15.0_deg;
+    static constexpr units::length::inch_t kYTransitionToEndPointTolerance = 10_in;
 };

@@ -98,6 +98,13 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE).X();
         m_redDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE).X();
 
+        // Set outpost X coordinates equal to depot X (aligned on 2026 field)
+        m_blueOutpostX = m_blueDepotX;
+        m_redOutpostX = m_redDepotX;
+
+        m_blueOutpostApproachX = m_blueOutpostX + OUTPOST_APPROACH_OFFSET; // Approach position is offset from outpost X
+        m_redOutpostApproachX = m_redOutpostX - OUTPOST_APPROACH_OFFSET;   // Approach position is offset from outpost X
+
         // Calculate hub positions with 2.0m offset toward neutral zone for navigation
         m_blueHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() - HUB_OFFSET;
         m_redHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER).X() + HUB_OFFSET;
@@ -131,6 +138,12 @@ FieldOffsetValues::FieldOffsetValues()
         // Fallback: Initialize all values to zero if FieldConstants unavailable
         m_blueDepotX = units::length::meter_t{0.0};
         m_redDepotX = units::length::meter_t{0.0};
+
+        m_blueOutpostX = m_blueDepotX;
+        m_redOutpostX = m_redDepotX;
+
+        m_blueOutpostApproachX = m_blueDepotX;
+        m_redOutpostApproachX = m_redDepotX;
 
         m_blueHubX = units::length::meter_t{0.0};
         m_redHubX = units::length::meter_t{0.0};
@@ -206,6 +219,11 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
     if (item == FIELD_OFFSET_ITEMS::OUTPOST_X)
     {
         return isRedSide ? m_redOutpostX : m_blueOutpostX;
+    }
+
+    else if (item == FIELD_OFFSET_ITEMS::OUTPOST_APPROACH_X)
+    {
+        return isRedSide ? m_redOutpostApproachX : m_blueOutpostApproachX;
     }
 
     // Depot X-coordinate query

@@ -89,25 +89,4 @@ public:
     /// @see        FieldConstants for available field elements
     //------------------------------------------------------------------
     static FieldConstants::FIELD_ELEMENT GetClosestFieldElement(const frc::Pose2d &pose, FieldConstants::FIELD_ELEMENT firstElement, FieldConstants::FIELD_ELEMENT secondElement);
-
-    //------------------------------------------------------------------
-    /// @brief      Calculates the angle formed by three poses
-    /// @param[in]  startPose - First pose (forms one ray from vertex)
-    /// @param[in]  vertexPose - Vertex pose (center point of angle)
-    /// @param[in]  endPose - Third pose (forms second ray from vertex)
-    /// @return     Angle in radians between the two rays formed from vertex
-    /// @details    Computes the angle at vertexPose formed by rays extending
-    ///             to startPose and endPose using vector dot product and arccos.
-    ///             Returns 0° if either vector has near-zero magnitude.
-    ///             Result is always positive (0 to π radians).
-    ///
-    ///             **Calculation Method:**
-    ///             1. Create vectors: vertex→start and vertex→end
-    ///             2. Calculate dot product and magnitudes
-    ///             3. Use arccos(dot/(mag1*mag2)) to find angle
-    ///             4. Clamp result to handle floating point errors
-    ///
-    /// @note       Useful for path smoothing and trajectory analysis
-    //------------------------------------------------------------------
-    static units::angle::radian_t GetAngleBetweenPoses(const frc::Pose2d &startPose, const frc::Pose2d &vertexPose, const frc::Pose2d &endPose);
 };

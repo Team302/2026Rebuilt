@@ -83,13 +83,17 @@ private:
     frc::Pose2d m_endPose;
     bool m_beforeMidPose = true;
 
-    static constexpr units::degree_t BlueAllianceOutpostWallTowardHub{315.0};
-    static constexpr units::degree_t NeutralZoneTowardHubBlueOutpost{315.0};
-    static constexpr units::degree_t BlueAllianceDepotWallTowardHub{45.0};
-    static constexpr units::degree_t NeutralZoneTowardHubBlueDepot{45.0};
+    static constexpr units::degree_t kBlueAllianceOutpostWallTowardHub{315.0};
+    static constexpr units::degree_t kNeutralZoneTowardHubBlueOutpost{315.0};
+    static constexpr units::degree_t kBlueAllianceDepotWallTowardHub{45.0};
+    static constexpr units::degree_t kNeutralZoneTowardHubBlueDepot{45.0};
 
-    static constexpr units::degree_t RedAllianceDepotWallTowardHub{315.0};
-    static constexpr units::degree_t NeutralZoneTowardHubRedDepot{315.0};
-    static constexpr units::degree_t RedAllianceOutpostWallTowardHub{45.0};
-    static constexpr units::degree_t NeutralZoneTowardHubRedOutpost{45.0};
+    static constexpr units::degree_t kRedAllianceDepotWallTowardHub{315.0};
+    static constexpr units::degree_t kNeutralZoneTowardHubRedDepot{315.0};
+    static constexpr units::degree_t kRedAllianceOutpostWallTowardHub{45.0};
+    static constexpr units::degree_t kNeutralZoneTowardHubRedOutpost{45.0};
+
+    static constexpr units::length::inch_t kDistanceThreshold = 12_in;
+    static constexpr units::angle::degree_t kAngleTolerance = 15.0_deg;
+    static constexpr units::length::inch_t kYTransitionToEndPointTolerance = 15.5_in;
 };

@@ -27,9 +27,9 @@
 DriveToOutpost::DriveToOutpost(subsystems::CommandSwerveDrivetrain *chassis)
     : DriveToPose(chassis)
 {
-    SetDistanceThreshold(0.1_ft);
-    SetAngleTolerance(30.0_deg);
-    SetYTransitionToEndPointTolerance(30_in);
+    SetDistanceThreshold(kDistanceThreshold);
+    SetAngleTolerance(kAngleTolerance);
+    SetYTransitionToEndPointTolerance(kYTransitionToEndPointTolerance);
 }
 
 //------------------------------------------------------------------

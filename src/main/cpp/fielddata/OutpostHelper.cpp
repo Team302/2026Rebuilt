@@ -100,11 +100,9 @@ frc::Pose2d OutpostHelper::CalcOutpostOffsetPose() const
         return frc::Pose2d();
     }
 
-    auto pose = CalcOutpostPose();
     auto isNearestOutpostRed = IsNearestOutpostRed();
-    pose = frc::Pose2d(pose.X() + (isNearestOutpostRed ? -OUTPOST_APPROACH_THRESHOLD : OUTPOST_APPROACH_THRESHOLD), pose.Y(), pose.Rotation());
-
-    return pose;
+    auto pose = CalcOutpostPose();
+    return frc::Pose2d{FieldOffsetValues::GetInstance()->GetValue(isNearestOutpostRed, FIELD_OFFSET_ITEMS::OUTPOST_APPROACH_X), pose.Y(), pose.Rotation()};
 }
 
 //------------------------------------------------------------------

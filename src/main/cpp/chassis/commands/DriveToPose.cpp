@@ -107,11 +107,7 @@ void DriveToPose::Initialize()
     if (poses.hasMidPose)
     {
         m_midPose = poses.midPose;
-        m_beforeMidPose = true;
-        if (ShouldSkipMidPoint())
-        {
-            m_beforeMidPose = false;
-        }
+        m_beforeMidPose = ShouldSkipMidPoint() ? false : true; // Skip mid pose if angle to target is small
     }
     else
     {
@@ -242,7 +238,7 @@ void DriveToPose::Execute()
     }
 
     // Log current error for debugging and tuning
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Error", m_targetPose.Translation().Distance(m_currentPose.Translation()).value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToPose", "Error", m_targetPose.Translation().Distance(m_currentPose.Translation()).value());
 }
 
 //------------------------------------------------------------------
@@ -289,13 +285,16 @@ bool DriveToPose::IsFinished()
 
     // Check if we've reached the target pose within tolerance
     bool isDone = PoseUtils::IsSamePose(m_currentPose, m_targetPose, m_distanceThreshold);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Is Done", isDone);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToPose", "Is Done", isDone);
 
     if (m_hasMidPose && m_beforeMidPose)
     {
         // Reached MidPose or withing the tolerance to transition to the end pose
+        auto xError = units::math::abs(m_endPose.X() - m_currentPose.X());
+        auto yError = units::math::abs(m_endPose.Y() - m_currentPose.Y());
+
         auto transitionToEndPose = (isDone || // reached the mid pose
-                                    (m_translationPIDX.GetPositionError() < m_xtoleranceForTransitionToEndPoint && m_translationPIDY.GetPositionError() < m_yToleranceForTransitionToEndPoint));
+                                    (xError < m_xtoleranceForTransitionToEndPoint && yError < m_yToleranceForTransitionToEndPoint));
 
         if (transitionToEndPose)
         {
@@ -308,7 +307,7 @@ bool DriveToPose::IsFinished()
 
     // Check if robot has stopped moving (stuck or blocked)
     auto isSamePose = m_chassis->IsSamePose();
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Is SamePose", isSamePose);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToPose", "Is SamePose", isSamePose);
 
     m_prevPose = m_currentPose; // Update for next cycle
 
@@ -421,5 +420,8 @@ void DriveToPose::CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds)
 bool DriveToPose::ShouldSkipMidPoint() const
 {
     auto currentPose = m_chassis->GetPose();
-    return PoseUtils::GetAngleBetweenPoses(currentPose, m_endPose, m_midPose) < m_angleTolerance;
+    auto rotationToEnd = (currentPose.Translation() - m_endPose.Translation()).Angle();
+    auto angleToEnd = units::math::abs(AngleUtils::GetEquivAngle(rotationToEnd.Degrees()));
+    angleToEnd = std::min(angleToEnd, 180.0_deg - angleToEnd);
+    return angleToEnd < m_angleTolerance;
 }

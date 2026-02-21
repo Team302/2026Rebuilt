@@ -33,9 +33,9 @@
 DriveOverBump::DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis) : DriveToPose(chassis), m_midPose(), m_endPose()
 {
     // Set distance threshold for pose completion detection (1 foot tolerance)
-    SetDistanceThreshold(1_ft);
-    SetAngleTolerance(15.0_deg);
-    SetYTransitionToEndPointTolerance(15.5_in); // Allow extra tolerance for Y due to bump crossing dynamics
+    SetDistanceThreshold(kDistanceThreshold);
+    SetAngleTolerance(kAngleTolerance);
+    SetYTransitionToEndPointTolerance(kYTransitionToEndPointTolerance); // Allow extra tolerance for Y due to bump crossing dynamics
 }
 
 //------------------------------------------------------------------
@@ -62,17 +62,17 @@ units::angle::degree_t DriveOverBump::GetRotation(BUMP_ID bump, bool isInNeutral
     {
     case BUMP_ID::RED_OUTPOST_BUMP:
         // Red outpost side: 45° heading regardless of direction
-        return isInNeutralZone ? NeutralZoneTowardHubRedOutpost : RedAllianceOutpostWallTowardHub;
+        return isInNeutralZone ? kNeutralZoneTowardHubRedOutpost : kRedAllianceOutpostWallTowardHub;
     case BUMP_ID::BLUE_OUTPOST_BUMP:
         // Blue outpost side: 315° heading regardless of direction
-        return isInNeutralZone ? NeutralZoneTowardHubBlueOutpost : BlueAllianceOutpostWallTowardHub;
+        return isInNeutralZone ? kNeutralZoneTowardHubBlueOutpost : kBlueAllianceOutpostWallTowardHub;
     case BUMP_ID::RED_DEPOT_BUMP:
         // Red depot side: 315° heading regardless of direction
-        return isInNeutralZone ? NeutralZoneTowardHubRedDepot : RedAllianceDepotWallTowardHub;
+        return isInNeutralZone ? kNeutralZoneTowardHubRedDepot : kRedAllianceDepotWallTowardHub;
     case BUMP_ID::BLUE_DEPOT_BUMP:
     default:
         // Blue depot side (default): 45° heading regardless of direction
-        return isInNeutralZone ? NeutralZoneTowardHubBlueDepot : BlueAllianceDepotWallTowardHub;
+        return isInNeutralZone ? kNeutralZoneTowardHubBlueDepot : kBlueAllianceDepotWallTowardHub;
     }
 }
 

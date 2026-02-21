@@ -92,6 +92,4 @@ private:
 
     /// @brief Pointer to the field constants singleton
     FieldConstants *m_fieldConstants;
-
-    static constexpr units::length::meter_t OUTPOST_APPROACH_THRESHOLD = 0.5_m; // Threshold distance to consider an Outpost "nearby"
 };

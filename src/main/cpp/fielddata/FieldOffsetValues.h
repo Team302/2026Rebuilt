@@ -28,13 +28,14 @@
 //====================================================================================================================================================
 enum class FIELD_OFFSET_ITEMS
 {
-    OUTPOST_X,       ///< X-coordinate of the outpost position (meters)
-    DEPOT_X,         ///< X-coordinate of the depot neutral side position (meters)
-    HUB_X,           ///< X-coordinate of the hub center with offset applied (meters)
-    ALLIANCE_BUMP_X, ///< X-coordinate of the bump on the alliance zone side (meters)
-    ALLIANCE_BUMP_Y, ///< Y-coordinate of the bump on the alliance zone side (meters)
-    NEUTRAL_BUMP_X,  ///< X-coordinate of the bump on the neutral zone side (meters)
-    NEUTRAL_BUMP_Y   ///< Y-coordinate of the bump on the neutral zone side (meters)
+    OUTPOST_X,          ///< X-coordinate of the outpost position (meters)
+    OUTPOST_APPROACH_X, ///< X-coordinate of the outpost approach position (meters)
+    DEPOT_X,            ///< X-coordinate of the depot neutral side position (meters)
+    HUB_X,              ///< X-coordinate of the hub center with offset applied (meters)
+    ALLIANCE_BUMP_X,    ///< X-coordinate of the bump on the alliance zone side (meters)
+    ALLIANCE_BUMP_Y,    ///< Y-coordinate of the bump on the alliance zone side (meters)
+    NEUTRAL_BUMP_X,     ///< X-coordinate of the bump on the neutral zone side (meters)
+    NEUTRAL_BUMP_Y      ///< Y-coordinate of the bump on the neutral zone side (meters)
 };
 
 //====================================================================================================================================================
@@ -175,6 +176,12 @@ private:
     /// @brief X-coordinate of red alliance outpost (meters, equal to depot X)
     units::length::meter_t m_redOutpostX;
 
+    /// @brief X-coordinate of blue alliance outpost approach position (meters, equal to depot X)
+    units::length::meter_t m_blueOutpostApproachX;
+
+    /// @brief X-coordinate of red alliance outpost approach position (meters, equal to depot X)
+    units::length::meter_t m_redOutpostApproachX;
+
     //------------------------------------------------------------------
     // Hub X-Coordinates with Offsets
     //------------------------------------------------------------------
@@ -227,4 +234,6 @@ private:
 
     /// @brief Bump offset distance from hub center (1.5 meters on each side)
     static constexpr units::length::meter_t BUMP_OFFSET = 1.5_m;
+
+    static constexpr units::length::meter_t OUTPOST_APPROACH_OFFSET = 0.5_m; // Additional offset for bump approach waypoints
 };
