@@ -26,16 +26,16 @@ public:
     void BuildCameraConfig() override;
 
 private:
-    static constexpr units::length::inch_t m_ll1MountingXOffset{-10.585};
-    static constexpr units::length::inch_t m_ll1MountingYOffset{-10.257};
-    static constexpr units::length::inch_t m_ll1MountingZOffset{9.231};
+    static constexpr units::length::inch_t m_ll1MountingXOffset{-10.7354};
+    static constexpr units::length::inch_t m_ll1MountingYOffset{-10.3104};
+    static constexpr units::length::inch_t m_ll1MountingZOffset{9.39};
     static constexpr units::angle::degree_t m_ll1Pitch{5};
     static constexpr units::angle::degree_t m_ll1Yaw{-150};
     static constexpr units::angle::degree_t m_ll1Roll{0};
 
-    static constexpr units::length::inch_t m_ll2MountingXOffset{-10.585};
-    static constexpr units::length::inch_t m_ll2MountingYOffset{10.257};
-    static constexpr units::length::inch_t m_ll2MountingZOffset{9.231};
+    static constexpr units::length::inch_t m_ll2MountingXOffset{-10.7354};
+    static constexpr units::length::inch_t m_ll2MountingYOffset{10.3104};
+    static constexpr units::length::inch_t m_ll2MountingZOffset{9.39};
     static constexpr units::angle::degree_t m_ll2Pitch{5};
     static constexpr units::angle::degree_t m_ll2Yaw{150};
     static constexpr units::angle::degree_t m_ll2Roll{0};
@@ -47,9 +47,9 @@ private:
     static constexpr units::angle::degree_t m_ll3Yaw{90};
     static constexpr units::angle::degree_t m_ll3Roll{0};
 
-    static constexpr units::length::inch_t m_questMountingXOffset{-11.171};
-    static constexpr units::length::inch_t m_questMountingYOffset{-9.924};
-    static constexpr units::length::inch_t m_questMountingZOffset{16.78};
+    static constexpr units::length::inch_t m_questMountingXOffset{-11.216};
+    static constexpr units::length::inch_t m_questMountingYOffset{-10.362};
+    static constexpr units::length::inch_t m_questMountingZOffset{16.762};
     static constexpr units::angle::degree_t m_questPitch{0.0};
     static constexpr units::angle::degree_t m_questYaw{180.0};
     static constexpr units::angle::degree_t m_questRoll{0.0};
