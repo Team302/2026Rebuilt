@@ -57,7 +57,7 @@ void LauncherTuningState::InitCompBot302()
 
 void LauncherTuningState::Run()
 {
-	double manualHoodPercentOut = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_X) * .15;
+	double manualHoodPercentOut = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_X);
 	if (abs(manualHoodPercentOut) < 0.075)
 	{
 		manualHoodPercentOut = 0;
@@ -90,7 +90,7 @@ void LauncherTuningState::Run()
 	if (m_tuningLauncherPercentOut)
 	{
 		m_mechanism->UpdateTargetLauncherPercentOut(m_launcherPercentOut);
-		double manualTurretPercentOut = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::UPDATE_OUTPOST_PASSING_TARGET_Y) * .15;
+		double manualTurretPercentOut = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::UPDATE_OUTPOST_PASSING_TARGET_Y);
 		if (abs(manualTurretPercentOut) < 0.075)
 		{
 			manualTurretPercentOut = 0;

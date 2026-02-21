@@ -625,7 +625,7 @@ void Launcher::InitializeTalonFXAgitatorCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
-	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
+	configs.MotorOutput.Inverted = InvertedValue::Clockwise_Positive;
 	configs.MotorOutput.NeutralMode = NeutralModeValue::Coast;
 	configs.MotorOutput.PeakForwardDutyCycle = 1;
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
@@ -775,7 +775,7 @@ void Launcher::UpdateLauncherTargets()
 {
 	int currentState = GetCurrentState();
 
-	if (currentState == STATE_NAMES::STATE_OFF || currentState == STATE_NAMES::STATE_INITIALIZE || currentState == STATE_NAMES::STATE_CLIMB || currentState == STATE_NAMES::STATE_MANUAL_LAUNCH || currentState == STATE_NAMES::STATE_MANUAL_LAUNCH)
+	if (currentState == STATE_NAMES::STATE_OFF || currentState == STATE_NAMES::STATE_INITIALIZE || currentState == STATE_NAMES::STATE_CLIMB || currentState == STATE_NAMES::STATE_MANUAL_LAUNCH || m_tuningLauncher)
 	{
 		return;
 	}

@@ -232,7 +232,7 @@ private:
 	void CalculateTargets();
 
 	bool m_launcherInitialized = false;
-	bool m_tuningLauncher = false;
+	bool m_tuningLauncher = true;
 
 	// TODO MECH tune and change values in these arrays
 	std::array<units::length::inch_t, 10> m_scoringDistanceArray = {20.0_in, 40.0_in, 60.0_in, 80.0_in, 100.0_in, 120.0_in, 140.0_in, 160.0_in, 180.0_in, 200.0_in};
