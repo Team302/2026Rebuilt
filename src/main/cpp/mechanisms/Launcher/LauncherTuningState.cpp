@@ -50,8 +50,8 @@ void LauncherTuningState::Init()
 
 void LauncherTuningState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetLauncherVelocityRPS(m_launcherTarget);
-	m_mechanism->UpdateTargetTransferPercentOut(m_launcherPercentOut);
+	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
+	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
 	m_mechanism->UpdateTargetHoodPercentOut(m_hoodTarget);
 }
 
