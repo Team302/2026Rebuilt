@@ -30,13 +30,13 @@ void WPISignalLogger::WriteBoolean(std::string_view signalID, bool value, uint64
 
 void WPISignalLogger::WriteDouble(std::string_view signalID, double value, std::string_view units, uint64_t timestamp)
 {
-    auto &entry = GetDoubleEntry(std::string(signalID) + units);
+    auto &entry = GetDoubleEntry(std::string(signalID) + std::string(units));
     entry.Append(value, timestamp);
 }
 
 void WPISignalLogger::WriteInteger(std::string_view signalID, int64_t value, std::string_view units, uint64_t timestamp)
 {
-    auto &entry = GetIntegerEntry(std::string(signalID) + units);
+    auto &entry = GetIntegerEntry(std::string(signalID) + std::string(units));
     entry.Append(value, timestamp);
 }
 
@@ -48,7 +48,7 @@ void WPISignalLogger::WriteString(std::string_view signalID, const std::string &
 
 void WPISignalLogger::WriteDoubleArray(std::string_view signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
 {
-    auto &entry = GetDoubleArrayEntry(std::string(signalID) + units);
+    auto &entry = GetDoubleArrayEntry(std::string(signalID) + std::string(units));
     entry.Append(value, timestamp);
 }
 
