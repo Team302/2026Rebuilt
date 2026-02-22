@@ -47,12 +47,6 @@ DriveOverBump::DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis) : Dri
 ///             - Which bump is being crossed (4 possibilities)
 ///             - Direction of travel (neutral->alliance or alliance->neutral)
 ///
-///             Rotation angles are defined as static constexpr members:
-///             - Red Depot: 315° from alliance, 315° from neutral
-///             - Red Outpost: 45° from alliance, 45° from neutral
-///             - Blue Depot: 45° from alliance, 45° from neutral
-///             - Blue Outpost: 315° from alliance, 315° from neutral
-///
 ///             These angles ensure the robot approaches and crosses the bump
 ///             at the optimal heading toward the hub center.
 //------------------------------------------------------------------
@@ -81,11 +75,11 @@ units::angle::degree_t DriveOverBump::GetRotation(BUMP_ID bump, bool isInNeutral
 /// @return     DriveToPoses struct containing midpoint and endpoint poses
 /// @details    Determines which bump is nearest and calculates a two-stage path:
 ///
-///             **Stage 1 (Mid Pose):**
+///             **Mid Pose**
 ///             - If in neutral zone: Target is neutral side of bump
 ///             - If in alliance zone: Target is alliance side of bump
 ///
-///             **Stage 2 (End Pose):**
+///             **End Pose**
 ///             - If in neutral zone: Target is alliance side of bump
 ///             - If in alliance zone: Target is neutral side of bump
 ///
@@ -94,7 +88,6 @@ units::angle::degree_t DriveOverBump::GetRotation(BUMP_ID bump, bool isInNeutral
 ///             FieldOffsetValues to retrieve the exact field coordinates.
 ///
 ///             Rotation angles are set to point toward the hub center
-///             (45° or 315° depending on which bump is being crossed).
 ///
 /// @note       This override enables the two-stage navigation required
 ///             to safely cross over field bumps

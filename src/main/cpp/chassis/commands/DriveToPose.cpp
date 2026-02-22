@@ -42,7 +42,7 @@
 ///
 ///             **PID Controller Setup:**
 ///             - Creates separate ProfiledPIDControllers for X and Y axes
-///             - Configures I-Zone (integral zone) to 0.20 meters to prevent integral windup
+///             - Configures I-Zone (integral zone) to prevent integral windup
 ///             - Uses trapezoidal motion profiles for smooth acceleration/deceleration
 ///
 ///             **Initial State:**
@@ -181,19 +181,19 @@ void DriveToPose::SetTargetPose(const frc::Pose2d &pose)
 ///             7. Log error and status for debugging
 ///
 ///             **Adaptive PID Reset:**
-///             When distance error exceeds m_pidResetThreshold (0.25m), the PID controllers are reset
+///             When distance error exceeds m_pidResetThreshold, the PID controllers are reset
 ///             to prevent integral windup. This happens when:
 ///             - Target is changed dynamically (multi-stage navigation)
 ///             - Robot is bumped or pushed off course
 ///             - Initial error is large at command start
 ///
 ///             **Control Modes:**
-///             - Large error (>0.25m): Feedforward only, PID reset
-///             - Small error (≤0.25m): Feedforward + PID corrections
+///             - Large error: Feedforward only, PID reset
+///             - Small error: Feedforward + PID corrections
 ///
 ///             **Heading Control:**
 ///             Robot rotation is controlled separately to face m_targetPose.Rotation() using
-///             a heading PID controller with gains (kP=6.0, kI=0.0, kD=0.0).
+///             a heading PID controller with gains.
 ///
 /// @note       All movements are field-centric relative to blue alliance perspective
 /// @see        CalculateFeedForward() for feedforward velocity calculation
@@ -253,7 +253,7 @@ void DriveToPose::Execute()
 ///               center cannot be at the origin of the field).
 ///
 ///             **Condition 2: Target Reached**
-///             - Compares current pose to target pose using m_distanceThreshold (default 0.25 inches)
+///             - Compares current pose to target pose using m_distanceThreshold
 ///             - Returns true if robot is within tolerance of target position
 ///             - Indicates successful navigation completion
 ///
@@ -272,7 +272,7 @@ void DriveToPose::Execute()
 ///             eventually timeout rather than running indefinitely.
 ///
 /// @note       Updates m_prevPose each cycle for next iteration's comparison
-/// @note       Distance threshold (m_distanceThreshold) defaults to 0.25 inches and can be customized via SetDistanceThreshold()
+/// @note       Distance threshold (m_distanceThreshold) can be customized via SetDistanceThreshold()
 /// @see        SetDistanceThreshold() for adjusting the completion distance threshold
 //------------------------------------------------------------------
 bool DriveToPose::IsFinished()
@@ -369,13 +369,13 @@ void DriveToPose::End(bool interrupted)
 ///                - Relies entirely on PID for final positioning
 ///                - Prevents overshoot from feedforward
 ///
-///             2. **Ramping Zone (m_ffMinRadius < distance ≤ m_ffMaxRadius = 1.25m):**
-///                - feedforwardSpeed linearly scaled from 0 to kMaxVelocity (4 m/s)
+///             2. **Ramping Zone:**
+///                - feedforwardSpeed linearly scaled from 0 to kMaxVelocity
 ///                - Scale factor = (distance - minRadius) / (maxRadius - minRadius)
 ///                - Provides smooth acceleration as robot approaches target
 ///
 ///             3. **Far From Target (distance > m_ffMaxRadius):**
-///                - feedforwardSpeed = kMaxVelocity (4 m/s)
+///                - feedforwardSpeed = kMaxVelocity
 ///                - Full speed when target is distant
 ///                - Minimizes navigation time for long distances
 ///
@@ -417,6 +417,16 @@ void DriveToPose::CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds)
     }
 }
 
+/**
+ * @brief Determines whether the midpoint target should be skipped based on the robot's alignment with the end pose.
+ *
+ * This method calculates the angle between the robot's current position and the final target position.
+ * If the robot is already aligned within the specified angle tolerance, the midpoint can be skipped
+ * for a more direct path to the end pose.
+ *
+ * @return true if the angle to the end pose is within the angle tolerance and the midpoint should be skipped
+ * @return false if the robot should navigate through the midpoint before reaching the end pose
+ */
 bool DriveToPose::ShouldSkipMidPoint() const
 {
     auto currentPose = m_chassis->GetPose();

@@ -73,10 +73,9 @@ public:
     ///             The command requires exclusive access to the chassis subsystem during execution.
     ///
     ///             **Controller Configuration:**
-    ///             - X/Y PID gains: kP=4.5, kI=0.0, kD=0.5
-    ///             - Trapezoidal constraints: 4 m/s max velocity, 4 m/s² max acceleration
-    ///             - I-Zone: 0.20m (prevents integral accumulation when far from target)
-    ///             - Update rate: 20ms (50 Hz)
+    ///             - X/Y PID gains: kP, kI, kD
+    ///             - Trapezoidal constraints: max velocity, max acceleration
+    ///             - I-Zone: (prevents integral accumulation when far from target)
     ///
     /// @note       Derived classes should call this constructor via initializer list
     /// @see        Initialize() for per-execution setup
@@ -160,7 +159,7 @@ protected:
     /// @param[in]  distanceThreshold - Distance tolerance in inches for considering target reached
     /// @details    Customizes how close the robot must be to the target before
     ///             IsFinished() returns true. Smaller values provide higher precision
-    ///             but may increase settling time. Default is 0.25 inches.
+    ///             but may increase settling time.
     ///
     /// @note       Derived classes should call this in their constructors or
     ///  initialization methods
@@ -172,7 +171,7 @@ protected:
     /// @param[in]  angleTolerance - Angular tolerance in degrees for considering target rotation reached
     /// @details    Customizes how close the robot's heading must be to the target angle before
     ///             IsFinished() returns true. Smaller values provide higher rotational precision
-    ///             but may increase settling time. Default is 20 degrees.
+    ///             but may increase settling time.
     ///
     /// @note       Derived classes should call this in their constructors or
     ///             initialization methods to override the default tolerance
@@ -195,11 +194,7 @@ private:
     //------------------------------------------------------------------
     /// @brief      Calculates feedforward velocity component toward target
     /// @param[out] chassisSpeeds - Reference to populate with feedforward velocities
-    /// @details    Implements distance-based velocity scaling with three zones:
-    ///             - Near (<0m): 0 m/s (PID only)
-    ///             - Ramping (0-1.25m): Linear scaling 0 to 4 m/s
-    ///             - Far (>1.25m): Full 4 m/s
-    ///             Velocity is decomposed into X/Y components along angle to target.
+    /// @details    Implements distance-based velocity scaling with three zones
     /// @see        Execute() for how feedforward combines with PID
     //------------------------------------------------------------------
     void CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds);
