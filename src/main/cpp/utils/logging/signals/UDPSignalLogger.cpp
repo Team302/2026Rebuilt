@@ -100,8 +100,8 @@ void UDPSignalLogger::Stop()
     m_isRunning = false;
 }
 
-std::string UDPSignalLogger::FormatMessage(std::string signalID, std::string type,
-                                           std::string value, std::string_view units, uint64_t timestamp)
+std::string UDPSignalLogger::FormatMessage(std::string_view signalID, std::string_view type,
+                                           std::string_view value, std::string_view units, uint64_t timestamp)
 {
     std::ostringstream oss;
     oss << std::to_string(timestamp) << "," << signalID << "," << type << "," << value << "," << units;
@@ -136,13 +136,13 @@ void UDPSignalLogger::SendData(const std::string &message)
 #endif
 }
 
-void UDPSignalLogger::WriteBoolean(std::string signalID, bool value, uint64_t timestamp)
+void UDPSignalLogger::WriteBoolean(std::string_view signalID, bool value, uint64_t timestamp)
 {
     std::string message = FormatMessage(signalID, "bool", value ? "true" : "false", "bool", timestamp);
     SendData(message);
 }
 
-void UDPSignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, uint64_t timestamp)
+void UDPSignalLogger::WriteDouble(std::string_view signalID, double value, std::string_view units, uint64_t timestamp)
 {
     std::ostringstream oss;
     oss << value;
@@ -150,7 +150,7 @@ void UDPSignalLogger::WriteDouble(std::string signalID, double value, std::strin
     SendData(message);
 }
 
-void UDPSignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, uint64_t timestamp)
+void UDPSignalLogger::WriteInteger(std::string_view signalID, int64_t value, std::string_view units, uint64_t timestamp)
 {
     std::ostringstream oss;
     oss << value;
@@ -158,13 +158,13 @@ void UDPSignalLogger::WriteInteger(std::string signalID, int64_t value, std::str
     SendData(message);
 }
 
-void UDPSignalLogger::WriteString(std::string signalID, const std::string &value, uint64_t timestamp)
+void UDPSignalLogger::WriteString(std::string_view signalID, const std::string &value, uint64_t timestamp)
 {
     std::string message = FormatMessage(signalID, "string", value, "string", timestamp);
     SendData(message);
 }
 
-void UDPSignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
+void UDPSignalLogger::WriteDoubleArray(std::string_view signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
 {
     std::ostringstream oss;
     for (size_t i = 0; i < value.size(); ++i)
@@ -179,7 +179,7 @@ void UDPSignalLogger::WriteDoubleArray(std::string signalID, const std::vector<d
     SendData(message);
 }
 
-void UDPSignalLogger::WritePose2d(std::string signalID, const frc::Pose2d &value, uint64_t timestamp)
+void UDPSignalLogger::WritePose2d(std::string_view signalID, const frc::Pose2d &value, uint64_t timestamp)
 {
     std::ostringstream oss;
     oss << value.X().value() << ";" << value.Y().value() << ";" << value.Rotation().Radians().value();
@@ -187,7 +187,7 @@ void UDPSignalLogger::WritePose2d(std::string signalID, const frc::Pose2d &value
     SendData(message);
 }
 
-void UDPSignalLogger::WritePose3d(std::string signalID, const frc::Pose3d &value, uint64_t timestamp)
+void UDPSignalLogger::WritePose3d(std::string_view signalID, const frc::Pose3d &value, uint64_t timestamp)
 {
     std::ostringstream oss;
     oss << value.X().value() << ";" << value.Y().value() << ";" << value.Z().value() << ";"
@@ -199,7 +199,7 @@ void UDPSignalLogger::WritePose3d(std::string signalID, const frc::Pose3d &value
     SendData(message);
 }
 
-void UDPSignalLogger::WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, uint64_t timestamp)
+void UDPSignalLogger::WriteChassisSpeeds(std::string_view signalID, const frc::ChassisSpeeds &value, uint64_t timestamp)
 {
     std::ostringstream oss;
     oss << value.vx.value() << ";" << value.vy.value() << ";" << value.omega.value();
@@ -207,7 +207,7 @@ void UDPSignalLogger::WriteChassisSpeeds(std::string signalID, const frc::Chassi
     SendData(message);
 }
 
-void UDPSignalLogger::WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, uint64_t timestamp)
+void UDPSignalLogger::WriteSwerveModuleState(std::string_view signalID, const frc::SwerveModuleState &value, uint64_t timestamp)
 {
     std::ostringstream oss;
     oss << value.speed.value() << ";" << value.angle.Radians().value();
@@ -215,7 +215,7 @@ void UDPSignalLogger::WriteSwerveModuleState(std::string signalID, const frc::Sw
     SendData(message);
 }
 
-void UDPSignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs, uint64_t timestamp)
+void UDPSignalLogger::WriteGamePadState(std::string_view signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs, uint64_t timestamp)
 {
     // Log axes
     {
@@ -228,7 +228,7 @@ void UDPSignalLogger::WriteGamePadState(std::string signalID, const std::array<d
                 oss << ";";
             }
         }
-        std::string message = FormatMessage(signalID + "/axes", "float_array", oss.str(), "", timestamp);
+        std::string message = FormatMessage(std::string(signalID) + "/axes", "float_array", oss.str(), "", timestamp);
         SendData(message);
     }
 
@@ -243,7 +243,7 @@ void UDPSignalLogger::WriteGamePadState(std::string signalID, const std::array<d
                 oss << ";";
             }
         }
-        std::string message = FormatMessage(signalID + "/buttons", "bool_array", oss.str(), "", timestamp);
+        std::string message = FormatMessage(std::string(signalID) + "/buttons", "bool_array", oss.str(), "", timestamp);
         SendData(message);
     }
 
@@ -258,7 +258,7 @@ void UDPSignalLogger::WriteGamePadState(std::string signalID, const std::array<d
                 oss << ";";
             }
         }
-        std::string message = FormatMessage(signalID + "/povs", "int_array", oss.str(), "", timestamp);
+        std::string message = FormatMessage(std::string(signalID) + "/povs", "int_array", oss.str(), "", timestamp);
         SendData(message);
     }
 }

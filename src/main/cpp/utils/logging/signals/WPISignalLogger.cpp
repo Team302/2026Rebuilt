@@ -22,65 +22,65 @@
 #include <filesystem>
 #include <span>
 
-void WPISignalLogger::WriteBoolean(std::string signalID, bool value, uint64_t timestamp)
+void WPISignalLogger::WriteBoolean(std::string_view signalID, bool value, uint64_t timestamp)
 {
-    auto &entry = GetBooleanEntry(signalID);
+    auto &entry = GetBooleanEntry(std::string(signalID));
     entry.Append(value, timestamp);
 }
 
-void WPISignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, uint64_t timestamp)
+void WPISignalLogger::WriteDouble(std::string_view signalID, double value, std::string_view units, uint64_t timestamp)
 {
-    auto &entry = GetDoubleEntry(signalID + std::string(units));
+    auto &entry = GetDoubleEntry(std::string(signalID) + units);
     entry.Append(value, timestamp);
 }
 
-void WPISignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, uint64_t timestamp)
+void WPISignalLogger::WriteInteger(std::string_view signalID, int64_t value, std::string_view units, uint64_t timestamp)
 {
-    auto &entry = GetIntegerEntry(signalID + std::string(units));
+    auto &entry = GetIntegerEntry(std::string(signalID) + units);
     entry.Append(value, timestamp);
 }
 
-void WPISignalLogger::WriteString(std::string signalID, const std::string &value, uint64_t timestamp)
+void WPISignalLogger::WriteString(std::string_view signalID, const std::string &value, uint64_t timestamp)
 {
-    auto &entry = GetStringEntry(signalID);
+    auto &entry = GetStringEntry(std::string(signalID));
     entry.Append(value, timestamp);
 }
 
-void WPISignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
+void WPISignalLogger::WriteDoubleArray(std::string_view signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
 {
-    auto &entry = GetDoubleArrayEntry(signalID + std::string(units));
+    auto &entry = GetDoubleArrayEntry(std::string(signalID) + units);
     entry.Append(value, timestamp);
 }
 
-void WPISignalLogger::WritePose2d(std::string signalID, const frc::Pose2d &value, uint64_t timestamp)
+void WPISignalLogger::WritePose2d(std::string_view signalID, const frc::Pose2d &value, uint64_t timestamp)
 {
-    auto &entry = GetPose2dEntry(signalID);
+    auto &entry = GetPose2dEntry(std::string(signalID));
     entry.Append(value, timestamp);
 }
 
-void WPISignalLogger::WritePose3d(std::string signalID, const frc::Pose3d &value, uint64_t timestamp)
+void WPISignalLogger::WritePose3d(std::string_view signalID, const frc::Pose3d &value, uint64_t timestamp)
 {
-    auto &entry = GetPose3dEntry(signalID);
+    auto &entry = GetPose3dEntry(std::string(signalID));
     entry.Append(value, timestamp);
 }
 
-void WPISignalLogger::WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, uint64_t timestamp)
+void WPISignalLogger::WriteChassisSpeeds(std::string_view signalID, const frc::ChassisSpeeds &value, uint64_t timestamp)
 {
-    auto &entry = GetChassisSpeedsEntry(signalID);
+    auto &entry = GetChassisSpeedsEntry(std::string(signalID));
     entry.Append(value, timestamp);
 }
 
-void WPISignalLogger::WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, uint64_t timestamp)
+void WPISignalLogger::WriteSwerveModuleState(std::string_view signalID, const frc::SwerveModuleState &value, uint64_t timestamp)
 {
-    auto &entry = GetSwerveModuleStateEntry(signalID);
+    auto &entry = GetSwerveModuleStateEntry(std::string(signalID));
     entry.Append(value, timestamp);
 }
 
-void WPISignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs, uint64_t timestamp)
+void WPISignalLogger::WriteGamePadState(std::string_view signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs, uint64_t timestamp)
 {
     // Log axes as float span (matching DriverStation format)
     {
-        auto &entry = GetFloatArrayEntry(signalID + "/axes");
+        auto &entry = GetFloatArrayEntry(std::string(signalID) + "/axes");
         std::array<float, 6> axesFloat;
         // Determine actual axis count (trim trailing zeros could be done, but log all 6 for safety)
         for (size_t i = 0; i < axes.size(); ++i)
@@ -92,7 +92,7 @@ void WPISignalLogger::WriteGamePadState(std::string signalID, const std::array<d
 
     // Log buttons as uint8_t span (matching DriverStation format: one byte per button)
     {
-        auto &entry = GetBoolArrayEntry(signalID + "/buttons");
+        auto &entry = GetBoolArrayEntry(std::string(signalID) + "/buttons");
         uint8_t buttonsArr[16];
         for (size_t i = 0; i < buttons.size(); ++i)
         {
@@ -103,7 +103,7 @@ void WPISignalLogger::WriteGamePadState(std::string signalID, const std::array<d
 
     // Log POVs as int64_t span (matching DriverStation format)
     {
-        auto &entry = GetIntegerArrayEntry(signalID + "/povs");
+        auto &entry = GetIntegerArrayEntry(std::string(signalID) + "/povs");
         std::array<int64_t, 1> povs64 = {static_cast<int64_t>(povs[0])};
         entry.Append(std::span<const int64_t>{povs64.data(), povs64.size()}, timestamp);
     }
