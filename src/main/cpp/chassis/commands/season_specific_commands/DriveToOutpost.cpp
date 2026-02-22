@@ -41,17 +41,15 @@ DriveToOutpost::DriveToOutpost(subsystems::CommandSwerveDrivetrain *chassis)
 ///             - If in neutral zone: Returns current pose (no movement)
 ///             - If in alliance zone: Calculates two-stage path using OutpostHelper
 ///
-///             **Stage 1 (Mid Pose):**
+///             **Mid Pose**
 ///             - Offset position near the outpost for approach alignment
 ///
-///             **Stage 2 (End Pose):**
+///             **End Pose**
 ///             - Final position at the outpost center
 ///
 ///             The command uses OutpostHelper to identify which outpost (red or blue)
 ///             is closest and calculates both an offset approach pose and the
 ///             final target pose at the outpost center.
-///
-/// @note       Two-stage navigation with tighter tolerances (0.1 ft, 30°)
 /// @see        OutpostHelper::CalcOutpostPose() for outpost position calculation
 /// @see        OutpostHelper::CalcOutpostOffsetPose() for approach position
 //------------------------------------------------------------------
