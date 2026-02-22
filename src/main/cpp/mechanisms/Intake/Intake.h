@@ -28,8 +28,7 @@
 #include "ctre/phoenix6/configs/Configuration.hpp"
 #include "ctre/phoenix6/TalonFXS.hpp"
 #include "utils/logging/signals/DragonDataLogger.h"
-#include <frc/DigitalInput.h>
-#include <frc/filter/Debouncer.h>
+#include "ctre/phoenix6/CANdi.hpp"
 
 #include "mechanisms/base/BaseMech.h"
 #include "state/StateMgr.h"
@@ -89,7 +88,8 @@ public:
 
 	ctre::phoenix6::hardware::TalonFX *GetIntake() const { return m_intake; }
 	ctre::phoenix6::hardware::TalonFXS *GetExtender() const { return m_extender; }
-	bool GetIsIntakeExtendedState() const { return m_isIntakeExtendedIsInverted ? !m_isIntakeExtended->Get() : m_isIntakeExtended->Get(); }
+	ctre::phoenix6::hardware::CANdi *GetIntakeCANdi() const { return m_intakeCANdi; }
+
 	ControlData *GetPercentOut() const { return m_percentOut; }
 	ControlData *GetPositionDeg() const { return m_positionDeg; }
 
@@ -101,7 +101,7 @@ public:
 	void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
 	bool IsInClimbMode() const { return m_isInClimbMode; }
 	bool IsLaunching() const { return m_isLaunching; }
-	bool IsIntakeExtended() const { return GetIsIntakeExtendedState(); }
+	bool IsIntakeExtended() const { return (m_intake->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround); }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -114,8 +114,8 @@ private:
 
 	ctre::phoenix6::hardware::TalonFX *m_intake;
 	ctre::phoenix6::hardware::TalonFXS *m_extender;
-	frc::DigitalInput *m_isIntakeExtended;
-	bool m_isIntakeExtendedIsInverted;
+	ctre::phoenix6::hardware::CANdi *m_intakeCANdi;
+
 	ControlData *m_percentOut;
 	ControlData *m_positionDeg;
 

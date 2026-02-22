@@ -32,8 +32,6 @@
 #include "ctre/phoenix6/configs/Configuration.hpp"
 #include "ctre/phoenix6/TalonFXS.hpp"
 #include "utils/logging/signals/DragonDataLogger.h"
-#include <frc/DigitalInput.h>
-#include <frc/filter/Debouncer.h>
 #include "mechanisms/Intake/OffState.h"
 #include "mechanisms/Intake/IntakeState.h"
 #include "mechanisms/Intake/ExpelState.h"
@@ -41,6 +39,7 @@
 #include "mechanisms/Intake/EmptyHopperState.h"
 #include "teleopcontrol/TeleopControl.h"
 
+using ctre::phoenix6::configs::CANdiConfiguration;
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
 using ctre::phoenix6::configs::TalonFXConfiguration;
@@ -150,9 +149,7 @@ void Intake::CreateCompBot302()
 	m_ntName = "Intake";
 	m_intake = new ctre::phoenix6::hardware::TalonFX(16, ctre::phoenix6::CANBus("canivore"));
 	m_extender = new ctre::phoenix6::hardware::TalonFXS(0, ctre::phoenix6::CANBus("canivore"));
-
-	m_isIntakeExtended = new frc::DigitalInput(0);
-	m_isIntakeExtendedIsInverted = false;
+	m_intakeCANdi = new ctre::phoenix6::hardware::CANdi(16, ctre::phoenix6::CANBus("canivore"));
 
 	m_percentOut = new ControlData(
 		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
@@ -244,15 +241,30 @@ void Intake::InitializeTalonFXIntakeCompBot302()
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
 	configs.Feedback.SensorToMechanismRatio = 1;
 
-	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	ctre::phoenix::StatusCode statusMotor = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		status = m_intake->GetConfigurator().Apply(configs, units::time::second_t(0.25));
-		if (status.IsOK())
+		statusMotor = m_intake->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		if (statusMotor.IsOK())
 			break;
 	}
-	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intake", "m_intake Status", status.GetName());
+	if (!statusMotor.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intake", "m_intake Status", statusMotor.GetName());
+
+	CANdiConfiguration CANdiConfig{};
+
+	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenHigh;
+	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::PullHigh;
+
+	ctre::phoenix::StatusCode statusCANdi = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	for (int i = 0; i < 5; ++i)
+	{
+		statusCANdi = m_intakeCANdi->GetConfigurator().Apply(CANdiConfig, units::time::second_t(0.25));
+		if (statusCANdi.IsOK())
+			break;
+	}
+	if (!statusCANdi.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intake", "m_intakeCANdi Status", statusCANdi.GetName());
 }
 
 void Intake::InitializeTalonFXSExtenderCompBot302()
@@ -323,11 +335,11 @@ void Intake::RunCommonTasks()
 	ManualControl();
 	Cyclic();
 
-	if (m_isAllowedToClimb == GetIsIntakeExtendedState())
-	{
-		m_isAllowedToClimb = !GetIsIntakeExtendedState();
-		NotifyStateUpdate(RobotStateChanges::StateChange::ClimbModeStatus_Bool, m_isAllowedToClimb);
-	}
+	// if (m_isAllowedToClimb == IsIntakeExtended())
+	// {
+	// 	m_isAllowedToClimb = !GetIsIntakeExtendedState();
+	// 	NotifyStateUpdate(RobotStateChanges::StateChange::ClimbModeStatus_Bool, m_isAllowedToClimb);
+	// }
 }
 /// @brief  Set the control constants (e.g. PIDF values).
 /// @param [in] ControlData*                                   pid:  the control constants
@@ -349,7 +361,7 @@ void Intake::Cyclic()
 	Update();
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentState());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeExtended", GetIsIntakeExtendedState());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeExtended", IsIntakeExtended());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IntakePercentOut", m_intakePercentOut.Output.value());
 }
 
