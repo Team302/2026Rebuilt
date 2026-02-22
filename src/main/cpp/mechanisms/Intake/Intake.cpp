@@ -380,13 +380,11 @@ void Intake::ManualControl()
 		bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE);
 		if (intakeOutPressed)
 		{
-			UpdateTargetExtenderPositionDeg(m_intakeRetractedPositionTarget);
 			UpdateTargetExtenderPositionDeg(m_intakeExtendedPositionTarget);
 		}
 		else if (intakeInPressed)
 		{
 			UpdateTargetExtenderPositionDeg(m_intakeRetractedPositionTarget);
-			UpdateTargetExtenderPositionDeg(m_intakeExtendedPositionTarget);
 		}
 	}
 }
