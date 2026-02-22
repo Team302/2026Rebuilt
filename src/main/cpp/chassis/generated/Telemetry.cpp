@@ -58,22 +58,27 @@ void Telemetry::Telemeterize(subsystems::CommandSwerveDrivetrain::SwerveDriveSta
 void Telemetry::DataLog(uint64_t timestamp)
 {
     /* Log the cached drive state data using DragonDataLogger methods */
-    Log2DPoseData(timestamp, DragonDataLogger::PoseSingals::CURRENT_CHASSIS_POSE2D, m_cachedPose);
-    LogChassisSpeedsData(timestamp, DragonDataLogger::ChassisSpeedSignals::ACTUAL_SPEEDS, m_cachedSpeeds);
+    double x = m_cachedPose.X().value();
+    double y = m_cachedPose.Y().value();
+    double rot = m_cachedPose.Rotation().Radians().value();
+    LogDoubleArrayData(timestamp, "/Chassis/Pose2d", {x, y, rot}, "X, Y, Rotation");
+
+    LogChassisSpeedsData(timestamp,
+                         "/Chassis/ActualSpeeds/Vx", "/Chassis/ActualSpeeds/Vy", "/Chassis/ActualSpeeds/Omega",
+                         m_cachedSpeeds, "Vx, Vy, Omega");
 
     // Log module states
-    LogSwerveModuleStateData(timestamp, DragonDataLogger::SwerveStateSingals::ACTUAL_LEFT_FRONT_STATE, m_cachedModuleStates[0]);
-    LogSwerveModuleStateData(timestamp, DragonDataLogger::SwerveStateSingals::ACTUAL_RIGHT_FRONT_STATE, m_cachedModuleStates[1]);
-    LogSwerveModuleStateData(timestamp, DragonDataLogger::SwerveStateSingals::ACTUAL_LEFT_BACK_STATE, m_cachedModuleStates[2]);
-    LogSwerveModuleStateData(timestamp, DragonDataLogger::SwerveStateSingals::ACTUAL_RIGHT_BACK_STATE, m_cachedModuleStates[3]);
+    LogSwerveModuleStateData(timestamp, "/Chassis/FrontLeftModule/ActualState/Speed", "/Chassis/FrontLeftModule/ActualState/Angle", m_cachedModuleStates[0], "Speed, Angle");
+    LogSwerveModuleStateData(timestamp, "/Chassis/FrontRightModule/ActualState/Speed", "/Chassis/FrontRightModule/ActualState/Angle", m_cachedModuleStates[1], "Speed, Angle");
+    LogSwerveModuleStateData(timestamp, "/Chassis/BackLeftModule/ActualState/Speed", "/Chassis/BackLeftModule/ActualState/Angle", m_cachedModuleStates[2], "Speed, Angle");
+    LogSwerveModuleStateData(timestamp, "/Chassis/BackRightModule/ActualState/Speed", "/Chassis/BackRightModule/ActualState/Angle", m_cachedModuleStates[3], "Speed, Angle");
 
     // Log module targets
-    LogSwerveModuleStateData(timestamp, DragonDataLogger::SwerveStateSingals::TARGET_LEFT_FRONT_STATE, m_cachedModuleTargets[0]);
-    LogSwerveModuleStateData(timestamp, DragonDataLogger::SwerveStateSingals::TARGET_RIGHT_FRONT_STATE, m_cachedModuleTargets[1]);
-    LogSwerveModuleStateData(timestamp, DragonDataLogger::SwerveStateSingals::TARGET_LEFT_BACK_STATE, m_cachedModuleTargets[2]);
-    LogSwerveModuleStateData(timestamp, DragonDataLogger::SwerveStateSingals::TARGET_RIGHT_BACK_STATE, m_cachedModuleTargets[3]);
+    LogSwerveModuleStateData(timestamp, "/Chassis/FrontLeftModule/TargetState/Speed", "/Chassis/FrontLeftModule/TargetState/Angle", m_cachedModuleTargets[0], "Speed, Angle");
+    LogSwerveModuleStateData(timestamp, "/Chassis/FrontRightModule/TargetState/Speed", "/Chassis/FrontRightModule/TargetState/Angle", m_cachedModuleTargets[1], "Speed, Angle");
+    LogSwerveModuleStateData(timestamp, "/Chassis/BackLeftModule/TargetState/Speed", "/Chassis/BackLeftModule/TargetState/Angle", m_cachedModuleTargets[2], "Speed, Angle");
+    LogSwerveModuleStateData(timestamp, "/Chassis/BackRightModule/TargetState/Speed", "/Chassis/BackRightModule/TargetState/Angle", m_cachedModuleTargets[3], "Speed, Angle");
 
-    // Note: Module positions are not directly supported by DragonDataLogger's existing methods
-    // OdometryPeriod can be logged as a double if needed
-    LogDoubleData(timestamp, DragonDataLogger::DoubleSignals::CHASSIS_YAW_DEGREES, m_cachedOdometryPeriod.value());
+    // OdometryPeriod logged as a double
+    LogDoubleData(timestamp, "/Chassis/Yaw", m_cachedOdometryPeriod.value(), "Degrees");
 }

@@ -315,5 +315,6 @@ void DragonXBox::DataLog(uint64_t timestamp)
     buttons[frc::XboxController::Button::kLeftStick - 1] = IsButtonPressed(TeleopControlMappingEnums::LEFT_STICK_PRESSED);
     buttons[frc::XboxController::Button::kRightStick - 1] = IsButtonPressed(TeleopControlMappingEnums::RIGHT_STICK_PRESSED);
     int id = m_xbox->GetPort();
-    LogGamePadData(timestamp, static_cast<DragonDataLogger::GamePadSignals>(id), axes, buttons, std::array<int, 1>{m_xbox->GetPOV()});
+    std::string path = "DS:joystick" + std::to_string(id);
+    LogGamePadData(timestamp, path, axes, buttons, std::array<int, 1>{m_xbox->GetPOV()});
 }

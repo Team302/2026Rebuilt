@@ -27,7 +27,7 @@
 #include "ctre/phoenix6/controls/Follower.hpp"
 #include "ctre/phoenix6/configs/Configuration.hpp"
 #include "frc/Solenoid.h"
-#include "utils/logging/signals/DragonDataLogger.h"
+#include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include <frc/DigitalInput.h>
 #include <frc/filter/Debouncer.h>
 
@@ -41,7 +41,7 @@
 
 #include "RobotIdentifier.h"
 
-class Intake : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber
+class Intake : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger
 {
 public:
 	enum STATE_NAMES
@@ -78,7 +78,7 @@ public:
 	void CreateAndRegisterStates();
 	void Cyclic();
 	void RunCommonTasks() override;
-	// void DataLog() override;
+	void DataLog(uint64_t timestamp) override;
 
 	RobotIdentifier getActiveRobotId() { return m_activeRobotId; }
 

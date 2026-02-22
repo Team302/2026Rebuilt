@@ -137,7 +137,11 @@ void DragonQuest::GetEstimatedPose()
 // ──────────────────────────────────────────────────────────────────────────────
 void DragonQuest::DataLog(uint64_t timestamp)
 {
-    Log2DPoseData(timestamp, DragonDataLogger::PoseSingals::CURRENT_CHASSIS_QUEST_POSE2D, m_lastCalculatedPose.ToPose2d());
+    frc::Pose2d pose2d = m_lastCalculatedPose.ToPose2d();
+    double x = pose2d.X().value();
+    double y = pose2d.Y().value();
+    double rot = pose2d.Rotation().Radians().value();
+    LogDoubleArrayData(timestamp, "/Chassis/QuestPose2d", {x, y, rot}, "X, Y, Rotation");
 }
 
 // ──────────────────────────────────────────────────────────────────────────────

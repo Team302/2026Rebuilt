@@ -310,28 +310,8 @@ void Intake::ManualControl()
 		}
 	}
 }
-/* void Intake::DataLog(uint64_t timestamp)
+void Intake::DataLog(uint64_t timestamp)
 {
-   auto currTime = m_powerTimer.Get();
-LogIntake(timestamp, m_Intake->GetPosition().GetValueAsDouble());
-auto IntakePower = DragonPower::CalcPowerEnergy(currTime, m_Intake->GetSupplyVoltage().GetValueAsDouble(), m_Intake->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(IntakePower);
-m_energy = get<1>(IntakePower);
-m_totalEnergy += m_energy;
-LogIntakePower(timestamp, m_power);
-LogIntakeEnergy(timestamp, m_energy);
-LogAgitator(timestamp, m_Agitator->GetPosition().GetValueAsDouble());
-auto AgitatorPower = DragonPower::CalcPowerEnergy(currTime, m_Agitator->GetSupplyVoltage().GetValueAsDouble(), m_Agitator->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(AgitatorPower);
-m_energy = get<1>(AgitatorPower);
-m_totalEnergy += m_energy;
-LogAgitatorPower(timestamp, m_power);
-LogAgitatorEnergy(timestamp, m_energy);
-LogIsIntakeExtended(timestamp, GetIsIntakeExtended());
-LogIntakeState(timestamp, GetCurrentState());
-m_totalWattHours += DragonPower::ConvertEnergyToWattHours(m_totalEnergy);
-LogIntakeTotalEnergy(timestamp, m_totalEnergy);
-LogIntakeTotalWattHours(timestamp, m_totalWattHours);
-m_powerTimer.Reset();
-m_powerTimer.Start();
- }*/
+	// TODO: add intake-specific logging calls here, e.g.:
+	// LogDoubleData(timestamp, "/Intake/PercentOut", m_intakePercentOut.Output.value());
+}

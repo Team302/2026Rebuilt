@@ -273,6 +273,6 @@ void CyclePrimitives::DataLog(uint64_t timestamp)
 {
     if (m_autonSelector != nullptr)
     {
-        LogStringData(timestamp, DragonDataLogger::StringSignals::AUTON_PATH_NAME, m_autonSelector->GetSelectedAutoFile().c_str());
+        LogStringData(timestamp, "/Auton/PathName", m_autonSelector->GetSelectedAutoFile().c_str());
     }
 }
