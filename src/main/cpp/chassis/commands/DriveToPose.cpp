@@ -66,8 +66,8 @@ DriveToPose::DriveToPose(
     AddRequirements(m_chassis);
 
     // Configure integral zones to prevent windup when far from target
-    m_translationPIDX.SetIZone(0.20);
-    m_translationPIDY.SetIZone(0.20);
+    m_translationPIDX.SetIZone(0.5);
+    m_translationPIDY.SetIZone(0.5);
 
     // Store initial pose for movement detection
     m_prevPose = m_chassis != nullptr ? m_chassis->GetPose() : frc::Pose2d();
@@ -229,7 +229,9 @@ void DriveToPose::Execute()
     }
 
     // Log current error for debugging and tuning
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Error", m_endPose.Translation().Distance(m_currentPose.Translation()).value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Vx", units::math::abs(chassisSpeeds.vx).value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Vy", units::math::abs(chassisSpeeds.vy).value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Error", units::length::inch_t(m_endPose.Translation().Distance(m_currentPose.Translation())).value());
 }
 
 //------------------------------------------------------------------

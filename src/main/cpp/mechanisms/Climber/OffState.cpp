@@ -51,7 +51,6 @@ void OffState::Init()
 void OffState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetClimberPercentOut(m_climberTarget);
-	m_mechanism->GetExtender()->Set(m_extenderTarget);
 }
 
 void OffState::Run()

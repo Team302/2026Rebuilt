@@ -45,8 +45,6 @@ namespace ClimberStates
 		void InitCompBot302();
 		RobotIdentifier m_RobotId;
 
-		const double m_climberTarget = 0.0;
-		const bool m_extenderTarget = true;
-		const bool m_alignmentTarget = true;
+		const double m_climberTarget = 0.25;
 	};
 }
