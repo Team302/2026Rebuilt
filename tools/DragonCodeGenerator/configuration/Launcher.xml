@@ -1866,10 +1866,6 @@
           <value>Initialize</value>
         </stringParameterConstInMechInstance>
       </transitionsTo>
-      <doubleParameters />
-      <boolParameters />
-      <constDoubleParameters />
-      <constBoolParameters />
       <motorTargets>
         <motorTarget>
           <name>Launcher</name>
@@ -1962,15 +1958,10 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
       </motorTargets>
-      <solenoidTarget />
     </state>
     <state>
       <name>Initialize</name>
       <transitionsTo />
-      <doubleParameters />
-      <boolParameters />
-      <constDoubleParameters />
-      <constBoolParameters />
       <motorTargets>
         <motorTarget>
           <name>Launcher</name>
@@ -2063,7 +2054,6 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
       </motorTargets>
-      <solenoidTarget />
     </state>
     <state>
       <name>Idle</name>
@@ -2104,10 +2094,6 @@
           <value>LauncherTuning</value>
         </stringParameterConstInMechInstance>
       </transitionsTo>
-      <doubleParameters />
-      <boolParameters />
-      <constDoubleParameters />
-      <constBoolParameters />
       <motorTargets>
         <motorTarget>
           <name>Launcher</name>
@@ -2200,7 +2186,6 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
       </motorTargets>
-      <solenoidTarget />
     </state>
     <state>
       <name>PrepareToLaunch</name>
@@ -2241,10 +2226,6 @@
           <value>Climb</value>
         </stringParameterConstInMechInstance>
       </transitionsTo>
-      <doubleParameters />
-      <boolParameters />
-      <constDoubleParameters />
-      <constBoolParameters />
       <motorTargets>
         <motorTarget>
           <name>Launcher</name>
@@ -2337,7 +2318,6 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
       </motorTargets>
-      <solenoidTarget />
     </state>
     <state>
       <name>Launch</name>
@@ -2364,10 +2344,6 @@
           <value>PrepareToLaunch</value>
         </stringParameterConstInMechInstance>
       </transitionsTo>
-      <doubleParameters />
-      <boolParameters />
-      <constDoubleParameters />
-      <constBoolParameters />
       <motorTargets>
         <motorTarget>
           <name>Launcher</name>
@@ -2460,7 +2436,6 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
       </motorTargets>
-      <solenoidTarget />
     </state>
     <state>
       <name>EmptyHopper</name>
@@ -2487,10 +2462,6 @@
           <value>Climb</value>
         </stringParameterConstInMechInstance>
       </transitionsTo>
-      <doubleParameters />
-      <boolParameters />
-      <constDoubleParameters />
-      <constBoolParameters />
       <motorTargets>
         <motorTarget>
           <name>Launcher</name>
@@ -2583,7 +2554,6 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
       </motorTargets>
-      <solenoidTarget />
     </state>
     <state>
       <name>Climb</name>
@@ -2603,10 +2573,6 @@
           <value>Idle</value>
         </stringParameterConstInMechInstance>
       </transitionsTo>
-      <doubleParameters />
-      <boolParameters />
-      <constDoubleParameters />
-      <constBoolParameters />
       <motorTargets>
         <motorTarget>
           <name>Launcher</name>
@@ -2699,7 +2665,6 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
       </motorTargets>
-      <solenoidTarget />
     </state>
     <state>
       <name>LauncherTuning</name>
@@ -2719,10 +2684,6 @@
           <value>Launch</value>
         </stringParameterConstInMechInstance>
       </transitionsTo>
-      <doubleParameters />
-      <boolParameters />
-      <constDoubleParameters />
-      <constBoolParameters />
       <motorTargets>
         <motorTarget>
           <name>Launcher</name>
@@ -2815,7 +2776,6 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
       </motorTargets>
-      <solenoidTarget />
     </state>
   </states>
   <doubleParameters />
