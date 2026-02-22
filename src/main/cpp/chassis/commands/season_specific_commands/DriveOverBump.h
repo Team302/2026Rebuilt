@@ -30,8 +30,8 @@
 ///
 /// **Two-Stage Navigation:**
 /// The command uses a midpoint-to-endpoint strategy to ensure the robot successfully crosses the bump:
-/// 1. First, drive to the midpoint pose (top of the bump)
-/// 2. Then, drive to the endpoint pose (other side of the bump)
+/// 1. First, drive to the midpoint pose (near side of the bump)
+/// 2. Then, drive to the endpoint pose (far side of the bump)
 ///
 /// **Directional Intelligence:**
 /// - If starting in the neutral zone: Drive toward the alliance zone
