@@ -68,11 +68,9 @@ StateMgr *MechanismConfigCompBot_302::GetMechanism(MechanismTypes::MECHANISM_TYP
 void MechanismConfigCompBot_302::DefineLEDs()
 {
 	// auto candle = DragonCANdle::GetInstance();
-	// candle->Initialize(0, 45); // CAN ID 0, 45 LEDs external) Update with actual number of LEDs on the robot
+	// candle->Initialize(0, 43); // CAN ID 0, 43 LEDs external) Update with actual number of LEDs on the robot
 }
 
 void MechanismConfigCompBot_302::DefineCompressor()
 {
-	auto Compressor = new frc::Compressor(1, frc::PneumaticsModuleType::REVPH);
-	Compressor->EnableAnalog(95_psi, 119.5_psi);
 }
