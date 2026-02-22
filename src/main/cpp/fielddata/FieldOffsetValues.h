@@ -176,10 +176,10 @@ private:
     /// @brief X-coordinate of red alliance outpost (meters, equal to depot X)
     units::length::meter_t m_redOutpostX;
 
-    /// @brief X-coordinate of blue alliance outpost approach position (meters, equal to depot X)
+    /// @brief X-coordinate of blue alliance outpost approach position (meters, outpostX + OUTPOST_APPROACH_OFFSET)
     units::length::meter_t m_blueOutpostApproachX;
 
-    /// @brief X-coordinate of red alliance outpost approach position (meters, equal to depot X)
+    /// @brief X-coordinate of red alliance outpost approach position (meters, outpostX - OUTPOST_APPROACH_OFFSET)
     units::length::meter_t m_redOutpostApproachX;
 
     //------------------------------------------------------------------
