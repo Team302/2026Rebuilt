@@ -235,5 +235,5 @@ private:
     /// @brief Bump offset distance from hub center (1.5 meters on each side)
     static constexpr units::length::meter_t BUMP_OFFSET = 1.5_m;
 
-    static constexpr units::length::meter_t OUTPOST_APPROACH_OFFSET = 0.5_m; // Additional offset for bump approach waypoints
+    static constexpr units::length::meter_t OUTPOST_APPROACH_OFFSET = 0.5_m; // Additional X-offset applied when computing outpost approach positions
 };
