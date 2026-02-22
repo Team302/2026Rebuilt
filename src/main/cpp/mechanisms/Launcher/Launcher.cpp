@@ -47,6 +47,7 @@
 #include "units/math.h"
 #include "utils/InterpolateUtils.h"
 
+using ctre::phoenix6::configs::CANdiConfiguration;
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
 using ctre::phoenix6::configs::TalonFXConfiguration;
@@ -425,15 +426,30 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 	configs.Slot0.GravityType = m_positionDegreesHood->GetGravityType();
 	configs.Slot0.StaticFeedforwardSign = m_positionDegreesHood->GetStaticFeedforwardSign();
 
-	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	ctre::phoenix::StatusCode statusMotor = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		status = m_hood->GetConfigurator().Apply(configs, units::time::second_t(0.25));
-		if (status.IsOK())
+		statusMotor = m_hood->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		if (statusMotor.IsOK())
 			break;
 	}
-	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_hood", "m_hood Status", status.GetName());
+	if (!statusMotor.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_hood", "m_hood Status", statusMotor.GetName());
+
+	CANdiConfiguration CANdiConfig{};
+
+	CANdiConfig.DigitalInputs.S1CloseState = signals::S1CloseStateValue::CloseWhenHigh;
+	CANdiConfig.DigitalInputs.S1FloatState = signals::S1FloatStateValue::PullHigh;
+
+	ctre::phoenix::StatusCode statusCANdi = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	for (int i = 0; i < 5; ++i)
+	{
+		statusCANdi = m_hoodCANdi->GetConfigurator().Apply(CANdiConfig, units::time::second_t(0.25));
+		if (statusCANdi.IsOK())
+			break;
+	}
+	if (!statusCANdi.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_hood", "m_hoodCANdi Status", statusCANdi.GetName());
 }
 
 void Launcher::InitializeTalonFXTransferCompBot302()
@@ -538,15 +554,32 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.Slot0.GravityType = m_positionDegreesTurret->GetGravityType();
 	configs.Slot0.StaticFeedforwardSign = m_positionDegreesTurret->GetStaticFeedforwardSign();
 
-	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	ctre::phoenix::StatusCode statusMotor = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		status = m_turret->GetConfigurator().Apply(configs, units::time::second_t(0.25));
-		if (status.IsOK())
+		statusMotor = m_turret->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		if (statusMotor.IsOK())
 			break;
 	}
-	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_turret", "m_turret Status", status.GetName());
+	if (!statusMotor.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_turret", "m_turret Status", statusMotor.GetName());
+
+	CANdiConfiguration CANdiConfig{};
+
+	CANdiConfig.DigitalInputs.S1CloseState = signals::S1CloseStateValue::CloseWhenHigh;
+	CANdiConfig.DigitalInputs.S1FloatState = signals::S1FloatStateValue::PullHigh;
+	CANdiConfig.DigitalInputs.S2CloseState = signals::S2CloseStateValue::CloseWhenHigh;
+	CANdiConfig.DigitalInputs.S2FloatState = signals::S2FloatStateValue::PullHigh;
+
+	ctre::phoenix::StatusCode statusCANdi = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	for (int i = 0; i < 5; ++i)
+	{
+		statusCANdi = m_turretCANdi->GetConfigurator().Apply(CANdiConfig, units::time::second_t(0.25));
+		if (statusCANdi.IsOK())
+			break;
+	}
+	if (!statusCANdi.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_turret", "m_turretCANdi Status", statusCANdi.GetName());
 }
 
 void Launcher::InitializeTalonFXIndexerCompBot302()
