@@ -51,6 +51,14 @@ public:
     ///             - Rotation based on the nearest alliance (0° for red, 180° for blue)
     //------------------------------------------------------------------
     frc::Pose2d CalcOutpostPose() const;
+
+    //------------------------------------------------------------------
+    /// @brief      Calculates an offset pose relative to the nearest Outpost
+    /// @return     frc::Pose2d - The calculated offset pose for approaching or aligning to the Outpost
+    /// @details    Uses the nearest Outpost center pose and applies a predefined translation
+    ///             and/or rotation offset to generate a more suitable navigation target,
+    ///             such as a staging point in front of the Outpost.
+    //------------------------------------------------------------------
     frc::Pose2d CalcOutpostOffsetPose() const;
 
 private:
