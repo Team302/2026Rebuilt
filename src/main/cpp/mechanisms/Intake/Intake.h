@@ -27,7 +27,7 @@
 #include "ctre/phoenix6/controls/Follower.hpp"
 #include "ctre/phoenix6/configs/Configuration.hpp"
 #include "frc/Solenoid.h"
-#include "utils/logging/signals/DragonDataLoggerMgr.h"
+#include "utils/logging/signals/DragonDataLogger.h"
 #include <frc/DigitalInput.h>
 #include <frc/filter/Debouncer.h>
 
@@ -121,5 +121,4 @@ private:
 	bool m_isInClimbMode = false;
 	bool m_isLaunching = false;
 	bool m_isAllowedToClimb = false;
-	// void InitializeLogging();
 };
