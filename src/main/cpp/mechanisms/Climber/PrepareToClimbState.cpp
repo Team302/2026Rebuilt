@@ -51,13 +51,14 @@ void PrepareToClimbState::Init()
 void PrepareToClimbState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetClimberPercentOut(m_climberTarget);
-	m_mechanism->GetExtender()->Set(m_extenderTarget);
-	m_mechanism->GetAlignment()->Set(m_alignmentTarget);
 }
 
 void PrepareToClimbState::Run()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("PrepareToClimbState"), string("Run"));
+	if (m_mechanism->IsClimberRetracted())
+	{
+		m_mechanism->UpdateTargetClimberPercentOut(0.0);
+	}
 }
 
 void PrepareToClimbState::Exit()
