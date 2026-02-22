@@ -98,7 +98,7 @@ frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
     return targetPosition;
 }
 
-units::angle::degree_t RebuiltTargetCalculator::GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle)
+units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle)
 {
 
     m_field->UpdateObject("Current Target Position", GetVirtualTargetPose(looheadTime));
@@ -138,7 +138,7 @@ units::angle::degree_t RebuiltTargetCalculator::GetLauncherTarget(units::time::s
     }
 
     m_field->UpdateObject("Launcher Position", frc::Pose2d(GetMechanismWorldPosition(), robotPose.Rotation() + frc::Rotation2d(bestAngle)));
-    return bestAngle;
+    return units::angle::turn_t(bestAngle.value());
 }
 
 void RebuiltTargetCalculator::UpdateTargetOffset()

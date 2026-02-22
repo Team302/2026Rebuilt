@@ -30,13 +30,13 @@ using std::string;
 
 void MechanismConfigCompBot_302::DefineMechanisms()
 {
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing mechanism"), string("Intake"), "");
-	m_theIntake = new Intake(RobotIdentifier::COMP_BOT_302);
-	m_theIntake->CreateCompBot302();
-	m_theIntake->CreateAndRegisterStates();
-	m_theIntake->InitializeCompBot302();
-	m_theIntake->Init(/*m_theIntake*/);
-	m_mechanismMap[MechanismTypes::MECHANISM_TYPE::INTAKE] = m_theIntake;
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing mechanism"), string("Intake"), "");
+	// m_theIntake = new Intake(RobotIdentifier::COMP_BOT_302);
+	// m_theIntake->CreateCompBot302();
+	// m_theIntake->CreateAndRegisterStates();
+	// m_theIntake->InitializeCompBot302();
+	// m_theIntake->Init(/*m_theIntake*/);
+	// m_mechanismMap[MechanismTypes::MECHANISM_TYPE::INTAKE] = m_theIntake;
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing mechanism"), string("Launcher"), "");
 	m_theLauncher = new Launcher(RobotIdentifier::COMP_BOT_302);
@@ -67,12 +67,10 @@ StateMgr *MechanismConfigCompBot_302::GetMechanism(MechanismTypes::MECHANISM_TYP
 
 void MechanismConfigCompBot_302::DefineLEDs()
 {
-	auto candle = DragonCANdle::GetInstance();
-	candle->Initialize(0, 45); // CAN ID 0, 45 LEDs external) Update with actual number of LEDs on the robot
+	// auto candle = DragonCANdle::GetInstance();
+	// candle->Initialize(0, 43); // CAN ID 0, 43 LEDs external) Update with actual number of LEDs on the robot
 }
 
 void MechanismConfigCompBot_302::DefineCompressor()
 {
-	auto Compressor = new frc::Compressor(1, frc::PneumaticsModuleType::REVPH);
-	Compressor->EnableAnalog(95_psi, 119.5_psi);
 }

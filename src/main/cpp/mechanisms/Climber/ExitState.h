@@ -47,8 +47,6 @@ namespace ClimberStates
 		RobotIdentifier m_RobotId;
 
 		const units::angle::degree_t m_climberTarget = units::angle::degree_t(0);
-		const bool m_extenderTarget = false;
-		const bool m_alignmentTarget = false;
 
 		const double m_rotationKP = 0.0;
 		const double m_rotationKI = 0.0;
