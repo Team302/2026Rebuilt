@@ -17,6 +17,7 @@
 #pragma once
 
 // #include <map>
+#include <string>
 
 // FRC includes
 #include "frc/XboxController.h"
@@ -155,6 +156,7 @@ private:
     frc::XboxController *m_xbox;
     AnalogAxis *m_axis[TeleopControlMappingEnums::MAX_AXIS];
     IButton *m_button[TeleopControlMappingEnums::MAX_BUTTONS];
+    std::string m_dataLogPath;
 
     DragonXBox() = delete;
 };
