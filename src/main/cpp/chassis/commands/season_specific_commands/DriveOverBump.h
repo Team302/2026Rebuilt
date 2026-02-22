@@ -55,8 +55,7 @@ public:
     /// @brief      Constructor for DriveOverBump command
     /// @param[in]  chassis - Pointer to the swerve drive subsystem that will execute the movement
     /// @details    Initializes the command with the chassis reference for autonomous navigation.
-    ///             The constructor sets up the base DriveToPose functionality and initializes
-    ///             the midpoint and endpoint pose members to default values.
+    ///             The constructor sets up the base DriveToPose functionality.
     //------------------------------------------------------------------
     DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis);
 
@@ -78,10 +77,6 @@ protected:
 
 private:
     units::angle::degree_t GetRotation(BUMP_ID bump, bool isInNeutralZone) const;
-
-    frc::Pose2d m_midPose;
-    frc::Pose2d m_endPose;
-    bool m_beforeMidPose = true;
 
     static constexpr units::degree_t kBlueAllianceOutpostWallTowardHub{315.0};
     static constexpr units::degree_t kNeutralZoneTowardHubBlueOutpost{315.0};

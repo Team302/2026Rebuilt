@@ -30,7 +30,7 @@
 ///             determines the nearest bump and calculates appropriate poses
 ///             based on whether the robot is in the alliance or neutral zone.
 //------------------------------------------------------------------
-DriveOverBump::DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis) : DriveToPose(chassis), m_midPose(), m_endPose()
+DriveOverBump::DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis) : DriveToPose(chassis)
 {
     // Set distance threshold for pose completion detection (1 foot tolerance)
     SetDistanceThreshold(kDistanceThreshold);
