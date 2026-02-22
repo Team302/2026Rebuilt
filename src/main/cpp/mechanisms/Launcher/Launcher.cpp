@@ -811,48 +811,67 @@ void Launcher::SetLauncherProtect()
 	}
 }
 
-/* void Launcher::DataLog(uint64_t timestamp)
+void Launcher::DataLog(uint64_t timestamp)
 {
-   auto currTime = m_powerTimer.Get();
-LogLauncher(timestamp, m_Launcher->GetPosition().GetValueAsDouble());
-auto LauncherPower = DragonPower::CalcPowerEnergy(currTime, m_Launcher->GetSupplyVoltage().GetValueAsDouble(), m_Launcher->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(LauncherPower);
-m_energy = get<1>(LauncherPower);
-m_totalEnergy += m_energy;
-LogLauncherPower(timestamp, m_power);
-LogLauncherEnergy(timestamp, m_energy);
-LogHood(timestamp, m_Hood->GetPosition().GetValueAsDouble());
-auto HoodPower = DragonPower::CalcPowerEnergy(currTime, m_Hood->GetSupplyVoltage().GetValueAsDouble(), m_Hood->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(HoodPower);
-m_energy = get<1>(HoodPower);
-m_totalEnergy += m_energy;
-LogHoodPower(timestamp, m_power);
-LogHoodEnergy(timestamp, m_energy);
-LogTransfer(timestamp, m_Transfer->GetPosition().GetValueAsDouble());
-auto TransferPower = DragonPower::CalcPowerEnergy(currTime, m_Transfer->GetSupplyVoltage().GetValueAsDouble(), m_Transfer->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(TransferPower);
-m_energy = get<1>(TransferPower);
-m_totalEnergy += m_energy;
-LogTransferPower(timestamp, m_power);
-LogTransferEnergy(timestamp, m_energy);
-LogTurret(timestamp, m_Turret->GetPosition().GetValueAsDouble());
-auto TurretPower = DragonPower::CalcPowerEnergy(currTime, m_Turret->GetSupplyVoltage().GetValueAsDouble(), m_Turret->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(TurretPower);
-m_energy = get<1>(TurretPower);
-m_totalEnergy += m_energy;
-LogTurretPower(timestamp, m_power);
-LogTurretEnergy(timestamp, m_energy);
-LogIndexer(timestamp, m_Indexer->GetPosition().GetValueAsDouble());
-auto IndexerPower = DragonPower::CalcPowerEnergy(currTime, m_Indexer->GetSupplyVoltage().GetValueAsDouble(), m_Indexer->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(IndexerPower);
-m_energy = get<1>(IndexerPower);
-m_totalEnergy += m_energy;
-LogIndexerPower(timestamp, m_power);
-LogIndexerEnergy(timestamp, m_energy);
-LogLauncherState(timestamp, GetCurrentState());
-m_totalWattHours += DragonPower::ConvertEnergyToWattHours(m_totalEnergy);
-LogLauncherTotalEnergy(timestamp, m_totalEnergy);
-LogLauncherTotalWattHours(timestamp, m_totalWattHours);
-m_powerTimer.Reset();
-m_powerTimer.Start();
- }*/
+	// Launcher motor signals
+	LogDoubleData(timestamp, m_ntName + "/Launcher/StatorCurrent", m_launcher->GetStatorCurrent().GetValueAsDouble(), "Amps");
+	LogDoubleData(timestamp, m_ntName + "/Launcher/SupplyCurrent", m_launcher->GetSupplyCurrent().GetValueAsDouble(), "Amps");
+	LogDoubleData(timestamp, m_ntName + "/Launcher/SupplyVoltage", m_launcher->GetSupplyVoltage().GetValueAsDouble(), "Volts");
+	LogDoubleData(timestamp, m_ntName + "/Launcher/MotorVoltage", m_launcher->GetMotorVoltage().GetValueAsDouble(), "Volts");
+	LogDoubleData(timestamp, m_ntName + "/Launcher/Velocity", m_launcher->GetVelocity().GetValueAsDouble(), "rps");
+	LogDoubleData(timestamp, m_ntName + "/Launcher/Position", m_launcher->GetPosition().GetValueAsDouble(), "rotations");
+	LogDoubleData(timestamp, m_ntName + "/Launcher/Temperature", m_launcher->GetDeviceTemp().GetValueAsDouble(), "Degrees C");
+
+	// Hood motor signals
+	LogDoubleData(timestamp, m_ntName + "/Hood/StatorCurrent", m_hood->GetStatorCurrent().GetValueAsDouble(), "Amps");
+	LogDoubleData(timestamp, m_ntName + "/Hood/SupplyCurrent", m_hood->GetSupplyCurrent().GetValueAsDouble(), "Amps");
+	LogDoubleData(timestamp, m_ntName + "/Hood/SupplyVoltage", m_hood->GetSupplyVoltage().GetValueAsDouble(), "Volts");
+	LogDoubleData(timestamp, m_ntName + "/Hood/MotorVoltage", m_hood->GetMotorVoltage().GetValueAsDouble(), "Volts");
+	LogDoubleData(timestamp, m_ntName + "/Hood/Position", m_hood->GetPosition().GetValueAsDouble(), "rotations");
+	LogDoubleData(timestamp, m_ntName + "/Hood/Temperature", m_hood->GetDeviceTemp().GetValueAsDouble(), "Degrees C");
+
+	// Transfer motor signals
+	LogDoubleData(timestamp, m_ntName + "/Transfer/StatorCurrent", m_transfer->GetStatorCurrent().GetValueAsDouble(), "Amps");
+	LogDoubleData(timestamp, m_ntName + "/Transfer/SupplyCurrent", m_transfer->GetSupplyCurrent().GetValueAsDouble(), "Amps");
+	LogDoubleData(timestamp, m_ntName + "/Transfer/SupplyVoltage", m_transfer->GetSupplyVoltage().GetValueAsDouble(), "Volts");
+	LogDoubleData(timestamp, m_ntName + "/Transfer/MotorVoltage", m_transfer->GetMotorVoltage().GetValueAsDouble(), "Volts");
+	LogDoubleData(timestamp, m_ntName + "/Transfer/Velocity", m_transfer->GetVelocity().GetValueAsDouble(), "rps");
+	LogDoubleData(timestamp, m_ntName + "/Transfer/Position", m_transfer->GetPosition().GetValueAsDouble(), "rotations");
+	LogDoubleData(timestamp, m_ntName + "/Transfer/Temperature", m_transfer->GetDeviceTemp().GetValueAsDouble(), "Degrees C");
+
+	// Turret motor signals
+	LogDoubleData(timestamp, m_ntName + "/Turret/StatorCurrent", m_turret->GetStatorCurrent().GetValueAsDouble(), "Amps");
+	LogDoubleData(timestamp, m_ntName + "/Turret/SupplyCurrent", m_turret->GetSupplyCurrent().GetValueAsDouble(), "Amps");
+	LogDoubleData(timestamp, m_ntName + "/Turret/SupplyVoltage", m_turret->GetSupplyVoltage().GetValueAsDouble(), "Volts");
+	LogDoubleData(timestamp, m_ntName + "/Turret/MotorVoltage", m_turret->GetMotorVoltage().GetValueAsDouble(), "Volts");
+	LogDoubleData(timestamp, m_ntName + "/Turret/Position", m_turret->GetPosition().GetValueAsDouble(), "rotations");
+	LogDoubleData(timestamp, m_ntName + "/Turret/Temperature", m_turret->GetDeviceTemp().GetValueAsDouble(), "Degrees C");
+
+	// Indexer motor signals
+	LogDoubleData(timestamp, m_ntName + "/Indexer/StatorCurrent", m_indexer->GetStatorCurrent().GetValueAsDouble(), "Amps");
+	LogDoubleData(timestamp, m_ntName + "/Indexer/SupplyCurrent", m_indexer->GetSupplyCurrent().GetValueAsDouble(), "Amps");
+	LogDoubleData(timestamp, m_ntName + "/Indexer/SupplyVoltage", m_indexer->GetSupplyVoltage().GetValueAsDouble(), "Volts");
+	LogDoubleData(timestamp, m_ntName + "/Indexer/MotorVoltage", m_indexer->GetMotorVoltage().GetValueAsDouble(), "Volts");
+	LogDoubleData(timestamp, m_ntName + "/Indexer/Velocity", m_indexer->GetVelocity().GetValueAsDouble(), "rps");
+	LogDoubleData(timestamp, m_ntName + "/Indexer/Position", m_indexer->GetPosition().GetValueAsDouble(), "rotations");
+	LogDoubleData(timestamp, m_ntName + "/Indexer/Temperature", m_indexer->GetDeviceTemp().GetValueAsDouble(), "Degrees C");
+
+	// Agitator motor signals
+	LogDoubleData(timestamp, m_ntName + "/Agitator/StatorCurrent", m_agitator->GetStatorCurrent().GetValueAsDouble(), "Amps");
+	LogDoubleData(timestamp, m_ntName + "/Agitator/SupplyCurrent", m_agitator->GetSupplyCurrent().GetValueAsDouble(), "Amps");
+	LogDoubleData(timestamp, m_ntName + "/Agitator/SupplyVoltage", m_agitator->GetSupplyVoltage().GetValueAsDouble(), "Volts");
+	LogDoubleData(timestamp, m_ntName + "/Agitator/MotorVoltage", m_agitator->GetMotorVoltage().GetValueAsDouble(), "Volts");
+	LogDoubleData(timestamp, m_ntName + "/Agitator/Velocity", m_agitator->GetVelocity().GetValueAsDouble(), "rps");
+	LogDoubleData(timestamp, m_ntName + "/Agitator/Position", m_agitator->GetPosition().GetValueAsDouble(), "rotations");
+	LogDoubleData(timestamp, m_ntName + "/Agitator/Temperature", m_agitator->GetDeviceTemp().GetValueAsDouble(), "Degrees C");
+
+	// Control targets
+	LogDoubleData(timestamp, m_ntName + "/Control/TargetLauncherVelocity", m_targetLauncherAngularVelocity.value(), "rpm");
+	LogDoubleData(timestamp, m_ntName + "/Control/TargetHoodAngle", m_targetHoodAngle.value(), "Degrees");
+	LogDoubleData(timestamp, m_ntName + "/Control/TargetTurretAngle", m_targetTurretAngle.value(), "Degrees");
+
+	// Mechanism state
+	LogDoubleData(timestamp, m_ntName + "/State", static_cast<double>(GetCurrentState()));
+	LogBoolData(timestamp, m_ntName + "/IsProtectedMode", m_launcherProtectedMode);
+	LogBoolData(timestamp, m_ntName + "/IsClimbMode", m_isClimbMode);
+}

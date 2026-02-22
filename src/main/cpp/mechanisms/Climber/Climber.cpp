@@ -108,29 +108,7 @@ Climber::Climber(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHA
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveToFinished_Bool);
-
-	// InitializeLogging();
 }
-
-/* void Climber::InitializeLogging()
- {
-	wpi::log::DataLog &log = frc::DataLogManager::GetLog();
-
-	 m_ClimberTotalEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/TotalEnergy");
-m_ClimberTotalEnergyLogEntry.Append(0.0);
-m_ClimberTotalWattHoursLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/TotalWattHours");
-m_ClimberTotalWattHoursLogEntry.Append(0.0);
-m_ClimberLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberPosition");
-m_ClimberLogEntry.Append(0.0);
-m_climberTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberTarget");
-m_climberTargetLogEntry.Append(0.0);
-m_ClimberPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberPower");
-m_ClimberPowerLogEntry.Append(0.0);
-m_ClimberEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberEnergy");
-m_ClimberEnergyLogEntry.Append(0.0);
-m_ClimberStateLogEntry = wpi::log::IntegerLogEntry(log, "mechanisms/Climber/State");
-m_ClimberStateLogEntry.Append(0);
- }*/
 
 std::map<std::string, Climber::STATE_NAMES>
 	Climber::stringToSTATE_NAMESEnumMap{
@@ -317,20 +295,17 @@ units::angle::degree_t Climber::GetPigeonPitch()
 	units::angle::degree_t pigeonPitch = m_chassis->GetPigeon2().GetPitch().GetValue();
 	return pigeonPitch;
 }
-/* void Climber::DataLog(uint64_t timestamp)
+void Climber::DataLog(uint64_t timestamp)
 {
-   auto currTime = m_powerTimer.Get();
-LogClimber(timestamp, m_Climber->GetPosition().GetValueAsDouble());
-auto ClimberPower = DragonPower::CalcPowerEnergy(currTime, m_Climber->GetSupplyVoltage().GetValueAsDouble(), m_Climber->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(ClimberPower);
-m_energy = get<1>(ClimberPower);
-m_totalEnergy += m_energy;
-LogClimberPower(timestamp, m_power);
-LogClimberEnergy(timestamp, m_energy);
-LogClimberState(timestamp, GetCurrentState());
-m_totalWattHours += DragonPower::ConvertEnergyToWattHours(m_totalEnergy);
-LogClimberTotalEnergy(timestamp, m_totalEnergy);
-LogClimberTotalWattHours(timestamp, m_totalWattHours);
-m_powerTimer.Reset();
-m_powerTimer.Start();
- }*/
+	// Climber motor signals
+	LogDoubleData(timestamp, m_ntName + "/Motor/StatorCurrent", m_climber->GetStatorCurrent().GetValueAsDouble(), "Amps");
+	LogDoubleData(timestamp, m_ntName + "/Motor/SupplyVoltage", m_climber->GetSupplyVoltage().GetValueAsDouble(), "Volts");
+	LogDoubleData(timestamp, m_ntName + "/Motor/MotorVoltage", m_climber->GetMotorVoltage().GetValueAsDouble(), "Volts");
+	LogDoubleData(timestamp, m_ntName + "/Motor/DutyCycle", m_climber->GetDutyCycle().GetValueAsDouble(), "Percent");
+	LogDoubleData(timestamp, m_ntName + "/Motor/Velocity", m_climber->GetVelocity().GetValueAsDouble(), "rps");
+	LogDoubleData(timestamp, m_ntName + "/Motor/Position", m_climber->GetPosition().GetValueAsDouble(), "rotations");
+	LogDoubleData(timestamp, m_ntName + "/Motor/Temperature", m_climber->GetDeviceTemp().GetValueAsDouble(), "Degrees C");
+
+	// Mechanism state
+	LogDoubleData(timestamp, m_ntName + "/State", static_cast<double>(GetCurrentState()));
+}

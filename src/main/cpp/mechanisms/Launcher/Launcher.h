@@ -36,11 +36,12 @@
 #include "configs/MechanismConfigMgr.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "RobotIdentifier.h"
+#include "utils/logging/signals/DragonDataLogger.h"
 
 // Includes after generation
 #include "utils/RebuiltTargetCalculator.h"
 
-class Launcher : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber
+class Launcher : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger
 {
 public:
 	enum STATE_NAMES
@@ -122,7 +123,7 @@ public:
 	void CreateAndRegisterStates();
 	void Cyclic();
 	void RunCommonTasks() override;
-	// void DataLog() override;
+	void DataLog(uint64_t timestamp) override;
 
 	RobotIdentifier getActiveRobotId() { return m_activeRobotId; }
 
@@ -231,6 +232,4 @@ private:
 	std::array<units::length::foot_t, 7> m_passingDistanceArray = {10.0_ft, 15.0_ft, 20.0_ft, 25.0_ft, 30.0_ft, 35.0_ft, 40.0_ft};
 	std::array<units::angle::degree_t, 7> m_passingHoodAngleArray = {0.0_deg, 5.0_deg, 10.0_deg, 15.0_deg, 20.0_deg, 25.0_deg, 30.0_deg};
 	std::array<units::angular_velocity::revolutions_per_minute_t, 7> m_passingLauncherVelocityArray = {500.0_rpm, 600.0_rpm, 700.0_rpm, 800.0_rpm, 900.0_rpm, 1000.0_rpm, 1100.0_rpm};
-
-	// void InitializeLogging();
 };

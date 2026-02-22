@@ -99,40 +99,7 @@ Intake::Intake(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANI
 	PeriodicLooper::GetInstance()->RegisterAll(this);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsLaunching_Bool);
-
-	// InitializeLogging();
 }
-
-/* void Intake::InitializeLogging()
- {
-	wpi::log::DataLog &log = frc::DataLogManager::GetLog();
-
-	 m_IntakeTotalEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/TotalEnergy");
-m_IntakeTotalEnergyLogEntry.Append(0.0);
-m_IntakeTotalWattHoursLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/TotalWattHours");
-m_IntakeTotalWattHoursLogEntry.Append(0.0);
-m_IntakeLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakePosition");
-m_IntakeLogEntry.Append(0.0);
-m_intakeTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakeTarget");
-m_intakeTargetLogEntry.Append(0.0);
-m_IntakePowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakePower");
-m_IntakePowerLogEntry.Append(0.0);
-m_IntakeEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakeEnergy");
-m_IntakeEnergyLogEntry.Append(0.0);
-m_AgitatorLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorPosition");
-m_AgitatorLogEntry.Append(0.0);
-m_agitatorTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorTarget");
-m_agitatorTargetLogEntry.Append(0.0);
-m_AgitatorPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorPower");
-m_AgitatorPowerLogEntry.Append(0.0);
-m_AgitatorEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorEnergy");
-m_AgitatorEnergyLogEntry.Append(0.0);
-m_IsIntakeExtendedLogEntry = wpi::log::BooleanLogEntry(log, "mechanisms/Intake/IsIntakeExtended");
-m_IsIntakeExtendedLogEntry.Append(false);
-
-m_IntakeStateLogEntry = wpi::log::IntegerLogEntry(log, "mechanisms/Intake/State");
-m_IntakeStateLogEntry.Append(0);
- }*/
 
 std::map<std::string, Intake::STATE_NAMES>
 	Intake::stringToSTATE_NAMESEnumMap{
@@ -312,6 +279,18 @@ void Intake::ManualControl()
 }
 void Intake::DataLog(uint64_t timestamp)
 {
-	// TODO: add intake-specific logging calls here, e.g.:
-	// LogDoubleData(timestamp, "/Intake/PercentOut", m_intakePercentOut.Output.value());
+	// Motor controller signals
+	LogDoubleData(timestamp, m_ntName + "/Motor/StatorCurrent", m_intake->GetStatorCurrent().GetValueAsDouble(), "Amps");
+	LogDoubleData(timestamp, m_ntName + "/Motor/SupplyCurrent", m_intake->GetSupplyCurrent().GetValueAsDouble(), "Amps");
+	LogDoubleData(timestamp, m_ntName + "/Motor/SupplyVoltage", m_intake->GetSupplyVoltage().GetValueAsDouble(), "Volts");
+	LogDoubleData(timestamp, m_ntName + "/Motor/MotorVoltage", m_intake->GetMotorVoltage().GetValueAsDouble(), "Volts");
+	LogDoubleData(timestamp, m_ntName + "/Motor/DutyCycle", m_intake->GetDutyCycle().GetValueAsDouble(), "Percent");
+	LogDoubleData(timestamp, m_ntName + "/Motor/Temperature", m_intake->GetDeviceTemp().GetValueAsDouble(), "Degrees C");
+
+	// Control data
+	LogDoubleData(timestamp, m_ntName + "/Control/TargetPercentOut", m_intakePercentOut.Output.value(), "Percent");
+
+	// Mechanism state
+	LogDoubleData(timestamp, m_ntName + "/State", static_cast<double>(GetCurrentState()));
+	LogBoolData(timestamp, m_ntName + "/IsIntakeExtended", GetIsIntakeExtendedState());
 }

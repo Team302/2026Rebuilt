@@ -99,7 +99,7 @@ public:
 
 protected:
 	RobotIdentifier m_activeRobotId;
-	std::string m_ntName;
+	std::string m_ntName = "Intake";
 
 	ControlData *GetControlData(std::string name) override;
 

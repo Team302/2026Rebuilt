@@ -142,6 +142,8 @@ void DragonQuest::DataLog(uint64_t timestamp)
     double y = pose2d.Y().value();
     double rot = pose2d.Rotation().Radians().value();
     LogDoubleArrayData(timestamp, "/Chassis/QuestPose2d", {x, y, rot}, "X, Y, Rotation");
+    LogBoolData(timestamp, "/Chassis/HasReset", m_hasReset);
+    LogBoolData(timestamp, "/Chassis/IsQuestEnabled", m_isQuestEnabled);
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
