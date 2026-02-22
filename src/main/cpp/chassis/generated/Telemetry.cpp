@@ -10,9 +10,6 @@ Telemetry::Telemetry()
     {
         frc::SmartDashboard::PutData("Module " + std::to_string(i), &m_moduleMechanisms[i]);
     }
-
-    // Register this instance with DragonDataLoggerMgr for periodic logging
-    DragonDataLoggerMgr::GetInstance()->RegisterItem(this);
 }
 
 void Telemetry::Telemeterize(subsystems::CommandSwerveDrivetrain::SwerveDriveState const &state)

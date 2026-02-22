@@ -66,7 +66,6 @@ CyclePrimitives::CyclePrimitives() : State(string("CyclePrimitives"), 0),
 {
     auto chassisConfig = ChassisConfigMgr::GetInstance();
     m_chassis = chassisConfig != nullptr ? chassisConfig->GetSwerveChassis() : nullptr;
-    DragonDataLoggerMgr::GetInstance()->RegisterItem(this);
 }
 
 void CyclePrimitives::Init()
