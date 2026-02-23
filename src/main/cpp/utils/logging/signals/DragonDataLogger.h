@@ -43,6 +43,8 @@ protected:
     void LogSwerveModuleStateData(uint64_t timestamp, const std::string &speedPath, const std::string &anglePath, frc::SwerveModuleState value, std::string_view units = "");
     void LogChassisSpeedsData(uint64_t timestamp, const std::string &vxPath, const std::string &vyPath, const std::string &omegaPath, frc::ChassisSpeeds value, std::string_view units = "");
     void LogGamePadData(uint64_t timestamp, const std::string &path, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs);
+    void LogPose2dData(uint64_t timestamp, const std::string &path, const frc::Pose2d &value);
+    void LogPose3dData(uint64_t timestamp, const std::string &path, const frc::Pose3d &value);
 
     const double m_doubleTolerance = 0.001;
 };
