@@ -382,5 +382,5 @@ void Intake::DataLog(uint64_t timestamp)
 
 	// Mechanism state
 	LogDoubleData(timestamp, m_ntName + "/State", static_cast<double>(GetCurrentState()));
-	LogBoolData(timestamp, m_ntName + "/IsIntakeExtended", GetIsIntakeExtendedState());
+	LogDoubleData(timestamp, m_ntName + "/IsIntakeExtended", m_intake->GetPosition().GetValueAsDouble());
 }
