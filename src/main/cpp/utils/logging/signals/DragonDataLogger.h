@@ -37,6 +37,7 @@ public:
 
 protected:
     void LogBoolData(uint64_t timestamp, const std::string &path, bool value);
+    void LogIntData(uint64_t timestamp, const std::string &path, int value, std::string units = "");
     void LogDoubleData(uint64_t timestamp, const std::string &path, double value, std::string_view units = "");
     void LogStringData(uint64_t timestamp, const std::string &path, const std::string &value);
     void LogDoubleArrayData(uint64_t timestamp, const std::string &path, const std::vector<double> &value, std::string_view units = "");

@@ -381,6 +381,6 @@ void Intake::DataLog(uint64_t timestamp)
 	LogDoubleData(timestamp, m_ntName + "/Control/TargetPercentOut", m_intakePercentOut.Output.value(), "Percent");
 
 	// Mechanism state
-	LogDoubleData(timestamp, m_ntName + "/State", static_cast<double>(GetCurrentState()));
+	LogIntData(timestamp, m_ntName + "/State", static_cast<int>(GetCurrentState()));
 	LogDoubleData(timestamp, m_ntName + "/IsIntakeExtended", m_intake->GetPosition().GetValueAsDouble());
 }

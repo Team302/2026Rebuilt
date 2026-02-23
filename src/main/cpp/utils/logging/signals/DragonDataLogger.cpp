@@ -39,6 +39,23 @@ void DragonDataLogger::LogBoolData(uint64_t timestamp, const std::string &path, 
     logger->WriteBoolean(path, value, timestamp);
 }
 
+void DragonDataLogger::LogIntData(uint64_t timestamp, const std::string &path, int value, std::string units)
+{
+    auto dataMgr = DragonDataLoggerMgr::GetInstance();
+    if (dataMgr == nullptr)
+    {
+        return;
+    }
+
+    auto logger = dataMgr->GetLogger();
+    if (logger == nullptr)
+    {
+        return;
+    }
+
+    logger->WriteInteger(path, value, units, timestamp);
+}
+
 void DragonDataLogger::LogDoubleData(uint64_t timestamp, const std::string &path, double value, std::string_view units)
 {
     auto dataMgr = DragonDataLoggerMgr::GetInstance();
@@ -145,4 +162,34 @@ void DragonDataLogger::LogGamePadData(uint64_t timestamp, const std::string &pat
         return;
     }
     logger->WriteGamePadState(path, axes, buttons, povs, timestamp);
+}
+
+void DragonDataLogger::LogPose2dData(uint64_t timestamp, const std::string &path, const frc::Pose2d &value)
+{
+    auto dataMgr = DragonDataLoggerMgr::GetInstance();
+    if (dataMgr == nullptr)
+    {
+        return;
+    }
+    auto logger = dataMgr->GetLogger();
+    if (logger == nullptr)
+    {
+        return;
+    }
+    logger->WritePose2d(path, value, timestamp);
+}
+
+void DragonDataLogger::LogPose3dData(uint64_t timestamp, const std::string &path, const frc::Pose3d &value)
+{
+    auto dataMgr = DragonDataLoggerMgr::GetInstance();
+    if (dataMgr == nullptr)
+    {
+        return;
+    }
+    auto logger = dataMgr->GetLogger();
+    if (logger == nullptr)
+    {
+        return;
+    }
+    logger->WritePose3d(path, value, timestamp);
 }

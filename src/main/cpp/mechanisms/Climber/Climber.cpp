@@ -305,5 +305,5 @@ void Climber::DataLog(uint64_t timestamp)
 	LogDoubleData(timestamp, m_ntName + "/Motor/Temperature", m_climber->GetDeviceTemp().GetValueAsDouble(), "Degrees C");
 
 	// Mechanism state
-	LogDoubleData(timestamp, m_ntName + "/State", static_cast<double>(GetCurrentState()));
+	LogIntData(timestamp, m_ntName + "/State", static_cast<int>(GetCurrentState()));
 }

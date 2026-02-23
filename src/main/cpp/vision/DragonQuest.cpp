@@ -137,11 +137,7 @@ void DragonQuest::GetEstimatedPose()
 // ──────────────────────────────────────────────────────────────────────────────
 void DragonQuest::DataLog(uint64_t timestamp)
 {
-    frc::Pose2d pose2d = m_lastCalculatedPose.ToPose2d();
-    double x = pose2d.X().value();
-    double y = pose2d.Y().value();
-    double rot = pose2d.Rotation().Radians().value();
-    LogDoubleArrayData(timestamp, "/Chassis/QuestPose2d", {x, y, rot}, "X, Y, Rotation");
+    LogPose3dData(timestamp, "/Chassis/QuestPose3d", m_lastCalculatedPose);
     LogBoolData(timestamp, "/Chassis/HasReset", m_hasReset);
     LogBoolData(timestamp, "/Chassis/IsQuestEnabled", m_isQuestEnabled);
 }
