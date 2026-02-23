@@ -133,60 +133,7 @@ Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MEC
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 
 	m_targetCalculator = RebuiltTargetCalculator::GetInstance();
-	// InitializeLogging();
 }
-
-/* void Launcher::InitializeLogging()
- {
-	wpi::log::DataLog &log = frc::DataLogManager::GetLog();
-
-	 m_LauncherTotalEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TotalEnergy");
-m_LauncherTotalEnergyLogEntry.Append(0.0);
-m_LauncherTotalWattHoursLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TotalWattHours");
-m_LauncherTotalWattHoursLogEntry.Append(0.0);
-m_LauncherLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/LauncherPosition");
-m_LauncherLogEntry.Append(0.0);
-m_launcherTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/LauncherTarget");
-m_launcherTargetLogEntry.Append(0.0);
-m_LauncherPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/LauncherPower");
-m_LauncherPowerLogEntry.Append(0.0);
-m_LauncherEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/LauncherEnergy");
-m_LauncherEnergyLogEntry.Append(0.0);
-m_HoodLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/HoodPosition");
-m_HoodLogEntry.Append(0.0);
-m_hoodTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/HoodTarget");
-m_hoodTargetLogEntry.Append(0.0);
-m_HoodPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/HoodPower");
-m_HoodPowerLogEntry.Append(0.0);
-m_HoodEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/HoodEnergy");
-m_HoodEnergyLogEntry.Append(0.0);
-m_TransferLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TransferPosition");
-m_TransferLogEntry.Append(0.0);
-m_transferTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TransferTarget");
-m_transferTargetLogEntry.Append(0.0);
-m_TransferPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TransferPower");
-m_TransferPowerLogEntry.Append(0.0);
-m_TransferEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TransferEnergy");
-m_TransferEnergyLogEntry.Append(0.0);
-m_TurretLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TurretPosition");
-m_TurretLogEntry.Append(0.0);
-m_turretTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TurretTarget");
-m_turretTargetLogEntry.Append(0.0);
-m_TurretPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TurretPower");
-m_TurretPowerLogEntry.Append(0.0);
-m_TurretEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TurretEnergy");
-m_TurretEnergyLogEntry.Append(0.0);
-m_IndexerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/IndexerPosition");
-m_IndexerLogEntry.Append(0.0);
-m_indexerTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/IndexerTarget");
-m_indexerTargetLogEntry.Append(0.0);
-m_IndexerPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/IndexerPower");
-m_IndexerPowerLogEntry.Append(0.0);
-m_IndexerEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/IndexerEnergy");
-m_IndexerEnergyLogEntry.Append(0.0);
-m_LauncherStateLogEntry = wpi::log::IntegerLogEntry(log, "mechanisms/Launcher/State");
-m_LauncherStateLogEntry.Append(0);
- }*/
 
 std::map<std::string, Launcher::STATE_NAMES>
 	Launcher::stringToSTATE_NAMESEnumMap{
@@ -199,6 +146,18 @@ std::map<std::string, Launcher::STATE_NAMES>
 		{"STATE_CLIMB", Launcher::STATE_NAMES::STATE_CLIMB},
 		{"STATE_LAUNCHER_TUNING", Launcher::STATE_NAMES::STATE_LAUNCHER_TUNING},
 		{"STATE_MANUAL_LAUNCH", Launcher::STATE_NAMES::STATE_MANUAL_LAUNCH}};
+
+std::map<Launcher::STATE_NAMES, std::string>
+	Launcher::STATE_NAMESEnumToStringMap{
+		{Launcher::STATE_NAMES::STATE_OFF, "STATE_OFF"},
+		{Launcher::STATE_NAMES::STATE_INITIALIZE, "STATE_INITIALIZE"},
+		{Launcher::STATE_NAMES::STATE_IDLE, "STATE_IDLE"},
+		{Launcher::STATE_NAMES::STATE_PREPARE_TO_LAUNCH, "STATE_PREPARE_TO_LAUNCH"},
+		{Launcher::STATE_NAMES::STATE_LAUNCH, "STATE_LAUNCH"},
+		{Launcher::STATE_NAMES::STATE_EMPTY_HOPPER, "STATE_EMPTY_HOPPER"},
+		{Launcher::STATE_NAMES::STATE_CLIMB, "STATE_CLIMB"},
+		{Launcher::STATE_NAMES::STATE_LAUNCHER_TUNING, "STATE_LAUNCHER_TUNING"},
+		{Launcher::STATE_NAMES::STATE_MANUAL_LAUNCH, "STATE_MANUAL_LAUNCH"}};
 
 void Launcher::CreateCompBot302()
 {
@@ -695,7 +654,7 @@ void Launcher::RunCommonTasks()
 	CalculateTargets();
 	UpdateLauncherTargets();
 
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Current State", GetCurrentState());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Current State", GetCurrentStateName());
 }
 
 /// @brief  Set the control constants (e.g. PIDF values).
@@ -756,7 +715,7 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 bool Launcher::IsLauncherAtTarget()
 {
 
-	if (frc::RobotBase::IsSimulation())
+	if (frc::RobotBase::IsSimulation() && !(GetCurrentState() == STATE_NAMES::STATE_LAUNCHER_TUNING))
 	{
 		return true;
 	}
@@ -797,11 +756,11 @@ void Launcher::CalculateTargets()
 		m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingLauncherVelocityArray, units::length::foot_t(distanceToTarget));
 	}
 
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Distance To Target", distanceToTarget.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Hood Angle Target", m_targetHoodAngle.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Launcher Speed Target", m_targetLauncherAngularVelocity.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Launcher Speed RPM", units::angular_velocity::revolutions_per_minute_t(m_launcher->GetVelocity().GetValue()).value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Hood Angle", units::angle::degree_t(m_hood->GetPosition().GetValue()).value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Distance To Target", distanceToTarget.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Angle Target", m_targetHoodAngle.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed Target", m_targetLauncherAngularVelocity.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed RPM", units::angular_velocity::revolutions_per_minute_t(m_launcher->GetVelocity().GetValue()).value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Angle", units::angle::degree_t(m_hood->GetPosition().GetValue()).value());
 }
 
 void Launcher::UpdateLauncherTargets()
@@ -845,48 +804,8 @@ void Launcher::SetLauncherProtect()
 	}
 }
 
-/* void Launcher::DataLog(uint64_t timestamp)
+std::string Launcher::GetCurrentStateName()
 {
-   auto currTime = m_powerTimer.Get();
-LogLauncher(timestamp, m_Launcher->GetPosition().GetValueAsDouble());
-auto LauncherPower = DragonPower::CalcPowerEnergy(currTime, m_Launcher->GetSupplyVoltage().GetValueAsDouble(), m_Launcher->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(LauncherPower);
-m_energy = get<1>(LauncherPower);
-m_totalEnergy += m_energy;
-LogLauncherPower(timestamp, m_power);
-LogLauncherEnergy(timestamp, m_energy);
-LogHood(timestamp, m_Hood->GetPosition().GetValueAsDouble());
-auto HoodPower = DragonPower::CalcPowerEnergy(currTime, m_Hood->GetSupplyVoltage().GetValueAsDouble(), m_Hood->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(HoodPower);
-m_energy = get<1>(HoodPower);
-m_totalEnergy += m_energy;
-LogHoodPower(timestamp, m_power);
-LogHoodEnergy(timestamp, m_energy);
-LogTransfer(timestamp, m_Transfer->GetPosition().GetValueAsDouble());
-auto TransferPower = DragonPower::CalcPowerEnergy(currTime, m_Transfer->GetSupplyVoltage().GetValueAsDouble(), m_Transfer->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(TransferPower);
-m_energy = get<1>(TransferPower);
-m_totalEnergy += m_energy;
-LogTransferPower(timestamp, m_power);
-LogTransferEnergy(timestamp, m_energy);
-LogTurret(timestamp, m_Turret->GetPosition().GetValueAsDouble());
-auto TurretPower = DragonPower::CalcPowerEnergy(currTime, m_Turret->GetSupplyVoltage().GetValueAsDouble(), m_Turret->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(TurretPower);
-m_energy = get<1>(TurretPower);
-m_totalEnergy += m_energy;
-LogTurretPower(timestamp, m_power);
-LogTurretEnergy(timestamp, m_energy);
-LogIndexer(timestamp, m_Indexer->GetPosition().GetValueAsDouble());
-auto IndexerPower = DragonPower::CalcPowerEnergy(currTime, m_Indexer->GetSupplyVoltage().GetValueAsDouble(), m_Indexer->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(IndexerPower);
-m_energy = get<1>(IndexerPower);
-m_totalEnergy += m_energy;
-LogIndexerPower(timestamp, m_power);
-LogIndexerEnergy(timestamp, m_energy);
-LogLauncherState(timestamp, GetCurrentState());
-m_totalWattHours += DragonPower::ConvertEnergyToWattHours(m_totalEnergy);
-LogLauncherTotalEnergy(timestamp, m_totalEnergy);
-LogLauncherTotalWattHours(timestamp, m_totalWattHours);
-m_powerTimer.Reset();
-m_powerTimer.Start();
- }*/
+	STATE_NAMES state = static_cast<STATE_NAMES>(GetCurrentState());
+	return (STATE_NAMESEnumToStringMap.find(state) == STATE_NAMESEnumToStringMap.end()) ? "Unknown State" : STATE_NAMESEnumToStringMap.at(state);
+}

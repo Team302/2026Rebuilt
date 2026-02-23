@@ -100,40 +100,7 @@ Intake::Intake(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANI
 	PeriodicLooper::GetInstance()->RegisterAll(this);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsLaunching_Bool);
-
-	// InitializeLogging();
 }
-
-/* void Intake::InitializeLogging()
- {
-	wpi::log::DataLog &log = frc::DataLogManager::GetLog();
-
-	 m_IntakeTotalEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/TotalEnergy");
-m_IntakeTotalEnergyLogEntry.Append(0.0);
-m_IntakeTotalWattHoursLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/TotalWattHours");
-m_IntakeTotalWattHoursLogEntry.Append(0.0);
-m_IntakeLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakePosition");
-m_IntakeLogEntry.Append(0.0);
-m_intakeTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakeTarget");
-m_intakeTargetLogEntry.Append(0.0);
-m_IntakePowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakePower");
-m_IntakePowerLogEntry.Append(0.0);
-m_IntakeEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakeEnergy");
-m_IntakeEnergyLogEntry.Append(0.0);
-m_AgitatorLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorPosition");
-m_AgitatorLogEntry.Append(0.0);
-m_agitatorTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorTarget");
-m_agitatorTargetLogEntry.Append(0.0);
-m_AgitatorPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorPower");
-m_AgitatorPowerLogEntry.Append(0.0);
-m_AgitatorEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorEnergy");
-m_AgitatorEnergyLogEntry.Append(0.0);
-m_IsIntakeExtendedLogEntry = wpi::log::BooleanLogEntry(log, "mechanisms/Intake/IsIntakeExtended");
-m_IsIntakeExtendedLogEntry.Append(false);
-
-m_IntakeStateLogEntry = wpi::log::IntegerLogEntry(log, "mechanisms/Intake/State");
-m_IntakeStateLogEntry.Append(0);
- }*/
 
 std::map<std::string, Intake::STATE_NAMES>
 	Intake::stringToSTATE_NAMESEnumMap{
@@ -142,6 +109,15 @@ std::map<std::string, Intake::STATE_NAMES>
 		{"STATE_EXPEL", Intake::STATE_NAMES::STATE_EXPEL},
 		{"STATE_LAUNCH", Intake::STATE_NAMES::STATE_LAUNCH},
 		{"STATE_EMPTY_HOPPER", Intake::STATE_NAMES::STATE_EMPTY_HOPPER},
+	};
+
+std::map<Intake::STATE_NAMES, std::string>
+	Intake::STATE_NAMESEnumToStringMap{
+		{Intake::STATE_NAMES::STATE_OFF, "STATE_OFF"},
+		{Intake::STATE_NAMES::STATE_INTAKE, "STATE_INTAKE"},
+		{Intake::STATE_NAMES::STATE_EXPEL, "STATE_EXPEL"},
+		{Intake::STATE_NAMES::STATE_LAUNCH, "STATE_LAUNCH"},
+		{Intake::STATE_NAMES::STATE_EMPTY_HOPPER, "STATE_EMPTY_HOPPER"},
 	};
 
 void Intake::CreateCompBot302()
@@ -360,7 +336,7 @@ void Intake::Cyclic()
 {
 	Update();
 
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentState());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentStateName());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeExtended", IsIntakeExtended());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IntakePercentOut", m_intakePercentOut.Output.value());
 }
@@ -400,28 +376,9 @@ void Intake::ManualControl()
 		}
 	}
 }
-/* void Intake::DataLog(uint64_t timestamp)
+
+std::string Intake::GetCurrentStateName()
 {
-   auto currTime = m_powerTimer.Get();
-LogIntake(timestamp, m_Intake->GetPosition().GetValueAsDouble());
-auto IntakePower = DragonPower::CalcPowerEnergy(currTime, m_Intake->GetSupplyVoltage().GetValueAsDouble(), m_Intake->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(IntakePower);
-m_energy = get<1>(IntakePower);
-m_totalEnergy += m_energy;
-LogIntakePower(timestamp, m_power);
-LogIntakeEnergy(timestamp, m_energy);
-LogAgitator(timestamp, m_Agitator->GetPosition().GetValueAsDouble());
-auto AgitatorPower = DragonPower::CalcPowerEnergy(currTime, m_Agitator->GetSupplyVoltage().GetValueAsDouble(), m_Agitator->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(AgitatorPower);
-m_energy = get<1>(AgitatorPower);
-m_totalEnergy += m_energy;
-LogAgitatorPower(timestamp, m_power);
-LogAgitatorEnergy(timestamp, m_energy);
-LogIsIntakeExtended(timestamp, GetIsIntakeExtended());
-LogIntakeState(timestamp, GetCurrentState());
-m_totalWattHours += DragonPower::ConvertEnergyToWattHours(m_totalEnergy);
-LogIntakeTotalEnergy(timestamp, m_totalEnergy);
-LogIntakeTotalWattHours(timestamp, m_totalWattHours);
-m_powerTimer.Reset();
-m_powerTimer.Start();
- }*/
+	STATE_NAMES state = static_cast<STATE_NAMES>(GetCurrentState());
+	return (STATE_NAMESEnumToStringMap.find(state) == STATE_NAMESEnumToStringMap.end()) ? "Unknown State" : STATE_NAMESEnumToStringMap.at(state);
+}

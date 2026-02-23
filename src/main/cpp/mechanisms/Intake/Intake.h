@@ -94,8 +94,10 @@ public:
 	ControlData *GetPositionDeg() const { return m_positionDeg; }
 
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
+	static std::map<STATE_NAMES, std::string> STATE_NAMESEnumToStringMap;
 
 	void SetCurrentState(int state, bool run) override;
+	std::string GetCurrentStateName();
 
 	void ManualControl();
 	void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;

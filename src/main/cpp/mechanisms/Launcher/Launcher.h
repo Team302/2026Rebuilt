@@ -144,8 +144,10 @@ public:
 	ControlData *GetPositionDegreesTurret() const { return m_positionDegreesTurret; }
 
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
+	static std::map<STATE_NAMES, std::string> STATE_NAMESEnumToStringMap;
 
 	void SetCurrentState(int state, bool run) override;
+	std::string GetCurrentStateName();
 	bool IsLauncherInProtectedMode() const { return m_launcherProtectedMode; }
 	void PublishLaunchMode(bool launching);
 	void NotifyStateUpdate(RobotStateChanges::StateChange statechange, bool value) override;
