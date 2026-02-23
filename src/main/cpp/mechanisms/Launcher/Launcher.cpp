@@ -133,60 +133,7 @@ Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MEC
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 
 	m_targetCalculator = RebuiltTargetCalculator::GetInstance();
-	// InitializeLogging();
 }
-
-/* void Launcher::InitializeLogging()
- {
-	wpi::log::DataLog &log = frc::DataLogManager::GetLog();
-
-	 m_LauncherTotalEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TotalEnergy");
-m_LauncherTotalEnergyLogEntry.Append(0.0);
-m_LauncherTotalWattHoursLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TotalWattHours");
-m_LauncherTotalWattHoursLogEntry.Append(0.0);
-m_LauncherLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/LauncherPosition");
-m_LauncherLogEntry.Append(0.0);
-m_launcherTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/LauncherTarget");
-m_launcherTargetLogEntry.Append(0.0);
-m_LauncherPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/LauncherPower");
-m_LauncherPowerLogEntry.Append(0.0);
-m_LauncherEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/LauncherEnergy");
-m_LauncherEnergyLogEntry.Append(0.0);
-m_HoodLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/HoodPosition");
-m_HoodLogEntry.Append(0.0);
-m_hoodTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/HoodTarget");
-m_hoodTargetLogEntry.Append(0.0);
-m_HoodPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/HoodPower");
-m_HoodPowerLogEntry.Append(0.0);
-m_HoodEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/HoodEnergy");
-m_HoodEnergyLogEntry.Append(0.0);
-m_TransferLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TransferPosition");
-m_TransferLogEntry.Append(0.0);
-m_transferTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TransferTarget");
-m_transferTargetLogEntry.Append(0.0);
-m_TransferPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TransferPower");
-m_TransferPowerLogEntry.Append(0.0);
-m_TransferEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TransferEnergy");
-m_TransferEnergyLogEntry.Append(0.0);
-m_TurretLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TurretPosition");
-m_TurretLogEntry.Append(0.0);
-m_turretTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TurretTarget");
-m_turretTargetLogEntry.Append(0.0);
-m_TurretPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TurretPower");
-m_TurretPowerLogEntry.Append(0.0);
-m_TurretEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/TurretEnergy");
-m_TurretEnergyLogEntry.Append(0.0);
-m_IndexerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/IndexerPosition");
-m_IndexerLogEntry.Append(0.0);
-m_indexerTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/IndexerTarget");
-m_indexerTargetLogEntry.Append(0.0);
-m_IndexerPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/IndexerPower");
-m_IndexerPowerLogEntry.Append(0.0);
-m_IndexerEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Launcher/IndexerEnergy");
-m_IndexerEnergyLogEntry.Append(0.0);
-m_LauncherStateLogEntry = wpi::log::IntegerLogEntry(log, "mechanisms/Launcher/State");
-m_LauncherStateLogEntry.Append(0);
- }*/
 
 std::map<std::string, Launcher::STATE_NAMES>
 	Launcher::stringToSTATE_NAMESEnumMap{
