@@ -50,7 +50,7 @@ public:
      * \brief Get the launcher angle target to hit the current target within launcher limits
      * \return Angle in degrees
      */
-    units::angle::degree_t GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle);
+    units::angle::turn_t GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle);
 
     /**
      * \brief Update the target offset based on driver input
@@ -86,11 +86,11 @@ private:
 
     // Mechanism position offset from robot center in robot frame (meters)
     // Default: 5.5 inches (0.1397m) back, centered
-    frc::Translation2d m_mechanismOffset{-4.647_in, 3.256_in};
+    frc::Translation2d m_mechanismOffset{-3.333_in, 4.604_in};
 
     DragonField *m_field; // Want to add targets and launcehr position
 
-    const units::degree_t m_minLauncherAngle = 120_deg;
+    const units::degree_t m_minLauncherAngle = 90_deg;
     const units::degree_t m_maxLauncherAngle = 270_deg;
 
     FieldConstants *m_fieldConstants;

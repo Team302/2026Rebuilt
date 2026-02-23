@@ -19,7 +19,7 @@
 #include "utils/logging/signals/DragonDataLogger.h"
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include "utils/logging/signals/ISignalLogger.h"
-
+#include "utils/logging/debug/Logger.h"
 
 DragonDataLogger::DragonDataLogger()
 {
@@ -39,7 +39,7 @@ void DragonDataLogger::LogBoolData(uint64_t timestamp, DragonDataLogger::BoolSig
     {
         return;
     }
-    
+
     switch (signalID)
     {
     case DragonDataLogger::BoolSignals::IS_BROWNOUT:
@@ -56,7 +56,7 @@ void DragonDataLogger::LogBoolData(uint64_t timestamp, DragonDataLogger::BoolSig
 void DragonDataLogger::LogDoubleData(uint64_t timestamp, DragonDataLogger::DoubleSignals signalID, double value)
 {
     auto dataMgr = DragonDataLoggerMgr::GetInstance();
-    
+
     if (dataMgr == nullptr)
     {
         return;
@@ -467,13 +467,12 @@ void DragonDataLogger::LogSwerveModuleStateData(uint64_t timestamp, DragonDataLo
     default:
         break;
     }
-    
 }
 
 void DragonDataLogger::LogChassisSpeedsData(uint64_t timestamp, DragonDataLogger::ChassisSpeedSignals signalID, frc::ChassisSpeeds value)
 {
     auto dataMgr = DragonDataLoggerMgr::GetInstance();
-    
+
     if (dataMgr == nullptr)
     {
         return;
@@ -507,6 +506,31 @@ void DragonDataLogger::LogChassisSpeedsData(uint64_t timestamp, DragonDataLogger
         logger->WriteDouble(m_swerveTargetOmegaPath, omega, m_swerveChassisSpeedUnits, timestamp);
         break;
     }
+    default:
+        break;
+    }
+}
+
+void DragonDataLogger::LogGamePadData(uint64_t timestamp, DragonDataLogger::GamePadSignals signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs)
+{
+    auto dataMgr = DragonDataLoggerMgr::GetInstance();
+    if (dataMgr == nullptr)
+    {
+        return;
+    }
+    auto logger = dataMgr->GetLogger();
+    if (logger == nullptr)
+    {
+        return;
+    }
+    switch (signalID)
+    {
+    case DragonDataLogger::GamePadSignals::GAMEPAD_0:
+        logger->WriteGamePadState(m_gamePad0Path, axes, buttons, povs, timestamp);
+        break;
+    case DragonDataLogger::GamePadSignals::GAMEPAD_1:
+        logger->WriteGamePadState(m_gamePad1Path, axes, buttons, povs, timestamp);
+        break;
     default:
         break;
     }
