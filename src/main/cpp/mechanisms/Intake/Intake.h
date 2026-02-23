@@ -105,8 +105,7 @@ public:
 
 protected:
 	RobotIdentifier m_activeRobotId;
-	std::string m_ntName = "Intake";
-
+	std::string m_ntName;
 	ControlData *GetControlData(std::string name) override;
 
 private:
@@ -130,7 +129,7 @@ private:
 	bool m_isInClimbMode = false;
 	bool m_isLaunching = false;
 	bool m_isAllowedToClimb = false;
-	
+
 	units::angle::turn_t m_intakeRetractedPositionTarget{0.0};
 	units::angle::turn_t m_intakeExtendedPositionTarget{0.0};
 };

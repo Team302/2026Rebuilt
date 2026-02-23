@@ -116,7 +116,7 @@ public:
 
 protected:
 	RobotIdentifier m_activeRobotId;
-	std::string m_ntName = "Climber";
+	std::string m_ntName;
 
 	ControlData *GetControlData(std::string name) override;
 
