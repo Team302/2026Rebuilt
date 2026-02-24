@@ -6,51 +6,10 @@ using namespace ctre::phoenix6;
 
 Telemetry::Telemetry()
 {
-    /* Set up the module state Mechanism2d telemetry */
-    for (size_t i = 0; i < m_moduleSpeeds.size(); ++i)
-    {
-        frc::SmartDashboard::PutData("Module " + std::to_string(i), &m_moduleMechanisms[i]);
-    }
 }
 
 void Telemetry::Telemeterize(subsystems::CommandSwerveDrivetrain::SwerveDriveState const &state)
 {
-    ChassisConfigMgr *configMgr = ChassisConfigMgr::GetInstance();
-    MaxSpeed = configMgr->GetMaxSpeed();
-
-    /* Telemeterize the swerve drive state */
-    drivePose.Set(state.Pose);
-    driveSpeeds.Set(state.Speeds);
-    driveModuleStates.Set(state.ModuleStates);
-    driveModuleTargets.Set(state.ModuleTargets);
-    driveModulePositions.Set(state.ModulePositions);
-    driveTimestamp.Set(state.Timestamp.value());
-    driveOdometryFrequency.Set(1.0 / state.OdometryPeriod.value());
-
-    // Cache state data for periodic logging
-    m_cachedPose = state.Pose;
-    m_cachedSpeeds = state.Speeds;
-    for (size_t i = 0; i < state.ModuleStates.size(); ++i)
-    {
-        m_cachedModuleStates[i] = state.ModuleStates[i];
-    }
-    for (size_t i = 0; i < state.ModuleTargets.size(); ++i)
-    {
-        m_cachedModuleTargets[i] = state.ModuleTargets[i];
-    }
-    for (size_t i = 0; i < state.ModulePositions.size(); ++i)
-    {
-        m_cachedModulePositions[i] = state.ModulePositions[i];
-    }
-    m_cachedOdometryPeriod = state.OdometryPeriod;
-
-    /* Telemeterize each module state to a Mechanism2d */
-    for (size_t i = 0; i < m_moduleSpeeds.size(); ++i)
-    {
-        m_moduleDirections[i]->SetAngle(state.ModuleStates[i].angle.Degrees());
-        m_moduleSpeeds[i]->SetAngle(state.ModuleStates[i].angle.Degrees());
-        m_moduleSpeeds[i]->SetLength(state.ModuleStates[i].speed / (2 * MaxSpeed));
-    }
 }
 
 void Telemetry::DataLog(uint64_t timestamp)
