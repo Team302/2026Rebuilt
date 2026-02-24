@@ -217,30 +217,15 @@ void Intake::InitializeTalonFXIntakeCompBot302()
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
 	configs.Feedback.SensorToMechanismRatio = 1;
 
-	ctre::phoenix::StatusCode statusMotor = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		statusMotor = m_intake->GetConfigurator().Apply(configs, units::time::second_t(0.25));
-		if (statusMotor.IsOK())
+		status = m_intake->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		if (status.IsOK())
 			break;
 	}
-	if (!statusMotor.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intake", "m_intake Status", statusMotor.GetName());
-
-	CANdiConfiguration CANdiConfig{};
-
-	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenHigh;
-	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::PullHigh;
-
-	ctre::phoenix::StatusCode statusCANdi = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
-	for (int i = 0; i < 5; ++i)
-	{
-		statusCANdi = m_intakeCANdi->GetConfigurator().Apply(CANdiConfig, units::time::second_t(0.25));
-		if (statusCANdi.IsOK())
-			break;
-	}
-	if (!statusCANdi.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intake", "m_intakeCANdi Status", statusCANdi.GetName());
+	if (!status.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intake", "m_intake Status", status.GetName());
 }
 
 void Intake::InitializeTalonFXSExtenderCompBot302()
@@ -289,15 +274,30 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.Slot0.GravityType = m_positionDeg->GetGravityType();
 	configs.Slot0.StaticFeedforwardSign = m_positionDeg->GetStaticFeedforwardSign();
 
-	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	CANdiConfiguration CANdiConfig{};
+
+	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenHigh;
+	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::PullHigh;
+
+	ctre::phoenix::StatusCode statusMotor = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		status = m_extender->GetConfigurator().Apply(configs, units::time::second_t(0.25));
-		if (status.IsOK())
+		statusMotor = m_extender->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		if (statusMotor.IsOK())
 			break;
 	}
-	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_extender", "m_extender Status", status.GetName());
+	if (!statusMotor.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_extender", "m_extender Status", statusMotor.GetName());
+
+	ctre::phoenix::StatusCode statusCANdi = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	for (int i = 0; i < 5; ++i)
+	{
+		statusCANdi = m_intakeCANdi->GetConfigurator().Apply(CANdiConfig, units::time::second_t(0.25));
+		if (statusCANdi.IsOK())
+			break;
+	}
+	if (!statusCANdi.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intakeCANdi", "m_intakeCANdi Status", statusCANdi.GetName());
 }
 
 void Intake::SetCurrentState(int state, bool run)
