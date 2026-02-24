@@ -94,6 +94,7 @@ public:
     ///             the robot to the outpost location
     //------------------------------------------------------------------
     DriveToOutpost *GetDriveToOutpostCommand() { return m_driveToOutpost.get(); }
+
     DriveToTower *GetDriveToTowerCommand() { return m_driveToTower.get(); }
     // filepath: src/main/cpp/commands/DriveToTowerOutpost.h
 

@@ -37,10 +37,11 @@ DriveToTower::DriveToTower(subsystems::CommandSwerveDrivetrain *chassis)
 frc::Pose2d DriveToTower::GetEndPose()
 {
     frc::Pose2d endPose{};
+
     auto driveToTowerHelper = DriveToTowerHelper::GetInstance();
     if (driveToTowerHelper != nullptr)
     {
-        endPose = driveToTowerHelper->CalcTowerPose();
+        return driveToTowerHelper->CalcTowerPose();
     }
     return endPose;
 }

@@ -63,7 +63,9 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
                                      m_driveOverBump(std::make_unique<DriveOverBump>(m_chassis)),
                                      m_driveToDepot(std::make_unique<DriveToDepot>(m_chassis)),
                                      m_driveToHub(std::make_unique<DriveToHub>(m_chassis)),
-                                     m_driveToOutpost(std::make_unique<DriveToOutpost>(m_chassis))
+                                     m_driveToOutpost(std::make_unique<DriveToOutpost>(m_chassis)),
+                                     m_driveToTower(std::make_unique<DriveToTower>(m_chassis))
+
 {
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 
