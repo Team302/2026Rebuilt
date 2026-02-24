@@ -749,11 +749,7 @@ bool Launcher::IsInLaunchZone() const
 {
 	if (!DeadZoneManager::GetInstance()->IsInDeadZone())
 	{
-		if (AllianceZoneManager::GetInstance()->IsInAllianceZone() && !(m_isHubActive || m_shiftChangeIn3Seconds))
-		{
-			return false;
-		}
-		return true;
+		return !(AllianceZoneManager::GetInstance()->IsInAllianceZone() && !(m_isHubActive || m_shiftChangeIn3Seconds));
 	}
 	return false;
 }
