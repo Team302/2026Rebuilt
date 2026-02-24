@@ -778,7 +778,7 @@ void Launcher::CalculateTargets()
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Angle Target", m_targetHoodAngle.value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed Target", m_targetLauncherAngularVelocity.value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed RPM", units::angular_velocity::revolutions_per_minute_t(m_launcher->GetVelocity().GetValue()).value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Angle", units::angle::degree_t(m_hood->GetPosition().GetValue()).value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Angle", m_hood->GetPosition().GetValueAsDouble());
 }
 
 void Launcher::UpdateLauncherTargets()
