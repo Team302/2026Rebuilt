@@ -317,6 +317,10 @@ void Intake::RunCommonTasks()
 		m_prevIntakeSwitchState = isIntakeIn;
 		NotifyStateUpdate(RobotStateChanges::StateChange::ClimbModeStatus_Bool, isIntakeIn);
 	}
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentStateName());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeIn", IsIntakeIn());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IntakePercentOut", m_intakePercentOut.Output.value());
 }
 /// @brief  Set the control constants (e.g. PIDF values).
 /// @param [in] ControlData*                                   pid:  the control constants
@@ -336,10 +340,6 @@ void Intake::Update()
 void Intake::Cyclic()
 {
 	Update();
-
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentStateName());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeIn", IsIntakeIn());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IntakePercentOut", m_intakePercentOut.Output.value());
 }
 
 ControlData *Intake::GetControlData(string name)
