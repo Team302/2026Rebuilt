@@ -213,6 +213,8 @@ private:
 	bool m_launcherOffButtonReleased = true;
 	bool m_isClimbMode = false;
 	bool m_isAllowedToClimb = false;
+	bool m_isHubActive = false;
+	bool m_shiftChangeIn3Seconds = false;
 
 	units::time::second_t m_lookaheadTime = 0.5_s;
 

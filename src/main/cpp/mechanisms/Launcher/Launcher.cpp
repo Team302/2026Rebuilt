@@ -131,6 +131,8 @@ Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MEC
 	PeriodicLooper::GetInstance()->RegisterAll(this);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::HubActive_Bool);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool);
 
 	m_targetCalculator = RebuiltTargetCalculator::GetInstance();
 }
@@ -710,6 +712,14 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 	{
 		m_isAllowedToClimb = value;
 	}
+	else if (statechange == RobotStateChanges::StateChange::HubActive_Bool)
+	{
+		m_isHubActive = value;
+	}
+	else if (statechange == RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool)
+	{
+		m_shiftChangeIn3Seconds = value;
+	}
 }
 
 bool Launcher::IsLauncherAtTarget()
@@ -737,7 +747,15 @@ bool Launcher::IsLauncherAtTarget()
 
 bool Launcher::IsInLaunchZone() const
 {
-	return !DeadZoneManager::GetInstance()->IsInDeadZone();
+	if (!DeadZoneManager::GetInstance()->IsInDeadZone())
+	{
+		if (AllianceZoneManager::GetInstance()->IsInAllianceZone() && !(m_isHubActive || m_shiftChangeIn3Seconds))
+		{
+			return false;
+		}
+		return true;
+	}
+	return false;
 }
 
 void Launcher::CalculateTargets()
