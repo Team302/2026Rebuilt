@@ -103,7 +103,7 @@ public:
 	void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
 	bool IsInClimbMode() const { return m_isInClimbMode; }
 	bool IsLaunching() const { return m_isLaunching; }
-	bool IsIntakeExtended() const { return (m_intake->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround); }
+	bool IsIntakeIn() const { return (m_intake->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround); }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -131,7 +131,7 @@ private:
 
 	bool m_isInClimbMode = false;
 	bool m_isLaunching = false;
-	bool m_isAllowedToClimb = false;
+	bool m_prevIntakeSwitchState = false;
 	// void InitializeLogging();
 
 	units::angle::turn_t m_intakeRetractedPositionTarget{0.0};

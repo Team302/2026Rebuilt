@@ -124,8 +124,8 @@ void Intake::CreateCompBot302()
 {
 	m_ntName = "Intake";
 	m_intake = new ctre::phoenix6::hardware::TalonFX(16, ctre::phoenix6::CANBus("canivore"));
-	m_extender = new ctre::phoenix6::hardware::TalonFXS(0, ctre::phoenix6::CANBus("canivore"));
-	m_intakeCANdi = new ctre::phoenix6::hardware::CANdi(16, ctre::phoenix6::CANBus("canivore"));
+	m_extender = new ctre::phoenix6::hardware::TalonFXS(11, ctre::phoenix6::CANBus("canivore"));
+	m_intakeCANdi = new ctre::phoenix6::hardware::CANdi(11, ctre::phoenix6::CANBus("canivore"));
 
 	m_percentOut = new ControlData(
 		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
@@ -264,11 +264,11 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
-	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
+	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
+	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 11;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
@@ -277,7 +277,7 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
-	configs.Commutation.MotorArrangement = MotorArrangementValue::Disabled;
+	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.Slot0.kI = m_positionDeg->GetI();
 	configs.Slot0.kD = m_positionDeg->GetD();
@@ -311,11 +311,12 @@ void Intake::RunCommonTasks()
 	ManualControl();
 	Cyclic();
 
-	// if (m_isAllowedToClimb == IsIntakeExtended())
-	// {
-	// 	m_isAllowedToClimb = !GetIsIntakeExtendedState();
-	// 	NotifyStateUpdate(RobotStateChanges::StateChange::ClimbModeStatus_Bool, m_isAllowedToClimb);
-	// }
+	bool isIntakeIn = IsIntakeIn();
+	if (m_prevIntakeSwitchState != isIntakeIn)
+	{
+		m_prevIntakeSwitchState = isIntakeIn;
+		NotifyStateUpdate(RobotStateChanges::StateChange::ClimbModeStatus_Bool, isIntakeIn);
+	}
 }
 /// @brief  Set the control constants (e.g. PIDF values).
 /// @param [in] ControlData*                                   pid:  the control constants
@@ -337,7 +338,7 @@ void Intake::Cyclic()
 	Update();
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentStateName());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeExtended", IsIntakeExtended());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeIn", IsIntakeIn());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IntakePercentOut", m_intakePercentOut.Output.value());
 }
 
