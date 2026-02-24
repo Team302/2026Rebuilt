@@ -42,7 +42,7 @@ DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items()
     CTRESignalLogger ctreLogger;
     ctreLogger.SetAutoLogging(false);
 
-    SetLoggerType(m_defaultLoggerType);
+    SetLoggerType(m_loggerType);
 }
 
 void DragonDataLoggerMgr::SetLoggerType(LoggerType type)
