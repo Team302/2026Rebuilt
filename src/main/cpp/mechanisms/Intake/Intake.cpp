@@ -100,40 +100,7 @@ Intake::Intake(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANI
 	PeriodicLooper::GetInstance()->RegisterAll(this);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsLaunching_Bool);
-
-	// InitializeLogging();
 }
-
-/* void Intake::InitializeLogging()
- {
-	wpi::log::DataLog &log = frc::DataLogManager::GetLog();
-
-	 m_IntakeTotalEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/TotalEnergy");
-m_IntakeTotalEnergyLogEntry.Append(0.0);
-m_IntakeTotalWattHoursLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/TotalWattHours");
-m_IntakeTotalWattHoursLogEntry.Append(0.0);
-m_IntakeLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakePosition");
-m_IntakeLogEntry.Append(0.0);
-m_intakeTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakeTarget");
-m_intakeTargetLogEntry.Append(0.0);
-m_IntakePowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakePower");
-m_IntakePowerLogEntry.Append(0.0);
-m_IntakeEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/IntakeEnergy");
-m_IntakeEnergyLogEntry.Append(0.0);
-m_AgitatorLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorPosition");
-m_AgitatorLogEntry.Append(0.0);
-m_agitatorTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorTarget");
-m_agitatorTargetLogEntry.Append(0.0);
-m_AgitatorPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorPower");
-m_AgitatorPowerLogEntry.Append(0.0);
-m_AgitatorEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Intake/AgitatorEnergy");
-m_AgitatorEnergyLogEntry.Append(0.0);
-m_IsIntakeExtendedLogEntry = wpi::log::BooleanLogEntry(log, "mechanisms/Intake/IsIntakeExtended");
-m_IsIntakeExtendedLogEntry.Append(false);
-
-m_IntakeStateLogEntry = wpi::log::IntegerLogEntry(log, "mechanisms/Intake/State");
-m_IntakeStateLogEntry.Append(0);
- }*/
 
 std::map<std::string, Intake::STATE_NAMES>
 	Intake::stringToSTATE_NAMESEnumMap{
@@ -144,12 +111,21 @@ std::map<std::string, Intake::STATE_NAMES>
 		{"STATE_EMPTY_HOPPER", Intake::STATE_NAMES::STATE_EMPTY_HOPPER},
 	};
 
+std::map<Intake::STATE_NAMES, std::string>
+	Intake::STATE_NAMESEnumToStringMap{
+		{Intake::STATE_NAMES::STATE_OFF, "STATE_OFF"},
+		{Intake::STATE_NAMES::STATE_INTAKE, "STATE_INTAKE"},
+		{Intake::STATE_NAMES::STATE_EXPEL, "STATE_EXPEL"},
+		{Intake::STATE_NAMES::STATE_LAUNCH, "STATE_LAUNCH"},
+		{Intake::STATE_NAMES::STATE_EMPTY_HOPPER, "STATE_EMPTY_HOPPER"},
+	};
+
 void Intake::CreateCompBot302()
 {
 	m_ntName = "Intake";
 	m_intake = new ctre::phoenix6::hardware::TalonFX(16, ctre::phoenix6::CANBus("canivore"));
-	m_extender = new ctre::phoenix6::hardware::TalonFXS(0, ctre::phoenix6::CANBus("canivore"));
-	m_intakeCANdi = new ctre::phoenix6::hardware::CANdi(16, ctre::phoenix6::CANBus("canivore"));
+	m_extender = new ctre::phoenix6::hardware::TalonFXS(11, ctre::phoenix6::CANBus("canivore"));
+	m_intakeCANdi = new ctre::phoenix6::hardware::CANdi(11, ctre::phoenix6::CANBus("canivore"));
 
 	m_percentOut = new ControlData(
 		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
@@ -241,30 +217,15 @@ void Intake::InitializeTalonFXIntakeCompBot302()
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
 	configs.Feedback.SensorToMechanismRatio = 1;
 
-	ctre::phoenix::StatusCode statusMotor = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		statusMotor = m_intake->GetConfigurator().Apply(configs, units::time::second_t(0.25));
-		if (statusMotor.IsOK())
+		status = m_intake->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		if (status.IsOK())
 			break;
 	}
-	if (!statusMotor.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intake", "m_intake Status", statusMotor.GetName());
-
-	CANdiConfiguration CANdiConfig{};
-
-	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenHigh;
-	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::PullHigh;
-
-	ctre::phoenix::StatusCode statusCANdi = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
-	for (int i = 0; i < 5; ++i)
-	{
-		statusCANdi = m_intakeCANdi->GetConfigurator().Apply(CANdiConfig, units::time::second_t(0.25));
-		if (statusCANdi.IsOK())
-			break;
-	}
-	if (!statusCANdi.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intake", "m_intakeCANdi Status", statusCANdi.GetName());
+	if (!status.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intake", "m_intake Status", status.GetName());
 }
 
 void Intake::InitializeTalonFXSExtenderCompBot302()
@@ -288,11 +249,11 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
-	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
+	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
+	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 11;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
@@ -301,7 +262,7 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
-	configs.Commutation.MotorArrangement = MotorArrangementValue::Disabled;
+	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.Slot0.kI = m_positionDeg->GetI();
 	configs.Slot0.kD = m_positionDeg->GetD();
@@ -313,15 +274,30 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.Slot0.GravityType = m_positionDeg->GetGravityType();
 	configs.Slot0.StaticFeedforwardSign = m_positionDeg->GetStaticFeedforwardSign();
 
-	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	CANdiConfiguration CANdiConfig{};
+
+	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenHigh;
+	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::PullHigh;
+
+	ctre::phoenix::StatusCode statusMotor = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		status = m_extender->GetConfigurator().Apply(configs, units::time::second_t(0.25));
-		if (status.IsOK())
+		statusMotor = m_extender->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		if (statusMotor.IsOK())
 			break;
 	}
-	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_extender", "m_extender Status", status.GetName());
+	if (!statusMotor.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_extender", "m_extender Status", statusMotor.GetName());
+
+	ctre::phoenix::StatusCode statusCANdi = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	for (int i = 0; i < 5; ++i)
+	{
+		statusCANdi = m_intakeCANdi->GetConfigurator().Apply(CANdiConfig, units::time::second_t(0.25));
+		if (statusCANdi.IsOK())
+			break;
+	}
+	if (!statusCANdi.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intakeCANdi", "m_intakeCANdi Status", statusCANdi.GetName());
 }
 
 void Intake::SetCurrentState(int state, bool run)
@@ -335,11 +311,16 @@ void Intake::RunCommonTasks()
 	ManualControl();
 	Cyclic();
 
-	// if (m_isAllowedToClimb == IsIntakeExtended())
-	// {
-	// 	m_isAllowedToClimb = !GetIsIntakeExtendedState();
-	// 	NotifyStateUpdate(RobotStateChanges::StateChange::ClimbModeStatus_Bool, m_isAllowedToClimb);
-	// }
+	bool isIntakeIn = IsIntakeIn();
+	if (m_prevIntakeSwitchState != isIntakeIn)
+	{
+		m_prevIntakeSwitchState = isIntakeIn;
+		NotifyStateUpdate(RobotStateChanges::StateChange::ClimbModeStatus_Bool, isIntakeIn);
+	}
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentStateName());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeIn", IsIntakeIn());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IntakePercentOut", m_intakePercentOut.Output.value());
 }
 /// @brief  Set the control constants (e.g. PIDF values).
 /// @param [in] ControlData*                                   pid:  the control constants
@@ -359,10 +340,6 @@ void Intake::Update()
 void Intake::Cyclic()
 {
 	Update();
-
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentState());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeExtended", IsIntakeExtended());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IntakePercentOut", m_intakePercentOut.Output.value());
 }
 
 ControlData *Intake::GetControlData(string name)
@@ -386,42 +363,34 @@ void Intake::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value
 void Intake::ManualControl()
 {
 	TeleopControl *controller = TeleopControl::GetInstance();
-	if (controller != nullptr && GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
+	if (controller != nullptr)
 	{
-		bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
-		bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE);
-		if (intakeOutPressed)
+		if (controller->IsButtonPressed(TeleopControlFunctions::EXTENDER_MODIFIER))
 		{
-			UpdateTargetExtenderPositionDeg(m_intakeExtendedPositionTarget);
+			double manualExtenderPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN);
+			UpdateTargetExtenderPercentOut(manualExtenderPercent);
 		}
-		else if (intakeInPressed)
+		else
 		{
-			UpdateTargetExtenderPositionDeg(m_intakeRetractedPositionTarget);
+			if (GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
+			{
+				bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
+				bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE);
+				if (intakeOutPressed)
+				{
+					UpdateTargetExtenderPositionDeg(m_intakeExtendedPositionTarget);
+				}
+				else if (intakeInPressed)
+				{
+					UpdateTargetExtenderPositionDeg(m_intakeRetractedPositionTarget);
+				}
+			}
 		}
 	}
 }
-/* void Intake::DataLog(uint64_t timestamp)
+
+std::string Intake::GetCurrentStateName()
 {
-   auto currTime = m_powerTimer.Get();
-LogIntake(timestamp, m_Intake->GetPosition().GetValueAsDouble());
-auto IntakePower = DragonPower::CalcPowerEnergy(currTime, m_Intake->GetSupplyVoltage().GetValueAsDouble(), m_Intake->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(IntakePower);
-m_energy = get<1>(IntakePower);
-m_totalEnergy += m_energy;
-LogIntakePower(timestamp, m_power);
-LogIntakeEnergy(timestamp, m_energy);
-LogAgitator(timestamp, m_Agitator->GetPosition().GetValueAsDouble());
-auto AgitatorPower = DragonPower::CalcPowerEnergy(currTime, m_Agitator->GetSupplyVoltage().GetValueAsDouble(), m_Agitator->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(AgitatorPower);
-m_energy = get<1>(AgitatorPower);
-m_totalEnergy += m_energy;
-LogAgitatorPower(timestamp, m_power);
-LogAgitatorEnergy(timestamp, m_energy);
-LogIsIntakeExtended(timestamp, GetIsIntakeExtended());
-LogIntakeState(timestamp, GetCurrentState());
-m_totalWattHours += DragonPower::ConvertEnergyToWattHours(m_totalEnergy);
-LogIntakeTotalEnergy(timestamp, m_totalEnergy);
-LogIntakeTotalWattHours(timestamp, m_totalWattHours);
-m_powerTimer.Reset();
-m_powerTimer.Start();
- }*/
+	STATE_NAMES state = static_cast<STATE_NAMES>(GetCurrentState());
+	return (STATE_NAMESEnumToStringMap.find(state) == STATE_NAMESEnumToStringMap.end()) ? "Unknown State" : STATE_NAMESEnumToStringMap.at(state);
+}

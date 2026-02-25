@@ -100,7 +100,11 @@ public:
 	bool IsClimberRetracted() const { return m_CANdi->GetS1Closed().GetValue(); };
 
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
+	static std::map<STATE_NAMES, std::string> STATE_NAMESEnumToStringMap;
+
 	void SetCurrentState(int state, bool run) override;
+	std::string GetCurrentStateName();
+
 	void UpdateTargetClimberPercentOut(double percentOut)
 	{
 		m_ClimberPercentOut.Output = percentOut;
