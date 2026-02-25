@@ -65,24 +65,24 @@ frc::Pose2d DriveToTowerHelper::CalcTowerPose() const
         return frc::Pose2d();
     }
     // red or blue and then if its in alliance zone then do the logic if not then return 00 / origin pose
-    auto fieldConstants = FieldConstants::GetInstance();
-
+    // auto fieldConstants = FieldConstants::GetInstance();
+    auto fieldVals = FieldOffsetValues::GetInstance();
     if (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed)
     {
-        // auto fieldVals = FieldOffsetValues::GetInstance();
 
         auto closestFieldElement = PoseUtils::GetClosestFieldElement(m_chassis->GetPose(), FieldConstants::FIELD_ELEMENT::RED_TOWER_DEPOT_STICK, FieldConstants::FIELD_ELEMENT::RED_TOWER_OUTPOST_STICK);
         if (closestFieldElement == FieldConstants::FIELD_ELEMENT::RED_TOWER_DEPOT_STICK)
         {
-            auto x = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X() + m_towerDepotXOffset;
-            auto y = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).Y() + m_towerDepotYOffset;
+            auto x = fieldVals->GetValue(true, FIELD_OFFSET_ITEMS::TOWER_DEPOT_X);
+            auto y = fieldVals->GetValue(true, FIELD_OFFSET_ITEMS::TOWER_DEPOT_Y);
             auto angle = units::angle::degree_t(0.0);
             return frc::Pose2d(x, y, angle);
+            // fieldOffsetValues->GetValue(isNearestDepotRed, FIELD_OFFSET_ITEMS::DEPOT_X)
         }
         else
         {
-            auto x = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X() + m_towerOutpostXOffset;
-            auto y = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).Y() - m_towerOutpostYOffset;
+            auto x = fieldVals->GetValue(true, FIELD_OFFSET_ITEMS::TOWER_OUTPOST_X);
+            auto y = fieldVals->GetValue(true, FIELD_OFFSET_ITEMS::TOWER_OUTPOST_Y);
             auto angle = units::angle::degree_t(0.0);
             return frc::Pose2d(x, y, angle);
         }
@@ -94,15 +94,15 @@ frc::Pose2d DriveToTowerHelper::CalcTowerPose() const
         auto closestFieldElement = PoseUtils::GetClosestFieldElement(m_chassis->GetPose(), FieldConstants::FIELD_ELEMENT::BLUE_TOWER_DEPOT_STICK, FieldConstants::FIELD_ELEMENT::BLUE_TOWER_OUTPOST_STICK);
         if (closestFieldElement == FieldConstants::FIELD_ELEMENT::BLUE_TOWER_DEPOT_STICK)
         {
-            auto x = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X() - m_towerDepotXOffset;
-            auto y = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).Y() - m_towerDepotYOffset;
+            auto x = fieldVals->GetValue(false, FIELD_OFFSET_ITEMS::TOWER_DEPOT_X);
+            auto y = fieldVals->GetValue(false, FIELD_OFFSET_ITEMS::TOWER_DEPOT_Y);
             auto angle = units::angle::degree_t(0.0);
             return frc::Pose2d(x, y, angle);
         }
         else
         {
-            auto x = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X() - m_towerOutpostXOffset;
-            auto y = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).Y() + m_towerOutpostYOffset;
+            auto x = fieldVals->GetValue(false, FIELD_OFFSET_ITEMS::TOWER_OUTPOST_X);
+            auto y = fieldVals->GetValue(false, FIELD_OFFSET_ITEMS::TOWER_OUTPOST_Y);
             auto angle = units::angle::degree_t(0.0);
             return frc::Pose2d(x, y, angle);
         }
