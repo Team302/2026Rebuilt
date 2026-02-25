@@ -73,6 +73,11 @@ public:
 		m_intakePercentOut.Output = percentOut;
 		m_intakeActiveTarget = &m_intakePercentOut;
 	}
+	void UpdateTargetExtenderPercentOut(double percentOut)
+	{
+		m_extenderPercentOut.Output = percentOut;
+		m_extenderActiveTarget = &m_extenderPercentOut;
+	}
 	void UpdateTargetExtenderPositionDeg(units::angle::turn_t position)
 	{
 		m_extenderPositionDeg.Position = position;
@@ -125,6 +130,7 @@ private:
 	void InitializeTalonFXSExtenderCompBot302();
 
 	ctre::phoenix6::controls::DutyCycleOut m_intakePercentOut{0.0};
+	ctre::phoenix6::controls::DutyCycleOut m_extenderPercentOut{0.0};
 	ctre::phoenix6::controls::PositionVoltage m_extenderPositionDeg{units::angle::degree_t(0.0)};
 	ctre::phoenix6::controls::ControlRequest *m_intakeActiveTarget = &m_intakePercentOut;
 	ctre::phoenix6::controls::ControlRequest *m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
