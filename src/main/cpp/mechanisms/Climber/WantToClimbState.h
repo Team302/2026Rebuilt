@@ -46,7 +46,5 @@ namespace ClimberStates
 		RobotIdentifier m_RobotId;
 
 		const double m_climberTarget = 0.0;
-		const bool m_extenderTarget = false;
-		const bool m_alignmentTarget = false;
 	};
 }

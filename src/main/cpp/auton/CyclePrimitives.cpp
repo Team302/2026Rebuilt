@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2025 Lake Orion Robotics FIRST Team 302
 //
@@ -43,9 +42,7 @@
 #include "mechanisms/Climber/Climber.h"
 
 // Third Party Includes
-#include "ctre/phoenix6/SignalLogger.hpp"
 
-using ctre::phoenix6::SignalLogger;
 using frc::DriverStation;
 using frc::Timer;
 using std::make_unique;
@@ -69,6 +66,7 @@ CyclePrimitives::CyclePrimitives() : State(string("CyclePrimitives"), 0),
 {
     auto chassisConfig = ChassisConfigMgr::GetInstance();
     m_chassis = chassisConfig != nullptr ? chassisConfig->GetSwerveChassis() : nullptr;
+    DragonDataLoggerMgr::GetInstance()->RegisterItem(this);
 }
 
 void CyclePrimitives::Init()
@@ -77,8 +75,6 @@ void CyclePrimitives::Init()
     m_currentPrimSlot = 0; // Reset current prim
     m_currentPrim = nullptr;
     m_zones.clear();
-
-    SignalLogger::WriteString("/Auton/SelectedFile", m_autonSelector->GetSelectedAutoFile(), units::time::second_t(0.0));
 
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("CyclePrim"), string("About to parse XML file "), m_autonSelector->GetSelectedAutoFile().c_str());
 
@@ -270,5 +266,13 @@ void CyclePrimitives::SetMechanismStatesFromZone(ZoneParams *params)
         {
             climberMgr->SetCurrentState(params->GetClimberState(), true);
         }
+    }
+}
+
+void CyclePrimitives::DataLog(uint64_t timestamp)
+{
+    if (m_autonSelector != nullptr)
+    {
+        LogStringData(timestamp, DragonDataLogger::StringSignals::AUTON_PATH_NAME, m_autonSelector->GetSelectedAutoFile().c_str());
     }
 }

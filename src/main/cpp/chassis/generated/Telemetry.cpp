@@ -5,8 +5,6 @@ using namespace ctre::phoenix6;
 
 Telemetry::Telemetry()
 {
-    SignalLogger::Start();
-
     /* Set up the module state Mechanism2d telemetry */
     for (size_t i = 0; i < m_moduleSpeeds.size(); ++i)
     {

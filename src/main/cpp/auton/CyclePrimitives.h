@@ -28,6 +28,8 @@
 #include "state/State.h"
 #include "auton/ZoneParams.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "utils/logging/signals/DragonDataLoggerMgr.h"
+
 // Third Party Includes
 
 class AutonSelector;
@@ -36,7 +38,7 @@ class PrimitiveFactory;
 class PrimitiveParams;
 class SwerveChassis;
 
-class CyclePrimitives : public State
+class CyclePrimitives : public State, DragonDataLogger
 {
 public:
     CyclePrimitives();
@@ -48,6 +50,8 @@ public:
     bool AtTarget() override;
 
     AutonSelector *GetAutonSelector() const { return m_autonSelector; };
+
+    void DataLog(uint64_t timestamp) override;
 
 protected:
     void GetNextPrim();

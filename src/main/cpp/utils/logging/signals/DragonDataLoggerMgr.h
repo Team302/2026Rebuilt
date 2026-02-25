@@ -26,7 +26,8 @@
 enum class LoggerType
 {
     CTRE_SIGNAL_LOGGER,
-    UDP_LOGGER
+    UDP_LOGGER,
+    WPILOGGER
 };
 
 class DragonDataLoggerMgr
@@ -42,6 +43,8 @@ public:
 
     void RegisterItem(DragonDataLogger *item);
     void PeriodicDataLog();
+
+    std::string GetLoggingDirectory() const;
 
 private:
     DragonDataLoggerMgr();

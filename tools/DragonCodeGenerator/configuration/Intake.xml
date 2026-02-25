@@ -286,8 +286,8 @@
       </MotionMagicSettings>
     </MotorController>
     <MotorController
-      xsi:type="TalonFX">
-      <name>Agitator</name>
+      xsi:type="TalonFXS">
+      <name>Extender</name>
       <ControllerEnabled>Yes</ControllerEnabled>
       <theDistanceAngleCalcInfo>
         <gearRatio>
@@ -318,21 +318,21 @@
           <name>doubleParameter</name>
           <__units__>s</__units__>
           <type>Double</type>
-          <value>0.25</value>
+          <value>0</value>
         </openLoopRampTime>
         <closedLoopRampTime>
           <unitsFamily>time</unitsFamily>
           <name>doubleParameter</name>
           <__units__>s</__units__>
           <type>Double</type>
-          <value>0.25</value>
+          <value>0</value>
         </closedLoopRampTime>
         <enableClosedLoop>
           <unitsFamily>none</unitsFamily>
           <name>boolParameter</name>
           <__units__ />
           <type>Boolean</type>
-          <value>true</value>
+          <value>false</value>
         </enableClosedLoop>
       </voltageRamping>
       <canID>
@@ -419,35 +419,35 @@
           <name>boolParameter</name>
           <__units__ />
           <type>Boolean</type>
-          <value>true</value>
+          <value>false</value>
         </enableStatorCurrentLimit>
         <statorCurrentLimit>
           <unitsFamily>current</unitsFamily>
           <name>doubleParameter</name>
           <__units__>A</__units__>
           <type>Double</type>
-          <value>100</value>
+          <value>0</value>
         </statorCurrentLimit>
         <enableSupplyCurrentLimit>
           <unitsFamily>none</unitsFamily>
           <name>boolParameter</name>
           <__units__ />
           <type>Boolean</type>
-          <value>true</value>
+          <value>false</value>
         </enableSupplyCurrentLimit>
         <supplyCurrentLimit>
           <unitsFamily>current</unitsFamily>
           <name>doubleParameter</name>
           <__units__>A</__units__>
           <type>Double</type>
-          <value>70</value>
+          <value>0</value>
         </supplyCurrentLimit>
         <supplyCurrentThreshold>
           <unitsFamily>current</unitsFamily>
           <name>doubleParameter</name>
           <__units__>A</__units__>
           <type>Double</type>
-          <value>35</value>
+          <value>0</value>
         </supplyCurrentThreshold>
         <supplyTimeThreshold>
           <unitsFamily>time</unitsFamily>
@@ -569,53 +569,7 @@
     </MotorController>
   </MotorControllers>
   <closedLoopControlParameters />
-  <solenoid>
-    <solenoid>
-      <name>Extender</name>
-      <CAN_ID>
-        <unitsFamily>none</unitsFamily>
-        <name>uintParameter</name>
-        <__units__ />
-        <type>UInt32</type>
-        <value>1</value>
-      </CAN_ID>
-      <channel>
-        <unitsFamily>none</unitsFamily>
-        <name>uintParameter</name>
-        <__units__ />
-        <type>UInt32</type>
-        <value>0</value>
-      </channel>
-      <enableDualChannel>
-        <unitsFamily>none</unitsFamily>
-        <name>boolParameter</name>
-        <__units__ />
-        <type>Boolean</type>
-        <value>false</value>
-      </enableDualChannel>
-      <forwardChannel>
-        <unitsFamily>none</unitsFamily>
-        <name>uintParameter</name>
-        <__units__ />
-        <type>UInt32</type>
-        <value>0</value>
-      </forwardChannel>
-      <reverseChannel>
-        <unitsFamily>none</unitsFamily>
-        <name>uintParameter</name>
-        <__units__ />
-        <type>UInt32</type>
-        <value>0</value>
-      </reverseChannel>
-      <reversed>
-        <unitsFamily>none</unitsFamily>
-        <name>boolParameter</name>
-        <__units__ />
-        <type>Boolean</type>
-        <value>false</value>
-      </reversed>
-    </solenoid>
-  </solenoid>
+  <solenoid />
   <servo />
   <analogInput />
   <digitalInput>
@@ -751,6 +705,111 @@
       </enableFOC>
       <feedForwardType>DUTY_CYCLE</feedForwardType>
     </motorControlData>
+    <motorControlData>
+      <name>PositionDeg</name>
+      <PID>
+        <name>PIDFZ</name>
+        <pGain>
+          <unitsFamily>none</unitsFamily>
+          <name>doubleParameter</name>
+          <__units__ />
+          <type>Double</type>
+          <value>0</value>
+        </pGain>
+        <iGain>
+          <unitsFamily>none</unitsFamily>
+          <name>doubleParameter</name>
+          <__units__ />
+          <type>Double</type>
+          <value>0</value>
+        </iGain>
+        <dGain>
+          <unitsFamily>none</unitsFamily>
+          <name>doubleParameter</name>
+          <__units__ />
+          <type>Double</type>
+          <value>0</value>
+        </dGain>
+        <fGain>
+          <unitsFamily>none</unitsFamily>
+          <name>doubleParameter</name>
+          <__units__ />
+          <type>Double</type>
+          <value>0</value>
+        </fGain>
+        <iZone>
+          <unitsFamily>none</unitsFamily>
+          <name>doubleParameter</name>
+          <__units__ />
+          <type>Double</type>
+          <value>0</value>
+        </iZone>
+        <sGain>
+          <unitsFamily>none</unitsFamily>
+          <name>doubleParameter</name>
+          <__units__ />
+          <type>Double</type>
+          <value>0</value>
+        </sGain>
+        <vGain>
+          <unitsFamily>none</unitsFamily>
+          <name>doubleParameter</name>
+          <__units__ />
+          <type>Double</type>
+          <value>0</value>
+        </vGain>
+        <aGain>
+          <unitsFamily>none</unitsFamily>
+          <name>doubleParameter</name>
+          <__units__ />
+          <type>Double</type>
+          <value>0</value>
+        </aGain>
+      </PID>
+      <SlotIndex>
+        <unitsFamily>none</unitsFamily>
+        <name>intParameter</name>
+        <__units__ />
+        <type>Int32</type>
+        <value>0</value>
+      </SlotIndex>
+      <peakValue>
+        <unitsFamily>none</unitsFamily>
+        <name>doubleParameter</name>
+        <__units__ />
+        <type>Double</type>
+        <value>0</value>
+      </peakValue>
+      <nominalValue>
+        <unitsFamily>none</unitsFamily>
+        <name>doubleParameter</name>
+        <__units__ />
+        <type>Double</type>
+        <value>0</value>
+      </nominalValue>
+      <maxAcceleration>
+        <unitsFamily>none</unitsFamily>
+        <name>doubleParameter</name>
+        <__units__ />
+        <type>Double</type>
+        <value>0</value>
+      </maxAcceleration>
+      <cruiseVelocity>
+        <unitsFamily>none</unitsFamily>
+        <name>doubleParameter</name>
+        <__units__ />
+        <type>Double</type>
+        <value>0</value>
+      </cruiseVelocity>
+      <enableFOC>
+        <unitsFamily>none</unitsFamily>
+        <name>boolParameter</name>
+        <__units__ />
+        <type>Boolean</type>
+        <value>false</value>
+      </enableFOC>
+      <controlType>POSITION_DEGREES</controlType>
+    </motorControlData>
   </stateMotorControlData>
   <states>
     <state>
@@ -785,10 +844,6 @@
           <value>EmptyHopper</value>
         </stringParameterConstInMechInstance>
       </transitionsTo>
-      <doubleParameters />
-      <boolParameters />
-      <constDoubleParameters />
-      <constBoolParameters />
       <motorTargets>
         <motorTarget>
           <name>Intake</name>
@@ -809,34 +864,14 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
         <motorTarget>
-          <name>Agitator</name>
-          <target>
-            <unitsFamily>none</unitsFamily>
-            <name>Target</name>
-            <__units__ />
-            <type>Double</type>
-          </target>
-          <motorName>Agitator</motorName>
-          <Enabled>
-            <unitsFamily>none</unitsFamily>
-            <name>boolParameter</name>
-            <__units__ />
-            <type>Boolean</type>
-            <value>true</value>
-          </Enabled>
-          <controlDataName>PercentOut</controlDataName>
-        </motorTarget>
-      </motorTargets>
-      <solenoidTarget>
-        <solenoidTarget>
           <name>Extender</name>
           <target>
-            <unitsFamily>none</unitsFamily>
+            <unitsFamily>angle</unitsFamily>
             <name>Target</name>
-            <__units__ />
-            <type>Boolean</type>
+            <__units__>deg</__units__>
+            <type>Double</type>
           </target>
-          <solenoidName>Extender</solenoidName>
+          <motorName>Extender</motorName>
           <Enabled>
             <unitsFamily>none</unitsFamily>
             <name>boolParameter</name>
@@ -844,8 +879,9 @@
             <type>Boolean</type>
             <value>false</value>
           </Enabled>
-        </solenoidTarget>
-      </solenoidTarget>
+          <controlDataName>PositionDeg</controlDataName>
+        </motorTarget>
+      </motorTargets>
     </state>
     <state>
       <name>Intake</name>
@@ -872,10 +908,6 @@
           <value>EmptyHopper</value>
         </stringParameterConstInMechInstance>
       </transitionsTo>
-      <doubleParameters />
-      <boolParameters />
-      <constDoubleParameters />
-      <constBoolParameters />
       <motorTargets>
         <motorTarget>
           <name>Intake</name>
@@ -896,14 +928,14 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
         <motorTarget>
-          <name>Agitator</name>
+          <name>Extender</name>
           <target>
-            <unitsFamily>none</unitsFamily>
+            <unitsFamily>angle</unitsFamily>
             <name>Target</name>
-            <__units__ />
+            <__units__>deg</__units__>
             <type>Double</type>
           </target>
-          <motorName>Agitator</motorName>
+          <motorName>Extender</motorName>
           <Enabled>
             <unitsFamily>none</unitsFamily>
             <name>boolParameter</name>
@@ -911,28 +943,9 @@
             <type>Boolean</type>
             <value>true</value>
           </Enabled>
-          <controlDataName>PercentOut</controlDataName>
+          <controlDataName>PositionDeg</controlDataName>
         </motorTarget>
       </motorTargets>
-      <solenoidTarget>
-        <solenoidTarget>
-          <name>Extender</name>
-          <target>
-            <unitsFamily>none</unitsFamily>
-            <name>Target</name>
-            <__units__ />
-            <type>Boolean</type>
-          </target>
-          <solenoidName>Extender</solenoidName>
-          <Enabled>
-            <unitsFamily>none</unitsFamily>
-            <name>boolParameter</name>
-            <__units__ />
-            <type>Boolean</type>
-            <value>false</value>
-          </Enabled>
-        </solenoidTarget>
-      </solenoidTarget>
     </state>
     <state>
       <name>Expel</name>
@@ -959,10 +972,6 @@
           <value>EmptyHopper</value>
         </stringParameterConstInMechInstance>
       </transitionsTo>
-      <doubleParameters />
-      <boolParameters />
-      <constDoubleParameters />
-      <constBoolParameters />
       <motorTargets>
         <motorTarget>
           <name>Intake</name>
@@ -983,14 +992,14 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
         <motorTarget>
-          <name>Agitator</name>
+          <name>Extender</name>
           <target>
-            <unitsFamily>none</unitsFamily>
+            <unitsFamily>angle</unitsFamily>
             <name>Target</name>
-            <__units__ />
+            <__units__>deg</__units__>
             <type>Double</type>
           </target>
-          <motorName>Agitator</motorName>
+          <motorName>Extender</motorName>
           <Enabled>
             <unitsFamily>none</unitsFamily>
             <name>boolParameter</name>
@@ -998,28 +1007,9 @@
             <type>Boolean</type>
             <value>true</value>
           </Enabled>
-          <controlDataName>PercentOut</controlDataName>
+          <controlDataName>PositionDeg</controlDataName>
         </motorTarget>
       </motorTargets>
-      <solenoidTarget>
-        <solenoidTarget>
-          <name>Extender</name>
-          <target>
-            <unitsFamily>none</unitsFamily>
-            <name>Target</name>
-            <__units__ />
-            <type>Boolean</type>
-          </target>
-          <solenoidName>Extender</solenoidName>
-          <Enabled>
-            <unitsFamily>none</unitsFamily>
-            <name>boolParameter</name>
-            <__units__ />
-            <type>Boolean</type>
-            <value>false</value>
-          </Enabled>
-        </solenoidTarget>
-      </solenoidTarget>
     </state>
     <state>
       <name>Launch</name>
@@ -1053,10 +1043,6 @@
           <value>EmptyHopper</value>
         </stringParameterConstInMechInstance>
       </transitionsTo>
-      <doubleParameters />
-      <boolParameters />
-      <constDoubleParameters />
-      <constBoolParameters />
       <motorTargets>
         <motorTarget>
           <name>Intake</name>
@@ -1077,34 +1063,14 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
         <motorTarget>
-          <name>Agitator</name>
-          <target>
-            <unitsFamily>none</unitsFamily>
-            <name>Target</name>
-            <__units__ />
-            <type>Double</type>
-          </target>
-          <motorName>Agitator</motorName>
-          <Enabled>
-            <unitsFamily>none</unitsFamily>
-            <name>boolParameter</name>
-            <__units__ />
-            <type>Boolean</type>
-            <value>true</value>
-          </Enabled>
-          <controlDataName>PercentOut</controlDataName>
-        </motorTarget>
-      </motorTargets>
-      <solenoidTarget>
-        <solenoidTarget>
           <name>Extender</name>
           <target>
-            <unitsFamily>none</unitsFamily>
+            <unitsFamily>angle</unitsFamily>
             <name>Target</name>
-            <__units__ />
-            <type>Boolean</type>
+            <__units__>deg</__units__>
+            <type>Double</type>
           </target>
-          <solenoidName>Extender</solenoidName>
+          <motorName>Extender</motorName>
           <Enabled>
             <unitsFamily>none</unitsFamily>
             <name>boolParameter</name>
@@ -1112,8 +1078,9 @@
             <type>Boolean</type>
             <value>false</value>
           </Enabled>
-        </solenoidTarget>
-      </solenoidTarget>
+          <controlDataName>PositionDeg</controlDataName>
+        </motorTarget>
+      </motorTargets>
     </state>
     <state>
       <name>EmptyHopper</name>
@@ -1133,10 +1100,6 @@
           <value>Intake</value>
         </stringParameterConstInMechInstance>
       </transitionsTo>
-      <doubleParameters />
-      <boolParameters />
-      <constDoubleParameters />
-      <constBoolParameters />
       <motorTargets>
         <motorTarget>
           <name>Intake</name>
@@ -1157,14 +1120,14 @@
           <controlDataName>PercentOut</controlDataName>
         </motorTarget>
         <motorTarget>
-          <name>Agitator</name>
+          <name>Extender</name>
           <target>
-            <unitsFamily>none</unitsFamily>
+            <unitsFamily>angle</unitsFamily>
             <name>Target</name>
-            <__units__ />
+            <__units__>deg</__units__>
             <type>Double</type>
           </target>
-          <motorName>Agitator</motorName>
+          <motorName>Extender</motorName>
           <Enabled>
             <unitsFamily>none</unitsFamily>
             <name>boolParameter</name>
@@ -1172,28 +1135,9 @@
             <type>Boolean</type>
             <value>true</value>
           </Enabled>
-          <controlDataName>PercentOut</controlDataName>
+          <controlDataName>PositionDeg</controlDataName>
         </motorTarget>
       </motorTargets>
-      <solenoidTarget>
-        <solenoidTarget>
-          <name>Extender</name>
-          <target>
-            <unitsFamily>none</unitsFamily>
-            <name>Target</name>
-            <__units__ />
-            <type>Boolean</type>
-          </target>
-          <solenoidName>Extender</solenoidName>
-          <Enabled>
-            <unitsFamily>none</unitsFamily>
-            <name>boolParameter</name>
-            <__units__ />
-            <type>Boolean</type>
-            <value>false</value>
-          </Enabled>
-        </solenoidTarget>
-      </solenoidTarget>
     </state>
   </states>
   <doubleParameters />

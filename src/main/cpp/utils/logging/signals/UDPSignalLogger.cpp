@@ -56,7 +56,7 @@ UDPSignalLogger::UDPSignalLogger(const std::string &host, int port)
     int res = getaddrinfo(m_host.c_str(), nullptr, &hints, &result);
     if (res != 0 || !result || !result->ai_addr)
     {
-        std::cerr << "!!! Failed to resolve host: " << m_host << "!!!" <<std::endl;
+        std::cerr << "!!! Failed to resolve host: " << m_host << "!!!" << std::endl;
 #ifdef _WIN32
         closesocket(m_socket);
         m_socket = INVALID_SOCKET;
@@ -177,4 +177,88 @@ void UDPSignalLogger::WriteDoubleArray(std::string signalID, const std::vector<d
     }
     std::string message = FormatMessage(signalID, "double_array", oss.str(), units, timestamp);
     SendData(message);
+}
+
+void UDPSignalLogger::WritePose2d(std::string signalID, const frc::Pose2d &value, uint64_t timestamp)
+{
+    std::ostringstream oss;
+    oss << value.X().value() << ";" << value.Y().value() << ";" << value.Rotation().Radians().value();
+    std::string message = FormatMessage(signalID, "pose2d", oss.str(), "X_m;Y_m;Rot_rad", timestamp);
+    SendData(message);
+}
+
+void UDPSignalLogger::WritePose3d(std::string signalID, const frc::Pose3d &value, uint64_t timestamp)
+{
+    std::ostringstream oss;
+    oss << value.X().value() << ";" << value.Y().value() << ";" << value.Z().value() << ";"
+        << value.Rotation().GetQuaternion().W() << ";"
+        << value.Rotation().GetQuaternion().X() << ";"
+        << value.Rotation().GetQuaternion().Y() << ";"
+        << value.Rotation().GetQuaternion().Z();
+    std::string message = FormatMessage(signalID, "pose3d", oss.str(), "X_m;Y_m;Z_m;QW;QX;QY;QZ", timestamp);
+    SendData(message);
+}
+
+void UDPSignalLogger::WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, uint64_t timestamp)
+{
+    std::ostringstream oss;
+    oss << value.vx.value() << ";" << value.vy.value() << ";" << value.omega.value();
+    std::string message = FormatMessage(signalID, "chassis_speeds", oss.str(), "Vx_mps;Vy_mps;Omega_radps", timestamp);
+    SendData(message);
+}
+
+void UDPSignalLogger::WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, uint64_t timestamp)
+{
+    std::ostringstream oss;
+    oss << value.speed.value() << ";" << value.angle.Radians().value();
+    std::string message = FormatMessage(signalID, "swerve_module_state", oss.str(), "Speed_mps;Angle_rad", timestamp);
+    SendData(message);
+}
+
+void UDPSignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs, uint64_t timestamp)
+{
+    // Log axes
+    {
+        std::ostringstream oss;
+        for (size_t i = 0; i < axes.size(); ++i)
+        {
+            oss << axes[i];
+            if (i < axes.size() - 1)
+            {
+                oss << ";";
+            }
+        }
+        std::string message = FormatMessage(signalID + "/axes", "float_array", oss.str(), "", timestamp);
+        SendData(message);
+    }
+
+    // Log buttons
+    {
+        std::ostringstream oss;
+        for (size_t i = 0; i < buttons.size(); ++i)
+        {
+            oss << (buttons[i] ? "1" : "0");
+            if (i < buttons.size() - 1)
+            {
+                oss << ";";
+            }
+        }
+        std::string message = FormatMessage(signalID + "/buttons", "bool_array", oss.str(), "", timestamp);
+        SendData(message);
+    }
+
+    // Log POVs
+    {
+        std::ostringstream oss;
+        for (size_t i = 0; i < povs.size(); ++i)
+        {
+            oss << povs[i];
+            if (i < povs.size() - 1)
+            {
+                oss << ";";
+            }
+        }
+        std::string message = FormatMessage(signalID + "/povs", "int_array", oss.str(), "", timestamp);
+        SendData(message);
+    }
 }
