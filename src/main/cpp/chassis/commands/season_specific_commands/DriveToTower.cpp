@@ -13,7 +13,7 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
-#include "chassis/commands/season_specific_commands/DriveToTowerHelper.h"
+#include "fieldData/TowerHelper.h"
 #include "utils/PoseUtils.h"
 DriveToTower::DriveToTower(subsystems::CommandSwerveDrivetrain *chassis)
     : DriveToPose(chassis)
