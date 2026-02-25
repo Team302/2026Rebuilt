@@ -55,6 +55,9 @@ public:
         EXPEL,
         INTAKE_OUT,
         INTAKE_IN,
+        MANUAL_INTAKE_OUT,
+        MANUAL_INTAKE_IN,
+        EXTENDER_MODIFIER,
 
         // Climber
         CLIMB_MODE,
