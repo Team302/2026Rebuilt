@@ -22,6 +22,7 @@
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"
 #include "chassis/commands/season_specific_commands/DriveToHub.h"
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
+#include "chassis/commands/season_specific_commands/DriveToTower.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "chassis/generated/Telemetry.h"
 #include "frc2/command/CommandPtr.h"
@@ -47,6 +48,7 @@
 class SwerveContainer : public IRobotStateChangeSubscriber
 {
 public:
+    // declaring classes
     //------------------------------------------------------------------
     /// @brief      Get the singleton instance of SwerveContainer
     /// @return     SwerveContainer* - Pointer to the singleton instance
@@ -92,6 +94,9 @@ public:
     ///             the robot to the outpost location
     //------------------------------------------------------------------
     DriveToOutpost *GetDriveToOutpostCommand() { return m_driveToOutpost.get(); }
+
+    DriveToTower *GetDriveToTowerCommand() { return m_driveToTower.get(); }
+    // filepath: src/main/cpp/commands/DriveToTowerOutpost.h
 
 private:
     //------------------------------------------------------------------
@@ -141,6 +146,8 @@ private:
 
     /// @brief Drive to outpost command for season-specific autonomous navigation
     std::unique_ptr<DriveToOutpost> m_driveToOutpost;
+
+    std::unique_ptr<DriveToTower> m_driveToTower;
 
     //------------------------------------------------------------------
     /// @brief      Configures button bindings for chassis control
