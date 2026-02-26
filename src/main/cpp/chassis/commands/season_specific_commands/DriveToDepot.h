@@ -29,7 +29,6 @@
 /// making it useful for autonomous routines or driver assistance features during matches.
 //====================================================================================================================================================
 class DriveToDepot : public DriveToPose
-
 {
 public:
     //------------------------------------------------------------------
