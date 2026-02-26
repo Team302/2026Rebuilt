@@ -60,6 +60,12 @@ void LaunchState::InitCompBot302()
 void LaunchState::Run()
 {
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LaunchState"), string("Run"));
+	if (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH) &&
+		!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH_OVERRIDE) &&
+		!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::MANUAL_LAUNCH))
+	{
+		m_mechanism->UpdateTargetAgitatorPercentOut(0.0);
+	}
 }
 
 void LaunchState::Exit()
