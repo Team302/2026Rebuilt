@@ -19,7 +19,7 @@
 #include "utils/PoseUtils.h"
 #include "utils/FMSData.h"
 #include "auton/AllianceZoneManager.h"
-#include "fieldData/FieldOffsetValues.h"
+#include "fielddata/FieldOffsetValues.h"
 #include "fielddata/FieldConstants.h"
 
 using frc::DriverStation;
