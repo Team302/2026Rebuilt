@@ -63,7 +63,6 @@ private:
     ~HubHelper() = default;
 
     /// @brief Singleton instance pointer
-
     static HubHelper *m_instance;
 
     //------------------------------------------------------------------
