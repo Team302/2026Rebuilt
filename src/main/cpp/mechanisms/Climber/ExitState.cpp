@@ -50,7 +50,6 @@ void ExitState::Init()
 
 void ExitState::InitCompBot302()
 {
-	m_mechanism->GetAlignment()->Set(m_alignmentTarget);
 }
 
 void ExitState::Run()
@@ -89,5 +88,4 @@ bool ExitState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
 	return (!m_mechanism->IsClimbMode() || (m_mechanism->GetCurrentState() == Climber::STATE_NAMES::STATE_AUTON_L1CLIMB && considerGamepadTransitions));
-	// return (considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXAMPLE_MECH_FORWARD));
 }

@@ -27,9 +27,10 @@
 #include "ctre/phoenix6/controls/Follower.hpp"
 #include "ctre/phoenix6/configs/Configuration.hpp"
 #include "frc/Solenoid.h"
-#include <ctre/phoenix6/CANcoder.hpp>
-#include <ctre/phoenix6/configs/Configurator.hpp>
-#include <ctre/phoenix6/signals/SpnEnums.hpp>
+#include "ctre/phoenix6/CANcoder.hpp"
+#include "ctre/phoenix6/configs/Configurator.hpp"
+#include "ctre/phoenix6/signals/SpnEnums.hpp"
+#include "ctre/phoenix6/CANdi.hpp"
 
 #include "mechanisms/base/BaseMech.h"
 #include "state/StateMgr.h"
@@ -89,15 +90,21 @@ public:
 	RobotIdentifier getActiveRobotId() { return m_activeRobotId; }
 
 	ctre::phoenix6::hardware::TalonFX *GetClimber() const { return m_climber; }
-	frc::Solenoid *GetExtender() const { return m_extender; }
-	frc::Solenoid *GetAlignment() const { return m_alignment; }
+	ctre::phoenix6::hardware::CANdi *GetCANdi() const { return m_CANdi; }
 	ControlData *GetPositionDegree() const { return m_positionDegree; }
 
 	bool IsClimbMode() const { return m_climbModeStatus; }
 	bool IsAllowedToClimb() const { return m_allowedToClimb; };
 	bool IsDriveToDone() const { return m_driveToFinished; };
+	bool IsClimberExtended() const { return m_CANdi->GetS2Closed().GetValue(); };
+	bool IsClimberRetracted() const { return m_CANdi->GetS1Closed().GetValue(); };
+
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
+	static std::map<STATE_NAMES, std::string> STATE_NAMESEnumToStringMap;
+
 	void SetCurrentState(int state, bool run) override;
+	std::string GetCurrentStateName();
+
 	void UpdateTargetClimberPercentOut(double percentOut)
 	{
 		m_ClimberPercentOut.Output = percentOut;
@@ -120,8 +127,8 @@ private:
 	std::unordered_map<std::string, STATE_NAMES> m_stateMap;
 
 	ctre::phoenix6::hardware::TalonFX *m_climber;
-	frc::Solenoid *m_extender;
-	frc::Solenoid *m_alignment;
+	ctre::phoenix6::hardware::CANdi *m_CANdi;
+
 	ControlData *m_positionDegree;
 
 	void InitializeTalonFXClimberCompBot302();

@@ -46,9 +46,9 @@ namespace LauncherStates
 		RobotIdentifier m_RobotId;
 
 		const units::angular_velocity::turns_per_second_t m_launcherTarget = units::angular_velocity::turns_per_second_t(500_rpm);
-		const units::angle::degree_t m_hoodTarget = units::angle::degree_t(15.0);
+		const units::angle::turn_t m_hoodTarget = units::angle::turn_t(15.0);
 		const double m_transferTarget = double(1);
-		const units::angle::degree_t m_turretTarget = units::angle::degree_t(180);
+		const units::angle::turn_t m_turretTarget = units::angle::turn_t(180);
 		const double m_indexerTarget = double(1);
 		const double m_agitatorTarget = double(1);
 	};

@@ -108,29 +108,7 @@ Climber::Climber(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHA
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveToFinished_Bool);
-
-	// InitializeLogging();
 }
-
-/* void Climber::InitializeLogging()
- {
-	wpi::log::DataLog &log = frc::DataLogManager::GetLog();
-
-	 m_ClimberTotalEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/TotalEnergy");
-m_ClimberTotalEnergyLogEntry.Append(0.0);
-m_ClimberTotalWattHoursLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/TotalWattHours");
-m_ClimberTotalWattHoursLogEntry.Append(0.0);
-m_ClimberLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberPosition");
-m_ClimberLogEntry.Append(0.0);
-m_climberTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberTarget");
-m_climberTargetLogEntry.Append(0.0);
-m_ClimberPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberPower");
-m_ClimberPowerLogEntry.Append(0.0);
-m_ClimberEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/Climber/ClimberEnergy");
-m_ClimberEnergyLogEntry.Append(0.0);
-m_ClimberStateLogEntry = wpi::log::IntegerLogEntry(log, "mechanisms/Climber/State");
-m_ClimberStateLogEntry.Append(0);
- }*/
 
 std::map<std::string, Climber::STATE_NAMES>
 	Climber::stringToSTATE_NAMESEnumMap{
@@ -142,13 +120,21 @@ std::map<std::string, Climber::STATE_NAMES>
 		{"STATE_EXIT", Climber::STATE_NAMES::STATE_EXIT},
 		{"STATE_AUTON_L1CLIMB", Climber::STATE_NAMES::STATE_AUTON_L1CLIMB}};
 
+std::map<Climber::STATE_NAMES, std::string>
+	Climber::STATE_NAMESEnumToStringMap{
+		{Climber::STATE_NAMES::STATE_OFF, "STATE_OFF"},
+		{Climber::STATE_NAMES::STATE_WANT_TO_CLIMB, "STATE_WANT_TO_CLIMB"},
+		{Climber::STATE_NAMES::STATE_PREPARE_TO_CLIMB, "STATE_PREPARE_TO_CLIMB"},
+		{Climber::STATE_NAMES::STATE_L1CLIMB, "STATE_L1CLIMB"},
+		{Climber::STATE_NAMES::STATE_L3CLIMB, "STATE_L3CLIMB"},
+		{Climber::STATE_NAMES::STATE_EXIT, "STATE_EXIT"},
+		{Climber::STATE_NAMES::STATE_AUTON_L1CLIMB, "STATE_AUTON_L1CLIMB"}};
+
 void Climber::CreateCompBot302()
 {
 	m_ntName = "Climber";
-	m_climber = new ctre::phoenix6::hardware::TalonFX(11, ctre::phoenix6::CANBus("canivore"));
-
-	m_extender = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 2);
-	m_alignment = new frc::Solenoid(1, frc::PneumaticsModuleType::REVPH, 3);
+	m_climber = new ctre::phoenix6::hardware::TalonFX(19, ctre::phoenix6::CANBus("canivore"));
+	m_CANdi = new ctre::phoenix6::hardware::CANdi(2, ctre::phoenix6::CANBus("canivore"));
 
 	m_positionDegree = new ControlData(
 		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
@@ -197,15 +183,15 @@ void Climber::InitializeTalonFXClimberCompBot302()
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(0);
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(0);
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
-	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 0;
+	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
+	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 2;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::turn_t(0);
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
@@ -256,6 +242,8 @@ void Climber::RunCommonTasks()
 {
 	// This function is called once per loop before the current state Run()
 	Cyclic();
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Climber", "Current State", GetCurrentStateName());
 }
 
 /// @brief  Set the control constants (e.g. PIDF values).
@@ -317,20 +305,9 @@ units::angle::degree_t Climber::GetPigeonPitch()
 	units::angle::degree_t pigeonPitch = m_chassis->GetPigeon2().GetPitch().GetValue();
 	return pigeonPitch;
 }
-/* void Climber::DataLog(uint64_t timestamp)
+
+std::string Climber::GetCurrentStateName()
 {
-   auto currTime = m_powerTimer.Get();
-LogClimber(timestamp, m_Climber->GetPosition().GetValueAsDouble());
-auto ClimberPower = DragonPower::CalcPowerEnergy(currTime, m_Climber->GetSupplyVoltage().GetValueAsDouble(), m_Climber->GetSupplyCurrent().GetValueAsDouble());
-m_power = get<0>(ClimberPower);
-m_energy = get<1>(ClimberPower);
-m_totalEnergy += m_energy;
-LogClimberPower(timestamp, m_power);
-LogClimberEnergy(timestamp, m_energy);
-LogClimberState(timestamp, GetCurrentState());
-m_totalWattHours += DragonPower::ConvertEnergyToWattHours(m_totalEnergy);
-LogClimberTotalEnergy(timestamp, m_totalEnergy);
-LogClimberTotalWattHours(timestamp, m_totalWattHours);
-m_powerTimer.Reset();
-m_powerTimer.Start();
- }*/
+	STATE_NAMES state = static_cast<STATE_NAMES>(GetCurrentState());
+	return (STATE_NAMESEnumToStringMap.find(state) == STATE_NAMESEnumToStringMap.end()) ? "Unknown State" : STATE_NAMESEnumToStringMap.at(state);
+}

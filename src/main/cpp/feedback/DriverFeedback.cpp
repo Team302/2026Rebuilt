@@ -139,7 +139,7 @@ void DriverFeedback::UpdateLEDStates()
         {
             desiredPrimaryColor = frc::Color::kCrimson;
 
-            if (m_isIntakeExtended)
+            if (m_isIntakeIn)
             {
                 desiredAnimation = DragonCANdle::AnimationMode::BLINKING;
             }
@@ -307,9 +307,9 @@ void DriverFeedback::UpdateDiagnosticLEDs()
 
         if (intakeMgr != nullptr)
         {
-            m_isIntakeExtended = intakeMgr->IsIntakeExtended();
+            m_isIntakeIn = intakeMgr->IsIntakeIn();
         }
-        m_LEDStates->SetIntakeSensor(m_isIntakeExtended);
+        m_LEDStates->SetIntakeSensor(m_isIntakeIn);
         m_LEDStates->SetHoodSwitch(hoodZeroSwitch);
         m_LEDStates->SetTurretZero(turretZero);
         m_LEDStates->SetTurretEnd(turretEnd);
