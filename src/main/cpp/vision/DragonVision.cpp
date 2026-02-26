@@ -298,6 +298,46 @@ std::vector<VisionPose> DragonVision::GetRobotPositionMegaTag1()
 	return poses;
 }
 
+/// @brief Set the Limelight robot pose (Yaw) on all AprilTag limelights using MegaTag1 localization.
+/// @note Iterates through all limelights configured for APRIL_TAGS usage and calls
+///       SetRobotPoseWithMegaTag1() on each one. This uses the limelight's current
+///       MegaTag1 pose estimate to update the robot's position. This should be called with IMU mode 1 during disabled only.
+void DragonVision::SetRobotPositionMegaTag1()
+{
+	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
+	for (auto limelight : limelights)
+	{
+		limelight->SetRobotPoseWithMegaTag1();
+	}
+}
+
+/// @brief Set the Limelight robot pose (Yaw) on all AprilTag limelights using the chassis pose.
+/// @param pose The robot's current pose (position and rotation) on the field.
+/// @note Updates the yaw/orientation of all limelights configured for APRIL_TAGS usage.
+///       This helps the limelight improve its localization accuracy by providing the
+///       current robot pose as a reference. This should be called with IMU mode 3/4
+void DragonVision::SetLimeLightYaw(frc::Pose2d pose)
+{
+	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
+	for (auto limelight : limelights)
+	{
+		limelight->SetRobotPose(pose);
+	}
+}
+
+/// @brief Update the IMU configuration for all AprilTag limelights.
+/// @note Iterates through all limelights configured for APRIL_TAGS usage and calls
+///       UpdateIMUConfiguration() on each one. This synchronizes IMU settings between
+///       the robot and the limelights, which is important for accurate localization.
+void DragonVision::SetIMUConfig()
+{
+	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
+	for (auto limelight : limelights)
+	{
+		limelight->UpdateIMUConfiguration();
+	}
+}
+
 /// @brief Query all registered limelights for MegaTag2-based robot poses and choose the best.
 /// @return std::vector<VisionPose>; empty if no valid poses were returned by cameras.
 std::vector<VisionPose> DragonVision::GetRobotPositionMegaTag2()
