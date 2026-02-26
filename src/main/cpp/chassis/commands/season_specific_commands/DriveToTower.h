@@ -16,6 +16,7 @@
 
 #include "chassis/commands/DriveToPose.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "fieldData/TowerHelper.h"
 
 //====================================================================================================================================================
 /// @class DriveToTower
@@ -23,7 +24,7 @@
 ///
 /// This command extends DriveToPose to provide specific functionality for navigating to Towers.
 /// It automatically determines which Tower (red or blue) is closest to the robot's current position
-/// and calculates the target pose at the center of that Tower using DriveToTowerHelper.
+/// and calculates the target pose at the center of that Tower using TowerHelper.
 ///
 /// The command uses PID control to drive the robot to the calculated Towercenter position,
 /// making it useful for autonomous routines or driver assistance features during matches.
@@ -33,7 +34,7 @@ class DriveToTower : public DriveToPose
 public:
     //------------------------------------------------------------------
     /// @brief      Get the singleton instance of TowerHelper
-    /// @return     DRiveToTowerHelper* - Pointer to the singleton instance
+    /// @return     TowerHelper* - Pointer to the singleton instance
     //------------------------------------------------------------------
 
     //------------------------------------------------------------------

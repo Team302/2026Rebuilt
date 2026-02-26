@@ -23,28 +23,28 @@
 #include "fielddata/FieldConstants.h"
 
 using frc::DriverStation;
-DriveToTowerHelper *DriveToTowerHelper::m_instance = nullptr;
+TowerHelper *TowerHelper::m_instance = nullptr;
 
 //------------------------------------------------------------------
-/// @brief      Get the singleton instance of DriveToTowerHelper
-/// @return     DRiveToTowerHelper* - Pointer to the singleton instance
+/// @brief      Get the singleton instance of TowerHelper
+/// @return     TowerHelper* - Pointer to the singleton instance
 //------------------------------------------------------------------
-DriveToTowerHelper *DriveToTowerHelper::GetInstance()
+TowerHelper *TowerHelper::GetInstance()
 {
-    if (DriveToTowerHelper::m_instance == nullptr)
+    if (TowerHelper::m_instance == nullptr)
     {
-        DriveToTowerHelper::m_instance = new DriveToTowerHelper();
+        TowerHelper::m_instance = new TowerHelper();
     }
-    return DriveToTowerHelper::m_instance;
+    return TowerHelper::m_instance;
 }
 
 //------------------------------------------------------------------
-/// @brief      Constructor for DriveToTowerHelper
+/// @brief      Constructor for TowerHelper
 /// @details    Initializes the chassis and field constants references
 ///             Used by GetInstance() to create the singleton
 //------------------------------------------------------------------
-DriveToTowerHelper::DriveToTowerHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
-                                           m_fieldConstants(FieldConstants::GetInstance())
+TowerHelper::TowerHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
+                             m_fieldConstants(FieldConstants::GetInstance())
 {
     m_allianceColor = FMSData::GetAllianceColor();
 }
@@ -57,10 +57,9 @@ DriveToTowerHelper::DriveToTowerHelper() : m_chassis(ChassisConfigMgr::GetInstan
 ///             of the left, right, and neutral side poses. Uses the neutral
 ///             side's rotation for the resulting pose orientation.
 //------------------------------------------------------------------
-frc::Pose2d DriveToTowerHelper::CalcTowerPose() const
+frc::Pose2d TowerHelper::CalcTowerPose() const
 {
     if (m_chassis == nullptr || m_fieldConstants == nullptr)
-    // refrefnce depothelper
     {
         return frc::Pose2d();
     }
@@ -164,7 +163,7 @@ frc::Pose2d DriveToTowerHelper::CalcTowerPose() const
 /// @details    Uses the translation components of both poses to calculate
 ///             the Euclidean distance between them
 //------------------------------------------------------------------
-// units::length::meter_t DriveToTowerHelper::CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element,
+// units::length::meter_t TowerHelper::CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element,
 //                                                                 frc::Pose2d currentPose) const
 // {
 //     if (m_fieldConstants == nullptr)

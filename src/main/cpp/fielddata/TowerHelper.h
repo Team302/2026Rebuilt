@@ -22,7 +22,7 @@
 #include "frc/DriverStation.h"
 
 //====================================================================================================================================================
-/// @class DriveToTowerHelper
+/// @class TowerHelper
 /// @brief Helper class for Tower-related calculations and navigation
 ///
 /// This singleton class provides utilities for interacting with Towers on the field, including:
@@ -33,14 +33,14 @@
 /// The class uses the robot's current pose and field constants to make alliance-aware decisions
 /// about Tower locations and navigation targets.
 //====================================================================================================================================================
-class DriveToTowerHelper
+class TowerHelper
 {
 public:
     //------------------------------------------------------------------
-    /// @brief      Get the singleton instance of DriveToTowerHelper
-    /// @return     DriveToTowerHelper* - Pointer to the singleton instance
+    /// @brief      Get the singleton instance of TowerHelper
+    /// @return     TowerHelper* - Pointer to the singleton instance
     //------------------------------------------------------------------
-    static DriveToTowerHelper *GetInstance();
+    static TowerHelper *GetInstance();
 
     //------------------------------------------------------------------
     /// @brief      Calculates the center pose of the nearest Tower
@@ -58,15 +58,15 @@ private:
     /// @brief      Private constructor for singleton pattern
     /// @details    Initializes the chassis and field constants references
     //------------------------------------------------------------------
-    DriveToTowerHelper();
+    TowerHelper();
 
     //------------------------------------------------------------------
     /// @brief      Destructor (default implementation)
     //------------------------------------------------------------------
-    ~DriveToTowerHelper() = default;
+    ~TowerHelper() = default;
 
     /// @brief Singleton instance pointer
-    static DriveToTowerHelper *m_instance;
+    static TowerHelper *m_instance;
 
     /// @brief Pointer to the swerve drivetrain subsystem
     subsystems::CommandSwerveDrivetrain *m_chassis;

@@ -13,7 +13,6 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
-#include "fieldData/TowerHelper.h"
 #include "utils/PoseUtils.h"
 DriveToTower::DriveToTower(subsystems::CommandSwerveDrivetrain *chassis)
     : DriveToPose(chassis)
@@ -30,7 +29,7 @@ DriveToTower::DriveToTower(subsystems::CommandSwerveDrivetrain *chassis)
 //------------------------------------------------------------------
 /// @brief      Calculates the target end pose for the Tower
 /// @return     frc::Pose2d - The target pose at the center of the nearest Tower
-/// @details    Uses DriveToTowerHelper to determine which Tower (red or blue) is
+/// @details    Uses TowerHelper to determine which Tower (red or blue) is
 ///             closest to the robot and calculates the center pose of that
 ///             Tower. Returns a default pose if TowerHelper is unavailable.
 //------------------------------------------------------------------
@@ -38,10 +37,10 @@ frc::Pose2d DriveToTower::GetEndPose()
 {
     frc::Pose2d endPose{};
 
-    auto driveToTowerHelper = DriveToTowerHelper::GetInstance();
-    if (driveToTowerHelper != nullptr)
+    auto TowerHelper = TowerHelper::GetInstance();
+    if (TowerHelper != nullptr)
     {
-        return driveToTowerHelper->CalcTowerPose();
+        return TowerHelper->CalcTowerPose();
     }
     return endPose;
 }
