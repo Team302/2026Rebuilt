@@ -116,10 +116,10 @@ struct DriveToPoses DriveOverBump::GetDriveToPoses()
 
         // Retrieve field coordinates for both sides of the bump
         auto offsetVals = FieldOffsetValues::GetInstance();
-        auto neutralX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_X);
-        auto neutralY = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_Y);
+        auto neutralX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X);
+        auto neutralY = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_Y);
 
-        auto allianceX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_X);
+        auto allianceX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X);
         auto allianceY = neutralY; // Y coordinate is the same for both sides of the same bump
 
         if (isInNeutralZone) // Drive from neutral zone over bump to alliance zone
