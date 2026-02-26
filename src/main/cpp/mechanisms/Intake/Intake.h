@@ -73,6 +73,11 @@ public:
 		m_intakePercentOut.Output = percentOut;
 		m_intakeActiveTarget = &m_intakePercentOut;
 	}
+	void UpdateTargetExtenderPercentOut(double percentOut)
+	{
+		m_extenderPercentOut.Output = percentOut;
+		m_extenderActiveTarget = &m_extenderPercentOut;
+	}
 	void UpdateTargetExtenderPositionDeg(units::angle::turn_t position)
 	{
 		m_extenderPositionDeg.Position = position;
@@ -94,14 +99,16 @@ public:
 	ControlData *GetPositionDeg() const { return m_positionDeg; }
 
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
+	static std::map<STATE_NAMES, std::string> STATE_NAMESEnumToStringMap;
 
 	void SetCurrentState(int state, bool run) override;
+	std::string GetCurrentStateName();
 
 	void ManualControl();
 	void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
 	bool IsInClimbMode() const { return m_isInClimbMode; }
 	bool IsLaunching() const { return m_isLaunching; }
-	bool IsIntakeExtended() const { return (m_intake->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround); }
+	bool IsIntakeIn() const { return (m_extender->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround); }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -122,13 +129,14 @@ private:
 	void InitializeTalonFXSExtenderCompBot302();
 
 	ctre::phoenix6::controls::DutyCycleOut m_intakePercentOut{0.0};
+	ctre::phoenix6::controls::DutyCycleOut m_extenderPercentOut{0.0};
 	ctre::phoenix6::controls::PositionVoltage m_extenderPositionDeg{units::angle::degree_t(0.0)};
-	ctre::phoenix6::controls::ControlRequest *m_intakeActiveTarget;
-	ctre::phoenix6::controls::ControlRequest *m_extenderActiveTarget;
+	ctre::phoenix6::controls::ControlRequest *m_intakeActiveTarget = &m_intakePercentOut;
+	ctre::phoenix6::controls::ControlRequest *m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
 
 	bool m_isInClimbMode = false;
 	bool m_isLaunching = false;
-	bool m_isAllowedToClimb = false;
+	bool m_prevIntakeSwitchState = false;
 
 	units::angle::turn_t m_intakeRetractedPositionTarget{0.0};
 	units::angle::turn_t m_intakeExtendedPositionTarget{0.0};

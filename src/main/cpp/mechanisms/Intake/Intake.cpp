@@ -111,12 +111,21 @@ std::map<std::string, Intake::STATE_NAMES>
 		{"STATE_EMPTY_HOPPER", Intake::STATE_NAMES::STATE_EMPTY_HOPPER},
 	};
 
+std::map<Intake::STATE_NAMES, std::string>
+	Intake::STATE_NAMESEnumToStringMap{
+		{Intake::STATE_NAMES::STATE_OFF, "STATE_OFF"},
+		{Intake::STATE_NAMES::STATE_INTAKE, "STATE_INTAKE"},
+		{Intake::STATE_NAMES::STATE_EXPEL, "STATE_EXPEL"},
+		{Intake::STATE_NAMES::STATE_LAUNCH, "STATE_LAUNCH"},
+		{Intake::STATE_NAMES::STATE_EMPTY_HOPPER, "STATE_EMPTY_HOPPER"},
+	};
+
 void Intake::CreateCompBot302()
 {
 	m_ntName = "Intake";
 	m_intake = new ctre::phoenix6::hardware::TalonFX(16, ctre::phoenix6::CANBus("canivore"));
-	m_extender = new ctre::phoenix6::hardware::TalonFXS(0, ctre::phoenix6::CANBus("canivore"));
-	m_intakeCANdi = new ctre::phoenix6::hardware::CANdi(16, ctre::phoenix6::CANBus("canivore"));
+	m_extender = new ctre::phoenix6::hardware::TalonFXS(11, ctre::phoenix6::CANBus("canivore"));
+	m_intakeCANdi = new ctre::phoenix6::hardware::CANdi(11, ctre::phoenix6::CANBus("canivore"));
 
 	m_percentOut = new ControlData(
 		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
@@ -208,30 +217,15 @@ void Intake::InitializeTalonFXIntakeCompBot302()
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
 	configs.Feedback.SensorToMechanismRatio = 1;
 
-	ctre::phoenix::StatusCode statusMotor = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		statusMotor = m_intake->GetConfigurator().Apply(configs, units::time::second_t(0.25));
-		if (statusMotor.IsOK())
+		status = m_intake->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		if (status.IsOK())
 			break;
 	}
-	if (!statusMotor.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intake", "m_intake Status", statusMotor.GetName());
-
-	CANdiConfiguration CANdiConfig{};
-
-	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenHigh;
-	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::PullHigh;
-
-	ctre::phoenix::StatusCode statusCANdi = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
-	for (int i = 0; i < 5; ++i)
-	{
-		statusCANdi = m_intakeCANdi->GetConfigurator().Apply(CANdiConfig, units::time::second_t(0.25));
-		if (statusCANdi.IsOK())
-			break;
-	}
-	if (!statusCANdi.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intake", "m_intakeCANdi Status", statusCANdi.GetName());
+	if (!status.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intake", "m_intake Status", status.GetName());
 }
 
 void Intake::InitializeTalonFXSExtenderCompBot302()
@@ -255,11 +249,11 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
-	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
+	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
+	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 11;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
@@ -268,7 +262,7 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
-	configs.Commutation.MotorArrangement = MotorArrangementValue::Disabled;
+	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.Slot0.kI = m_positionDeg->GetI();
 	configs.Slot0.kD = m_positionDeg->GetD();
@@ -280,15 +274,30 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.Slot0.GravityType = m_positionDeg->GetGravityType();
 	configs.Slot0.StaticFeedforwardSign = m_positionDeg->GetStaticFeedforwardSign();
 
-	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	CANdiConfiguration CANdiConfig{};
+
+	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenHigh;
+	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::PullHigh;
+
+	ctre::phoenix::StatusCode statusMotor = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		status = m_extender->GetConfigurator().Apply(configs, units::time::second_t(0.25));
-		if (status.IsOK())
+		statusMotor = m_extender->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		if (statusMotor.IsOK())
 			break;
 	}
-	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_extender", "m_extender Status", status.GetName());
+	if (!statusMotor.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_extender", "m_extender Status", statusMotor.GetName());
+
+	ctre::phoenix::StatusCode statusCANdi = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	for (int i = 0; i < 5; ++i)
+	{
+		statusCANdi = m_intakeCANdi->GetConfigurator().Apply(CANdiConfig, units::time::second_t(0.25));
+		if (statusCANdi.IsOK())
+			break;
+	}
+	if (!statusCANdi.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intakeCANdi", "m_intakeCANdi Status", statusCANdi.GetName());
 }
 
 void Intake::SetCurrentState(int state, bool run)
@@ -302,11 +311,16 @@ void Intake::RunCommonTasks()
 	ManualControl();
 	Cyclic();
 
-	// if (m_isAllowedToClimb == IsIntakeExtended())
-	// {
-	// 	m_isAllowedToClimb = !GetIsIntakeExtendedState();
-	// 	NotifyStateUpdate(RobotStateChanges::StateChange::ClimbModeStatus_Bool, m_isAllowedToClimb);
-	// }
+	bool isIntakeIn = IsIntakeIn();
+	if (m_prevIntakeSwitchState != isIntakeIn)
+	{
+		m_prevIntakeSwitchState = isIntakeIn;
+		NotifyStateUpdate(RobotStateChanges::StateChange::ClimbModeStatus_Bool, isIntakeIn);
+	}
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentStateName());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeIn", IsIntakeIn());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IntakePercentOut", m_intakePercentOut.Output.value());
 }
 /// @brief  Set the control constants (e.g. PIDF values).
 /// @param [in] ControlData*                                   pid:  the control constants
@@ -326,10 +340,6 @@ void Intake::Update()
 void Intake::Cyclic()
 {
 	Update();
-
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentState());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeExtended", IsIntakeExtended());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IntakePercentOut", m_intakePercentOut.Output.value());
 }
 
 ControlData *Intake::GetControlData(string name)
@@ -353,17 +363,28 @@ void Intake::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value
 void Intake::ManualControl()
 {
 	TeleopControl *controller = TeleopControl::GetInstance();
-	if (controller != nullptr && GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
+	if (controller != nullptr)
 	{
-		bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
-		bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE);
-		if (intakeOutPressed)
+		if (controller->IsButtonPressed(TeleopControlFunctions::EXTENDER_MODIFIER))
 		{
-			UpdateTargetExtenderPositionDeg(m_intakeExtendedPositionTarget);
+			double manualExtenderPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN);
+			UpdateTargetExtenderPercentOut(manualExtenderPercent);
 		}
-		else if (intakeInPressed)
+		else
 		{
-			UpdateTargetExtenderPositionDeg(m_intakeRetractedPositionTarget);
+			if (GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
+			{
+				bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
+				bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE);
+				if (intakeOutPressed)
+				{
+					UpdateTargetExtenderPositionDeg(m_intakeExtendedPositionTarget);
+				}
+				else if (intakeInPressed)
+				{
+					UpdateTargetExtenderPositionDeg(m_intakeRetractedPositionTarget);
+				}
+			}
 		}
 	}
 }
@@ -413,6 +434,12 @@ void Intake::DataLog(uint64_t timestamp)
 	LogDoubleData(timestamp, m_ntName + "/Control/TargetPercentOut", m_intakePercentOut.Output.value(), "Percent");
 
 	// Mechanism state
-	LogIntData(timestamp, m_ntName + "/State", static_cast<int>(GetCurrentState()));
+	LogIntData(timestamp, m_ntName + "/State", GetCurrentStateName());
 	LogDoubleData(timestamp, m_ntName + "/IsIntakeExtended", m_intake->GetPosition().GetValueAsDouble());
+}
+
+std::string Intake::GetCurrentStateName()
+{
+	STATE_NAMES state = static_cast<STATE_NAMES>(GetCurrentState());
+	return (STATE_NAMESEnumToStringMap.find(state) == STATE_NAMESEnumToStringMap.end()) ? "Unknown State" : STATE_NAMESEnumToStringMap.at(state);
 }

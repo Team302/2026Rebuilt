@@ -120,6 +120,16 @@ std::map<std::string, Climber::STATE_NAMES>
 		{"STATE_EXIT", Climber::STATE_NAMES::STATE_EXIT},
 		{"STATE_AUTON_L1CLIMB", Climber::STATE_NAMES::STATE_AUTON_L1CLIMB}};
 
+std::map<Climber::STATE_NAMES, std::string>
+	Climber::STATE_NAMESEnumToStringMap{
+		{Climber::STATE_NAMES::STATE_OFF, "STATE_OFF"},
+		{Climber::STATE_NAMES::STATE_WANT_TO_CLIMB, "STATE_WANT_TO_CLIMB"},
+		{Climber::STATE_NAMES::STATE_PREPARE_TO_CLIMB, "STATE_PREPARE_TO_CLIMB"},
+		{Climber::STATE_NAMES::STATE_L1CLIMB, "STATE_L1CLIMB"},
+		{Climber::STATE_NAMES::STATE_L3CLIMB, "STATE_L3CLIMB"},
+		{Climber::STATE_NAMES::STATE_EXIT, "STATE_EXIT"},
+		{Climber::STATE_NAMES::STATE_AUTON_L1CLIMB, "STATE_AUTON_L1CLIMB"}};
+
 void Climber::CreateCompBot302()
 {
 	m_ntName = "Climber";
@@ -232,6 +242,8 @@ void Climber::RunCommonTasks()
 {
 	// This function is called once per loop before the current state Run()
 	Cyclic();
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Climber", "Current State", GetCurrentStateName());
 }
 
 /// @brief  Set the control constants (e.g. PIDF values).
@@ -314,5 +326,10 @@ void Climber::DataLog(uint64_t timestamp)
 	LogBoolData(timestamp, m_ntName + "/Motor/Fault/SupplyCurrLimit", m_climber->GetFault_SupplyCurrLimit().GetValue());
 
 	// Mechanism state
-	LogIntData(timestamp, m_ntName + "/State", static_cast<int>(GetCurrentState()));
+	LogIntData(timestamp, m_ntName + "/State", GetCurrentStateName());
+}
+std::string Climber::GetCurrentStateName()
+{
+	STATE_NAMES state = static_cast<STATE_NAMES>(GetCurrentState());
+	return (STATE_NAMESEnumToStringMap.find(state) == STATE_NAMESEnumToStringMap.end()) ? "Unknown State" : STATE_NAMESEnumToStringMap.at(state);
 }

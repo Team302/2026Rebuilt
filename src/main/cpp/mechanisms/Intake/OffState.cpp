@@ -76,6 +76,6 @@ bool OffState::IsTransitionCondition(bool considerGamepadTransitions)
 	// To get the current state use m_mechanism->GetCurrentState()
 	return ((considerGamepadTransitions && ((!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXPEL) && m_mechanism->GetCurrentState() == m_mechanism->STATE_EXPEL) ||
 											(!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::INTAKE) && m_mechanism->GetCurrentState() == m_mechanism->STATE_INTAKE))) ||
-			(!m_mechanism->IsIntakeExtended() && m_mechanism->GetCurrentState() == m_mechanism->STATE_EMPTY_HOPPER) ||
+			(m_mechanism->IsIntakeIn() && m_mechanism->GetCurrentState() == m_mechanism->STATE_EMPTY_HOPPER) ||
 			(!m_mechanism->IsLaunching() && m_mechanism->GetCurrentState() == m_mechanism->STATE_LAUNCH));
 }

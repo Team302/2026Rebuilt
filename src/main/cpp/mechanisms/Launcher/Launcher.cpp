@@ -131,6 +131,8 @@ Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MEC
 	PeriodicLooper::GetInstance()->RegisterAll(this);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::HubActive_Bool);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool);
 
 	m_targetCalculator = RebuiltTargetCalculator::GetInstance();
 }
@@ -146,6 +148,18 @@ std::map<std::string, Launcher::STATE_NAMES>
 		{"STATE_CLIMB", Launcher::STATE_NAMES::STATE_CLIMB},
 		{"STATE_LAUNCHER_TUNING", Launcher::STATE_NAMES::STATE_LAUNCHER_TUNING},
 		{"STATE_MANUAL_LAUNCH", Launcher::STATE_NAMES::STATE_MANUAL_LAUNCH}};
+
+std::map<Launcher::STATE_NAMES, std::string>
+	Launcher::STATE_NAMESEnumToStringMap{
+		{Launcher::STATE_NAMES::STATE_OFF, "STATE_OFF"},
+		{Launcher::STATE_NAMES::STATE_INITIALIZE, "STATE_INITIALIZE"},
+		{Launcher::STATE_NAMES::STATE_IDLE, "STATE_IDLE"},
+		{Launcher::STATE_NAMES::STATE_PREPARE_TO_LAUNCH, "STATE_PREPARE_TO_LAUNCH"},
+		{Launcher::STATE_NAMES::STATE_LAUNCH, "STATE_LAUNCH"},
+		{Launcher::STATE_NAMES::STATE_EMPTY_HOPPER, "STATE_EMPTY_HOPPER"},
+		{Launcher::STATE_NAMES::STATE_CLIMB, "STATE_CLIMB"},
+		{Launcher::STATE_NAMES::STATE_LAUNCHER_TUNING, "STATE_LAUNCHER_TUNING"},
+		{Launcher::STATE_NAMES::STATE_MANUAL_LAUNCH, "STATE_MANUAL_LAUNCH"}};
 
 void Launcher::CreateCompBot302()
 {
@@ -589,7 +603,7 @@ void Launcher::InitializeTalonFXAgitatorCompBot302()
 
 	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
-	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
+	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.05);
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
@@ -642,7 +656,7 @@ void Launcher::RunCommonTasks()
 	CalculateTargets();
 	UpdateLauncherTargets();
 
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Current State", GetCurrentState());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Current State", GetCurrentStateName());
 }
 
 /// @brief  Set the control constants (e.g. PIDF values).
@@ -698,12 +712,20 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 	{
 		m_isAllowedToClimb = value;
 	}
+	else if (statechange == RobotStateChanges::StateChange::HubActive_Bool)
+	{
+		m_isHubActive = value;
+	}
+	else if (statechange == RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool)
+	{
+		m_shiftChangeIn3Seconds = value;
+	}
 }
 
 bool Launcher::IsLauncherAtTarget()
 {
 
-	if (frc::RobotBase::IsSimulation())
+	if (frc::RobotBase::IsSimulation() && !(GetCurrentState() == STATE_NAMES::STATE_LAUNCHER_TUNING))
 	{
 		return true;
 	}
@@ -725,7 +747,11 @@ bool Launcher::IsLauncherAtTarget()
 
 bool Launcher::IsInLaunchZone() const
 {
-	return !DeadZoneManager::GetInstance()->IsInDeadZone();
+	if (!DeadZoneManager::GetInstance()->IsInDeadZone())
+	{
+		return !(AllianceZoneManager::GetInstance()->IsInAllianceZone() && !(m_isHubActive || m_shiftChangeIn3Seconds));
+	}
+	return false;
 }
 
 void Launcher::CalculateTargets()
@@ -744,11 +770,11 @@ void Launcher::CalculateTargets()
 		m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingLauncherVelocityArray, units::length::foot_t(distanceToTarget));
 	}
 
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Distance To Target", distanceToTarget.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Hood Angle Target", m_targetHoodAngle.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Launcher Speed Target", m_targetLauncherAngularVelocity.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Launcher Speed RPM", units::angular_velocity::revolutions_per_minute_t(m_launcher->GetVelocity().GetValue()).value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "Hood Angle", units::angle::degree_t(m_hood->GetPosition().GetValue()).value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Distance To Target", distanceToTarget.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Angle Target", m_targetHoodAngle.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed Target", m_targetLauncherAngularVelocity.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed RPM", units::angular_velocity::revolutions_per_minute_t(m_launcher->GetVelocity().GetValue()).value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Angle", m_hood->GetPosition().GetValueAsDouble());
 }
 
 void Launcher::UpdateLauncherTargets()
@@ -908,7 +934,12 @@ void Launcher::DataLog(uint64_t timestamp)
 	LogDoubleData(timestamp, m_ntName + "/Control/TargetTurretAngle", m_targetTurretAngle.value(), "Degrees");
 
 	// Mechanism state
-	LogIntData(timestamp, m_ntName + "/State", static_cast<int>(GetCurrentState()));
+	LogIntData(timestamp, m_ntName + "/State", GetCurrentStateName());
 	LogBoolData(timestamp, m_ntName + "/IsProtectedMode", m_launcherProtectedMode);
 	LogBoolData(timestamp, m_ntName + "/IsClimbMode", m_isClimbMode);
+}
+std::string Launcher::GetCurrentStateName()
+{
+	STATE_NAMES state = static_cast<STATE_NAMES>(GetCurrentState());
+	return (STATE_NAMESEnumToStringMap.find(state) == STATE_NAMESEnumToStringMap.end()) ? "Unknown State" : STATE_NAMESEnumToStringMap.at(state);
 }

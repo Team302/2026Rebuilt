@@ -145,8 +145,10 @@ public:
 	ControlData *GetPositionDegreesTurret() const { return m_positionDegreesTurret; }
 
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
+	static std::map<STATE_NAMES, std::string> STATE_NAMESEnumToStringMap;
 
 	void SetCurrentState(int state, bool run) override;
+	std::string GetCurrentStateName();
 	bool IsLauncherInProtectedMode() const { return m_launcherProtectedMode; }
 	void PublishLaunchMode(bool launching);
 	void NotifyStateUpdate(RobotStateChanges::StateChange statechange, bool value) override;
@@ -212,12 +214,14 @@ private:
 	bool m_launcherOffButtonReleased = true;
 	bool m_isClimbMode = false;
 	bool m_isAllowedToClimb = false;
+	bool m_isHubActive = false;
+	bool m_shiftChangeIn3Seconds = false;
 
 	units::time::second_t m_lookaheadTime = 0.5_s;
 
 	units::angle::turn_t m_targetTurretAngle = 0.0_tr;
 	units::angular_velocity::revolutions_per_minute_t m_targetLauncherAngularVelocity = 0.0_rpm;
-	units::angle::degree_t m_targetHoodAngle = 0.0_tr;
+	units::angle::turn_t m_targetHoodAngle = 0.0_tr;
 	units::angle::turn_t m_minHoodAngle = 0.0_tr;
 	units::angle::turn_t m_maxHoodAngle = 45.0_tr;
 	units::angle::turn_t m_minTurretAngle = 90_tr;
