@@ -14,10 +14,6 @@
 //====================================================================================================================================================
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
 #include "utils/PoseUtils.h"
-DriveToTower::DriveToTower(subsystems::CommandSwerveDrivetrain *chassis)
-    : DriveToPose(chassis)
-{
-}
 //------------------------------------------------------------------
 /// @brief      Constructor for DriveToTower command
 /// @param[in]  chassis - Pointer to the swerve drive subsystem
@@ -33,6 +29,11 @@ DriveToTower::DriveToTower(subsystems::CommandSwerveDrivetrain *chassis)
 ///             closest to the robot and calculates the center pose of that
 ///             Tower. Returns a default pose if TowerHelper is unavailable.
 //------------------------------------------------------------------
+DriveToTower::DriveToTower(subsystems::CommandSwerveDrivetrain *chassis)
+    : DriveToPose(chassis)
+{
+}
+
 frc::Pose2d DriveToTower::GetEndPose()
 {
     frc::Pose2d endPose{};

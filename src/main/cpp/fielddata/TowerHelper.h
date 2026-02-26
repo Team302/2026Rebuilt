@@ -51,8 +51,6 @@ public:
     //------------------------------------------------------------------
     frc::Pose2d CalcTowerPose() const;
 
-    // units::length::meter_t CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
-
 private:
     //------------------------------------------------------------------
     /// @brief      Private constructor for singleton pattern

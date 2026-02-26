@@ -17,10 +17,6 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "chassis/commands/TeleopFieldDrive.h"
 #include "chassis/commands/TeleopRobotDrive.h"
-#include "chassis/commands/season_specific_commands/DriveOverBump.h"
-#include "chassis/commands/season_specific_commands/DriveToDepot.h"
-#include "chassis/commands/season_specific_commands/DriveToHub.h"
-#include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "frc2/command/Commands.h"
 #include "frc2/command/DeferredCommand.h"
 #include "frc2/command/ProxyCommand.h"
@@ -32,7 +28,10 @@
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
-
+#include "chassis/commands/season_specific_commands/DriveOverBump.h"
+#include "chassis/commands/season_specific_commands/DriveToDepot.h"
+#include "chassis/commands/season_specific_commands/DriveToHub.h"
+#include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 //------------------------------------------------------------------
 /// @brief      Static method to create or return the singleton instance
 //------------------------------------------------------------------

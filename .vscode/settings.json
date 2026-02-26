@@ -180,6 +180,5 @@
   "C_Cpp.vcFormat.space.aroundTernaryOperator": "insert",
   "C_Cpp.vcFormat.space.aroundBinaryOperator": "insert",
   "C_Cpp.vcFormat.newLine.beforeOpenBrace.namespace": "ignore",
-  "C_Cpp.vcFormat.newLine.beforeOpenBrace.lambda": "ignore",
   "C_Cpp.errorSquiggles": "disabled"
 }

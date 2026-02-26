@@ -32,17 +32,6 @@
 class DriveToTower : public DriveToPose
 {
 public:
-    //------------------------------------------------------------------
-    /// @brief      Get the singleton instance of TowerHelper
-    /// @return     TowerHelper* - Pointer to the singleton instance
-    //------------------------------------------------------------------
-
-    //------------------------------------------------------------------
-    /// @brief      Constructor for DriveToTower command
-    /// @param[in]  chassis - Pointer to the swerve drive subsystem
-    /// @details    Initializes the command with the chassis reference for
-    ///             autonomous navigation to the nearest Tower
-    //------------------------------------------------------------------
     DriveToTower(subsystems::CommandSwerveDrivetrain *chassis);
 
     //------------------------------------------------------------------
