@@ -934,7 +934,7 @@ void Launcher::DataLog(uint64_t timestamp)
 	LogDoubleData(timestamp, m_ntName + "/Control/TargetTurretAngle", m_targetTurretAngle.value(), "Degrees");
 
 	// Mechanism state
-	LogIntData(timestamp, m_ntName + "/State", GetCurrentStateName());
+	LogStringData(timestamp, m_ntName + "/State", GetCurrentStateName());
 	LogBoolData(timestamp, m_ntName + "/IsProtectedMode", m_launcherProtectedMode);
 	LogBoolData(timestamp, m_ntName + "/IsClimbMode", m_isClimbMode);
 }
