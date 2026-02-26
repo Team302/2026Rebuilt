@@ -13,7 +13,6 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include "fielddata/FieldElementCalculator.h"
-
 #include "RobotIdentifier.h"
 #include "fielddata/FieldConstantsPoseLogger.h"
 #include "frc/RobotController.h"
@@ -65,9 +64,9 @@ void FieldElementCalculator::InitializeTransforms()
     // Blue Calculated Positions
     m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::BLUE_HUB_ALLIANCE_CENTER, m_calcHubCenter);
-    m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::BLUE_TOWER_LEFT_STICK] =
+    m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::BLUE_TOWER_OUTPOST_STICK] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER, m_calcTowerLeftStick);
-    m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::BLUE_TOWER_RIGHT_STICK] =
+    m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::BLUE_TOWER_DEPOT_STICK] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER, m_calcTowerRightStick);
     m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_LEFT_SIDE] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER, m_calcDepoOffsetLeft);
@@ -83,9 +82,9 @@ void FieldElementCalculator::InitializeTransforms()
     // Red Calculated Positions
     m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::RED_HUB_ALLIANCE_CENTER, m_calcHubCenter);
-    m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::RED_TOWER_LEFT_STICK] =
+    m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::RED_TOWER_OUTPOST_STICK] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER, m_calcTowerLeftStick);
-    m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::RED_TOWER_RIGHT_STICK] =
+    m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::RED_TOWER_DEPOT_STICK] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER, m_calcTowerRightStick);
     m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::RED_DEPOT_LEFT_SIDE] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER, m_calcDepoOffsetLeft);
@@ -99,5 +98,4 @@ void FieldElementCalculator::InitializeTransforms()
         TransformToPose(FieldConstants::FIELD_ELEMENT::RED_OUTPOST_CENTER, m_calcDepoPassingTarget);
     m_transformCalculatedMap[FieldConstants::FIELD_ELEMENT::RED_OUTPOST_PASSING_TARGET] =
         TransformToPose(FieldConstants::FIELD_ELEMENT::RED_OUTPOST_CENTER, m_calcOutpostPassingTarget);
-    }
-
+}

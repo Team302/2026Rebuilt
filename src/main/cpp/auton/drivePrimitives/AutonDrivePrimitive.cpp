@@ -159,7 +159,10 @@ frc2::CommandPtr AutonDrivePrimitive::CreateDriveToPoseCommand(ChassisOptionEnum
     case ChassisOptionEnums::DRIVE_TO_OUTPOST:
         return frc2::ProxyCommand(container->GetDriveToOutpostCommand()).ToPtr();
 
-        // TODO: add drive to bump and drive to tower commands when implemented
+    case ChassisOptionEnums::DRIVE_TO_TOWER:
+        return frc2::ProxyCommand(container->GetDriveToTowerCommand()).ToPtr();
+
+    // TODO: add drive to bump and drive to tower commands when implemented
     default:
         return frc2::cmd::None();
     }

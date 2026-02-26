@@ -17,10 +17,6 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "chassis/commands/TeleopFieldDrive.h"
 #include "chassis/commands/TeleopRobotDrive.h"
-#include "chassis/commands/season_specific_commands/DriveOverBump.h"
-#include "chassis/commands/season_specific_commands/DriveToDepot.h"
-#include "chassis/commands/season_specific_commands/DriveToHub.h"
-#include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "frc2/command/Commands.h"
 #include "frc2/command/DeferredCommand.h"
 #include "frc2/command/ProxyCommand.h"
@@ -28,6 +24,14 @@
 #include "state/RobotState.h"
 #include "utils/logging/debug/Logger.h"
 
+// Season Specific Commands
+#include "chassis/commands/season_specific_commands/DriveToDepot.h"
+#include "chassis/commands/season_specific_commands/DriveToOutpost.h"
+#include "chassis/commands/season_specific_commands/DriveToTower.h"
+#include "chassis/commands/season_specific_commands/DriveOverBump.h"
+#include "chassis/commands/season_specific_commands/DriveToDepot.h"
+#include "chassis/commands/season_specific_commands/DriveToHub.h"
+#include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 //------------------------------------------------------------------
 /// @brief      Static method to create or return the singleton instance
 //------------------------------------------------------------------
@@ -58,7 +62,9 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
                                      m_driveOverBump(std::make_unique<DriveOverBump>(m_chassis)),
                                      m_driveToDepot(std::make_unique<DriveToDepot>(m_chassis)),
                                      m_driveToHub(std::make_unique<DriveToHub>(m_chassis)),
-                                     m_driveToOutpost(std::make_unique<DriveToOutpost>(m_chassis))
+                                     m_driveToOutpost(std::make_unique<DriveToOutpost>(m_chassis)),
+                                     m_driveToTower(std::make_unique<DriveToTower>(m_chassis))
+
 {
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 
@@ -138,6 +144,7 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     auto driveToDepot = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_DEPOT);
     auto driveToHub = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_HUB);
     auto driveToOutpost = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_OUTPOST);
+    auto driveToTower = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_TOWER);
 
     // Drive over Bump - Navigates over field obstacles/bumps
     // Uses DeferredProxy to check climb mode status at execution time
@@ -156,7 +163,7 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     if (!m_climbModeStatus) {
         return frc2::ProxyCommand(m_driveToDepot.get()).ToPtr();
     } else {
-        return frc2::cmd::None(); // TODO add drive to Tower for Climb mode
+        return frc2::cmd::None(); 
     } }));
 
     // Drive To Hub - Autonomous navigation to hub scoring location
@@ -166,7 +173,7 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     if (!m_climbModeStatus) {
         return frc2::ProxyCommand(m_driveToHub.get()).ToPtr();
     } else {
-        return frc2::cmd::None(); // TODO add drive to Tower for Climb mode
+        return frc2::cmd::None(); 
     } }));
 
     // Drive To Outpost - Autonomous navigation to outpost location
@@ -176,7 +183,16 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     if (!m_climbModeStatus) {
         return frc2::ProxyCommand(m_driveToOutpost.get()).ToPtr();
     } else {
-        return frc2::cmd::None(); // TODO add drive to Tower for Climb mode
+        return frc2::cmd::None(); 
+    } }));
+
+    // drive To Tower
+    driveToTower.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
+                                                    {
+    if (m_climbModeStatus) {
+        return frc2::ProxyCommand(m_driveToTower.get()).ToPtr();
+    } else {
+        return frc2::cmd::None();
     } }));
 }
 
