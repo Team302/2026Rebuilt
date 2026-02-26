@@ -731,7 +731,6 @@ bool Launcher::IsLauncherAtTarget()
 	}
 	// Launcher Speed error, Hood Angle error, Turret angle error are within a threshold, and if we are in launch zone. Also check chassis speed.
 	units::angle::degree_t hoodError = m_hood->GetPosition().GetValue() - m_targetHoodAngle;
-	units::angle::degree_t turretError = m_turret->GetPosition().GetValue() - m_targetTurretAngle;
 	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = m_launcher->GetVelocity().GetValue() - m_targetLauncherAngularVelocity;
 	bool inLaunchzone = IsInLaunchZone();
 	auto chassisSpeeds = m_chassis != nullptr ? m_chassis->GetState().Speeds : frc::ChassisSpeeds();
@@ -739,7 +738,7 @@ bool Launcher::IsLauncherAtTarget()
 	auto Speed = units::math::sqrt(units::math::abs(chassisSpeeds.vx * chassisSpeeds.vx) + units::math::abs(chassisSpeeds.vy * chassisSpeeds.vy));
 
 	return ((units::math::abs(hoodError) < m_hoodAngleThreshold) &&
-			(units::math::abs(turretError) < m_turretAngleThreshold) &&
+			IsTurretAtTarget() &&
 			(units::math::abs(launcherSpeedError) < m_launcherVelocityThreshold) &&
 			(inLaunchzone) &&
 			(Speed < m_chassisSpeedThreshold));
@@ -822,4 +821,11 @@ std::string Launcher::GetCurrentStateName()
 {
 	STATE_NAMES state = static_cast<STATE_NAMES>(GetCurrentState());
 	return (STATE_NAMESEnumToStringMap.find(state) == STATE_NAMESEnumToStringMap.end()) ? "Unknown State" : STATE_NAMESEnumToStringMap.at(state);
+}
+
+bool Launcher::IsTurretAtTarget()
+{
+	units::angle::degree_t turretError = m_turret->GetPosition().GetValue() - m_targetTurretAngle;
+
+	return ((units::math::abs(turretError) < m_turretAngleThreshold));
 }

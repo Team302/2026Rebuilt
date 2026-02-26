@@ -161,6 +161,7 @@ public:
 	void UpdateLauncherTargets();
 	void InitilaizeLauncher();
 	void SetLauncherProtect();
+	bool IsTurretAtTarget();
 	units::angle::degree_t GetTargetTurretAngle() const { return m_targetTurretAngle; }
 
 protected:
