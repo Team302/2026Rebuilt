@@ -94,9 +94,6 @@ FieldOffsetValues::FieldOffsetValues()
     {
         m_blueDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE).X() + units::length::meter_t{DEPOT_OFFSET};
         m_redDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE).X() - units::length::meter_t{DEPOT_OFFSET};
-        // Retrieve depot positions from field constants
-        m_blueDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE).X();
-        m_redDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE).X();
 
         m_redTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
         m_blueTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
@@ -152,6 +149,7 @@ FieldOffsetValues::FieldOffsetValues()
         // Fallback: Initialize all values to zero if FieldConstants unavailable
         m_blueDepotX = units::length::meter_t{0.0};
         m_redDepotX = units::length::meter_t{0.0};
+
         m_redTowerOutpostX = units::length::meter_t{0.0};
         m_blueTowerOutpostX = units::length::meter_t{0.0};
         m_redTowerOutpostY = units::length::meter_t{0.0};
@@ -242,35 +240,35 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
     // Outpost X-coordinate query
     if (item == FIELD_OFFSET_ITEMS::OUTPOST_X)
     {
-        return isRedSide ? units::length::meter_t{m_redOutpostX.value()} : units::length::meter_t{m_blueOutpostX.value()};
+        return isRedSide ? m_redOutpostX : m_blueOutpostX;
     }
     else if (item == FIELD_OFFSET_ITEMS::TOWER_OUTPOST_X)
     {
-        return isRedSide ? units::length::meter_t{m_redTowerOutpostX.value()} : units::length::meter_t{m_blueTowerOutpostX.value()};
+        return isRedSide ? m_redTowerOutpostX : m_blueTowerOutpostX;
     }
     else if (item == FIELD_OFFSET_ITEMS::TOWER_DEPOT_X)
     {
-        return isRedSide ? units::length::meter_t{m_redTowerDepotX.value()} : units::length::meter_t{m_blueTowerDepotX.value()};
+        return isRedSide ? m_redTowerDepotX : m_blueTowerDepotX;
     }
     else if (item == FIELD_OFFSET_ITEMS::TOWER_OUTPOST_Y)
     {
-        return isRedSide ? units::length::meter_t{m_redTowerOutpostY.value()} : units::length::meter_t{m_blueTowerOutpostY.value()};
+        return isRedSide ? m_redTowerOutpostY : m_blueTowerOutpostY;
     }
     else if (item == FIELD_OFFSET_ITEMS::TOWER_DEPOT_Y)
     {
-        return isRedSide ? units::length::meter_t{m_redTowerDepotY.value()} : units::length::meter_t{m_blueTowerDepotY.value()};
+        return isRedSide ? m_redTowerDepotY : m_blueTowerDepotY;
     }
 
     // Depot X-coordinate query
     else if (item == FIELD_OFFSET_ITEMS::DEPOT_X)
     {
-        return isRedSide ? units::length::meter_t{m_redDepotX.value()} : units::length::meter_t{m_blueDepotX.value()};
+        return isRedSide ? m_redDepotX : m_blueDepotX;
     }
 
     // Hub X-coordinate query (with 2.0m navigation offset)
     else if (item == FIELD_OFFSET_ITEMS::HUB_X)
     {
-        return isRedSide ? units::length::meter_t{m_redHubX.value()} : units::length::meter_t{m_blueHubX.value()};
+        return isRedSide ? m_redHubX : m_blueHubX;
     }
 
     // Alliance-side bump X-coordinate query
