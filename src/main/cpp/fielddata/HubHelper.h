@@ -35,14 +35,6 @@
 class HubHelper
 {
 public:
-    bool IsNearestHubRed() const;
-
-    frc::Pose2d CalcHubPose() const;
-
-    static HubHelper *m_instance;
-
-    FieldConstants *m_fieldConstants; // Declare m_fieldConstants as a member variable
-
     //------------------------------------------------------------------
     /// @brief      Get the singleton instance of HubHelper
     /// @return     HubHelper* - Pointer to the singleton instance
@@ -56,8 +48,7 @@ public:
     ///             Calculates the center pose using the Hub center field element
     ///             and rotation based on the nearest alliance (0° for red, 180° for blue)
     //------------------------------------------------------------------
-
-    //     frc::Pose2d CalcHubPose() const;
+    frc::Pose2d CalcHubPose() const;
 
 private:
     //------------------------------------------------------------------
@@ -73,12 +64,15 @@ private:
 
     /// @brief Singleton instance pointer
 
+    static HubHelper *m_instance;
+
     //------------------------------------------------------------------
     /// @brief      Determines which Hub (red or blue) is nearest to the robot
     /// @return     bool - true if the red Hub is nearest, false if blue Hub is nearest
     /// @details    Calculates the distance from the robot's current pose to both
     ///             Hub centers and returns true if red is nearest, false if blue is nearest
     //------------------------------------------------------------------
+    bool IsNearestHubRed() const;
 
     //------------------------------------------------------------------
     /// @brief      Calculates the distance from a given pose to a field element
@@ -93,4 +87,7 @@ private:
 
     /// @brief Pointer to the swerve drivetrain subsystem
     subsystems::CommandSwerveDrivetrain *m_chassis;
+
+    /// @brief Pointer to the field constants singleton
+    FieldConstants *m_fieldConstants;
 };
