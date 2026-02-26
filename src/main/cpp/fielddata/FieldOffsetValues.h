@@ -36,6 +36,10 @@ enum class FIELD_OFFSET_ITEMS
     ALLIANCE_BUMP_Y,    ///< Y-coordinate of the bump on the alliance zone side (meters)
     NEUTRAL_BUMP_X,     ///< X-coordinate of the bump on the neutral zone side (meters)
     NEUTRAL_BUMP_Y      ///< Y-coordinate of the bump on the neutral zone side (meters)
+    TOWER_OUTPOST_X,    ///< X-coordinate offset of the outpost
+    TOWER_DEPOT_X,      ///< X-coordinate offset of the depot neutral side
+    TOWER_OUTPOST_Y,    ///< Y-coordinate offset of the outpost
+    TOWER_DEPOT_Y       ///< Y-coordinate offset of the depot neutral side
 };
 
 //====================================================================================================================================================
@@ -161,7 +165,7 @@ private:
     static FieldOffsetValues *m_instance;
 
     //------------------------------------------------------------------
-    // Depot and Outpost X-Coordinates
+    // Depot X-Coordinates
     //------------------------------------------------------------------
 
     /// @brief X-coordinate of blue alliance depot neutral side (meters)
@@ -169,6 +173,10 @@ private:
 
     /// @brief X-coordinate of red alliance depot neutral side (meters)
     units::length::meter_t m_redDepotX;
+
+    //------------------------------------------------------------------
+    // Outpost X-Coordinates
+    //------------------------------------------------------------------
 
     /// @brief X-coordinate of blue alliance outpost (meters, equal to depot X)
     units::length::meter_t m_blueOutpostX;
@@ -181,6 +189,25 @@ private:
 
     /// @brief X-coordinate of red alliance outpost approach position (meters, outpostX - OUTPOST_APPROACH_OFFSET)
     units::length::meter_t m_redOutpostApproachX;
+
+    //------------------------------------------------------------------
+    // Tower Coordinates
+    //------------------------------------------------------------------
+    units::length::meter_t m_redTowerOutpostX;
+
+    units::length::meter_t m_redTowerDepotX;
+
+    units::length::meter_t m_redTowerOutpostY;
+
+    units::length::meter_t m_redTowerDepotY;
+
+    units::length::meter_t m_blueTowerOutpostX;
+
+    units::length::meter_t m_blueTowerDepotX;
+
+    units::length::meter_t m_blueTowerOutpostY;
+
+    units::length::meter_t m_blueTowerDepotY;
 
     //------------------------------------------------------------------
     // Hub X-Coordinates with Offsets

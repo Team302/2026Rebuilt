@@ -37,7 +37,8 @@ public:
         DRIVE_TO_HUB,
         DRIVE_TO_BUMP,
         DRIVE_TO_DEPOT,
-        DRIVE_TO_OUTPOST
+        DRIVE_TO_OUTPOST,
+        DRIVE_TO_TOWER
     };
 
     enum NoMovementOption

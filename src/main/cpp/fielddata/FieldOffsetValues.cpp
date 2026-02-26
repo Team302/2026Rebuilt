@@ -94,9 +94,27 @@ FieldOffsetValues::FieldOffsetValues()
     {
         m_blueDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE).X() + units::length::meter_t{DEPOT_OFFSET};
         m_redDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE).X() - units::length::meter_t{DEPOT_OFFSET};
-        // Retrieve depot positions from field constants
-        m_blueDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE).X();
-        m_redDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE).X();
+
+        m_redTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
+        m_blueTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
+        m_redTowerOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).Y();
+        m_blueTowerOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).Y();
+        m_redTowerDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
+        m_blueTowerDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
+        m_redTowerDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).Y();
+        m_blueTowerDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).Y();
+
+        m_blueHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() - HUB_OFFSET;
+        m_redHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER).X() + HUB_OFFSET;
+
+        m_redTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
+        m_blueTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
+        m_redTowerOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).Y();
+        m_blueTowerOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).Y();
+        m_redTowerDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
+        m_blueTowerDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
+        m_redTowerDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).Y();
+        m_blueTowerDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).Y();
 
         // Set outpost X coordinates equal to depot X (aligned on 2026 field)
         m_blueOutpostX = m_blueDepotX;
@@ -144,6 +162,22 @@ FieldOffsetValues::FieldOffsetValues()
 
         m_blueOutpostApproachX = m_blueDepotX;
         m_redOutpostApproachX = m_redDepotX;
+        m_redTowerOutpostX = units::length::meter_t{0.0};
+        m_blueTowerOutpostX = units::length::meter_t{0.0};
+        m_redTowerOutpostY = units::length::meter_t{0.0};
+        m_blueTowerOutpostY = units::length::meter_t{0.0};
+        m_redTowerDepotX = units::length::meter_t{0.0};
+        m_blueTowerDepotX = units::length::meter_t{0.0};
+        m_redTowerDepotY = units::length::meter_t{0, 0};
+        m_blueTowerDepotY = units::length::meter_t{0, 0};
+        m_redTowerOutpostX = units::length::meter_t{0.0};
+        m_blueTowerOutpostX = units::length::meter_t{0.0};
+        m_redTowerOutpostY = units::length::meter_t{0.0};
+        m_blueTowerOutpostY = units::length::meter_t{0.0};
+        m_redTowerDepotX = units::length::meter_t{0.0};
+        m_blueTowerDepotX = units::length::meter_t{0.0};
+        m_redTowerDepotY = units::length::meter_t{0.0};
+        m_blueTowerDepotY = units::length::meter_t{0.0};
 
         m_blueHubX = units::length::meter_t{0.0};
         m_redHubX = units::length::meter_t{0.0};
@@ -158,10 +192,6 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueBumpDepotY = units::length::meter_t{0.0};
         m_blueBumpOutpostY = units::length::meter_t{0.0};
     }
-
-    // Set outpost X coordinates equal to depot X (aligned on 2026 field)
-    m_blueOutpostX = m_blueDepotX;
-    m_redOutpostX = m_redDepotX;
 }
 
 //------------------------------------------------------------------
@@ -219,6 +249,22 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
     if (item == FIELD_OFFSET_ITEMS::OUTPOST_X)
     {
         return isRedSide ? m_redOutpostX : m_blueOutpostX;
+    }
+    else if (item == FIELD_OFFSET_ITEMS::TOWER_OUTPOST_X)
+    {
+        return isRedSide ? m_redTowerOutpostX : m_blueTowerOutpostX;
+    }
+    else if (item == FIELD_OFFSET_ITEMS::TOWER_DEPOT_X)
+    {
+        return isRedSide ? m_redTowerDepotX : m_blueTowerDepotX;
+    }
+    else if (item == FIELD_OFFSET_ITEMS::TOWER_OUTPOST_Y)
+    {
+        return isRedSide ? m_redTowerOutpostY : m_blueTowerOutpostY;
+    }
+    else if (item == FIELD_OFFSET_ITEMS::TOWER_DEPOT_Y)
+    {
+        return isRedSide ? m_redTowerDepotY : m_blueTowerDepotY;
     }
 
     else if (item == FIELD_OFFSET_ITEMS::OUTPOST_APPROACH_X)
