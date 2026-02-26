@@ -54,6 +54,6 @@ namespace LauncherStates
 		const double m_agitatorTarget = double(0);
 
 		frc::Timer *m_Timer;
-		units::time::second_t m_launchTimer = units::time::second_t(.25);
+		units::time::second_t m_launchTimer = 0.25_s;
 	};
 }
