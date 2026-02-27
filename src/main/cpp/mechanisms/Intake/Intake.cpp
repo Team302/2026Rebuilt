@@ -435,7 +435,7 @@ void Intake::DataLog(uint64_t timestamp)
 
 	// Mechanism state
 	LogStringData(timestamp, m_ntName + "/State", GetCurrentStateName());
-	LogDoubleData(timestamp, m_ntName + "/IsIntakeExtended", IsIntakeIn());
+	LogBoolData(timestamp, m_ntName + "/IsIntakeExtended", IsIntakeIn());
 }
 
 std::string Intake::GetCurrentStateName()
