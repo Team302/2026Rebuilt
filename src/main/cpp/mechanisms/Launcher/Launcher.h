@@ -162,6 +162,7 @@ public:
 	void UpdateLauncherTargets();
 	void InitilaizeLauncher();
 	void SetLauncherProtect();
+	bool IsTurretAtTarget();
 	units::angle::degree_t GetTargetTurretAngle() const { return m_targetTurretAngle; }
 
 protected:
@@ -234,7 +235,9 @@ private:
 
 	RebuiltTargetCalculator *m_targetCalculator;
 	subsystems::CommandSwerveDrivetrain *m_chassis;
+
 	void CalculateTargets();
+	void RefreshCachedMotorData();
 
 	bool m_launcherInitialized = false;
 	bool m_tuningLauncher = true;
@@ -249,4 +252,10 @@ private:
 	std::array<units::angle::turn_t, 7> m_passingHoodAngleArray = {0.0_tr, 5.0_tr, 10.0_tr, 15.0_tr, 20.0_tr, 25.0_tr, 30.0_tr};
 	std::array<units::angular_velocity::revolutions_per_minute_t, 7> m_passingLauncherVelocityArray = {500.0_rpm, 600.0_rpm, 700.0_rpm, 800.0_rpm, 900.0_rpm, 1000.0_rpm, 1100.0_rpm};
 	// All values in turns are actually Degree's
+
+	// Cached motor status signals for performance optimization
+	// These are refreshed once per loop in RunCommonTasks() to avoid multiple CAN bus queries
+	units::angular_velocity::turns_per_second_t m_cachedLauncherVelocity = 0.0_tps;
+	units::angle::turn_t m_cachedHoodPosition = 0.0_tr;
+	units::angle::turn_t m_cachedTurretPosition = 0.0_tr;
 };

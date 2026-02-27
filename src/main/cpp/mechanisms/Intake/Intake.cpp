@@ -264,6 +264,9 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
+	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.2368421528998243;
+
 	configs.Slot0.kI = m_positionDeg->GetI();
 	configs.Slot0.kD = m_positionDeg->GetD();
 	configs.Slot0.kG = m_positionDeg->GetF();
@@ -321,6 +324,7 @@ void Intake::RunCommonTasks()
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentStateName());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeIn", IsIntakeIn());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IntakePercentOut", m_intakePercentOut.Output.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Intake Position", m_extender->GetPosition().GetValueAsDouble());
 }
 /// @brief  Set the control constants (e.g. PIDF values).
 /// @param [in] ControlData*                                   pid:  the control constants
