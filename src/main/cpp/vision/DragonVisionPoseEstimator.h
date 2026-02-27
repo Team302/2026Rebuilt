@@ -63,6 +63,7 @@ public:
     void RunCurrentState() override;
     void SetCurrentState(int state, bool run) override;
 
+private:
     /**
      * @brief Attempt to compute and apply an initial absolute pose from vision.
      *
@@ -81,7 +82,6 @@ public:
      */
     frc::Pose2d GetPose() const;
 
-private:
     /**
      * Pointer to the swerve drivetrain used to update/fetch odometry/pose estimator.
      */
