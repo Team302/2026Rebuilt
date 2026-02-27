@@ -38,6 +38,7 @@ void RoboRio::DataLog(uint64_t timestamp)
 
     LogBoolData(timestamp, "/RoboRio/IsBrownOut", frc::RobotController::IsBrownedOut());
 
+<<<<<<< Updated upstream
     if (DragonDataLoggerMgr::GetInstance()->GetLoggerType() == LoggerType::UDP_LOGGER)
     {
         LogBoolData(timestamp, "/DS/RobotEnable", frc::DriverStation::IsEnabled());
@@ -45,6 +46,12 @@ void RoboRio::DataLog(uint64_t timestamp)
     }
     /** other things we may want to add, but commenting out for now
     auto commsDisabledCount = frc::RobotController::GetCommsDisableCount();
+=======
+
+    if ()
+    //other things we may want to add, but commenting out for now
+    /**auto commsDisabledCount = frc::RobotController::GetCommsDisableCount();
+>>>>>>> Stashed changes
     auto isRSLOn = frc::RobotController::GetRSLState();
 
 
