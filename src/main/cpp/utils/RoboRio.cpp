@@ -14,8 +14,10 @@
 //====================================================================================================================================================
 
 #include "frc/RobotController.h"
+#include "frc/DriverStation.h"
 #include "units/voltage.h"
 #include "utils/RoboRio.h"
+#include "utils/logging/signals/DragonDataLoggerMgr.h"
 
 RoboRio *RoboRio::m_instance = nullptr;
 RoboRio *RoboRio::GetInstance()
@@ -36,6 +38,11 @@ void RoboRio::DataLog(uint64_t timestamp)
 
     LogBoolData(timestamp, "/RoboRio/IsBrownOut", frc::RobotController::IsBrownedOut());
 
+    if (DragonDataLoggerMgr::GetInstance()->GetLoggerType() == LoggerType::UDP_LOGGER)
+    {
+        LogBoolData(timestamp, "/DS/RobotEnable", frc::DriverStation::IsEnabled());
+        LogStringData(timestamp, "/DS/IsEnabled", frc::DriverStation::IsEnabled() ? "Enabled" : "Disabled");
+    }
     /** other things we may want to add, but commenting out for now
     auto commsDisabledCount = frc::RobotController::GetCommsDisableCount();
     auto isRSLOn = frc::RobotController::GetRSLState();
