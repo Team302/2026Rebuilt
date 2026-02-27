@@ -644,11 +644,25 @@ void Launcher::SetCurrentState(int state, bool run)
 	StateMgr::SetCurrentState(state, run);
 }
 
+void Launcher::RefreshCachedMotorData()
+{
+	m_cachedLauncherVelocity = m_launcher->GetVelocity().GetValue();
+	m_cachedHoodPosition = m_hood->GetPosition().GetValue();
+	m_cachedTurretPosition = m_turret->GetPosition().GetValue();
+}
+
 void Launcher::RunCommonTasks()
 {
+	// Refresh all motor data once at the start of the loop to avoid multiple CAN bus queries
+	RefreshCachedMotorData();
+
+	if (frc::DriverStation::IsDisabled())
+	{
+		InitilaizeLauncher();
+	}
+
 	// This function is called once per loop before the current state Run()
 	Cyclic();
-	InitilaizeLauncher();
 	SetLauncherProtect();
 
 	// Update Launcher Targets/Field
@@ -730,8 +744,8 @@ bool Launcher::IsLauncherAtTarget()
 		return true;
 	}
 	// Launcher Speed error, Hood Angle error, Turret angle error are within a threshold, and if we are in launch zone. Also check chassis speed.
-	units::angle::degree_t hoodError = m_hood->GetPosition().GetValue() - m_targetHoodAngle;
-	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = m_launcher->GetVelocity().GetValue() - m_targetLauncherAngularVelocity;
+	units::angle::degree_t hoodError = m_cachedHoodPosition - m_targetHoodAngle;
+	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = m_cachedLauncherVelocity - m_targetLauncherAngularVelocity;
 	bool inLaunchzone = IsInLaunchZone();
 	auto chassisSpeeds = m_chassis != nullptr ? m_chassis->GetState().Speeds : frc::ChassisSpeeds();
 
@@ -755,7 +769,7 @@ bool Launcher::IsInLaunchZone() const
 
 void Launcher::CalculateTargets()
 {
-	m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_launcher->GetPosition().GetValue());
+	m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_cachedTurretPosition);
 	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateDistanceToTarget(m_lookaheadTime);
 
 	if (AllianceZoneManager::GetInstance()->IsInAllianceZone())
@@ -771,10 +785,10 @@ void Launcher::CalculateTargets()
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Distance To Target", distanceToTarget.value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Angle Target", m_targetHoodAngle.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Turret Angle", m_turret->GetPosition().GetValueAsDouble());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Turret Angle", m_cachedTurretPosition.value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed Target", m_targetLauncherAngularVelocity.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed RPM", units::angular_velocity::revolutions_per_minute_t(m_launcher->GetVelocity().GetValue()).value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Angle", m_hood->GetPosition().GetValueAsDouble());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed RPM", units::angular_velocity::revolutions_per_minute_t(m_cachedLauncherVelocity).value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Angle", m_cachedHoodPosition.value());
 }
 
 void Launcher::UpdateLauncherTargets()
@@ -794,7 +808,7 @@ void Launcher::UpdateLauncherTargets()
 void Launcher::InitilaizeLauncher()
 {
 	if (((m_turret->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround ||
-		  m_turret->GetForwardLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround) &&
+		  m_turret->GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround) &&
 		 (m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)) ||
 		frc::RobotBase::IsSimulation())
 	{
@@ -826,7 +840,7 @@ std::string Launcher::GetCurrentStateName()
 
 bool Launcher::IsTurretAtTarget()
 {
-	units::angle::degree_t turretError = m_turret->GetPosition().GetValue() - m_targetTurretAngle;
+	units::angle::degree_t turretError = m_cachedTurretPosition - m_targetTurretAngle;
 
 	return ((units::math::abs(turretError) < m_turretAngleThreshold));
 }
