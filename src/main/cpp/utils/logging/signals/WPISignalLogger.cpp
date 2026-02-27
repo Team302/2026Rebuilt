@@ -90,15 +90,15 @@ void WPISignalLogger::WriteGamePadState(std::string signalID, const std::array<d
         entry.Append(std::span<const float>{axesFloat.data(), axesFloat.size()}, timestamp);
     }
 
-    // Log buttons as uint8_t span (matching DriverStation format: one byte per button)
+    // Log buttons as int span (BooleanArrayLogEntry::Append requires span<const int>)
     {
         auto &entry = GetBoolArrayEntry(signalID + "/buttons");
-        uint8_t buttonsArr[16];
+        int buttonsArr[10];
         for (size_t i = 0; i < buttons.size(); ++i)
         {
             buttonsArr[i] = buttons[i] ? 1 : 0;
         }
-        entry.Append(std::span<const uint8_t>{buttonsArr, buttons.size()}, timestamp);
+        entry.Append(std::span<const int>{buttonsArr, buttons.size()}, timestamp);
     }
 
     // Log POVs as int64_t span (matching DriverStation format)
