@@ -160,12 +160,19 @@ void Robot::RobotPeriodic()
     UpdateDriveTeamFeedback();
     m_driverFeedbackTimer.Stop();
 
-    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "CommandScheduler", m_commandTimer.Get().value());
-    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "Logger", m_LoggerTimer.Get().value());
-    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "RobotState", m_robotStateTimer.Get().value());
-    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "DriverFeedback", m_driverFeedbackTimer.Get().value());
-    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "DataLogger", m_dataLoggerTimer.Get().value());
-    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "Total Robot Perodic Time", m_commandTimer.Get().value() + m_LoggerTimer.Get().value() + m_robotStateTimer.Get().value() + m_driverFeedbackTimer.Get().value() + m_dataLoggerTimer.Get().value());
+    double commandTime = m_commandTimer.Get().value();
+    double loggerTime = m_LoggerTimer.Get().value();
+    double robotStateTime = m_robotStateTimer.Get().value();
+    double driverFeedbackTime = m_driverFeedbackTimer.Get().value();
+    double dataLoggerTime = m_dataLoggerTimer.Get().value();
+    double totalTime = commandTime + loggerTime + robotStateTime + driverFeedbackTime + dataLoggerTime;
+
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "CommandScheduler", commandTime);
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "Logger", loggerTime);
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "RobotState", robotStateTime);
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "DriverFeedback", driverFeedbackTime);
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "DataLogger", dataLoggerTime);
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "Total Robot Perodic Time", totalTime);
 }
 
 /// @brief Called periodically while the robot is disabled.
