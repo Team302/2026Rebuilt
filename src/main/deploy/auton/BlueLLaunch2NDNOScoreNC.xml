@@ -8,12 +8,16 @@ launcherState = "STATE_LAUNCH"/>
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueLeftBumpNZNZ_A"
 time = "2.0"
-intakeState = "STATE_INTAKE"/>
+intakeState = "STATE_INTAKE">
+<zone filename = "BlueLeftBumpNZNZ_A.xml"/>
+</primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "LeftToRightNZ"
 time = "3.0"
-intakeState = "STATE_INTAKE"/>
+intakeState = "STATE_INTAKE">
+<zone filename = "LeftToRightNZ.xml"/>
+</primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueLeftBumpNZNZ_C"
@@ -24,7 +28,9 @@ time = "1.5">
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "RightToLeftNZ"
 time = "3.0"
-intakeState = "STATE_INTAKE"/>
+intakeState = "STATE_INTAKE">
+<zone filename = "RightToLeftNZ.xml"/>
+</primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueLeftBumpNZNZ_D"

@@ -4,7 +4,9 @@
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueRightBumpNZNZ_A"
-time = "2.0"/>
+time = "2.0">
+<file filename = "BlueRightBumpNZNZ_A.xml"/>
+</primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "RightToLeftNZ"
@@ -12,15 +14,24 @@ time = "3.0"/>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueRightBumpNZNZ_C"
-time = "1.5"/>
+time = "1.5">
+<file filename = "BlueRightBumpNZNZ_C.xml"/>
+</primitive>
+
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "LeftToRightNZ"
-time = "3.0"/>
+time = "3.0">
+<file filename = "LeftToRightNZ.xml"/>
+</primitive>
+
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueRightBumpNZNZ_E"
-time = "2.0"/>
+time = "2.0">
+<file filename = "BlueRightBumpNZNZ_E.xml"/>
+</primitive>
+
 
 <!--This path could honestly do a lot more, we could probably grab some pieces from our side if people are willing to pass-->
 
