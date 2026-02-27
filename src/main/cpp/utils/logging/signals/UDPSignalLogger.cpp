@@ -1,5 +1,6 @@
 #include "utils/logging/signals/UDPSignalLogger.h"
-#include <sstream>
+#include <cinttypes>
+#include <cstdio>
 #include <iostream>
 #include <cstring>
 #ifdef _WIN32
@@ -9,7 +10,6 @@
 #include <cerrno>
 #include <netdb.h>
 #endif
-#include <string>
 
 UDPSignalLogger::UDPSignalLogger(const std::string &host, int port)
     : m_host(host), m_port(port), m_isRunning(false)
@@ -100,15 +100,13 @@ void UDPSignalLogger::Stop()
     m_isRunning = false;
 }
 
-std::string UDPSignalLogger::FormatMessage(std::string signalID, std::string type,
-                                           std::string value, std::string_view units, uint64_t timestamp)
+int UDPSignalLogger::FormatMessage(char *buf, int bufSize, const char *signalID, const char *type,
+                                   const char *value, const char *units, uint64_t timestamp)
 {
-    std::ostringstream oss;
-    oss << std::to_string(timestamp) << "," << signalID << "," << type << "," << value << "," << units;
-    return oss.str();
+    return snprintf(buf, bufSize, "%llu,%s,%s,%s,%s", (unsigned long long)timestamp, signalID, type, value, units);
 }
 
-void UDPSignalLogger::SendData(const std::string &message)
+void UDPSignalLogger::SendData(const char *buf, int len)
 {
 #ifdef _WIN32
     if (!m_isRunning || m_socket == INVALID_SOCKET)
@@ -120,14 +118,14 @@ void UDPSignalLogger::SendData(const std::string &message)
     }
 
 #ifdef _WIN32
-    int bytesSent = sendto(m_socket, message.c_str(), (int)message.length(), 0,
+    int bytesSent = sendto(m_socket, buf, len, 0,
                            (struct sockaddr *)&m_serverAddr, sizeof(m_serverAddr));
     if (bytesSent == SOCKET_ERROR)
     {
         std::cerr << "sendto failed: " << WSAGetLastError() << std::endl;
     }
 #else
-    ssize_t bytesSent = sendto(m_socket, message.c_str(), message.length(), 0,
+    ssize_t bytesSent = sendto(m_socket, buf, len, 0,
                                (struct sockaddr *)&m_serverAddr, sizeof(m_serverAddr));
     if (bytesSent < 0)
     {
@@ -138,127 +136,119 @@ void UDPSignalLogger::SendData(const std::string &message)
 
 void UDPSignalLogger::WriteBoolean(std::string signalID, bool value, uint64_t timestamp)
 {
-    std::string message = FormatMessage(signalID, "bool", value ? "true" : "false", "bool", timestamp);
-    SendData(message);
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID.c_str(), "bool", value ? "true" : "false", "bool", timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WriteDouble(std::string signalID, double value, std::string_view units, uint64_t timestamp)
 {
-    std::ostringstream oss;
-    oss << value;
-    std::string message = FormatMessage(signalID, "double", oss.str(), units, timestamp);
-    SendData(message);
+    char valBuf[32];
+    snprintf(valBuf, sizeof(valBuf), "%.6g", value);
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID.c_str(), "double", valBuf, units.data(), timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WriteInteger(std::string signalID, int64_t value, std::string_view units, uint64_t timestamp)
 {
-    std::ostringstream oss;
-    oss << value;
-    std::string message = FormatMessage(signalID, "int64", oss.str(), units, timestamp);
-    SendData(message);
+    char valBuf[32];
+    snprintf(valBuf, sizeof(valBuf), "%lld", (long long)value);
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID.c_str(), "int64", valBuf, units.data(), timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WriteString(std::string signalID, const std::string &value, uint64_t timestamp)
 {
-    std::string message = FormatMessage(signalID, "string", value, "string", timestamp);
-    SendData(message);
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID.c_str(), "string", value.c_str(), "string", timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
 {
-    std::ostringstream oss;
-    for (size_t i = 0; i < value.size(); ++i)
+    char valBuf[256];
+    int pos = 0;
+    for (size_t i = 0; i < value.size() && pos < (int)sizeof(valBuf) - 1; ++i)
     {
-        oss << value[i];
-        if (i < value.size() - 1)
-        {
-            oss << ";";
-        }
+        pos += snprintf(valBuf + pos, sizeof(valBuf) - pos, i ? ";%.6g" : "%.6g", value[i]);
     }
-    std::string message = FormatMessage(signalID, "double_array", oss.str(), units, timestamp);
-    SendData(message);
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID.c_str(), "double_array", valBuf, units.data(), timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WritePose2d(std::string signalID, const frc::Pose2d &value, uint64_t timestamp)
 {
-    std::ostringstream oss;
-    oss << value.X().value() << ";" << value.Y().value() << ";" << value.Rotation().Radians().value();
-    std::string message = FormatMessage(signalID, "pose2d", oss.str(), "X_m;Y_m;Rot_rad", timestamp);
-    SendData(message);
+    char valBuf[96];
+    snprintf(valBuf, sizeof(valBuf), "%.6g;%.6g;%.6g",
+             value.X().value(), value.Y().value(), value.Rotation().Radians().value());
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID.c_str(), "pose2d", valBuf, "X_m;Y_m;Rot_rad", timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WritePose3d(std::string signalID, const frc::Pose3d &value, uint64_t timestamp)
 {
-    std::ostringstream oss;
-    oss << value.X().value() << ";" << value.Y().value() << ";" << value.Z().value() << ";"
-        << value.Rotation().GetQuaternion().W() << ";"
-        << value.Rotation().GetQuaternion().X() << ";"
-        << value.Rotation().GetQuaternion().Y() << ";"
-        << value.Rotation().GetQuaternion().Z();
-    std::string message = FormatMessage(signalID, "pose3d", oss.str(), "X_m;Y_m;Z_m;QW;QX;QY;QZ", timestamp);
-    SendData(message);
+    char valBuf[160];
+    snprintf(valBuf, sizeof(valBuf), "%.6g;%.6g;%.6g;%.6g;%.6g;%.6g;%.6g",
+             value.X().value(), value.Y().value(), value.Z().value(),
+             value.Rotation().GetQuaternion().W(),
+             value.Rotation().GetQuaternion().X(),
+             value.Rotation().GetQuaternion().Y(),
+             value.Rotation().GetQuaternion().Z());
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID.c_str(), "pose3d", valBuf, "X_m;Y_m;Z_m;QW;QX;QY;QZ", timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, uint64_t timestamp)
 {
-    std::ostringstream oss;
-    oss << value.vx.value() << ";" << value.vy.value() << ";" << value.omega.value();
-    std::string message = FormatMessage(signalID, "chassis_speeds", oss.str(), "Vx_mps;Vy_mps;Omega_radps", timestamp);
-    SendData(message);
+    char valBuf[96];
+    snprintf(valBuf, sizeof(valBuf), "%.6g;%.6g;%.6g",
+             value.vx.value(), value.vy.value(), value.omega.value());
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID.c_str(), "chassis_speeds", valBuf, "Vx_mps;Vy_mps;Omega_radps", timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, uint64_t timestamp)
 {
-    std::ostringstream oss;
-    oss << value.speed.value() << ";" << value.angle.Radians().value();
-    std::string message = FormatMessage(signalID, "swerve_module_state", oss.str(), "Speed_mps;Angle_rad", timestamp);
-    SendData(message);
+    char valBuf[64];
+    snprintf(valBuf, sizeof(valBuf), "%.6g;%.6g", value.speed.value(), value.angle.Radians().value());
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID.c_str(), "swerve_module_state", valBuf, "Speed_mps;Angle_rad", timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs, uint64_t timestamp)
 {
+    char valBuf[128];
+    char buf[k_bufSize];
+    int pos, len;
+
     // Log axes
-    {
-        std::ostringstream oss;
-        for (size_t i = 0; i < axes.size(); ++i)
-        {
-            oss << axes[i];
-            if (i < axes.size() - 1)
-            {
-                oss << ";";
-            }
-        }
-        std::string message = FormatMessage(signalID + "/axes", "float_array", oss.str(), "", timestamp);
-        SendData(message);
-    }
+    pos = 0;
+    for (size_t i = 0; i < axes.size() && pos < (int)sizeof(valBuf) - 1; ++i)
+        pos += snprintf(valBuf + pos, sizeof(valBuf) - pos, i ? ";%.6g" : "%.6g", axes[i]);
+    std::string axesID = signalID + "/axes";
+    len = FormatMessage(buf, k_bufSize, axesID.c_str(), "float_array", valBuf, "", timestamp);
+    SendData(buf, len);
 
     // Log buttons
-    {
-        std::ostringstream oss;
-        for (size_t i = 0; i < buttons.size(); ++i)
-        {
-            oss << (buttons[i] ? "1" : "0");
-            if (i < buttons.size() - 1)
-            {
-                oss << ";";
-            }
-        }
-        std::string message = FormatMessage(signalID + "/buttons", "bool_array", oss.str(), "", timestamp);
-        SendData(message);
-    }
+    pos = 0;
+    for (size_t i = 0; i < buttons.size() && pos < (int)sizeof(valBuf) - 1; ++i)
+        pos += snprintf(valBuf + pos, sizeof(valBuf) - pos, i ? ";%d" : "%d", buttons[i] ? 1 : 0);
+    std::string buttonsID = signalID + "/buttons";
+    len = FormatMessage(buf, k_bufSize, buttonsID.c_str(), "bool_array", valBuf, "", timestamp);
+    SendData(buf, len);
 
     // Log POVs
-    {
-        std::ostringstream oss;
-        for (size_t i = 0; i < povs.size(); ++i)
-        {
-            oss << povs[i];
-            if (i < povs.size() - 1)
-            {
-                oss << ";";
-            }
-        }
-        std::string message = FormatMessage(signalID + "/povs", "int_array", oss.str(), "", timestamp);
-        SendData(message);
-    }
+    pos = 0;
+    for (size_t i = 0; i < povs.size() && pos < (int)sizeof(valBuf) - 1; ++i)
+        pos += snprintf(valBuf + pos, sizeof(valBuf) - pos, i ? ";%d" : "%d", povs[i]);
+    std::string povsID = signalID + "/povs";
+    len = FormatMessage(buf, k_bufSize, povsID.c_str(), "int_array", valBuf, "", timestamp);
+    SendData(buf, len);
 }
