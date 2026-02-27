@@ -111,6 +111,11 @@ Robot::Robot()
     InitializeDriveteamFeedback();
 
     m_datalogger = DragonDataLoggerMgr::GetInstance();
+
+    m_commandTimer.Reset();
+    m_LoggerTimer.Reset();
+    m_robotStateTimer.Reset();
+    m_driverFeedbackTimer.Reset();
     // auto path = AutonUtils::GetTrajectoryFromPathFile("BlueLeftInside_I"); // load choreo library so we don't get loop overruns during autonperiodic
 }
 /// @brief Called periodically while the robot is running, regardless of mode.
@@ -118,25 +123,49 @@ Robot::Robot()
 /// updates RobotState, and refreshes drive-team feedback (vision, field position, HUD).
 void Robot::RobotPeriodic()
 {
-    frc2::CommandScheduler::GetInstance().Run();
+    m_commandTimer.Reset();
+    m_LoggerTimer.Reset();
+    m_robotStateTimer.Reset();
+    m_driverFeedbackTimer.Reset();
+    m_dataLoggerTimer.Reset();
 
+    m_commandTimer.Start();
+    frc2::CommandScheduler::GetInstance().Run();
+    m_commandTimer.Stop();
+
+    m_LoggerTimer.Start();
     m_isFMSAttached = frc::DriverStation::IsFMSAttached();
     if (!m_isFMSAttached)
     {
         Logger::GetLogger()->PeriodicLog();
     }
+    m_LoggerTimer.Stop();
 
+    m_dataLoggerTimer.Start();
     if (m_datalogger != nullptr && !frc::DriverStation::IsDisabled())
     {
         m_datalogger->PeriodicDataLog();
     }
+    m_dataLoggerTimer.Stop();
 
+    m_robotStateTimer.Start();
+    m_driverFeedbackTimer.Start();
     if (m_robotState != nullptr)
     {
         m_robotState->Run();
     }
+    m_robotStateTimer.Stop();
 
+    m_driverFeedbackTimer.Start();
     UpdateDriveTeamFeedback();
+    m_driverFeedbackTimer.Stop();
+
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "CommandScheduler", m_commandTimer.Get().value());
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "Logger", m_LoggerTimer.Get().value());
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "RobotState", m_robotStateTimer.Get().value());
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "DriverFeedback", m_driverFeedbackTimer.Get().value());
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "DataLogger", m_dataLoggerTimer.Get().value());
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "Total Robot Perodic Time", m_commandTimer.Get().value() + m_LoggerTimer.Get().value() + m_robotStateTimer.Get().value() + m_driverFeedbackTimer.Get().value() + m_dataLoggerTimer.Get().value());
 }
 
 /// @brief Called periodically while the robot is disabled.

@@ -19,6 +19,7 @@
 
 #include "frc2/command/CommandPtr.h"
 #include <frc/TimedRobot.h>
+#include <frc/Timer.h>
 
 class CyclePrimitives;
 class TeleopControl;
@@ -61,4 +62,10 @@ private:
     bool m_rewindLatch = false;
     DragonVisionPoseEstimatorContainer *m_dragonVisionPoseEstimator;
     DragonQuest *m_quest;
+
+    frc::Timer m_commandTimer{};
+    frc::Timer m_LoggerTimer{};
+    frc::Timer m_robotStateTimer{};
+    frc::Timer m_driverFeedbackTimer{};
+    frc::Timer m_dataLoggerTimer{};
 };
