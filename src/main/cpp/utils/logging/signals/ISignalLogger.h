@@ -30,6 +30,15 @@
 class ISignalLogger
 {
 public:
+    // Shared unit string constants for all logger implementations
+    static constexpr std::string_view kUnitsPose2d = "X_m;Y_m;Rot_rad";
+    static constexpr std::string_view kUnitsPose3d = "X_m;Y_m;Z_m;QW;QX;QY;QZ";
+    static constexpr std::string_view kUnitsChassisSpeeds = "Vx_mps;Vy_mps;Omega_radps";
+    static constexpr std::string_view kUnitsSwerveState = "Speed_mps;Angle_rad";
+    static constexpr std::string_view kSubpathAxes = "/axes";
+    static constexpr std::string_view kSubpathButtons = "/buttons";
+    static constexpr std::string_view kSubpathPovs = "/povs";
+
     virtual ~ISignalLogger() = default;
 
     virtual void WriteBoolean(std::string_view signalID, bool value, uint64_t timestamp) = 0;

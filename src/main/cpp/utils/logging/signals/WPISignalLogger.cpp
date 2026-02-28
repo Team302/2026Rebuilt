@@ -81,7 +81,7 @@ void WPISignalLogger::WriteGamePadState(std::string_view signalID, const std::ar
     const std::string id(signalID);
     // Log axes as float span (matching DriverStation format)
     {
-        auto &entry = GetFloatArrayEntry(id + "/axes");
+        auto &entry = GetFloatArrayEntry(id + std::string(kSubpathAxes));
         std::array<float, 6> axesFloat;
         for (size_t i = 0; i < axes.size(); ++i)
             axesFloat[i] = static_cast<float>(axes[i]);
@@ -90,7 +90,7 @@ void WPISignalLogger::WriteGamePadState(std::string_view signalID, const std::ar
 
     // Log buttons as int span (BooleanArrayLogEntry::Append requires span<const int>)
     {
-        auto &entry = GetBoolArrayEntry(id + "/buttons");
+        auto &entry = GetBoolArrayEntry(id + std::string(kSubpathButtons));
         int buttonsArr[10];
         for (size_t i = 0; i < buttons.size(); ++i)
             buttonsArr[i] = buttons[i] ? 1 : 0;
@@ -99,7 +99,7 @@ void WPISignalLogger::WriteGamePadState(std::string_view signalID, const std::ar
 
     // Log POVs as int64_t span (matching DriverStation format)
     {
-        auto &entry = GetIntegerArrayEntry(id + "/povs");
+        auto &entry = GetIntegerArrayEntry(id + std::string(kSubpathPovs));
         std::array<int64_t, 1> povs64 = {static_cast<int64_t>(povs[0])};
         entry.Append(std::span<const int64_t>{povs64.data(), povs64.size()}, timestamp);
     }
