@@ -19,6 +19,20 @@
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/geometry/Pose2d.h"
+#include <utility>
+
+//====================================================================================================================================================
+/// @struct OutpostPoses
+/// @brief Holds both the outpost end pose and approach offset pose
+///
+/// Returned by CalcOutpostPoses() to avoid redundant computations when both
+/// the outpost center pose and approach offset pose are needed.
+//====================================================================================================================================================
+struct OutpostPoses
+{
+    frc::Pose2d endPose{};
+    frc::Pose2d offsetPose{};
+};
 
 //====================================================================================================================================================
 /// @class OutpostHelper
@@ -61,6 +75,15 @@ public:
     //------------------------------------------------------------------
     frc::Pose2d CalcOutpostOffsetPose() const;
 
+    //------------------------------------------------------------------
+    /// @brief      Calculates both the outpost end pose and offset approach pose in a single pass
+    /// @return     OutpostPoses - Struct containing both the end pose and offset pose
+    /// @details    Avoids redundant calls to IsNearestOutpostRed() and GetPose() by computing
+    ///             both poses in one method. Preferred over calling CalcOutpostPose() and
+    ///             CalcOutpostOffsetPose() separately.
+    //------------------------------------------------------------------
+    OutpostPoses CalcOutpostPoses() const;
+
 private:
     //------------------------------------------------------------------
     /// @brief      Private constructor for singleton pattern
@@ -83,6 +106,13 @@ private:
     ///             Outpost centers and returns true if red is nearest, false if blue is nearest
     //------------------------------------------------------------------
     bool IsNearestOutpostRed() const;
+
+    //------------------------------------------------------------------
+    /// @brief      Determines which Outpost is nearest using a pre-fetched pose
+    /// @param[in]  currentPose - The robot's current pose (avoids redundant GetPose() call)
+    /// @return     bool - true if the red Outpost is nearest, false if blue Outpost is nearest
+    //------------------------------------------------------------------
+    bool IsNearestOutpostRed(const frc::Pose2d &currentPose) const;
 
     //------------------------------------------------------------------
     /// @brief      Calculates the distance from a given pose to a field element

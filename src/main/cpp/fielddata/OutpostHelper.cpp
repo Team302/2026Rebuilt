@@ -59,14 +59,24 @@ bool OutpostHelper::IsNearestOutpostRed() const
     }
 
     auto currentPose = m_chassis->GetPose();
+    return IsNearestOutpostRed(currentPose);
+}
 
-    auto blueDistance = CalcDistanceToObject(FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_CENTER, currentPose);
-    auto redDistance = CalcDistanceToObject(FieldConstants::FIELD_ELEMENT::RED_OUTPOST_CENTER, currentPose);
-    if (blueDistance < redDistance)
+//------------------------------------------------------------------
+/// @brief      Determines which Outpost is nearest using a pre-fetched pose
+/// @param[in]  currentPose - The robot's current pose (avoids redundant GetPose() call)
+/// @return     bool - true if the red Outpost is nearest
+//------------------------------------------------------------------
+bool OutpostHelper::IsNearestOutpostRed(const frc::Pose2d &currentPose) const
+{
+    if (m_fieldConstants == nullptr)
     {
         return false;
     }
-    return true;
+
+    auto blueDistance = CalcDistanceToObject(FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_CENTER, currentPose);
+    auto redDistance = CalcDistanceToObject(FieldConstants::FIELD_ELEMENT::RED_OUTPOST_CENTER, currentPose);
+    return (redDistance < blueDistance);
 }
 
 //------------------------------------------------------------------
@@ -85,7 +95,8 @@ frc::Pose2d OutpostHelper::CalcOutpostPose() const
         return frc::Pose2d();
     }
 
-    auto isNearestOutpostRed = IsNearestOutpostRed();
+    auto currentPose = m_chassis->GetPose();
+    auto isNearestOutpostRed = IsNearestOutpostRed(currentPose);
 
     auto outpostPose = isNearestOutpostRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_OUTPOST_CENTER)
                                            : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_CENTER);
@@ -100,9 +111,51 @@ frc::Pose2d OutpostHelper::CalcOutpostOffsetPose() const
         return frc::Pose2d();
     }
 
-    auto isNearestOutpostRed = IsNearestOutpostRed();
-    auto pose = CalcOutpostPose();
-    return frc::Pose2d{FieldOffsetValues::GetInstance()->GetValue(isNearestOutpostRed, FIELD_OFFSET_ITEMS::OUTPOST_APPROACH_X), pose.Y(), pose.Rotation()};
+    auto currentPose = m_chassis->GetPose();
+    auto isNearestOutpostRed = IsNearestOutpostRed(currentPose);
+
+    auto outpostPose = isNearestOutpostRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_OUTPOST_CENTER)
+                                           : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_CENTER);
+
+    auto fieldOffsets = FieldOffsetValues::GetInstance();
+    auto endY = outpostPose.Y();
+    auto rotation = isNearestOutpostRed ? frc::Rotation2d(0_deg) : frc::Rotation2d(180_deg);
+
+    return frc::Pose2d{fieldOffsets->GetValue(isNearestOutpostRed, FIELD_OFFSET_ITEMS::OUTPOST_APPROACH_X), endY, rotation};
+}
+
+//------------------------------------------------------------------
+/// @brief      Calculates both outpost poses in a single pass (end + offset)
+/// @return     OutpostPoses struct with both endPose and offsetPose
+/// @details    Performs IsNearestOutpostRed() once and derives both poses,
+///             eliminating 2 redundant GetPose() calls and 2 redundant
+///             IsNearestOutpostRed() calls compared to calling
+///             CalcOutpostPose() + CalcOutpostOffsetPose() separately.
+//------------------------------------------------------------------
+OutpostPoses OutpostHelper::CalcOutpostPoses() const
+{
+    OutpostPoses poses;
+
+    if (m_chassis == nullptr || m_fieldConstants == nullptr)
+    {
+        return poses;
+    }
+
+    // Fetch pose and determine nearest outpost ONCE
+    auto currentPose = m_chassis->GetPose();
+    auto isRed = IsNearestOutpostRed(currentPose);
+
+    auto outpostPose = isRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_OUTPOST_CENTER)
+                             : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_CENTER);
+
+    auto fieldOffsets = FieldOffsetValues::GetInstance();
+    auto endY = outpostPose.Y();
+    auto rotation = isRed ? frc::Rotation2d(0_deg) : frc::Rotation2d(180_deg);
+
+    poses.endPose = frc::Pose2d(fieldOffsets->GetValue(isRed, FIELD_OFFSET_ITEMS::OUTPOST_X), endY, rotation);
+    poses.offsetPose = frc::Pose2d(fieldOffsets->GetValue(isRed, FIELD_OFFSET_ITEMS::OUTPOST_APPROACH_X), endY, rotation);
+
+    return poses;
 }
 
 //------------------------------------------------------------------

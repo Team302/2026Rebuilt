@@ -74,6 +74,13 @@ private:
     bool IsNearestHubRed() const;
 
     //------------------------------------------------------------------
+    /// @brief      Determines which Hub (red or blue) is nearest using a pre-fetched pose
+    /// @param[in]  currentPose - The robot's current pose (avoids redundant GetPose() call)
+    /// @return     bool - true if the red Hub is nearest, false if blue Hub is nearest
+    //------------------------------------------------------------------
+    bool IsNearestHubRed(const frc::Pose2d &currentPose) const;
+
+    //------------------------------------------------------------------
     /// @brief      Calculates the distance from a given pose to a field element
     /// @param[in]  element - The field element to calculate distance to
     /// @param[in]  currentPose - The pose to measure distance from
