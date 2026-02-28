@@ -93,6 +93,18 @@ frc::Pose2d OutpostHelper::CalcOutpostPose() const
     return frc::Pose2d(FieldOffsetValues::GetInstance()->GetValue(isNearestOutpostRed, FIELD_OFFSET_ITEMS::OUTPOST_X), outpostPose.Y(), isNearestOutpostRed ? 0_deg : 180_deg);
 }
 
+frc::Pose2d OutpostHelper::CalcOutpostOffsetPose() const
+{
+    if (m_chassis == nullptr || m_fieldConstants == nullptr)
+    {
+        return frc::Pose2d();
+    }
+
+    auto isNearestOutpostRed = IsNearestOutpostRed();
+    auto pose = CalcOutpostPose();
+    return frc::Pose2d{FieldOffsetValues::GetInstance()->GetValue(isNearestOutpostRed, FIELD_OFFSET_ITEMS::OUTPOST_APPROACH_X), pose.Y(), pose.Rotation()};
+}
+
 //------------------------------------------------------------------
 /// @brief      Calculates the distance from a given pose to a field element
 /// @param[in]  element - The field element to calculate distance to

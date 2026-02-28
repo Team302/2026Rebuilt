@@ -8,6 +8,6 @@ y1_rect = "6.69"
 x2_rect = "5.97"
 y2_rect = "4.65"
 
-pathUpdateOption = "DRIVE_TO_BUMP"
+pathUpdateOption = "DRIVE_OVER_BUMP"
 />
 </auton>

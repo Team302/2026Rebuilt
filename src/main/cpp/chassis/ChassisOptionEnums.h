@@ -35,7 +35,7 @@ public:
         POLAR_DRIVE,
         STOP_DRIVE,
         DRIVE_TO_HUB,
-        DRIVE_TO_BUMP,
+        DRIVE_OVER_BUMP,
         DRIVE_TO_DEPOT,
         DRIVE_TO_OUTPOST,
         DRIVE_TO_TOWER

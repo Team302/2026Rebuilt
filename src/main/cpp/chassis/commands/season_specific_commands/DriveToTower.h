@@ -40,19 +40,11 @@ public:
     ~DriveToTower() = default;
 
     //------------------------------------------------------------------
-    /// @brief      Calculates the target end pose for the Tower
-    /// @return     frc::Pose2d - The target pose at the center of the nearest Tower
-    /// @details    Overrides the base class method to provide Tower-specific
-    ///             target calculation using TowerHelper
+    /// @brief      Calculates target poses for tower navigation
+    /// @return     DriveToPoses struct with offset approach pose (midpoint) and tower center (endpoint)
+    /// @details    Overrides base class to provide tower-specific two-stage navigation.
+    ///             Returns current pose if in neutral zone, otherwise calculates nearest tower path.
+    /// @see        DriveToTower.cpp for full implementation details
     //------------------------------------------------------------------
-    frc::Pose2d GetEndPose() override;
-
-    //------------------------------------------------------------------
-    /// @brief      Determines if the DriveToTower command has finished execution
-    /// @return     true if the command has completed driving to the tower,
-    ///             false if the command should continue running
-    /// @details    Called repeatedly by the command scheduler to check completion status
-    //------------------------------------------------------------------
-
-    bool IsFinished() override;
+    struct DriveToPoses GetDriveToPoses() override;
 };
