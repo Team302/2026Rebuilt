@@ -184,6 +184,17 @@ public:
     /// @brief Get robot pose estimate derived from Quest detections.
     /// @return DragonVisionPoseEstimatorStruct - confidence level indicates the usefulness of the pose.
     DragonVisionPoseEstimatorStruct GetRobotPositionQuest();
+
+    /// @brief Set the Limelight robot pose (Yaw) on all AprilTag limelights using MegaTag1 localization.
+    void SetRobotPositionMegaTag1();
+
+    /// @brief Set the Limelight robot pose (Yaw) on all AprilTag limelights using the chassis pose.
+    /// @param pose The robot's current pose (position and rotation) on the field.
+    void SetLimeLightYaw(frc::Pose2d pose);
+
+    /// @brief Update the IMU configuration for all AprilTag limelights.
+    void SetIMUConfig();
+
     void RefreshQuestData();
 
     /// @brief Enable rewind buffer recording on all registered limelights.
@@ -198,7 +209,7 @@ public:
     /// @brief Disable rewind buffer recording on all registered limelights.
     /// @note LL4 only feature.
     void StopRewind();
-    
+
     /// @brief Distribute a Pose2d to vision that accept external robot pose.
     /// @param pose The pose to set (frc::Pose2d).
     /// @note Updates running the registered DragonQuest instance.

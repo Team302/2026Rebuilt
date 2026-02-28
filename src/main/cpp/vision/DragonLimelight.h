@@ -144,6 +144,16 @@ public:
     ///-----------------------------------------------------------------------------------
     void SetRobotPose(const frc::Pose2d &pose);
 
+    ///-----------------------------------------------------------------------------------
+    /// @brief Set the robot pose on this Limelight using its current MegaTag1 estimate.
+    ///-----------------------------------------------------------------------------------
+    void SetRobotPoseWithMegaTag1();
+
+    ///-----------------------------------------------------------------------------------
+    /// @brief Update the IMU configuration for this Limelight.
+    ///-----------------------------------------------------------------------------------
+    void UpdateIMUConfiguration();
+
     DRAGON_LIMELIGHT_CAMERA_TYPE GetCameraType() { return m_cameraType; };
 
     ///-----------------------------------------------------------------------------------
@@ -218,5 +228,6 @@ private:
     VisionPose m_megatag1Pos;       ///< last MegaTag1 pose
     bool m_megatag2PosBool = false; ///< flag: have MegaTag2 estimate
     VisionPose m_megatag2Pos;       ///< last MegaTag2 pose
-    bool m_robotPoseSet = false;    ///< true after SetRobotPose has been called
+
+    LIMELIGHT_IMU_MODE m_lastIMUMode = LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_ONLY;
 };
