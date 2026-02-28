@@ -128,7 +128,7 @@ bool TrajectoryDrive::IsFinished()
             Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "target pose Y", m_finalState.GetPose().Y().value());
             Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "target pose Rotation", m_finalState.GetPose().Rotation().Degrees().value());
 
-            isDone = IsSamePose(currentPose, m_finalState.GetPose(), m_chassisSpeeds, 10.0, 3.0, 1.5); // TO DO verify these values
+            isDone = IsSamePose(currentPose, m_finalState.GetPose(), m_chassisSpeeds, 1.0, 3.0, 1.5); // TO DO verify these values
         }
         else if (m_chassis != nullptr)
         {
