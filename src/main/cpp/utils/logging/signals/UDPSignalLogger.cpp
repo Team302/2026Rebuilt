@@ -117,6 +117,10 @@ void UDPSignalLogger::SendData(const char *buf, int len)
         return;
     }
 
+    // snprintf returns what it *would* write if truncated; clamp to what was actually written.
+    if (len <= 0 || len >= k_bufSize)
+        return;
+
 #ifdef _WIN32
     int bytesSent = sendto(m_socket, buf, len, 0,
                            (struct sockaddr *)&m_serverAddr, sizeof(m_serverAddr));
@@ -170,9 +174,14 @@ void UDPSignalLogger::WriteDoubleArray(std::string signalID, const std::vector<d
 {
     char valBuf[256];
     int pos = 0;
-    for (size_t i = 0; i < value.size() && pos < (int)sizeof(valBuf) - 1; ++i)
+    int remaining = (int)sizeof(valBuf);
+    for (size_t i = 0; i < value.size() && remaining > 1; ++i)
     {
-        pos += snprintf(valBuf + pos, sizeof(valBuf) - pos, i ? ";%.6g" : "%.6g", value[i]);
+        int written = snprintf(valBuf + pos, remaining, i ? ";%.6g" : "%.6g", value[i]);
+        if (written < 0 || written >= remaining)
+            break;
+        pos += written;
+        remaining -= written;
     }
     char buf[k_bufSize];
     int len = FormatMessage(buf, k_bufSize, signalID.c_str(), "double_array", valBuf, units.data(), timestamp);
@@ -226,28 +235,49 @@ void UDPSignalLogger::WriteGamePadState(std::string signalID, const std::array<d
 {
     char valBuf[128];
     char buf[k_bufSize];
-    int pos, len;
+    int pos, remaining, written, len;
 
     // Log axes
     pos = 0;
-    for (size_t i = 0; i < axes.size() && pos < (int)sizeof(valBuf) - 1; ++i)
-        pos += snprintf(valBuf + pos, sizeof(valBuf) - pos, i ? ";%.6g" : "%.6g", axes[i]);
+    remaining = (int)sizeof(valBuf);
+    for (size_t i = 0; i < axes.size() && remaining > 1; ++i)
+    {
+        written = snprintf(valBuf + pos, remaining, i ? ";%.6g" : "%.6g", axes[i]);
+        if (written < 0 || written >= remaining)
+            break;
+        pos += written;
+        remaining -= written;
+    }
     std::string axesID = signalID + "/axes";
     len = FormatMessage(buf, k_bufSize, axesID.c_str(), "float_array", valBuf, "", timestamp);
     SendData(buf, len);
 
     // Log buttons
     pos = 0;
-    for (size_t i = 0; i < buttons.size() && pos < (int)sizeof(valBuf) - 1; ++i)
-        pos += snprintf(valBuf + pos, sizeof(valBuf) - pos, i ? ";%d" : "%d", buttons[i] ? 1 : 0);
+    remaining = (int)sizeof(valBuf);
+    for (size_t i = 0; i < buttons.size() && remaining > 1; ++i)
+    {
+        written = snprintf(valBuf + pos, remaining, i ? ";%d" : "%d", buttons[i] ? 1 : 0);
+        if (written < 0 || written >= remaining)
+            break;
+        pos += written;
+        remaining -= written;
+    }
     std::string buttonsID = signalID + "/buttons";
     len = FormatMessage(buf, k_bufSize, buttonsID.c_str(), "bool_array", valBuf, "", timestamp);
     SendData(buf, len);
 
     // Log POVs
     pos = 0;
-    for (size_t i = 0; i < povs.size() && pos < (int)sizeof(valBuf) - 1; ++i)
-        pos += snprintf(valBuf + pos, sizeof(valBuf) - pos, i ? ";%d" : "%d", povs[i]);
+    remaining = (int)sizeof(valBuf);
+    for (size_t i = 0; i < povs.size() && remaining > 1; ++i)
+    {
+        written = snprintf(valBuf + pos, remaining, i ? ";%d" : "%d", povs[i]);
+        if (written < 0 || written >= remaining)
+            break;
+        pos += written;
+        remaining -= written;
+    }
     std::string povsID = signalID + "/povs";
     len = FormatMessage(buf, k_bufSize, povsID.c_str(), "int_array", valBuf, "", timestamp);
     SendData(buf, len);
