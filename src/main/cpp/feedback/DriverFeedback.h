@@ -38,8 +38,8 @@ class DragonVision;
 /// Performance notes:
 ///   - Expensive operations (vision health checks, CAN limit-switch reads) are throttled
 ///     via m_diagnosticUpdateInterval so they only run every Nth loop.
-///   - Mechanism pointers (Launcher, Intake), DragonVision, and the NetworkTable are cached
-///     once in the constructor to avoid repeated singleton lookups and dynamic_casts.
+///   - Mechanism pointers (Launcher, Intake), DragonVision, TeleopControl, and the NetworkTable are cached
+///     once (in the constructor or via in-class member initializers) to avoid repeated singleton lookups and dynamic_casts.
 
 class DriverFeedback : public IRobotStateChangeSubscriber
 {
