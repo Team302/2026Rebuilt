@@ -140,10 +140,7 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
     m_field->UpdateObject("Launcher Position", frc::Pose2d(GetMechanismWorldPosition(), robotPose.Rotation() + frc::Rotation2d(bestAngle)));
     return units::angle::turn_t(bestAngle.value());
 }
-// don't update turret if the change is small enough in target calculator
-// do in launcher.cpp, m_turret target compared to the getted value, subtract and abs, then compare to a threshold.
-// if below threshold, don't update
-// update launcher tables * ask tanay
+
 void RebuiltTargetCalculator::UpdateTargetOffset()
 {
     auto teleopControl = TeleopControl::GetInstance();
