@@ -46,6 +46,8 @@ public:
 
     std::string GetLoggingDirectory() const;
 
+    LoggerType GetLoggerType() const { return m_loggerType; }
+
 private:
     DragonDataLoggerMgr();
     ~DragonDataLoggerMgr();
@@ -55,8 +57,8 @@ private:
     unsigned int m_lastIndex = 0;
 
     const units::time::second_t m_period{0.00075};
-    const LoggerType m_defaultLoggerType{LoggerType::UDP_LOGGER};
-    const std::string m_piLoggerAddress{"dragondataloggerz.local"};
+    const LoggerType m_loggerType{LoggerType::CTRE_SIGNAL_LOGGER};
+    const std::string m_piLoggerAddress{"pi-logger.local"};
     const int m_piLoggerPort{5900};
 
     static DragonDataLoggerMgr *m_instance;

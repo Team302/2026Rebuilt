@@ -40,7 +40,7 @@
 
 #include "RobotIdentifier.h"
 
-class Intake : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber
+class Intake : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger
 {
 public:
 	enum STATE_NAMES
@@ -87,7 +87,7 @@ public:
 	void CreateAndRegisterStates();
 	void Cyclic();
 	void RunCommonTasks() override;
-	// void DataLog() override;
+	void DataLog(uint64_t timestamp) override;
 
 	RobotIdentifier getActiveRobotId() { return m_activeRobotId; }
 
@@ -113,7 +113,6 @@ public:
 protected:
 	RobotIdentifier m_activeRobotId;
 	std::string m_ntName;
-
 	ControlData *GetControlData(std::string name) override;
 
 private:
@@ -138,7 +137,6 @@ private:
 	bool m_isInClimbMode = false;
 	bool m_isLaunching = false;
 	bool m_prevIntakeSwitchState = false;
-	// void InitializeLogging();
 
 	units::angle::turn_t m_intakeRetractedPositionTarget{0.0};
 	units::angle::turn_t m_intakeExtendedPositionTarget{0.0};

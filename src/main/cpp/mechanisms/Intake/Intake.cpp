@@ -392,6 +392,55 @@ void Intake::ManualControl()
 		}
 	}
 }
+void Intake::DataLog(uint64_t timestamp)
+{
+	// Intake motor signals
+	// LogDoubleData(timestamp, m_ntName + "/Intake/StatorCurrent", m_intake->GetStatorCurrent().GetValueAsDouble(), "Amps");
+	// LogDoubleData(timestamp, m_ntName + "/Intake/SupplyCurrent", m_intake->GetSupplyCurrent().GetValueAsDouble(), "Amps");
+	// LogDoubleData(timestamp, m_ntName + "/Intake/SupplyVoltage", m_intake->GetSupplyVoltage().GetValueAsDouble(), "Volts");
+	// LogDoubleData(timestamp, m_ntName + "/Intake/MotorVoltage", m_intake->GetMotorVoltage().GetValueAsDouble(), "Volts");
+	// LogDoubleData(timestamp, m_ntName + "/Intake/DutyCycle", m_intake->GetDutyCycle().GetValueAsDouble(), "Percent");
+	// LogDoubleData(timestamp, m_ntName + "/Intake/Velocity", m_intake->GetVelocity().GetValueAsDouble(), "rps");
+	// LogDoubleData(timestamp, m_ntName + "/Intake/Position", m_intake->GetPosition().GetValueAsDouble(), "rotations");
+	// LogDoubleData(timestamp, m_ntName + "/Intake/Temperature", m_intake->GetDeviceTemp().GetValueAsDouble(), "Degrees C");
+
+	// // Intake motor faults
+	// LogBoolData(timestamp, m_ntName + "/Intake/Fault/BootDuringEnable", m_intake->GetFault_BootDuringEnable().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Intake/Fault/DeviceTemp", m_intake->GetFault_DeviceTemp().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Intake/Fault/Hardware", m_intake->GetFault_Hardware().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Intake/Fault/Undervoltage", m_intake->GetFault_Undervoltage().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Intake/Fault/OverSupplyV", m_intake->GetFault_OverSupplyV().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Intake/Fault/UnstableSupplyV", m_intake->GetFault_UnstableSupplyV().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Intake/Fault/StatorCurrLimit", m_intake->GetFault_StatorCurrLimit().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Intake/Fault/SupplyCurrLimit", m_intake->GetFault_SupplyCurrLimit().GetValue());
+
+	// // Extender motor signals
+	// LogDoubleData(timestamp, m_ntName + "/Extender/StatorCurrent", m_extender->GetStatorCurrent().GetValueAsDouble(), "Amps");
+	// LogDoubleData(timestamp, m_ntName + "/Extender/SupplyCurrent", m_extender->GetSupplyCurrent().GetValueAsDouble(), "Amps");
+	// LogDoubleData(timestamp, m_ntName + "/Extender/SupplyVoltage", m_extender->GetSupplyVoltage().GetValueAsDouble(), "Volts");
+	// LogDoubleData(timestamp, m_ntName + "/Extender/MotorVoltage", m_extender->GetMotorVoltage().GetValueAsDouble(), "Volts");
+	// LogDoubleData(timestamp, m_ntName + "/Extender/DutyCycle", m_extender->GetDutyCycle().GetValueAsDouble(), "Percent");
+	// LogDoubleData(timestamp, m_ntName + "/Extender/Velocity", m_extender->GetVelocity().GetValueAsDouble(), "rps");
+	// LogDoubleData(timestamp, m_ntName + "/Extender/Position", m_extender->GetPosition().GetValueAsDouble(), "rotations");
+	// LogDoubleData(timestamp, m_ntName + "/Extender/Temperature", m_extender->GetDeviceTemp().GetValueAsDouble(), "Degrees C");
+
+	// // Extender motor faults
+	// LogBoolData(timestamp, m_ntName + "/Extender/Fault/BootDuringEnable", m_extender->GetFault_BootDuringEnable().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Extender/Fault/DeviceTemp", m_extender->GetFault_DeviceTemp().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Extender/Fault/Hardware", m_extender->GetFault_Hardware().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Extender/Fault/Undervoltage", m_extender->GetFault_Undervoltage().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Extender/Fault/OverSupplyV", m_extender->GetFault_OverSupplyV().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Extender/Fault/UnstableSupplyV", m_extender->GetFault_UnstableSupplyV().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Extender/Fault/StatorCurrLimit", m_extender->GetFault_StatorCurrLimit().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Extender/Fault/SupplyCurrLimit", m_extender->GetFault_SupplyCurrLimit().GetValue());
+
+	// Control data
+	LogDoubleData(timestamp, m_ntName + "/Control/TargetPercentOut", m_intakePercentOut.Output.value(), "Percent");
+
+	// Mechanism state
+	LogStringData(timestamp, m_ntName + "/State", GetCurrentStateName());
+	LogBoolData(timestamp, m_ntName + "/IsIntakeExtended", IsIntakeIn());
+}
 
 std::string Intake::GetCurrentStateName()
 {

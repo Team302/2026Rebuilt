@@ -52,7 +52,6 @@ public:
     virtual void WriteChassisSpeeds(std::string_view signalID, const frc::ChassisSpeeds &value, uint64_t timestamp) = 0;
     virtual void WriteSwerveModuleState(std::string_view signalID, const frc::SwerveModuleState &value, uint64_t timestamp) = 0;
     virtual void WriteGamePadState(std::string_view signalID, const std::array<double, 6>, const std::array<bool, 10>, const std::array<int, 1>, uint64_t timestamp) = 0;
-    // Optional: methods for starting/stopping logging
     virtual void Start() = 0;
     virtual void Stop() = 0;
 };

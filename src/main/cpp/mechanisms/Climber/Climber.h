@@ -41,10 +41,11 @@
 #include "configs/RobotElementNames.h"
 #include "configs/MechanismConfigMgr.h"
 #include "chassis/ChassisConfigMgr.h"
+#include "utils/logging/signals/DragonDataLogger.h"
 
 #include "RobotIdentifier.h"
 
-class Climber : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber
+class Climber : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger
 {
 public:
 	enum STATE_NAMES
@@ -83,7 +84,7 @@ public:
 	void CreateAndRegisterStates();
 	void Cyclic();
 	void RunCommonTasks() override;
-	// void DataLog() override;
+	void DataLog(uint64_t timestamp) override;
 
 	void NotifyStateUpdate(RobotStateChanges::StateChange stchange, bool value) override;
 
@@ -145,6 +146,4 @@ private:
 	subsystems::CommandSwerveDrivetrain *m_chassis; ///< pointer to chassis for pitch
 
 	units::angular_velocity::degrees_per_second_t m_maxAngularVelocity = 360_deg_per_s;
-
-	// void InitializeLogging();
 };

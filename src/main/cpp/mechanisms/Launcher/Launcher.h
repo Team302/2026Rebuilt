@@ -37,11 +37,12 @@
 #include "configs/MechanismConfigMgr.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "RobotIdentifier.h"
+#include "utils/logging/signals/DragonDataLogger.h"
 
 // Includes after generation
 #include "utils/RebuiltTargetCalculator.h"
 
-class Launcher : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber
+class Launcher : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger
 {
 public:
 	enum STATE_NAMES
@@ -125,7 +126,7 @@ public:
 	void CreateAndRegisterStates();
 	void Cyclic();
 	void RunCommonTasks() override;
-	// void DataLog() override;
+	void DataLog(uint64_t timestamp) override;
 
 	RobotIdentifier getActiveRobotId() { return m_activeRobotId; }
 
