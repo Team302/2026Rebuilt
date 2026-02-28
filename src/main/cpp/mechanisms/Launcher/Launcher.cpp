@@ -769,10 +769,10 @@ bool Launcher::IsInLaunchZone() const
 
 void Launcher::CalculateTargets()
 {
-
-	if (units::math::abs(m_targetTurretAngle - m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_cachedTurretPosition)) > 0.1_tr)
+	units::angle::turn_t calculatorTurretTarget = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_cachedTurretPosition);
+	if (units::math::abs(m_targetTurretAngle - calculatorTurretTarget) > 0.1_tr)
 	{
-		m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_cachedTurretPosition);
+		m_targetTurretAngle = calculatorTurretTarget;
 	}
 	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateDistanceToTarget(m_lookaheadTime);
 
