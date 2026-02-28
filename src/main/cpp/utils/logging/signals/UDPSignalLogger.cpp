@@ -182,7 +182,14 @@ void UDPSignalLogger::WriteDoubleArray(std::string signalID, const std::vector<d
     {
         int written = snprintf(valBuf + pos, remaining, i ? ";%.6g" : "%.6g", value[i]);
         if (written < 0 || written >= remaining)
+        {
+            // Discard any partially written token to avoid truncated final element
+            if (pos >= 0 && pos < static_cast<int>(sizeof(valBuf)))
+            {
+                valBuf[pos] = '\0';
+            }
             break;
+        }
         pos += written;
         remaining -= written;
     }
