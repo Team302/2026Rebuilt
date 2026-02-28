@@ -105,11 +105,8 @@ void DriverFeedback::UpdateFeedback()
 {
     UpdateLEDStates();
 
-    // Throttle diagnostic LED updates — vision health checks and CAN limit switch reads are expensive
-    m_diagnosticCounter++;
-    if (m_diagnosticCounter >= m_diagnosticUpdateInterval)
+    if (DriverStation::IsDisabled())
     {
-        m_diagnosticCounter = 0;
         UpdateDiagnosticLEDs();
     }
 

@@ -114,8 +114,4 @@ private:
     Intake *m_intake = nullptr;                                    ///< Cached intake mechanism
     DragonVision *m_dragonVision = nullptr;                        ///< Cached vision singleton
     std::shared_ptr<nt::NetworkTable> m_controllerTable = nullptr; ///< Cached NT table for controller status
-
-    // --- Diagnostic throttle ---
-    int m_diagnosticCounter = 0;                          ///< Counts loops since last diagnostic update
-    static constexpr int m_diagnosticUpdateInterval = 10; ///< Run diagnostics every N loops (~200 ms at 50 Hz)
 };

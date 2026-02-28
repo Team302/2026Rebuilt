@@ -266,7 +266,7 @@ void Robot::InitializeDriveteamFeedback()
 /// and refreshes driver feedback (dashboard HUD, camera feeds, etc.).
 void Robot::UpdateDriveTeamFeedback()
 {
-    if (m_previewer != nullptr)
+    if (m_previewer != nullptr && frc::DriverStation::IsDisabled())
     {
         m_previewer->CheckCurrentAuton();
     }
