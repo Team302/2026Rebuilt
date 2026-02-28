@@ -27,53 +27,55 @@
 DriveToOutpost::DriveToOutpost(subsystems::CommandSwerveDrivetrain *chassis)
     : DriveToPose(chassis)
 {
+    SetDistanceThreshold(kDistanceThreshold);
+    SetAngleTolerance(kAngleTolerance);
+    SetYTransitionToEndPointTolerance(kYTransitionToEndPointTolerance);
 }
 
 //------------------------------------------------------------------
-/// @brief      Calculates the target end pose for the Outpost
-/// @return     frc::Pose2d - The target pose at the center of the nearest Outpost
-/// @details    Uses OutpostHelper to determine which Outpost (red or blue) is
-///             closest to the robot and calculates the center pose of that
-///             Outpost. Returns a default pose if OutpostHelper is unavailable.
+/// @brief      Calculates the target poses for driving to an outpost
+/// @return     DriveToPoses struct containing midpoint and endpoint poses
+/// @details    Determines the nearest outpost and returns a two-stage path:
+///
+///             **Behavior:**
+///             - If in neutral zone: Returns current pose (no movement)
+///             - If in alliance zone: Calculates two-stage path using OutpostHelper
+///
+///             **Mid Pose**
+///             - Offset position near the outpost for approach alignment
+///
+///             **End Pose**
+///             - Final position at the outpost center
+///
+///             The command uses OutpostHelper to identify which outpost (red or blue)
+///             is closest and calculates both an offset approach pose and the
+///             final target pose at the outpost center.
+/// @see        OutpostHelper::CalcOutpostPose() for outpost position calculation
+/// @see        OutpostHelper::CalcOutpostOffsetPose() for approach position
 //------------------------------------------------------------------
-frc::Pose2d DriveToOutpost::GetEndPose()
+struct DriveToPoses DriveToOutpost::GetDriveToPoses()
 {
-    frc::Pose2d endPose;
+    struct DriveToPoses poses;
+    poses.hasMidPose = false;
+
     if (NeutralZoneManager::GetInstance()->IsInNeutralZone())
     {
         auto chassis = GetChassis();
         if (chassis != nullptr)
         {
-            return chassis->GetPose();
+            poses.endPose = chassis->GetPose();
         }
-        return endPose;
+        return poses;
     }
     auto outpostHelper = OutpostHelper::GetInstance();
     if (outpostHelper != nullptr)
     {
-        return outpostHelper->CalcOutpostPose();
-    }
-    return endPose;
-}
+        poses.endPose = outpostHelper->CalcOutpostPose();
+        poses.hasMidPose = true;
+        poses.midPose = outpostHelper->CalcOutpostOffsetPose();
 
-//------------------------------------------------------------------
-/// @brief Checks if the DriveToOutpost command has finished execution.
-///
-/// @return true if the end pose is at the origin or if the base class's IsFinished
-///         condition is met, false otherwise.
-///
-/// @details This method determines whether the command should terminate by first checking
-///          if the end pose is at the origin (which means we had an error calculating the
-///          target position) so we stop immediately.  Otherwise, it delegates to the base class's
-///          IsFinished() method to determine completion.
-//------------------------------------------------------------------
-bool DriveToOutpost::IsFinished()
-{
-    auto endPose = GetEndPose();
-    if (PoseUtils::IsPoseAtOrigin(endPose, units::length::centimeter_t{1.0}))
-    {
-        return true;
+        return poses;
     }
 
-    return DriveToPose::IsFinished(); // call base class's IsFinished method
+    return poses;
 }

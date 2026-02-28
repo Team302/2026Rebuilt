@@ -28,17 +28,22 @@
 //====================================================================================================================================================
 enum class FIELD_OFFSET_ITEMS
 {
-    OUTPOST_X,       ///< X-coordinate offset of the outpost
-    DEPOT_X,         ///< X-coordinate offset of the depot neutral side
+    DEPOT_X, ///< X-coordinate of the depot neutral side position (meters)
+
+    OUTPOST_X,          ///< X-coordinate of the outpost position (meters)
+    OUTPOST_APPROACH_X, ///< X-coordinate of the outpost approach position (meters)
+
+    HUB_X, ///< X-coordinate of the hub center with offset applied (meters)
+
+    BUMP_ALLIANCE_X, ///< X-coordinate of the bump on the alliance zone side (meters)
+    BUMP_ALLIANCE_Y, ///< Y-coordinate of the bump on the alliance zone side (meters)
+    BUMP_NEUTRAL_X,  ///< X-coordinate of the bump on the neutral zone side (meters)
+    BUMP_NEUTRAL_Y,  ///< Y-coordinate of the bump on the neutral zone side (meters)
+
     TOWER_OUTPOST_X, ///< X-coordinate offset of the outpost
     TOWER_DEPOT_X,   ///< X-coordinate offset of the depot neutral side
     TOWER_OUTPOST_Y, ///< Y-coordinate offset of the outpost
-    TOWER_DEPOT_Y,   ///< Y-coordinate offset of the depot neutral side
-    HUB_X,
-    ALLIANCE_BUMP_X, ///< X-coordinate of the bump on the alliance zone side (meters)
-    ALLIANCE_BUMP_Y, ///< Y-coordinate of the bump on the alliance zone side (meters)
-    NEUTRAL_BUMP_X,  ///< X-coordinate of the bump on the neutral zone side (meters)
-    NEUTRAL_BUMP_Y   ///< Y-coordinate of the bump on the neutral zone side (meters)
+    TOWER_DEPOT_Y    ///< Y-coordinate offset of the depot neutral side
 };
 
 //====================================================================================================================================================
@@ -68,7 +73,7 @@ enum class FIELD_OFFSET_ITEMS
 /// auto offsets = FieldOffsetValues::GetInstance();
 /// bool isRed = true;
 /// auto hubX = offsets->GetValue(isRed, FIELD_OFFSET_ITEMS::HUB_X);
-/// auto bumpX = offsets->GetValue(isRed, FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_X);
+/// auto bumpX = offsets->GetValue(isRed, FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X);
 /// ```
 ///
 /// **Primary Consumers:**
@@ -105,11 +110,11 @@ public:
     ///             - OUTPOST_X: Returns red or blue outpost X position
     ///             - DEPOT_X: Returns red or blue depot neutral side X position
     ///             - HUB_X: Returns red or blue hub X position with 2.0m offset toward neutral zone
-    ///             - ALLIANCE_BUMP_X: Returns alliance side bump X position (1.5m offset from hub)
-    ///             - NEUTRAL_BUMP_X: Returns neutral side bump X position (1.5m offset from hub)
+    ///             - BUMP_ALLIANCE_X: Returns alliance side bump X position (1.5m offset from hub)
+    ///             - BUMP_NEUTRAL_X: Returns neutral side bump X position (1.5m offset from hub)
     ///
     ///             **Y-Coordinate Queries:**
-    ///             - ALLIANCE_BUMP_Y or NEUTRAL_BUMP_Y:
+    ///             - BUMP_ALLIANCE_Y or BUMP_NEUTRAL_Y:
     ///               * Dynamically calculates Y position based on nearest bump (uses BumpHelper)
     ///               * Returns midpoint between hub center and corresponding trench
     ///               * Same Y value for both alliance and neutral side of the same bump
@@ -164,7 +169,7 @@ private:
     static FieldOffsetValues *m_instance;
 
     //------------------------------------------------------------------
-    // Depot and Outpost X-Coordinates
+    // Depot X-Coordinates
     //------------------------------------------------------------------
 
     /// @brief X-coordinate of blue alliance depot neutral side (meters)
@@ -173,12 +178,25 @@ private:
     /// @brief X-coordinate of red alliance depot neutral side (meters)
     units::length::meter_t m_redDepotX;
 
+    //------------------------------------------------------------------
+    // Outpost X-Coordinates
+    //------------------------------------------------------------------
+
     /// @brief X-coordinate of blue alliance outpost (meters, equal to depot X)
     units::length::meter_t m_blueOutpostX;
 
     /// @brief X-coordinate of red alliance outpost (meters, equal to depot X)
     units::length::meter_t m_redOutpostX;
 
+    /// @brief X-coordinate of blue alliance outpost approach position (meters, outpostX + OUTPOST_APPROACH_OFFSET)
+    units::length::meter_t m_blueOutpostApproachX;
+
+    /// @brief X-coordinate of red alliance outpost approach position (meters, outpostX - OUTPOST_APPROACH_OFFSET)
+    units::length::meter_t m_redOutpostApproachX;
+
+    //------------------------------------------------------------------
+    // Tower Coordinates
+    //------------------------------------------------------------------
     units::length::meter_t m_redTowerOutpostX;
 
     units::length::meter_t m_redTowerDepotX;
@@ -247,4 +265,9 @@ private:
 
     /// @brief Bump offset distance from hub center (1.5 meters on each side)
     static constexpr units::length::meter_t BUMP_OFFSET = 1.5_m;
+
+    static constexpr units::length::meter_t OUTPOST_APPROACH_OFFSET = 0.5_m; // Additional X-offset applied when computing outpost approach positions
+
+    static constexpr units::length::meter_t TOWER_X_OFFSET = 1.0_m; // X-offset for tower outpost position
+    static constexpr units::length::meter_t TOWER_Y_OFFSET = 0.5_m; // Y-offset for tower outpost position
 };
