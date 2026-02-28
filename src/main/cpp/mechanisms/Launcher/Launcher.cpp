@@ -497,13 +497,13 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
 	// MECH_TODO: Set Motion Magic params
-	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::turns_per_second_t(54.5);
-	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(200);
+	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::turns_per_second_t(220);
+	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(400);
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 2.341053459459459;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.60050076744186046511627906976744;
 
 	configs.Slot0.kI = m_positionDegreesTurret->GetI();
 	configs.Slot0.kD = m_positionDegreesTurret->GetD();
@@ -769,7 +769,11 @@ bool Launcher::IsInLaunchZone() const
 
 void Launcher::CalculateTargets()
 {
-	m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_cachedTurretPosition);
+	units::angle::turn_t calculatorTurretTarget = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_cachedTurretPosition);
+	if (units::math::abs(m_targetTurretAngle - calculatorTurretTarget) > 0.1_tr)
+	{
+		m_targetTurretAngle = calculatorTurretTarget;
+	}
 	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateDistanceToTarget(m_lookaheadTime);
 
 	if (AllianceZoneManager::GetInstance()->IsInAllianceZone())
@@ -779,8 +783,10 @@ void Launcher::CalculateTargets()
 	}
 	else
 	{
-		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingHoodAngleArray, units::length::foot_t(distanceToTarget));
-		m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingLauncherVelocityArray, units::length::foot_t(distanceToTarget));
+		m_targetHoodAngle = m_passingHoodTargetAngle;
+		m_targetLauncherAngularVelocity = m_passingLauncherTargetVelocity;
+		// m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingHoodAngleArray, units::length::foot_t(distanceToTarget));
+		// m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingLauncherVelocityArray, units::length::foot_t(distanceToTarget));
 	}
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Distance To Target", distanceToTarget.value());
