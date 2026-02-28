@@ -1,5 +1,6 @@
 #include "utils/logging/signals/UDPSignalLogger.h"
-#include <sstream>
+#include <cinttypes>
+#include <cstdio>
 #include <iostream>
 #include <cstring>
 #ifdef _WIN32
@@ -9,7 +10,6 @@
 #include <cerrno>
 #include <netdb.h>
 #endif
-#include <string>
 
 UDPSignalLogger::UDPSignalLogger(const std::string &host, int port)
     : m_host(host), m_port(port), m_isRunning(false)
@@ -100,15 +100,17 @@ void UDPSignalLogger::Stop()
     m_isRunning = false;
 }
 
-std::string UDPSignalLogger::FormatMessage(std::string_view signalID, std::string_view type,
-                                           std::string_view value, std::string_view units, uint64_t timestamp)
+int UDPSignalLogger::FormatMessage(char *buf, int bufSize, std::string_view signalID, const char *type,
+                                   const char *value, std::string_view units, uint64_t timestamp)
 {
-    std::ostringstream oss;
-    oss << std::to_string(timestamp) << "," << signalID << "," << type << "," << value << "," << units;
-    return oss.str();
+    return snprintf(buf, bufSize, "%llu,%.*s,%s,%s,%.*s",
+                    (unsigned long long)timestamp,
+                    (int)signalID.size(), signalID.data(),
+                    type, value,
+                    (int)units.size(), units.data());
 }
 
-void UDPSignalLogger::SendData(const std::string &message)
+void UDPSignalLogger::SendData(const char *buf, int len)
 {
 #ifdef _WIN32
     if (!m_isRunning || m_socket == INVALID_SOCKET)
@@ -119,15 +121,20 @@ void UDPSignalLogger::SendData(const std::string &message)
         return;
     }
 
+    // len is expected to be the snprintf return value; if it's non-positive or
+    // indicates truncation (>= k_bufSize), treat the message as invalid and drop it.
+    if (len <= 0 || len >= static_cast<int>(k_bufSize))
+        return;
+
 #ifdef _WIN32
-    int bytesSent = sendto(m_socket, message.c_str(), (int)message.length(), 0,
+    int bytesSent = sendto(m_socket, buf, len, 0,
                            (struct sockaddr *)&m_serverAddr, sizeof(m_serverAddr));
     if (bytesSent == SOCKET_ERROR)
     {
         std::cerr << "sendto failed: " << WSAGetLastError() << std::endl;
     }
 #else
-    ssize_t bytesSent = sendto(m_socket, message.c_str(), message.length(), 0,
+    ssize_t bytesSent = sendto(m_socket, buf, len, 0,
                                (struct sockaddr *)&m_serverAddr, sizeof(m_serverAddr));
     if (bytesSent < 0)
     {
@@ -138,127 +145,150 @@ void UDPSignalLogger::SendData(const std::string &message)
 
 void UDPSignalLogger::WriteBoolean(std::string_view signalID, bool value, uint64_t timestamp)
 {
-    std::string message = FormatMessage(signalID, "bool", value ? "true" : "false", "bool", timestamp);
-    SendData(message);
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID, "bool", value ? "true" : "false", "bool", timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WriteDouble(std::string_view signalID, double value, std::string_view units, uint64_t timestamp)
 {
-    std::ostringstream oss;
-    oss << value;
-    std::string message = FormatMessage(signalID, "double", oss.str(), units, timestamp);
-    SendData(message);
+    char valBuf[32];
+    snprintf(valBuf, sizeof(valBuf), "%.6g", value);
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID, "double", valBuf, units, timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WriteInteger(std::string_view signalID, int64_t value, std::string_view units, uint64_t timestamp)
 {
-    std::ostringstream oss;
-    oss << value;
-    std::string message = FormatMessage(signalID, "int64", oss.str(), units, timestamp);
-    SendData(message);
+    char valBuf[32];
+    snprintf(valBuf, sizeof(valBuf), "%lld", (long long)value);
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID, "int64", valBuf, units, timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WriteString(std::string_view signalID, const std::string &value, uint64_t timestamp)
 {
-    std::string message = FormatMessage(signalID, "string", value, "string", timestamp);
-    SendData(message);
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID, "string", value.c_str(), "string", timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WriteDoubleArray(std::string_view signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
 {
-    std::ostringstream oss;
-    for (size_t i = 0; i < value.size(); ++i)
+    char valBuf[256];
+    valBuf[0] = '\0';
+    int pos = 0;
+    int remaining = (int)sizeof(valBuf);
+    for (size_t i = 0; i < value.size() && remaining > 1; ++i)
     {
-        oss << value[i];
-        if (i < value.size() - 1)
+        int written = snprintf(valBuf + pos, remaining, i ? ";%.6g" : "%.6g", value[i]);
+        if (written < 0 || written >= remaining)
         {
-            oss << ";";
+            if (pos >= 0 && pos < static_cast<int>(sizeof(valBuf)))
+                valBuf[pos] = '\0';
+            break;
         }
+        pos += written;
+        remaining -= written;
     }
-    std::string message = FormatMessage(signalID, "double_array", oss.str(), units, timestamp);
-    SendData(message);
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID, "double_array", valBuf, units, timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WritePose2d(std::string_view signalID, const frc::Pose2d &value, uint64_t timestamp)
 {
-    std::ostringstream oss;
-    oss << value.X().value() << ";" << value.Y().value() << ";" << value.Rotation().Radians().value();
-    std::string message = FormatMessage(signalID, "pose2d", oss.str(), "X_m;Y_m;Rot_rad", timestamp);
-    SendData(message);
+    char valBuf[96];
+    snprintf(valBuf, sizeof(valBuf), "%.6g;%.6g;%.6g",
+             value.X().value(), value.Y().value(), value.Rotation().Radians().value());
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID, "pose2d", valBuf, kUnitsPose2d, timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WritePose3d(std::string_view signalID, const frc::Pose3d &value, uint64_t timestamp)
 {
-    std::ostringstream oss;
-    oss << value.X().value() << ";" << value.Y().value() << ";" << value.Z().value() << ";"
-        << value.Rotation().GetQuaternion().W() << ";"
-        << value.Rotation().GetQuaternion().X() << ";"
-        << value.Rotation().GetQuaternion().Y() << ";"
-        << value.Rotation().GetQuaternion().Z();
-    std::string message = FormatMessage(signalID, "pose3d", oss.str(), "X_m;Y_m;Z_m;QW;QX;QY;QZ", timestamp);
-    SendData(message);
+    char valBuf[160];
+    snprintf(valBuf, sizeof(valBuf), "%.6g;%.6g;%.6g;%.6g;%.6g;%.6g;%.6g",
+             value.X().value(), value.Y().value(), value.Z().value(),
+             value.Rotation().GetQuaternion().W(),
+             value.Rotation().GetQuaternion().X(),
+             value.Rotation().GetQuaternion().Y(),
+             value.Rotation().GetQuaternion().Z());
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID, "pose3d", valBuf, kUnitsPose3d, timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WriteChassisSpeeds(std::string_view signalID, const frc::ChassisSpeeds &value, uint64_t timestamp)
 {
-    std::ostringstream oss;
-    oss << value.vx.value() << ";" << value.vy.value() << ";" << value.omega.value();
-    std::string message = FormatMessage(signalID, "chassis_speeds", oss.str(), "Vx_mps;Vy_mps;Omega_radps", timestamp);
-    SendData(message);
+    char valBuf[96];
+    snprintf(valBuf, sizeof(valBuf), "%.6g;%.6g;%.6g",
+             value.vx.value(), value.vy.value(), value.omega.value());
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID, "chassis_speeds", valBuf, kUnitsChassisSpeeds, timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WriteSwerveModuleState(std::string_view signalID, const frc::SwerveModuleState &value, uint64_t timestamp)
 {
-    std::ostringstream oss;
-    oss << value.speed.value() << ";" << value.angle.Radians().value();
-    std::string message = FormatMessage(signalID, "swerve_module_state", oss.str(), "Speed_mps;Angle_rad", timestamp);
-    SendData(message);
+    char valBuf[64];
+    snprintf(valBuf, sizeof(valBuf), "%.6g;%.6g", value.speed.value(), value.angle.Radians().value());
+    char buf[k_bufSize];
+    int len = FormatMessage(buf, k_bufSize, signalID, "swerve_module_state", valBuf, kUnitsSwerveState, timestamp);
+    SendData(buf, len);
 }
 
 void UDPSignalLogger::WriteGamePadState(std::string_view signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs, uint64_t timestamp)
 {
+    char valBuf[128];
+    char buf[k_bufSize];
+    int pos, remaining, written, len;
+
     // Log axes
+    pos = 0;
+    remaining = (int)sizeof(valBuf);
+    for (size_t i = 0; i < axes.size() && remaining > 1; ++i)
     {
-        std::ostringstream oss;
-        for (size_t i = 0; i < axes.size(); ++i)
-        {
-            oss << axes[i];
-            if (i < axes.size() - 1)
-            {
-                oss << ";";
-            }
-        }
-        std::string message = FormatMessage(std::string(signalID) + "/axes", "float_array", oss.str(), "", timestamp);
-        SendData(message);
+        written = snprintf(valBuf + pos, remaining, i ? ";%.6g" : "%.6g", axes[i]);
+        if (written < 0 || written >= remaining)
+            break;
+        pos += written;
+        remaining -= written;
     }
+    std::string axesID = std::string(signalID) + std::string(kSubpathAxes);
+    len = FormatMessage(buf, k_bufSize, axesID, "float_array", valBuf, "", timestamp);
+    SendData(buf, len);
 
     // Log buttons
+    pos = 0;
+    remaining = (int)sizeof(valBuf);
+    for (size_t i = 0; i < buttons.size() && remaining > 1; ++i)
     {
-        std::ostringstream oss;
-        for (size_t i = 0; i < buttons.size(); ++i)
-        {
-            oss << (buttons[i] ? "1" : "0");
-            if (i < buttons.size() - 1)
-            {
-                oss << ";";
-            }
-        }
-        std::string message = FormatMessage(std::string(signalID) + "/buttons", "bool_array", oss.str(), "", timestamp);
-        SendData(message);
+        written = snprintf(valBuf + pos, remaining, i ? ";%d" : "%d", buttons[i] ? 1 : 0);
+        if (written < 0 || written >= remaining)
+            break;
+        pos += written;
+        remaining -= written;
     }
+    std::string buttonsID = std::string(signalID) + std::string(kSubpathButtons);
+    len = FormatMessage(buf, k_bufSize, buttonsID, "bool_array", valBuf, "", timestamp);
+    SendData(buf, len);
 
     // Log POVs
+    pos = 0;
+    remaining = (int)sizeof(valBuf);
+    for (size_t i = 0; i < povs.size() && remaining > 1; ++i)
     {
-        std::ostringstream oss;
-        for (size_t i = 0; i < povs.size(); ++i)
-        {
-            oss << povs[i];
-            if (i < povs.size() - 1)
-            {
-                oss << ";";
-            }
-        }
-        std::string message = FormatMessage(std::string(signalID) + "/povs", "int_array", oss.str(), "", timestamp);
-        SendData(message);
+        written = snprintf(valBuf + pos, remaining, i ? ";%d" : "%d", povs[i]);
+        if (written < 0 || written >= remaining)
+            break;
+        pos += written;
+        remaining -= written;
     }
+    std::string povsID = std::string(signalID) + std::string(kSubpathPovs);
+    len = FormatMessage(buf, k_bufSize, povsID, "int_array", valBuf, "", timestamp);
+    SendData(buf, len);
 }

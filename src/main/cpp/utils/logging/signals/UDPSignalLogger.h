@@ -38,10 +38,12 @@ public:
     void Start() override;
     void Stop() override;
 
+    static constexpr size_t k_bufSize = 512;
+
 private:
-    void SendData(const std::string &message);
-    std::string FormatMessage(std::string_view signalID, std::string_view type,
-                              std::string_view value, std::string_view units, uint64_t timestamp);
+    void SendData(const char *buf, int len);
+    int FormatMessage(char *buf, int bufSize, std::string_view signalID, const char *type,
+                      const char *value, std::string_view units, uint64_t timestamp);
 
     std::string m_host;
     int m_port;

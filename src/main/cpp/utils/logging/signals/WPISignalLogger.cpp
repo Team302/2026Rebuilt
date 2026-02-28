@@ -78,32 +78,28 @@ void WPISignalLogger::WriteSwerveModuleState(std::string_view signalID, const fr
 
 void WPISignalLogger::WriteGamePadState(std::string_view signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs, uint64_t timestamp)
 {
+    const std::string id(signalID);
     // Log axes as float span (matching DriverStation format)
     {
-        auto &entry = GetFloatArrayEntry(std::string(signalID) + "/axes");
+        auto &entry = GetFloatArrayEntry(id + std::string(kSubpathAxes));
         std::array<float, 6> axesFloat;
-        // Determine actual axis count (trim trailing zeros could be done, but log all 6 for safety)
         for (size_t i = 0; i < axes.size(); ++i)
-        {
             axesFloat[i] = static_cast<float>(axes[i]);
-        }
         entry.Append(std::span<const float>{axesFloat.data(), axesFloat.size()}, timestamp);
     }
 
-    // Log buttons as uint8_t span (matching DriverStation format: one byte per button)
+    // Log buttons as int span (BooleanArrayLogEntry::Append requires span<const int>)
     {
-        auto &entry = GetBoolArrayEntry(std::string(signalID) + "/buttons");
-        uint8_t buttonsArr[16];
+        auto &entry = GetBoolArrayEntry(id + std::string(kSubpathButtons));
+        int buttonsArr[10];
         for (size_t i = 0; i < buttons.size(); ++i)
-        {
             buttonsArr[i] = buttons[i] ? 1 : 0;
-        }
-        entry.Append(std::span<const uint8_t>{buttonsArr, buttons.size()}, timestamp);
+        entry.Append(std::span<const int>{buttonsArr, buttons.size()}, timestamp);
     }
 
     // Log POVs as int64_t span (matching DriverStation format)
     {
-        auto &entry = GetIntegerArrayEntry(std::string(signalID) + "/povs");
+        auto &entry = GetIntegerArrayEntry(id + std::string(kSubpathPovs));
         std::array<int64_t, 1> povs64 = {static_cast<int64_t>(povs[0])};
         entry.Append(std::span<const int64_t>{povs64.data(), povs64.size()}, timestamp);
     }
