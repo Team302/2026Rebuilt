@@ -276,11 +276,11 @@ void Robot::UpdateDriveTeamFeedback()
     {
         m_field->UpdateRobotPosition(chassis->GetPose());
     }
-    auto feedback = DriverFeedback::GetInstance();
-    if (feedback != nullptr)
-    {
-        feedback->UpdateFeedback();
-    }
+    // auto feedback = DriverFeedback::GetInstance();
+    // if (feedback != nullptr)
+    // {
+    //     feedback->UpdateFeedback();
+    // }
 }
 
 #ifndef RUNNING_FRC_TESTS

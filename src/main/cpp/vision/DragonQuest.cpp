@@ -29,6 +29,7 @@
 #include "utils/DragonField.h"
 #include "utils/logging/debug/Logger.h"
 #include "vision/Questnavlib/PoseFrame.h"
+#include "networktables/NetworkTableInstance.h"
 
 // Static strings to avoid repeated heap allocations in logging
 static const std::string kQuestNavDebug = "questnavdebug";
@@ -83,6 +84,8 @@ DragonQuest::DragonQuest(
     frc::SmartDashboard::PutData("Quest ON/OFF", &m_questEnabledChooser);
     frc::SmartDashboard::PutData("Quest Endgame ONLY", &m_questEndgameEnabledChooser);
 
+    m_debugData = nt::NetworkTableInstance::GetDefault().GetTable("QuestNavDebug");
+
     // Subscribe to climb-mode state changes
     RobotState *robotStates = RobotState::GetInstance();
     robotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
@@ -102,9 +105,9 @@ void DragonQuest::Periodic()
     m_questNav.CommandPeriodic();
 
     bool connected = m_questNav.IsConnected() && m_questNav.IsTracking();
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogIsConnected, connected);
 
     HandleDashboard();
+    LogDashboardData();
 
     if (connected)
     {
@@ -197,6 +200,16 @@ void DragonQuest::HandleDashboard()
     {
         m_isQuestEnabled = false;
     }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// LogDashboardData
+// ──────────────────────────────────────────────────────────────────────────────
+void DragonQuest::LogDashboardData()
+{
+    m_debugData->PutBoolean("IsQuestConnected", m_questNav.IsConnected());
+    m_debugData->PutBoolean("IsQuestTracking", m_questNav.IsTracking());
+    m_debugData->PutNumber("QuestBatteryPercent", m_questNav.GetBatteryPercent().value_or(-1));
 }
 
 // ──────────────────────────────────────────────────────────────────────────────

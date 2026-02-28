@@ -16,18 +16,18 @@
 #include <map>
 #include <string>
 
+#include "RobinHood/robin_hood.h"
 #include "auton/AutonGrid.h"
 #include "auton/PrimitiveEnums.h"
 #include "auton/ZoneParams.h"
 #include "auton/ZoneParser.h"
 #include "frc/Filesystem.h"
 #include "pugixml/pugixml.hpp"
-#include "RobinHood/robin_hood.h"
 #include "utils/logging/debug/Logger.h"
 
-#include "mechanisms/Launcher/Launcher.h"
-#include "mechanisms/Intake/Intake.h"
 #include "mechanisms/Climber/Climber.h"
+#include "mechanisms/Intake/Intake.h"
+#include "mechanisms/Launcher/Launcher.h"
 
 using namespace std;
 using namespace pugi;
@@ -48,7 +48,7 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
 
     static robin_hood::unordered_map<string, ChassisOptionEnums::DriveStateType> xmlStringToPathUpdateOptionMap{
         {"DRIVE_TO_HUB", ChassisOptionEnums::DRIVE_TO_HUB},
-        {"DRIVE_TO_BUMP", ChassisOptionEnums::DRIVE_TO_BUMP},
+        {"DRIVE_OVER_BUMP", ChassisOptionEnums::DRIVE_OVER_BUMP},
         {"DRIVE_TO_DEPOT", ChassisOptionEnums::DRIVE_TO_DEPOT},
         {"DRIVE_TO_OUTPOST", ChassisOptionEnums::DRIVE_TO_OUTPOST},
         {"NOTHING", ChassisOptionEnums::STOP_DRIVE}};

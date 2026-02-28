@@ -55,6 +55,6 @@ namespace LauncherStates
 
 		bool m_speedUpButtonReleased = true;
 		bool m_speedDownButtonReleased = true;
-		bool m_tuningLauncherPercentOut = true;
+		bool m_tuningLauncherPercentOut = false;
 	};
 }

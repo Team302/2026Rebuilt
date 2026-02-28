@@ -38,13 +38,13 @@ void MechanismConfigCompBot_302::DefineMechanisms()
 	m_theIntake->Init(/*m_theIntake*/);
 	m_mechanismMap[MechanismTypes::MECHANISM_TYPE::INTAKE] = m_theIntake;
 
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing mechanism"), string("Launcher"), "");
-	m_theLauncher = new Launcher(RobotIdentifier::COMP_BOT_302);
-	m_theLauncher->CreateCompBot302();
-	m_theLauncher->CreateAndRegisterStates();
-	m_theLauncher->InitializeCompBot302();
-	m_theLauncher->Init(/*m_theLauncher*/);
-	m_mechanismMap[MechanismTypes::MECHANISM_TYPE::LAUNCHER] = m_theLauncher;
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing mechanism"), string("Launcher"), "");
+	// m_theLauncher = new Launcher(RobotIdentifier::COMP_BOT_302);
+	// m_theLauncher->CreateCompBot302();
+	// m_theLauncher->CreateAndRegisterStates();
+	// m_theLauncher->InitializeCompBot302();
+	// m_theLauncher->Init(/*m_theLauncher*/);
+	// m_mechanismMap[MechanismTypes::MECHANISM_TYPE::LAUNCHER] = m_theLauncher;
 
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing mechanism"), string("Climber"), "");
 	// m_theClimber = new Climber(RobotIdentifier::COMP_BOT_302);
@@ -68,7 +68,7 @@ StateMgr *MechanismConfigCompBot_302::GetMechanism(MechanismTypes::MECHANISM_TYP
 void MechanismConfigCompBot_302::DefineLEDs()
 {
 	// auto candle = DragonCANdle::GetInstance();
-	// candle->Initialize(60, 44, std::string("swerve")); // CAN ID 0, 43 LEDs external) Update with actual number of LEDs on the robot
+	// candle->Initialize(60, 44, std::string("rio")); // CAN ID 0, 43 LEDs external) Update with actual number of LEDs on the robot
 }
 
 void MechanismConfigCompBot_302::DefineCompressor()

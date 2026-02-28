@@ -20,6 +20,13 @@
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/geometry/Pose2d.h>
 
+struct DriveToPoses
+{
+    frc::Pose2d endPose{};
+    bool hasMidPose = false;
+    frc::Pose2d midPose{};
+};
+
 //====================================================================================================================================================
 /// @class DriveToPose
 /// @brief Base command class for autonomous navigation to field poses using hybrid feedforward+PID control
@@ -43,7 +50,7 @@
 /// - Completion threshold: 0.25 inches (customizable)
 ///
 /// **Extensibility:**
-/// Derived classes override GetEndPose() to provide specific target calculations:
+/// Derived classes override GetDriveToPoses() to provide specific target calculations:
 /// - DriveToDepot: Navigate to depot zones
 /// - DriveOverBump: Multi-stage bump crossing
 /// - DriveToGamePiece: Vision-based game piece targeting
@@ -52,7 +59,7 @@
 /// The command publishes state changes to RobotState for coordination with other subsystems
 /// and provides logging for debugging and performance analysis.
 ///
-/// @see DriveOverBump Example of multi-waypoint navigation using SetEndPose()
+/// @see DriveOverBump Example of multi-waypoint navigation using SetTargetPose()
 /// @see CommandSwerveDrivetrain The swerve drive subsystem controlled by this command
 //====================================================================================================================================================
 class DriveToPose : public frc2::CommandHelper<frc2::Command, DriveToPose>
@@ -66,10 +73,9 @@ public:
     ///             The command requires exclusive access to the chassis subsystem during execution.
     ///
     ///             **Controller Configuration:**
-    ///             - X/Y PID gains: kP=4.5, kI=0.0, kD=0.5
-    ///             - Trapezoidal constraints: 4 m/s max velocity, 4 m/s² max acceleration
-    ///             - I-Zone: 0.20m (prevents integral accumulation when far from target)
-    ///             - Update rate: 20ms (50 Hz)
+    ///             - X/Y PID gains: kP, kI, kD
+    ///             - Trapezoidal constraints: max velocity, max acceleration
+    ///             - I-Zone: (prevents integral accumulation when far from target)
     ///
     /// @note       Derived classes should call this constructor via initializer list
     /// @see        Initialize() for per-execution setup
@@ -85,7 +91,7 @@ public:
     /// @details    Called once when the command starts. Gets the target pose,
     ///             resets movement detection, configures controllers, and publishes
     ///             state changes to notify other subsystems that navigation is active.
-    /// @see        GetEndPose() for target determination
+    /// @see        GetDriveToPoses() for target determination
     //------------------------------------------------------------------
     void Initialize() override;
 
@@ -118,18 +124,22 @@ public:
 
 protected:
     //------------------------------------------------------------------
-    /// @brief      Gets the target pose for navigation
-    /// @return     frc::Pose2d - The target field pose to navigate to
+    /// @brief      Gets the target pose(s) for navigation
+    /// @return     DriveToPoses struct containing endpoint and optional midpoint
     /// @details    Virtual method that derived classes override to provide
-    ///             specific target calculations based on field elements,
-    ///             vision data, or game strategy. Base implementation returns
-    ///             the current m_endPose value.
+    ///             specific target pose calculations. The base implementation
+    ///             returns an empty DriveToPoses struct.
     ///
-    /// @note       Called by Initialize() at command start
-    /// @note       Override this in derived classes for custom targeting
-    /// @see        DriveOverBump::GetEndPose() for multi-waypoint example
+    ///             **Usage Pattern:**
+    ///             - Override in derived classes to provide field element targets
+    ///             - Set hasMidPose=true for two-stage navigation
+    ///             - Called during Initialize() to determine navigation goals
+    ///
+    /// @note       Derived classes should implement this to specify their targets
+    /// @see        DriveOverBump::GetDriveToPoses() for multi-waypoint example
+    /// @see        DriveToDepot::GetDriveToPoses() for single-target example
     //------------------------------------------------------------------
-    virtual frc::Pose2d GetEndPose() { return m_endPose; };
+    virtual struct DriveToPoses GetDriveToPoses() { return DriveToPoses{}; }
 
     //------------------------------------------------------------------
     /// @brief      Updates the target pose during execution
@@ -142,18 +152,33 @@ protected:
     /// @note       PID controllers are reset to prevent control discontinuities
     /// @see        DriveOverBump::IsFinished() for example usage
     //------------------------------------------------------------------
-    void SetEndPose(const frc::Pose2d &endPose);
+    void SetTargetPose(const frc::Pose2d &endPose);
 
     //------------------------------------------------------------------
     /// @brief      Sets the distance threshold for completion detection
     /// @param[in]  distanceThreshold - Distance tolerance in inches for considering target reached
     /// @details    Customizes how close the robot must be to the target before
     ///             IsFinished() returns true. Smaller values provide higher precision
-    ///             but may increase settling time. Default is 0.25 inches.
+    ///             but may increase settling time.
     ///
-    /// @note       Typically called by derived classes in GetEndPose()
+    /// @note       Derived classes should call this in their constructors or
+    ///  initialization methods
     //------------------------------------------------------------------
     void SetDistanceThreshold(const units::length::inch_t &distanceThreshold) { m_distanceThreshold = distanceThreshold; }
+
+    //------------------------------------------------------------------
+    /// @brief      Sets the angle tolerance for completion detection
+    /// @param[in]  angleTolerance - Angular tolerance in degrees for considering target rotation reached
+    /// @details    Customizes how close the robot's heading must be to the target angle before
+    ///             IsFinished() returns true. Smaller values provide higher rotational precision
+    ///             but may increase settling time.
+    ///
+    /// @note       Derived classes should call this in their constructors or
+    ///             initialization methods to override the default tolerance
+    //------------------------------------------------------------------
+    void SetAngleTolerance(const units::angle::degree_t &angleTolerance) { m_angleTolerance = angleTolerance; }
+    void SetXTransitionToEndPointTolerance(const units::length::inch_t &xTolerance) { m_xtoleranceForTransitionToEndPoint = xTolerance; }
+    void SetYTransitionToEndPointTolerance(const units::length::inch_t &yTolerance) { m_yToleranceForTransitionToEndPoint = yTolerance; }
 
     //------------------------------------------------------------------
     /// @brief      Gets the chassis subsystem pointer
@@ -164,14 +189,12 @@ protected:
     subsystems::CommandSwerveDrivetrain *GetChassis() const { return m_chassis; }
 
 private:
+    bool ShouldSkipMidPoint() const;
+
     //------------------------------------------------------------------
     /// @brief      Calculates feedforward velocity component toward target
     /// @param[out] chassisSpeeds - Reference to populate with feedforward velocities
-    /// @details    Implements distance-based velocity scaling with three zones:
-    ///             - Near (<0m): 0 m/s (PID only)
-    ///             - Ramping (0-1.25m): Linear scaling 0 to 4 m/s
-    ///             - Far (>1.25m): Full 4 m/s
-    ///             Velocity is decomposed into X/Y components along angle to target.
+    /// @details    Implements distance-based velocity scaling with three zones
     /// @see        Execute() for how feedforward combines with PID
     //------------------------------------------------------------------
     void CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds);
@@ -200,7 +223,14 @@ private:
     frc::Pose2d m_currentPose;
 
     /// @brief Target pose to navigate to
+    frc::Pose2d m_targetPose;
     frc::Pose2d m_endPose;
+    frc::Pose2d m_midPose;
+    bool m_hasMidPose = false;
+    bool m_beforeMidPose = true;
+    units::angle::degree_t m_angleTolerance{20.0};
+    units::length::inch_t m_xtoleranceForTransitionToEndPoint{0.25};
+    units::length::inch_t m_yToleranceForTransitionToEndPoint{0.25};
 
     //------------------------------------------------------------------
     // Threshold and Range Constants

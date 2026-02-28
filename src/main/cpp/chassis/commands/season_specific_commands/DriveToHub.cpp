@@ -30,50 +30,41 @@ DriveToHub::DriveToHub(subsystems::CommandSwerveDrivetrain *chassis)
 }
 
 //------------------------------------------------------------------
-/// @brief      Calculates the target end pose for the Hub
-/// @return     frc::Pose2d - The target pose at the center of the nearest Hub
-/// @details    Uses HubHelper to determine which Hub (red or blue) is
-///             closest to the robot and calculates the center pose of that
-///             Hub. Returns a default pose if HubHelper is unavailable.
+/// @brief      Calculates the target pose for driving to the hub
+/// @return     DriveToPoses struct containing the hub target pose
+/// @details    Determines the nearest hub and returns its center position.
+///
+///             **Behavior:**
+///             - If in neutral zone: Returns current pose (no movement)
+///             - If in alliance zone: Calculates nearest hub pose using HubHelper
+///
+///             The command uses HubHelper to identify which hub (red or blue)
+///             is closest based on the robot's current position and returns
+///             the center coordinates of that hub.
+///
+/// @note       This is a single-stage navigation (no midpoint)
+/// @see        HubHelper::CalcHubPose() for hub position calculation
 //------------------------------------------------------------------
-frc::Pose2d DriveToHub::GetEndPose()
+struct DriveToPoses DriveToHub::GetDriveToPoses()
 {
-    frc::Pose2d endPose;
+    struct DriveToPoses poses;
+    poses.hasMidPose = false;
     if (NeutralZoneManager::GetInstance()->IsInNeutralZone())
     {
         auto chassis = GetChassis();
         if (chassis != nullptr)
         {
-            return chassis->GetPose();
+            poses.endPose = chassis->GetPose();
+            return poses;
         }
-        return endPose;
+        return poses; // if in the neutral zone but chassis is unavailable, return default poses with hasMidPose=false
     }
     auto hubHelper = HubHelper::GetInstance();
     if (hubHelper != nullptr)
     {
-        return hubHelper->CalcHubPose();
-    }
-    return endPose;
-}
-
-//------------------------------------------------------------------
-/// @brief Checks if the DriveToHub command has finished execution.
-///
-/// @return true if the end pose is at the origin or if the base class's IsFinished
-///         condition is met, false otherwise.
-///
-/// @details This method determines whether the command should terminate by first checking
-///          if the end pose is at the origin (which means we had an error calculating the
-///          target position) so we stop immediately.  Otherwise, it delegates to the base class's
-///          IsFinished() method to determine completion.
-//------------------------------------------------------------------
-bool DriveToHub::IsFinished()
-{
-    auto endPose = GetEndPose();
-    if (PoseUtils::IsPoseAtOrigin(endPose, units::length::centimeter_t{1.0}))
-    {
-        return true;
+        poses.endPose = hubHelper->CalcHubPose();
+        return poses;
     }
 
-    return DriveToPose::IsFinished(); // call base class's IsFinished method
+    return poses;
 }

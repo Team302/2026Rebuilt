@@ -123,9 +123,9 @@ BUMP_ID BumpHelper::CalcNearestBump() const
     {
         // Stage 2: On blue side, determine if depot or outpost is closer
         auto blueElement = PoseUtils::GetClosestFieldElement(currentPose,
-                                                             FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE,
-                                                             FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_CENTER);
-        if (blueElement == FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE)
+                                                             FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT,
+                                                             FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST);
+        if (blueElement == FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT)
         {
             return BUMP_ID::BLUE_DEPOT_BUMP; // Blue depot bump is nearest
         }
@@ -135,9 +135,9 @@ BUMP_ID BumpHelper::CalcNearestBump() const
     // Robot is closer to red side
     // Stage 2: On red side, determine if depot or outpost is closer
     auto redElement = PoseUtils::GetClosestFieldElement(currentPose,
-                                                        FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE,
-                                                        FieldConstants::FIELD_ELEMENT::RED_OUTPOST_CENTER);
-    if (redElement == FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE)
+                                                        FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT,
+                                                        FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST);
+    if (redElement == FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT)
     {
         return BUMP_ID::RED_DEPOT_BUMP; // Red depot bump is nearest
     }
