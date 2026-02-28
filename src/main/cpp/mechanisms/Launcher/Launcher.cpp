@@ -497,13 +497,13 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
 	// MECH_TODO: Set Motion Magic params
-	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::turns_per_second_t(54.5);
-	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(200);
+	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::turns_per_second_t(220);
+	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(400);
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 2.341053459459459;
+	configs.ExternalFeedback.SensorToMechanismRatio = 2.341053459459459 / 4;
 
 	configs.Slot0.kI = m_positionDegreesTurret->GetI();
 	configs.Slot0.kD = m_positionDegreesTurret->GetD();
