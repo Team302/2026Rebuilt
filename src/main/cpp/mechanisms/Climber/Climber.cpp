@@ -305,7 +305,29 @@ units::angle::degree_t Climber::GetPigeonPitch()
 	units::angle::degree_t pigeonPitch = m_chassis->GetPigeon2().GetPitch().GetValue();
 	return pigeonPitch;
 }
+void Climber::DataLog(uint64_t timestamp)
+{
+	// Climber motor signals
+	// LogDoubleData(timestamp, m_ntName + "/Motor/StatorCurrent", m_climber->GetStatorCurrent().GetValueAsDouble(), "Amps");
+	// LogDoubleData(timestamp, m_ntName + "/Motor/SupplyCurrent", m_climber->GetSupplyCurrent().GetValueAsDouble(), "Amps");
+	// LogDoubleData(timestamp, m_ntName + "/Motor/SupplyVoltage", m_climber->GetSupplyVoltage().GetValueAsDouble(), "Volts");
+	// LogDoubleData(timestamp, m_ntName + "/Motor/MotorVoltage", m_climber->GetMotorVoltage().GetValueAsDouble(), "Volts");
+	// LogDoubleData(timestamp, m_ntName + "/Motor/DutyCycle", m_climber->GetDutyCycle().GetValueAsDouble(), "Percent");
+	// LogDoubleData(timestamp, m_ntName + "/Motor/Velocity", m_climber->GetVelocity().GetValueAsDouble(), "rps");
+	// LogDoubleData(timestamp, m_ntName + "/Motor/Position", m_climber->GetPosition().GetValueAsDouble(), "rotations");
+	// LogDoubleData(timestamp, m_ntName + "/Motor/Temperature", m_climber->GetDeviceTemp().GetValueAsDouble(), "Degrees C");
+	// LogBoolData(timestamp, m_ntName + "/Motor/Fault/BootDuringEnable", m_climber->GetFault_BootDuringEnable().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Motor/Fault/DeviceTemp", m_climber->GetFault_DeviceTemp().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Motor/Fault/Hardware", m_climber->GetFault_Hardware().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Motor/Fault/Undervoltage", m_climber->GetFault_Undervoltage().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Motor/Fault/OverSupplyV", m_climber->GetFault_OverSupplyV().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Motor/Fault/UnstableSupplyV", m_climber->GetFault_UnstableSupplyV().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Motor/Fault/StatorCurrLimit", m_climber->GetFault_StatorCurrLimit().GetValue());
+	// LogBoolData(timestamp, m_ntName + "/Motor/Fault/SupplyCurrLimit", m_climber->GetFault_SupplyCurrLimit().GetValue());
 
+	// Mechanism state
+	LogStringData(timestamp, m_ntName + "/State", GetCurrentStateName());
+}
 std::string Climber::GetCurrentStateName()
 {
 	STATE_NAMES state = static_cast<STATE_NAMES>(GetCurrentState());
