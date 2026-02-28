@@ -43,7 +43,6 @@ public:
 private:
     std::string CreateLogFileName();
     std::string GetLoggingDir();
-    units::time::second_t ConvertToSeconds(uint64_t timestamp);
     units::time::second_t ConvertMicrosecondsToSeconds(uint64_t microseconds)
     {
         return units::time::second_t(static_cast<double>(microseconds) * 1e-6);
