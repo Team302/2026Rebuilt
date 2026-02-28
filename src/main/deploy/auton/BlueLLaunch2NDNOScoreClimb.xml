@@ -2,8 +2,6 @@
 <!DOCTYPE auton SYSTEM "auton.dtd">
 <auton>
 
-
-
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueLeftBumpNZNZ_A"
 time = "2.0"

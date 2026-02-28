@@ -5,21 +5,21 @@
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueRightBumpNZNZ_A"
 time = "5.0">
-<file filename = "BlueRightBumpNZNZ_A.xml"/>
+<zone filename = "RedRightBumpZone.xml"/>
 </primitive>
 
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "RightToLeftNZ"
 time = "5.0">
-<file filename = "RightToLeftNZ.xml"/>
+<zone filename = "RedLeftBumpZone.xml"/>
 </primitive>
 
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueRightBumpNZNZ_C"
 time = "5.0">
-<file filename = "BlueLeftBumpNZNZ_C.xml"/>
+<zone filename = "RedLeftBumpZone.xml"/>
 </primitive>
 
 
@@ -29,7 +29,7 @@ time = "5.0"/>
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueRightBumpNZNZ_E"
 time = "5.0">
-<file filename = "BlueLeftBumpNZNZ_E.xml"/>
+<zone filename = "RedRightBumpZone.xml"/>
 </primitive>
 
 

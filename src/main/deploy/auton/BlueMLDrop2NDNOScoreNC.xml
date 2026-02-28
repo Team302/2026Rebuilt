@@ -2,45 +2,34 @@
 <!DOCTYPE auton SYSTEM "auton.dtd">
 <auton>
 
-<primitive id = "DRIVE_STOP_MECH"
-launcherState = "STATE_LAUNCH"/>
-
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueLeftBumpNZNZ_A"
-time = "2.0"
+choreoname = "BlueMLDrop2_A"
+time = "5.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "BlueLeftBumpZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "LeftToRightNZ"
-time = "3.0"
+choreoname = "BlueMLDrop2_B"
+time = "5.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "BlueRightBumpZone.xml"/>
-</primitive>
-
-<primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueLeftBumpNZNZ_C"
-time = "1.5">
 <zone filename = "BlueLaunchZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "RightToLeftNZ"
-time = "3.0"
-intakeState = "STATE_INTAKE">
+choreoname = "BlueMLDrop2_C"
+time = "5.0">
 <zone filename = "BlueRightBumpZone.xml"/>
-<zone filename = "BlueLeftBumpZone.xml"/>
-</primitive>
-
-<primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueLeftBumpNZNZ_D"
-time = "2.0">
 <zone filename = "BlueLaunchZone.xml"/>
 </primitive>
 
-<!--This path could honestly do a lot more, we could probably grab some pieces from our side if people are willing to pass-->
-
-
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueMLDrop2_D"
+time = "5.0"
+intakeState = "STATE_INTAKE">
+<zone filename = "BlueRightBumpZone.xml"/>
+<zone filename = "BlueLaunchZone.xml"/>
+</primitive>
 
 </auton>

@@ -2,14 +2,12 @@
 <!DOCTYPE auton SYSTEM "auton.dtd">
 <auton>
 
-<primitive id = "DRIVE_STOP_MECH"
-launcherState = "STATE_LAUNCH"/>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueLeftBumpNZNZ_A"
 time = "2.0"
 intakeState = "STATE_INTAKE">
-<file filename = "BlueLeftBumpNZNZ_A.xml"/>
+<zone filename = "BlueLeftBumpNZNZ_A.xml"/>
 </primitive>
 
 
@@ -17,7 +15,7 @@ intakeState = "STATE_INTAKE">
 choreoname = "LeftToRightNZ"
 time = "5.0"
 intakeState = "STATE_INTAKE">
-<file filename = "LeftToRightNZ.xml"/>
+<zone filename = "LeftToRightNZ.xml"/>
 </primitive>
 
 
@@ -31,7 +29,7 @@ time = "5.0">
 choreoname = "RightToLeftNZ"
 time = "5.0"
 intakeState = "STATE_INTAKE">
-<file filename = "RightToLeftNZ.xml"/>
+<zone filename = "RightToLeftNZ.xml"/>
 </primitive>
 
 
