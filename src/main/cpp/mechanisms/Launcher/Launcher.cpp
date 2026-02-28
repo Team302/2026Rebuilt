@@ -769,7 +769,11 @@ bool Launcher::IsInLaunchZone() const
 
 void Launcher::CalculateTargets()
 {
-	m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_cachedTurretPosition);
+
+	if (units::math::abs(m_targetTurretAngle - m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_cachedTurretPosition)) > 0.1_tr)
+	{
+		m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_cachedTurretPosition);
+	}
 	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateDistanceToTarget(m_lookaheadTime);
 
 	if (AllianceZoneManager::GetInstance()->IsInAllianceZone())
