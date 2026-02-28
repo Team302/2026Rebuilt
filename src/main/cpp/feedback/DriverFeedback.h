@@ -89,9 +89,6 @@ private:
     };
 
     DragonCANdle *m_LEDStates = DragonCANdle::GetInstance(); ///< Cached LED controller singleton
-    int m_controllerCounter = 0;                             ///< Throttle counter for CheckControllers (fires every 25 loops)
-    int m_rumbleLoopCounter = 0;                             ///< Rumble timing counter
-    int m_firstloop = true;                                  ///< True on the first call to UpdateFeedback
 
     units::frequency::hertz_t m_blinkingFrequency = 5_Hz;      ///< Normal blink rate
     units::frequency::hertz_t m_shiftBlinkingFrequency = 1_Hz; ///< Slower blink rate for shift warnings

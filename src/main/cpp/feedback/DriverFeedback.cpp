@@ -131,7 +131,6 @@ void DriverFeedback::UpdateRumble()
     }
     else
     {
-        m_rumbleLoopCounter = 0;
         m_teleopControl->SetRumble(0, false, false);
         m_teleopControl->SetRumble(1, false, false);
     }
@@ -337,23 +336,14 @@ void DriverFeedback::UpdateDiagnosticLEDs()
 }
 
 /// @brief While disabled, publishes Xbox controller connection status to NetworkTables
-///        every ~25 loops (~500 ms). Uses the cached m_controllerTable to avoid
 ///        re-fetching the NT table handle each call.
 void DriverFeedback::CheckControllers()
 {
     if (frc::DriverStation::IsDisabled())
     {
-        if (m_controllerCounter == 0 && m_controllerTable != nullptr)
+        for (auto i = 0; i < DriverStation::kJoystickPorts; ++i)
         {
-            for (auto i = 0; i < DriverStation::kJoystickPorts; ++i)
-            {
-                m_controllerTable->PutBoolean(std::string("Controller") + std::to_string(i), DriverStation::GetJoystickIsXbox(i));
-            }
-        }
-        m_controllerCounter++;
-        if (m_controllerCounter > 25)
-        {
-            m_controllerCounter = 0;
+            m_controllerTable->PutBoolean(std::string("Controller") + std::to_string(i), DriverStation::GetJoystickIsXbox(i));
         }
     }
 }
