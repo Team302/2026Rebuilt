@@ -503,7 +503,7 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 2.341053459459459 / 4;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.60050076744186046511627906976744;
 
 	configs.Slot0.kI = m_positionDegreesTurret->GetI();
 	configs.Slot0.kD = m_positionDegreesTurret->GetD();
