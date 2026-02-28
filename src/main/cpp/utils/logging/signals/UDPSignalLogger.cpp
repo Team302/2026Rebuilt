@@ -123,7 +123,7 @@ void UDPSignalLogger::SendData(const char *buf, int len)
 
     // len is expected to be the snprintf return value; if it's non-positive or
     // indicates truncation (>= k_bufSize), treat the message as invalid and drop it.
-    if (len <= 0 || len >= k_bufSize)
+    if (len <= 0 || len >= static_cast<int>(k_bufSize))
         return;
 
 #ifdef _WIN32
