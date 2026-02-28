@@ -62,7 +62,8 @@ void InitializeState::InitCompBot302()
 
 void InitializeState::Run()
 {
-	m_mechanism->InitilaizeLauncher();
+	// m_mechanism->InitilaizeLauncher();
+	m_mechanism->SetLauncherInitialized(true);
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("InitializeState"), string("Run"));
 }
 
