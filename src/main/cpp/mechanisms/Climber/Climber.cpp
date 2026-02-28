@@ -326,7 +326,7 @@ void Climber::DataLog(uint64_t timestamp)
 	// LogBoolData(timestamp, m_ntName + "/Motor/Fault/SupplyCurrLimit", m_climber->GetFault_SupplyCurrLimit().GetValue());
 
 	// Mechanism state
-	LogStringData(timestamp, m_ntName + "/State", GetCurrentStateName());
+	LogStringData(timestamp, m_climberStatePath, GetCurrentStateName());
 }
 std::string Climber::GetCurrentStateName()
 {

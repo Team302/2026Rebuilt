@@ -944,14 +944,13 @@ void Launcher::DataLog(uint64_t timestamp)
 	// LogBoolData(timestamp, m_ntName + "/Agitator/Fault/SupplyCurrLimit", m_agitator->GetFault_SupplyCurrLimit().GetValue());
 
 	// Control targets
-	LogDoubleData(timestamp, m_ntName + "/Control/TargetLauncherVelocity", m_targetLauncherAngularVelocity.value(), "rpm");
-	LogDoubleData(timestamp, m_ntName + "/Control/TargetHoodAngle", m_targetHoodAngle.value(), "Degrees");
-	LogDoubleData(timestamp, m_ntName + "/Control/TargetTurretAngle", m_targetTurretAngle.value(), "Degrees");
+	LogDoubleData(timestamp, m_loggingLauncherTargetPath, m_targetLauncherAngularVelocity.value(), "rpm");
+	LogDoubleData(timestamp, m_loggingHoodTargetPath, m_targetHoodAngle.value(), "Turns");
+	LogDoubleData(timestamp, m_loggingHoodPercentOutPath, m_targetTurretAngle.value(), "Turns");
 
 	// Mechanism state
-	LogStringData(timestamp, m_ntName + "/State", GetCurrentStateName());
-	LogBoolData(timestamp, m_ntName + "/IsProtectedMode", m_launcherProtectedMode);
-	LogBoolData(timestamp, m_ntName + "/IsClimbMode", m_isClimbMode);
+	LogStringData(timestamp, m_loggingLauncherStatePath, GetCurrentStateName());
+	LogBoolData(timestamp, m_loggingProtectedModePath, m_launcherProtectedMode);
 }
 std::string Launcher::GetCurrentStateName()
 {

@@ -258,4 +258,11 @@ private:
 	units::angular_velocity::turns_per_second_t m_cachedLauncherVelocity = 0.0_tps;
 	units::angle::turn_t m_cachedHoodPosition = 0.0_tr;
 	units::angle::turn_t m_cachedTurretPosition = 0.0_tr;
+
+	// logging paths
+	static constexpr std::string_view m_loggingLauncherStatePath = "/Launcher/State";
+	static constexpr std::string_view m_loggingLauncherTargetPath = "/Launcher/TargetLauncherVelocity";
+	static constexpr std::string_view m_loggingHoodTargetPath = "/Launcher/TargetHoodAngle";
+	static constexpr std::string_view m_loggingHoodPercentOutPath = "/Launcher/HoodTargetAngle";
+	static constexpr std::string_view m_loggingProtectedModePath = "/Launcher/IsProtectedMode";
 };

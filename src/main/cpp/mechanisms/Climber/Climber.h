@@ -146,4 +146,7 @@ private:
 	subsystems::CommandSwerveDrivetrain *m_chassis; ///< pointer to chassis for pitch
 
 	units::angular_velocity::degrees_per_second_t m_maxAngularVelocity = 360_deg_per_s;
+
+	// logging paths
+	static constexpr std::string_view m_climberStatePath = "/Climber/State";
 };

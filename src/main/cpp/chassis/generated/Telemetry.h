@@ -49,6 +49,27 @@ private:
     std::array<frc::SwerveModulePosition, 4> m_cachedModulePositions;
     units::second_t m_cachedOdometryPeriod;
 
+    static constexpr std::string_view m_loggerName = "Swervetelemetry";
+    static constexpr std::string_view m_frontLeftModuleActualSpeed = "/Chassis/FrontLeftModule/ActualState/Speed";
+    static constexpr std::string_view m_frontRightModuleActualSpeed = "/Chassis/FrontRightModule/ActualState/Speed";
+    static constexpr std::string_view m_backLeftModuleActualSpeed = "/Chassis/BackLeftModule/ActualState/Speed";
+    static constexpr std::string_view m_backRightModuleActualSpeed = "/Chassis/BackRightModule/ActualState/Speed";
+
+    static constexpr std::string_view m_frontLeftModuleActualAngle = "/Chassis/FrontLeftModule/ActualState/Angle";
+    static constexpr std::string_view m_frontRightModuleActualAngle = "/Chassis/FrontRightModule/ActualState/Angle";
+    static constexpr std::string_view m_backLeftModuleActualAngle = "/Chassis/BackLeftModule/ActualState/Angle";
+    static constexpr std::string_view m_backRightModuleActualAngle = "/Chassis/BackRightModule/ActualState/Angle";
+
+    static constexpr std::string_view m_frontLeftModuleTargetSpeed = "/Chassis/FrontLeftModule/TargetState/Speed";
+    static constexpr std::string_view m_frontRightModuleTargetSpeed = "/Chassis/FrontRightModule/TargetState/Speed";
+    static constexpr std::string_view m_backLeftModuleTargetSpeed = "/Chassis/BackLeftModule/TargetState/Speed";
+    static constexpr std::string_view m_backRightModuleTargetSpeed = "/Chassis/BackRightModule/TargetState/Speed";
+
+    static constexpr std::string_view m_frontLeftModuleTargetAngle = "/Chassis/FrontLeftModule/TargetState/Angle";
+    static constexpr std::string_view m_frontRightModuleTargetAngle = "/Chassis/FrontRightModule/TargetState/Angle";
+    static constexpr std::string_view m_backLeftModuleTargetAngle = "/Chassis/BackLeftModule/TargetState/Angle";
+    static constexpr std::string_view m_backRightModuleTargetAngle = "/Chassis/BackRightModule/TargetState/Angle";
+
 public:
     /**
      * Construct a telemetry object with the specified max speed of the robot.
