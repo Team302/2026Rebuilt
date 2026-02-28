@@ -101,9 +101,11 @@ void UDPSignalLogger::Stop()
 }
 
 int UDPSignalLogger::FormatMessage(char *buf, int bufSize, const char *signalID, const char *type,
-                                   const char *value, const char *units, uint64_t timestamp)
+                                   const char *value, std::string_view units, uint64_t timestamp)
 {
-    return snprintf(buf, bufSize, "%llu,%s,%s,%s,%s", (unsigned long long)timestamp, signalID, type, value, units);
+    return snprintf(buf, bufSize, "%llu,%s,%s,%s,%.*s",
+                    (unsigned long long)timestamp, signalID, type, value,
+                    (int)units.size(), units.data());
 }
 
 void UDPSignalLogger::SendData(const char *buf, int len)
@@ -150,7 +152,7 @@ void UDPSignalLogger::WriteDouble(std::string signalID, double value, std::strin
     char valBuf[32];
     snprintf(valBuf, sizeof(valBuf), "%.6g", value);
     char buf[k_bufSize];
-    int len = FormatMessage(buf, k_bufSize, signalID.c_str(), "double", valBuf, units.data(), timestamp);
+    int len = FormatMessage(buf, k_bufSize, signalID.c_str(), "double", valBuf, units, timestamp);
     SendData(buf, len);
 }
 
@@ -159,7 +161,7 @@ void UDPSignalLogger::WriteInteger(std::string signalID, int64_t value, std::str
     char valBuf[32];
     snprintf(valBuf, sizeof(valBuf), "%lld", (long long)value);
     char buf[k_bufSize];
-    int len = FormatMessage(buf, k_bufSize, signalID.c_str(), "int64", valBuf, units.data(), timestamp);
+    int len = FormatMessage(buf, k_bufSize, signalID.c_str(), "int64", valBuf, units, timestamp);
     SendData(buf, len);
 }
 
@@ -184,7 +186,7 @@ void UDPSignalLogger::WriteDoubleArray(std::string signalID, const std::vector<d
         remaining -= written;
     }
     char buf[k_bufSize];
-    int len = FormatMessage(buf, k_bufSize, signalID.c_str(), "double_array", valBuf, units.data(), timestamp);
+    int len = FormatMessage(buf, k_bufSize, signalID.c_str(), "double_array", valBuf, units, timestamp);
     SendData(buf, len);
 }
 

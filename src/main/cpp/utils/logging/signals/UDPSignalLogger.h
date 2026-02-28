@@ -43,7 +43,7 @@ public:
 private:
     void SendData(const char *buf, int len);
     int FormatMessage(char *buf, int bufSize, const char *signalID, const char *type,
-                      const char *value, const char *units, uint64_t timestamp);
+                      const char *value, std::string_view units, uint64_t timestamp);
 
     std::string m_host;
     int m_port;
