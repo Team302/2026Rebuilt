@@ -237,10 +237,10 @@ void DriveToPose::Execute()
                 .WithForwardPerspective(ctre::phoenix6::swerve::requests::ForwardPerspectiveValue::BlueAlliance));
     }
 
-    // Log current error for debugging and tuning
+    // Log current error for debugging and tuning (reuse m_distanceError computed in CalculateFeedForward)
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToPose", "Vx", units::math::abs(chassisSpeeds.vx).value());
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToPose", "Vy", units::math::abs(chassisSpeeds.vy).value());
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToPose", "Error", units::length::inch_t(m_endPose.Translation().Distance(m_currentPose.Translation())).value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToPose", "Error", units::length::inch_t(m_distanceError).value());
 }
 
 //------------------------------------------------------------------
@@ -313,7 +313,8 @@ bool DriveToPose::IsFinished()
 
     m_prevPose = m_currentPose; // Update for next cycle
 
-    return isDone || isSamePose; // End command if target reached or robot is stuck
+    m_isFinished = isDone || isSamePose; // Cache result for End() to avoid redundant recomputation
+    return m_isFinished;
 }
 
 //------------------------------------------------------------------
@@ -351,8 +352,8 @@ void DriveToPose::End(bool interrupted)
         m_chassis->SetControl(swerve::requests::SwerveDriveBrake{});
     }
 
-    // Publish completion status to robot state
-    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, IsFinished());
+    // Publish completion status to robot state (use cached result to avoid redundant recomputation)
+    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, m_isFinished);
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElement_Bool, false);
 }
 

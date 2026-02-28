@@ -89,7 +89,7 @@ private:
     ///             components of the current pose and the field element pose.
     ///             This is a helper method used internally for distance comparisons.
     //------------------------------------------------------------------
-    units::length::meter_t CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
+    units::length::meter_t CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element, const frc::Pose2d &currentPose) const;
 
     /// @brief Pointer to the swerve drivetrain subsystem
     subsystems::CommandSwerveDrivetrain *m_chassis;

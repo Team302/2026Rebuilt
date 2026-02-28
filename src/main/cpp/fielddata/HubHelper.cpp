@@ -123,7 +123,7 @@ frc::Pose2d HubHelper::CalcHubPose() const
 ///             This is a helper method used internally for distance comparisons.
 //------------------------------------------------------------------
 units::length::meter_t HubHelper::CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element,
-                                                       frc::Pose2d currentPose) const
+                                                       const frc::Pose2d &currentPose) const
 {
     if (m_fieldConstants == nullptr)
     {
