@@ -3,5 +3,5 @@
 
 <auton>
 <zone circlex="11.94" circley="5.61" radius="65.0"
-pathUpdateOption = "DRIVE_TO_BUMP"/>
+pathUpdateOption = "DRIVE_OVER_BUMP"/>
 </auton>

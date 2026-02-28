@@ -94,9 +94,34 @@ FieldOffsetValues::FieldOffsetValues()
     {
         m_blueDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE).X() + units::length::meter_t{DEPOT_OFFSET};
         m_redDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE).X() - units::length::meter_t{DEPOT_OFFSET};
-        // Retrieve depot positions from field constants
-        m_blueDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE).X();
-        m_redDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE).X();
+
+        m_redTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
+        m_blueTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
+        m_redTowerOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).Y();
+        m_blueTowerOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).Y();
+        m_redTowerDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
+        m_blueTowerDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
+        m_redTowerDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).Y();
+        m_blueTowerDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).Y();
+
+        m_blueHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() - HUB_OFFSET;
+        m_redHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER).X() + HUB_OFFSET;
+
+        m_redTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X() - TOWER_X_OFFSET;
+        m_blueTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X() + TOWER_X_OFFSET;
+        m_redTowerOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).Y() + TOWER_Y_OFFSET;
+        m_blueTowerOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).Y() - TOWER_Y_OFFSET;
+        m_redTowerDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X() - TOWER_X_OFFSET;
+        m_blueTowerDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X() + TOWER_X_OFFSET;
+        m_redTowerDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).Y() - TOWER_Y_OFFSET;
+        m_blueTowerDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).Y() + TOWER_Y_OFFSET;
+
+        // Set outpost X coordinates equal to depot X (aligned on 2026 field)
+        m_blueOutpostX = m_blueDepotX;
+        m_redOutpostX = m_redDepotX;
+
+        m_blueOutpostApproachX = m_blueOutpostX + OUTPOST_APPROACH_OFFSET; // Approach position is offset from outpost X
+        m_redOutpostApproachX = m_redOutpostX - OUTPOST_APPROACH_OFFSET;   // Approach position is offset from outpost X
 
         // Calculate hub positions with 2.0m offset toward neutral zone for navigation
         m_blueHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() - HUB_OFFSET;
@@ -132,6 +157,28 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueDepotX = units::length::meter_t{0.0};
         m_redDepotX = units::length::meter_t{0.0};
 
+        m_blueOutpostX = m_blueDepotX;
+        m_redOutpostX = m_redDepotX;
+
+        m_blueOutpostApproachX = m_blueDepotX;
+        m_redOutpostApproachX = m_redDepotX;
+        m_redTowerOutpostX = units::length::meter_t{0.0};
+        m_blueTowerOutpostX = units::length::meter_t{0.0};
+        m_redTowerOutpostY = units::length::meter_t{0.0};
+        m_blueTowerOutpostY = units::length::meter_t{0.0};
+        m_redTowerDepotX = units::length::meter_t{0.0};
+        m_blueTowerDepotX = units::length::meter_t{0.0};
+        m_redTowerDepotY = units::length::meter_t{0, 0};
+        m_blueTowerDepotY = units::length::meter_t{0, 0};
+        m_redTowerOutpostX = units::length::meter_t{0.0};
+        m_blueTowerOutpostX = units::length::meter_t{0.0};
+        m_redTowerOutpostY = units::length::meter_t{0.0};
+        m_blueTowerOutpostY = units::length::meter_t{0.0};
+        m_redTowerDepotX = units::length::meter_t{0.0};
+        m_blueTowerDepotX = units::length::meter_t{0.0};
+        m_redTowerDepotY = units::length::meter_t{0.0};
+        m_blueTowerDepotY = units::length::meter_t{0.0};
+
         m_blueHubX = units::length::meter_t{0.0};
         m_redHubX = units::length::meter_t{0.0};
 
@@ -145,10 +192,6 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueBumpDepotY = units::length::meter_t{0.0};
         m_blueBumpOutpostY = units::length::meter_t{0.0};
     }
-
-    // Set outpost X coordinates equal to depot X (aligned on 2026 field)
-    m_blueOutpostX = m_blueDepotX;
-    m_redOutpostX = m_redDepotX;
 }
 
 //------------------------------------------------------------------
@@ -172,17 +215,17 @@ FieldOffsetValues::FieldOffsetValues()
 ///             - Red: Hub center + 2.0m
 ///             - Blue: Hub center - 2.0m
 ///
-///             **ALLIANCE_BUMP_X:**
+///             **BUMP_ALLIANCE_X:**
 ///             Returns X-coordinate of bump edge on alliance zone side:
 ///             - Red: Hub center + 1.5m
 ///             - Blue: Hub center - 1.5m
 ///
-///             **NEUTRAL_BUMP_X:**
+///             **BUMP_NEUTRAL_X:**
 ///             Returns X-coordinate of bump edge on neutral zone side:
 ///             - Red: Hub center - 1.5m
 ///             - Blue: Hub center + 1.5m
 ///
-///             **ALLIANCE_BUMP_Y or NEUTRAL_BUMP_Y:**
+///             **BUMP_ALLIANCE_Y or BUMP_NEUTRAL_Y:**
 ///             Dynamically determines Y-coordinate based on nearest bump:
 ///             1. Calls BumpHelper::CalcNearestBump() to identify which bump
 ///             2. Returns corresponding Y position:
@@ -207,6 +250,27 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
     {
         return isRedSide ? m_redOutpostX : m_blueOutpostX;
     }
+    else if (item == FIELD_OFFSET_ITEMS::TOWER_OUTPOST_X)
+    {
+        return isRedSide ? m_redTowerOutpostX : m_blueTowerOutpostX;
+    }
+    else if (item == FIELD_OFFSET_ITEMS::TOWER_DEPOT_X)
+    {
+        return isRedSide ? m_redTowerDepotX : m_blueTowerDepotX;
+    }
+    else if (item == FIELD_OFFSET_ITEMS::TOWER_OUTPOST_Y)
+    {
+        return isRedSide ? m_redTowerOutpostY : m_blueTowerOutpostY;
+    }
+    else if (item == FIELD_OFFSET_ITEMS::TOWER_DEPOT_Y)
+    {
+        return isRedSide ? m_redTowerDepotY : m_blueTowerDepotY;
+    }
+
+    else if (item == FIELD_OFFSET_ITEMS::OUTPOST_APPROACH_X)
+    {
+        return isRedSide ? m_redOutpostApproachX : m_blueOutpostApproachX;
+    }
 
     // Depot X-coordinate query
     else if (item == FIELD_OFFSET_ITEMS::DEPOT_X)
@@ -221,19 +285,19 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
     }
 
     // Alliance-side bump X-coordinate query
-    else if (item == FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_X)
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X)
     {
         return isRedSide ? m_redAllianceBumpEdgeX : m_blueAllianceBumpEdgeX;
     }
 
     // Neutral-side bump X-coordinate query
-    else if (item == FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_X)
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X)
     {
         return isRedSide ? m_redNeutralBumpEdgeX : m_blueNeutralBumpEdgeX;
     }
 
     // Bump Y-coordinate query (dynamic based on nearest bump)
-    else if (item == FIELD_OFFSET_ITEMS::ALLIANCE_BUMP_Y || item == FIELD_OFFSET_ITEMS::NEUTRAL_BUMP_Y)
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_Y || item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_Y)
     {
         // Identify which of the four bumps is nearest to robot
         auto bump = BumpHelper::GetInstance()->CalcNearestBump();

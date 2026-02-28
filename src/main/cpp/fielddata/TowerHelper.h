@@ -14,43 +14,68 @@
 //====================================================================================================================================================
 #pragma once
 
-#include "chassis/commands/DriveToPose.h"
+// C++ includes
+
 #include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "fielddata/FieldConstants.h"
+#include "frc/geometry/Pose2d.h"
+#include "frc/DriverStation.h"
 
 //====================================================================================================================================================
-/// @class DriveToHub
-/// @brief Command to autonomously drive the robot to the nearest Hub on the field
+/// @class TowerHelper
+/// @brief Helper class for Tower-related calculations and navigation
 ///
-/// This command extends DriveToPose to provide specific functionality for navigating to Hubs.
-/// It automatically determines which Hub (red or blue) is closest to the robot's current position
-/// and calculates the target pose at the center of that Hub using HubHelper.
+/// This singleton class provides utilities for interacting with Towers on the field, including:
+/// - Determining which Tower (red or blue) is closest to the robot
+/// - Calculating the center pose of the nearest Tower
+/// - Computing distances to field elements
 ///
-/// The command uses PID control to drive the robot to the calculated Hub center position,
-/// making it useful for autonomous routines or driver assistance features during matches.
+/// The class uses the robot's current pose and field constants to make alliance-aware decisions
+/// about Tower locations and navigation targets.
 //====================================================================================================================================================
-class DriveToHub : public DriveToPose
+class TowerHelper
 {
 public:
     //------------------------------------------------------------------
-    /// @brief      Constructor for DriveToHub command
-    /// @param[in]  chassis - Pointer to the swerve drive subsystem
-    /// @details    Initializes the command with the chassis reference for
-    ///             autonomous navigation to the nearest Hub
+    /// @brief      Get the singleton instance of TowerHelper
+    /// @return     TowerHelper* - Pointer to the singleton instance
     //------------------------------------------------------------------
-    DriveToHub(subsystems::CommandSwerveDrivetrain *chassis);
+    static TowerHelper *GetInstance();
+
+    //------------------------------------------------------------------
+    /// @brief      Calculates the center pose of the nearest Tower
+    /// @return     frc::Pose2d - The calculated center pose of the Tower
+    /// @details    Determines which Tower (red or blue) is nearest, then
+    ///             calculates the center point by averaging the X and Y
+    ///             coordinates of the left, right, and neutral side poses.
+    //------------------------------------------------------------------
+    frc::Pose2d CalcTowerPose() const;
+
+private:
+    //------------------------------------------------------------------
+    /// @brief      Private constructor for singleton pattern
+    /// @details    Initializes the chassis and field constants references
+    //------------------------------------------------------------------
+    TowerHelper();
 
     //------------------------------------------------------------------
     /// @brief      Destructor (default implementation)
     //------------------------------------------------------------------
-    ~DriveToHub() = default;
+    ~TowerHelper() = default;
 
-protected:
-    //------------------------------------------------------------------
-    /// @brief      Calculates target pose for hub navigation
-    /// @return     DriveToPoses struct with hub center as endpoint
-    /// @details    Overrides base class to provide hub-specific navigation.
-    ///             Returns current pose if in neutral zone, otherwise calculates nearest hub.
-    /// @see        DriveToHub.cpp for full implementation details
-    //------------------------------------------------------------------
-    struct DriveToPoses GetDriveToPoses() override;
+    /// @brief Singleton instance pointer
+    static TowerHelper *m_instance;
+
+    /// @brief Pointer to the swerve drivetrain subsystem
+    subsystems::CommandSwerveDrivetrain *m_chassis;
+
+    /// @brief Pointer to the field constants singleton
+    FieldConstants *m_fieldConstants;
+
+    units::length::inch_t m_towerDepotXOffset{12.0};
+    units::length::inch_t m_towerDepotYOffset{12.0};
+    units::length::inch_t m_towerOutpostXOffset{12.0};
+    units::length::inch_t m_towerOutpostYOffset{12.0};
+
+    frc::DriverStation::Alliance m_allianceColor;
 };

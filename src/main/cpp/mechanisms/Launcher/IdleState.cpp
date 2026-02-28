@@ -36,7 +36,7 @@ using namespace LauncherStates;
 IdleState::IdleState(std::string stateName,
 					 int stateId,
 					 Launcher *mech,
-					 RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId)
+					 RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId), m_Timer(new frc::Timer())
 {
 }
 
@@ -78,8 +78,20 @@ bool IdleState::AtTarget()
 bool IdleState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
+	bool launchingDone = false;
+
+	if (considerGamepadTransitions && (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH) && !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH_OVERRIDE) && !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::MANUAL_LAUNCH)) &&
+		((m_mechanism->GetCurrentState() == Launcher::STATE_LAUNCH) || (m_mechanism->GetCurrentState() == Launcher::STATE_PREPARE_TO_LAUNCH) || (m_mechanism->GetCurrentState() == Launcher::STATE_MANUAL_LAUNCH)))
+	{
+		m_Timer->Start();
+		if (m_Timer->Get() > m_launchTimer)
+		{
+			launchingDone = true;
+			m_Timer->Stop();
+			m_Timer->Reset();
+		}
+	}
 	return (m_mechanism->IsLauncherInitialized() && m_mechanism->GetCurrentState() == Launcher::STATE_INITIALIZE) ||
-		   (considerGamepadTransitions && (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH) && !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH_OVERRIDE) && !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::MANUAL_LAUNCH)) &&
-			((m_mechanism->GetCurrentState() == Launcher::STATE_LAUNCH) || (m_mechanism->GetCurrentState() == Launcher::STATE_PREPARE_TO_LAUNCH) || (m_mechanism->GetCurrentState() == Launcher::STATE_MANUAL_LAUNCH))) ||
+		   (launchingDone) ||
 		   (!m_mechanism->IsInClimbMode() && (m_mechanism->GetCurrentState() == Launcher::STATE_CLIMB || m_mechanism->GetCurrentState() == Launcher::STATE_EMPTY_HOPPER));
 }
