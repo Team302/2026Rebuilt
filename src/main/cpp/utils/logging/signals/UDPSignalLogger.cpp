@@ -175,6 +175,7 @@ void UDPSignalLogger::WriteString(std::string signalID, const std::string &value
 void UDPSignalLogger::WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
 {
     char valBuf[256];
+    valBuf[0] = '\0';
     int pos = 0;
     int remaining = (int)sizeof(valBuf);
     for (size_t i = 0; i < value.size() && remaining > 1; ++i)
