@@ -25,7 +25,7 @@
 /// It automatically determines which Hub (red or blue) is closest to the robot's current position
 /// and calculates the target pose at the center of that Hub using HubHelper.
 ///
-/// The command uses path following to drive the robot to the calculated Hub center position,
+/// The command uses PID control to drive the robot to the calculated Hub center position,
 /// making it useful for autonomous routines or driver assistance features during matches.
 //====================================================================================================================================================
 class DriveToHub : public DriveToPose
@@ -44,19 +44,13 @@ public:
     //------------------------------------------------------------------
     ~DriveToHub() = default;
 
+protected:
     //------------------------------------------------------------------
-    /// @brief      Calculates the target end pose for the Hub
-    /// @return     frc::Pose2d - The target pose at the center of the nearest Hub
-    /// @details    Overrides the base class method to provide Hub-specific
-    ///             target calculation using HubHelper
+    /// @brief      Calculates target pose for hub navigation
+    /// @return     DriveToPoses struct with hub center as endpoint
+    /// @details    Overrides base class to provide hub-specific navigation.
+    ///             Returns current pose if in neutral zone, otherwise calculates nearest hub.
+    /// @see        DriveToHub.cpp for full implementation details
     //------------------------------------------------------------------
-    frc::Pose2d GetEndPose() override;
-
-    //------------------------------------------------------------------
-    /// @brief      Determines if the DriveToHub command has finished execution
-    /// @return     true if the command has completed driving to the hub,
-    ///             false if the command should continue running
-    /// @details    Called repeatedly by the command scheduler to check completion status
-    //------------------------------------------------------------------
-    bool IsFinished() override;
+    struct DriveToPoses GetDriveToPoses() override;
 };

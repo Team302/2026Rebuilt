@@ -30,8 +30,8 @@
 ///
 /// **Two-Stage Navigation:**
 /// The command uses a midpoint-to-endpoint strategy to ensure the robot successfully crosses the bump:
-/// 1. First, drive to the midpoint pose (top of the bump)
-/// 2. Then, drive to the endpoint pose (other side of the bump)
+/// 1. First, drive to the midpoint pose (near side of the bump)
+/// 2. Then, drive to the endpoint pose (far side of the bump)
 ///
 /// **Directional Intelligence:**
 /// - If starting in the neutral zone: Drive toward the alliance zone
@@ -55,9 +55,7 @@ public:
     /// @brief      Constructor for DriveOverBump command
     /// @param[in]  chassis - Pointer to the swerve drive subsystem that will execute the movement
     /// @details    Initializes the command with the chassis reference for autonomous navigation.
-    ///             The constructor sets up the base DriveToPose functionality and initializes
-    ///             the midpoint and endpoint pose members to default values. Actual pose
-    ///             calculation occurs when GetEndPose() is called by the command scheduler.
+    ///             The constructor sets up the base DriveToPose functionality.
     //------------------------------------------------------------------
     DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis);
 
@@ -67,63 +65,30 @@ public:
     //------------------------------------------------------------------
     ~DriveOverBump() = default;
 
+protected:
     //------------------------------------------------------------------
-    /// @brief      Calculates the target poses for the two-stage bump crossing maneuver
-    /// @return     frc::Pose2d - The initial midpoint pose (top of bump) to navigate to first
-    /// @details    This method is called by the command scheduler to determine the robot's path.
-    ///             It performs the following operations:
-    ///             - Identifies the nearest bump using BumpHelper
-    ///             - Determines current zone (alliance or neutral) via NeutralZoneManager
-    ///             - Retrieves field coordinates for both sides of the bump from FieldOffsetValues
-    ///             - Calculates appropriate rotation angles based on bump type and direction
-    ///             - Sets m_midPose (returned value) and m_endPose (used after midpoint reached)
-    ///             - Configures distance threshold to 1 foot for completion detection
-    ///
-    ///             The two-stage approach ensures the robot follows a safe trajectory over
-    ///             the bump rather than attempting to drive straight through it.
-    ///
-    /// @note       If BumpHelper is unavailable, returns default origin pose
-    /// @see        GetRotation() for rotation angle calculation
+    /// @brief      Calculates target poses for two-stage bump crossing
+    /// @return     DriveToPoses struct with midpoint (bump side) and endpoint (opposite side)
+    /// @details    Overrides base class to provide bump-specific navigation.
+    ///             See implementation for detailed pose calculation logic.
+    /// @see        DriveOverBump.cpp for full implementation details
     //------------------------------------------------------------------
-    frc::Pose2d GetEndPose() override;
-
-    //------------------------------------------------------------------
-    /// @brief      Checks if the DriveOverBump command has completed execution
-    /// @return     true if the command should terminate, false if it should continue running
-    /// @details    Implements two-stage completion logic:
-    ///
-    ///             **Stage 1 (Error Check):**
-    ///             Returns true immediately if m_endPose is at origin, indicating a calculation error
-    ///
-    ///             **Stage 2 (Two-Phase Navigation):**
-    ///             - Phase 1: Navigate to m_midPose (top of bump)
-    ///               * When reached, switches target to m_endPose and continues (returns false)
-    ///             - Phase 2: Navigate to m_endPose (other side of bump)
-    ///               * When reached, command completes (returns true)
-    ///
-    ///             The m_beforeMidPose flag tracks which phase is active. This ensures the robot
-    ///             successfully crosses the bump using waypoint navigation instead of direct path planning.
-    ///
-    /// @note       Delegates to base class DriveToPose::IsFinished() for actual distance threshold checking
-    /// @note       Called repeatedly by the command scheduler during command execution
-    //------------------------------------------------------------------
-
-    bool IsFinished() override;
+    struct DriveToPoses GetDriveToPoses() override;
 
 private:
     units::angle::degree_t GetRotation(BUMP_ID bump, bool isInNeutralZone) const;
 
-    frc::Pose2d m_midPose;
-    frc::Pose2d m_endPose;
-    bool m_beforeMidPose = true;
+    static constexpr units::degree_t kBlueAllianceOutpostWallTowardHub{315.0};
+    static constexpr units::degree_t kNeutralZoneTowardHubBlueOutpost{315.0};
+    static constexpr units::degree_t kBlueAllianceDepotWallTowardHub{45.0};
+    static constexpr units::degree_t kNeutralZoneTowardHubBlueDepot{45.0};
 
-    static constexpr units::degree_t BlueAllianceOutpostWallTowardHub{315.0};
-    static constexpr units::degree_t NeutralZoneTowardHubBlueOutpost{315.0};
-    static constexpr units::degree_t BlueAllianceDepotWallTowardHub{45.0};
-    static constexpr units::degree_t NeutralZoneTowardHubBlueDepot{45.0};
+    static constexpr units::degree_t kRedAllianceDepotWallTowardHub{315.0};
+    static constexpr units::degree_t kNeutralZoneTowardHubRedDepot{315.0};
+    static constexpr units::degree_t kRedAllianceOutpostWallTowardHub{45.0};
+    static constexpr units::degree_t kNeutralZoneTowardHubRedOutpost{45.0};
 
-    static constexpr units::degree_t RedAllianceDepotWallTowardHub{315.0};
-    static constexpr units::degree_t NeutralZoneTowardHubRedDepot{315.0};
-    static constexpr units::degree_t RedAllianceOutpostWallTowardHub{45.0};
-    static constexpr units::degree_t NeutralZoneTowardHubRedOutpost{45.0};
+    static constexpr units::length::inch_t kDistanceThreshold = 12_in;
+    static constexpr units::angle::degree_t kAngleTolerance = 15.0_deg;
+    static constexpr units::length::inch_t kYTransitionToEndPointTolerance = 15.5_in;
 };

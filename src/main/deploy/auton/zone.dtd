@@ -31,7 +31,7 @@
     circley                 CDATA #IMPLIED
     radius                  CDATA #IMPLIED                
 
-    pathUpdateOption 	    ( DRIVE_TO_HUB | DRIVE_TO_BUMP | DRIVE_TO_DEPOT | DRIVE_TO_OUTPOST | DRIVE_TO_TOWER | NOTHING ) "NOTHING"         
+    pathUpdateOption 	    ( DRIVE_TO_HUB | DRIVE_OVER_BUMP | DRIVE_TO_DEPOT | DRIVE_TO_OUTPOST | DRIVE_TO_TOWER | NOTHING ) "NOTHING"         
     
     chassisOption           ( NO_VISION ) "NO_VISION"
     avoidOption             ( ROBOT_COLLISION | NO_AVOID_OPTION ) "NO_AVOID_OPTION"
