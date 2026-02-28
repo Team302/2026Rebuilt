@@ -4,9 +4,9 @@
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDrop3_A"
-time = "2.0"
+time = "3.0"
 intakeState = "STATE_INTAKE">
-<zone filename = "RedLeftBumpZone.xml"/>
+<!-- <zone filename = "RedLeftBumpZoneRect.xml"/> -->
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
@@ -18,7 +18,7 @@ intakeState = "STATE_INTAKE">
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDrop3_C"
 time = "5.0">
-<zone filename = "RedLeftBumpZone.xml"/>
+<zone filename = "RedLeftBumpZoneRect.xml"/>
 <zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
@@ -26,7 +26,7 @@ time = "5.0">
 choreoname = "BlueMLDrop3_D"
 time = "5.0"
 intakeState = "STATE_INTAKE">
-<zone filename = "RedLeftBumpZone.xml"/>
+<zone filename = "RedLeftBumpZoneRect.xml"/>
 <zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
@@ -40,7 +40,7 @@ intakeState = "STATE_INTAKE">
 choreoname = "BlueMLDrop3_F"
 time = "5.0"
 intakeState = "STATE_INTAKE">
-<zone filename = "RedLeftBumpZone.xml"/>
+<zone filename = "RedLeftBumpZoneRect.xml"/>
 <zone filename = "RedLaunchZone.xml"/>
 </primitive>
 

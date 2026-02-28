@@ -2,6 +2,6 @@
 <!DOCTYPE auton SYSTEM "zone.dtd">
 
 <auton>
-<zone circlex="4.60" circley="2.54" radius="65.0"
+<zone circlex="4.60" circley="2.54" radius="70.0"
 pathUpdateOption = "DRIVE_OVER_BUMP"/>
 </auton>
