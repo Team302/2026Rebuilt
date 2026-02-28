@@ -13,13 +13,12 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include <frc/DriverStation.h>
-#include <networktables/NetworkTable.h>
-#include <networktables/NetworkTableEntry.h>
-#include <networktables/NetworkTableInstance.h>
+#include "frc/DriverStation.h"
+#include "networktables/NetworkTable.h"
+#include "networktables/NetworkTableEntry.h"
+#include "networktables/NetworkTableInstance.h"
 
 #include "feedback/DriverFeedback.h"
-#include "frc/DriverStation.h"
 #include "state/IRobotStateChangeSubscriber.h"
 #include "state/RobotState.h"
 #include "state/RobotStateChanges.h"
@@ -35,8 +34,10 @@
 
 using frc::DriverStation;
 
+/// Singleton instance pointer.
 DriverFeedback *DriverFeedback::m_instance = nullptr;
 
+/// @brief Returns the singleton, creating it on first access.
 DriverFeedback *DriverFeedback::GetInstance()
 {
     if (DriverFeedback::m_instance == nullptr)
@@ -46,6 +47,8 @@ DriverFeedback *DriverFeedback::GetInstance()
     return DriverFeedback::m_instance;
 }
 
+/// @brief Constructor — registers for state changes and caches pointers to avoid
+///        repeated singleton lookups, map searches, and dynamic_casts in the periodic loop.
 DriverFeedback::DriverFeedback() : IRobotStateChangeSubscriber()
 {
 
@@ -56,8 +59,24 @@ DriverFeedback::DriverFeedback() : IRobotStateChangeSubscriber()
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool);
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool);
+
+    auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
+    if (config != nullptr)
+    {
+        auto launcherStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::LAUNCHER);
+        m_launcher = launcherStateMgr != nullptr ? dynamic_cast<Launcher *>(launcherStateMgr) : nullptr;
+
+        auto intakeStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::INTAKE);
+        m_intake = intakeStateMgr != nullptr ? dynamic_cast<Intake *>(intakeStateMgr) : nullptr;
+    }
+
+    m_dragonVision = DragonVision::GetDragonVision();
+    m_controllerTable = nt::NetworkTableInstance::GetDefault().GetTable("XBOX Controller");
+
     m_LEDStates->SetBlinkingFrequency(m_blinkingFrequency);
 }
+
+/// @brief Handles integer state changes — scoring mode and drive state type.
 void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, int value)
 {
     if (RobotStateChanges::StateChange::DesiredScoringMode_Int == change)
@@ -66,6 +85,7 @@ void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, in
         m_driveStateType = static_cast<ChassisOptionEnums::DriveStateType>(value);
 }
 
+/// @brief Handles boolean state changes — drive-to, climb mode, shift warnings.
 void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value)
 {
     if (RobotStateChanges::StateChange::DriveToFieldElement_Bool == change)
@@ -78,31 +98,50 @@ void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, bo
         m_shiftChangeIn3Seconds = value;
 }
 
+/// @brief Main periodic entry point. Runs every robot loop (~20 ms).
+///        LED state logic runs every loop; diagnostic checks are throttled to every
+///        m_diagnosticUpdateInterval loops to reduce CAN bus and network overhead.
 void DriverFeedback::UpdateFeedback()
 {
     UpdateLEDStates();
-    UpdateDiagnosticLEDs();
+
+    if (DriverStation::IsDisabled())
+    {
+        UpdateDiagnosticLEDs();
+    }
+
     UpdateRumble();
     CheckControllers();
     m_LEDStates->Periodic();
 }
 
+/// @brief Activates or deactivates controller rumble on both controllers.
+///        Rumble is ON when a shift change is imminent (within 3 seconds).
 void DriverFeedback::UpdateRumble()
 {
+    if (m_teleopControl == nullptr)
+    {
+        return;
+    }
 
     if (m_shiftChangeIn3Seconds)
     {
-        TeleopControl::GetInstance()->SetRumble(0, true, true);
-        TeleopControl::GetInstance()->SetRumble(1, true, true);
+        m_teleopControl->SetRumble(0, true, true);
+        m_teleopControl->SetRumble(1, true, true);
     }
     else
     {
-        m_rumbleLoopCounter = 0;
-        TeleopControl::GetInstance()->SetRumble(0, false, false);
-        TeleopControl::GetInstance()->SetRumble(1, false, false);
+        m_teleopControl->SetRumble(0, false, false);
+        m_teleopControl->SetRumble(1, false, false);
     }
 }
 
+/// @brief Determines the desired LED animation and colors based on robot state priority:
+///        1. Disabled → chaser (green if valid auton, red otherwise)
+///        2. Drive-to active → rainbow
+///        3. Climb mode → crimson solid/blinking depending on intake
+///        4. Launcher state → maps each state to a specific animation/color
+///        5. Shift-change warning overrides animation to slow blinking
 void DriverFeedback::UpdateLEDStates()
 {
     DragonCANdle::AnimationMode desiredAnimation = m_prevAnimaiton;
@@ -111,17 +150,11 @@ void DriverFeedback::UpdateLEDStates()
 
     auto currentLauncherState = Launcher::STATE_OFF;
     bool isInLaunchZone = false;
-    auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
-    if (config != nullptr)
-    {
-        auto launcherStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::LAUNCHER);
-        auto launcherMgr = launcherStateMgr != nullptr ? dynamic_cast<Launcher *>(launcherStateMgr) : nullptr;
 
-        if (launcherMgr != nullptr)
-        {
-            currentLauncherState = static_cast<Launcher::STATE_NAMES>(launcherMgr->GetCurrentState());
-            isInLaunchZone = launcherMgr->IsInLaunchZone();
-        }
+    if (m_launcher != nullptr)
+    {
+        currentLauncherState = static_cast<Launcher::STATE_NAMES>(m_launcher->GetCurrentState());
+        isInLaunchZone = m_launcher->IsInLaunchZone();
     }
 
     if (frc::DriverStation::IsDisabled())
@@ -206,17 +239,17 @@ void DriverFeedback::UpdateLEDStates()
     UpdateLEDs(desiredAnimation, desiredPrimaryColor, desiredSecondaryColor);
 }
 
+/// @brief Sends animation/color changes to the DragonCANdle hardware only when the
+///        desired state differs from the previously applied state (avoids redundant CAN writes).
+/// @param desiredAnimation   The animation mode to apply.
+/// @param desiredPrimaryColor   Primary LED color.
+/// @param desiredSecondaryColor Secondary LED color (used by ALTERNATING mode).
 void DriverFeedback::UpdateLEDs(DragonCANdle::AnimationMode desiredAnimation, frc::Color desiredPrimaryColor, frc::Color desiredSecondaryColor)
 {
     if (desiredAnimation != m_prevAnimaiton || desiredPrimaryColor != m_prevPrimaryColorState || desiredSecondaryColor != m_prevSecondaryColorState)
     {
         switch (desiredAnimation)
         {
-        case DragonCANdle::AnimationMode::SOLID:
-            m_LEDStates->SetSolidColor(desiredPrimaryColor);
-            m_LEDStates->SetAnimation(desiredAnimation);
-            break;
-
         case DragonCANdle::AnimationMode::ALTERNATING:
             m_LEDStates->SetAlternatingColors(desiredPrimaryColor, desiredSecondaryColor);
             m_LEDStates->SetAnimation(desiredAnimation);
@@ -226,21 +259,10 @@ void DriverFeedback::UpdateLEDs(DragonCANdle::AnimationMode desiredAnimation, fr
             m_LEDStates->SetAnimation(desiredAnimation);
             break;
 
+        case DragonCANdle::AnimationMode::SOLID:
         case DragonCANdle::AnimationMode::BREATHING:
-            m_LEDStates->SetSolidColor(desiredPrimaryColor);
-            m_LEDStates->SetAnimation(desiredAnimation);
-            break;
-
         case DragonCANdle::AnimationMode::BLINKING:
-            m_LEDStates->SetSolidColor(desiredPrimaryColor);
-            m_LEDStates->SetAnimation(desiredAnimation);
-            break;
-
         case DragonCANdle::AnimationMode::CHASER:
-            m_LEDStates->SetSolidColor(desiredPrimaryColor);
-            m_LEDStates->SetAnimation(desiredAnimation);
-            break;
-
         case DragonCANdle::AnimationMode::CLOSING_IN:
             m_LEDStates->SetSolidColor(desiredPrimaryColor);
             m_LEDStates->SetAnimation(desiredAnimation);
@@ -256,6 +278,14 @@ void DriverFeedback::UpdateLEDs(DragonCANdle::AnimationMode desiredAnimation, fr
     }
 }
 
+/// @brief Reads hardware diagnostic inputs and pushes them to the DragonCANdle diagnostic LEDs.
+///
+///        This method is intentionally throttled (called every ~200 ms instead of every 20 ms)
+///        because it performs expensive operations:
+///          - Limelight health checks (3 network queries)
+///          - Quest health check (1 network query)
+///          - 3 CAN bus limit-switch reads (hood reverse, turret reverse, turret forward)
+///          - 1 CAN bus limit-switch read for intake (via Intake::IsIntakeIn)
 void DriverFeedback::UpdateDiagnosticLEDs()
 {
     bool questStatus = false;
@@ -269,10 +299,9 @@ void DriverFeedback::UpdateDiagnosticLEDs()
     bool turretZero = false;
     bool turretEnd = false;
 
-    auto dragonVision = DragonVision::GetDragonVision();
-    if (dragonVision != nullptr)
+    if (m_dragonVision != nullptr)
     {
-        auto limelightRunning = dragonVision->HealthCheckAllLimelights();
+        auto limelightRunning = m_dragonVision->HealthCheckAllLimelights();
         if (limelightRunning.size() == 3)
         {
             backLeftLL = limelightRunning[0];
@@ -280,7 +309,7 @@ void DriverFeedback::UpdateDiagnosticLEDs()
             climberLL = limelightRunning[2];
         }
 
-        questStatus = dragonVision->HealthCheckQuest();
+        questStatus = m_dragonVision->HealthCheckQuest();
 
         m_LEDStates->SetQuestStatus(questStatus);
         m_LEDStates->SetLimelightStatuses(backLeftLL, backRightLL, climberLL);
@@ -289,49 +318,32 @@ void DriverFeedback::UpdateDiagnosticLEDs()
     // Add Data Logger Connection Status dataLoggerConnected = ...
     m_LEDStates->SetDataLoggerStatus(dataLoggerConnected);
 
-    auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
-    if (config != nullptr)
+    if (m_launcher != nullptr)
     {
-        auto launcherStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::LAUNCHER);
-        auto intakeStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::INTAKE);
-
-        auto launcherMgr = launcherStateMgr != nullptr ? dynamic_cast<Launcher *>(launcherStateMgr) : nullptr;
-        auto intakeMgr = intakeStateMgr != nullptr ? dynamic_cast<Intake *>(intakeStateMgr) : nullptr;
-
-        if (launcherMgr != nullptr)
-        {
-            hoodZeroSwitch = launcherMgr->GetHood()->GetReverseLimit().GetValue().value;
-            turretZero = launcherMgr->GetTurret()->GetReverseLimit().GetValue().value;
-            turretEnd = launcherMgr->GetTurret()->GetForwardLimit().GetValue().value;
-        }
-
-        if (intakeMgr != nullptr)
-        {
-            m_isIntakeIn = intakeMgr->IsIntakeIn();
-        }
-        m_LEDStates->SetIntakeSensor(m_isIntakeIn);
-        m_LEDStates->SetHoodSwitch(hoodZeroSwitch);
-        m_LEDStates->SetTurretZero(turretZero);
-        m_LEDStates->SetTurretEnd(turretEnd);
+        hoodZeroSwitch = m_launcher->GetHood()->GetReverseLimit().GetValue().value;
+        turretZero = m_launcher->GetTurret()->GetReverseLimit().GetValue().value;
+        turretEnd = m_launcher->GetTurret()->GetForwardLimit().GetValue().value;
     }
+
+    if (m_intake != nullptr)
+    {
+        m_isIntakeIn = m_intake->IsIntakeIn();
+    }
+    m_LEDStates->SetIntakeSensor(m_isIntakeIn);
+    m_LEDStates->SetHoodSwitch(hoodZeroSwitch);
+    m_LEDStates->SetTurretZero(turretZero);
+    m_LEDStates->SetTurretEnd(turretEnd);
 }
 
+/// @brief While disabled, publishes Xbox controller connection status to NetworkTables
+///        re-fetching the NT table handle each call.
 void DriverFeedback::CheckControllers()
 {
     if (frc::DriverStation::IsDisabled())
     {
-        if (m_controllerCounter == 0)
+        for (auto i = 0; i < DriverStation::kJoystickPorts; ++i)
         {
-            auto table = nt::NetworkTableInstance::GetDefault().GetTable("XBOX Controller");
-            for (auto i = 0; i < DriverStation::kJoystickPorts; ++i)
-            {
-                table.get()->PutBoolean(std::string("Controller") + std::to_string(i), DriverStation::GetJoystickIsXbox(i));
-            }
-        }
-        m_controllerCounter++;
-        if (m_controllerCounter > 25)
-        {
-            m_controllerCounter = 0;
+            m_controllerTable->PutBoolean(std::string("Controller") + std::to_string(i), DriverStation::GetJoystickIsXbox(i));
         }
     }
 }
