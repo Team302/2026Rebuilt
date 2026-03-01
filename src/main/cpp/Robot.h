@@ -68,4 +68,10 @@ private:
     frc::Timer m_robotStateTimer{};
     frc::Timer m_driverFeedbackTimer{};
     frc::Timer m_dataLoggerTimer{};
+
+    double m_maxCommandPeriod{0.0};
+    double m_maxLoggerPeriod{0.0};
+    double m_maxRobotStatePeriod{0.0};
+    double m_maxDriverFeedbackPeriod{0.0};
+    double m_maxDataLoggerPeriod{0.0};
 };

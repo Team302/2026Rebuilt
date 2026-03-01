@@ -160,12 +160,18 @@ void Robot::RobotPeriodic()
     UpdateDriveTeamFeedback();
     m_driverFeedbackTimer.Stop();
 
-    double commandTime = m_commandTimer.Get().value();
-    double loggerTime = m_LoggerTimer.Get().value();
-    double robotStateTime = m_robotStateTimer.Get().value();
-    double driverFeedbackTime = m_driverFeedbackTimer.Get().value();
-    double dataLoggerTime = m_dataLoggerTimer.Get().value();
+    double commandTime = units::time::millisecond_t(m_commandTimer.Get()).value();
+    double loggerTime = units::time::millisecond_t(m_LoggerTimer.Get()).value();
+    double robotStateTime = units::time::millisecond_t(m_robotStateTimer.Get()).value();
+    double driverFeedbackTime = units::time::millisecond_t(m_driverFeedbackTimer.Get()).value();
+    double dataLoggerTime = units::time::millisecond_t(m_dataLoggerTimer.Get()).value();
     double totalTime = commandTime + loggerTime + robotStateTime + driverFeedbackTime + dataLoggerTime;
+
+    m_maxCommandPeriod = std::max(m_maxCommandPeriod, commandTime);
+    m_maxLoggerPeriod = std::max(m_maxLoggerPeriod, loggerTime);
+    m_maxRobotStatePeriod = std::max(m_maxRobotStatePeriod, robotStateTime);
+    m_maxDriverFeedbackPeriod = std::max(m_maxDriverFeedbackPeriod, driverFeedbackTime);
+    m_maxDataLoggerPeriod = std::max(m_maxDataLoggerPeriod, dataLoggerTime);
 
     Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "CommandScheduler", commandTime);
     Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "Logger", loggerTime);
@@ -173,6 +179,11 @@ void Robot::RobotPeriodic()
     Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "DriverFeedback", driverFeedbackTime);
     Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "DataLogger", dataLoggerTime);
     Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "Total Robot Perodic Time", totalTime);
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "Max CommandScheduler Time", m_maxCommandPeriod);
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "Max Logger Time", m_maxLoggerPeriod);
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "Max RobotState Time", m_maxRobotStatePeriod);
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "Max DriverFeedback Time", m_maxDriverFeedbackPeriod);
+    Logger::GetLogger()->LogDataDirectlyOverNT("LoopTimes", "Max DataLogger Time", m_maxDataLoggerPeriod);
 }
 
 /// @brief Called periodically while the robot is disabled.
@@ -235,6 +246,12 @@ void Robot::TeleopInit()
         }
         m_rewindLatch = true;
     }
+
+    m_maxCommandPeriod = 0.0;
+    m_maxLoggerPeriod = 0.0;
+    m_maxRobotStatePeriod = 0.0;
+    m_maxDriverFeedbackPeriod = 0.0;
+    m_maxDataLoggerPeriod = 0.0;
 }
 
 /// @brief Called periodically while in teleop mode.
