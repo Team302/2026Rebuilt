@@ -32,6 +32,7 @@ DragonDataLoggerMgr *DragonDataLoggerMgr::GetInstance()
     if (DragonDataLoggerMgr::m_instance == nullptr)
     {
         DragonDataLoggerMgr::m_instance = new DragonDataLoggerMgr();
+        DragonDataLoggerMgr::m_instance->SetLoggerType(DragonDataLoggerMgr::m_instance->m_loggerType);
     }
     return DragonDataLoggerMgr::m_instance;
 }
@@ -39,10 +40,11 @@ DragonDataLoggerMgr *DragonDataLoggerMgr::GetInstance()
 DragonDataLoggerMgr::DragonDataLoggerMgr() : m_items()
 {
     // This line needs to be removed if we want to run hoot logs
-    CTRESignalLogger ctreLogger;
-    ctreLogger.SetAutoLogging(false);
+    // CTRESignalLogger ctreLogger;
+    // ctreLogger.SetAutoLogging(true);
 
-    SetLoggerType(m_defaultLoggerType);
+    // NOTE: SetLoggerType is called from GetInstance() AFTER m_instance is assigned
+    // to avoid re-entrancy issues (CTRESignalLogger::Start calls GetInstance())
 }
 
 void DragonDataLoggerMgr::SetLoggerType(LoggerType type)
@@ -87,20 +89,31 @@ DragonDataLoggerMgr::~DragonDataLoggerMgr()
 }
 void DragonDataLoggerMgr::PeriodicDataLog()
 {
+    if (m_items.empty())
+    {
+        return;
+    }
+
     uint64_t timestamp = frc::RobotController::GetFPGATime();
 
     m_timer.Reset();
     while (m_timer.Get() < m_period)
     {
         auto item = m_items[m_lastIndex];
-        item->DataLog(timestamp);
-        m_lastIndex += ((m_lastIndex >= (m_items.size() - 1)) ? -m_lastIndex : 1);
+        if (item != nullptr)
+        {
+            item->DataLog(timestamp);
+        }
+        m_lastIndex = (m_lastIndex + 1) % m_items.size();
     }
 }
 
 void DragonDataLoggerMgr::RegisterItem(DragonDataLogger *item)
 {
-    m_items.emplace_back(item);
+    if (item != nullptr)
+    {
+        m_items.emplace_back(item);
+    }
 }
 
 std::string DragonDataLoggerMgr::GetLoggingDirectory() const

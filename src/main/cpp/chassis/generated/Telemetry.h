@@ -19,19 +19,6 @@ class Telemetry : public DragonDataLogger
 private:
     units::meters_per_second_t MaxSpeed = 0_mps; // Maximum speed of the robot, set by chassis configuration manager
 
-    /* What to publish over networktables for telemetry */
-    nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
-
-    /* Robot swerve drive state */
-    std::shared_ptr<nt::NetworkTable> driveStateTable = inst.GetTable("DriveState");
-    nt::StructPublisher<frc::Pose2d> drivePose = driveStateTable->GetStructTopic<frc::Pose2d>("Pose").Publish();
-    nt::StructPublisher<frc::ChassisSpeeds> driveSpeeds = driveStateTable->GetStructTopic<frc::ChassisSpeeds>("Speeds").Publish();
-    nt::StructArrayPublisher<frc::SwerveModuleState> driveModuleStates = driveStateTable->GetStructArrayTopic<frc::SwerveModuleState>("ModuleStates").Publish();
-    nt::StructArrayPublisher<frc::SwerveModuleState> driveModuleTargets = driveStateTable->GetStructArrayTopic<frc::SwerveModuleState>("ModuleTargets").Publish();
-    nt::StructArrayPublisher<frc::SwerveModulePosition> driveModulePositions = driveStateTable->GetStructArrayTopic<frc::SwerveModulePosition>("ModulePositions").Publish();
-    nt::DoublePublisher driveTimestamp = driveStateTable->GetDoubleTopic("Timestamp").Publish();
-    nt::DoublePublisher driveOdometryFrequency = driveStateTable->GetDoubleTopic("OdometryFrequency").Publish();
-
     /* Mechanisms to represent the swerve module states */
     std::array<frc::Mechanism2d, 4> m_moduleMechanisms{
         frc::Mechanism2d{1, 1},

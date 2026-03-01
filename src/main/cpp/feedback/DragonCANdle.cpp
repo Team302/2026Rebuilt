@@ -115,6 +115,15 @@ void DragonCANdle::UpdateAnimation()
 {
     using RGBWColor = signals::RGBWColor;
 
+    // Only proceed if the animation mode has changed
+    if (m_animMode == m_prevAnimMode &&
+        m_primaryColor == m_prevPrimaryColor &&
+        m_secondaryColor == m_prevSecondaryColor &&
+        m_animMode != AnimationMode::ALTERNATING) // Always update alternating (it has its own timer)
+    {
+        return;
+    }
+
     switch (m_animMode)
     {
     case AnimationMode::OFF:
@@ -135,7 +144,7 @@ void DragonCANdle::UpdateAnimation()
     case AnimationMode::ALTERNATING: // Blinking pattern that swaps entire strip between two colors
 
     {
-        if (m_alternatingTimer > 2 * m_alternatingPeriod)
+        if (m_alternatingTimer >= 2 * m_alternatingPeriod)
             m_alternatingTimer = 0;
 
         int blinkState = (m_alternatingTimer / m_alternatingPeriod) % 2;
@@ -186,6 +195,11 @@ void DragonCANdle::UpdateAnimation()
     default:
         break;
     }
+
+    // Cache the current state for next frame
+    m_prevAnimMode = m_animMode;
+    m_prevPrimaryColor = m_primaryColor;
+    m_prevSecondaryColor = m_secondaryColor;
 }
 
 // ================= Diagnostics =================
@@ -195,24 +209,52 @@ void DragonCANdle::UpdateDiagnostics()
     using RGBWColor = signals::RGBWColor;
 
     // Set individual onboard LEDs for diagnostics
+    // Only send CAN commands if state changed (reduces bus traffic significantly)
+
     // Alliance
-    if (m_alliance == frc::DriverStation::Alliance::kBlue)
-        m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{frc::Color::kBlue}));
-    else
-        m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{frc::Color::kRed}));
+    if (m_alliance != m_prevAlliance)
+    {
+        if (m_alliance == frc::DriverStation::Alliance::kBlue)
+            m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{frc::Color::kBlue}));
+        else
+            m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{frc::Color::kRed}));
+        m_prevAlliance = m_alliance;
+    }
 
     // Quest
-    if (m_questOK)
-        m_candle->SetControl(controls::SolidColor{1, 1}.WithColor(RGBWColor{frc::Color::kGreen}));
-    else
-        m_candle->SetControl(controls::SolidColor{1, 1}.WithColor(RGBWColor{frc::Color::kRed}));
+    if (m_questOK != m_prevQuestOK)
+    {
+        if (m_questOK)
+            m_candle->SetControl(controls::SolidColor{1, 1}.WithColor(RGBWColor{frc::Color::kGreen}));
+        else
+            m_candle->SetControl(controls::SolidColor{1, 1}.WithColor(RGBWColor{frc::Color::kRed}));
+        m_prevQuestOK = m_questOK;
+    }
 
     // Limelights (aggregated)
     int llCount = (m_ll1 ? 1 : 0) + (m_ll2 ? 1 : 0) + (m_ll3 ? 1 : 0);
+    bool llStateChanged = (m_ll1 != m_prevLL1) || (m_ll2 != m_prevLL2) || (m_ll3 != m_prevLL3);
+
     if (llCount == 3)
-        m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{frc::Color::kGreen}));
+    {
+        if (llStateChanged)
+        {
+            m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{frc::Color::kGreen}));
+            m_prevLL1 = m_ll1;
+            m_prevLL2 = m_ll2;
+            m_prevLL3 = m_ll3;
+        }
+    }
     else if (llCount == 0)
-        m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{frc::Color::kRed}));
+    {
+        if (llStateChanged)
+        {
+            m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{frc::Color::kRed}));
+            m_prevLL1 = m_ll1;
+            m_prevLL2 = m_ll2;
+            m_prevLL3 = m_ll3;
+        }
+    }
     else
     {
         // Cycle through the 3 limelights, showing green for connected and red for missing
@@ -232,17 +274,43 @@ void DragonCANdle::UpdateDiagnostics()
             llColor = frc::Color::kGreen;
 
         m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{llColor}));
+        m_prevLL1 = m_ll1;
+        m_prevLL2 = m_ll2;
+        m_prevLL3 = m_ll3;
     }
 
     // Data Logger
-    if (m_dataLoggerOK)
-        m_candle->SetControl(controls::SolidColor{3, 3}.WithColor(RGBWColor{frc::Color::kGreen}));
-    else
-        m_candle->SetControl(controls::SolidColor{3, 3}.WithColor(RGBWColor{frc::Color::kRed}));
+    if (m_dataLoggerOK != m_prevDataLoggerOK)
+    {
+        if (m_dataLoggerOK)
+            m_candle->SetControl(controls::SolidColor{3, 3}.WithColor(RGBWColor{frc::Color::kGreen}));
+        else
+            m_candle->SetControl(controls::SolidColor{3, 3}.WithColor(RGBWColor{frc::Color::kRed}));
+        m_prevDataLoggerOK = m_dataLoggerOK;
+    }
 
     // Sensors - show yellow when triggered, black when not
-    m_candle->SetControl(controls::SolidColor{4, 4}.WithColor(RGBWColor{m_intake ? frc::Color::kYellow : frc::Color::kBlack}));
-    m_candle->SetControl(controls::SolidColor{5, 5}.WithColor(RGBWColor{m_hood ? frc::Color::kYellow : frc::Color::kBlack}));
-    m_candle->SetControl(controls::SolidColor{6, 6}.WithColor(RGBWColor{m_turretZero ? frc::Color::kYellow : frc::Color::kBlack}));
-    m_candle->SetControl(controls::SolidColor{7, 7}.WithColor(RGBWColor{m_turretEnd ? frc::Color::kYellow : frc::Color::kBlack}));
+    if (m_intake != m_prevIntake)
+    {
+        m_candle->SetControl(controls::SolidColor{4, 4}.WithColor(RGBWColor{m_intake ? frc::Color::kYellow : frc::Color::kBlack}));
+        m_prevIntake = m_intake;
+    }
+
+    if (m_hood != m_prevHood)
+    {
+        m_candle->SetControl(controls::SolidColor{5, 5}.WithColor(RGBWColor{m_hood ? frc::Color::kBlack : frc::Color::kYellow}));
+        m_prevHood = m_hood;
+    }
+
+    if (m_turretZero != m_prevTurretZero)
+    {
+        m_candle->SetControl(controls::SolidColor{6, 6}.WithColor(RGBWColor{m_turretZero ? frc::Color::kBlack : frc::Color::kYellow}));
+        m_prevTurretZero = m_turretZero;
+    }
+
+    if (m_turretEnd != m_prevTurretEnd)
+    {
+        m_candle->SetControl(controls::SolidColor{7, 7}.WithColor(RGBWColor{m_turretEnd ? frc::Color::kBlack : frc::Color::kYellow}));
+        m_prevTurretEnd = m_turretEnd;
+    }
 }

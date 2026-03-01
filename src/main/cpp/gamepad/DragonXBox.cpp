@@ -39,7 +39,8 @@ using namespace frc;
 /// @brief Wrapper for an XBOX controller used to control the robot in teleop mode.
 
 DragonXBox::DragonXBox(
-    int port) : m_xbox(new frc::XboxController(port))
+    int port) : m_xbox(new frc::XboxController(port)),
+                m_dataLogPath("DS:joystick" + std::to_string(port))
 {
     // Create Axis Objects
     m_axis[TeleopControlMappingEnums::LEFT_JOYSTICK_X] = new AnalogAxis(m_xbox, XboxController::Axis::kLeftX, false);
@@ -314,6 +315,5 @@ void DragonXBox::DataLog(uint64_t timestamp)
     buttons[frc::XboxController::Button::kStart - 1] = IsButtonPressed(TeleopControlMappingEnums::START_BUTTON);
     buttons[frc::XboxController::Button::kLeftStick - 1] = IsButtonPressed(TeleopControlMappingEnums::LEFT_STICK_PRESSED);
     buttons[frc::XboxController::Button::kRightStick - 1] = IsButtonPressed(TeleopControlMappingEnums::RIGHT_STICK_PRESSED);
-    int id = m_xbox->GetPort();
-    LogGamePadData(timestamp, static_cast<DragonDataLogger::GamePadSignals>(id), axes, buttons, std::array<int, 1>{m_xbox->GetPOV()});
+    LogGamePadData(timestamp, m_dataLogPath, axes, buttons, std::array<int, 1>{m_xbox->GetPOV()});
 }
