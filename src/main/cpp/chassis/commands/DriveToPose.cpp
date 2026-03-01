@@ -42,7 +42,7 @@
 ///
 ///             **PID Controller Setup:**
 ///             - Creates separate ProfiledPIDControllers for X and Y axes
-///             - Configures I-Zone (integral zone) to 0.20 meters to prevent integral windup
+///             - Configures I-Zone (integral zone) to prevent integral windup
 ///             - Uses trapezoidal motion profiles for smooth acceleration/deceleration
 ///
 ///             **Initial State:**
@@ -59,9 +59,7 @@
 /// @note       The command requires exclusive access to the chassis subsystem
 /// @see        Initialize() for per-run setup when command is scheduled
 //------------------------------------------------------------------
-DriveToPose::DriveToPose(
-    subsystems::CommandSwerveDrivetrain *chassis) : m_chassis(chassis)
-
+DriveToPose::DriveToPose(subsystems::CommandSwerveDrivetrain *chassis) : m_chassis(chassis)
 {
     AddRequirements(m_chassis);
 
@@ -82,8 +80,8 @@ DriveToPose::DriveToPose(
 ///             Performs the following initialization steps:
 ///
 ///             **Target Acquisition:**
-///             - Calls GetEndPose() to determine the target pose (overridable by derived classes)
-///             - Sets the target pose as the navigation goal
+///             - Calls GetDriveToPoses() to determine the target pose(s) (overridable by derived classes)
+///             - Sets the end pose and optional mid pose as navigation goals
 ///
 ///             **State Preparation:**
 ///             - Resets the "same pose" tracker to detect when robot stops moving
@@ -96,20 +94,31 @@ DriveToPose::DriveToPose(
 ///             These state changes notify other subsystems that autonomous navigation is in progress,
 ///             which may trigger coordinated behaviors or safety interlocks.
 ///
-/// @note       Derived classes can override GetEndPose() to provide custom target calculations
-/// @see        GetEndPose() for target pose determination
-/// @see        SetEndPose() for controller configuration
+/// @note       Derived classes can override GetDriveToPoses() to provide custom target calculations
+/// @see        GetDriveToPoses() for target pose determination
+/// @see        SetTargetPose() for controller configuration
 //------------------------------------------------------------------
 void DriveToPose::Initialize()
 {
     // Get the target pose (may be overridden by derived classes)
-    m_endPose = GetEndPose();
+    auto poses = GetDriveToPoses();
+    m_endPose = poses.endPose;
+    m_hasMidPose = poses.hasMidPose;
+    if (poses.hasMidPose)
+    {
+        m_midPose = poses.midPose;
+        m_beforeMidPose = ShouldSkipMidPoint() ? false : true; // Skip mid pose if angle to target is small
+    }
+    else
+    {
+        m_beforeMidPose = false;
+    }
 
     // Reset movement detection to start fresh
     m_chassis->ResetSamePose();
 
     // Configure controllers with the target pose
-    SetEndPose(m_endPose);
+    SetTargetPose(m_beforeMidPose ? m_midPose : m_endPose);
 
     // Notify robot state that navigation has started
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElement_Bool, true);
@@ -137,9 +146,9 @@ void DriveToPose::Initialize()
 /// @note       Calling this during execution will cause the robot to smoothly redirect to the new target
 /// @see        DriveOverBump::IsFinished() for an example of dynamic target switching
 //------------------------------------------------------------------
-void DriveToPose::SetEndPose(const frc::Pose2d &endPose)
+void DriveToPose::SetTargetPose(const frc::Pose2d &pose)
 {
-    m_endPose = endPose;
+    m_targetPose = pose;
     if (m_chassis != nullptr)
     {
 
@@ -152,8 +161,8 @@ void DriveToPose::SetEndPose(const frc::Pose2d &endPose)
 
         // Update current pose and set new controller goals
         m_currentPose = m_chassis->GetPose();
-        m_translationPIDX.SetGoal(m_endPose.X());
-        m_translationPIDY.SetGoal(m_endPose.Y());
+        m_translationPIDX.SetGoal(m_targetPose.X());
+        m_translationPIDY.SetGoal(m_targetPose.Y());
     }
 }
 
@@ -172,19 +181,19 @@ void DriveToPose::SetEndPose(const frc::Pose2d &endPose)
 ///             7. Log error and status for debugging
 ///
 ///             **Adaptive PID Reset:**
-///             When distance error exceeds m_pidResetThreshold (0.25m), the PID controllers are reset
+///             When distance error exceeds m_pidResetThreshold, the PID controllers are reset
 ///             to prevent integral windup. This happens when:
 ///             - Target is changed dynamically (multi-stage navigation)
 ///             - Robot is bumped or pushed off course
 ///             - Initial error is large at command start
 ///
 ///             **Control Modes:**
-///             - Large error (>0.25m): Feedforward only, PID reset
-///             - Small error (≤0.25m): Feedforward + PID corrections
+///             - Large error: Feedforward only, PID reset
+///             - Small error: Feedforward + PID corrections
 ///
 ///             **Heading Control:**
-///             Robot rotation is controlled separately to face m_endPose.Rotation() using
-///             a heading PID controller with gains (kP=6.0, kI=0.0, kD=0.0).
+///             Robot rotation is controlled separately to face m_targetPose.Rotation() using
+///             a heading PID controller with gains.
 ///
 /// @note       All movements are field-centric relative to blue alliance perspective
 /// @see        CalculateFeedForward() for feedforward velocity calculation
@@ -211,8 +220,8 @@ void DriveToPose::Execute()
         else
         {
             // Small error: Add PID corrections for precise positioning
-            chassisSpeeds.vx += units::velocity::meters_per_second_t(m_translationPIDX.Calculate(m_currentPose.X(), m_endPose.X()));
-            chassisSpeeds.vy += units::velocity::meters_per_second_t(m_translationPIDY.Calculate(m_currentPose.Y(), m_endPose.Y()));
+            chassisSpeeds.vx += units::velocity::meters_per_second_t(m_translationPIDX.Calculate(m_currentPose.X(), m_targetPose.X()));
+            chassisSpeeds.vy += units::velocity::meters_per_second_t(m_translationPIDY.Calculate(m_currentPose.Y(), m_targetPose.Y()));
 
             // Clamp velocities to safe maximum
             chassisSpeeds.vx = std::clamp(chassisSpeeds.vx, -kMaxVelocity, kMaxVelocity);
@@ -223,15 +232,15 @@ void DriveToPose::Execute()
         m_chassis->SetControl(
             m_driveRequest.WithVelocityX(chassisSpeeds.vx)
                 .WithVelocityY(chassisSpeeds.vy)
-                .WithTargetDirection(m_endPose.Rotation().Degrees())
+                .WithTargetDirection(m_targetPose.Rotation().Degrees())
                 .WithHeadingPID(m_rotationKP, m_rotationKI, m_rotationKD)
                 .WithForwardPerspective(ctre::phoenix6::swerve::requests::ForwardPerspectiveValue::BlueAlliance));
     }
 
     // Log current error for debugging and tuning
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Vx", units::math::abs(chassisSpeeds.vx).value());
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Vy", units::math::abs(chassisSpeeds.vy).value());
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Error", units::length::inch_t(m_endPose.Translation().Distance(m_currentPose.Translation())).value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToPose", "Vx", units::math::abs(chassisSpeeds.vx).value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToPose", "Vy", units::math::abs(chassisSpeeds.vy).value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToPose", "Error", units::length::inch_t(m_endPose.Translation().Distance(m_currentPose.Translation())).value());
 }
 
 //------------------------------------------------------------------
@@ -240,12 +249,17 @@ void DriveToPose::Execute()
 /// @details    Implements a two-condition completion check to handle both successful completion
 ///             and stuck robot detection:
 ///
-///             **Condition 1: Target Reached**
-///             - Compares current pose to target pose using m_distanceThreshold (default 0.25 inches)
+///             **Condition 1: Target is at the origin**
+///             - Checks if the end pose is at the origin (0,0) with a small tolerance
+///             - Returns true if end pose is at origin, indicating an error in target calculation (physically the robot
+///               center cannot be at the origin of the field).
+///
+///             **Condition 2: Target Reached**
+///             - Compares current pose to target pose using m_distanceThreshold
 ///             - Returns true if robot is within tolerance of target position
 ///             - Indicates successful navigation completion
 ///
-///             **Condition 2: Robot Stopped Moving**
+///             **Condition 3: Robot Stopped Moving**
 ///             - Uses chassis IsSamePose() to detect if robot hasn't moved between cycles
 ///             - Returns true if robot is stuck or unable to make progress
 ///             - Prevents command from running indefinitely if blocked
@@ -260,26 +274,46 @@ void DriveToPose::Execute()
 ///             eventually timeout rather than running indefinitely.
 ///
 /// @note       Updates m_prevPose each cycle for next iteration's comparison
-/// @note       Distance threshold can be customized via SetDistanceThreshold()
-/// @see        SetDistanceThreshold() for adjusting completion tolerance
+/// @note       Distance threshold (m_distanceThreshold) can be customized via SetDistanceThreshold()
+/// @see        SetDistanceThreshold() for adjusting the completion distance threshold
 //------------------------------------------------------------------
 bool DriveToPose::IsFinished()
 {
-    // Check if we've reached the target pose within tolerance
-    bool isDone = PoseUtils::IsSamePose(m_currentPose, m_endPose, m_distanceThreshold);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Is Done", isDone);
-
-    if (isDone)
+    // Safety check: If end pose wasn't calculated properly, stop immediately
+    if (PoseUtils::IsPoseAtOrigin(m_targetPose, units::length::centimeter_t{1.0}))
     {
-        return true; // Successfully reached target
+        return true;
+    }
+
+    // Check if we've reached the target pose within tolerance
+    bool isDone = PoseUtils::IsSamePose(m_currentPose, m_targetPose, m_distanceThreshold);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToPose", "Is Done", isDone);
+
+    if (m_hasMidPose && m_beforeMidPose)
+    {
+        // Reached MidPose or withing the tolerance to transition to the end pose
+        auto xError = units::math::abs(m_endPose.X() - m_currentPose.X());
+        auto yError = units::math::abs(m_endPose.Y() - m_currentPose.Y());
+
+        auto transitionToEndPose = (isDone || // reached the mid pose
+                                    (xError < m_xtoleranceForTransitionToEndPoint && yError < m_yToleranceForTransitionToEndPoint));
+
+        if (transitionToEndPose)
+        {
+            // Transition to the final target pose
+            SetTargetPose(m_endPose);
+            m_beforeMidPose = false;
+            return false; // Continue execution to reach end pose
+        }
     }
 
     // Check if robot has stopped moving (stuck or blocked)
     auto isSamePose = m_chassis->IsSamePose();
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToPose", "Is SamePose", isSamePose);
+
     m_prevPose = m_currentPose; // Update for next cycle
 
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Is SamePose", isSamePose);
-    return isSamePose; // End command if robot is stuck
+    return isDone || isSamePose; // End command if target reached or robot is stuck
 }
 
 //------------------------------------------------------------------
@@ -337,13 +371,13 @@ void DriveToPose::End(bool interrupted)
 ///                - Relies entirely on PID for final positioning
 ///                - Prevents overshoot from feedforward
 ///
-///             2. **Ramping Zone (m_ffMinRadius < distance ≤ m_ffMaxRadius = 1.25m):**
-///                - feedforwardSpeed linearly scaled from 0 to kMaxVelocity (4 m/s)
+///             2. **Ramping Zone:**
+///                - feedforwardSpeed linearly scaled from 0 to kMaxVelocity
 ///                - Scale factor = (distance - minRadius) / (maxRadius - minRadius)
 ///                - Provides smooth acceleration as robot approaches target
 ///
 ///             3. **Far From Target (distance > m_ffMaxRadius):**
-///                - feedforwardSpeed = kMaxVelocity (4 m/s)
+///                - feedforwardSpeed = kMaxVelocity
 ///                - Full speed when target is distant
 ///                - Minimizes navigation time for long distances
 ///
@@ -363,7 +397,7 @@ void DriveToPose::CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds)
     if (m_chassis != nullptr)
     {
         // Calculate Euclidean distance from current position to target
-        m_distanceError = m_currentPose.Translation().Distance(m_endPose.Translation());
+        m_distanceError = m_currentPose.Translation().Distance(m_targetPose.Translation());
 
         // Determine feedforward speed based on distance using ramped profile
         units::velocity::meters_per_second_t feedforwardSpeed = 0.0_mps;
@@ -376,11 +410,30 @@ void DriveToPose::CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds)
         // else: Within minimum radius, feedforward = 0 (rely on PID only)
 
         // Calculate direction vector from current position to target
-        frc::Translation2d translationError = m_endPose.Translation() - m_currentPose.Translation();
+        frc::Translation2d translationError = m_targetPose.Translation() - m_currentPose.Translation();
         frc::Rotation2d angleToTarget = translationError.Angle();
 
         // Decompose feedforward velocity into X and Y components
         chassisSpeeds.vx = feedforwardSpeed * angleToTarget.Cos();
         chassisSpeeds.vy = feedforwardSpeed * angleToTarget.Sin();
     }
+}
+
+/**
+ * @brief Determines whether the midpoint target should be skipped based on the robot's alignment with the end pose.
+ *
+ * This method calculates the angle between the robot's current position and the final target position.
+ * If the robot is already aligned within the specified angle tolerance, the midpoint can be skipped
+ * for a more direct path to the end pose.
+ *
+ * @return true if the angle to the end pose is within the angle tolerance and the midpoint should be skipped
+ * @return false if the robot should navigate through the midpoint before reaching the end pose
+ */
+bool DriveToPose::ShouldSkipMidPoint() const
+{
+    auto currentPose = m_chassis->GetPose();
+    auto rotationToEnd = (currentPose.Translation() - m_endPose.Translation()).Angle();
+    auto angleToEnd = units::math::abs(AngleUtils::GetEquivAngle(rotationToEnd.Degrees()));
+    angleToEnd = std::min(angleToEnd, 180.0_deg - angleToEnd);
+    return angleToEnd < m_angleTolerance;
 }

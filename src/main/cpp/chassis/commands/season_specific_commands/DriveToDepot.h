@@ -44,20 +44,13 @@ public:
     //------------------------------------------------------------------
     ~DriveToDepot() = default;
 
+protected:
     //------------------------------------------------------------------
-    /// @brief      Calculates the target end pose for the depot
-    /// @return     frc::Pose2d - The target pose at the center of the nearest depot
-    /// @details    Overrides the base class method to provide depot-specific
-    ///             target calculation using DepotHelper
+    /// @brief      Calculates target pose for depot navigation
+    /// @return     DriveToPoses struct with depot center as endpoint
+    /// @details    Overrides base class to provide depot-specific navigation.
+    ///             Returns current pose if in neutral zone, otherwise calculates nearest depot.
+    /// @see        DriveToDepot.cpp for full implementation details
     //------------------------------------------------------------------
-    frc::Pose2d GetEndPose() override;
-
-    //------------------------------------------------------------------
-    /// @brief      Determines if the DriveToDepot command has finished execution
-    /// @return     true if the command has completed driving to the depot,
-    ///             false if the command should continue running
-    /// @details    Called repeatedly by the command scheduler to check completion status
-    //------------------------------------------------------------------
-
-    bool IsFinished() override;
+    struct DriveToPoses GetDriveToPoses() override;
 };

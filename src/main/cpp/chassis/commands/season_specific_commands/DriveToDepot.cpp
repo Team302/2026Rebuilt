@@ -30,50 +30,41 @@ DriveToDepot::DriveToDepot(subsystems::CommandSwerveDrivetrain *chassis)
 }
 
 //------------------------------------------------------------------
-/// @brief      Calculates the target end pose for the depot
-/// @return     frc::Pose2d - The target pose at the center of the nearest depot
-/// @details    Uses DepotHelper to determine which depot (red or blue) is
-///             closest to the robot and calculates the center pose of that
-///             depot. Returns a default pose if DepotHelper is unavailable.
+/// @brief      Calculates the target pose for driving to a depot
+/// @return     DriveToPoses struct containing the depot target pose
+/// @details    Determines the nearest depot and returns its center position.
+///
+///             **Behavior:**
+///             - If in neutral zone: Returns current pose (no movement)
+///             - If in alliance zone: Calculates nearest depot pose using DepotHelper
+///
+///             The command uses DepotHelper to identify which depot (red or blue)
+///             is closest based on the robot's current position and returns
+///             the center coordinates of that depot.
+///
+/// @note       This is a single-stage navigation (no midpoint)
+/// @see        DepotHelper::CalcDepotPose() for depot position calculation
 //------------------------------------------------------------------
-frc::Pose2d DriveToDepot::GetEndPose()
+struct DriveToPoses DriveToDepot::GetDriveToPoses()
 {
-    frc::Pose2d endPose{};
+    struct DriveToPoses poses;
+    poses.hasMidPose = false;
+
     if (NeutralZoneManager::GetInstance()->IsInNeutralZone())
     {
         auto chassis = GetChassis();
         if (chassis != nullptr)
         {
-            return chassis->GetPose();
+            poses.endPose = chassis->GetPose();
         }
-        return endPose;
+        return poses;
     }
     auto depotHelper = DepotHelper::GetInstance();
     if (depotHelper != nullptr)
     {
-        return depotHelper->CalcDepotPose();
-    }
-    return endPose;
-}
-
-//------------------------------------------------------------------
-/// @brief Checks if the DriveToDepot command has finished execution.
-///
-/// @return true if the end pose is at the origin or if the base class's IsFinished
-///         condition is met, false otherwise.
-///
-/// @details This method determines whether the command should terminate by first checking
-///          if the end pose is at the origin (which means we had an error calculating the
-///          target position) so we stop immediately.  Otherwise, it delegates to the base class's
-///          IsFinished() method to determine completion.
-//------------------------------------------------------------------
-bool DriveToDepot::IsFinished()
-{
-    auto endPose = GetEndPose();
-    if (PoseUtils::IsPoseAtOrigin(endPose, units::length::centimeter_t{1.0}))
-    {
-        return true;
+        poses.endPose = depotHelper->CalcDepotPose();
+        return poses;
     }
 
-    return DriveToPose::IsFinished(); // call base class's IsFinished method
+    return poses;
 }

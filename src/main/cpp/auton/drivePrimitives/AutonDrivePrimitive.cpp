@@ -15,11 +15,11 @@
 #include "auton/drivePrimitives/AutonDrivePrimitive.h"
 #include "auton/PrimitiveParams.h"
 #include "chassis/SwerveContainer.h"
-#include "chassis/commands/TrajectoryDrive.h"
 #include "chassis/commands/DriveToPose.h"
+#include "chassis/commands/TrajectoryDrive.h"
 #include "configs/MechanismConfigMgr.h"
-#include "utils/logging/debug/Logger.h"
 #include "frc2/command/Commands.h"
+#include "utils/logging/debug/Logger.h"
 #include <frc2/command/ProxyCommand.h>
 
 AutonDrivePrimitive::AutonDrivePrimitive() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
@@ -158,6 +158,9 @@ frc2::CommandPtr AutonDrivePrimitive::CreateDriveToPoseCommand(ChassisOptionEnum
 
     case ChassisOptionEnums::DRIVE_TO_OUTPOST:
         return frc2::ProxyCommand(container->GetDriveToOutpostCommand()).ToPtr();
+
+    case ChassisOptionEnums::DRIVE_OVER_BUMP:
+        return frc2::ProxyCommand(container->GetDriveOverBumpCommand()).ToPtr();
 
     case ChassisOptionEnums::DRIVE_TO_TOWER:
         return frc2::ProxyCommand(container->GetDriveToTowerCommand()).ToPtr();

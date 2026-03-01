@@ -66,7 +66,6 @@ CyclePrimitives::CyclePrimitives() : State(string("CyclePrimitives"), 0),
 {
     auto chassisConfig = ChassisConfigMgr::GetInstance();
     m_chassis = chassisConfig != nullptr ? chassisConfig->GetSwerveChassis() : nullptr;
-    DragonDataLoggerMgr::GetInstance()->RegisterItem(this);
 }
 
 void CyclePrimitives::Init()
@@ -273,6 +272,6 @@ void CyclePrimitives::DataLog(uint64_t timestamp)
 {
     if (m_autonSelector != nullptr)
     {
-        LogStringData(timestamp, DragonDataLogger::StringSignals::AUTON_PATH_NAME, m_autonSelector->GetSelectedAutoFile().c_str());
+        LogStringData(timestamp, "/Auton/PathName", m_autonSelector->GetSelectedAutoFile());
     }
 }

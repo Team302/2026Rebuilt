@@ -20,11 +20,11 @@
 #include "configs/MechanismConfigCompBot_302.h"
 #include "configs/MechanismConfigMgr.h"
 #include "configs/RobotElementNames.h"
-#include "utils/logging/debug/Logger.h"
-#include "utils/PeriodicLooper.h"
-#include "frc/RobotBase.h"
-#include "frc/Compressor.h"
 #include "feedback/DragonCANdle.h"
+#include "frc/Compressor.h"
+#include "frc/RobotBase.h"
+#include "utils/PeriodicLooper.h"
+#include "utils/logging/debug/Logger.h"
 
 using std::string;
 
@@ -67,8 +67,8 @@ StateMgr *MechanismConfigCompBot_302::GetMechanism(MechanismTypes::MECHANISM_TYP
 
 void MechanismConfigCompBot_302::DefineLEDs()
 {
-	// auto candle = DragonCANdle::GetInstance();
-	// candle->Initialize(60, 44, std::string("swerve")); // CAN ID 0, 43 LEDs external) Update with actual number of LEDs on the robot
+	auto candle = DragonCANdle::GetInstance();
+	candle->Initialize(60, 44, std::string("rio")); // CAN ID 0, 43 LEDs external) Update with actual number of LEDs on the robot
 }
 
 void MechanismConfigCompBot_302::DefineCompressor()
