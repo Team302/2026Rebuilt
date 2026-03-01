@@ -68,7 +68,8 @@ frc::Pose2d TowerHelper::CalcTowerPose() const
         return frc::Pose2d();
     }
 
-    // Use cached alliance color instead of re-querying FMSData each call
+    // Refresh alliance color each call so we don't rely on the startup default
+    m_allianceColor = FMSData::GetAllianceColor();
     auto currentPose = m_chassis->GetPose();
     auto isRed = (m_allianceColor == frc::DriverStation::Alliance::kRed);
 
