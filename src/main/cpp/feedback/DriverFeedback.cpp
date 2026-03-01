@@ -74,6 +74,8 @@ DriverFeedback::DriverFeedback() : IRobotStateChangeSubscriber()
     m_controllerTable = nt::NetworkTableInstance::GetDefault().GetTable("XBOX Controller");
 
     m_LEDStates->SetBlinkingFrequency(m_blinkingFrequency);
+
+    m_LEDStates->SetBrightness(0.75);
 }
 
 /// @brief Handles integer state changes — scoring mode and drive state type.
