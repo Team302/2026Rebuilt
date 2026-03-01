@@ -130,7 +130,7 @@ private:
 
 	ctre::phoenix6::controls::DutyCycleOut m_intakePercentOut{0.0};
 	ctre::phoenix6::controls::DutyCycleOut m_extenderPercentOut{0.0};
-	ctre::phoenix6::controls::PositionVoltage m_extenderPositionDeg{units::angle::degree_t(0.0)};
+	ctre::phoenix6::controls::PositionVoltage m_extenderPositionDeg{units::angle::degree_t(20.0)};
 	ctre::phoenix6::controls::ControlRequest *m_intakeActiveTarget = &m_intakePercentOut;
 	ctre::phoenix6::controls::ControlRequest *m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
 
@@ -138,6 +138,6 @@ private:
 	bool m_isLaunching = false;
 	bool m_prevIntakeSwitchState = false;
 
-	units::angle::turn_t m_intakeRetractedPositionTarget{0.0};
-	units::angle::turn_t m_intakeExtendedPositionTarget{0.0};
+	units::angle::turn_t m_intakeRetractedPositionTarget{20.0};
+	units::angle::turn_t m_intakeExtendedPositionTarget{120.0};
 };
