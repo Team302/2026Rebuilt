@@ -117,6 +117,9 @@ void DriveToPose::Initialize()
     // Reset movement detection to start fresh
     m_chassis->ResetSamePose();
 
+    // Reset completion flag so each run starts clean
+    m_isFinished = false;
+
     // Configure controllers with the target pose
     SetTargetPose(m_beforeMidPose ? m_midPose : m_endPose);
 
@@ -282,6 +285,7 @@ bool DriveToPose::IsFinished()
     // Safety check: If end pose wasn't calculated properly, stop immediately
     if (PoseUtils::IsPoseAtOrigin(m_targetPose, units::length::centimeter_t{1.0}))
     {
+        m_isFinished = true;
         return true;
     }
 
@@ -303,6 +307,7 @@ bool DriveToPose::IsFinished()
             // Transition to the final target pose
             SetTargetPose(m_endPose);
             m_beforeMidPose = false;
+            m_isFinished = false;
             return false; // Continue execution to reach end pose
         }
     }
