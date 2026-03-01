@@ -60,6 +60,20 @@ bool HubHelper::IsNearestHubRed() const
     }
 
     auto currentPose = m_chassis->GetPose();
+    return IsNearestHubRed(currentPose);
+}
+
+//------------------------------------------------------------------
+/// @brief      Determines which Hub is nearest using a pre-fetched pose
+/// @param[in]  currentPose - The robot's current pose (avoids redundant GetPose() call)
+/// @return     bool - true if the red Hub is nearest, false if blue Hub is nearest
+//------------------------------------------------------------------
+bool HubHelper::IsNearestHubRed(const frc::Pose2d &currentPose) const
+{
+    if (m_fieldConstants == nullptr)
+    {
+        return false;
+    }
 
     auto blueDistance = CalcDistanceToObject(FieldConstants::FIELD_ELEMENT::BLUE_HUB_ALLIANCE_CENTER, currentPose);
     auto redDistance = CalcDistanceToObject(FieldConstants::FIELD_ELEMENT::RED_HUB_ALLIANCE_CENTER, currentPose);
@@ -81,7 +95,9 @@ frc::Pose2d HubHelper::CalcHubPose() const
         return frc::Pose2d();
     }
 
-    auto isNearestHubRed = IsNearestHubRed();
+    // Fetch pose once and pass to IsNearestHubRed to avoid duplicate GetPose() call
+    auto currentPose = m_chassis->GetPose();
+    auto isNearestHubRed = IsNearestHubRed(currentPose);
 
     auto hubPose = isNearestHubRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER)
                                    : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER);
@@ -107,7 +123,7 @@ frc::Pose2d HubHelper::CalcHubPose() const
 ///             This is a helper method used internally for distance comparisons.
 //------------------------------------------------------------------
 units::length::meter_t HubHelper::CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element,
-                                                       frc::Pose2d currentPose) const
+                                                       const frc::Pose2d &currentPose) const
 {
     if (m_fieldConstants == nullptr)
     {
