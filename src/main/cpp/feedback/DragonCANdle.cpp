@@ -292,25 +292,25 @@ void DragonCANdle::UpdateDiagnostics()
     // Sensors - show yellow when triggered, black when not
     if (m_intake != m_prevIntake)
     {
-        m_candle->SetControl(controls::SolidColor{4, 4}.WithColor(RGBWColor{m_intake ? frc::Color::kYellow : frc::Color::kBlack}));
+        m_candle->SetControl(controls::SolidColor{4, 4}.WithColor(RGBWColor{m_intake ? frc::Color::kBlack : frc::Color::kYellow}));
         m_prevIntake = m_intake;
     }
 
     if (m_hood != m_prevHood)
     {
-        m_candle->SetControl(controls::SolidColor{5, 5}.WithColor(RGBWColor{m_hood ? frc::Color::kYellow : frc::Color::kBlack}));
+        m_candle->SetControl(controls::SolidColor{5, 5}.WithColor(RGBWColor{m_hood ? frc::Color::kBlack : frc::Color::kYellow}));
         m_prevHood = m_hood;
     }
 
     if (m_turretZero != m_prevTurretZero)
     {
-        m_candle->SetControl(controls::SolidColor{6, 6}.WithColor(RGBWColor{m_turretZero ? frc::Color::kYellow : frc::Color::kBlack}));
+        m_candle->SetControl(controls::SolidColor{6, 6}.WithColor(RGBWColor{m_turretZero ? frc::Color::kBlack : frc::Color::kYellow}));
         m_prevTurretZero = m_turretZero;
     }
 
     if (m_turretEnd != m_prevTurretEnd)
     {
-        m_candle->SetControl(controls::SolidColor{7, 7}.WithColor(RGBWColor{m_turretEnd ? frc::Color::kYellow : frc::Color::kBlack}));
+        m_candle->SetControl(controls::SolidColor{7, 7}.WithColor(RGBWColor{m_turretEnd ? frc::Color::kBlack : frc::Color::kYellow}));
         m_prevTurretEnd = m_turretEnd;
     }
 }
