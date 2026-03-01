@@ -72,24 +72,21 @@ void DragonDataLogger::LogDoubleArrayData(uint64_t timestamp, const std::string_
     }
 }
 
-void DragonDataLogger::LogSwerveModuleStateData(uint64_t timestamp, const std::string_view &speedPath, const std::string_view &anglePath, const frc::SwerveModuleState &value, std::string_view units)
+void DragonDataLogger::LogSwerveModuleStateData(uint64_t timestamp, const std::string_view &path, const std::array<frc::SwerveModuleState, 4> &value)
 {
     auto logger = GetLogger();
     if (logger != nullptr)
     {
-        logger->WriteDouble(speedPath, value.speed.value(), units, timestamp);
-        logger->WriteDouble(anglePath, value.angle.Radians().value(), units, timestamp);
+        logger->WriteSwerveModuleState(path, value, timestamp);
     }
 }
 
-void DragonDataLogger::LogChassisSpeedsData(uint64_t timestamp, const std::string_view &vxPath, const std::string_view &vyPath, const std::string_view &omegaPath, const frc::ChassisSpeeds &value, std::string_view units)
+void DragonDataLogger::LogChassisSpeedsData(uint64_t timestamp, const std::string_view &path, const frc::ChassisSpeeds &value)
 {
     auto logger = GetLogger();
     if (logger != nullptr)
     {
-        logger->WriteDouble(vxPath, value.vx.value(), units, timestamp);
-        logger->WriteDouble(vyPath, value.vy.value(), units, timestamp);
-        logger->WriteDouble(omegaPath, value.omega.value(), units, timestamp);
+        logger->WriteChassisSpeeds(path, value, timestamp);
     }
 }
 

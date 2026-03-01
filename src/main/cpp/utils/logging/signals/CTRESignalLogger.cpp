@@ -55,24 +55,17 @@ void CTRESignalLogger::WritePose2d(std::string_view signalID, const frc::Pose2d 
 
 void CTRESignalLogger::WritePose3d(std::string_view signalID, const frc::Pose3d &value, uint64_t timestamp)
 {
-    std::vector<double> data = {value.X().value(), value.Y().value(), value.Z().value(),
-                                value.Rotation().GetQuaternion().W(),
-                                value.Rotation().GetQuaternion().X(),
-                                value.Rotation().GetQuaternion().Y(),
-                                value.Rotation().GetQuaternion().Z()};
-    SignalLogger::WriteDoubleArray(signalID, data, kUnitsPose3d, units::time::microsecond_t(timestamp));
+    SignalLogger::WriteStruct<frc::Pose3d>(signalID, value, units::time::microsecond_t(timestamp));
 }
 
 void CTRESignalLogger::WriteChassisSpeeds(std::string_view signalID, const frc::ChassisSpeeds &value, uint64_t timestamp)
 {
-    std::vector<double> data = {value.vx.value(), value.vy.value(), value.omega.value()};
-    SignalLogger::WriteDoubleArray(signalID, data, kUnitsChassisSpeeds, units::time::microsecond_t(timestamp));
+    SignalLogger::WriteStruct<frc::ChassisSpeeds>(signalID, value, units::time::microsecond_t(timestamp));
 }
 
-void CTRESignalLogger::WriteSwerveModuleState(std::string_view signalID, const frc::SwerveModuleState &value, uint64_t timestamp)
+void CTRESignalLogger::WriteSwerveModuleState(std::string_view signalID, const std::array<frc::SwerveModuleState, 4> &value, uint64_t timestamp)
 {
-    std::vector<double> data = {value.speed.value(), value.angle.Radians().value()};
-    SignalLogger::WriteDoubleArray(signalID, data, kUnitsSwerveState, units::time::microsecond_t(timestamp));
+    SignalLogger::WriteStructArray<frc::SwerveModuleState>(signalID, value, units::time::microsecond_t(timestamp));
 }
 
 void CTRESignalLogger::WriteGamePadState(std::string_view signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs, uint64_t timestamp)

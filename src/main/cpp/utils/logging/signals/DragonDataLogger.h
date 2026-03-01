@@ -44,8 +44,8 @@ protected:
     void LogDoubleData(uint64_t timestamp, const std::string_view &path, double value, std::string_view units = "");
     void LogStringData(uint64_t timestamp, const std::string_view &path, const std::string &value);
     void LogDoubleArrayData(uint64_t timestamp, const std::string_view &path, const std::vector<double> &value, std::string_view units = "");
-    void LogSwerveModuleStateData(uint64_t timestamp, const std::string_view &speedPath, const std::string_view &anglePath, const frc::SwerveModuleState &value, std::string_view units = "");
-    void LogChassisSpeedsData(uint64_t timestamp, const std::string_view &vxPath, const std::string_view &vyPath, const std::string_view &omegaPath, const frc::ChassisSpeeds &value, std::string_view units = "");
+    void LogSwerveModuleStateData(uint64_t timestamp, const std::string_view &path, const std::array<frc::SwerveModuleState, 4> &value);
+    void LogChassisSpeedsData(uint64_t timestamp, const std::string_view &path, const frc::ChassisSpeeds &value);
     void LogGamePadData(uint64_t timestamp, const std::string_view &path, const std::array<double, 6> &axes, const std::array<bool, 10> &buttons, const std::array<int, 1> &povs);
     void LogPose2dData(uint64_t timestamp, const std::string_view &path, const frc::Pose2d &value);
     void LogPose3dData(uint64_t timestamp, const std::string_view &path, const frc::Pose3d &value);
