@@ -16,6 +16,7 @@
 #include "feedback/GameDataHelper.h"
 #include "frc/smartdashboard/SmartDashboard.h"
 #include "state/RobotState.h"
+#include "utils/FMSData.h"
 #include "utils/PeriodicLooper.h"
 #include <algorithm>
 #include <array>
@@ -95,7 +96,7 @@ void GameDataHelper::RunCurrentState()
             // If it's an odd shift (1, 3) and red is supposed to be inactive first...
             bool shouldBeInactive = (isOddShift == redInactiveFirst);
 
-            if (frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed)
+            if (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed)
             {
                 PublishHubActive(!shouldBeInactive);
             }

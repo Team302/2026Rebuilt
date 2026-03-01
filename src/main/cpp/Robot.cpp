@@ -137,6 +137,8 @@ void Robot::RobotPeriodic()
     }
 
     UpdateDriveTeamFeedback();
+
+    FMSData::UpdateAllianceColor();
 }
 
 /// @brief Called periodically while the robot is disabled.
