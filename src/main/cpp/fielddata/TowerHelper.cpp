@@ -15,12 +15,10 @@
 
 #include "fielddata/TowerHelper.h"
 #include "chassis/ChassisConfigMgr.h"
-#include "frc/geometry/Pose2d.h"
-#include "utils/PoseUtils.h"
-#include "utils/FMSData.h"
-#include "auton/AllianceZoneManager.h"
-#include "fielddata/FieldOffsetValues.h"
 #include "fielddata/FieldConstants.h"
+#include "fielddata/FieldOffsetValues.h"
+#include "frc/geometry/Pose2d.h"
+#include "utils/FMSData.h"
 
 using frc::DriverStation;
 TowerHelper *TowerHelper::m_instance = nullptr;
@@ -63,44 +61,57 @@ frc::Pose2d TowerHelper::CalcTowerPose() const
     {
         return frc::Pose2d();
     }
-    // red or blue and then if its in alliance zone then do the logic if not then return 00 / origin pose
-    // auto fieldConstants = FieldConstants::GetInstance();
-    auto fieldVals = FieldOffsetValues::GetInstance();
-    if (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed)
-    {
 
-        auto closestFieldElement = PoseUtils::GetClosestFieldElement(m_chassis->GetPose(), FieldConstants::FIELD_ELEMENT::RED_TOWER_DEPOT_STICK, FieldConstants::FIELD_ELEMENT::RED_TOWER_OUTPOST_STICK);
-        if (closestFieldElement == FieldConstants::FIELD_ELEMENT::RED_TOWER_DEPOT_STICK)
+    auto fieldVals = FieldOffsetValues::GetInstance();
+    if (fieldVals == nullptr)
+    {
+        return frc::Pose2d();
+    }
+
+    // Refresh alliance color each call so we don't rely on the startup default
+    m_allianceColor = FMSData::GetAllianceColor();
+    auto currentPose = m_chassis->GetPose();
+    auto isRed = (m_allianceColor == frc::DriverStation::Alliance::kRed);
+
+    if (isRed)
+    {
+        // Use cached m_fieldConstants for distance calculations instead of going through PoseUtils
+        auto depotPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_DEPOT_STICK);
+        auto outpostPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_OUTPOST_STICK);
+        auto distToDepot = currentPose.Translation().Distance(depotPose.Translation());
+        auto distToOutpost = currentPose.Translation().Distance(outpostPose.Translation());
+
+        if (distToDepot < distToOutpost)
         {
-            auto x = fieldVals->GetValue(true, FIELD_OFFSET_ITEMS::TOWER_DEPOT_X);
-            auto y = fieldVals->GetValue(true, FIELD_OFFSET_ITEMS::TOWER_DEPOT_Y);
-            auto angle = units::angle::degree_t(0.0);
-            return frc::Pose2d(x, y, angle);
+            return frc::Pose2d(fieldVals->GetValue(true, FIELD_OFFSET_ITEMS::TOWER_DEPOT_X),
+                               fieldVals->GetValue(true, FIELD_OFFSET_ITEMS::TOWER_DEPOT_Y),
+                               units::angle::degree_t(0.0));
         }
         else
         {
-            auto x = fieldVals->GetValue(true, FIELD_OFFSET_ITEMS::TOWER_OUTPOST_X);
-            auto y = fieldVals->GetValue(true, FIELD_OFFSET_ITEMS::TOWER_OUTPOST_Y);
-            auto angle = units::angle::degree_t(0.0);
-            return frc::Pose2d(x, y, angle);
+            return frc::Pose2d(fieldVals->GetValue(true, FIELD_OFFSET_ITEMS::TOWER_OUTPOST_X),
+                               fieldVals->GetValue(true, FIELD_OFFSET_ITEMS::TOWER_OUTPOST_Y),
+                               units::angle::degree_t(0.0));
         }
     }
     else // blue
     {
-        auto closestFieldElement = PoseUtils::GetClosestFieldElement(m_chassis->GetPose(), FieldConstants::FIELD_ELEMENT::BLUE_TOWER_DEPOT_STICK, FieldConstants::FIELD_ELEMENT::BLUE_TOWER_OUTPOST_STICK);
-        if (closestFieldElement == FieldConstants::FIELD_ELEMENT::BLUE_TOWER_DEPOT_STICK)
+        auto depotPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_DEPOT_STICK);
+        auto outpostPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_OUTPOST_STICK);
+        auto distToDepot = currentPose.Translation().Distance(depotPose.Translation());
+        auto distToOutpost = currentPose.Translation().Distance(outpostPose.Translation());
+
+        if (distToDepot < distToOutpost)
         {
-            auto x = fieldVals->GetValue(false, FIELD_OFFSET_ITEMS::TOWER_DEPOT_X);
-            auto y = fieldVals->GetValue(false, FIELD_OFFSET_ITEMS::TOWER_DEPOT_Y);
-            auto angle = units::angle::degree_t(0.0);
-            return frc::Pose2d(x, y, angle);
+            return frc::Pose2d(fieldVals->GetValue(false, FIELD_OFFSET_ITEMS::TOWER_DEPOT_X),
+                               fieldVals->GetValue(false, FIELD_OFFSET_ITEMS::TOWER_DEPOT_Y),
+                               units::angle::degree_t(0.0));
         }
         else
         {
-            auto x = fieldVals->GetValue(false, FIELD_OFFSET_ITEMS::TOWER_OUTPOST_X);
-            auto y = fieldVals->GetValue(false, FIELD_OFFSET_ITEMS::TOWER_OUTPOST_Y);
-            auto angle = units::angle::degree_t(0.0);
-            return frc::Pose2d(x, y, angle);
+            return frc::Pose2d(fieldVals->GetValue(false, FIELD_OFFSET_ITEMS::TOWER_OUTPOST_X),
+                               fieldVals->GetValue(false, FIELD_OFFSET_ITEMS::TOWER_OUTPOST_Y),
+                               units::angle::degree_t(0.0));
         }
     }
 }

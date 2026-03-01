@@ -21,6 +21,7 @@
 #include <cstdint>
 #include <units/time.h>
 #include <vector>
+#include <array>
 
 #include "frc/geometry/Pose2d.h"
 #include "frc/geometry/Pose3d.h"
@@ -50,7 +51,7 @@ public:
     virtual void WritePose2d(std::string_view signalID, const frc::Pose2d &value, uint64_t timestamp) = 0;
     virtual void WritePose3d(std::string_view signalID, const frc::Pose3d &value, uint64_t timestamp) = 0;
     virtual void WriteChassisSpeeds(std::string_view signalID, const frc::ChassisSpeeds &value, uint64_t timestamp) = 0;
-    virtual void WriteSwerveModuleState(std::string_view signalID, const frc::SwerveModuleState &value, uint64_t timestamp) = 0;
+    virtual void WriteSwerveModuleState(std::string_view signalID, const std::array<frc::SwerveModuleState, 4> &value, uint64_t timestamp) = 0;
     virtual void WriteGamePadState(std::string_view signalID, const std::array<double, 6>, const std::array<bool, 10>, const std::array<int, 1>, uint64_t timestamp) = 0;
     virtual void Start() = 0;
     virtual void Stop() = 0;
