@@ -25,47 +25,47 @@ using ctre::phoenix6::SignalLogger;
 
 void CTRESignalLogger::WriteBoolean(std::string_view signalID, bool value, uint64_t timestamp)
 {
-    SignalLogger::WriteBoolean(signalID, value, units::time::microsecond_t(0));
+    SignalLogger::WriteBoolean(signalID, value, 0_s);
 }
 
 void CTRESignalLogger::WriteDouble(std::string_view signalID, double value, std::string_view units, uint64_t timestamp)
 {
-    SignalLogger::WriteDouble(signalID, value, units, units::time::microsecond_t(0));
+    SignalLogger::WriteDouble(signalID, value, units, 0_s);
 }
 
 void CTRESignalLogger::WriteInteger(std::string_view signalID, int64_t value, std::string_view units, uint64_t timestamp)
 {
-    SignalLogger::WriteInteger(signalID, value, units, units::time::microsecond_t(0));
+    SignalLogger::WriteInteger(signalID, value, units, 0_s);
 }
 
 void CTRESignalLogger::WriteString(std::string_view signalID, const std::string &value, uint64_t timestamp)
 {
-    SignalLogger::WriteString(signalID, value, units::time::microsecond_t(0));
+    SignalLogger::WriteString(signalID, value, 0_s);
 }
 
 void CTRESignalLogger::WriteDoubleArray(std::string_view signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
 {
-    SignalLogger::WriteDoubleArray(signalID, value, units, units::time::microsecond_t(0));
+    SignalLogger::WriteDoubleArray(signalID, value, units, 0_s);
 }
 
 void CTRESignalLogger::WritePose2d(std::string_view signalID, const frc::Pose2d &value, uint64_t timestamp)
 {
-    SignalLogger::WriteStruct<frc::Pose2d>(signalID, value, units::time::microsecond_t(0));
+    SignalLogger::WriteStruct<frc::Pose2d>(signalID, value, 0_s);
 }
 
 void CTRESignalLogger::WritePose3d(std::string_view signalID, const frc::Pose3d &value, uint64_t timestamp)
 {
-    SignalLogger::WriteStruct<frc::Pose3d>(signalID, value, units::time::microsecond_t(0));
+    SignalLogger::WriteStruct<frc::Pose3d>(signalID, value, 0_s);
 }
 
 void CTRESignalLogger::WriteChassisSpeeds(std::string_view signalID, const frc::ChassisSpeeds &value, uint64_t timestamp)
 {
-    SignalLogger::WriteStruct<frc::ChassisSpeeds>(signalID, value, units::time::microsecond_t(0));
+    SignalLogger::WriteStruct<frc::ChassisSpeeds>(signalID, value, 0_s);
 }
 
 void CTRESignalLogger::WriteSwerveModuleState(std::string_view signalID, const std::array<frc::SwerveModuleState, 4> &value, uint64_t timestamp)
 {
-    SignalLogger::WriteStructArray<frc::SwerveModuleState>(signalID, value, units::time::microsecond_t(0));
+    SignalLogger::WriteStructArray<frc::SwerveModuleState>(signalID, value, 0_s);
 }
 
 void CTRESignalLogger::WriteGamePadState(std::string_view signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs, uint64_t timestamp)
@@ -74,7 +74,7 @@ void CTRESignalLogger::WriteGamePadState(std::string_view signalID, const std::a
     // Log axes
     {
         std::vector<double> axesVec(axes.begin(), axes.end());
-        SignalLogger::WriteDoubleArray(id + std::string(kSubpathAxes), axesVec, "", units::time::microsecond_t(0));
+        SignalLogger::WriteDoubleArray(id + std::string(kSubpathAxes), axesVec, "", 0_s);
     }
 
     // Log buttons as doubles (0.0 or 1.0)
@@ -83,7 +83,7 @@ void CTRESignalLogger::WriteGamePadState(std::string_view signalID, const std::a
         buttonsVec.reserve(buttons.size());
         for (bool b : buttons)
             buttonsVec.push_back(b ? 1.0 : 0.0);
-        SignalLogger::WriteDoubleArray(id + std::string(kSubpathButtons), buttonsVec, "", units::time::microsecond_t(0));
+        SignalLogger::WriteDoubleArray(id + std::string(kSubpathButtons), buttonsVec, "", 0_s);
     }
 
     // Log POVs
@@ -92,7 +92,7 @@ void CTRESignalLogger::WriteGamePadState(std::string_view signalID, const std::a
         povsVec.reserve(povs.size());
         for (int p : povs)
             povsVec.push_back(static_cast<double>(p));
-        SignalLogger::WriteDoubleArray(id + std::string(kSubpathPovs), povsVec, "", units::time::microsecond_t(0));
+        SignalLogger::WriteDoubleArray(id + std::string(kSubpathPovs), povsVec, "", 0_s);
     }
 }
 
