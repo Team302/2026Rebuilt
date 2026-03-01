@@ -17,7 +17,6 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "fielddata/FieldOffsetValues.h"
 #include "frc/geometry/Pose2d.h"
-#include "utils/PoseUtils.h"
 
 DepotHelper *DepotHelper::m_instance = nullptr;
 
@@ -58,10 +57,28 @@ bool DepotHelper::IsNearestDepotRed() const
     }
 
     auto currentPose = m_chassis->GetPose();
-    auto nearestDepot = PoseUtils::GetClosestFieldElement(currentPose,
-                                                          FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE,
-                                                          FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE);
-    return nearestDepot == FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE;
+    return IsNearestDepotRed(currentPose);
+}
+
+//------------------------------------------------------------------
+/// @brief      Determines which depot is nearest using a pre-fetched pose
+/// @param[in]  currentPose - The robot's current pose (avoids redundant GetPose() call)
+/// @return     bool - true if the red depot is nearest, false if blue depot is nearest
+/// @details    Uses cached m_fieldConstants for distance calculations instead of
+///             going through PoseUtils::GetClosestFieldElement() singleton lookup
+//------------------------------------------------------------------
+bool DepotHelper::IsNearestDepotRed(const frc::Pose2d &currentPose) const
+{
+    if (m_fieldConstants == nullptr)
+    {
+        return false;
+    }
+
+    auto redPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE);
+    auto bluePose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE);
+    auto distToRed = currentPose.Translation().Distance(redPose.Translation());
+    auto distToBlue = currentPose.Translation().Distance(bluePose.Translation());
+    return (distToRed < distToBlue);
 }
 
 //------------------------------------------------------------------
@@ -79,7 +96,9 @@ frc::Pose2d DepotHelper::CalcDepotPose() const
         return frc::Pose2d();
     }
 
-    auto isNearestDepotRed = IsNearestDepotRed();
+    // Fetch pose once and pass to IsNearestDepotRed to avoid duplicate GetPose() call
+    auto currentPose = m_chassis->GetPose();
+    auto isNearestDepotRed = IsNearestDepotRed(currentPose);
     auto neutralPose = isNearestDepotRed ? m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE)
                                          : m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE);
 

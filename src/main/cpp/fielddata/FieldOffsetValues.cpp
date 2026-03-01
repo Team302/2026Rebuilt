@@ -95,26 +95,18 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_DEPOT_NEUTRAL_SIDE).X() + units::length::meter_t{DEPOT_OFFSET};
         m_redDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_DEPOT_NEUTRAL_SIDE).X() - units::length::meter_t{DEPOT_OFFSET};
 
-        m_redTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
-        m_blueTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
-        m_redTowerOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).Y();
-        m_blueTowerOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).Y();
-        m_redTowerDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X();
-        m_blueTowerDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X();
-        m_redTowerDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).Y();
-        m_blueTowerDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).Y();
+        // Cache tower center poses (each looked up once instead of 8 times each)
+        auto redTowerCenter = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER);
+        auto blueTowerCenter = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER);
 
-        m_blueHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() - HUB_OFFSET;
-        m_redHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER).X() + HUB_OFFSET;
-
-        m_redTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X() - TOWER_X_OFFSET;
-        m_blueTowerOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X() + TOWER_X_OFFSET;
-        m_redTowerOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).Y() + TOWER_Y_OFFSET;
-        m_blueTowerOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).Y() - TOWER_Y_OFFSET;
-        m_redTowerDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).X() - TOWER_X_OFFSET;
-        m_blueTowerDepotX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).X() + TOWER_X_OFFSET;
-        m_redTowerDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TOWER_CENTER).Y() - TOWER_Y_OFFSET;
-        m_blueTowerDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TOWER_CENTER).Y() + TOWER_Y_OFFSET;
+        m_redTowerOutpostX = redTowerCenter.X() - TOWER_X_OFFSET;
+        m_blueTowerOutpostX = blueTowerCenter.X() + TOWER_X_OFFSET;
+        m_redTowerOutpostY = redTowerCenter.Y() + TOWER_Y_OFFSET;
+        m_blueTowerOutpostY = blueTowerCenter.Y() - TOWER_Y_OFFSET;
+        m_redTowerDepotX = redTowerCenter.X() - TOWER_X_OFFSET;
+        m_blueTowerDepotX = blueTowerCenter.X() + TOWER_X_OFFSET;
+        m_redTowerDepotY = redTowerCenter.Y() - TOWER_Y_OFFSET;
+        m_blueTowerDepotY = blueTowerCenter.Y() + TOWER_Y_OFFSET;
 
         // Set outpost X coordinates equal to depot X (aligned on 2026 field)
         m_blueOutpostX = m_blueDepotX;
@@ -123,13 +115,13 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueOutpostApproachX = m_blueOutpostX + OUTPOST_APPROACH_OFFSET; // Approach position is offset from outpost X
         m_redOutpostApproachX = m_redOutpostX - OUTPOST_APPROACH_OFFSET;   // Approach position is offset from outpost X
 
-        // Calculate hub positions with 2.0m offset toward neutral zone for navigation
-        m_blueHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() - HUB_OFFSET;
-        m_redHubX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER).X() + HUB_OFFSET;
-
-        // Get hub center poses for bump calculations
+        // Cache hub center poses (each looked up once instead of 3 times each)
         auto redHubCenter = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER);
         auto blueHubCenter = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER);
+
+        // Calculate hub positions with 2.0m offset toward neutral zone for navigation
+        m_blueHubX = blueHubCenter.X() - HUB_OFFSET;
+        m_redHubX = redHubCenter.X() + HUB_OFFSET;
 
         // Calculate bump X positions 1.5m from hub centers
         m_redAllianceBumpEdgeX = redHubCenter.X() + BUMP_OFFSET;   // Alliance side of red bump
@@ -162,14 +154,6 @@ FieldOffsetValues::FieldOffsetValues()
 
         m_blueOutpostApproachX = m_blueDepotX;
         m_redOutpostApproachX = m_redDepotX;
-        m_redTowerOutpostX = units::length::meter_t{0.0};
-        m_blueTowerOutpostX = units::length::meter_t{0.0};
-        m_redTowerOutpostY = units::length::meter_t{0.0};
-        m_blueTowerOutpostY = units::length::meter_t{0.0};
-        m_redTowerDepotX = units::length::meter_t{0.0};
-        m_blueTowerDepotX = units::length::meter_t{0.0};
-        m_redTowerDepotY = units::length::meter_t{0, 0};
-        m_blueTowerDepotY = units::length::meter_t{0, 0};
         m_redTowerOutpostX = units::length::meter_t{0.0};
         m_blueTowerOutpostX = units::length::meter_t{0.0};
         m_redTowerOutpostY = units::length::meter_t{0.0};

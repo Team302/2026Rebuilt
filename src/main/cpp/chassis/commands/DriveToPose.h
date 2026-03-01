@@ -216,6 +216,9 @@ private:
     /// @brief Flag indicating if robot pose hasn't changed (for stuck detection)
     bool m_isSamePose = false;
 
+    /// @brief Cached result of last IsFinished() evaluation, used by End() to avoid redundant recomputation
+    bool m_isFinished = false;
+
     /// @brief Robot pose from previous cycle for movement detection
     frc::Pose2d m_prevPose;
 

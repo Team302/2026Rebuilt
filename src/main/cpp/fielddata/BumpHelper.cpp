@@ -27,7 +27,6 @@
 #include "fielddata/BumpHelper.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "frc/geometry/Pose2d.h"
-#include "utils/PoseUtils.h"
 
 /// @brief Singleton instance pointer - initialized to nullptr for lazy instantiation
 BumpHelper *BumpHelper::m_instance = nullptr;
@@ -109,23 +108,32 @@ BumpHelper::BumpHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveC
 //------------------------------------------------------------------
 BUMP_ID BumpHelper::CalcNearestBump() const
 {
-    // Get current robot pose (defaults to origin if chassis unavailable)
-    auto chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
-    auto currentPose = (chassis != nullptr) ? chassis->GetPose() : frc::Pose2d();
+    // Get current robot pose using cached chassis pointer (defaults to origin if chassis unavailable)
+    auto currentPose = (m_chassis != nullptr) ? m_chassis->GetPose() : frc::Pose2d();
+
+    if (m_fieldConstants == nullptr)
+    {
+        return BUMP_ID::BLUE_DEPOT_BUMP;
+    }
 
     // Stage 1: Determine which alliance side (blue or red) is closer
     // Compare distance to hub centers as reference points for each side
-    auto closestHub = PoseUtils::GetClosestFieldElement(currentPose,
-                                                        FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER,
-                                                        FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER);
+    // Use cached m_fieldConstants instead of re-fetching singleton through PoseUtils
+    auto blueHubPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER);
+    auto redHubPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER);
+    auto distToBlueHub = currentPose.Translation().Distance(blueHubPose.Translation());
+    auto distToRedHub = currentPose.Translation().Distance(redHubPose.Translation());
+    auto closerToBlue = (distToBlueHub < distToRedHub);
 
-    if (closestHub == FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER) // Robot is closer to blue side
+    if (closerToBlue) // Robot is closer to blue side
     {
         // Stage 2: On blue side, determine if depot or outpost is closer
-        auto blueElement = PoseUtils::GetClosestFieldElement(currentPose,
-                                                             FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT,
-                                                             FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST);
-        if (blueElement == FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT)
+        // Use cached m_fieldConstants directly for distance calculations
+        auto blueDepotPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT);
+        auto blueOutpostPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST);
+        auto distToDepot = currentPose.Translation().Distance(blueDepotPose.Translation());
+        auto distToOutpost = currentPose.Translation().Distance(blueOutpostPose.Translation());
+        if (distToDepot < distToOutpost)
         {
             return BUMP_ID::BLUE_DEPOT_BUMP; // Blue depot bump is nearest
         }
@@ -134,10 +142,11 @@ BUMP_ID BumpHelper::CalcNearestBump() const
 
     // Robot is closer to red side
     // Stage 2: On red side, determine if depot or outpost is closer
-    auto redElement = PoseUtils::GetClosestFieldElement(currentPose,
-                                                        FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT,
-                                                        FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST);
-    if (redElement == FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT)
+    auto redDepotPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT);
+    auto redOutpostPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST);
+    auto distToDepot = currentPose.Translation().Distance(redDepotPose.Translation());
+    auto distToOutpost = currentPose.Translation().Distance(redOutpostPose.Translation());
+    if (distToDepot < distToOutpost)
     {
         return BUMP_ID::RED_DEPOT_BUMP; // Red depot bump is nearest
     }
