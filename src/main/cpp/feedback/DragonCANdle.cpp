@@ -292,7 +292,7 @@ void DragonCANdle::UpdateDiagnostics()
     // Sensors - show yellow when triggered, black when not
     if (m_intake != m_prevIntake)
     {
-        m_candle->SetControl(controls::SolidColor{4, 4}.WithColor(RGBWColor{m_intake ? frc::Color::kBlack : frc::Color::kYellow}));
+        m_candle->SetControl(controls::SolidColor{4, 4}.WithColor(RGBWColor{m_intake ? frc::Color::kYellow : frc::Color::kBlack}));
         m_prevIntake = m_intake;
     }
 
