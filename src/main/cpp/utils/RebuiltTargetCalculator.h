@@ -19,6 +19,8 @@
 #include "fielddata/FieldConstants.h"
 #include "auton/AllianceZoneManager.h"
 
+#include <string>
+#include <frc/DriverStation.h>
 #include <frc/geometry/Translation2d.h>
 #include <units/length.h>
 
@@ -82,19 +84,43 @@ private:
      * */
     void UpdatePassingTargetsOnField();
 
+    /**
+     * \brief Refresh cached alliance-specific field elements and positions if alliance has changed
+     */
+    void RefreshAllianceCache();
+
     static RebuiltTargetCalculator *m_instance;
+
+    // Static string constants to avoid repeated std::string construction
+    static const std::string kOutpostPassingTargetName;
+    static const std::string kDepotPassingTargetName;
+    static const std::string kCurrentTargetName;
+    static const std::string kLauncherPositionName;
 
     // Mechanism position offset from robot center in robot frame (meters)
     // Default: 5.5 inches (0.1397m) back, centered
     frc::Translation2d m_mechanismOffset{-3.333_in, 4.604_in};
 
-    DragonField *m_field; // Want to add targets and launcehr position
+    DragonField *m_field; // Want to add targets and launcher position
 
     const units::degree_t m_minLauncherAngle = 91_deg;
     const units::degree_t m_maxLauncherAngle = 267_deg;
 
     FieldConstants *m_fieldConstants;
     AllianceZoneManager *m_zoneManager;
+
+    // Cached alliance-specific field elements (set once in constructor)
+    FieldConstants::FIELD_ELEMENT m_hubCenter;
+    FieldConstants::FIELD_ELEMENT m_outpostPassingTarget;
+    FieldConstants::FIELD_ELEMENT m_depotPassingTarget;
+
+    // Cached field positions (looked up once in constructor instead of every cycle)
+    frc::Translation2d m_hubCenterPosition;
+    frc::Translation2d m_outpostPassingPosition;
+    frc::Translation2d m_depotPassingPosition;
+
+    // Cached alliance for detecting changes
+    frc::DriverStation::Alliance m_cachedAlliance;
 
     units::length::inch_t m_xTargetOffset = 0_in;
     units::length::inch_t m_yTargetOffset = 0_in;
