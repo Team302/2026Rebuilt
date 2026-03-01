@@ -50,15 +50,8 @@ private:
     units::second_t m_cachedOdometryPeriod;
 
     static constexpr std::string_view m_loggerName = "Swervetelemetry";
-    static constexpr std::string_view m_frontLeftModuleActual = "/Chassis/FrontLeftModuleActualState";
-    static constexpr std::string_view m_frontRightModuleActual = "/Chassis/FrontRightModuleActualState";
-    static constexpr std::string_view m_backLeftModuleActual = "/Chassis/BackLeftModuleActualState";
-    static constexpr std::string_view m_backRightModuleActual = "/Chassis/BackRightModuleActualState";
-
-    static constexpr std::string_view m_frontLeftModuleTarget = "/Chassis/FrontLeftModuleTargetState";
-    static constexpr std::string_view m_frontRightModuleTarget = "/Chassis/FrontRightModuleTargetState";
-    static constexpr std::string_view m_backLeftModuleTarget = "/Chassis/BackLeftModuleTargetState";
-    static constexpr std::string_view m_backRightModuleTarget = "/Chassis/BackRightModuleTargetState";
+    static constexpr std::string_view m_loggingModuleActual = "/Chassis/ModuleActualState";
+    static constexpr std::string_view m_loggingModuleTarget = "/Chassis/ModuleTargetState";
 
 public:
     /**

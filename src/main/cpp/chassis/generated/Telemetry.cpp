@@ -77,10 +77,10 @@ void Telemetry::DataLog(uint64_t timestamp)
     LogChassisSpeedsData(timestamp, "/Chassis/Speeds", m_cachedSpeeds);
 
     // Log module states
-    LogSwerveModuleStateData(timestamp, m_frontLeftModuleActual, m_cachedModuleStates);
+    LogSwerveModuleStateData(timestamp, m_loggingModuleActual, m_cachedModuleStates);
 
     // Log module targets
-    LogSwerveModuleStateData(timestamp, m_frontLeftModuleTarget, m_cachedModuleTargets);
+    LogSwerveModuleStateData(timestamp, m_loggingModuleTarget, m_cachedModuleTargets);
     // OdometryPeriod logged as a double
     LogDoubleData(timestamp, "/Chassis/OdometryPeriod", m_cachedOdometryPeriod.value(), "Seconds");
 }
