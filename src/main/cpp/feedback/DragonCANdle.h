@@ -89,7 +89,7 @@ private:
 	static constexpr int m_onboardStart = 0;
 	static constexpr int m_onboardCount = 8;
 	static constexpr int m_externalStart = 8;
-	int m_externalCount;
+	int m_externalCount{0};
 
 	// Diagnostic State
 	frc::DriverStation::Alliance m_alliance{frc::DriverStation::Alliance::kBlue};
@@ -121,4 +121,22 @@ private:
 	// Limelight diagnostic blinking state
 	int m_limelightBlinkTimer{0};
 	static constexpr int m_limelightBlinkPeriod = 50; // Frames per limelight display
+
+	// ===== State Caching for Efficiency =====
+	// Diagnostic LED state cache (prevents redundant CAN writes)
+	frc::DriverStation::Alliance m_prevAlliance{frc::DriverStation::Alliance::kBlue};
+	bool m_prevQuestOK{false};
+	bool m_prevDataLoggerOK{false};
+	bool m_prevLL1{false};
+	bool m_prevLL2{false};
+	bool m_prevLL3{false};
+	bool m_prevIntake{false};
+	bool m_prevHood{false};
+	bool m_prevTurretZero{false};
+	bool m_prevTurretEnd{false};
+
+	// Animation state cache (prevents redundant SetControl calls)
+	AnimationMode m_prevAnimMode{AnimationMode::OFF};
+	frc::Color m_prevPrimaryColor{frc::Color::kGreen};
+	frc::Color m_prevSecondaryColor{frc::Color::kBlack};
 };
