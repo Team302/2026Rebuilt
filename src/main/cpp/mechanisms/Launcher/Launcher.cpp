@@ -952,7 +952,7 @@ void Launcher::DataLog(uint64_t timestamp)
 	// Control targets
 	LogDoubleData(timestamp, m_loggingLauncherTargetPath, m_targetLauncherAngularVelocity.value(), "rpm");
 	LogDoubleData(timestamp, m_loggingHoodTargetPath, m_targetHoodAngle.value(), "Turns");
-	LogDoubleData(timestamp, m_loggingHoodPercentOutPath, m_targetTurretAngle.value(), "Turns");
+	LogDoubleData(timestamp, m_loggingTurretTargetPath, m_targetTurretAngle.value(), "Turns");
 
 	// Mechanism state
 	LogStringData(timestamp, m_loggingLauncherStatePath, GetCurrentStateName());

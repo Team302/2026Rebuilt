@@ -261,10 +261,10 @@ private:
 
 	units::angle::turn_t m_passingHoodTargetAngle = 30.0_tr;
 	units::angular_velocity::revolutions_per_minute_t m_passingLauncherTargetVelocity = 1000.0_rpm;
-		// logging paths
+	// logging paths
 	static constexpr std::string_view m_loggingLauncherStatePath = "/Launcher/State";
 	static constexpr std::string_view m_loggingLauncherTargetPath = "/Launcher/TargetLauncherVelocity";
 	static constexpr std::string_view m_loggingHoodTargetPath = "/Launcher/TargetHoodAngle";
-	static constexpr std::string_view m_loggingHoodPercentOutPath = "/Launcher/HoodTargetAngle";
+	static constexpr std::string_view m_loggingTurretTargetPath = "/Launcher/HoodTargetAngle";
 	static constexpr std::string_view m_loggingProtectedModePath = "/Launcher/IsProtectedMode";
 };
