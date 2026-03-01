@@ -53,6 +53,11 @@ private:
     static constexpr std::string_view m_loggingModuleActual = "/Chassis/ModuleActualState";
     static constexpr std::string_view m_loggingModuleTarget = "/Chassis/ModuleTargetState";
 
+    static constexpr std::string_view m_loggingPose2d = "/Chassis/Pose2d";
+    static constexpr std::string_view m_loggingChassisSpeeds = "/Chassis/ChassisSpeeds";
+    static constexpr std::string_view m_loggingOdometryPeriod = "/Chassis/OdometryPeriod";
+    static constexpr std::string_view m_loggingSeconds = "Seconds";
+
 public:
     /**
      * Construct a telemetry object with the specified max speed of the robot.

@@ -119,7 +119,7 @@ private:
 
     // logging strings
 
-    static constexpr std::string_view m_questEnabledPath = "/Chassis/QuestHasReset";
-    static constexpr std::string_view m_questHasResetPath = "/Chassis/IsQuestEnabled";
+    static constexpr std::string_view m_questHasResetPath = "/Chassis/QuestHasReset";
+    static constexpr std::string_view m_questIsEnabledPath = "/Chassis/IsQuestEnabled";
     static constexpr std::string_view m_questPosePath = "/Chassis/QuestPose3d";
 };

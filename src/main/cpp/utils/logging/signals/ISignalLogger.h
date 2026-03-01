@@ -21,6 +21,7 @@
 #include <cstdint>
 #include <units/time.h>
 #include <vector>
+#include <array>
 
 #include "frc/geometry/Pose2d.h"
 #include "frc/geometry/Pose3d.h"

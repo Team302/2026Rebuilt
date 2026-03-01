@@ -142,7 +142,7 @@ void DragonQuest::DataLog(uint64_t timestamp)
 {
     LogPose3dData(timestamp, m_questPosePath, m_lastCalculatedPose);
     LogBoolData(timestamp, m_questHasResetPath, m_hasReset);
-    LogBoolData(timestamp, m_questEnabledPath, m_isQuestEnabled);
+    LogBoolData(timestamp, m_questIsEnabledPath, m_isQuestEnabled);
 }
 
 // ──────────────────────────────────────────────────────────────────────────────

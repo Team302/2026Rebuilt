@@ -72,9 +72,9 @@ void Telemetry::Telemeterize(subsystems::CommandSwerveDrivetrain::SwerveDriveSta
 void Telemetry::DataLog(uint64_t timestamp)
 {
     /* Log the cached drive state data using DragonDataLogger methods */
-    LogPose2dData(timestamp, "/Chassis/Pose2d", m_cachedPose);
+    LogPose2dData(timestamp, m_loggingPose2d, m_cachedPose);
 
-    LogChassisSpeedsData(timestamp, "/Chassis/Speeds", m_cachedSpeeds);
+    LogChassisSpeedsData(timestamp, m_loggingChassisSpeeds, m_cachedSpeeds);
 
     // Log module states
     LogSwerveModuleStateData(timestamp, m_loggingModuleActual, m_cachedModuleStates);
@@ -82,5 +82,5 @@ void Telemetry::DataLog(uint64_t timestamp)
     // Log module targets
     LogSwerveModuleStateData(timestamp, m_loggingModuleTarget, m_cachedModuleTargets);
     // OdometryPeriod logged as a double
-    LogDoubleData(timestamp, "/Chassis/OdometryPeriod", m_cachedOdometryPeriod.value(), "Seconds");
+    LogDoubleData(timestamp, m_loggingOdometryPeriod, m_cachedOdometryPeriod.value(), m_loggingSeconds);
 }

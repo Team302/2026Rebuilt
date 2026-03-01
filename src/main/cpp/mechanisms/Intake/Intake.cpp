@@ -399,7 +399,7 @@ void Intake::DataLog(uint64_t timestamp)
 
 	// Mechanism state
 	LogStringData(timestamp, m_intakeStatePath, GetCurrentStateName());
-	LogBoolData(timestamp, m_extenderExtendedPath, IsIntakeIn());
+	LogBoolData(timestamp, m_extenderExtendedPath, !IsIntakeIn());
 }
 
 std::string Intake::GetCurrentStateName()
