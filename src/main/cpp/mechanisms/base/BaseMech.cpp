@@ -58,7 +58,7 @@ MechanismTypes::MECHANISM_TYPE BaseMech::GetType() const
 }
 
 /// @brief indicate the network table name used to for logging parameters
-/// @return std::string the name of the network table
+/// @return const std::string& the name of the network table
 const string &BaseMech::GetNetworkTableName() const
 {
     return m_ntName;
