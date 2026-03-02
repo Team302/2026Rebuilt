@@ -14,14 +14,14 @@
 //====================================================================================================================================================
 #pragma once
 
-#include "utils/TargetCalculator.h"
-#include "utils/DragonField.h"
-#include "fielddata/FieldConstants.h"
 #include "auton/AllianceZoneManager.h"
+#include "fielddata/FieldConstants.h"
+#include "utils/DragonField.h"
+#include "utils/TargetCalculator.h"
 
-#include <string>
 #include <frc/DriverStation.h>
 #include <frc/geometry/Translation2d.h>
+#include <string>
 #include <units/length.h>
 
 /**
@@ -60,6 +60,8 @@ public:
     void UpdateTargetOffset();
 
 private:
+    bool ValidateAlliance();
+
     /**
      * \brief Constructor - initializes with default mechanism offset
      */
@@ -109,7 +111,7 @@ private:
     FieldConstants *m_fieldConstants;
     AllianceZoneManager *m_zoneManager;
 
-    // Cached alliance-specific field elements (set once in constructor)
+    // Cached alliance-specific field elements (initialized in constructor and refreshed on alliance change via RefreshAllianceCache)
     FieldConstants::FIELD_ELEMENT m_hubCenter;
     FieldConstants::FIELD_ELEMENT m_outpostPassingTarget;
     FieldConstants::FIELD_ELEMENT m_depotPassingTarget;
@@ -135,4 +137,6 @@ private:
     bool m_prevDownPressed = false;
     bool m_prevLeftPressed = false;
     bool m_prevRightPressed = false;
+
+    bool m_validatedWhileEnabled = false;
 };

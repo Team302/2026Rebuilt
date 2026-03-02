@@ -14,11 +14,14 @@
 //====================================================================================================================================================
 #pragma once
 
-// FRC Include
-#include <frc/geometry/Pose2d.h>
-#include <frc/smartdashboard/Field2d.h>
-#include <frc/smartdashboard/FieldObject2d.h>
-#include <frc/trajectory/Trajectory.h>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "frc/geometry/Pose2d.h"
+#include "frc/smartdashboard/Field2d.h"
+#include "frc/smartdashboard/FieldObject2d.h"
+#include "frc/trajectory/Trajectory.h"
 
 /// @class DragonField
 /// @brief Singleton class for managing field visualization in SmartDashboard.
@@ -52,8 +55,6 @@ public:
     /// @details Reads boolean values from SmartDashboard for each registered object to determine
     ///          whether they should be visible on the field display.
     void UpdateEnabledStates();
-
-    // void UpdateObjectVisionPose(std::string name, std::optional<VisionPose> visionPose);
 
     /// @brief Get the singleton instance of DragonField.
     /// @return Pointer to the singleton DragonField instance.

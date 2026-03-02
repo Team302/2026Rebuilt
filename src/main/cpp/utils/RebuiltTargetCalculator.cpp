@@ -54,8 +54,29 @@ RebuiltTargetCalculator *RebuiltTargetCalculator::GetInstance()
     return m_instance;
 }
 
+bool RebuiltTargetCalculator::ValidateAlliance()
+{
+    if (m_validatedWhileEnabled)
+    {
+        return false; // no change since last validation, skip
+    }
+
+    m_validatedWhileEnabled = frc::DriverStation::IsEnabled();
+
+    auto currentAlliance = FMSData::GetAllianceColor();
+    if (currentAlliance != m_cachedAlliance)
+    {
+        m_cachedAlliance = currentAlliance;
+        RefreshAllianceCache();
+        return true; // alliance changed, cache refreshed
+    }
+    return false; // no change, cache still valid
+}
+
 frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
 {
+    ValidateAlliance();
+
     bool isInAllianceZone = m_zoneManager->IsInAllianceZone();
     frc::Translation2d targetPosition{};
 
@@ -87,6 +108,8 @@ frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
 
 units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle)
 {
+    ValidateAlliance();
+
     m_field->UpdateObject(kCurrentTargetName, GetVirtualTargetPose(looheadTime));
 
     units::degree_t fieldAngleToTarget = CalculateMechanismAngleToTarget(looheadTime);
@@ -129,17 +152,10 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
 
 void RebuiltTargetCalculator::UpdateTargetOffset()
 {
+    ValidateAlliance();
+
     auto teleopControl = TeleopControl::GetInstance();
-
-    // Refresh cached alliance data if alliance has changed
-    auto currentAlliance = FMSData::GetAllianceColor();
-    if (currentAlliance != m_cachedAlliance)
-    {
-        m_cachedAlliance = currentAlliance;
-        RefreshAllianceCache();
-    }
-
-    bool isBlue = (m_cachedAlliance == frc::DriverStation::Alliance::kBlue);
+    auto isBlue = (m_cachedAlliance == frc::DriverStation::Alliance::kBlue);
 
     if (teleopControl != nullptr)
     {
@@ -186,16 +202,20 @@ void RebuiltTargetCalculator::UpdateTargetOffset()
 
 units::length::inch_t RebuiltTargetCalculator::GetPassingTargetXOffset(FieldConstants::FIELD_ELEMENT fieldElement)
 {
+    ValidateAlliance();
     return (fieldElement == m_outpostPassingTarget) ? m_passingOutpostTargetXOffset : m_passingDepotTargetXOffset;
 }
 
 units::length::inch_t RebuiltTargetCalculator::GetPassingTargetYOffset(FieldConstants::FIELD_ELEMENT fieldElement)
 {
+    ValidateAlliance();
     return (fieldElement == m_outpostPassingTarget) ? m_passingOutpostTargetYOffset : m_passingDepotTargetYOffset;
 }
 
 void RebuiltTargetCalculator::UpdatePassingTargetsOnField()
 {
+    ValidateAlliance();
+
     frc::Translation2d passingDepotOffset = frc::Translation2d(m_passingDepotTargetXOffset, m_passingDepotTargetYOffset);
     frc::Translation2d passingOutpostOffset = frc::Translation2d(m_passingOutpostTargetXOffset, m_passingOutpostTargetYOffset);
 
