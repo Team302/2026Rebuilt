@@ -252,26 +252,29 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
 	configs.OpenLoopRamps.VoltageOpenLoopRampPeriod = units::time::second_t(0);
 
-	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
+	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
+	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 11;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(100);
+	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
-	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
+	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 11;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
-	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
-	configs.MotorOutput.NeutralMode = NeutralModeValue::Coast;
+	configs.MotorOutput.Inverted = InvertedValue::Clockwise_Positive;
+	configs.MotorOutput.NeutralMode = NeutralModeValue::Brake;
 	configs.MotorOutput.PeakForwardDutyCycle = 1;
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
+	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::turns_per_second_t(150);
+	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(300);
+	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
@@ -284,8 +287,8 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.Slot0.kV = m_positionDeg->GetV();
 	configs.Slot0.kP = m_positionDeg->GetP();
 	configs.Slot0.kA = m_positionDeg->GetA();
-	configs.Slot0.GravityType = m_positionDeg->GetGravityType();
-	configs.Slot0.StaticFeedforwardSign = m_positionDeg->GetStaticFeedforwardSign();
+	configs.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Arm_Cosine;
+	configs.Slot0.StaticFeedforwardSign = ctre::phoenix6::signals::StaticFeedforwardSignValue::UseVelocitySign;
 
 	CANdiConfiguration CANdiConfig{};
 

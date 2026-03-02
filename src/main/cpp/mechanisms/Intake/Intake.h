@@ -81,6 +81,7 @@ public:
 	}
 	void UpdateTargetExtenderPositionDeg(units::angle::turn_t position)
 	{
+		position = std::clamp(position, m_intakeRetractedPositionTarget, m_intakeExtendedPositionTarget);
 		m_extenderPositionDeg.Position = position;
 		m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
 	}
@@ -131,7 +132,7 @@ private:
 
 	ctre::phoenix6::controls::DutyCycleOut m_intakePercentOut{0.0};
 	ctre::phoenix6::controls::DutyCycleOut m_extenderPercentOut{0.0};
-	ctre::phoenix6::controls::PositionVoltage m_extenderPositionDeg{units::angle::degree_t(20.0)};
+	ctre::phoenix6::controls::MotionMagicVoltage m_extenderPositionDeg{80_tr};
 	ctre::phoenix6::controls::ControlRequest *m_intakeActiveTarget = &m_intakePercentOut;
 	ctre::phoenix6::controls::ControlRequest *m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
 
@@ -139,8 +140,8 @@ private:
 	bool m_isLaunching = false;
 	bool m_prevIntakeSwitchState = false;
 
-	units::angle::turn_t m_intakeRetractedPositionTarget{20.0};
-	units::angle::turn_t m_intakeExtendedPositionTarget{120.0};
+	units::angle::turn_t m_intakeRetractedPositionTarget{80.0};
+	units::angle::turn_t m_intakeExtendedPositionTarget{-30.0};
 
 	// logging paths
 	static constexpr std::string_view m_intakeStatePath = "/Intake/State";
