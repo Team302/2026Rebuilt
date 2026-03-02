@@ -21,13 +21,15 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
+#include <memory>
+
 #include <gamepad/button/ButtonDecorator.h>
 #include <gamepad/button/IButton.h>
 
 ButtonDecorator::ButtonDecorator(
-    IButton *button // <I> - concrete button to decorate
+    std::unique_ptr<IButton> button // <I> - concrete button to decorate (takes ownership)
     ) : IButton(),
-        m_button(button)
+        m_button(std::move(button))
 {
 }
 

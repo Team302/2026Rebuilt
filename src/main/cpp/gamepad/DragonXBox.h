@@ -17,6 +17,7 @@
 #pragma once
 
 // #include <map>
+#include <memory>
 #include <string>
 
 // FRC includes
@@ -155,7 +156,7 @@ public:
 private:
     frc::XboxController *m_xbox;
     AnalogAxis *m_axis[TeleopControlMappingEnums::MAX_AXIS];
-    IButton *m_button[TeleopControlMappingEnums::MAX_BUTTONS];
+    std::unique_ptr<IButton> m_button[TeleopControlMappingEnums::MAX_BUTTONS];
     std::string m_dataLogPath;
     bool m_logThis = false;
 

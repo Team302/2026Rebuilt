@@ -18,8 +18,8 @@
 #include <gamepad/button/IButton.h>
 
 ToggleButton::ToggleButton(
-    IButton *button // <I> - button to decorate
-    ) : ButtonDecorator(button),
+    std::unique_ptr<IButton> button // <I> - button to decorate (takes ownership)
+    ) : ButtonDecorator(std::move(button)),
         m_isPressed(false),
         m_isToggledOn(false)
 {
