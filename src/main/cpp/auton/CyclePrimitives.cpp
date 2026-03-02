@@ -201,6 +201,10 @@ void CyclePrimitives::RunDriveStop()
 
 void CyclePrimitives::CacheMechanismPointers()
 {
+    // Always clear cached pointers first to avoid holding stale/dangling references
+    m_cachedLauncher = nullptr;
+    m_cachedIntake = nullptr;
+    m_cachedClimber = nullptr;
     auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
     if (config != nullptr)
     {
