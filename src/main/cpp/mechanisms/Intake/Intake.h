@@ -140,4 +140,10 @@ private:
 
 	units::angle::turn_t m_intakeRetractedPositionTarget{0.0};
 	units::angle::turn_t m_intakeExtendedPositionTarget{0.0};
+
+	// logging paths
+	static constexpr std::string_view m_intakeStatePath = "/Intake/State";
+	static constexpr std::string_view m_intakePercentOutPath = "/Intake/TargetPercentOut";
+	static constexpr std::string_view m_extenderExtendedPath = "/Intake/Extender/Extended";
+	static constexpr std::string_view m_loggingpercentUnit = "Percent";
 };

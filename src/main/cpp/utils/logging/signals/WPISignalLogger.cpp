@@ -70,7 +70,7 @@ void WPISignalLogger::WriteChassisSpeeds(std::string_view signalID, const frc::C
     entry.Append(value, timestamp);
 }
 
-void WPISignalLogger::WriteSwerveModuleState(std::string_view signalID, const frc::SwerveModuleState &value, uint64_t timestamp)
+void WPISignalLogger::WriteSwerveModuleState(std::string_view signalID, const std::array<frc::SwerveModuleState, 4> &value, uint64_t timestamp)
 {
     auto &entry = GetSwerveModuleStateEntry(std::string(signalID));
     entry.Append(value, timestamp);
@@ -273,13 +273,13 @@ wpi::log::StructLogEntry<frc::ChassisSpeeds> &WPISignalLogger::GetChassisSpeedsE
     return *it->second;
 }
 
-wpi::log::StructLogEntry<frc::SwerveModuleState> &WPISignalLogger::GetSwerveModuleStateEntry(const std::string &signalID)
+wpi::log::StructLogEntry<std::array<frc::SwerveModuleState, 4>> &WPISignalLogger::GetSwerveModuleStateEntry(const std::string &signalID)
 {
     auto it = m_swerveModuleStateEntries.find(signalID);
     if (it == m_swerveModuleStateEntries.end())
     {
         auto &log = frc::DataLogManager::GetLog();
-        auto entry = std::make_unique<wpi::log::StructLogEntry<frc::SwerveModuleState>>(log, signalID);
+        auto entry = std::make_unique<wpi::log::StructLogEntry<std::array<frc::SwerveModuleState, 4>>>(log, signalID);
         auto [inserted, success] = m_swerveModuleStateEntries.emplace(signalID, std::move(entry));
         return *inserted->second;
     }

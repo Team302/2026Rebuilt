@@ -19,60 +19,53 @@
 #include <filesystem>
 #include <ctime>
 #include <string>
+#include <iostream>
 
 using ctre::phoenix6::SignalLogger;
 
 void CTRESignalLogger::WriteBoolean(std::string_view signalID, bool value, uint64_t timestamp)
 {
-    SignalLogger::WriteBoolean(signalID, value, units::time::second_t(timestamp));
+    SignalLogger::WriteBoolean(signalID, value, 0_s);
 }
 
 void CTRESignalLogger::WriteDouble(std::string_view signalID, double value, std::string_view units, uint64_t timestamp)
 {
-    SignalLogger::WriteDouble(signalID, value, units, units::time::second_t(timestamp));
+    SignalLogger::WriteDouble(signalID, value, units, 0_s);
 }
 
 void CTRESignalLogger::WriteInteger(std::string_view signalID, int64_t value, std::string_view units, uint64_t timestamp)
 {
-    SignalLogger::WriteInteger(signalID, value, units, units::time::second_t(timestamp));
+    SignalLogger::WriteInteger(signalID, value, units, 0_s);
 }
 
 void CTRESignalLogger::WriteString(std::string_view signalID, const std::string &value, uint64_t timestamp)
 {
-    SignalLogger::WriteString(signalID, value, units::time::second_t(timestamp));
+    SignalLogger::WriteString(signalID, value, 0_s);
 }
 
 void CTRESignalLogger::WriteDoubleArray(std::string_view signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp)
 {
-    SignalLogger::WriteDoubleArray(signalID, value, units, units::time::second_t(timestamp));
+    SignalLogger::WriteDoubleArray(signalID, value, units, 0_s);
 }
 
 void CTRESignalLogger::WritePose2d(std::string_view signalID, const frc::Pose2d &value, uint64_t timestamp)
 {
-    std::vector<double> data = {value.X().value(), value.Y().value(), value.Rotation().Radians().value()};
-    SignalLogger::WriteDoubleArray(signalID, data, kUnitsPose2d, units::time::second_t(timestamp));
+    SignalLogger::WriteStruct<frc::Pose2d>(signalID, value, 0_s);
 }
 
 void CTRESignalLogger::WritePose3d(std::string_view signalID, const frc::Pose3d &value, uint64_t timestamp)
 {
-    std::vector<double> data = {value.X().value(), value.Y().value(), value.Z().value(),
-                                value.Rotation().GetQuaternion().W(),
-                                value.Rotation().GetQuaternion().X(),
-                                value.Rotation().GetQuaternion().Y(),
-                                value.Rotation().GetQuaternion().Z()};
-    SignalLogger::WriteDoubleArray(signalID, data, kUnitsPose3d, units::time::second_t(timestamp));
+    SignalLogger::WriteStruct<frc::Pose3d>(signalID, value, 0_s);
 }
 
 void CTRESignalLogger::WriteChassisSpeeds(std::string_view signalID, const frc::ChassisSpeeds &value, uint64_t timestamp)
 {
-    std::vector<double> data = {value.vx.value(), value.vy.value(), value.omega.value()};
-    SignalLogger::WriteDoubleArray(signalID, data, kUnitsChassisSpeeds, units::time::second_t(timestamp));
+    SignalLogger::WriteStruct<frc::ChassisSpeeds>(signalID, value, 0_s);
 }
 
-void CTRESignalLogger::WriteSwerveModuleState(std::string_view signalID, const frc::SwerveModuleState &value, uint64_t timestamp)
+void CTRESignalLogger::WriteSwerveModuleState(std::string_view signalID, const std::array<frc::SwerveModuleState, 4> &value, uint64_t timestamp)
 {
-    std::vector<double> data = {value.speed.value(), value.angle.Radians().value()};
-    SignalLogger::WriteDoubleArray(signalID, data, kUnitsSwerveState, units::time::second_t(timestamp));
+    SignalLogger::WriteStructArray<frc::SwerveModuleState>(signalID, value, 0_s);
 }
 
 void CTRESignalLogger::WriteGamePadState(std::string_view signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs, uint64_t timestamp)
@@ -81,7 +74,7 @@ void CTRESignalLogger::WriteGamePadState(std::string_view signalID, const std::a
     // Log axes
     {
         std::vector<double> axesVec(axes.begin(), axes.end());
-        SignalLogger::WriteDoubleArray(id + std::string(kSubpathAxes), axesVec, "", units::time::second_t(timestamp));
+        SignalLogger::WriteDoubleArray(id + std::string(kSubpathAxes), axesVec, "", 0_s);
     }
 
     // Log buttons as doubles (0.0 or 1.0)
@@ -90,7 +83,7 @@ void CTRESignalLogger::WriteGamePadState(std::string_view signalID, const std::a
         buttonsVec.reserve(buttons.size());
         for (bool b : buttons)
             buttonsVec.push_back(b ? 1.0 : 0.0);
-        SignalLogger::WriteDoubleArray(id + std::string(kSubpathButtons), buttonsVec, "", units::time::second_t(timestamp));
+        SignalLogger::WriteDoubleArray(id + std::string(kSubpathButtons), buttonsVec, "", 0_s);
     }
 
     // Log POVs
@@ -99,15 +92,15 @@ void CTRESignalLogger::WriteGamePadState(std::string_view signalID, const std::a
         povsVec.reserve(povs.size());
         for (int p : povs)
             povsVec.push_back(static_cast<double>(p));
-        SignalLogger::WriteDoubleArray(id + std::string(kSubpathPovs), povsVec, "", units::time::second_t(timestamp));
+        SignalLogger::WriteDoubleArray(id + std::string(kSubpathPovs), povsVec, "", 0_s);
     }
 }
 
 void CTRESignalLogger::Start()
 {
     SignalLogger::SetPath(DragonDataLoggerMgr::GetInstance()->GetLoggingDirectory().c_str());
-    SignalLogger::EnableAutoLogging(true);
     SignalLogger::Start();
+    std::cout << "CTRE Signal Logger started with log file: " << CreateLogFileName() << std::endl;
 }
 
 void CTRESignalLogger::Stop()
@@ -126,13 +119,8 @@ std::string CTRESignalLogger::CreateLogFileName()
     strftime(buffer, 80, "%Y%m%d-%H%M%S", ltm);
     std::string time(buffer);
 
-    std::string filename = "frc302-" + time + ".wpilog";
+    std::string filename = "frc302-" + time + ".hoot";
     return filename;
-}
-
-units::time::second_t CTRESignalLogger::ConvertToSeconds(uint64_t timestamp)
-{
-    return units::time::second_t(static_cast<double>(timestamp) / 1e9);
 }
 
 void CTRESignalLogger::SetAutoLogging(bool enable)
