@@ -97,11 +97,6 @@ DragonGamepad::DragonGamepad(
 
 DragonGamepad::~DragonGamepad()
 {
-    for (auto &button : m_button)
-    {
-        delete button;
-        button = nullptr;
-    }
     for (auto &axis : m_axis)
     {
         delete axis;

@@ -97,10 +97,6 @@ DragonXBox::~DragonXBox()
     {
         delete axis;
     }
-    for (auto *button : m_button)
-    {
-        delete button;
-    }
     delete m_xbox;
     m_xbox = nullptr;
 }
