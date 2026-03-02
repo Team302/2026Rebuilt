@@ -14,8 +14,7 @@
 //====================================================================================================================================================
 #include <auton/AllianceZoneManager.h>
 #include "ZoneParams.h"
-
-using frc::DriverStation;
+#include "utils/FMSData.h"
 
 AllianceZoneManager::AllianceZoneManager() : ZoneHelper()
 {
@@ -41,7 +40,7 @@ std::vector<std::string> AllianceZoneManager::GetZoneFiles()
 
 bool AllianceZoneManager::IsInAllianceZone()
 {
-    if (DriverStation::GetAlliance() == DriverStation::Alliance::kRed)
+    if (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed)
     {
         return IsInZones(m_redAllianceZone);
     }
