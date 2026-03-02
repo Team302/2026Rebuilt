@@ -20,9 +20,16 @@
 #include "utils/logging/debug/Logger.h"
 
 // Static string constants — constructed once, never copied on each call
+/// Identifies the outpost passing target visualization object on the field
 const std::string RebuiltTargetCalculator::kOutpostPassingTargetName = "Outpost Passing Target Position";
+
+/// Identifies the depot passing target visualization object on the field
 const std::string RebuiltTargetCalculator::kDepotPassingTargetName = "Depot Passing Target Position";
+
+/// Identifies the current target visualization object on the field
 const std::string RebuiltTargetCalculator::kCurrentTargetName = "Current Target Position";
+
+/// Identifies the launcher position/angle visualization object on the field
 const std::string RebuiltTargetCalculator::kLauncherPositionName = "Launcher Position";
 
 RebuiltTargetCalculator::RebuiltTargetCalculator() : TargetCalculator()
@@ -45,6 +52,12 @@ RebuiltTargetCalculator::RebuiltTargetCalculator() : TargetCalculator()
 
 RebuiltTargetCalculator *RebuiltTargetCalculator::m_instance = nullptr;
 
+/**
+ * Returns the singleton instance of RebuiltTargetCalculator, creating it if necessary.
+ * Thread-safe singleton pattern implementation.
+ *
+ * \return Pointer to the single RebuiltTargetCalculator instance
+ */
 RebuiltTargetCalculator *RebuiltTargetCalculator::GetInstance()
 {
     if (m_instance == nullptr)
@@ -54,6 +67,16 @@ RebuiltTargetCalculator *RebuiltTargetCalculator::GetInstance()
     return m_instance;
 }
 
+/**
+ * Validates whether the alliance has changed since the last check and refreshes cached
+ * alliance-specific data if needed.
+ *
+ * Performance optimization using lazy validation:
+ * - Only refreshes cache when alliance changes
+ * - Tracks enabled state to avoid unnecessary validation when robot is disabled
+ *
+ * \return true if alliance changed and cache was refreshed, false if no change
+ */
 bool RebuiltTargetCalculator::ValidateAlliance()
 {
     if (m_validatedWhileEnabled)
@@ -73,6 +96,18 @@ bool RebuiltTargetCalculator::ValidateAlliance()
     return false; // no change, cache still valid
 }
 
+/**
+ * Determines the current target position based on robot location and alliance.
+ *
+ * Target selection logic:
+ * - If in alliance zone: targets the hub center
+ * - If outside alliance zone: targets the closest passing target (outpost or depot)
+ *
+ * Applies manual offset adjustments (m_xTargetOffset, m_yTargetOffset) for driver tuning.
+ * Automatically validates alliance and refreshes cache if needed.
+ *
+ * \return Target position in world frame (meters) as Translation2d
+ */
 frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
 {
     ValidateAlliance();
@@ -106,6 +141,22 @@ frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
     return targetPosition;
 }
 
+/**
+ * Calculates the optimal launcher angle to acquire and hit the current target.
+ *
+ * Algorithm:
+ * 1. Validates alliance and refreshes cache if needed
+ * 2. Predicts target position using lookahead time
+ * 3. Calculates field angle from mechanism position to target
+ * 4. Converts to robot-relative angle accounting for current robot orientation
+ * 5. Searches for closest valid angle within mechanical constraints (91-267 degrees)
+ * 6. Considers 360-degree rotations to minimize launcher movement
+ * 7. If no valid angle found in range, clamps to nearest limit
+ *
+ * \param looheadTime Time in seconds to predict target position movement
+ * \param currentLauncherAngle Current launcher angle in degrees (for minimum-error optimization)
+ * \return Optimal launcher angle in rotations (0-1.0 scale, where 1.0 = 360°)
+ */
 units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle)
 {
     ValidateAlliance();
@@ -150,6 +201,26 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
     return units::angle::turn_t(bestAngle.value());
 }
 
+/**
+ * Processes controller input to adjust target positions in real-time for driver tuning.
+ *
+ * Discrete button adjustments (single press = 5-inch step):
+ * - Update up button: increase main target X offset
+ * - Update down button: decrease main target X offset
+ * - Update left button: increase main target Y offset
+ * - Update right button: decrease main target Y offset
+ *
+ * Analog axis adjustments (continuous):
+ * - Depot passing target X/Y offsets
+ * - Outpost passing target X/Y offsets
+ *
+ * Direction adjustments:
+ * - Blue alliance: natural forward/starboard adjustments
+ * - Red alliance: reversed adjustments for intuitive driver control
+ *
+ * Uses button state tracking to detect rising edges and prevent drift.
+ * Updates field visualization after offset changes.
+ */
 void RebuiltTargetCalculator::UpdateTargetOffset()
 {
     ValidateAlliance();
@@ -200,18 +271,40 @@ void RebuiltTargetCalculator::UpdateTargetOffset()
     UpdatePassingTargetsOnField();
 }
 
+/**
+ * Returns the current X-axis offset for a passing target element.
+ *
+ * \param fieldElement The field element to query (RED_OUTPOST_PASSING_TARGET, BLUE_DEPOT_PASSING_TARGET, etc.)
+ * \return X offset in inches; positive values move target away from friendly alliance zone
+ */
 units::length::inch_t RebuiltTargetCalculator::GetPassingTargetXOffset(FieldConstants::FIELD_ELEMENT fieldElement)
 {
     ValidateAlliance();
     return (fieldElement == m_outpostPassingTarget) ? m_passingOutpostTargetXOffset : m_passingDepotTargetXOffset;
 }
 
+/**
+ * Returns the current Y-axis offset for a passing target element.
+ *
+ * \param fieldElement The field element to query (RED_OUTPOST_PASSING_TARGET, BLUE_DEPOT_PASSING_TARGET, etc.)
+ * \return Y offset in inches; sign is alliance-dependent for intuitive control
+ */
 units::length::inch_t RebuiltTargetCalculator::GetPassingTargetYOffset(FieldConstants::FIELD_ELEMENT fieldElement)
 {
     ValidateAlliance();
     return (fieldElement == m_outpostPassingTarget) ? m_passingOutpostTargetYOffset : m_passingDepotTargetYOffset;
 }
 
+/**
+ * Updates field visualization objects with current passing target positions.
+ *
+ * Recalculates positions based on:
+ * - Cached base positions (m_depotPassingPosition, m_outpostPassingPosition)
+ * - Current offset values (m_passingDepotTargetXOffset, m_passingOutpostTargetXOffset, etc.)
+ *
+ * Called after any offset modification to keep visualizations synchronized with calculated positions.
+ * Useful for driver tuning and debugging target acquisition.
+ */
 void RebuiltTargetCalculator::UpdatePassingTargetsOnField()
 {
     ValidateAlliance();
@@ -227,6 +320,24 @@ void RebuiltTargetCalculator::UpdatePassingTargetsOnField()
     m_field->UpdateObject(kOutpostPassingTargetName, outpostPose);
 }
 
+/**
+ * Refreshes all cached alliance-specific field elements and their world positions.
+ *
+ * Called on:
+ * - Initialization in constructor
+ * - Alliance change (via ValidateAlliance())
+ *
+ * Updates these cache members:
+ * - m_hubCenter: RED_HUB_CENTER or BLUE_HUB_CENTER
+ * - m_outpostPassingTarget: RED_OUTPOST_PASSING_TARGET or BLUE_OUTPOST_PASSING_TARGET
+ * - m_depotPassingTarget: RED_DEPOT_PASSING_TARGET or BLUE_DEPOT_PASSING_TARGET
+ * - m_hubCenterPosition: Cached position of hub center
+ * - m_outpostPassingPosition: Cached position of outpost target
+ * - m_depotPassingPosition: Cached position of depot target
+ *
+ * Performance optimization: Performs FieldConstants lookups only once per alliance change
+ * instead of on every GetTargetPosition() call.
+ */
 void RebuiltTargetCalculator::RefreshAllianceCache()
 {
     bool isRed = (m_cachedAlliance == frc::DriverStation::Alliance::kRed);
