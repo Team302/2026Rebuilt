@@ -14,7 +14,6 @@
 //====================================================================================================================================================
 #include <string>
 
-#include <gamepad/IDragonGamepad.h>
 #include <gamepad/axis/AnalogAxis.h>
 #include <gamepad/button/AnalogButton.h>
 

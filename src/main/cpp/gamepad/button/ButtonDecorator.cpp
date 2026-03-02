@@ -21,6 +21,8 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
+#include <memory>
+
 #include <gamepad/button/ButtonDecorator.h>
 #include <gamepad/button/IButton.h>
 
