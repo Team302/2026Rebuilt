@@ -22,6 +22,7 @@
 #include "auton/AutonGrid.h"
 
 // Thirdparty includes
+#include "units/math.h"
 
 AutonGrid *AutonGrid::m_instance = nullptr; // initialize m_instance as a nullptr
 
