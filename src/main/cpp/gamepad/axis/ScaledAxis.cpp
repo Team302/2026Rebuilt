@@ -28,7 +28,7 @@ ScaledAxis::ScaledAxis() : m_scale(1.0)
 /// </summary>
 //==================================================================================
 void ScaledAxis::SetScaleFactor(
-    double scaleFactor // <I> - scale factor must be > 0.0 and <= 1.0
+    double scaleFactor // <I> - scale factor; positive values are used directly (any magnitude), zero results in no output, negative values invert and scale the output
 )
 {
     if (scaleFactor > 0.0)
