@@ -58,7 +58,7 @@ public:
         std::unique_ptr<IButton> button // <I> - concrete button to decorate (takes ownership)
     );
     ButtonDecorator() = delete;
-    ~ButtonDecorator() = default;
+    ~ButtonDecorator();
 
 protected:
     inline IButton *GetButton() { return m_button.get(); }
