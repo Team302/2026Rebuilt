@@ -17,13 +17,13 @@
 
 #include "frc/GenericHID.h"
 #include "frc/Joystick.h"
+#include "gamepad/DragonGamepad.h"
 #include "gamepad/axis/AnalogAxis.h"
 #include "gamepad/axis/IDeadband.h"
 #include "gamepad/axis/IProfile.h"
 #include "gamepad/button/AnalogButton.h"
 #include "gamepad/button/DigitalButton.h"
 #include "gamepad/button/ToggleButton.h"
-#include "gamepad/DragonGamepad.h"
 #include "teleopcontrol/TeleopControlMappingEnums.h"
 #include "utils/logging/debug/Logger.h"
 
@@ -32,26 +32,15 @@ using namespace frc;
 
 DragonGamepad::DragonGamepad(
     int port) : m_gamepad(new Joystick(port)),
-                m_axis(),
-                m_axisScale(),
-                m_axisInversionFactor(),
-                m_axisProfile(),
-                // m_button(),
-                m_button()
+                m_axis{},
+                m_button{}
 {
     // device type is 24
     // 8 axis
     // 11 buttons
-    m_axis.resize(TeleopControlMappingEnums::MAX_AXIS);
-    m_axisScale.resize(TeleopControlMappingEnums::MAX_AXIS);
-    m_axisInversionFactor.resize(TeleopControlMappingEnums::MAX_AXIS);
-    m_axisProfile.resize(TeleopControlMappingEnums::MAX_AXIS);
 
     for (auto inx = 0; inx < TeleopControlMappingEnums::MAX_AXIS; ++inx)
     {
-        m_axisScale[inx] = 1.0;
-        m_axisInversionFactor[inx] = 1.0;
-        m_axisProfile[inx] = TeleopControlMappingEnums::AXIS_PROFILE::LINEAR;
         m_axis[inx] = nullptr;
     }
 
@@ -74,7 +63,6 @@ DragonGamepad::DragonGamepad(
     m_axis[TeleopControlMappingEnums::DIAL_ANALOG_BUTTON_AXIS]->SetDeadBand(TeleopControlMappingEnums::AXIS_DEADBAND::NONE);
 
     // Create Button objects
-    m_button.resize(TeleopControlMappingEnums::MAX_BUTTONS);
     for (auto inx = 0; inx < TeleopControlMappingEnums::MAX_BUTTONS; ++inx)
     {
         m_button[inx] = nullptr;
@@ -137,14 +125,16 @@ void DragonGamepad::SetButtonMode(
     {
         if (mode == TeleopControlMappingEnums::BUTTON_MODE::TOGGLE)
         {
-            auto btn = new ToggleButton(m_button[button]);
-            m_button[button] = btn;
+            // Only wrap if not already a toggle to avoid leaking nested decorators
+            if (dynamic_cast<ToggleButton *>(m_button[button]) == nullptr)
+            {
+                m_button[button] = new ToggleButton(m_button[button]);
+            }
         }
-        else
-        {
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT_ONCE, string("SetButtonMode"), to_string(button), string("button is Nullptr"));
-        }
-        // TODO: should have else to re-create the button or remove the toggle decorator
+    }
+    else
+    {
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT_ONCE, string("SetButtonMode"), to_string(button), string("button is Nullptr"));
     }
 }
 

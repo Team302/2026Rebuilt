@@ -14,9 +14,9 @@
 //====================================================================================================================================================
 #include <string>
 
+#include <gamepad/IDragonGamepad.h>
 #include <gamepad/axis/AnalogAxis.h>
 #include <gamepad/button/AnalogButton.h>
-#include <gamepad/IDragonGamepad.h>
 
 using namespace std;
 
@@ -57,7 +57,7 @@ bool AnalogButton::IsButtonPressed() const
     if (m_axis != nullptr)
     {
         auto axisValue = m_axis->GetAxisValue();
-        pressed = (axisValue > m_minValue);
+        pressed = (axisValue >= m_minValue && axisValue <= m_maxValue);
     }
     return pressed;
 }

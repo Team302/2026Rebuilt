@@ -82,19 +82,15 @@ public:
     void DefinePerpendicularAxis(
         AnalogAxis *m_perpendicularAxis);
 
-protected:
+private:
     //==================================================================================
     /// @brief  Returns the analog input's raw value. If there is a connection problem,
     ///         0.0 will be returned and a debug message will be written.
     /// @return double - raw axis value
     //==================================================================================
-    virtual double GetRawValue();
+    double GetRawValue() const;
     double GetRawInvertedValue();
 
-    inline frc::GenericHID *GetGameePad() const { return m_gamepad; }
-    inline int GetAxisID() const { return m_axis; }
-
-private:
     frc::GenericHID *m_gamepad;
     int m_axis;
     IProfile *m_profile;

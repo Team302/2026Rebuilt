@@ -31,7 +31,7 @@ void ScaledAxis::SetScaleFactor(
     double scaleFactor // <I> - scale factor must be > 0.0 and <= 1.0
 )
 {
-    if (m_scale > 0.0)
+    if (scaleFactor > 0.0)
     {
         m_scale = scaleFactor;
     }

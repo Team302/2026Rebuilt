@@ -44,5 +44,6 @@ void SquaredProfile::ApplyProfile(
     double &inputVal // <I> - value to apply profile to
 ) const
 {
-    inputVal *= inputVal; // chose to be explicit instead of using the general pow function as this should be faster
+    double sign = (inputVal < 0.0) ? -1.0 : 1.0;
+    inputVal = sign * inputVal * inputVal; // preserve the sign while squaring the magnitude
 }

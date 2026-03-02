@@ -17,9 +17,10 @@
 #include <string>
 #include <utility>
 
+#include "frc/DriverStation.h"
 #include "frc/GenericHID.h"
 #include "frc/XboxController.h"
-#include "frc/DriverStation.h"
+#include "gamepad/DragonXBox.h"
 #include "gamepad/axis/AnalogAxis.h"
 #include "gamepad/axis/IDeadband.h"
 #include "gamepad/axis/IProfile.h"
@@ -28,7 +29,6 @@
 #include "gamepad/button/DigitalButton.h"
 #include "gamepad/button/POVButton.h"
 #include "gamepad/button/ToggleButton.h"
-#include "gamepad/DragonXBox.h"
 #include "teleopcontrol/TeleopControlMappingEnums.h"
 
 #include "utils/logging/debug/Logger.h"
@@ -40,6 +40,8 @@ using namespace frc;
 
 DragonXBox::DragonXBox(
     int port) : m_xbox(new frc::XboxController(port)),
+                m_axis{},
+                m_button{},
                 m_dataLogPath("DS:joystick" + std::to_string(port))
 {
     // Create Axis Objects
@@ -169,14 +171,16 @@ void DragonXBox::SetButtonMode(
     {
         if (mode == TeleopControlMappingEnums::BUTTON_MODE::TOGGLE)
         {
-            auto btn = new ToggleButton(m_button[button]);
-            m_button[button] = btn;
+            // Only wrap if not already a toggle to avoid leaking nested decorators
+            if (dynamic_cast<ToggleButton *>(m_button[button]) == nullptr)
+            {
+                m_button[button] = new ToggleButton(m_button[button]);
+            }
         }
-        else
-        {
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT_ONCE, string("DragonXBox::SetButtonMode"), to_string(button), string("button is Nullptr"));
-        }
-        // TODO: should have else to re-create the button or remove the toggle decorator
+    }
+    else
+    {
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT_ONCE, string("DragonXBox::SetButtonMode"), to_string(button), string("button is Nullptr"));
     }
 }
 
