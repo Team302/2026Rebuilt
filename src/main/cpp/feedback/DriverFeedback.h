@@ -18,6 +18,8 @@
 #include <memory>
 #include <string>
 
+#include "frc/DriverStation.h"
+
 #include "chassis/ChassisOptionEnums.h"
 #include "feedback/DragonCANdle.h"
 #include "mechanisms/Launcher/Launcher.h"
@@ -121,7 +123,7 @@ private:
     static constexpr int m_controllerUpdateInterval = 25; ///< Check controllers every 25 loops (~500 ms)
 
     // --- Pre-built NT key strings (avoid per-loop heap allocations) ---
-    static constexpr int kMaxJoystickPorts = 6;                  ///< DriverStation::kJoystickPorts
+    static constexpr int kMaxJoystickPorts = frc::DriverStation::kJoystickPorts; ///< mirrors DriverStation::kJoystickPorts
     std::array<std::string, kMaxJoystickPorts> m_controllerKeys; ///< "Controller0" … "Controller5"
 
     // --- Previous rumble state (avoid redundant SetRumble writes) ---
