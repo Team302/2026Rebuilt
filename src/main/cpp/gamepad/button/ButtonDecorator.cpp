@@ -31,6 +31,12 @@ ButtonDecorator::ButtonDecorator(
 {
 }
 
+ButtonDecorator::~ButtonDecorator()
+{
+    delete m_button;
+    m_button = nullptr;
+}
+
 bool ButtonDecorator::IsButtonPressed() const
 {
     bool isPressed = false;
