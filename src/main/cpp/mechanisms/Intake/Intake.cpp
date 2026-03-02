@@ -318,7 +318,7 @@ void Intake::RunCommonTasks()
 	if (m_prevIntakeSwitchState != isIntakeIn)
 	{
 		m_prevIntakeSwitchState = isIntakeIn;
-		NotifyStateUpdate(RobotStateChanges::StateChange::ClimbModeStatus_Bool, isIntakeIn);
+		NotifyStateUpdate(RobotStateChanges::StateChange::AllowedToClimbStatus_Bool, isIntakeIn);
 	}
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentStateName());
