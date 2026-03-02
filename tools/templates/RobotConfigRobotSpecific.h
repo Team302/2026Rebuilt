@@ -3,7 +3,7 @@ $$_GEN_NOTICE_$$
 
 #pragma once
 #include "mechanisms/MechanismTypes.h"
-#include "mechanisms/base/StateMgr.h"
+#include "state/StateMgr.h"
 #include "mechanisms/configs/RobotConfig.h"
 $$_MECHANISM_INCLUDE_FILES_$$
 
