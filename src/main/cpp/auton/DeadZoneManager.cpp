@@ -14,8 +14,7 @@
 //====================================================================================================================================================
 #include <auton/DeadZoneManager.h>
 #include "ZoneParams.h"
-
-using frc::DriverStation;
+#include "utils/FMSData.h"
 
 DeadZoneManager::DeadZoneManager() : ZoneHelper()
 {
@@ -41,7 +40,7 @@ std::vector<std::string> DeadZoneManager::GetZoneFiles()
 
 bool DeadZoneManager::IsInDeadZone()
 {
-    if (DriverStation::GetAlliance() == DriverStation::Alliance::kRed)
+    if (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed)
     {
         return IsInZones(m_redDeadZone);
     }

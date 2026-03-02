@@ -14,11 +14,14 @@
 //====================================================================================================================================================
 #pragma once
 
-// FRC Include
-#include <frc/geometry/Pose2d.h>
-#include <frc/smartdashboard/Field2d.h>
-#include <frc/smartdashboard/FieldObject2d.h>
-#include <frc/trajectory/Trajectory.h>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "frc/geometry/Pose2d.h"
+#include "frc/smartdashboard/Field2d.h"
+#include "frc/smartdashboard/FieldObject2d.h"
+#include "frc/trajectory/Trajectory.h"
 
 /// @class DragonField
 /// @brief Singleton class for managing field visualization in SmartDashboard.
@@ -36,24 +39,22 @@ public:
     /// @param name The name identifier for the object.
     /// @param pose The initial pose of the object.
     /// @param defaultSelectorValue Whether the object should be enabled by default on the field.
-    void AddObject(std::string name, frc::Pose2d pose, bool defaultSelectorValue = false);
+    void AddObject(const std::string &name, frc::Pose2d pose, bool defaultSelectorValue = false);
 
     /// @brief Add a trajectory to be displayed on the field.
     /// @param name The name identifier for the trajectory.
     /// @param trajectory The trajectory to display.
-    void AddTrajectory(std::string name, frc::Trajectory trajectory);
+    void AddTrajectory(const std::string &name, frc::Trajectory trajectory);
 
     /// @brief Update the pose of a specific field object if it is enabled.
     /// @param name The name identifier of the object to update.
     /// @param pose The new pose for the object.
-    void UpdateObject(std::string name, frc::Pose2d pose);
+    void UpdateObject(const std::string &name, frc::Pose2d pose);
 
     /// @brief Update the enabled/disabled state of all field objects based on SmartDashboard values.
     /// @details Reads boolean values from SmartDashboard for each registered object to determine
     ///          whether they should be visible on the field display.
     void UpdateEnabledStates();
-
-    // void UpdateObjectVisionPose(std::string name, std::optional<VisionPose> visionPose);
 
     /// @brief Get the singleton instance of DragonField.
     /// @return Pointer to the singleton DragonField instance.
@@ -79,5 +80,5 @@ private:
     /// @brief Add a boolean selector to SmartDashboard for enabling/disabling a field object.
     /// @param name The name identifier for the object.
     /// @param defaultValue The default enabled state for the selector.
-    void AddSelector(std::string name, bool defaultValue);
+    void AddSelector(const std::string &name, bool defaultValue);
 };

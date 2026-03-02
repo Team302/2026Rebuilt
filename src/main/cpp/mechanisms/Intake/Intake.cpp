@@ -208,7 +208,7 @@ void Intake::InitializeTalonFXIntakeCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
-	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
+	configs.MotorOutput.Inverted = InvertedValue::Clockwise_Positive;
 	configs.MotorOutput.NeutralMode = NeutralModeValue::Coast;
 	configs.MotorOutput.PeakForwardDutyCycle = 1;
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
@@ -231,11 +231,11 @@ void Intake::InitializeTalonFXIntakeCompBot302()
 void Intake::InitializeTalonFXSExtenderCompBot302()
 {
 	TalonFXSConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(0);
-	configs.CurrentLimits.StatorCurrentLimitEnable = false;
-	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(0);
-	configs.CurrentLimits.SupplyCurrentLimitEnable = false;
-	configs.CurrentLimits.SupplyCurrentLowerLimit = units::current::ampere_t(0);
+	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
+	configs.CurrentLimits.StatorCurrentLimitEnable = true;
+	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
+	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
+	configs.CurrentLimits.SupplyCurrentLowerLimit = units::current::ampere_t(35);
 	configs.CurrentLimits.SupplyCurrentLowerTime = units::time::second_t(0);
 
 	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
@@ -265,7 +265,7 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 0.2368421528998243;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.56761719;
 
 	configs.Slot0.kI = m_positionDeg->GetI();
 	configs.Slot0.kD = m_positionDeg->GetD();
@@ -318,7 +318,7 @@ void Intake::RunCommonTasks()
 	if (m_prevIntakeSwitchState != isIntakeIn)
 	{
 		m_prevIntakeSwitchState = isIntakeIn;
-		NotifyStateUpdate(RobotStateChanges::StateChange::ClimbModeStatus_Bool, isIntakeIn);
+		NotifyStateUpdate(RobotStateChanges::StateChange::AllowedToClimbStatus_Bool, isIntakeIn);
 	}
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentStateName());
@@ -350,6 +350,8 @@ ControlData *Intake::GetControlData(string name)
 {
 	if (name.compare("PercentOut") == 0)
 		return m_percentOut;
+	else if (name.compare("PositionDegree") == 0)
+		return m_positionDeg;
 
 	return nullptr;
 }

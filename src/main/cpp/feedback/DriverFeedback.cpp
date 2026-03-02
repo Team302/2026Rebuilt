@@ -322,9 +322,9 @@ void DriverFeedback::UpdateDiagnosticLEDs()
 
     if (m_launcher != nullptr)
     {
-        hoodZeroSwitch = m_launcher->GetHood()->GetReverseLimit().GetValue().value;
-        turretZero = m_launcher->GetTurret()->GetReverseLimit().GetValue().value;
-        turretEnd = m_launcher->GetTurret()->GetForwardLimit().GetValue().value;
+        hoodZeroSwitch = m_launcher->GetHood()->GetReverseLimit(false).GetValue().value;
+        turretZero = m_launcher->GetTurret()->GetReverseLimit(false).GetValue().value;
+        turretEnd = m_launcher->GetTurret()->GetForwardLimit(false).GetValue().value;
     }
 
     if (m_intake != nullptr)
