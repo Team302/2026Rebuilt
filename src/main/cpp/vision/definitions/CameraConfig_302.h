@@ -33,20 +33,6 @@ private:
     static constexpr units::angle::degree_t m_ll1Yaw{-150};
     static constexpr units::angle::degree_t m_ll1Roll{0};
 
-    static constexpr units::length::inch_t m_ll2MountingXOffset{-10.7354};
-    static constexpr units::length::inch_t m_ll2MountingYOffset{10.3104};
-    static constexpr units::length::inch_t m_ll2MountingZOffset{9.39};
-    static constexpr units::angle::degree_t m_ll2Pitch{5};
-    static constexpr units::angle::degree_t m_ll2Yaw{150};
-    static constexpr units::angle::degree_t m_ll2Roll{0};
-
-    static constexpr units::length::inch_t m_ll3MountingXOffset{7.43};
-    static constexpr units::length::inch_t m_ll3MountingYOffset{14.359};
-    static constexpr units::length::inch_t m_ll3MountingZOffset{19.589};
-    static constexpr units::angle::degree_t m_ll3Pitch{0};
-    static constexpr units::angle::degree_t m_ll3Yaw{90};
-    static constexpr units::angle::degree_t m_ll3Roll{0};
-
     static constexpr units::length::inch_t m_questMountingXOffset{-11.216};
     static constexpr units::length::inch_t m_questMountingYOffset{-10.362};
     static constexpr units::length::inch_t m_questMountingZOffset{16.762};
