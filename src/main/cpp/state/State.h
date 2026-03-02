@@ -35,11 +35,11 @@ public:
 
     virtual void RegisterTransitionState(State *state);
     virtual bool IsTransitionCondition(bool considerGamepadTransitions);
-    std::vector<State *> GetPossibleStateTransitions() const { return m_transitionStates; }
+    const std::vector<State *> &GetPossibleStateTransitions() const { return m_transitionStates; }
 
     void LogInformation();
 
-    inline std::string GetStateName() const { return m_stateName; }
+    inline const std::string &GetStateName() const { return m_stateName; }
     inline int GetStateId() const { return m_stateId; }
 
 private:

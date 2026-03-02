@@ -51,7 +51,7 @@ RobotState::RobotState() : m_brokers(),
 
 RobotState::~RobotState()
 {
-    for (auto broker : m_brokers)
+    for (auto *broker : m_brokers)
     {
         delete broker;
     }
@@ -133,7 +133,7 @@ void RobotState::PublishStateChange(RobotStateChanges::StateChange change, units
         m_brokers[slot]->Notify(newValue);
     }
 }
-void RobotState::PublishStateChange(RobotStateChanges::StateChange change, frc::Pose2d newValue)
+void RobotState::PublishStateChange(RobotStateChanges::StateChange change, const frc::Pose2d &newValue)
 {
     auto slot = static_cast<unsigned int>(change);
     if (slot < m_brokers.size())
