@@ -186,7 +186,7 @@ void PeriodicLooper::DisabledRunCurrentState()
  * This sets the flag on each manager so that they will (or will not) consider
  * gamepad input when deciding to transition between states.
  *
- * @param mgrs list of StateMgr pointers to configure (copied by value)
+ * @param mgrs list of StateMgr pointers to configure (passed by const reference)
  * @param checkSw true to enable gamepad transitions, false to disable
  */
 void PeriodicLooper::SetGamePadTransitions(const vector<StateMgr *> &mgrs, bool checkSw)
