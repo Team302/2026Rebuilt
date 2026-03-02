@@ -15,6 +15,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include <gamepad/button/ButtonDecorator.h>
 
 // forward declare
@@ -30,7 +32,7 @@ class ToggleButton : public ButtonDecorator
 {
 public:
     ToggleButton(
-        IButton *button // <I> - button to decorate
+        std::unique_ptr<IButton> button // <I> - button to decorate (takes ownership)
     );
     ToggleButton() = delete;
     ~ToggleButton() = default;

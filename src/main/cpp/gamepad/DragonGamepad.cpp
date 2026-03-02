@@ -13,6 +13,7 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
+#include <memory>
 #include <string>
 
 #include "frc/GenericHID.h"
@@ -63,44 +64,49 @@ DragonGamepad::DragonGamepad(
     m_axis[TeleopControlMappingEnums::DIAL_ANALOG_BUTTON_AXIS]->SetDeadBand(TeleopControlMappingEnums::AXIS_DEADBAND::NONE);
 
     // Create Button objects
-    for (auto inx = 0; inx < TeleopControlMappingEnums::MAX_BUTTONS; ++inx)
-    {
-        m_button[inx] = nullptr;
-    }
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_1] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::LEFT_ANALOG_BUTTON_AXIS], BUTTON_1_LOWERBOUND, BUTTON_1_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_3] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::LEFT_ANALOG_BUTTON_AXIS], BUTTON_3_LOWERBOUND, BUTTON_3_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_6] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::LEFT_ANALOG_BUTTON_AXIS], BUTTON_6_LOWERBOUND, BUTTON_6_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_8] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::LEFT_ANALOG_BUTTON_AXIS], BUTTON_8_LOWERBOUND, BUTTON_8_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_10] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::LEFT_ANALOG_BUTTON_AXIS], BUTTON_10_LOWERBOUND, BUTTON_10_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_12] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::LEFT_ANALOG_BUTTON_AXIS], BUTTON_12_LOWERBOUND, BUTTON_12_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_2] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::RIGHT_ANALOG_BUTTON_AXIS], BUTTON_2_LOWERBOUND, BUTTON_2_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_4] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::RIGHT_ANALOG_BUTTON_AXIS], BUTTON_4_LOWERBOUND, BUTTON_4_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_5] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::RIGHT_ANALOG_BUTTON_AXIS], BUTTON_5_LOWERBOUND, BUTTON_5_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_7] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::RIGHT_ANALOG_BUTTON_AXIS], BUTTON_7_LOWERBOUND, BUTTON_7_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_9] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::RIGHT_ANALOG_BUTTON_AXIS], BUTTON_9_LOWERBOUND, BUTTON_9_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_11] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::RIGHT_ANALOG_BUTTON_AXIS], BUTTON_11_LOWERBOUND, BUTTON_11_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_13] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::RIGHT_ANALOG_BUTTON_AXIS], BUTTON_13_LOWERBOUND, BUTTON_13_UPPERBOUND);
+    // m_button[GAMEPAD_BIG_RED_BUTTON] = std::make_unique<AnalogButton>(m_gamepad, GAMEPAD_BIG_RED_BUTTON,);
+    m_button[TeleopControlMappingEnums::GAMEPAD_DIAL_22] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::DIAL_ANALOG_BUTTON_AXIS], BUTTON_22_LOWERBOUND, BUTTON_22_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_DIAL_23] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::DIAL_ANALOG_BUTTON_AXIS], BUTTON_23_LOWERBOUND, BUTTON_23_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_DIAL_24] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::DIAL_ANALOG_BUTTON_AXIS], BUTTON_24_LOWERBOUND, BUTTON_24_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_DIAL_25] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::DIAL_ANALOG_BUTTON_AXIS], BUTTON_25_LOWERBOUND, BUTTON_25_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_DIAL_26] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::DIAL_ANALOG_BUTTON_AXIS], BUTTON_26_LOWERBOUND, BUTTON_26_UPPERBOUND);
+    m_button[TeleopControlMappingEnums::GAMEPAD_DIAL_27] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::DIAL_ANALOG_BUTTON_AXIS], BUTTON_27_LOWERBOUND, BUTTON_27_UPPERBOUND);
 
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_1] = new AnalogButton(m_axis[TeleopControlMappingEnums::LEFT_ANALOG_BUTTON_AXIS], BUTTON_1_LOWERBOUND, BUTTON_1_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_3] = new AnalogButton(m_axis[TeleopControlMappingEnums::LEFT_ANALOG_BUTTON_AXIS], BUTTON_3_LOWERBOUND, BUTTON_3_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_6] = new AnalogButton(m_axis[TeleopControlMappingEnums::LEFT_ANALOG_BUTTON_AXIS], BUTTON_6_LOWERBOUND, BUTTON_6_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_8] = new AnalogButton(m_axis[TeleopControlMappingEnums::LEFT_ANALOG_BUTTON_AXIS], BUTTON_8_LOWERBOUND, BUTTON_8_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_10] = new AnalogButton(m_axis[TeleopControlMappingEnums::LEFT_ANALOG_BUTTON_AXIS], BUTTON_10_LOWERBOUND, BUTTON_10_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_12] = new AnalogButton(m_axis[TeleopControlMappingEnums::LEFT_ANALOG_BUTTON_AXIS], BUTTON_12_LOWERBOUND, BUTTON_12_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_2] = new AnalogButton(m_axis[TeleopControlMappingEnums::RIGHT_ANALOG_BUTTON_AXIS], BUTTON_2_LOWERBOUND, BUTTON_2_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_4] = new AnalogButton(m_axis[TeleopControlMappingEnums::RIGHT_ANALOG_BUTTON_AXIS], BUTTON_4_LOWERBOUND, BUTTON_4_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_5] = new AnalogButton(m_axis[TeleopControlMappingEnums::RIGHT_ANALOG_BUTTON_AXIS], BUTTON_5_LOWERBOUND, BUTTON_5_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_7] = new AnalogButton(m_axis[TeleopControlMappingEnums::RIGHT_ANALOG_BUTTON_AXIS], BUTTON_7_LOWERBOUND, BUTTON_7_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_9] = new AnalogButton(m_axis[TeleopControlMappingEnums::RIGHT_ANALOG_BUTTON_AXIS], BUTTON_9_LOWERBOUND, BUTTON_9_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_11] = new AnalogButton(m_axis[TeleopControlMappingEnums::RIGHT_ANALOG_BUTTON_AXIS], BUTTON_11_LOWERBOUND, BUTTON_11_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_13] = new AnalogButton(m_axis[TeleopControlMappingEnums::RIGHT_ANALOG_BUTTON_AXIS], BUTTON_13_LOWERBOUND, BUTTON_13_UPPERBOUND);
-    // m_button[GAMEPAD_BIG_RED_BUTTON] = new AnalogButton(m_gamepad, GAMEPAD_BIG_RED_BUTTON,);
-    m_button[TeleopControlMappingEnums::GAMEPAD_DIAL_22] = new AnalogButton(m_axis[TeleopControlMappingEnums::DIAL_ANALOG_BUTTON_AXIS], BUTTON_22_LOWERBOUND, BUTTON_22_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_DIAL_23] = new AnalogButton(m_axis[TeleopControlMappingEnums::DIAL_ANALOG_BUTTON_AXIS], BUTTON_23_LOWERBOUND, BUTTON_23_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_DIAL_24] = new AnalogButton(m_axis[TeleopControlMappingEnums::DIAL_ANALOG_BUTTON_AXIS], BUTTON_24_LOWERBOUND, BUTTON_24_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_DIAL_25] = new AnalogButton(m_axis[TeleopControlMappingEnums::DIAL_ANALOG_BUTTON_AXIS], BUTTON_25_LOWERBOUND, BUTTON_25_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_DIAL_26] = new AnalogButton(m_axis[TeleopControlMappingEnums::DIAL_ANALOG_BUTTON_AXIS], BUTTON_26_LOWERBOUND, BUTTON_26_UPPERBOUND);
-    m_button[TeleopControlMappingEnums::GAMEPAD_DIAL_27] = new AnalogButton(m_axis[TeleopControlMappingEnums::DIAL_ANALOG_BUTTON_AXIS], BUTTON_27_LOWERBOUND, BUTTON_27_UPPERBOUND);
-
-    m_button[TeleopControlMappingEnums::GAMEPAD_SWITCH_18] = new DigitalButton(m_gamepad, SWITCH_18_DIGITAL_ID);
-    m_button[TeleopControlMappingEnums::GAMEPAD_SWITCH_19] = new DigitalButton(m_gamepad, SWITCH_19_DIGITAL_ID);
-    m_button[TeleopControlMappingEnums::GAMEPAD_SWITCH_20] = new DigitalButton(m_gamepad, SWITCH_20_DIGITAL_ID);
-    m_button[TeleopControlMappingEnums::GAMEPAD_SWITCH_21] = new DigitalButton(m_gamepad, SWITCH_21_DIGITAL_ID);
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_14_UP] = new DigitalButton(m_gamepad, LEVER_14_UP_DIGITAL_ID);
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_14_DOWN] = new DigitalButton(m_gamepad, LEVER_14_DOWN_DIGITAL_ID);
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_15_UP] = new DigitalButton(m_gamepad, LEVER_15_UP_DIGITAL_ID);
-    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_15_DOWN] = new DigitalButton(m_gamepad, LEVER_15_DOWN_DIGITAL_ID);
+    m_button[TeleopControlMappingEnums::GAMEPAD_SWITCH_18] = std::make_unique<DigitalButton>(m_gamepad, SWITCH_18_DIGITAL_ID);
+    m_button[TeleopControlMappingEnums::GAMEPAD_SWITCH_19] = std::make_unique<DigitalButton>(m_gamepad, SWITCH_19_DIGITAL_ID);
+    m_button[TeleopControlMappingEnums::GAMEPAD_SWITCH_20] = std::make_unique<DigitalButton>(m_gamepad, SWITCH_20_DIGITAL_ID);
+    m_button[TeleopControlMappingEnums::GAMEPAD_SWITCH_21] = std::make_unique<DigitalButton>(m_gamepad, SWITCH_21_DIGITAL_ID);
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_14_UP] = std::make_unique<DigitalButton>(m_gamepad, LEVER_14_UP_DIGITAL_ID);
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_14_DOWN] = std::make_unique<DigitalButton>(m_gamepad, LEVER_14_DOWN_DIGITAL_ID);
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_15_UP] = std::make_unique<DigitalButton>(m_gamepad, LEVER_15_UP_DIGITAL_ID);
+    m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_15_DOWN] = std::make_unique<DigitalButton>(m_gamepad, LEVER_15_DOWN_DIGITAL_ID);
 }
 
 DragonGamepad::~DragonGamepad()
 {
+    for (auto &button : m_button)
+    {
+        delete button;
+        button = nullptr;
+    }
+    for (auto &axis : m_axis)
+    {
+        delete axis;
+        axis = nullptr;
+    }
     delete m_gamepad;
     m_gamepad = nullptr;
 }
@@ -126,9 +132,9 @@ void DragonGamepad::SetButtonMode(
         if (mode == TeleopControlMappingEnums::BUTTON_MODE::TOGGLE)
         {
             // Only wrap if not already a toggle to avoid leaking nested decorators
-            if (dynamic_cast<ToggleButton *>(m_button[button]) == nullptr)
+            if (dynamic_cast<ToggleButton *>(m_button[button].get()) == nullptr)
             {
-                m_button[button] = new ToggleButton(m_button[button]);
+                m_button[button] = std::make_unique<ToggleButton>(std::move(m_button[button]));
             }
         }
     }

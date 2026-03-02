@@ -16,6 +16,7 @@
 #pragma once
 
 // C++ Includes
+#include <memory>
 
 // FRC includes
 
@@ -54,14 +55,14 @@ public:
     bool WasButtonPressed() const override;
 
     ButtonDecorator(
-        IButton *button // <I> - concrete button to decorate
+        std::unique_ptr<IButton> button // <I> - concrete button to decorate (takes ownership)
     );
     ButtonDecorator() = delete;
     ~ButtonDecorator() override;
 
 protected:
-    inline IButton *GetButton() { return m_button; }
+    inline IButton *GetButton() { return m_button.get(); }
 
 private:
-    IButton *m_button;
+    std::unique_ptr<IButton> m_button;
 };

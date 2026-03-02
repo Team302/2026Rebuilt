@@ -22,7 +22,6 @@
 
 // Team 302 includes
 #include "utils/logging/debug/Logger.h"
-#include <gamepad/IDragonGamepad.h>
 #include <gamepad/axis/AnalogAxis.h>
 #include <gamepad/axis/CubedProfile.h>
 #include <gamepad/axis/DeadbandValue.h>
