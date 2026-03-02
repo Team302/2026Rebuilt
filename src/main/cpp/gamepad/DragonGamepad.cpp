@@ -64,11 +64,6 @@ DragonGamepad::DragonGamepad(
     m_axis[TeleopControlMappingEnums::DIAL_ANALOG_BUTTON_AXIS]->SetDeadBand(TeleopControlMappingEnums::AXIS_DEADBAND::NONE);
 
     // Create Button objects
-    for (auto inx = 0; inx < TeleopControlMappingEnums::MAX_BUTTONS; ++inx)
-    {
-        m_button[inx] = nullptr;
-    }
-
     m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_1] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::LEFT_ANALOG_BUTTON_AXIS], BUTTON_1_LOWERBOUND, BUTTON_1_UPPERBOUND);
     m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_3] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::LEFT_ANALOG_BUTTON_AXIS], BUTTON_3_LOWERBOUND, BUTTON_3_UPPERBOUND);
     m_button[TeleopControlMappingEnums::GAMEPAD_BUTTON_6] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::LEFT_ANALOG_BUTTON_AXIS], BUTTON_6_LOWERBOUND, BUTTON_6_UPPERBOUND);
