@@ -98,6 +98,7 @@ void Intake::CreateAndRegisterStates()
 	EmptyHopperStateInst->RegisterTransitionState(OffStateInst);
 	EmptyHopperStateInst->RegisterTransitionState(IntakeStateInst);
 	LoadHopperStateInst->RegisterTransitionState(OffStateInst);
+	LoadHopperStateInst->RegisterTransitionState(IntakeStateInst);
 }
 
 Intake::Intake(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANISM_TYPE::INTAKE, std::string("Intake")),
