@@ -99,9 +99,18 @@ public:
     static constexpr int kNumLimelights = 3;
 
     /// @brief Index constants for each Limelight in the health-check array.
-    static constexpr int kBackLeftLimelightIndex = 0;
-    static constexpr int kBackRightLimelightIndex = 1;
-    static constexpr int kClimberLimelightIndex = 2;
+    /// @details
+    ///   - The ordering of these indices MUST match the numeric values of
+    ///     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER.
+    ///   - HealthCheckAllLimelights() and any health/status arrays are ordered
+    ///     according to DRAGON_LIMELIGHT_CAMERA_IDENTIFIER:
+    ///       BACK_RIGHT (0), BACK_LEFT (1), FRONT (2).
+    static constexpr int kBackRightLimelightIndex =
+        static_cast<int>(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::BACK_RIGHT);
+    static constexpr int kBackLeftLimelightIndex =
+        static_cast<int>(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::BACK_LEFT);
+    static constexpr int kFrontLimelightIndex =
+        static_cast<int>(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::FRONT);
 
     /// @brief Get the singleton instance of DragonVision.
     /// @note Not thread-safe for initialization; if called concurrently during startup,
