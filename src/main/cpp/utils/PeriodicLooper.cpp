@@ -200,7 +200,7 @@ void PeriodicLooper::SetGamePadTransitions(const vector<StateMgr *> &mgrs, bool 
 /**
  * @brief Run the periodic common tasks and current state for each manager.
  *
- * The managers are provided by value to keep the signature simple. Each
+ * The managers are provided as a const reference to avoid unnecessary copies. Each
  * manager will first have its common periodic work run, followed by a call
  * to RunCurrentState() to execute the active state's logic.
  */
