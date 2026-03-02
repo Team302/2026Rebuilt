@@ -92,7 +92,7 @@ public:
 
     /// @brief  Retrieve the identifier
     /// @return std::string the identifier
-    inline std::string GetIdentifier() const { return m_identifier; }
+    inline const std::string &GetIdentifier() const { return m_identifier; }
     inline void SetIdentifier(std::string id) { m_identifier = id; }
 
     /// @brief  Retrieve the P coefficient for a PID-based control mode

@@ -45,7 +45,7 @@ public:
 
     /// @brief indicate the Network Table name used to setting tracking parameters
     /// @return std::string the name of the network table
-    virtual std::string GetNetworkTableName() const;
+    virtual const std::string &GetNetworkTableName() const;
 
     /// @brief log data to the network table if it is activated and time period has past
     void LogInformation();
