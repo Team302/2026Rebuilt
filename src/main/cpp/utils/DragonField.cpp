@@ -61,7 +61,7 @@ void DragonField::UpdateRobotPosition(frc::Pose2d robotPose)
 /// @param name The name identifier for the object.
 /// @param pose The initial pose of the object.
 /// @param defaultSelectorValue Whether the object should be enabled by default on the field.
-void DragonField::AddObject(std::string name, frc::Pose2d pose, bool defaultSelectorValue)
+void DragonField::AddObject(const std::string &name, frc::Pose2d pose, bool defaultSelectorValue)
 {
     if (!defaultSelectorValue)
         pose = frc::Pose2d(99_m, 99_m, frc::Rotation2d()); // place out of view when not enabled initially
@@ -73,7 +73,7 @@ void DragonField::AddObject(std::string name, frc::Pose2d pose, bool defaultSele
 /// @brief Add a trajectory to be displayed on the field.
 /// @param name The name identifier for the trajectory.
 /// @param trajectory The trajectory to display.
-void DragonField::AddTrajectory(std::string name, frc::Trajectory trajectory)
+void DragonField::AddTrajectory(const std::string &name, frc::Trajectory trajectory)
 {
     m_objects.emplace_back(m_field.GetObject(name));
     m_field.GetObject(name)->SetTrajectory(trajectory);
@@ -92,7 +92,7 @@ void DragonField::ResetField()
 /// @brief Update the pose of a specific field object if it is enabled.
 /// @param name The name identifier of the object to update.
 /// @param object The new pose for the object.
-void DragonField::UpdateObject(std::string name, frc::Pose2d object)
+void DragonField::UpdateObject(const std::string &name, frc::Pose2d object)
 {
     auto objectPair = std::find_if(m_objectNameEnabled.begin(), m_objectNameEnabled.end(),
                                    [&name](const std::pair<std::string, bool> &pair)
@@ -120,7 +120,7 @@ void DragonField::UpdateEnabledStates()
 /// @brief Add a boolean selector to SmartDashboard for enabling/disabling a field object.
 /// @param name The name identifier for the object.
 /// @param defaultValue The default enabled state for the selector.
-void DragonField::AddSelector(std::string name, bool defaultValue)
+void DragonField::AddSelector(const std::string &name, bool defaultValue)
 {
     frc::SmartDashboard::PutBoolean(name + " Enabled On Field", defaultValue);
     m_objectNameEnabled.emplace_back(name, defaultValue);
