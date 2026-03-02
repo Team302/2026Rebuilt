@@ -19,19 +19,6 @@ class Telemetry : public DragonDataLogger
 private:
     units::meters_per_second_t MaxSpeed = 0_mps; // Maximum speed of the robot, set by chassis configuration manager
 
-    /* What to publish over networktables for telemetry */
-    nt::NetworkTableInstance inst = nt::NetworkTableInstance::GetDefault();
-
-    /* Robot swerve drive state */
-    std::shared_ptr<nt::NetworkTable> driveStateTable = inst.GetTable("DriveState");
-    nt::StructPublisher<frc::Pose2d> drivePose = driveStateTable->GetStructTopic<frc::Pose2d>("Pose").Publish();
-    nt::StructPublisher<frc::ChassisSpeeds> driveSpeeds = driveStateTable->GetStructTopic<frc::ChassisSpeeds>("Speeds").Publish();
-    nt::StructArrayPublisher<frc::SwerveModuleState> driveModuleStates = driveStateTable->GetStructArrayTopic<frc::SwerveModuleState>("ModuleStates").Publish();
-    nt::StructArrayPublisher<frc::SwerveModuleState> driveModuleTargets = driveStateTable->GetStructArrayTopic<frc::SwerveModuleState>("ModuleTargets").Publish();
-    nt::StructArrayPublisher<frc::SwerveModulePosition> driveModulePositions = driveStateTable->GetStructArrayTopic<frc::SwerveModulePosition>("ModulePositions").Publish();
-    nt::DoublePublisher driveTimestamp = driveStateTable->GetDoubleTopic("Timestamp").Publish();
-    nt::DoublePublisher driveOdometryFrequency = driveStateTable->GetDoubleTopic("OdometryFrequency").Publish();
-
     /* Mechanisms to represent the swerve module states */
     std::array<frc::Mechanism2d, 4> m_moduleMechanisms{
         frc::Mechanism2d{1, 1},
@@ -61,6 +48,15 @@ private:
     std::array<frc::SwerveModuleState, 4> m_cachedModuleTargets;
     std::array<frc::SwerveModulePosition, 4> m_cachedModulePositions;
     units::second_t m_cachedOdometryPeriod;
+
+    static constexpr std::string_view m_loggerName = "Swervetelemetry";
+    static constexpr std::string_view m_loggingModuleActual = "/Chassis/ModuleActualState";
+    static constexpr std::string_view m_loggingModuleTarget = "/Chassis/ModuleTargetState";
+
+    static constexpr std::string_view m_loggingPose2d = "/Chassis/Pose2d";
+    static constexpr std::string_view m_loggingChassisSpeeds = "/Chassis/ChassisSpeeds";
+    static constexpr std::string_view m_loggingOdometryPeriod = "/Chassis/OdometryPeriod";
+    static constexpr std::string_view m_loggingSeconds = "Seconds";
 
 public:
     /**

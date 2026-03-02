@@ -70,9 +70,12 @@ struct DriveToPoses DriveToOutpost::GetDriveToPoses()
     auto outpostHelper = OutpostHelper::GetInstance();
     if (outpostHelper != nullptr)
     {
-        poses.endPose = outpostHelper->CalcOutpostPose();
+        // Use combined method to compute both poses in a single pass
+        // (avoids 3x redundant IsNearestOutpostRed() + GetPose() calls)
+        auto outpostPoses = outpostHelper->CalcOutpostPoses();
+        poses.endPose = outpostPoses.endPose;
         poses.hasMidPose = true;
-        poses.midPose = outpostHelper->CalcOutpostOffsetPose();
+        poses.midPose = outpostPoses.offsetPose;
 
         return poses;
     }

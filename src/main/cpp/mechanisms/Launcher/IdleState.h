@@ -46,7 +46,7 @@ namespace LauncherStates
 		void InitCompBot302();
 		RobotIdentifier m_RobotId;
 
-		const double m_launcherTarget = double(0.3);
+		const double m_launcherTarget = double(0.2);
 		const units::angle::turn_t m_hoodTarget = units::angle::turn_t(0);
 		const double m_transferTarget = double(0);
 		const units::angle::turn_t m_turretTarget = units::angle::turn_t(0);

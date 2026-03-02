@@ -40,7 +40,7 @@
 
 #include "RobotIdentifier.h"
 
-class Intake : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber
+class Intake : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger
 {
 public:
 	enum STATE_NAMES
@@ -87,7 +87,7 @@ public:
 	void CreateAndRegisterStates();
 	void Cyclic();
 	void RunCommonTasks() override;
-	// void DataLog() override;
+	void DataLog(uint64_t timestamp) override;
 
 	RobotIdentifier getActiveRobotId() { return m_activeRobotId; }
 
@@ -108,12 +108,11 @@ public:
 	void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
 	bool IsInClimbMode() const { return m_isInClimbMode; }
 	bool IsLaunching() const { return m_isLaunching; }
-	bool IsIntakeIn() const { return (m_extender->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround); }
+	bool IsIntakeIn() const { return (m_extender->GetReverseLimit(false).GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround); }
 
 protected:
 	RobotIdentifier m_activeRobotId;
 	std::string m_ntName;
-
 	ControlData *GetControlData(std::string name) override;
 
 private:
@@ -131,15 +130,20 @@ private:
 
 	ctre::phoenix6::controls::DutyCycleOut m_intakePercentOut{0.0};
 	ctre::phoenix6::controls::DutyCycleOut m_extenderPercentOut{0.0};
-	ctre::phoenix6::controls::PositionVoltage m_extenderPositionDeg{units::angle::degree_t(0.0)};
+	ctre::phoenix6::controls::PositionVoltage m_extenderPositionDeg{units::angle::degree_t(20.0)};
 	ctre::phoenix6::controls::ControlRequest *m_intakeActiveTarget = &m_intakePercentOut;
 	ctre::phoenix6::controls::ControlRequest *m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
 
 	bool m_isInClimbMode = false;
 	bool m_isLaunching = false;
 	bool m_prevIntakeSwitchState = false;
-	// void InitializeLogging();
 
-	units::angle::turn_t m_intakeRetractedPositionTarget{0.0};
-	units::angle::turn_t m_intakeExtendedPositionTarget{0.0};
+	units::angle::turn_t m_intakeRetractedPositionTarget{20.0};
+	units::angle::turn_t m_intakeExtendedPositionTarget{120.0};
+
+	// logging paths
+	static constexpr std::string_view m_intakeStatePath = "/Intake/State";
+	static constexpr std::string_view m_intakePercentOutPath = "/Intake/TargetPercentOut";
+	static constexpr std::string_view m_extenderExtendedPath = "/Intake/Extender/Extended";
+	static constexpr std::string_view m_loggingpercentUnit = "Percent";
 };

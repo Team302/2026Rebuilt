@@ -84,6 +84,7 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "configs/MechanismConfigMgr.h"
 #include "feedback/DriverFeedback.h"
+#include "feedback/GameDataHelper.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/DriverStation.h"
 #include "frc/RobotController.h"
@@ -95,7 +96,6 @@
 #include "utils/logging/debug/Logger.h"
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include "vision/DragonVision.h"
-#include "feedback/GameDataHelper.h"
 
 #include "auton/NeutralZoneManager.h"
 
@@ -146,6 +146,7 @@ void Robot::DisabledPeriodic()
     PeriodicLooper::GetInstance()->DisabledRunCurrentState();
 
     m_field->UpdateEnabledStates();
+    FMSData::UpdateAllianceColor();
 }
 
 /// @brief Called once when autonomous mode begins.
@@ -266,7 +267,7 @@ void Robot::InitializeDriveteamFeedback()
 /// and refreshes driver feedback (dashboard HUD, camera feeds, etc.).
 void Robot::UpdateDriveTeamFeedback()
 {
-    if (m_previewer != nullptr)
+    if (m_previewer != nullptr && frc::DriverStation::IsDisabled())
     {
         m_previewer->CheckCurrentAuton();
     }
@@ -276,11 +277,11 @@ void Robot::UpdateDriveTeamFeedback()
     {
         m_field->UpdateRobotPosition(chassis->GetPose());
     }
-    // auto feedback = DriverFeedback::GetInstance();
-    // if (feedback != nullptr)
-    // {
-    //     feedback->UpdateFeedback();
-    // }
+    auto feedback = DriverFeedback::GetInstance();
+    if (feedback != nullptr)
+    {
+        feedback->UpdateFeedback();
+    }
 }
 
 #ifndef RUNNING_FRC_TESTS

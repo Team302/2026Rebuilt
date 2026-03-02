@@ -18,8 +18,8 @@
 
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "fielddata/FieldConstants.h"
-#include "frc/geometry/Pose2d.h"
 #include "frc/DriverStation.h"
+#include "frc/geometry/Pose2d.h"
 
 //====================================================================================================================================================
 /// @class TowerHelper
@@ -77,5 +77,5 @@ private:
     units::length::inch_t m_towerOutpostXOffset{12.0};
     units::length::inch_t m_towerOutpostYOffset{12.0};
 
-    frc::DriverStation::Alliance m_allianceColor;
+    mutable frc::DriverStation::Alliance m_allianceColor;
 };

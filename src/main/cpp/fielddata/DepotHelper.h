@@ -71,6 +71,13 @@ private:
     //------------------------------------------------------------------
     bool IsNearestDepotRed() const;
 
+    //------------------------------------------------------------------
+    /// @brief      Determines which depot (red or blue) is nearest using a pre-fetched pose
+    /// @param[in]  currentPose - The robot's current pose (avoids redundant GetPose() call)
+    /// @return     bool - true if the red depot is nearest, false if blue depot is nearest
+    //------------------------------------------------------------------
+    bool IsNearestDepotRed(const frc::Pose2d &currentPose) const;
+
     /// @brief Pointer to the swerve drivetrain subsystem
     subsystems::CommandSwerveDrivetrain *m_chassis;
 

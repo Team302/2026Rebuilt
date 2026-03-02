@@ -1,4 +1,5 @@
 #include "chassis/generated/Telemetry.h"
+#include "utils/logging/debug/Logger.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 
 using namespace ctre::phoenix6;
@@ -10,24 +11,13 @@ Telemetry::Telemetry()
     {
         frc::SmartDashboard::PutData("Module " + std::to_string(i), &m_moduleMechanisms[i]);
     }
-
-    // Register this instance with DragonDataLoggerMgr for periodic logging
-    DragonDataLoggerMgr::GetInstance()->RegisterItem(this);
 }
 
 void Telemetry::Telemeterize(subsystems::CommandSwerveDrivetrain::SwerveDriveState const &state)
 {
+    auto logger = Logger::GetLogger();
     ChassisConfigMgr *configMgr = ChassisConfigMgr::GetInstance();
     MaxSpeed = configMgr->GetMaxSpeed();
-
-    /* Telemeterize the swerve drive state */
-    drivePose.Set(state.Pose);
-    driveSpeeds.Set(state.Speeds);
-    driveModuleStates.Set(state.ModuleStates);
-    driveModuleTargets.Set(state.ModuleTargets);
-    driveModulePositions.Set(state.ModulePositions);
-    driveTimestamp.Set(state.Timestamp.value());
-    driveOdometryFrequency.Set(1.0 / state.OdometryPeriod.value());
 
     // Cache state data for periodic logging
     m_cachedPose = state.Pose;
@@ -53,27 +43,44 @@ void Telemetry::Telemeterize(subsystems::CommandSwerveDrivetrain::SwerveDriveSta
         m_moduleSpeeds[i]->SetAngle(state.ModuleStates[i].angle.Degrees());
         m_moduleSpeeds[i]->SetLength(state.ModuleStates[i].speed / (2 * MaxSpeed));
     }
+
+    double x = m_cachedPose.X().value();
+    double y = m_cachedPose.Y().value();
+    double rot = m_cachedPose.Rotation().Radians().value();
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("Pose2dX"), x);
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("Pose2dY"), y);
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("Pose2dRotation"), rot);
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("FrontLeftActualStateSpeed"), m_cachedModuleStates[0].speed.value());
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("FrontLeftActualStateAngle"), m_cachedModuleStates[0].angle.Degrees().value());
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("FrontRightActualStateSpeed"), m_cachedModuleStates[1].speed.value());
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("FrontRightActualStateAngle"), m_cachedModuleStates[1].angle.Degrees().value());
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("BackLeftActualStateSpeed"), m_cachedModuleStates[2].speed.value());
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("BackLeftActualStateAngle"), m_cachedModuleStates[2].angle.Degrees().value());
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("BackRightActualStateSpeed"), m_cachedModuleStates[3].speed.value());
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("BackRightActualStateAngle"), m_cachedModuleStates[3].angle.Degrees().value());
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("FrontLeftTargetStateSpeed"), m_cachedModuleTargets[0].speed.value());
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("FrontLeftTargetStateAngle"), m_cachedModuleTargets[0].angle.Degrees().value());
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("FrontRightTargetStateSpeed"), m_cachedModuleTargets[1].speed.value());
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("FrontRightTargetStateAngle"), m_cachedModuleTargets[1].angle.Degrees().value());
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("BackLeftTargetStateSpeed"), m_cachedModuleTargets[2].speed.value());
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("BackLeftTargetStateAngle"), m_cachedModuleTargets[2].angle.Degrees().value());
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("BackRightTargetStateSpeed"), m_cachedModuleTargets[3].speed.value());
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("BackRightTargetStateAngle"), m_cachedModuleTargets[3].angle.Degrees().value());
+    logger->LogData(LOGGER_LEVEL::PRINT, std::string("SwerveTelemetry"), std::string("OdometryPeriod"), m_cachedOdometryPeriod.value());
 }
 
 void Telemetry::DataLog(uint64_t timestamp)
 {
     /* Log the cached drive state data using DragonDataLogger methods */
-    Log2DPoseData(timestamp, DragonDataLogger::PoseSingals::CURRENT_CHASSIS_POSE2D, m_cachedPose);
-    LogChassisSpeedsData(timestamp, DragonDataLogger::ChassisSpeedSignals::ACTUAL_SPEEDS, m_cachedSpeeds);
+    LogPose2dData(timestamp, m_loggingPose2d, m_cachedPose);
+
+    LogChassisSpeedsData(timestamp, m_loggingChassisSpeeds, m_cachedSpeeds);
 
     // Log module states
-    LogSwerveModuleStateData(timestamp, DragonDataLogger::SwerveStateSingals::ACTUAL_LEFT_FRONT_STATE, m_cachedModuleStates[0]);
-    LogSwerveModuleStateData(timestamp, DragonDataLogger::SwerveStateSingals::ACTUAL_RIGHT_FRONT_STATE, m_cachedModuleStates[1]);
-    LogSwerveModuleStateData(timestamp, DragonDataLogger::SwerveStateSingals::ACTUAL_LEFT_BACK_STATE, m_cachedModuleStates[2]);
-    LogSwerveModuleStateData(timestamp, DragonDataLogger::SwerveStateSingals::ACTUAL_RIGHT_BACK_STATE, m_cachedModuleStates[3]);
+    LogSwerveModuleStateData(timestamp, m_loggingModuleActual, m_cachedModuleStates);
 
     // Log module targets
-    LogSwerveModuleStateData(timestamp, DragonDataLogger::SwerveStateSingals::TARGET_LEFT_FRONT_STATE, m_cachedModuleTargets[0]);
-    LogSwerveModuleStateData(timestamp, DragonDataLogger::SwerveStateSingals::TARGET_RIGHT_FRONT_STATE, m_cachedModuleTargets[1]);
-    LogSwerveModuleStateData(timestamp, DragonDataLogger::SwerveStateSingals::TARGET_LEFT_BACK_STATE, m_cachedModuleTargets[2]);
-    LogSwerveModuleStateData(timestamp, DragonDataLogger::SwerveStateSingals::TARGET_RIGHT_BACK_STATE, m_cachedModuleTargets[3]);
-
-    // Note: Module positions are not directly supported by DragonDataLogger's existing methods
-    // OdometryPeriod can be logged as a double if needed
-    LogDoubleData(timestamp, DragonDataLogger::DoubleSignals::CHASSIS_YAW_DEGREES, m_cachedOdometryPeriod.value());
+    LogSwerveModuleStateData(timestamp, m_loggingModuleTarget, m_cachedModuleTargets);
+    // OdometryPeriod logged as a double
+    LogDoubleData(timestamp, m_loggingOdometryPeriod, m_cachedOdometryPeriod.value(), m_loggingSeconds);
 }

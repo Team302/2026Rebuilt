@@ -305,7 +305,11 @@ units::angle::degree_t Climber::GetPigeonPitch()
 	units::angle::degree_t pigeonPitch = m_chassis->GetPigeon2().GetPitch().GetValue();
 	return pigeonPitch;
 }
-
+void Climber::DataLog(uint64_t timestamp)
+{
+	// Mechanism state
+	LogStringData(timestamp, m_climberStatePath, GetCurrentStateName());
+}
 std::string Climber::GetCurrentStateName()
 {
 	STATE_NAMES state = static_cast<STATE_NAMES>(GetCurrentState());

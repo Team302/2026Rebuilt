@@ -36,17 +36,17 @@ public:
     WPISignalLogger() = default;
     ~WPISignalLogger() override = default;
 
-    void WriteBoolean(std::string signalID, bool value, uint64_t timestamp) override;
-    void WriteDouble(std::string signalID, double value, std::string_view units, uint64_t timestamp) override;
-    void WriteInteger(std::string signalID, int64_t value, std::string_view units, uint64_t timestamp) override;
-    void WriteString(std::string signalID, const std::string &value, uint64_t timestamp) override;
-    void WriteDoubleArray(std::string signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp) override;
+    void WriteBoolean(std::string_view signalID, bool value, uint64_t timestamp) override;
+    void WriteDouble(std::string_view signalID, double value, std::string_view units, uint64_t timestamp) override;
+    void WriteInteger(std::string_view signalID, int64_t value, std::string_view units, uint64_t timestamp) override;
+    void WriteString(std::string_view signalID, const std::string &value, uint64_t timestamp) override;
+    void WriteDoubleArray(std::string_view signalID, const std::vector<double> &value, std::string_view units, uint64_t timestamp) override;
 
-    void WritePose2d(std::string signalID, const frc::Pose2d &value, uint64_t timestamp) override;
-    void WritePose3d(std::string signalID, const frc::Pose3d &value, uint64_t timestamp) override;
-    void WriteChassisSpeeds(std::string signalID, const frc::ChassisSpeeds &value, uint64_t timestamp) override;
-    void WriteSwerveModuleState(std::string signalID, const frc::SwerveModuleState &value, uint64_t timestamp) override;
-    void WriteGamePadState(std::string signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs, uint64_t timestamp) override;
+    void WritePose2d(std::string_view signalID, const frc::Pose2d &value, uint64_t timestamp) override;
+    void WritePose3d(std::string_view signalID, const frc::Pose3d &value, uint64_t timestamp) override;
+    void WriteChassisSpeeds(std::string_view signalID, const frc::ChassisSpeeds &value, uint64_t timestamp) override;
+    void WriteSwerveModuleState(std::string_view signalID, const std::array<frc::SwerveModuleState, 4> &value, uint64_t timestamp) override;
+    void WriteGamePadState(std::string_view signalID, const std::array<double, 6> axes, const std::array<bool, 10> buttons, const std::array<int, 1> povs, uint64_t timestamp) override;
     void Start() override;
     void Stop() override;
 
@@ -88,7 +88,7 @@ private:
     wpi::log::StructLogEntry<frc::ChassisSpeeds> &GetChassisSpeedsEntry(const std::string &signalID);
 
     /// Get or create a StructLogEntry<SwerveModuleState> for the given signal path
-    wpi::log::StructLogEntry<frc::SwerveModuleState> &GetSwerveModuleStateEntry(const std::string &signalID);
+    wpi::log::StructLogEntry<std::array<frc::SwerveModuleState, 4>> &GetSwerveModuleStateEntry(const std::string &signalID);
 
     std::unordered_map<std::string, std::unique_ptr<wpi::log::BooleanLogEntry>> m_boolEntries;
     std::unordered_map<std::string, std::unique_ptr<wpi::log::DoubleLogEntry>> m_doubleEntries;
@@ -101,5 +101,5 @@ private:
     std::unordered_map<std::string, std::unique_ptr<wpi::log::StructLogEntry<frc::Pose2d>>> m_pose2dEntries;
     std::unordered_map<std::string, std::unique_ptr<wpi::log::StructLogEntry<frc::Pose3d>>> m_pose3dEntries;
     std::unordered_map<std::string, std::unique_ptr<wpi::log::StructLogEntry<frc::ChassisSpeeds>>> m_chassisSpeedsEntries;
-    std::unordered_map<std::string, std::unique_ptr<wpi::log::StructLogEntry<frc::SwerveModuleState>>> m_swerveModuleStateEntries;
+    std::unordered_map<std::string, std::unique_ptr<wpi::log::StructLogEntry<std::array<frc::SwerveModuleState, 4>>>> m_swerveModuleStateEntries;
 };
