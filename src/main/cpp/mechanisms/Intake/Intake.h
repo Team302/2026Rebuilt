@@ -49,7 +49,8 @@ public:
 		STATE_INTAKE,
 		STATE_EXPEL,
 		STATE_LAUNCH,
-		STATE_EMPTY_HOPPER
+		STATE_EMPTY_HOPPER,
+		STATE_LOAD_HOPPER
 	};
 
 	Intake(RobotIdentifier activeRobotId);

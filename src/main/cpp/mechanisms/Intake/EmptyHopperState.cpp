@@ -75,5 +75,5 @@ bool EmptyHopperState::AtTarget()
 bool EmptyHopperState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return (m_mechanism->IsInClimbMode() && m_mechanism->GetCurrentState() != m_mechanism->STATE_LAUNCH);
+	return (m_mechanism->IsInClimbMode() && m_mechanism->GetCurrentState() != m_mechanism->STATE_LAUNCH && !m_mechanism->IsIntakeIn());
 }
