@@ -91,7 +91,7 @@ public:
     inline void SetRunLoc(ControlModes::CONTROL_RUN_LOCS loc) { m_runLoc = loc; }
 
     /// @brief  Retrieve the identifier
-    /// @return std::string the identifier
+    /// @return const std::string& - reference to the internal identifier string
     inline const std::string &GetIdentifier() const { return m_identifier; }
     inline void SetIdentifier(std::string id) { m_identifier = id; }
 
