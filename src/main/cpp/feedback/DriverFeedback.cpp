@@ -314,7 +314,7 @@ void DriverFeedback::UpdateDiagnosticLEDs()
         auto limelightRunning = m_dragonVision->HealthCheckAllLimelights();
         backLeftLL = limelightRunning[DragonVision::kBackLeftLimelightIndex];
         backRightLL = limelightRunning[DragonVision::kBackRightLimelightIndex];
-        climberLL = limelightRunning[DragonVision::kClimberLimelightIndex];
+        climberLL = limelightRunning[DragonVision::kFrontLimelightIndex];
 
         questStatus = m_dragonVision->HealthCheckQuest();
 
