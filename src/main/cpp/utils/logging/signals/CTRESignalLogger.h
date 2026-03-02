@@ -34,7 +34,7 @@ public:
     void WritePose2d(std::string_view signalID, const frc::Pose2d &value, uint64_t timestamp) override;
     void WritePose3d(std::string_view signalID, const frc::Pose3d &value, uint64_t timestamp) override;
     void WriteChassisSpeeds(std::string_view signalID, const frc::ChassisSpeeds &value, uint64_t timestamp) override;
-    void WriteSwerveModuleState(std::string_view signalID, const frc::SwerveModuleState &value, uint64_t timestamp) override;
+    void WriteSwerveModuleState(std::string_view signalID, const std::array<frc::SwerveModuleState, 4> &value, uint64_t timestamp) override;
     void WriteGamePadState(std::string_view signalID, const std::array<double, 6>, const std::array<bool, 10>, const std::array<int, 1>, uint64_t timestamp) override;
     void Start() override;
     void Stop() override;
@@ -43,7 +43,6 @@ public:
 private:
     std::string CreateLogFileName();
     std::string GetLoggingDir();
-    units::time::second_t ConvertToSeconds(uint64_t timestamp);
     units::time::second_t ConvertMicrosecondsToSeconds(uint64_t microseconds)
     {
         return units::time::second_t(static_cast<double>(microseconds) * 1e-6);

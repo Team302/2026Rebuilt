@@ -140,9 +140,9 @@ void DragonQuest::GetEstimatedPose()
 // ──────────────────────────────────────────────────────────────────────────────
 void DragonQuest::DataLog(uint64_t timestamp)
 {
-    LogPose3dData(timestamp, "/Chassis/QuestPose3d", m_lastCalculatedPose);
-    LogBoolData(timestamp, "/Chassis/HasReset", m_hasReset);
-    LogBoolData(timestamp, "/Chassis/IsQuestEnabled", m_isQuestEnabled);
+    LogPose3dData(timestamp, m_questPosePath, m_lastCalculatedPose);
+    LogBoolData(timestamp, m_questHasResetPath, m_hasReset);
+    LogBoolData(timestamp, m_questIsEnabledPath, m_isQuestEnabled);
 }
 
 // ──────────────────────────────────────────────────────────────────────────────

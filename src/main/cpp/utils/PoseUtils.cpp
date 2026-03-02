@@ -78,7 +78,28 @@ bool PoseUtils::IsPoseAtOrigin(const frc::Pose2d &pose,
 //------------------------------------------------------------------
 FieldConstants::FIELD_ELEMENT PoseUtils::GetClosestFieldElement(const frc::Pose2d &pose, FieldConstants::FIELD_ELEMENT firstElement, FieldConstants::FIELD_ELEMENT secondElement)
 {
-    auto fieldConstants = FieldConstants::GetInstance();
+    return GetClosestFieldElement(pose, firstElement, secondElement, FieldConstants::GetInstance());
+}
+
+//------------------------------------------------------------------
+/// @brief      Determines which field element is closest using a cached FieldConstants pointer
+/// @param[in]  pose - Reference pose to measure from (typically robot position)
+/// @param[in]  firstElement - First field element to consider
+/// @param[in]  secondElement - Second field element to consider
+/// @param[in]  fieldConstants - Pre-fetched FieldConstants pointer (avoids singleton re-lookup)
+/// @return     The field element enum that is nearest to the given pose
+//------------------------------------------------------------------
+FieldConstants::FIELD_ELEMENT PoseUtils::GetClosestFieldElement(const frc::Pose2d &pose, FieldConstants::FIELD_ELEMENT firstElement, FieldConstants::FIELD_ELEMENT secondElement, FieldConstants *fieldConstants)
+{
+    if (fieldConstants == nullptr)
+    {
+        fieldConstants = FieldConstants::GetInstance();
+        if (fieldConstants == nullptr)
+        {
+            // Fallback if FieldConstants is unavailable; avoid dereferencing a null pointer.
+            return firstElement;
+        }
+    }
     auto firstElementPose = fieldConstants->GetFieldElementPose2d(firstElement);
     auto secondElementPose = fieldConstants->GetFieldElementPose2d(secondElement);
 

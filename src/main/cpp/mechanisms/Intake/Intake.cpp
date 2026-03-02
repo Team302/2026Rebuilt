@@ -396,52 +396,12 @@ void Intake::ManualControl()
 }
 void Intake::DataLog(uint64_t timestamp)
 {
-	// Intake motor signals
-	// LogDoubleData(timestamp, m_ntName + "/Intake/StatorCurrent", m_intake->GetStatorCurrent(false).GetValueAsDouble(), "Amps");
-	// LogDoubleData(timestamp, m_ntName + "/Intake/SupplyCurrent", m_intake->GetSupplyCurrent(false).GetValueAsDouble(), "Amps");
-	// LogDoubleData(timestamp, m_ntName + "/Intake/SupplyVoltage", m_intake->GetSupplyVoltage(false).GetValueAsDouble(), "Volts");
-	// LogDoubleData(timestamp, m_ntName + "/Intake/MotorVoltage", m_intake->GetMotorVoltage(false).GetValueAsDouble(), "Volts");
-	// LogDoubleData(timestamp, m_ntName + "/Intake/DutyCycle", m_intake->GetDutyCycle(false).GetValueAsDouble(), "Percent");
-	// LogDoubleData(timestamp, m_ntName + "/Intake/Velocity", m_intake->GetVelocity(false).GetValueAsDouble(), "rps");
-	// LogDoubleData(timestamp, m_ntName + "/Intake/Position", m_intake->GetPosition(false).GetValueAsDouble(), "rotations");
-	// LogDoubleData(timestamp, m_ntName + "/Intake/Temperature", m_intake->GetDeviceTemp(false).GetValueAsDouble(), "Degrees C");
-
-	// // Intake motor faults
-	// LogBoolData(timestamp, m_ntName + "/Intake/Fault/BootDuringEnable", m_intake->GetFault_BootDuringEnable(false).GetValue());
-	// LogBoolData(timestamp, m_ntName + "/Intake/Fault/DeviceTemp", m_intake->GetFault_DeviceTemp(false).GetValue());
-	// LogBoolData(timestamp, m_ntName + "/Intake/Fault/Hardware", m_intake->GetFault_Hardware(false).GetValue());
-	// LogBoolData(timestamp, m_ntName + "/Intake/Fault/Undervoltage", m_intake->GetFault_Undervoltage(false).GetValue());
-	// LogBoolData(timestamp, m_ntName + "/Intake/Fault/OverSupplyV", m_intake->GetFault_OverSupplyV(false).GetValue());
-	// LogBoolData(timestamp, m_ntName + "/Intake/Fault/UnstableSupplyV", m_intake->GetFault_UnstableSupplyV(false).GetValue());
-	// LogBoolData(timestamp, m_ntName + "/Intake/Fault/StatorCurrLimit", m_intake->GetFault_StatorCurrLimit(false).GetValue());
-	// LogBoolData(timestamp, m_ntName + "/Intake/Fault/SupplyCurrLimit", m_intake->GetFault_SupplyCurrLimit(false).GetValue());
-
-	// // Extender motor signals
-	// LogDoubleData(timestamp, m_ntName + "/Extender/StatorCurrent", m_extender->GetStatorCurrent(false).GetValueAsDouble(), "Amps");
-	// LogDoubleData(timestamp, m_ntName + "/Extender/SupplyCurrent", m_extender->GetSupplyCurrent(false).GetValueAsDouble(), "Amps");
-	// LogDoubleData(timestamp, m_ntName + "/Extender/SupplyVoltage", m_extender->GetSupplyVoltage(false).GetValueAsDouble(), "Volts");
-	// LogDoubleData(timestamp, m_ntName + "/Extender/MotorVoltage", m_extender->GetMotorVoltage(false).GetValueAsDouble(), "Volts");
-	// LogDoubleData(timestamp, m_ntName + "/Extender/DutyCycle", m_extender->GetDutyCycle(false).GetValueAsDouble(), "Percent");
-	// LogDoubleData(timestamp, m_ntName + "/Extender/Velocity", m_extender->GetVelocity(false).GetValueAsDouble(), "rps");
-	// LogDoubleData(timestamp, m_ntName + "/Extender/Position", m_extender->GetPosition(false).GetValueAsDouble(), "rotations");
-	// LogDoubleData(timestamp, m_ntName + "/Extender/Temperature", m_extender->GetDeviceTemp(false).GetValueAsDouble(), "Degrees C");
-
-	// // Extender motor faults
-	// LogBoolData(timestamp, m_ntName + "/Extender/Fault/BootDuringEnable", m_extender->GetFault_BootDuringEnable(false).GetValue());
-	// LogBoolData(timestamp, m_ntName + "/Extender/Fault/DeviceTemp", m_extender->GetFault_DeviceTemp(false).GetValue());
-	// LogBoolData(timestamp, m_ntName + "/Extender/Fault/Hardware", m_extender->GetFault_Hardware(false).GetValue());
-	// LogBoolData(timestamp, m_ntName + "/Extender/Fault/Undervoltage", m_extender->GetFault_Undervoltage(false).GetValue());
-	// LogBoolData(timestamp, m_ntName + "/Extender/Fault/OverSupplyV", m_extender->GetFault_OverSupplyV(false).GetValue());
-	// LogBoolData(timestamp, m_ntName + "/Extender/Fault/UnstableSupplyV", m_extender->GetFault_UnstableSupplyV(false).GetValue());
-	// LogBoolData(timestamp, m_ntName + "/Extender/Fault/StatorCurrLimit", m_extender->GetFault_StatorCurrLimit(false).GetValue());
-	// LogBoolData(timestamp, m_ntName + "/Extender/Fault/SupplyCurrLimit", m_extender->GetFault_SupplyCurrLimit(false).GetValue());
-
 	// Control data
-	LogDoubleData(timestamp, m_ntName + "/Control/TargetPercentOut", m_intakePercentOut.Output.value(), "Percent");
+	LogDoubleData(timestamp, m_intakePercentOutPath, m_intakePercentOut.Output.value(), m_loggingpercentUnit);
 
 	// Mechanism state
-	LogStringData(timestamp, m_ntName + "/State", GetCurrentStateName());
-	LogBoolData(timestamp, m_ntName + "/IsIntakeExtended", IsIntakeIn());
+	LogStringData(timestamp, m_intakeStatePath, GetCurrentStateName());
+	LogBoolData(timestamp, m_extenderExtendedPath, !IsIntakeIn());
 }
 
 std::string Intake::GetCurrentStateName()

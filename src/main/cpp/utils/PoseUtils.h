@@ -89,4 +89,17 @@ public:
     /// @see        FieldConstants for available field elements
     //------------------------------------------------------------------
     static FieldConstants::FIELD_ELEMENT GetClosestFieldElement(const frc::Pose2d &pose, FieldConstants::FIELD_ELEMENT firstElement, FieldConstants::FIELD_ELEMENT secondElement);
+
+    //------------------------------------------------------------------
+    /// @brief      Determines which of two field elements is closest to a pose (using cached FieldConstants)
+    /// @param[in]  pose - Reference pose to measure from
+    /// @param[in]  firstElement - First field element to consider
+    /// @param[in]  secondElement - Second field element to consider
+    /// @param[in]  fieldConstants - Pointer to cached FieldConstants (avoids singleton re-lookup)
+    /// @return     The field element that is closest to the given pose
+    /// @details    Same as the other overload but uses a pre-fetched FieldConstants pointer
+    ///             instead of calling FieldConstants::GetInstance() internally. Preferred when
+    ///             the caller already has a cached FieldConstants pointer.
+    //------------------------------------------------------------------
+    static FieldConstants::FIELD_ELEMENT GetClosestFieldElement(const frc::Pose2d &pose, FieldConstants::FIELD_ELEMENT firstElement, FieldConstants::FIELD_ELEMENT secondElement, FieldConstants *fieldConstants);
 };

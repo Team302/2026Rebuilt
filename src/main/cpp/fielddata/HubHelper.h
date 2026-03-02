@@ -74,6 +74,13 @@ private:
     bool IsNearestHubRed() const;
 
     //------------------------------------------------------------------
+    /// @brief      Determines which Hub (red or blue) is nearest using a pre-fetched pose
+    /// @param[in]  currentPose - The robot's current pose (avoids redundant GetPose() call)
+    /// @return     bool - true if the red Hub is nearest, false if blue Hub is nearest
+    //------------------------------------------------------------------
+    bool IsNearestHubRed(const frc::Pose2d &currentPose) const;
+
+    //------------------------------------------------------------------
     /// @brief      Calculates the distance from a given pose to a field element
     /// @param[in]  element - The field element to calculate distance to
     /// @param[in]  currentPose - The pose to measure distance from
@@ -82,7 +89,7 @@ private:
     ///             components of the current pose and the field element pose.
     ///             This is a helper method used internally for distance comparisons.
     //------------------------------------------------------------------
-    units::length::meter_t CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element, frc::Pose2d currentPose) const;
+    units::length::meter_t CalcDistanceToObject(FieldConstants::FIELD_ELEMENT element, const frc::Pose2d &currentPose) const;
 
     /// @brief Pointer to the swerve drivetrain subsystem
     subsystems::CommandSwerveDrivetrain *m_chassis;

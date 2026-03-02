@@ -30,9 +30,7 @@
 #include "vision/Questnavlib/QuestNav.h"
 #include "networktables/NetworkTable.h"
 
-
 class DragonQuest : public IRobotStateChangeSubscriber, public DragonDataLogger
-
 {
 public:
     DragonQuest(
@@ -118,4 +116,10 @@ private:
 
     // ── Field visualisation ──
     DragonField *m_field = nullptr;
+
+    // logging strings
+
+    static constexpr std::string_view m_questHasResetPath = "/Chassis/QuestHasReset";
+    static constexpr std::string_view m_questIsEnabledPath = "/Chassis/IsQuestEnabled";
+    static constexpr std::string_view m_questPosePath = "/Chassis/QuestPose3d";
 };

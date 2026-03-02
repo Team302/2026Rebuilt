@@ -82,6 +82,10 @@ DragonXBox::DragonXBox(
     m_button[TeleopControlMappingEnums::POV_225] = new POVButton(m_xbox, 225);
     m_button[TeleopControlMappingEnums::POV_270] = new POVButton(m_xbox, 270);
     m_button[TeleopControlMappingEnums::POV_315] = new POVButton(m_xbox, 315);
+    if (port <= 1)
+    {
+        m_logThis = true;
+    }
 }
 
 DragonXBox::~DragonXBox()
@@ -295,25 +299,27 @@ void DragonXBox::SetRumble(
 
 void DragonXBox::DataLog(uint64_t timestamp)
 {
-    std::array<double, 6> axes;
-    std::array<bool, 10> buttons;
-    // axes[0] = GetAxisValue(TeleopControlMappingEnums::LEFT_JOYSTICK_X);
-    axes[frc::XboxController::Axis::kLeftX] = GetAxisValue(TeleopControlMappingEnums::LEFT_JOYSTICK_X);
-    axes[frc::XboxController::Axis::kLeftY] = GetAxisValue(TeleopControlMappingEnums::LEFT_JOYSTICK_Y);
-    axes[frc::XboxController::Axis::kLeftTrigger] = GetAxisValue(TeleopControlMappingEnums::LEFT_TRIGGER);
-    axes[frc::XboxController::Axis::kRightTrigger] = GetAxisValue(TeleopControlMappingEnums::RIGHT_TRIGGER);
-    axes[frc::XboxController::Axis::kRightX] = GetAxisValue(TeleopControlMappingEnums::RIGHT_JOYSTICK_X);
-    axes[frc::XboxController::Axis::kRightY] = GetAxisValue(TeleopControlMappingEnums::RIGHT_JOYSTICK_Y);
+    if (m_logThis)
+    {
+        std::array<double, 6> axes;
+        std::array<bool, 10> buttons;
+        axes[frc::XboxController::Axis::kLeftX] = GetAxisValue(TeleopControlMappingEnums::LEFT_JOYSTICK_X);
+        axes[frc::XboxController::Axis::kLeftY] = GetAxisValue(TeleopControlMappingEnums::LEFT_JOYSTICK_Y);
+        axes[frc::XboxController::Axis::kLeftTrigger] = GetAxisValue(TeleopControlMappingEnums::LEFT_TRIGGER);
+        axes[frc::XboxController::Axis::kRightTrigger] = GetAxisValue(TeleopControlMappingEnums::RIGHT_TRIGGER);
+        axes[frc::XboxController::Axis::kRightX] = GetAxisValue(TeleopControlMappingEnums::RIGHT_JOYSTICK_X);
+        axes[frc::XboxController::Axis::kRightY] = GetAxisValue(TeleopControlMappingEnums::RIGHT_JOYSTICK_Y);
 
-    buttons[frc::XboxController::Button::kA - 1] = IsButtonPressed(TeleopControlMappingEnums::A_BUTTON);
-    buttons[frc::XboxController::Button::kB - 1] = IsButtonPressed(TeleopControlMappingEnums::B_BUTTON);
-    buttons[frc::XboxController::Button::kX - 1] = IsButtonPressed(TeleopControlMappingEnums::X_BUTTON);
-    buttons[frc::XboxController::Button::kY - 1] = IsButtonPressed(TeleopControlMappingEnums::Y_BUTTON);
-    buttons[frc::XboxController::Button::kLeftBumper - 1] = IsButtonPressed(TeleopControlMappingEnums::LEFT_BUMPER);
-    buttons[frc::XboxController::Button::kRightBumper - 1] = IsButtonPressed(TeleopControlMappingEnums::RIGHT_BUMPER);
-    buttons[frc::XboxController::Button::kBack - 1] = IsButtonPressed(TeleopControlMappingEnums::SELECT_BUTTON);
-    buttons[frc::XboxController::Button::kStart - 1] = IsButtonPressed(TeleopControlMappingEnums::START_BUTTON);
-    buttons[frc::XboxController::Button::kLeftStick - 1] = IsButtonPressed(TeleopControlMappingEnums::LEFT_STICK_PRESSED);
-    buttons[frc::XboxController::Button::kRightStick - 1] = IsButtonPressed(TeleopControlMappingEnums::RIGHT_STICK_PRESSED);
-    LogGamePadData(timestamp, m_dataLogPath, axes, buttons, std::array<int, 1>{m_xbox->GetPOV()});
+        buttons[frc::XboxController::Button::kA - 1] = IsButtonPressed(TeleopControlMappingEnums::A_BUTTON);
+        buttons[frc::XboxController::Button::kB - 1] = IsButtonPressed(TeleopControlMappingEnums::B_BUTTON);
+        buttons[frc::XboxController::Button::kX - 1] = IsButtonPressed(TeleopControlMappingEnums::X_BUTTON);
+        buttons[frc::XboxController::Button::kY - 1] = IsButtonPressed(TeleopControlMappingEnums::Y_BUTTON);
+        buttons[frc::XboxController::Button::kLeftBumper - 1] = IsButtonPressed(TeleopControlMappingEnums::LEFT_BUMPER);
+        buttons[frc::XboxController::Button::kRightBumper - 1] = IsButtonPressed(TeleopControlMappingEnums::RIGHT_BUMPER);
+        buttons[frc::XboxController::Button::kBack - 1] = IsButtonPressed(TeleopControlMappingEnums::SELECT_BUTTON);
+        buttons[frc::XboxController::Button::kStart - 1] = IsButtonPressed(TeleopControlMappingEnums::START_BUTTON);
+        buttons[frc::XboxController::Button::kLeftStick - 1] = IsButtonPressed(TeleopControlMappingEnums::LEFT_STICK_PRESSED);
+        buttons[frc::XboxController::Button::kRightStick - 1] = IsButtonPressed(TeleopControlMappingEnums::RIGHT_STICK_PRESSED);
+        LogGamePadData(timestamp, m_dataLogPath, axes, buttons, std::array<int, 1>{m_xbox->GetPOV()});
+    }
 }

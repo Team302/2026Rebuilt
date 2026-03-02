@@ -72,24 +72,15 @@ void Telemetry::Telemeterize(subsystems::CommandSwerveDrivetrain::SwerveDriveSta
 void Telemetry::DataLog(uint64_t timestamp)
 {
     /* Log the cached drive state data using DragonDataLogger methods */
-    LogPose2dData(timestamp, "/Chassis/Pose2d", m_cachedPose);
+    LogPose2dData(timestamp, m_loggingPose2d, m_cachedPose);
 
-    LogChassisSpeedsData(timestamp,
-                         "/Chassis/ActualSpeeds/Vx", "/Chassis/ActualSpeeds/Vy", "/Chassis/ActualSpeeds/Omega",
-                         m_cachedSpeeds, "Vx, Vy, Omega");
+    LogChassisSpeedsData(timestamp, m_loggingChassisSpeeds, m_cachedSpeeds);
 
     // Log module states
-    LogSwerveModuleStateData(timestamp, "/Chassis/FrontLeftModule/ActualState/Speed", "/Chassis/FrontLeftModule/ActualState/Angle", m_cachedModuleStates[0], "Speed, Angle");
-    LogSwerveModuleStateData(timestamp, "/Chassis/FrontRightModule/ActualState/Speed", "/Chassis/FrontRightModule/ActualState/Angle", m_cachedModuleStates[1], "Speed, Angle");
-    LogSwerveModuleStateData(timestamp, "/Chassis/BackLeftModule/ActualState/Speed", "/Chassis/BackLeftModule/ActualState/Angle", m_cachedModuleStates[2], "Speed, Angle");
-    LogSwerveModuleStateData(timestamp, "/Chassis/BackRightModule/ActualState/Speed", "/Chassis/BackRightModule/ActualState/Angle", m_cachedModuleStates[3], "Speed, Angle");
+    LogSwerveModuleStateData(timestamp, m_loggingModuleActual, m_cachedModuleStates);
 
     // Log module targets
-    LogSwerveModuleStateData(timestamp, "/Chassis/FrontLeftModule/TargetState/Speed", "/Chassis/FrontLeftModule/TargetState/Angle", m_cachedModuleTargets[0], "Speed, Angle");
-    LogSwerveModuleStateData(timestamp, "/Chassis/FrontRightModule/TargetState/Speed", "/Chassis/FrontRightModule/TargetState/Angle", m_cachedModuleTargets[1], "Speed, Angle");
-    LogSwerveModuleStateData(timestamp, "/Chassis/BackLeftModule/TargetState/Speed", "/Chassis/BackLeftModule/TargetState/Angle", m_cachedModuleTargets[2], "Speed, Angle");
-    LogSwerveModuleStateData(timestamp, "/Chassis/BackRightModule/TargetState/Speed", "/Chassis/BackRightModule/TargetState/Angle", m_cachedModuleTargets[3], "Speed, Angle");
-
+    LogSwerveModuleStateData(timestamp, m_loggingModuleTarget, m_cachedModuleTargets);
     // OdometryPeriod logged as a double
-    LogDoubleData(timestamp, "/Chassis/OdometryPeriod", m_cachedOdometryPeriod.value(), "Seconds");
+    LogDoubleData(timestamp, m_loggingOdometryPeriod, m_cachedOdometryPeriod.value(), m_loggingSeconds);
 }

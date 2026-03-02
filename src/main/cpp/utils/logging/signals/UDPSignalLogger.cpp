@@ -232,10 +232,21 @@ void UDPSignalLogger::WriteChassisSpeeds(std::string_view signalID, const frc::C
     SendData(buf, len);
 }
 
-void UDPSignalLogger::WriteSwerveModuleState(std::string_view signalID, const frc::SwerveModuleState &value, uint64_t timestamp)
+void UDPSignalLogger::WriteSwerveModuleState(std::string_view signalID, const std::array<frc::SwerveModuleState, 4> &value, uint64_t timestamp)
 {
-    char valBuf[64];
-    snprintf(valBuf, sizeof(valBuf), "%.6g;%.6g", value.speed.value(), value.angle.Radians().value());
+    char valBuf[256];
+    valBuf[0] = '\0';
+    int pos = 0;
+    int remaining = (int)sizeof(valBuf);
+    for (size_t i = 0; i < value.size(); ++i)
+    {
+        int written = snprintf(valBuf + pos, remaining, i ? ";%.6g;%.6g" : "%.6g;%.6g",
+                               value[i].speed.value(), value[i].angle.Radians().value());
+        if (written < 0 || written >= remaining)
+            break;
+        pos += written;
+        remaining -= written;
+    }
     char buf[k_bufSize];
     int len = FormatMessage(buf, k_bufSize, signalID, "swerve_module_state", valBuf, kUnitsSwerveState, timestamp);
     SendData(buf, len);
