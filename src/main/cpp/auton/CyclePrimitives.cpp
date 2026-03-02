@@ -62,10 +62,14 @@ CyclePrimitives::CyclePrimitives() : State(string("CyclePrimitives"), 0),
                                      m_maxTime(units::time::second_t(0.0)),
                                      m_isDone(false),
                                      m_chassis(),
-                                     m_updatedHeadingOption()
+                                     m_updatedHeadingOption(),
+                                     m_cachedLauncher(nullptr),
+                                     m_cachedIntake(nullptr),
+                                     m_cachedClimber(nullptr)
 {
     auto chassisConfig = ChassisConfigMgr::GetInstance();
     m_chassis = chassisConfig != nullptr ? chassisConfig->GetSwerveChassis() : nullptr;
+    CacheMechanismPointers();
 }
 
 void CyclePrimitives::Init()
@@ -75,59 +79,47 @@ void CyclePrimitives::Init()
     m_currentPrim = nullptr;
     m_zones.clear();
 
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("CyclePrim"), string("About to parse XML file "), m_autonSelector->GetSelectedAutoFile().c_str());
+    // Re-cache mechanism pointers in case config changed
+    CacheMechanismPointers();
 
-    m_primParams = PrimitiveParser::ParseXML(m_autonSelector->GetSelectedAutoFile());
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("CyclePrim"), string("nPrims"), double(m_primParams.size()));
+    auto selectedFile = m_autonSelector->GetSelectedAutoFile();
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "CyclePrim", "About to parse XML file ", selectedFile.c_str());
+
+    m_primParams = PrimitiveParser::ParseXML(selectedFile);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "CyclePrim", "nPrims", static_cast<double>(m_primParams.size()));
 
     if (!m_primParams.empty())
     {
         GetNextPrim();
     }
 
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("CyclePrim"), string("end init"), m_autonSelector->GetSelectedAutoFile().c_str());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "CyclePrim", "end init", selectedFile.c_str());
 }
 
 void CyclePrimitives::Run()
 {
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("CyclePrim"), string("Arrived at "), string("run"));
     if (m_currentPrim != nullptr)
     {
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("CyclePrim"), string("CurrentPrim "), string("run"));
         m_currentPrim->Run();
 
-        if (m_chassis != nullptr)
+        if (m_chassis != nullptr && !m_zones.empty())
         {
+            auto robotPose = m_chassis->GetPose(); // Get pose once per cycle instead of once per zone
 
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("CyclePrim"), string("CurrentPrimSlot "), m_currentPrimSlot);
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("CyclePrim"), string("Prim Size "), (int)m_primParams.size());
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("CyclePrim"), string("zone size "), (int)m_zones.size());
-
-            if (!m_zones.empty())
+            for (auto zone : m_zones)
             {
-
-                for (auto zone : m_zones)
+                if (zone != nullptr && zone->IsPoseInZone(robotPose))
                 {
-                    bool isInZone = false;
-                    if (zone != nullptr)
+                    SetMechanismStatesFromZone(zone);
+
+                    if (zone->GetChassisOption() != ChassisOptionEnums::AutonChassisOptions::NO_VISION)
                     {
-                        isInZone = zone->IsPoseInZone(m_chassis->GetPose());
+                        // TODO:  plug in vision drive options
+                    }
 
-                        if (isInZone)
-                        {
-
-                            SetMechanismStatesFromZone(zone);
-
-                            if (zone->GetChassisOption() != ChassisOptionEnums::AutonChassisOptions::NO_VISION)
-                            {
-                                // TODO:  plug in vision drive options
-                            }
-
-                            if (zone->GetAvoidOption() != ChassisOptionEnums::AutonAvoidOptions::NO_AVOID_OPTION)
-                            {
-                                // TODO:  plug in avoid options
-                            }
-                        }
+                    if (zone->GetAvoidOption() != ChassisOptionEnums::AutonAvoidOptions::NO_AVOID_OPTION)
+                    {
+                        // TODO:  plug in avoid options
                     }
                 }
             }
@@ -140,7 +132,6 @@ void CyclePrimitives::Run()
     }
     else
     {
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("CyclePrim"), string("CurrentPrim "), string("done"));
         m_isDone = true;
         m_primParams.clear();  // clear the primitive params vector
         m_currentPrimSlot = 0; // Reset current prim slot
@@ -176,7 +167,7 @@ void CyclePrimitives::GetNextPrim()
             m_timer->Start();
         }
 
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("CyclePrim"), string("Current Prim "), m_currentPrimSlot);
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "CyclePrim", "Current Prim ", m_currentPrimSlot);
 
         m_currentPrimSlot++;
     }
@@ -208,62 +199,58 @@ void CyclePrimitives::RunDriveStop()
     m_driveStop->Run();
 }
 
-void CyclePrimitives::SetMechanismStatesFromParam(PrimitiveParams *params)
+void CyclePrimitives::CacheMechanismPointers()
 {
-
     auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
-    if (params != nullptr && config != nullptr)
+    if (config != nullptr)
     {
         auto launcherStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::LAUNCHER);
         auto intakeStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::INTAKE);
         auto climberStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::CLIMBER);
 
-        auto launcherMgr = launcherStateMgr != nullptr ? dynamic_cast<Launcher *>(launcherStateMgr) : nullptr;
-        auto intakeMgr = intakeStateMgr != nullptr ? dynamic_cast<Intake *>(intakeStateMgr) : nullptr;
-        auto climberMgr = climberStateMgr != nullptr ? dynamic_cast<Climber *>(climberStateMgr) : nullptr;
+        m_cachedLauncher = launcherStateMgr != nullptr ? dynamic_cast<Launcher *>(launcherStateMgr) : nullptr;
+        m_cachedIntake = intakeStateMgr != nullptr ? dynamic_cast<Intake *>(intakeStateMgr) : nullptr;
+        m_cachedClimber = climberStateMgr != nullptr ? dynamic_cast<Climber *>(climberStateMgr) : nullptr;
+    }
+}
 
-        if (launcherMgr != nullptr && params->IsLauncherStateChanging())
+void CyclePrimitives::SetMechanismStatesFromParam(PrimitiveParams *params)
+{
+    if (params != nullptr)
+    {
+        if (m_cachedLauncher != nullptr && params->IsLauncherStateChanging())
         {
-            launcherMgr->SetCurrentState(params->GetLauncherState(), true);
+            m_cachedLauncher->SetCurrentState(params->GetLauncherState(), true);
         }
 
-        if (intakeMgr != nullptr && params->IsIntakeStateChanging())
+        if (m_cachedIntake != nullptr && params->IsIntakeStateChanging())
         {
-            intakeMgr->SetCurrentState(params->GetIntakeState(), true);
+            m_cachedIntake->SetCurrentState(params->GetIntakeState(), true);
         }
 
-        if (climberMgr != nullptr && params->IsClimberStateChanging())
+        if (m_cachedClimber != nullptr && params->IsClimberStateChanging())
         {
-            climberMgr->SetCurrentState(params->GetClimberState(), true);
+            m_cachedClimber->SetCurrentState(params->GetClimberState(), true);
         }
     }
 }
 void CyclePrimitives::SetMechanismStatesFromZone(ZoneParams *params)
 {
-    auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
-    if (params != nullptr && config != nullptr)
+    if (params != nullptr)
     {
-        auto launcherStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::LAUNCHER);
-        auto intakeStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::INTAKE);
-        auto climberStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::CLIMBER);
-
-        auto launcherMgr = launcherStateMgr != nullptr ? dynamic_cast<Launcher *>(launcherStateMgr) : nullptr;
-        auto intakeMgr = intakeStateMgr != nullptr ? dynamic_cast<Intake *>(intakeStateMgr) : nullptr;
-        auto climberMgr = climberStateMgr != nullptr ? dynamic_cast<Climber *>(climberStateMgr) : nullptr;
-
-        if (launcherMgr != nullptr && params->IsLauncherStateChanging())
+        if (m_cachedLauncher != nullptr && params->IsLauncherStateChanging())
         {
-            launcherMgr->SetCurrentState(params->GetLauncherState(), true);
+            m_cachedLauncher->SetCurrentState(params->GetLauncherState(), true);
         }
 
-        if (intakeMgr != nullptr && params->IsIntakeStateChanging())
+        if (m_cachedIntake != nullptr && params->IsIntakeStateChanging())
         {
-            intakeMgr->SetCurrentState(params->GetIntakeState(), true);
+            m_cachedIntake->SetCurrentState(params->GetIntakeState(), true);
         }
 
-        if (climberMgr != nullptr && params->IsClimberStateChanging())
+        if (m_cachedClimber != nullptr && params->IsClimberStateChanging())
         {
-            climberMgr->SetCurrentState(params->GetClimberState(), true);
+            m_cachedClimber->SetCurrentState(params->GetClimberState(), true);
         }
     }
 }

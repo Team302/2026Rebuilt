@@ -42,27 +42,26 @@ PrimitiveParamsVector PrimitiveParser::ParseXML(string fulldirfile)
     PrimitiveParamsVector paramVector;
     auto hasError = false;
 
-    // initialize the xml string to enum maps
-    map<string, PRIMITIVE_IDENTIFIER> primStringToEnumMap;
-    primStringToEnumMap["DO_NOTHING"] = DO_NOTHING;
-    primStringToEnumMap["HOLD_POSITION"] = HOLD_POSITION;
-    primStringToEnumMap["TRAJECTORY_DRIVE"] = TRAJECTORY_DRIVE;
-    primStringToEnumMap["RESET_POSITION"] = RESET_POSITION;
-    primStringToEnumMap["VISION_ALIGN"] = VISION_ALIGN;
-    primStringToEnumMap["DRIVE_STOP_MECH"] = DO_NOTHING_MECHANISMS;
+    // initialize the xml string to enum maps (static so they are built only once)
+    static const map<string, PRIMITIVE_IDENTIFIER> primStringToEnumMap{
+        {"DO_NOTHING", DO_NOTHING},
+        {"HOLD_POSITION", HOLD_POSITION},
+        {"TRAJECTORY_DRIVE", TRAJECTORY_DRIVE},
+        {"RESET_POSITION", RESET_POSITION},
+        {"VISION_ALIGN", VISION_ALIGN},
+        {"DRIVE_STOP_MECH", DO_NOTHING_MECHANISMS}};
 
-    map<string, ChassisOptionEnums::HeadingOption>
-        headingOptionMap;
-    headingOptionMap["MAINTAIN"] = ChassisOptionEnums::HeadingOption::MAINTAIN;
-    headingOptionMap["IGNORE"] = ChassisOptionEnums::HeadingOption::IGNORE;
-    headingOptionMap["SPECIFIED_ANGLE"] = ChassisOptionEnums::HeadingOption::SPECIFIED_ANGLE;
-    headingOptionMap["FACE_GAME_PIECE"] = ChassisOptionEnums::HeadingOption::FACE_GAME_PIECE;
+    static const map<string, ChassisOptionEnums::HeadingOption> headingOptionMap{
+        {"MAINTAIN", ChassisOptionEnums::HeadingOption::MAINTAIN},
+        {"IGNORE", ChassisOptionEnums::HeadingOption::IGNORE},
+        {"SPECIFIED_ANGLE", ChassisOptionEnums::HeadingOption::SPECIFIED_ANGLE},
+        {"FACE_GAME_PIECE", ChassisOptionEnums::HeadingOption::FACE_GAME_PIECE}};
 
-    map<string, PrimitiveParams::VISION_ALIGNMENT>
+    static const map<string, PrimitiveParams::VISION_ALIGNMENT>
         xmlStringToVisionAlignmentEnumMap{
             {"UNKNOWN", PrimitiveParams::VISION_ALIGNMENT::UNKNOWN}};
 
-    map<string, ChassisOptionEnums::DriveStateType> updateOptionMap{
+    static const map<string, ChassisOptionEnums::DriveStateType> updateOptionMap{
         {"NOTHING", ChassisOptionEnums::DriveStateType::STOP_DRIVE}};
 
     xml_document doc;
@@ -330,7 +329,7 @@ PrimitiveParamsVector PrimitiveParser::ParseXML(string fulldirfile)
     return paramVector;
 }
 
-void PrimitiveParser::Print(PrimitiveParamsVector paramVector)
+void PrimitiveParser::Print(const PrimitiveParamsVector &paramVector)
 {
     auto slot = 0;
     for (auto param : paramVector)
