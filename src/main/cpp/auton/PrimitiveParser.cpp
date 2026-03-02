@@ -57,10 +57,6 @@ PrimitiveParamsVector PrimitiveParser::ParseXML(string fulldirfile)
         {"SPECIFIED_ANGLE", ChassisOptionEnums::HeadingOption::SPECIFIED_ANGLE},
         {"FACE_GAME_PIECE", ChassisOptionEnums::HeadingOption::FACE_GAME_PIECE}};
 
-    static const map<string, PrimitiveParams::VISION_ALIGNMENT>
-        xmlStringToVisionAlignmentEnumMap{
-            {"UNKNOWN", PrimitiveParams::VISION_ALIGNMENT::UNKNOWN}};
-
     static const map<string, ChassisOptionEnums::DriveStateType> updateOptionMap{
         {"NOTHING", ChassisOptionEnums::DriveStateType::STOP_DRIVE}};
 
