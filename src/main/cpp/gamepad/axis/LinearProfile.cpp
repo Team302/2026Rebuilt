@@ -13,8 +13,8 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include <gamepad/axis/IProfile.h>
-#include <gamepad/axis/LinearProfile.h>
+#include "gamepad/axis/LinearProfile.h"
+#include "gamepad/axis/IProfile.h"
 
 //==================================================================================
 /// <summary>

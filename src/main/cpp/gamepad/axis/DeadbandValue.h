@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include <gamepad/axis/IDeadband.h>
+#include "gamepad/axis/IDeadband.h"
 
 //==================================================================================
 /// <summary>

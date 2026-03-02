@@ -13,7 +13,7 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include <gamepad/axis/ScaledAxis.h>
+#include "gamepad/axis/ScaledAxis.h"
 
 #include <cmath>
 

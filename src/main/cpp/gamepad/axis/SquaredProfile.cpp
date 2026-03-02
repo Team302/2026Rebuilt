@@ -14,8 +14,8 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include <gamepad/axis/IProfile.h>
-#include <gamepad/axis/SquaredProfile.h>
+#include "gamepad/axis/SquaredProfile.h"
+#include "gamepad/axis/IProfile.h"
 
 //==================================================================================
 /// <summary>

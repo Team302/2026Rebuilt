@@ -14,8 +14,8 @@
 //====================================================================================================================================================
 #include <string>
 
-#include <gamepad/axis/AnalogAxis.h>
-#include <gamepad/button/AnalogButton.h>
+#include "gamepad/axis/AnalogAxis.h"
+#include "gamepad/button/AnalogButton.h"
 
 using namespace std;
 

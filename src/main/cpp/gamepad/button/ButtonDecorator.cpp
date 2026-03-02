@@ -23,8 +23,8 @@
 
 #include <memory>
 
-#include <gamepad/button/ButtonDecorator.h>
-#include <gamepad/button/IButton.h>
+#include "gamepad/button/ButtonDecorator.h"
+#include "gamepad/button/IButton.h"
 
 ButtonDecorator::ButtonDecorator(
     std::unique_ptr<IButton> button // <I> - concrete button to decorate (takes ownership)

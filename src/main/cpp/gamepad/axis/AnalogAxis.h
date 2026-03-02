@@ -15,11 +15,8 @@
 
 #pragma once
 
-// FRC includes
-#include <frc/GenericHID.h>
-
-// Team 302 includes
-#include <gamepad/IDragonGamepad.h>
+#include "frc/GenericHID.h"
+#include "gamepad/IDragonGamepad.h"
 
 // forward declares
 class IProfile;

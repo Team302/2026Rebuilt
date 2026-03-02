@@ -17,7 +17,7 @@
 
 #include <memory>
 
-#include <gamepad/button/ButtonDecorator.h>
+#include "gamepad/button/ButtonDecorator.h"
 
 // forward declare
 class IButton;

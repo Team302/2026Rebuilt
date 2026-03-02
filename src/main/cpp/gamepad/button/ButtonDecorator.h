@@ -15,15 +15,9 @@
 
 #pragma once
 
-// C++ Includes
 #include <memory>
 
-// FRC includes
-
-// Team 302 includes
-#include <gamepad/button/IButton.h>
-
-// Third Party Includes
+#include "gamepad/button/IButton.h"
 
 //==================================================================================
 /// <summary>

@@ -15,10 +15,9 @@
 
 #include <string>
 
-#include <frc/GenericHID.h>
-#include <gamepad/button/DigitalButton.h>
-#include <gamepad/IDragonGamepad.h>
-
+#include "frc/GenericHID.h"
+#include "gamepad/IDragonGamepad.h"
+#include "gamepad/button/DigitalButton.h"
 #include "utils/logging/debug/Logger.h"
 
 using namespace std;
