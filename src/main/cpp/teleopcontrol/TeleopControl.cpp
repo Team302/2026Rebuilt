@@ -18,14 +18,11 @@
 #include <string>
 #include <utility>
 
-// #include <vector>
-
 // FRC includes
 
 // Team 302 includes
 
 // Third Party Includes
-#include <string>
 #include <frc/GenericHID.h>
 #include <gamepad/IDragonGamepad.h>
 #include <gamepad/DragonXBox.h>
@@ -137,7 +134,7 @@ void TeleopControl::InitializeAxes(int port)
 			auto itr = teleopControlMapAxisMap.find(function);
 			if (itr != teleopControlMapAxisMap.end())
 			{
-				auto axisInfo = itr->second;
+				const auto &axisInfo = itr->second;
 				m_controller[port]->SetAxisDeadband(axisInfo.axisId, axisInfo.deadbandType);
 				m_controller[port]->SetAxisProfile(axisInfo.axisId, axisInfo.profile);
 				m_controller[port]->SetAxisScale(axisInfo.axisId, axisInfo.scaleFactor);
@@ -157,7 +154,7 @@ void TeleopControl::InitializeButtons(int port)
 			auto itr = teleopControlMapButtonMap.find(function);
 			if (itr != teleopControlMapButtonMap.end())
 			{
-				auto buttonInfo = itr->second;
+				const auto &buttonInfo = itr->second;
 				if (buttonInfo.mode != TeleopControlMappingEnums::BUTTON_MODE::STANDARD)
 				{
 					m_controller[port]->SetButtonMode(buttonInfo.buttonId, buttonInfo.mode);
@@ -169,12 +166,13 @@ void TeleopControl::InitializeButtons(int port)
 vector<TeleopControlFunctions::FUNCTION> TeleopControl::GetAxisFunctionsOnController(int controller)
 {
 	vector<TeleopControlFunctions::FUNCTION> functions;
+	functions.reserve(teleopControlMapAxisMap.size());
 
-	for (auto itr = teleopControlMapAxisMap.begin(); itr != teleopControlMapAxisMap.end(); ++itr)
+	for (const auto &[function, axisInfo] : teleopControlMapAxisMap)
 	{
-		if (itr->second.controllerNumber == controller)
+		if (axisInfo.controllerNumber == controller)
 		{
-			functions.emplace_back(itr->first);
+			functions.emplace_back(function);
 		}
 	}
 	return functions;
@@ -183,12 +181,13 @@ vector<TeleopControlFunctions::FUNCTION> TeleopControl::GetAxisFunctionsOnContro
 vector<TeleopControlFunctions::FUNCTION> TeleopControl::GetButtonFunctionsOnController(int controller)
 {
 	vector<TeleopControlFunctions::FUNCTION> functions;
+	functions.reserve(teleopControlMapButtonMap.size());
 
-	for (auto itr = teleopControlMapButtonMap.begin(); itr != teleopControlMapButtonMap.end(); ++itr)
+	for (const auto &[function, buttonInfo] : teleopControlMapButtonMap)
 	{
-		if (itr->second.controllerNumber == controller)
+		if (buttonInfo.controllerNumber == controller)
 		{
-			functions.emplace_back(itr->first);
+			functions.emplace_back(function);
 		}
 	}
 	return functions;
@@ -209,7 +208,7 @@ pair<IDragonGamepad *, TeleopControlMappingEnums::AXIS_IDENTIFIER> TeleopControl
 	auto itr = teleopControlMapAxisMap.find(function);
 	if (itr != teleopControlMapAxisMap.end())
 	{
-		auto axisInfo = itr->second;
+		const auto &axisInfo = itr->second;
 		if (m_controller[axisInfo.controllerNumber] != nullptr)
 		{
 			controller = m_controller[axisInfo.controllerNumber];
@@ -234,7 +233,7 @@ pair<IDragonGamepad *, TeleopControlMappingEnums::BUTTON_IDENTIFIER> TeleopContr
 	auto itr = teleopControlMapButtonMap.find(function);
 	if (itr != teleopControlMapButtonMap.end())
 	{
-		auto buttonInfo = itr->second;
+		const auto &buttonInfo = itr->second;
 		if (m_controller[buttonInfo.controllerNumber] != nullptr)
 		{
 			controller = m_controller[buttonInfo.controllerNumber];
@@ -368,22 +367,21 @@ void TeleopControl::SetRumble(
 
 void TeleopControl::LogInformation()
 {
-	auto self = const_cast<TeleopControl *>(this);
 	for (int inx = 0; inx < DriverStation::kJoystickPorts; ++inx)
 	{
 		if (m_controller[inx] != nullptr)
 		{
-			auto functions = self->GetAxisFunctionsOnController(inx);
+			auto functions = GetAxisFunctionsOnController(inx);
 			for (auto function : functions)
 			{
-				Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("TeleopControl-axis"), std::to_string(function), self->GetAxisValue(function));
+				Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("TeleopControl-axis"), std::to_string(function), GetAxisValue(function));
 			}
 
 			functions.clear();
-			functions = self->GetButtonFunctionsOnController(inx);
+			functions = GetButtonFunctionsOnController(inx);
 			for (auto function : functions)
 			{
-				Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("TeleopControl-button"), std::to_string(function), self->IsButtonPressed(function));
+				Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("TeleopControl-button"), std::to_string(function), IsButtonPressed(function));
 			}
 		}
 	}
@@ -393,7 +391,13 @@ frc2::Trigger TeleopControl::GetCommandTrigger(TeleopControlFunctions::FUNCTION 
 {
 	// Find the button mapping for the given function
 	auto itr = teleopControlMapButtonMap.find(function);
-	auto buttonInfo = itr->second;
+	if (itr == teleopControlMapButtonMap.end())
+	{
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("TeleopControl-Command"), std::to_string(function), "Function not found in button map.");
+		return frc2::Trigger([]()
+							 { return false; });
+	}
+	const auto &buttonInfo = itr->second;
 
 	auto controller = m_hybridController->GetCommandController();
 	if (controller != nullptr)
