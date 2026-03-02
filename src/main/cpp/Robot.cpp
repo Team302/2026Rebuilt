@@ -146,6 +146,7 @@ void Robot::DisabledPeriodic()
     PeriodicLooper::GetInstance()->DisabledRunCurrentState();
 
     m_field->UpdateEnabledStates();
+    FMSData::UpdateAllianceColor();
 }
 
 /// @brief Called once when autonomous mode begins.

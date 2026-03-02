@@ -12,27 +12,15 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-#pragma once
 
-#include <optional>
+#include "utils/FMSData.h"
 
-// FRC Includes
-#include <frc/DriverStation.h>
+// Initialize static member variable
+frc::DriverStation::Alliance FMSData::m_allianceColor = frc::DriverStation::Alliance::kRed;
 
-class FMSData
+/// @brief Update the alliance color from dashboard or FMS when available. Call during disabled only to reduce overhead during teleop and auto
+/// @return None
+void FMSData::UpdateAllianceColor()
 {
-public:
-    FMSData() = default;
-    ~FMSData() = default;
-
-    /// @brief Update the alliance color from dashboard or FMS when available. Call during disabled only to reduce overhead during teleop and auto
-    /// @return None
-    static void UpdateAllianceColor();
-
-    /// @brief Get the cached alliance color from dashboard or FMS when available
-    /// @return the current alliance
-    static frc::DriverStation::Alliance GetAllianceColor() { return m_allianceColor; }
-
-private:
-    static frc::DriverStation::Alliance m_allianceColor;
-};
+    m_allianceColor = (frc::DriverStation::GetAlliance().has_value()) ? frc::DriverStation::GetAlliance().value() : frc::DriverStation::Alliance::kRed;
+}
