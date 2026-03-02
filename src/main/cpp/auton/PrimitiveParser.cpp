@@ -27,11 +27,11 @@
 
 #include <pugixml/pugixml.hpp>
 
-#include "mechanisms/MechanismTypes.h"
-#include "configs/MechanismConfigMgr.h"
+#include "mechanisms/Climber/Climber.h"
 #include "mechanisms/Intake/Intake.h"
 #include "mechanisms/Launcher/Launcher.h"
-#include "mechanisms/Climber/Climber.h"
+#include "mechanisms/MechanismTypes.h"
+#include "mechanisms/configs/MechanismConfigMgr.h"
 
 using namespace std;
 using namespace pugi;

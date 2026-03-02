@@ -35,11 +35,11 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "chassis/ChassisOptionEnums.h"
 
-#include "configs/MechanismConfigMgr.h"
-#include "mechanisms/MechanismTypes.h"
-#include "mechanisms/Launcher/Launcher.h"
-#include "mechanisms/Intake/Intake.h"
 #include "mechanisms/Climber/Climber.h"
+#include "mechanisms/Intake/Intake.h"
+#include "mechanisms/Launcher/Launcher.h"
+#include "mechanisms/MechanismTypes.h"
+#include "mechanisms/configs/MechanismConfigMgr.h"
 
 // Third Party Includes
 

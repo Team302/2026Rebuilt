@@ -17,8 +17,8 @@
 #include "chassis/SwerveContainer.h"
 #include "chassis/commands/DriveToPose.h"
 #include "chassis/commands/TrajectoryDrive.h"
-#include "configs/MechanismConfigMgr.h"
 #include "frc2/command/Commands.h"
+#include "mechanisms/configs/MechanismConfigMgr.h"
 #include "utils/logging/debug/Logger.h"
 #include <frc2/command/ProxyCommand.h>
 

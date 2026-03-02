@@ -3,11 +3,11 @@ $$_GEN_NOTICE_$$
 
 #include <string>
 
-#include "configs/MechanismConfig$$_ROBOT_NAME_$$.h"
-#include "configs/MechanismConfigMgr.h"
-#include "configs/RobotElementNames.h"
-#include "utils/logging/debug/Logger.h"
+#include "mechanisms/configs/MechanismConfig$$_ROBOT_NAME_$$.h"
+#include "mechanisms/configs/MechanismConfigMgr.h"
+#include "mechanisms/configs/RobotElementNames.h"
 #include "utils/PeriodicLooper.h"
+#include "utils/logging/debug/Logger.h"
 
 $$_INCLUDE_$$
 
