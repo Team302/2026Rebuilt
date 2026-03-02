@@ -45,7 +45,7 @@ namespace LauncherStates
 		void InitCompBot302();
 		RobotIdentifier m_RobotId;
 
-		units::angular_velocity::revolutions_per_minute_t m_launcherTarget = units::angular_velocity::revolutions_per_minute_t(500);
+		units::angular_velocity::revolutions_per_minute_t m_launcherTarget = units::angular_velocity::revolutions_per_minute_t(1000);
 		const double m_hoodTarget = double(0);
 		const double m_transferTarget = double(0);
 		const double m_turretTarget = double(0);
@@ -55,6 +55,6 @@ namespace LauncherStates
 
 		bool m_speedUpButtonReleased = true;
 		bool m_speedDownButtonReleased = true;
-		bool m_tuningLauncherPercentOut = false;
+		bool m_tuningLauncherPercentOut = true;
 	};
 }
