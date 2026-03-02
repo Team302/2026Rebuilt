@@ -57,7 +57,7 @@ public:
         IButton *button // <I> - concrete button to decorate
     );
     ButtonDecorator() = delete;
-    ~ButtonDecorator() = default;
+    ~ButtonDecorator() override;
 
 protected:
     inline IButton *GetButton() { return m_button; }
