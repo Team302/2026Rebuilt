@@ -96,7 +96,7 @@ class DragonVision
 {
 public:
     /// @brief Number of Limelight cameras on the robot.
-    static constexpr int kNumLimelights = 3;
+    static constexpr int kNumLimelights = 1;
 
     /// @brief Index constants for each Limelight in the health-check array.
     /// @details
@@ -104,13 +104,9 @@ public:
     ///     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER.
     ///   - HealthCheckAllLimelights() and any health/status arrays are ordered
     ///     according to DRAGON_LIMELIGHT_CAMERA_IDENTIFIER:
-    ///       BACK_RIGHT (0), BACK_LEFT (1), FRONT (2).
-    static constexpr int kBackRightLimelightIndex =
-        static_cast<int>(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::BACK_RIGHT);
+    ///       BACK_LEFT (0).
     static constexpr int kBackLeftLimelightIndex =
         static_cast<int>(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::BACK_LEFT);
-    static constexpr int kFrontLimelightIndex =
-        static_cast<int>(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::FRONT);
 
     /// @brief Get the singleton instance of DragonVision.
     /// @note Not thread-safe for initialization; if called concurrently during startup,

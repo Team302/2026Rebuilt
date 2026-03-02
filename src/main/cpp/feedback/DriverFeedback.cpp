@@ -300,8 +300,6 @@ void DriverFeedback::UpdateDiagnosticLEDs()
 {
     bool questStatus = false;
     bool backLeftLL = false;
-    bool backRightLL = false;
-    bool climberLL = false;
 
     bool dataLoggerConnected = false;
 
@@ -313,13 +311,11 @@ void DriverFeedback::UpdateDiagnosticLEDs()
     {
         auto limelightRunning = m_dragonVision->HealthCheckAllLimelights();
         backLeftLL = limelightRunning[DragonVision::kBackLeftLimelightIndex];
-        backRightLL = limelightRunning[DragonVision::kBackRightLimelightIndex];
-        climberLL = limelightRunning[DragonVision::kFrontLimelightIndex];
 
         questStatus = m_dragonVision->HealthCheckQuest();
 
         m_LEDStates->SetQuestStatus(questStatus);
-        m_LEDStates->SetLimelightStatuses(backLeftLL, backRightLL, climberLL);
+        m_LEDStates->SetLimelightStatuses(backLeftLL);
     }
 
     // Add Data Logger Connection Status dataLoggerConnected = ...
