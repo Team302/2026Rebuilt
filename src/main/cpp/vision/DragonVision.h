@@ -14,6 +14,7 @@
 //====================================================================================================================================================
 
 #pragma once
+#include <array>
 #include <map>
 #include <memory>
 #include <optional>
@@ -94,6 +95,14 @@ class DragonVision
  */
 {
 public:
+    /// @brief Number of Limelight cameras on the robot.
+    static constexpr int kNumLimelights = 3;
+
+    /// @brief Index constants for each Limelight in the health-check array.
+    static constexpr int kBackLeftLimelightIndex = 0;
+    static constexpr int kBackRightLimelightIndex = 1;
+    static constexpr int kClimberLimelightIndex = 2;
+
     /// @brief Get the singleton instance of DragonVision.
     /// @note Not thread-safe for initialization; if called concurrently during startup,
     ///       callers must ensure proper synchronization. The instance is leaked intentionally
@@ -157,13 +166,13 @@ public:
      * Performs a health check on all connected Limelight cameras.
      *
      * This function checks the status of each Limelight camera in the system
-     * and returns a vector of boolean values indicating the health of each camera.
+     * and returns a fixed-size array of boolean values indicating the health of each camera.
      * A value of `true` means the corresponding Limelight is functioning correctly,
      * while `false` indicates an issue with that Limelight.
      *
-     * @return A vector of boolean values representing the health status of each Limelight.
+     * @return A std::array of kNumLimelights boolean values representing the health status of each Limelight.
      */
-    std::vector<bool> HealthCheckAllLimelights();
+    std::array<bool, kNumLimelights> HealthCheckAllLimelights();
 
     bool HealthCheckQuest();
 

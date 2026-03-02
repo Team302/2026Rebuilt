@@ -132,20 +132,18 @@ bool DragonVision::HealthCheck(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier)
 	return false;
 }
 
-std::vector<bool> DragonVision::HealthCheckAllLimelights()
+std::array<bool, DragonVision::kNumLimelights> DragonVision::HealthCheckAllLimelights()
 {
-	std::vector<bool> healthStatuses;
+	std::array<bool, kNumLimelights> healthStatuses = {};
+	size_t index = 0;
 	for (const auto &pair : m_dragonLimelightMap)
 	{
+		if (index >= healthStatuses.size())
+			break;
+
 		DragonLimelight *limelight = pair.second.get();
-		if (limelight != nullptr)
-		{
-			healthStatuses.push_back(limelight->IsLimelightRunning());
-		}
-		else
-		{
-			healthStatuses.push_back(false);
-		}
+		healthStatuses[index] = (limelight != nullptr) && limelight->IsLimelightRunning();
+		++index;
 	}
 	return healthStatuses;
 }
