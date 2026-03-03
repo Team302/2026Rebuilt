@@ -240,7 +240,7 @@ private:
 	void RefreshCachedMotorData();
 
 	bool m_launcherInitialized = false;
-	bool m_tuningLauncher = false;
+	bool m_tuningLauncher = true;
 
 	// TODO MECH tune and change values in these arrays
 	// All values in turns are actually Degree's
