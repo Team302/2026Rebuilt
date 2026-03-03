@@ -164,8 +164,8 @@ private:
     frc::ChassisSpeeds m_currentChassisSpeeds{};
     frc::Pose2d m_chassisPose{};
 
-    units::meters_per_second_t m_translationSpeedThreshold{0.1_mps};
-    units::radians_per_second_t m_rotationSpeedThreshold{0.25_deg_per_s};
+    static constexpr units::meters_per_second_t m_translationSpeedThreshold{0.1_mps};
+    static constexpr units::radians_per_second_t m_rotationSpeedThreshold{0.25_deg_per_s};
 
     subsystems::CommandSwerveDrivetrain *m_chassis;
 };
