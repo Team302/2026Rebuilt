@@ -16,19 +16,20 @@
 #include <string>
 
 // FRC Includes
+#include "auton/drivePrimitives/AutonUtils.h"
+#include "chassis/commands/TrajectoryDrive.h"
+#include "choreo/Choreo.h"
+#include "frc/DriverStation.h"
+#include "frc/Timer.h"
 #include "frc/geometry/Pose2d.h"
 #include "frc/geometry/Rotation2d.h"
+#include "state/RobotState.h"
+#include "units/angle.h"
 #include "units/angular_velocity.h"
 #include "units/velocity.h"
-#include "units/angle.h"
-#include "frc/Timer.h"
-#include <choreo/Choreo.h>
-
-// 302 includes
-#include "chassis/commands/TrajectoryDrive.h"
+#include "utils/FMSData.h"
+#include "utils/PoseUtils.h"
 #include "utils/logging/debug/Logger.h"
-#include "state/RobotState.h"
-#include "auton/drivePrimitives/AutonUtils.h"
 
 TrajectoryDrive::TrajectoryDrive(
     subsystems::CommandSwerveDrivetrain *chassis) : m_chassis(chassis),
@@ -38,7 +39,7 @@ TrajectoryDrive::TrajectoryDrive(
                                                     m_wasMoving(false),
                                                     m_timer(std::make_unique<frc::Timer>()),
                                                     m_whyDone("Trajectory isn't finished/Error"),
-                                                    m_totalTrajectoryTime(units::time::second_t(0.0))
+                                                    m_totalTrajectoryTime(0.0_s)
 {
     // This command requires the chassis subsystem
     AddRequirements(m_chassis);
@@ -51,11 +52,17 @@ void TrajectoryDrive::Initialize()
     m_trajectory = AutonUtils::GetTrajectoryFromPathFile(m_pathName);
     if (m_trajectory.has_value())
     {
-        m_trajectoryStates = m_trajectory.value().samples;
+        auto trajectory = m_trajectory.value();
+        m_trajectoryStates = trajectory.samples;
+        m_totalTrajectoryTime = trajectory.GetTotalTime();
+        auto finalPose = trajectory.GetFinalPose(FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed);
+        m_finalPose = finalPose.has_value() ? finalPose.value() : frc::Pose2d();
     }
     else
     {
         m_totalTrajectoryTime = 0_s;
+        m_trajectoryStates.clear();
+        m_finalPose = frc::Pose2d();
     }
 
     // Reset and start the timer when the command begins
@@ -107,74 +114,54 @@ void TrajectoryDrive::Execute()
 
 bool TrajectoryDrive::IsFinished()
 {
-    bool isDone = false;
-
-    auto currentPose = m_chassis != nullptr ? m_chassis->GetPose() : frc::Pose2d();
-    if (!m_trajectoryStates.empty())
+    if (m_trajectoryStates.empty())
     {
-        auto currentTime = m_timer.get()->Get();
-
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "current time", currentTime.value());
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "total time", m_totalTrajectoryTime.value());
-
-        if ((currentTime) / m_totalTrajectoryTime > 0.9)
-        {
-
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "current pose X", currentPose.X().value());
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "current pose Y", currentPose.Y().value());
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "current pose Rotation", currentPose.Rotation().Degrees().value());
-
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "target pose X", m_finalState.GetPose().X().value());
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "target pose Y", m_finalState.GetPose().Y().value());
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "target pose Rotation", m_finalState.GetPose().Rotation().Degrees().value());
-
-            isDone = IsSamePose(currentPose, m_finalState.GetPose(), m_chassisSpeeds, 10.0, 3.0, 1.5); // TO DO verify these values
-        }
-        else if (m_chassis != nullptr)
-        {
-            isDone = m_chassis->IsSamePose();
-        }
-    }
-    else
-    {
-        m_whyDone = "No states in trajectory";
-        isDone = true;
+        m_whyDone = "Trajectory states are empty";
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "", "why done", m_whyDone);
+        return true;
     }
 
-    return isDone;
+    if (m_chassis == nullptr)
+    {
+        m_whyDone = "Chassis is null";
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "", "why done", m_whyDone);
+        return true;
+    }
+
+    auto currentPose = m_chassis->GetPose();
+    auto currentTime = m_timer.get()->Get();
+
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "current time", currentTime.value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "total time", m_totalTrajectoryTime.value());
+
+    if ((currentTime) / m_totalTrajectoryTime > kPercentComplete)
+    {
+        auto isSamePose = PoseUtils::IsSamePose(currentPose, m_finalPose, kPositionTolerance, kHeadingTolerance);
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "is same pose?", isSamePose);
+        if (isSamePose)
+        {
+            // previously also compared the robot's velocity to a tolerance of 1.5 m/s
+            // right now skipping this because it doesn't make sense to me but here
+            // is where to add it in (and if we do we should compare the squares to the
+            // 1.5^2 to avoid the sqrt calculation)
+            m_whyDone = "Robot is at the target pose";
+            return true;
+        }
+        else if (m_chassis->IsSamePose())
+        {
+            m_whyDone = "Robot is not moving but is not at the target pose";
+            return true;
+        }
+        else
+        {
+            m_whyDone = "Robot is not at the target pose";
+        }
+    }
+    return false;
 }
 
 void TrajectoryDrive::End(bool interrupted)
 {
     // When the command ends (or is interrupted), stop the robot.
     m_chassis->SetControl(swerve::requests::SwerveDriveBrake{});
-}
-
-bool TrajectoryDrive::IsSamePose(frc::Pose2d currentPose, frc::Pose2d previousPose, frc::ChassisSpeeds velocity, double xyTolerance, double rotTolerance, double speedTolerance)
-{
-    // Detect if the two poses are the same within a tolerance
-    double dCurPosX = currentPose.X().to<double>() * 100; // cm
-    double dCurPosY = currentPose.Y().to<double>() * 100;
-    double dPrevPosX = previousPose.X().to<double>() * 100;
-    double dPrevPosY = previousPose.Y().to<double>() * 100;
-
-    double dCurPosRot = currentPose.Rotation().Degrees().to<double>();
-    double dPrevPosRot = previousPose.Rotation().Degrees().to<double>();
-
-    dCurPosRot = dCurPosRot < 0 ? 360 + dCurPosRot : dCurPosRot;
-    dPrevPosRot = dPrevPosRot < 0 ? 360 + dPrevPosRot : dPrevPosRot;
-
-    double dDeltaX = abs(dPrevPosX - dCurPosX);
-    double dDeltaY = abs(dPrevPosY - dCurPosY);
-    double dDeltaRot = abs(dCurPosRot - dPrevPosRot);
-
-    units::velocity::meters_per_second_t chassisSpeed = units::math::sqrt((velocity.vx * velocity.vx) + (velocity.vy * velocity.vy));
-
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "trajectory drive", "deltaX", dPrevPosX - dCurPosX);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "trajectory drive", "deltaY", dPrevPosY - dCurPosY);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "trajectory drive", "deltaRotation", dDeltaRot);
-
-    //  If Position of X or Y has moved since last scan..  Using Delta X/Y
-    return ((dDeltaX <= xyTolerance) && (dDeltaY <= xyTolerance) && (dDeltaRot <= rotTolerance) && (chassisSpeed.to<double>() <= speedTolerance));
 }

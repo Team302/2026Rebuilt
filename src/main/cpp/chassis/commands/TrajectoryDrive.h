@@ -15,9 +15,9 @@
 
 #pragma once
 
-#include "frc2/command/CommandHelper.h"
-#include "frc2/command/Command.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "frc2/command/Command.h"
+#include "frc2/command/CommandHelper.h"
 
 // FRC Includes
 #include "frc/Timer.h"
@@ -51,10 +51,8 @@ private:
     subsystems::CommandSwerveDrivetrain *m_chassis;
     std::string m_pathName;
 
-    bool IsSamePose(frc::Pose2d currentPose, frc::Pose2d previousPose, frc::ChassisSpeeds velocity, double xyTolerance, double rotTolerance, double speedTolerance);
-
     std::optional<choreo::Trajectory<choreo::SwerveSample>> m_trajectory;
-    choreo::SwerveSample m_finalState;
+    frc::Pose2d m_finalPose;
     std::vector<choreo::SwerveSample> m_trajectoryStates;
 
     frc::Pose2d m_prevPose;
@@ -80,4 +78,8 @@ private:
     frc::ChassisSpeeds m_chassisSpeeds;
 
     swerve::requests::FieldCentric m_driveRequest;
+
+    static constexpr units::length::centimeter_t kPositionTolerance{10.0_cm}; // this is what we had; should we lower it? This is probably why we stopped short on straight path test.
+    static constexpr units::angle::degree_t kHeadingTolerance{3.0_deg};       // this is what we had; should we lower it?
+    static constexpr double kPercentComplete{0.9};                            // this is what we had; should we up it so we don't compare poses so often?
 };
