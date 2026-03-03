@@ -36,7 +36,7 @@ class ZoneHelper
 {
 public:
     // void InitZones();
-    bool IsInZones(std::vector<ZoneParams *> zoneFiles);
+    bool IsInZones(const std::vector<ZoneParams *> &zoneFiles);
     bool IsInZone(ZoneParams *zoneFile);
     void ParseZoneFiles();
 

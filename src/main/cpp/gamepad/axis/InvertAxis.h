@@ -15,14 +15,6 @@
 
 #pragma once
 
-// C++ Includes
-
-// FRC includes
-
-// Team 302 includes
-
-// Third Party Includes
-
 //==================================================================================
 /// <summary>
 /// Class:          InvertAxis

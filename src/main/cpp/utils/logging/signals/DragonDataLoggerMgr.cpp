@@ -108,6 +108,22 @@ void DragonDataLoggerMgr::PeriodicDataLog()
     }
 }
 
+void DragonDataLoggerMgr::PeriodicDataLogInit()
+{
+    if (m_items.empty())
+    {
+        return;
+    }
+    uint64_t timestamp = frc::RobotController::GetFPGATime();
+    for (auto item : m_items)
+    {
+        if (item != nullptr)
+        {
+            item->DataLog(timestamp);
+        }
+    }
+}
+
 void DragonDataLoggerMgr::RegisterItem(DragonDataLogger *item)
 {
     if (item != nullptr)

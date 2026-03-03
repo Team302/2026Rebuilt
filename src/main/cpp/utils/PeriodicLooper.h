@@ -76,11 +76,11 @@ private:
     /// @brief Sets up gamepad transitions for the given state managers.
     /// @param mgrs Vector of StateMgr pointers to configure gamepad transitions for.
     /// @param checkSw Whether to check switch states for transitions.
-    void SetGamePadTransitions(std::vector<StateMgr *> mgrs, bool checkSw);
+    void SetGamePadTransitions(const std::vector<StateMgr *> &mgrs, bool checkSw);
 
     /// @brief Executes the current state for all provided state managers.
     /// @param mgrs Vector of StateMgr pointers whose current states should be executed.
-    void RunCurrentStates(std::vector<StateMgr *> mgrs);
+    void RunCurrentStates(const std::vector<StateMgr *> &mgrs);
 
     std::vector<StateMgr *> m_auton;      ///< State managers registered for autonomous mode.
     std::vector<StateMgr *> m_teleop;     ///< State managers registered for teleop mode.

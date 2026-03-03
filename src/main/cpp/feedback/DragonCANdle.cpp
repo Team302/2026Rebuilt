@@ -61,7 +61,6 @@ void DragonCANdle::Periodic()
     if (m_candle == nullptr)
         return;
 
-    UpdateDiagnostics();
     UpdateAnimation();
 
     if (frc::RobotBase::IsSimulation() && m_candle != nullptr)
@@ -71,6 +70,10 @@ void DragonCANdle::Periodic()
         simState.SetSupplyVoltage(12_V);
         simState.GetLastStatusCode();
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonCANdle", "AppliedControl", std::string(m_candle->GetAppliedControl().get()->GetName()));
+    }
+    else if (frc::DriverStation::IsDisabled())
+    {
+        UpdateDiagnostics();
     }
 }
 

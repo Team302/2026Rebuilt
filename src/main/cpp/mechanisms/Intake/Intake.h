@@ -23,20 +23,20 @@
 // FRC Includes
 #include <networktables/NetworkTable.h>
 
-#include "ctre/phoenix6/TalonFX.hpp"
-#include "ctre/phoenix6/controls/Follower.hpp"
-#include "ctre/phoenix6/configs/Configuration.hpp"
-#include "ctre/phoenix6/TalonFXS.hpp"
-#include "utils/logging/signals/DragonDataLogger.h"
 #include "ctre/phoenix6/CANdi.hpp"
+#include "ctre/phoenix6/TalonFX.hpp"
+#include "ctre/phoenix6/TalonFXS.hpp"
+#include "ctre/phoenix6/configs/Configuration.hpp"
+#include "ctre/phoenix6/controls/Follower.hpp"
+#include "utils/logging/signals/DragonDataLogger.h"
 
 #include "mechanisms/base/BaseMech.h"
-#include "state/StateMgr.h"
-#include "state/IRobotStateChangeSubscriber.h"
+#include "mechanisms/configs/MechanismConfigMgr.h"
+#include "mechanisms/configs/RobotElementNames.h"
 #include "mechanisms/controllers/ControlData.h"
+#include "state/IRobotStateChangeSubscriber.h"
 #include "state/RobotStateChanges.h"
-#include "configs/RobotElementNames.h"
-#include "configs/MechanismConfigMgr.h"
+#include "state/StateMgr.h"
 
 #include "RobotIdentifier.h"
 
@@ -49,7 +49,8 @@ public:
 		STATE_INTAKE,
 		STATE_EXPEL,
 		STATE_LAUNCH,
-		STATE_EMPTY_HOPPER
+		STATE_EMPTY_HOPPER,
+		STATE_LOAD_HOPPER
 	};
 
 	Intake(RobotIdentifier activeRobotId);
@@ -80,6 +81,7 @@ public:
 	}
 	void UpdateTargetExtenderPositionDeg(units::angle::turn_t position)
 	{
+		position = std::clamp(position, m_intakeRetractedPositionTarget, m_intakeExtendedPositionTarget);
 		m_extenderPositionDeg.Position = position;
 		m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
 	}
@@ -130,7 +132,7 @@ private:
 
 	ctre::phoenix6::controls::DutyCycleOut m_intakePercentOut{0.0};
 	ctre::phoenix6::controls::DutyCycleOut m_extenderPercentOut{0.0};
-	ctre::phoenix6::controls::PositionVoltage m_extenderPositionDeg{units::angle::degree_t(20.0)};
+	ctre::phoenix6::controls::MotionMagicVoltage m_extenderPositionDeg{0_tr};
 	ctre::phoenix6::controls::ControlRequest *m_intakeActiveTarget = &m_intakePercentOut;
 	ctre::phoenix6::controls::ControlRequest *m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
 
@@ -138,8 +140,8 @@ private:
 	bool m_isLaunching = false;
 	bool m_prevIntakeSwitchState = false;
 
-	units::angle::turn_t m_intakeRetractedPositionTarget{20.0};
-	units::angle::turn_t m_intakeExtendedPositionTarget{120.0};
+	units::angle::turn_t m_intakeRetractedPositionTarget{80.0};
+	units::angle::turn_t m_intakeExtendedPositionTarget{-0.0};
 
 	// logging paths
 	static constexpr std::string_view m_intakeStatePath = "/Intake/State";

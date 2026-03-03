@@ -3,9 +3,9 @@ $$_GEN_NOTICE_$$
 
 #include <string>
 
+#include "mechanisms/configs/RobotConfig.h"
+#include "mechanisms/configs/RobotConfigMgr.h"
 #include "utils/logging/debug/Logger.h"
-#include "configs/RobotConfigMgr.h"
-#include "configs/RobotConfig.h"
 $$_ROBOT_CONFIG_INCLUDES_$$
 
 using namespace std;

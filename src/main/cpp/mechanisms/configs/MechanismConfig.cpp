@@ -13,24 +13,36 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#pragma once
+#include "mechanisms/configs/MechanismConfig.h"
 
-#include "configs/RobotElementNames.h"
-#include "state/StateMgr.h"
-#include "mechanisms/MechanismTypes.h"
-
-class MechanismConfig
+MechanismConfig::MechanismConfig()
 {
-public:
-    MechanismConfig();
-    ~MechanismConfig();
+}
 
-    void BuildRobot();
+void MechanismConfig::BuildRobot()
+{
+    DefineMechanisms();
+    DefineLEDs();
+    DefineCompressor();
+}
 
-    virtual StateMgr *GetMechanism(MechanismTypes::MECHANISM_TYPE mechType);
+MechanismConfig::~MechanismConfig()
+{
+}
 
-protected:
-    virtual void DefineMechanisms();
-    virtual void DefineLEDs();
-    virtual void DefineCompressor();
-};
+void MechanismConfig::DefineMechanisms()
+{
+}
+
+void MechanismConfig::DefineLEDs()
+{
+}
+
+void MechanismConfig::DefineCompressor()
+{
+}
+
+StateMgr *MechanismConfig::GetMechanism(MechanismTypes::MECHANISM_TYPE mechType)
+{
+    return nullptr;
+}

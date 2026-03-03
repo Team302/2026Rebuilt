@@ -23,24 +23,24 @@
 // FRC Includes
 #include <networktables/NetworkTable.h>
 
-#include "ctre/phoenix6/TalonFX.hpp"
-#include "ctre/phoenix6/controls/Follower.hpp"
-#include "ctre/phoenix6/configs/Configuration.hpp"
-#include "frc/Solenoid.h"
 #include "ctre/phoenix6/CANcoder.hpp"
-#include "ctre/phoenix6/configs/Configurator.hpp"
-#include "ctre/phoenix6/signals/SpnEnums.hpp"
 #include "ctre/phoenix6/CANdi.hpp"
+#include "ctre/phoenix6/TalonFX.hpp"
+#include "ctre/phoenix6/configs/Configuration.hpp"
+#include "ctre/phoenix6/configs/Configurator.hpp"
+#include "ctre/phoenix6/controls/Follower.hpp"
+#include "ctre/phoenix6/signals/SpnEnums.hpp"
+#include "frc/Solenoid.h"
 
 #include "mechanisms/base/BaseMech.h"
-#include "state/StateMgr.h"
-#include "state/IRobotStateChangeSubscriber.h"
 #include "mechanisms/controllers/ControlData.h"
+#include "state/IRobotStateChangeSubscriber.h"
 #include "state/RobotStateChanges.h"
+#include "state/StateMgr.h"
 
-#include "configs/RobotElementNames.h"
-#include "configs/MechanismConfigMgr.h"
 #include "chassis/ChassisConfigMgr.h"
+#include "mechanisms/configs/MechanismConfigMgr.h"
+#include "mechanisms/configs/RobotElementNames.h"
 #include "utils/logging/signals/DragonDataLogger.h"
 
 #include "RobotIdentifier.h"

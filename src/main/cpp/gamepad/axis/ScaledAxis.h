@@ -15,14 +15,6 @@
 
 #pragma once
 
-// C++ Includes
-
-// FRC includes
-
-// Team 302 includes
-
-// Third Party Includes
-
 //==================================================================================
 /// <summary>
 /// Class:          ScaledAxis
@@ -42,7 +34,7 @@ public:
     /// </summary>
     //==================================================================================
     virtual void SetScaleFactor(
-        double scaleFactor // <I> - scale factor must be > 0.0 and <= 1.0
+        double scaleFactor // <I> - scale factor; positive values are used directly (any magnitude), zero results in no output, negative values invert and scale the output
     );
 
     //==================================================================================

@@ -48,7 +48,7 @@ std::vector<ZoneParams *> ZoneHelper::GetAllianceZones(ZoneAllianceColor allianc
     return allianceZones;
 }
 
-bool ZoneHelper::IsInZones(std::vector<ZoneParams *> zoneFiles)
+bool ZoneHelper::IsInZones(const std::vector<ZoneParams *> &zoneFiles)
 {
     return std::find_if(zoneFiles.begin(), zoneFiles.end(),
                         [this](ZoneParams *zone)

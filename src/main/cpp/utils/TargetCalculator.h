@@ -68,7 +68,8 @@ public:
      *
      * \return Translation2d with mechanism position in meters (world frame)
      */
-    frc::Translation2d GetMechanismWorldPosition() const;
+    frc::Translation2d
+    GetMechanismWorldPosition() const;
 
     /**
      * \brief Calculate distance from chassis center to target
@@ -128,25 +129,43 @@ public:
      */
     frc::Pose2d GetVirtualTargetPose(units::time::second_t lookaheadTime);
 
+    void ForceUpdateChassisPose() { UpdateChassisPose(true); }
+
 protected:
     TargetCalculator();
     ~TargetCalculator() = default;
 
     /**
-     * \brief Get the current chassis pose
+     * \brief Get the current cached chassis pose
      * \return Pose2d with X, Y position (meters) and rotation (radians)
      */
-    frc::Pose2d GetChassisPose() const;
+    frc::Pose2d GetChassisPose() const { return m_chassisPose; };
+
+    /**
+     * \brief Update the chassis pose and return it
+     */
+    void UpdateChassisPose(bool forceUpdate = false);
 
     /**
      * \brief Get the current chassis velocity
      * \return ChassisSpeeds with vx, vy (m/s) and omega (rad/s) in field frame
      */
-    frc::ChassisSpeeds GetChassisVelocity() const;
+    frc::ChassisSpeeds GetChassisVelocity() const { return m_currentChassisSpeeds; };
+
+    /**
+     * \brief Updates the current chassis velocity
+     */
+    void UpdateChassisSpeeds();
 
 private:
     static TargetCalculator *m_instance;
     frc::Translation2d m_mechanismOffset;
+
+    frc::ChassisSpeeds m_currentChassisSpeeds{};
+    frc::Pose2d m_chassisPose{};
+
+    static constexpr units::meters_per_second_t m_translationSpeedThreshold{0.1_mps};
+    static constexpr units::radians_per_second_t m_rotationSpeedThreshold{0.25_deg_per_s};
 
     subsystems::CommandSwerveDrivetrain *m_chassis;
 };

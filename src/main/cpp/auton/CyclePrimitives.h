@@ -37,6 +37,9 @@ class IPrimitive;
 class PrimitiveFactory;
 class PrimitiveParams;
 class SwerveChassis;
+class Launcher;
+class Intake;
+class Climber;
 
 class CyclePrimitives : public State, DragonDataLogger
 {
@@ -60,6 +63,7 @@ protected:
 private:
     void SetMechanismStatesFromParam(PrimitiveParams *params);
     void SetMechanismStatesFromZone(ZoneParams *params);
+    void CacheMechanismPointers();
 
     std::vector<PrimitiveParams *> m_primParams;
     int m_currentPrimSlot;
@@ -73,4 +77,9 @@ private:
     subsystems::CommandSwerveDrivetrain *m_chassis;
     ChassisOptionEnums::PathUpdateOption m_updatedHeadingOption;
     ZoneParamsVector m_zones;
+
+    // Cached mechanism pointers to avoid repeated lookups
+    Launcher *m_cachedLauncher;
+    Intake *m_cachedIntake;
+    Climber *m_cachedClimber;
 };

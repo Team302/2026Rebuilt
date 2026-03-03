@@ -659,6 +659,7 @@ void Launcher::RunCommonTasks()
 	if (frc::DriverStation::IsDisabled())
 	{
 		InitilaizeLauncher();
+		m_targetCalculator->ForceUpdateChassisPose();
 	}
 
 	// This function is called once per loop before the current state Run()
@@ -666,7 +667,10 @@ void Launcher::RunCommonTasks()
 	SetLauncherProtect();
 
 	// Update Launcher Targets/Field
-	m_targetCalculator->UpdateTargetOffset();
+	if (!m_tuningLauncher)
+	{
+		m_targetCalculator->UpdateTargetOffset();
+	}
 	CalculateTargets();
 	UpdateLauncherTargets();
 

@@ -14,12 +14,14 @@
 //====================================================================================================================================================
 
 #include <map>
+#include <memory>
 #include <string>
 #include <utility>
 
+#include "frc/DriverStation.h"
 #include "frc/GenericHID.h"
 #include "frc/XboxController.h"
-#include "frc/DriverStation.h"
+#include "gamepad/DragonXBox.h"
 #include "gamepad/axis/AnalogAxis.h"
 #include "gamepad/axis/IDeadband.h"
 #include "gamepad/axis/IProfile.h"
@@ -28,7 +30,6 @@
 #include "gamepad/button/DigitalButton.h"
 #include "gamepad/button/POVButton.h"
 #include "gamepad/button/ToggleButton.h"
-#include "gamepad/DragonXBox.h"
 #include "teleopcontrol/TeleopControlMappingEnums.h"
 
 #include "utils/logging/debug/Logger.h"
@@ -40,6 +41,8 @@ using namespace frc;
 
 DragonXBox::DragonXBox(
     int port) : m_xbox(new frc::XboxController(port)),
+                m_axis{},
+                m_button{},
                 m_dataLogPath("DS:joystick" + std::to_string(port))
 {
     // Create Axis Objects
@@ -57,31 +60,31 @@ DragonXBox::DragonXBox(
     m_axis[TeleopControlMappingEnums::RIGHT_JOYSTICK_Y]->DefinePerpendicularAxis(m_axis[TeleopControlMappingEnums::RIGHT_JOYSTICK_X]);
 
     // Create DigitalButton Objects for the physical buttons
-    m_button[TeleopControlMappingEnums::A_BUTTON] = new DigitalButton(m_xbox, XboxController::Button::kA);
-    m_button[TeleopControlMappingEnums::B_BUTTON] = new DigitalButton(m_xbox, XboxController::Button::kB);
-    m_button[TeleopControlMappingEnums::X_BUTTON] = new DigitalButton(m_xbox, XboxController::Button::kX);
-    m_button[TeleopControlMappingEnums::Y_BUTTON] = new DigitalButton(m_xbox, XboxController::Button::kY);
-    m_button[TeleopControlMappingEnums::LEFT_BUMPER] = new DigitalButton(m_xbox, XboxController::Button::kLeftBumper);
-    m_button[TeleopControlMappingEnums::RIGHT_BUMPER] = new DigitalButton(m_xbox, XboxController::Button::kRightBumper);
-    m_button[TeleopControlMappingEnums::SELECT_BUTTON] = new DigitalButton(m_xbox, XboxController::Button::kBack);
-    m_button[TeleopControlMappingEnums::START_BUTTON] = new DigitalButton(m_xbox, XboxController::Button::kStart);
-    m_button[TeleopControlMappingEnums::LEFT_STICK_PRESSED] = new DigitalButton(m_xbox, XboxController::Button::kLeftStick);
-    m_button[TeleopControlMappingEnums::RIGHT_STICK_PRESSED] = new DigitalButton(m_xbox, XboxController::Button::kRightStick);
+    m_button[TeleopControlMappingEnums::A_BUTTON] = std::make_unique<DigitalButton>(m_xbox, XboxController::Button::kA);
+    m_button[TeleopControlMappingEnums::B_BUTTON] = std::make_unique<DigitalButton>(m_xbox, XboxController::Button::kB);
+    m_button[TeleopControlMappingEnums::X_BUTTON] = std::make_unique<DigitalButton>(m_xbox, XboxController::Button::kX);
+    m_button[TeleopControlMappingEnums::Y_BUTTON] = std::make_unique<DigitalButton>(m_xbox, XboxController::Button::kY);
+    m_button[TeleopControlMappingEnums::LEFT_BUMPER] = std::make_unique<DigitalButton>(m_xbox, XboxController::Button::kLeftBumper);
+    m_button[TeleopControlMappingEnums::RIGHT_BUMPER] = std::make_unique<DigitalButton>(m_xbox, XboxController::Button::kRightBumper);
+    m_button[TeleopControlMappingEnums::SELECT_BUTTON] = std::make_unique<DigitalButton>(m_xbox, XboxController::Button::kBack);
+    m_button[TeleopControlMappingEnums::START_BUTTON] = std::make_unique<DigitalButton>(m_xbox, XboxController::Button::kStart);
+    m_button[TeleopControlMappingEnums::LEFT_STICK_PRESSED] = std::make_unique<DigitalButton>(m_xbox, XboxController::Button::kLeftStick);
+    m_button[TeleopControlMappingEnums::RIGHT_STICK_PRESSED] = std::make_unique<DigitalButton>(m_xbox, XboxController::Button::kRightStick);
 
     // Create AnalogButton Objects for the triggers
-    m_button[TeleopControlMappingEnums::LEFT_TRIGGER_PRESSED] = new AnalogButton(m_axis[TeleopControlMappingEnums::LEFT_TRIGGER]);
-    m_button[TeleopControlMappingEnums::RIGHT_TRIGGER_PRESSED] = new AnalogButton(m_axis[TeleopControlMappingEnums::RIGHT_TRIGGER]);
+    m_button[TeleopControlMappingEnums::LEFT_TRIGGER_PRESSED] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::LEFT_TRIGGER]);
+    m_button[TeleopControlMappingEnums::RIGHT_TRIGGER_PRESSED] = std::make_unique<AnalogButton>(m_axis[TeleopControlMappingEnums::RIGHT_TRIGGER]);
 
     // Create POVButton Objects for the POV
 
-    m_button[TeleopControlMappingEnums::POV_0] = new POVButton(m_xbox, 0);
-    m_button[TeleopControlMappingEnums::POV_45] = new POVButton(m_xbox, 45);
-    m_button[TeleopControlMappingEnums::POV_90] = new POVButton(m_xbox, 90);
-    m_button[TeleopControlMappingEnums::POV_135] = new POVButton(m_xbox, 135);
-    m_button[TeleopControlMappingEnums::POV_180] = new POVButton(m_xbox, 180);
-    m_button[TeleopControlMappingEnums::POV_225] = new POVButton(m_xbox, 225);
-    m_button[TeleopControlMappingEnums::POV_270] = new POVButton(m_xbox, 270);
-    m_button[TeleopControlMappingEnums::POV_315] = new POVButton(m_xbox, 315);
+    m_button[TeleopControlMappingEnums::POV_0] = std::make_unique<POVButton>(m_xbox, 0);
+    m_button[TeleopControlMappingEnums::POV_45] = std::make_unique<POVButton>(m_xbox, 45);
+    m_button[TeleopControlMappingEnums::POV_90] = std::make_unique<POVButton>(m_xbox, 90);
+    m_button[TeleopControlMappingEnums::POV_135] = std::make_unique<POVButton>(m_xbox, 135);
+    m_button[TeleopControlMappingEnums::POV_180] = std::make_unique<POVButton>(m_xbox, 180);
+    m_button[TeleopControlMappingEnums::POV_225] = std::make_unique<POVButton>(m_xbox, 225);
+    m_button[TeleopControlMappingEnums::POV_270] = std::make_unique<POVButton>(m_xbox, 270);
+    m_button[TeleopControlMappingEnums::POV_315] = std::make_unique<POVButton>(m_xbox, 315);
     if (port <= 1)
     {
         m_logThis = true;
@@ -90,6 +93,10 @@ DragonXBox::DragonXBox(
 
 DragonXBox::~DragonXBox()
 {
+    for (auto *axis : m_axis)
+    {
+        delete axis;
+    }
     delete m_xbox;
     m_xbox = nullptr;
 }
@@ -169,14 +176,16 @@ void DragonXBox::SetButtonMode(
     {
         if (mode == TeleopControlMappingEnums::BUTTON_MODE::TOGGLE)
         {
-            auto btn = new ToggleButton(m_button[button]);
-            m_button[button] = btn;
+            // Only wrap if not already a toggle to avoid leaking nested decorators
+            if (dynamic_cast<ToggleButton *>(m_button[button].get()) == nullptr)
+            {
+                m_button[button] = std::make_unique<ToggleButton>(std::move(m_button[button]));
+            }
         }
-        else
-        {
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT_ONCE, string("DragonXBox::SetButtonMode"), to_string(button), string("button is Nullptr"));
-        }
-        // TODO: should have else to re-create the button or remove the toggle decorator
+    }
+    else
+    {
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT_ONCE, string("DragonXBox::SetButtonMode"), to_string(button), string("button is Nullptr"));
     }
 }
 
