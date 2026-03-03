@@ -15,14 +15,7 @@
 
 #pragma once
 
-// C++ Includes
-
-// FRC includes
-
-// Team 302 includes
-#include <gamepad/axis/IDeadband.h>
-
-// Third Party Includes
+#include "gamepad/axis/IDeadband.h"
 
 //==================================================================================
 /// <summary>

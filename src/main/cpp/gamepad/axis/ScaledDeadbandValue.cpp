@@ -13,9 +13,9 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include <gamepad/axis/ScaledDeadbandValue.h>
-#include <gamepad/axis/IDeadband.h>
-#include <gamepad/axis/DeadbandValue.h>
+#include "gamepad/axis/ScaledDeadbandValue.h"
+#include "gamepad/axis/DeadbandValue.h"
+#include "gamepad/axis/IDeadband.h"
 
 #include <cmath>
 

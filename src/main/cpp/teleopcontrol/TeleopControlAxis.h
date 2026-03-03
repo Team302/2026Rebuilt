@@ -31,4 +31,13 @@ struct TeleopControlAxis
     TeleopControlMappingEnums::AXIS_PROFILE profile = TeleopControlMappingEnums::AXIS_PROFILE::CUBED;
     TeleopControlMappingEnums::AXIS_DIRECTION direction = TeleopControlMappingEnums::AXIS_DIRECTION::SYNCED;
     double scaleFactor = 1.0;
+
+    constexpr TeleopControlAxis() = default;
+    constexpr TeleopControlAxis(TeleopControlMappingEnums::CONTROLLER ctrl,
+                                TeleopControlMappingEnums::AXIS_IDENTIFIER axis,
+                                TeleopControlMappingEnums::AXIS_DEADBAND deadband,
+                                TeleopControlMappingEnums::AXIS_PROFILE prof,
+                                TeleopControlMappingEnums::AXIS_DIRECTION dir,
+                                double scale)
+        : controllerNumber(ctrl), axisId(axis), deadbandType(deadband), profile(prof), direction(dir), scaleFactor(scale) {}
 };

@@ -55,5 +55,7 @@ protected:
     IButton() = default;
     IButton(const IButton &that) = delete;
     IButton &operator=(const IButton &that) = delete;
+
+public:
     virtual ~IButton() = default;
 };

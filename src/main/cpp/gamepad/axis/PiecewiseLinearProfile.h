@@ -16,14 +16,7 @@
 
 #pragma once
 
-// C++ Includes
-
-// FRC includes
-
-// Team 302 includes
-#include <gamepad/axis/IProfile.h>
-
-// Third Party Includes
+#include "gamepad/axis/IProfile.h"
 
 //========================================================================================================
 /// @class PiecewiseLinearProfile
