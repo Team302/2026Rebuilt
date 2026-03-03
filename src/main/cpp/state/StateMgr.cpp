@@ -89,7 +89,7 @@ void StateMgr::CheckForStateTransition()
 void StateMgr::CheckForSensorTransitions()
 {
     const auto &transitions = m_currentState->GetPossibleStateTransitions();
-    for (auto state : transitions)
+    for (auto *state : transitions)
     {
         if (state->IsTransitionCondition(false))
         {
@@ -102,7 +102,7 @@ void StateMgr::CheckForSensorTransitions()
 void StateMgr::CheckForGamepadTransitions()
 {
     const auto &transitions = m_currentState->GetPossibleStateTransitions();
-    for (auto state : transitions)
+    for (auto *state : transitions)
     {
         if (state->IsTransitionCondition(true))
         {
