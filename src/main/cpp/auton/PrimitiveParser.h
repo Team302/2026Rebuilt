@@ -30,5 +30,5 @@ public:
     static PrimitiveParamsVector ParseXML(std::string fileName);
 
 private:
-    static void Print(PrimitiveParamsVector params);
+    static void Print(const PrimitiveParamsVector &params);
 };

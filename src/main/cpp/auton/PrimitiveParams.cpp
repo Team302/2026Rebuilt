@@ -17,6 +17,8 @@
 #include "auton/PrimitiveParams.h"
 #include "chassis/ChassisOptionEnums.h"
 
+#include <utility>
+
 // @ADDMECH mechanism state for mech as parameter
 PrimitiveParams::PrimitiveParams(PRIMITIVE_IDENTIFIER id,
 								 units::time::second_t time,
@@ -35,9 +37,9 @@ PrimitiveParams::PrimitiveParams(PRIMITIVE_IDENTIFIER id,
 																	  m_time(time),
 																	  m_headingOption(headingOpt),
 																	  m_heading(heading),
-																	  m_choreoTrajectoryName(choreoTrajectoryName),
+																	  m_choreoTrajectoryName(std::move(choreoTrajectoryName)),
 																	  m_visionAlignment(visionAlignment),
-																	  m_zones(zones),
+																	  m_zones(std::move(zones)),
 																	  m_pathUpdateOption(pathUpdateOption),
 																	  m_isLauncherStateChanged(launcherStateChanged),
 																	  m_isIntakeStateChanged(intakeStateChanged),
