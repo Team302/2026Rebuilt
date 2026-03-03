@@ -111,6 +111,8 @@ Robot::Robot()
     InitializeDriveteamFeedback();
 
     m_datalogger = DragonDataLoggerMgr::GetInstance();
+    m_datalogger->PeriodicDataLogInit(); // warm-load the data logger to avoid first-run stalls during matches
+
     // auto path = AutonUtils::GetTrajectoryFromPathFile("BlueLeftInside_I"); // load choreo library so we don't get loop overruns during autonperiodic
 }
 /// @brief Called periodically while the robot is running, regardless of mode.
