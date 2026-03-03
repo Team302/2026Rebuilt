@@ -24,8 +24,6 @@
 #include "state/StateMgr.h"
 #include "utils/logging/debug/Logger.h"
 
-State *myState;
-
 /// @brief    initialize the state manager, parse the configuration file and create the states.
 StateMgr::StateMgr() : m_checkGamePadTransitions(true),
                        m_currentState(),
@@ -40,7 +38,6 @@ void StateMgr::Init()
         m_currentState = m_stateVector[0];
         m_currentStateID = 0;
         m_currentState->Init();
-        myState = m_currentState;
     }
 }
 
@@ -72,8 +69,8 @@ void StateMgr::CheckForStateTransition()
 
 void StateMgr::CheckForSensorTransitions()
 {
-    auto transitions = m_currentState->GetPossibleStateTransitions();
-    for (auto state : transitions)
+    const auto &transitions = m_currentState->GetPossibleStateTransitions();
+    for (auto *state : transitions)
     {
         auto transition = state->IsTransitionCondition(false);
         if (transition)
@@ -86,8 +83,8 @@ void StateMgr::CheckForSensorTransitions()
 
 void StateMgr::CheckForGamepadTransitions()
 {
-    auto transitions = m_currentState->GetPossibleStateTransitions();
-    for (auto state : transitions)
+    const auto &transitions = m_currentState->GetPossibleStateTransitions();
+    for (auto *state : transitions)
     {
         auto transition = state->IsTransitionCondition(true);
         if (transition)

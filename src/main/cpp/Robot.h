@@ -31,6 +31,12 @@ class DragonDataLoggerMgr;
 class DragonVisionPoseEstimatorContainer;
 class DragonQuest;
 class DragonVision;
+class DriverFeedback;
+
+namespace subsystems
+{
+    class CommandSwerveDrivetrain;
+}
 
 class Robot : public frc::TimedRobot
 {
@@ -61,4 +67,6 @@ private:
     bool m_rewindLatch = false;
     DragonVisionPoseEstimatorContainer *m_dragonVisionPoseEstimator;
     DragonQuest *m_quest;
+    DriverFeedback *m_feedback = nullptr;
+    subsystems::CommandSwerveDrivetrain *m_chassis = nullptr;
 };
