@@ -58,7 +58,7 @@ public:
      * \param lookaheadTime Time in seconds for projectile flight
      * \return Translation2d representing the virtual target in world coordinates
      */
-    frc::Translation2d CalculateVirtualTarget(const frc::Translation2d &realTarget, units::time::second_t lookaheadTime);
+    frc::Translation2d CalculateVirtualTarget(const frc::Translation2d &realTarget, units::time::second_t lookaheadTime) const;
 
     /**
      * \brief Get mechanism/mechanism position in world coordinates
@@ -68,7 +68,8 @@ public:
      *
      * \return Translation2d with mechanism position in meters (world frame)
      */
-    frc::Translation2d GetMechanismWorldPosition() const;
+    frc::Translation2d
+    GetMechanismWorldPosition() const;
 
     /**
      * \brief Calculate distance from chassis center to target

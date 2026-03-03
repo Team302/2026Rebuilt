@@ -14,6 +14,7 @@
 //====================================================================================================================================================
 
 #include "utils/TargetCalculator.h"
+#include "utils/logging/debug/Logger.h"
 
 #include <cmath>
 
@@ -24,7 +25,7 @@ TargetCalculator::TargetCalculator()
 
 frc::Translation2d TargetCalculator::CalculateVirtualTarget(
     const frc::Translation2d &realTarget,
-    units::time::second_t lookaheadTime)
+    units::time::second_t lookaheadTime) const
 {
     auto pose = GetChassisPose();
 
@@ -113,7 +114,7 @@ frc::Pose2d TargetCalculator::GetVirtualTargetPose(
 void TargetCalculator::UpdateChassisPose(bool forceUpdate)
 {
     if (m_chassis != nullptr &&
-        (forceUpdate || (m_currentChassisSpeeds.vx >= m_translationSpeedThreshold && m_currentChassisSpeeds.vy >= m_translationSpeedThreshold && m_currentChassisSpeeds.omega >= m_rotationSpeedThreshold)))
+        (forceUpdate || units::math::abs(m_currentChassisSpeeds.vx) >= m_translationSpeedThreshold || units::math::abs(m_currentChassisSpeeds.vy) >= m_translationSpeedThreshold || units::math::abs(m_currentChassisSpeeds.omega) >= m_rotationSpeedThreshold))
     {
         m_chassisPose = m_chassis->GetPose();
     }

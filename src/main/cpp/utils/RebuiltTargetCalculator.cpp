@@ -159,8 +159,8 @@ frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
  */
 units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle)
 {
-    UpdateChassisPose();
     UpdateChassisSpeeds();
+    UpdateChassisPose();
 
     m_field->UpdateObject(kCurrentTargetName, GetVirtualTargetPose(looheadTime));
 
