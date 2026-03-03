@@ -23,20 +23,20 @@
 // FRC Includes
 #include <networktables/NetworkTable.h>
 
-#include "ctre/phoenix6/TalonFX.hpp"
-#include "ctre/phoenix6/controls/Follower.hpp"
-#include "ctre/phoenix6/configs/Configuration.hpp"
-#include "ctre/phoenix6/TalonFXS.hpp"
-#include "utils/logging/signals/DragonDataLogger.h"
 #include "ctre/phoenix6/CANdi.hpp"
+#include "ctre/phoenix6/TalonFX.hpp"
+#include "ctre/phoenix6/TalonFXS.hpp"
+#include "ctre/phoenix6/configs/Configuration.hpp"
+#include "ctre/phoenix6/controls/Follower.hpp"
+#include "utils/logging/signals/DragonDataLogger.h"
 
 #include "mechanisms/base/BaseMech.h"
-#include "state/StateMgr.h"
-#include "state/IRobotStateChangeSubscriber.h"
+#include "mechanisms/configs/MechanismConfigMgr.h"
+#include "mechanisms/configs/RobotElementNames.h"
 #include "mechanisms/controllers/ControlData.h"
+#include "state/IRobotStateChangeSubscriber.h"
 #include "state/RobotStateChanges.h"
-#include "configs/RobotElementNames.h"
-#include "configs/MechanismConfigMgr.h"
+#include "state/StateMgr.h"
 
 #include "RobotIdentifier.h"
 

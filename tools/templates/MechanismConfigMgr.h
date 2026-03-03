@@ -3,8 +3,8 @@ $$_GEN_NOTICE_$$
 
 #pragma once
 
-#include "configs/MechanismConfig.h"
 #include "RobotIdentifier.h"
+#include "mechanisms/configs/MechanismConfig.h"
 class MechanismConfigMgr
 {
 public:

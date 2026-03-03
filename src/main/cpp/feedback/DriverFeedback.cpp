@@ -28,9 +28,9 @@
 #include "vision/DragonVision.h"
 
 // Season Specific Includes
-#include "configs/MechanismConfigMgr.h"
 #include "mechanisms/Intake/Intake.h"
 #include "mechanisms/Launcher/Launcher.h"
+#include "mechanisms/configs/MechanismConfigMgr.h"
 
 using frc::DriverStation;
 

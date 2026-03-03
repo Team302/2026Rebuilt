@@ -2,8 +2,8 @@ $$_COPYRIGHT_$$
 $$_GEN_NOTICE_$$
 
 #pragma once
-#include "configs/MechanismConfig.h"
 #include "mechanisms/MechanismTypes.h"
+#include "mechanisms/configs/MechanismConfig.h"
 #include "state/StateMgr.h"
 $$_MECHANISM_INCLUDE_FILES_$$
 
@@ -18,7 +18,7 @@ public:
 protected:
     void DefineMechanisms() override;
     void DefineLEDs() override;
-	void DefineCompressor() override;
+    void DefineCompressor() override;
 
 private:
     $$_MECHANISM_PTR_DECLARATIONS_$$

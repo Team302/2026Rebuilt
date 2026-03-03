@@ -3,7 +3,7 @@ $$_GEN_NOTICE_$$
 
 #pragma once
 
-#include "configs/RobotConfig.h"
+#include "mechanisms/configs/RobotConfig.h"
 
 class RobotConfigMgr
 {

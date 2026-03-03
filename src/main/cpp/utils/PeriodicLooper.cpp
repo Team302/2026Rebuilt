@@ -186,10 +186,10 @@ void PeriodicLooper::DisabledRunCurrentState()
  * This sets the flag on each manager so that they will (or will not) consider
  * gamepad input when deciding to transition between states.
  *
- * @param mgrs list of StateMgr pointers to configure (copied by value)
+ * @param mgrs list of StateMgr pointers to configure (passed by const reference)
  * @param checkSw true to enable gamepad transitions, false to disable
  */
-void PeriodicLooper::SetGamePadTransitions(vector<StateMgr *> mgrs, bool checkSw)
+void PeriodicLooper::SetGamePadTransitions(const vector<StateMgr *> &mgrs, bool checkSw)
 {
     for (auto mgr : mgrs)
     {
@@ -200,11 +200,11 @@ void PeriodicLooper::SetGamePadTransitions(vector<StateMgr *> mgrs, bool checkSw
 /**
  * @brief Run the periodic common tasks and current state for each manager.
  *
- * The managers are provided by value to keep the signature simple. Each
+ * The managers are provided as a const reference to avoid unnecessary copies. Each
  * manager will first have its common periodic work run, followed by a call
  * to RunCurrentState() to execute the active state's logic.
  */
-void PeriodicLooper::RunCurrentStates(vector<StateMgr *> mgrs)
+void PeriodicLooper::RunCurrentStates(const vector<StateMgr *> &mgrs)
 {
     for (auto mgr : mgrs)
     {

@@ -21,22 +21,22 @@
 #include <string>
 
 // FRC Includes
-#include "ctre/phoenix6/TalonFX.hpp"
-#include "ctre/phoenix6/controls/Follower.hpp"
-#include "ctre/phoenix6/configs/Configuration.hpp"
-#include "ctre/phoenix6/TalonFXS.hpp"
 #include "ctre/phoenix6/CANdi.hpp"
+#include "ctre/phoenix6/TalonFX.hpp"
+#include "ctre/phoenix6/TalonFXS.hpp"
+#include "ctre/phoenix6/configs/Configuration.hpp"
+#include "ctre/phoenix6/controls/Follower.hpp"
 
 #include "mechanisms/base/BaseMech.h"
-#include "state/StateMgr.h"
-#include "state/IRobotStateChangeSubscriber.h"
 #include "mechanisms/controllers/ControlData.h"
+#include "state/IRobotStateChangeSubscriber.h"
 #include "state/RobotStateChanges.h"
+#include "state/StateMgr.h"
 
-#include "configs/RobotElementNames.h"
-#include "configs/MechanismConfigMgr.h"
-#include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "RobotIdentifier.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "mechanisms/configs/MechanismConfigMgr.h"
+#include "mechanisms/configs/RobotElementNames.h"
 #include "utils/logging/signals/DragonDataLogger.h"
 
 // Includes after generation

@@ -60,10 +60,29 @@ void StateMgr::RunCurrentState()
 
 void StateMgr::CheckForStateTransition()
 {
-    CheckForSensorTransitions();
+    const auto &transitions = m_currentState->GetPossibleStateTransitions();
+
+    // Check sensor transitions first (higher priority)
+    for (auto state : transitions)
+    {
+        if (state->IsTransitionCondition(false))
+        {
+            SetCurrentState(state->GetStateId(), true);
+            return;
+        }
+    }
+
+    // Then check gamepad transitions if enabled
     if (m_checkGamePadTransitions)
     {
-        CheckForGamepadTransitions();
+        for (auto state : transitions)
+        {
+            if (state->IsTransitionCondition(true))
+            {
+                SetCurrentState(state->GetStateId(), true);
+                return;
+            }
+        }
     }
 }
 
@@ -72,8 +91,7 @@ void StateMgr::CheckForSensorTransitions()
     const auto &transitions = m_currentState->GetPossibleStateTransitions();
     for (auto *state : transitions)
     {
-        auto transition = state->IsTransitionCondition(false);
-        if (transition)
+        if (state->IsTransitionCondition(false))
         {
             SetCurrentState(state->GetStateId(), true);
             break;
@@ -86,8 +104,7 @@ void StateMgr::CheckForGamepadTransitions()
     const auto &transitions = m_currentState->GetPossibleStateTransitions();
     for (auto *state : transitions)
     {
-        auto transition = state->IsTransitionCondition(true);
-        if (transition)
+        if (state->IsTransitionCondition(true))
         {
             SetCurrentState(state->GetStateId(), true);
             break;
