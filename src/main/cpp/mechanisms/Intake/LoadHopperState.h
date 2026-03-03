@@ -25,15 +25,15 @@ using namespace std;
 
 namespace IntakeStates
 {
-	class ExpelState : public State
+	class LoadHopperState : public State
 	{
 	public:
-		ExpelState() = delete;
-		ExpelState(std::string stateName,
-				   int stateId,
-				   Intake *mech,
-				   RobotIdentifier activeRobotId);
-		~ExpelState() = default;
+		LoadHopperState() = delete;
+		LoadHopperState(std::string stateName,
+						int stateId,
+						Intake *mech,
+						RobotIdentifier activeRobotId);
+		~LoadHopperState() = default;
 		void Init() override;
 		void Run() override;
 		void Exit() override;
@@ -45,7 +45,7 @@ namespace IntakeStates
 		void InitCompBot302();
 		RobotIdentifier m_RobotId;
 
-		const double m_intakeTarget = double(-1);
-		const units::angle::turn_t m_extenderTarget = units::angle::turn_t(0);
+		const double m_intakeTarget = double(0.25);
+		const units::angle::turn_t m_extenderTarget = units::angle::turn_t(45);
 	};
 }
