@@ -53,7 +53,9 @@ private:
 
     std::optional<choreo::Trajectory<choreo::SwerveSample>> m_trajectory;
     frc::Pose2d m_finalPose;
+    frc::Pose2d m_previousPose;
     std::vector<choreo::SwerveSample> m_trajectoryStates;
+    int m_numberOfExecutions{0};
 
     frc::Pose2d m_prevPose;
     bool m_wasMoving;
@@ -62,6 +64,8 @@ private:
 
     std::string m_whyDone;
     units::time::second_t m_totalTrajectoryTime;
+    units::time::second_t m_thresholdTime{0.0_s}; // pre-computed kPercentComplete * m_totalTrajectoryTime
+    units::time::second_t m_elapsedTime{0.0_s};   // cached timer value, updated once per Execute() call
 
     static constexpr double kPDrive{0.65};
     static constexpr double kIDrive{0.0};
@@ -82,4 +86,5 @@ private:
     static constexpr units::length::centimeter_t kPositionTolerance{10.0_cm}; // this is what we had; should we lower it? This is probably why we stopped short on straight path test.
     static constexpr units::angle::degree_t kHeadingTolerance{3.0_deg};       // this is what we had; should we lower it?
     static constexpr double kPercentComplete{0.9};                            // this is what we had; should we up it so we don't compare poses so often?
+    static constexpr int kMinExecutions{5};                                   // minimum number of executions before checking pose
 };

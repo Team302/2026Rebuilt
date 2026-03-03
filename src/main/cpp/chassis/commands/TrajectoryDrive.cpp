@@ -55,15 +55,19 @@ void TrajectoryDrive::Initialize()
         auto trajectory = m_trajectory.value();
         m_trajectoryStates = trajectory.samples;
         m_totalTrajectoryTime = trajectory.GetTotalTime();
+        m_thresholdTime = m_totalTrajectoryTime * kPercentComplete;
         auto finalPose = trajectory.GetFinalPose(FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed);
         m_finalPose = finalPose.has_value() ? finalPose.value() : frc::Pose2d();
     }
     else
     {
         m_totalTrajectoryTime = 0_s;
+        m_thresholdTime = 0_s;
         m_trajectoryStates.clear();
         m_finalPose = frc::Pose2d();
     }
+    m_previousPose = frc::Pose2d();
+    m_numberOfExecutions = 0;
 
     // Reset and start the timer when the command begins
     m_timer.get()->Reset();
@@ -87,9 +91,10 @@ void TrajectoryDrive::SetPath(const std::string &pathName)
 
 void TrajectoryDrive::Execute()
 {
+    m_elapsedTime = m_timer->Get();  // cache once; reused by IsFinished() this cycle
     if (!m_trajectoryStates.empty()) // If we have a path parsed / have states to run
     {
-        auto desiredState = m_trajectory.value().SampleAt(m_timer.get()->Get()).value();
+        auto desiredState = m_trajectory.value().SampleAt(m_elapsedTime).value();
         if (m_chassis != nullptr)
         {
             auto currentPose = m_chassis->GetPose();
@@ -110,6 +115,7 @@ void TrajectoryDrive::Execute()
             .WithVelocityY(m_chassisSpeeds.vy)
             .WithRotationalRate(m_chassisSpeeds.omega)
             .WithForwardPerspective(ctre::phoenix6::swerve::requests::ForwardPerspectiveValue::BlueAlliance));
+    m_numberOfExecutions++;
 }
 
 bool TrajectoryDrive::IsFinished()
@@ -129,12 +135,12 @@ bool TrajectoryDrive::IsFinished()
     }
 
     auto currentPose = m_chassis->GetPose();
-    auto currentTime = m_timer.get()->Get();
+    auto currentTime = m_elapsedTime; // already updated in Execute() this cycle
 
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "current time", currentTime.value());
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "total time", m_totalTrajectoryTime.value());
 
-    if ((currentTime) / m_totalTrajectoryTime > kPercentComplete)
+    if (currentTime > m_thresholdTime && m_numberOfExecutions >= kMinExecutions) // avoids a division every loop
     {
         auto isSamePose = PoseUtils::IsSamePose(currentPose, m_finalPose, kPositionTolerance, kHeadingTolerance);
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "is same pose?", isSamePose);
@@ -147,15 +153,13 @@ bool TrajectoryDrive::IsFinished()
             m_whyDone = "Robot is at the target pose";
             return true;
         }
-        else if (m_chassis->IsSamePose())
+        else if (PoseUtils::IsSamePose(currentPose, m_previousPose, kPositionTolerance, kHeadingTolerance))
         {
             m_whyDone = "Robot is not moving but is not at the target pose";
             return true;
         }
-        else
-        {
-            m_whyDone = "Robot is not at the target pose";
-        }
+        m_whyDone = "Robot is not at the target pose";
+        m_previousPose = currentPose; // update previous pose for next loop's comparison
     }
     return false;
 }
