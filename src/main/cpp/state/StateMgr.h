@@ -65,7 +65,7 @@ protected:
 
     bool m_checkGamePadTransitions;
 
-    std::vector<State *> GetStateVector() { return m_stateVector; };
+    const std::vector<State *> &GetStateVector() const { return m_stateVector; };
 
 private:
     State *m_currentState;
