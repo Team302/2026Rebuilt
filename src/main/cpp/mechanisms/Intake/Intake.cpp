@@ -37,6 +37,7 @@
 #include "mechanisms/Intake/ExpelState.h"
 #include "mechanisms/Intake/LaunchState.h"
 #include "mechanisms/Intake/EmptyHopperState.h"
+#include "mechanisms/Intake/LoadHopperState.h"
 #include "teleopcontrol/TeleopControl.h"
 
 using ctre::phoenix6::configs::CANdiConfiguration;
@@ -75,10 +76,14 @@ void Intake::CreateAndRegisterStates()
 	EmptyHopperState *EmptyHopperStateInst = new EmptyHopperState(string("EmptyHopper"), 4, this, m_activeRobotId);
 	AddToStateVector(EmptyHopperStateInst);
 
+	LoadHopperState *LoadHopperStateInst = new LoadHopperState(string("LoadHopper"), 5, this, m_activeRobotId);
+	AddToStateVector(LoadHopperStateInst);
+
 	OffStateInst->RegisterTransitionState(IntakeStateInst);
 	OffStateInst->RegisterTransitionState(ExpelStateInst);
 	OffStateInst->RegisterTransitionState(LaunchStateInst);
 	OffStateInst->RegisterTransitionState(EmptyHopperStateInst);
+	OffStateInst->RegisterTransitionState(LoadHopperStateInst);
 	IntakeStateInst->RegisterTransitionState(OffStateInst);
 	IntakeStateInst->RegisterTransitionState(LaunchStateInst);
 	IntakeStateInst->RegisterTransitionState(EmptyHopperStateInst);
@@ -89,8 +94,11 @@ void Intake::CreateAndRegisterStates()
 	LaunchStateInst->RegisterTransitionState(IntakeStateInst);
 	LaunchStateInst->RegisterTransitionState(ExpelStateInst);
 	LaunchStateInst->RegisterTransitionState(EmptyHopperStateInst);
+	LaunchStateInst->RegisterTransitionState(LoadHopperStateInst);
 	EmptyHopperStateInst->RegisterTransitionState(OffStateInst);
 	EmptyHopperStateInst->RegisterTransitionState(IntakeStateInst);
+	LoadHopperStateInst->RegisterTransitionState(OffStateInst);
+	LoadHopperStateInst->RegisterTransitionState(IntakeStateInst);
 }
 
 Intake::Intake(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANISM_TYPE::INTAKE, std::string("Intake")),
@@ -109,6 +117,7 @@ std::map<std::string, Intake::STATE_NAMES>
 		{"STATE_EXPEL", Intake::STATE_NAMES::STATE_EXPEL},
 		{"STATE_LAUNCH", Intake::STATE_NAMES::STATE_LAUNCH},
 		{"STATE_EMPTY_HOPPER", Intake::STATE_NAMES::STATE_EMPTY_HOPPER},
+		{"STATE_LOAD_HOPPER", Intake::STATE_NAMES::STATE_LOAD_HOPPER},
 	};
 
 std::map<Intake::STATE_NAMES, std::string>
@@ -118,6 +127,7 @@ std::map<Intake::STATE_NAMES, std::string>
 		{Intake::STATE_NAMES::STATE_EXPEL, "STATE_EXPEL"},
 		{Intake::STATE_NAMES::STATE_LAUNCH, "STATE_LAUNCH"},
 		{Intake::STATE_NAMES::STATE_EMPTY_HOPPER, "STATE_EMPTY_HOPPER"},
+		{Intake::STATE_NAMES::STATE_LOAD_HOPPER, "STATE_LOAD_HOPPER"},
 	};
 
 void Intake::CreateCompBot302()
@@ -242,26 +252,29 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
 	configs.OpenLoopRamps.VoltageOpenLoopRampPeriod = units::time::second_t(0);
 
-	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
+	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
+	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 11;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(100);
+	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
-	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
+	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 11;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
-	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
-	configs.MotorOutput.NeutralMode = NeutralModeValue::Coast;
+	configs.MotorOutput.Inverted = InvertedValue::Clockwise_Positive;
+	configs.MotorOutput.NeutralMode = NeutralModeValue::Brake;
 	configs.MotorOutput.PeakForwardDutyCycle = 1;
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
+	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::turns_per_second_t(150);
+	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(300);
+	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
@@ -274,8 +287,8 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.Slot0.kV = m_positionDeg->GetV();
 	configs.Slot0.kP = m_positionDeg->GetP();
 	configs.Slot0.kA = m_positionDeg->GetA();
-	configs.Slot0.GravityType = m_positionDeg->GetGravityType();
-	configs.Slot0.StaticFeedforwardSign = m_positionDeg->GetStaticFeedforwardSign();
+	configs.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Arm_Cosine;
+	configs.Slot0.StaticFeedforwardSign = ctre::phoenix6::signals::StaticFeedforwardSignValue::UseVelocitySign;
 
 	CANdiConfiguration CANdiConfig{};
 
@@ -374,12 +387,13 @@ void Intake::ManualControl()
 		if (controller->IsButtonPressed(TeleopControlFunctions::EXTENDER_MODIFIER))
 		{
 			double manualExtenderPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN);
-			UpdateTargetExtenderPercentOut(manualExtenderPercent);
+			UpdateTargetExtenderPercentOut(-manualExtenderPercent);
 		}
 		else
 		{
 			if (GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
 			{
+
 				bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
 				bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE);
 				if (intakeOutPressed)

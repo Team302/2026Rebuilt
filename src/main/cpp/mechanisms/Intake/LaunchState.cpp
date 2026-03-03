@@ -50,7 +50,7 @@ void LaunchState::Init()
 
 void LaunchState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetExtenderPositionDeg(m_extenderTarget);
+	// m_mechanism->UpdateTargetExtenderPositionDeg(m_extenderTarget);
 }
 
 void LaunchState::Run()
