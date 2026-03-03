@@ -160,6 +160,8 @@ frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
 units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle)
 {
     ValidateAlliance();
+    UpdateChassisSpeeds();
+    UpdateChassisPose();
 
     m_field->UpdateObject(kCurrentTargetName, GetVirtualTargetPose(looheadTime));
 
@@ -279,7 +281,6 @@ void RebuiltTargetCalculator::UpdateTargetOffset()
  */
 units::length::inch_t RebuiltTargetCalculator::GetPassingTargetXOffset(FieldConstants::FIELD_ELEMENT fieldElement)
 {
-    ValidateAlliance();
     return (fieldElement == m_outpostPassingTarget) ? m_passingOutpostTargetXOffset : m_passingDepotTargetXOffset;
 }
 
@@ -291,7 +292,6 @@ units::length::inch_t RebuiltTargetCalculator::GetPassingTargetXOffset(FieldCons
  */
 units::length::inch_t RebuiltTargetCalculator::GetPassingTargetYOffset(FieldConstants::FIELD_ELEMENT fieldElement)
 {
-    ValidateAlliance();
     return (fieldElement == m_outpostPassingTarget) ? m_passingOutpostTargetYOffset : m_passingDepotTargetYOffset;
 }
 
@@ -307,8 +307,6 @@ units::length::inch_t RebuiltTargetCalculator::GetPassingTargetYOffset(FieldCons
  */
 void RebuiltTargetCalculator::UpdatePassingTargetsOnField()
 {
-    ValidateAlliance();
-
     frc::Translation2d passingDepotOffset = frc::Translation2d(m_passingDepotTargetXOffset, m_passingDepotTargetYOffset);
     frc::Translation2d passingOutpostOffset = frc::Translation2d(m_passingOutpostTargetXOffset, m_passingOutpostTargetYOffset);
 
