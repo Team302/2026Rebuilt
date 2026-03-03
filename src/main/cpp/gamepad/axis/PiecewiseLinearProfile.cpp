@@ -19,15 +19,8 @@
 /// @brief This applies a cubic profile to the input values.
 //========================================================================================================
 
-// C++ Includes
+#include "gamepad/axis/PiecewiseLinearProfile.h"
 #include <cmath>
-
-// FRC includes
-
-// Team 302 includes
-#include <gamepad/axis/PiecewiseLinearProfile.h>
-
-// Third Party Includes
 
 using namespace std;
 

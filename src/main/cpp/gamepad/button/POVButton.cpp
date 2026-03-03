@@ -13,10 +13,9 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include <frc/GenericHID.h>
-
-#include <gamepad/button/POVButton.h>
-#include <gamepad/IDragonGamepad.h>
+#include "gamepad/button/POVButton.h"
+#include "frc/GenericHID.h"
+#include "gamepad/IDragonGamepad.h"
 
 //==================================================================================
 /// <summary>

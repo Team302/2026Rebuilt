@@ -15,14 +15,8 @@
 
 #pragma once
 
-// C++ Includes
-
-// FRC includes
-
-// Team 302 includes
-#include <gamepad/button/IButton.h>
-
-// Third Party Includes
+#include "frc/Joystick.h"
+#include "gamepad/button/IButton.h"
 
 // forward declares
 class AnalogAxis;

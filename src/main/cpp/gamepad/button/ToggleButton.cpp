@@ -13,13 +13,13 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include <gamepad/button/ToggleButton.h>
-#include <gamepad/button/ButtonDecorator.h>
-#include <gamepad/button/IButton.h>
+#include "gamepad/button/ToggleButton.h"
+#include "gamepad/button/ButtonDecorator.h"
+#include "gamepad/button/IButton.h"
 
 ToggleButton::ToggleButton(
-    IButton *button // <I> - button to decorate
-    ) : ButtonDecorator(button),
+    std::unique_ptr<IButton> button // <I> - button to decorate (takes ownership)
+    ) : ButtonDecorator(std::move(button)),
         m_isPressed(false),
         m_isToggledOn(false)
 {

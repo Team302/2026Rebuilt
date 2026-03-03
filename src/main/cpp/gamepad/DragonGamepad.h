@@ -16,7 +16,7 @@
 #pragma once
 
 // C++ Includes
-#include <vector>
+#include <memory>
 
 // Team 302 includes
 #include "gamepad/IDragonGamepad.h"
@@ -78,12 +78,8 @@ public:
 private:
     frc::Joystick *m_gamepad;
 
-    std::vector<AnalogAxis *> m_axis;
-    std::vector<double> m_axisScale;
-    std::vector<double> m_axisInversionFactor;
-    std::vector<TeleopControlMappingEnums::AXIS_PROFILE> m_axisProfile;
-
-    std::vector<IButton *> m_button;
+    AnalogAxis *m_axis[TeleopControlMappingEnums::MAX_AXIS];
+    std::unique_ptr<IButton> m_button[TeleopControlMappingEnums::MAX_BUTTONS];
 
     const int LEFT_BUTTON_AXIS_ID = 0;
     const int RIGHT_BUTTON_AXIS_ID = 1;

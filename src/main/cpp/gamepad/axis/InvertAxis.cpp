@@ -13,7 +13,7 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include <gamepad/axis/InvertAxis.h>
+#include "gamepad/axis/InvertAxis.h"
 
 InvertAxis::InvertAxis() : m_isInverted(false)
 {

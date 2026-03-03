@@ -19,15 +19,8 @@
 /// @brief This applies a cubic profile to the input values.
 //========================================================================================================
 
-// C++ Includes
+#include "gamepad/axis/CubedProfile.h"
 #include <cmath>
-
-// FRC includes
-
-// Team 302 includes
-#include <gamepad/axis/CubedProfile.h>
-
-// Third Party Includes
 
 //==================================================================================
 /// @brief    Static singleton method to create the object
