@@ -133,10 +133,16 @@ protected:
     ~TargetCalculator() = default;
 
     /**
-     * \brief Get the current chassis pose
+     * \brief Get the current cached chassis pose
      * \return Pose2d with X, Y position (meters) and rotation (radians)
      */
-    frc::Pose2d GetChassisPose() const;
+    frc::Pose2d GetChassisPose() const { return m_chassisPose; };
+
+    /**
+     * \brief Update the chassis pose and return it
+     * \return Pose2d with X, Y position (meters) and rotation (radians)
+     */
+    void UpdateChassisPose();
 
     /**
      * \brief Get the current chassis velocity
@@ -147,6 +153,9 @@ protected:
 private:
     static TargetCalculator *m_instance;
     frc::Translation2d m_mechanismOffset;
+
+    frc::Pose2d m_lastChassisPose{};
+    frc::Pose2d m_chassisPose{};
 
     subsystems::CommandSwerveDrivetrain *m_chassis;
 };

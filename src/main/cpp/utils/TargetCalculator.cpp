@@ -111,13 +111,12 @@ frc::Pose2d TargetCalculator::GetVirtualTargetPose(
         frc::Rotation2d{}};
 }
 
-frc::Pose2d TargetCalculator::GetChassisPose() const
+void TargetCalculator::UpdateChassisPose()
 {
     if (m_chassis != nullptr)
     {
-        return m_chassis->GetPose();
+        m_chassisPose = m_chassis->GetPose();
     }
-    return frc::Pose2d{};
 }
 
 frc::ChassisSpeeds TargetCalculator::GetChassisVelocity() const

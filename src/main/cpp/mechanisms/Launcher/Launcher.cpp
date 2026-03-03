@@ -666,7 +666,10 @@ void Launcher::RunCommonTasks()
 	SetLauncherProtect();
 
 	// Update Launcher Targets/Field
-	m_targetCalculator->UpdateTargetOffset();
+	if (!m_tuningLauncher)
+	{
+		m_targetCalculator->UpdateTargetOffset();
+	}
 	CalculateTargets();
 	UpdateLauncherTargets();
 
