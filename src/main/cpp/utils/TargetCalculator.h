@@ -58,7 +58,7 @@ public:
      * \param lookaheadTime Time in seconds for projectile flight
      * \return Translation2d representing the virtual target in world coordinates
      */
-    frc::Translation2d CalculateVirtualTarget(const frc::Translation2d &realTarget, units::time::second_t lookaheadTime) const;
+    frc::Translation2d CalculateVirtualTarget(const frc::Translation2d &realTarget, units::time::second_t lookaheadTime);
 
     /**
      * \brief Get mechanism/mechanism position in world coordinates
@@ -128,6 +128,8 @@ public:
      */
     frc::Pose2d GetVirtualTargetPose(units::time::second_t lookaheadTime);
 
+    void ForceUpdateChassisPose() { UpdateChassisPose(true); }
+
 protected:
     TargetCalculator();
     ~TargetCalculator() = default;
@@ -140,22 +142,29 @@ protected:
 
     /**
      * \brief Update the chassis pose and return it
-     * \return Pose2d with X, Y position (meters) and rotation (radians)
      */
-    void UpdateChassisPose();
+    void UpdateChassisPose(bool forceUpdate = false);
 
     /**
      * \brief Get the current chassis velocity
      * \return ChassisSpeeds with vx, vy (m/s) and omega (rad/s) in field frame
      */
-    frc::ChassisSpeeds GetChassisVelocity() const;
+    frc::ChassisSpeeds GetChassisVelocity() const { return m_currentChassisSpeeds; };
+
+    /**
+     * \brief Updates the current chassis velocity
+     */
+    void UpdateChassisSpeeds();
 
 private:
     static TargetCalculator *m_instance;
     frc::Translation2d m_mechanismOffset;
 
-    frc::Pose2d m_lastChassisPose{};
+    frc::ChassisSpeeds m_currentChassisSpeeds{};
     frc::Pose2d m_chassisPose{};
+
+    units::meters_per_second_t m_translationSpeedThreshold{0.1_mps};
+    units::radians_per_second_t m_rotationSpeedThreshold{0.25_deg_per_s};
 
     subsystems::CommandSwerveDrivetrain *m_chassis;
 };

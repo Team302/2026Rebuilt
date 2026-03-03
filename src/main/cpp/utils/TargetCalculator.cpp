@@ -24,16 +24,15 @@ TargetCalculator::TargetCalculator()
 
 frc::Translation2d TargetCalculator::CalculateVirtualTarget(
     const frc::Translation2d &realTarget,
-    units::time::second_t lookaheadTime) const
+    units::time::second_t lookaheadTime)
 {
-    auto robotVelocity = GetChassisVelocity();
     auto pose = GetChassisPose();
 
     // Convert robot-relative speeds to field-relative speeds
     auto fieldVelocity = frc::ChassisSpeeds::FromRobotRelativeSpeeds(
-        robotVelocity.vx,
-        robotVelocity.vy,
-        robotVelocity.omega,
+        m_currentChassisSpeeds.vx,
+        m_currentChassisSpeeds.vy,
+        m_currentChassisSpeeds.omega,
         pose.Rotation());
 
     units::meter_t offsetX = fieldVelocity.vx * lookaheadTime;
@@ -111,19 +110,19 @@ frc::Pose2d TargetCalculator::GetVirtualTargetPose(
         frc::Rotation2d{}};
 }
 
-void TargetCalculator::UpdateChassisPose()
+void TargetCalculator::UpdateChassisPose(bool forceUpdate)
 {
-    if (m_chassis != nullptr)
+    if (m_chassis != nullptr &&
+        (forceUpdate || (m_currentChassisSpeeds.vx >= m_translationSpeedThreshold && m_currentChassisSpeeds.vy >= m_translationSpeedThreshold && m_currentChassisSpeeds.omega >= m_rotationSpeedThreshold)))
     {
         m_chassisPose = m_chassis->GetPose();
     }
 }
 
-frc::ChassisSpeeds TargetCalculator::GetChassisVelocity() const
+void TargetCalculator::UpdateChassisSpeeds()
 {
     if (m_chassis != nullptr)
     {
-        return m_chassis->GetState().Speeds;
+        m_currentChassisSpeeds = m_chassis->GetState().Speeds;
     }
-    return frc::ChassisSpeeds{};
 }
