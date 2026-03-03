@@ -47,5 +47,6 @@ namespace IntakeStates
 
 		const double m_intakeTarget = double(-1);
 		const units::angle::turn_t m_extenderTarget = units::angle::turn_t(100);
+		const double m_extenderPercentOutTarget = double(0.2);
 	};
 }
