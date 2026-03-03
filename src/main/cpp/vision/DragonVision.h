@@ -14,6 +14,7 @@
 //====================================================================================================================================================
 
 #pragma once
+#include <array>
 #include <map>
 #include <memory>
 #include <optional>
@@ -94,6 +95,19 @@ class DragonVision
  */
 {
 public:
+    /// @brief Number of Limelight cameras on the robot.
+    static constexpr int kNumLimelights = 1;
+
+    /// @brief Index constants for each Limelight in the health-check array.
+    /// @details
+    ///   - The ordering of these indices MUST match the numeric values of
+    ///     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER.
+    ///   - HealthCheckAllLimelights() and any health/status arrays are ordered
+    ///     according to DRAGON_LIMELIGHT_CAMERA_IDENTIFIER:
+    ///       BACK_LEFT (0).
+    static constexpr int kBackLeftLimelightIndex =
+        static_cast<int>(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::BACK_LEFT);
+
     /// @brief Get the singleton instance of DragonVision.
     /// @note Not thread-safe for initialization; if called concurrently during startup,
     ///       callers must ensure proper synchronization. The instance is leaked intentionally
@@ -157,13 +171,13 @@ public:
      * Performs a health check on all connected Limelight cameras.
      *
      * This function checks the status of each Limelight camera in the system
-     * and returns a vector of boolean values indicating the health of each camera.
+     * and returns a fixed-size array of boolean values indicating the health of each camera.
      * A value of `true` means the corresponding Limelight is functioning correctly,
      * while `false` indicates an issue with that Limelight.
      *
-     * @return A vector of boolean values representing the health status of each Limelight.
+     * @return A std::array of kNumLimelights boolean values representing the health status of each Limelight.
      */
-    std::vector<bool> HealthCheckAllLimelights();
+    std::array<bool, kNumLimelights> HealthCheckAllLimelights();
 
     bool HealthCheckQuest();
 

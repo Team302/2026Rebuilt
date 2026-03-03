@@ -259,6 +259,8 @@ void Robot::InitializeAutonOptions()
 void Robot::InitializeDriveteamFeedback()
 {
     m_field = DragonField::GetInstance(); // TODO: move to drive team feedback
+    m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
+    m_feedback = DriverFeedback::GetInstance();
     new GameDataHelper();
 }
 
@@ -272,15 +274,13 @@ void Robot::UpdateDriveTeamFeedback()
         m_previewer->CheckCurrentAuton();
     }
 
-    auto chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
-    if (m_field != nullptr && chassis != nullptr)
+    if (m_field != nullptr && m_chassis != nullptr)
     {
-        m_field->UpdateRobotPosition(chassis->GetPose());
+        m_field->UpdateRobotPosition(m_chassis->GetPose());
     }
-    auto feedback = DriverFeedback::GetInstance();
-    if (feedback != nullptr)
+    if (m_feedback != nullptr)
     {
-        feedback->UpdateFeedback();
+        m_feedback->UpdateFeedback();
     }
 }
 
