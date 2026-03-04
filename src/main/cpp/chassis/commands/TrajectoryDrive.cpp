@@ -135,12 +135,11 @@ bool TrajectoryDrive::IsFinished()
     }
 
     auto currentPose = m_chassis->GetPose();
-    auto currentTime = m_elapsedTime; // already updated in Execute() this cycle
 
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "current time", currentTime.value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "current time", m_elapsedTime.value());
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "total time", m_totalTrajectoryTime.value());
 
-    if (currentTime > m_thresholdTime && m_numberOfExecutions >= kMinExecutions) // avoids a division every loop
+    if (m_elapsedTime > m_thresholdTime && m_numberOfExecutions >= kMinExecutions) // avoids a division every loop
     {
         auto isSamePose = PoseUtils::IsSamePose(currentPose, m_finalPose, kPositionTolerance, kHeadingTolerance);
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "is same pose?", isSamePose);
