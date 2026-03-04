@@ -163,6 +163,11 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
     UpdateChassisSpeeds();
     UpdateChassisPose();
 
+    if (GetChassisPose() == m_lastChassisPose)
+    {
+        return m_cachedLauncherTarget;
+    }
+
     m_field->UpdateObject(kCurrentTargetName, GetVirtualTargetPose(looheadTime));
 
     units::degree_t fieldAngleToTarget = CalculateMechanismAngleToTarget(looheadTime);
@@ -200,7 +205,9 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
     }
 
     m_field->UpdateObject(kLauncherPositionName, frc::Pose2d(GetMechanismWorldPosition(), robotPose.Rotation() + frc::Rotation2d(bestAngle)));
-    return units::angle::turn_t(bestAngle.value());
+    m_cachedLauncherTarget = units::angle::turn_t(bestAngle.value());
+
+    return m_cachedLauncherTarget;
 }
 
 /**

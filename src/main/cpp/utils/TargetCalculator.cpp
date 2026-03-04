@@ -27,14 +27,12 @@ frc::Translation2d TargetCalculator::CalculateVirtualTarget(
     const frc::Translation2d &realTarget,
     units::time::second_t lookaheadTime) const
 {
-    auto pose = GetChassisPose();
-
     // Convert robot-relative speeds to field-relative speeds
     auto fieldVelocity = frc::ChassisSpeeds::FromRobotRelativeSpeeds(
         m_currentChassisSpeeds.vx,
         m_currentChassisSpeeds.vy,
         m_currentChassisSpeeds.omega,
-        pose.Rotation());
+        m_chassisPose.Rotation());
 
     units::meter_t offsetX = fieldVelocity.vx * lookaheadTime;
     units::meter_t offsetY = fieldVelocity.vy * lookaheadTime;
@@ -48,53 +46,65 @@ frc::Translation2d TargetCalculator::CalculateVirtualTarget(
 
 frc::Translation2d TargetCalculator::GetMechanismWorldPosition() const
 {
-    auto robotPose = GetChassisPose();
-    return robotPose.Translation() + m_mechanismOffset.RotateBy(robotPose.Rotation());
+    return m_chassisPose.Translation() + m_mechanismOffset.RotateBy(m_chassisPose.Rotation());
 }
 
 units::meter_t TargetCalculator::CalculateDistanceToTarget(units::time::second_t lookaheadTime)
 {
-    auto pose = GetChassisPose();
-    auto robotPosition = frc::Translation2d{pose.X(), pose.Y()};
+    if (m_chassisPose == m_lastChassisPose)
+    {
+        return m_cachedDistanceToTarget;
+    }
+
+    auto robotPosition = frc::Translation2d{m_chassisPose.X(), m_chassisPose.Y()};
 
     auto realTarget = GetTargetPosition();
     auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
 
-    // Calculate distance from chassis center to target
-    return robotPosition.Distance(targetPos);
+    m_cachedDistanceToTarget = robotPosition.Distance(targetPos);
+    return m_cachedDistanceToTarget;
 }
 
 units::meter_t TargetCalculator::CalculateMechanismDistanceToTarget(units::time::second_t lookaheadTime)
 {
+    if (m_chassisPose == m_lastChassisPose)
+    {
+        return m_cachedMechanismDistanceToTarget;
+    }
+
     frc::Translation2d mechanismPos = GetMechanismWorldPosition();
 
     auto realTarget = GetTargetPosition();
     auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
 
-    // Calculate distance from mechanism to target
-    return mechanismPos.Distance(targetPos);
+    m_cachedMechanismDistanceToTarget = mechanismPos.Distance(targetPos);
+    return m_cachedMechanismDistanceToTarget;
 }
 
 units::degree_t TargetCalculator::CalculateAngleToTarget(units::time::second_t lookaheadTime)
 {
-    frc::Pose2d robotPose = GetChassisPose();
-
     auto realTarget = GetTargetPosition();
     auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
-    frc::Translation2d vectorToTarget = targetPos - robotPose.Translation();
+    frc::Translation2d vectorToTarget = targetPos - m_chassisPose.Translation();
 
     return vectorToTarget.Angle().Degrees();
 }
 
 units::degree_t TargetCalculator::CalculateMechanismAngleToTarget(units::time::second_t lookaheadTime)
 {
+    if (m_chassisPose == m_lastChassisPose)
+    {
+        return m_cachedMechanismAngleToTarget;
+    }
+
     frc::Translation2d mechanismPos = GetMechanismWorldPosition();
 
     auto realTarget = GetTargetPosition();
     auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
     frc::Translation2d vectorToTarget = targetPos - mechanismPos;
 
-    return vectorToTarget.Angle().Degrees();
+    m_cachedMechanismAngleToTarget = vectorToTarget.Angle().Degrees();
+    return m_cachedMechanismAngleToTarget;
 }
 
 void TargetCalculator::SetMechanismOffset(frc::Translation2d offset)
@@ -113,6 +123,7 @@ frc::Pose2d TargetCalculator::GetVirtualTargetPose(
 
 void TargetCalculator::UpdateChassisPose(bool forceUpdate)
 {
+    m_lastChassisPose = m_chassisPose;
     if (m_chassis != nullptr &&
         (forceUpdate || units::math::abs(m_currentChassisSpeeds.vx) >= m_translationSpeedThreshold || units::math::abs(m_currentChassisSpeeds.vy) >= m_translationSpeedThreshold || units::math::abs(m_currentChassisSpeeds.omega) >= m_rotationSpeedThreshold))
     {
