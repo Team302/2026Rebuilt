@@ -30,13 +30,13 @@ using std::string;
 
 void MechanismConfigCompBot_302::DefineMechanisms()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing mechanism"), string("Intake"), "");
-	// m_theIntake = new Intake(RobotIdentifier::COMP_BOT_302);
-	// m_theIntake->CreateCompBot302();
-	// m_theIntake->CreateAndRegisterStates();
-	// m_theIntake->InitializeCompBot302();
-	// m_theIntake->Init(/*m_theIntake*/);
-	// m_mechanismMap[MechanismTypes::MECHANISM_TYPE::INTAKE] = m_theIntake;
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing mechanism"), string("Intake"), "");
+	m_theIntake = new Intake(RobotIdentifier::COMP_BOT_302);
+	m_theIntake->CreateCompBot302();
+	m_theIntake->CreateAndRegisterStates();
+	m_theIntake->InitializeCompBot302();
+	m_theIntake->Init(/*m_theIntake*/);
+	m_mechanismMap[MechanismTypes::MECHANISM_TYPE::INTAKE] = m_theIntake;
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing mechanism"), string("Launcher"), "");
 	m_theLauncher = new Launcher(RobotIdentifier::COMP_BOT_302);

@@ -122,33 +122,6 @@ bool TrajectoryDrive::IsFinished()
 {
     if (m_trajectoryStates.empty())
     {
-        auto currentTime = m_timer.get()->Get();
-
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "current time", currentTime.value());
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "total time", m_totalTrajectoryTime.value());
-
-        if ((currentTime) / m_totalTrajectoryTime > 0.9)
-        {
-
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "current pose X", currentPose.X().value());
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "current pose Y", currentPose.Y().value());
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "current pose Rotation", currentPose.Rotation().Degrees().value());
-
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "target pose X", m_finalState.GetPose().X().value());
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "target pose Y", m_finalState.GetPose().Y().value());
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "TrajectoryDrive", "target pose Rotation", m_finalState.GetPose().Rotation().Degrees().value());
-
-            isDone = IsSamePose(currentPose, m_finalState.GetPose(), m_chassisSpeeds, 1.0, 3.0, 1.5); // TO DO verify these values
-        }
-        else if (m_chassis != nullptr)
-        {
-            isDone = m_chassis->IsSamePose();
-        }
-    }
-    else
-    {
-        m_whyDone = "No states in trajectory";
-        isDone = true;
         m_whyDone = "Trajectory states are empty";
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "", "why done", m_whyDone);
         return true;
