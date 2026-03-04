@@ -246,9 +246,9 @@ private:
 	// All values in turns are actually Degree's
 
 	// droppeed down to 5 spots.Will need to increase when we have time to tune
-	std::array<units::length::inch_t, 5> m_scoringDistanceArray = {80.0_in, 90.0_in, 100.0_in, 150.0_in, 200.0_in};
-	std::array<units::angle::turn_t, 5> m_scoringHoodAngleArray = {0.0_tr, 0.0_tr, 10.0_tr, 15.0_tr, 20.0_tr};
-	std::array<units::angular_velocity::revolutions_per_minute_t, 5> m_scoringLauncherVelocityArray = {2150.0_rpm, 2250.0_rpm, 3000.0_rpm, 3000.0_rpm, 3500.0_rpm};
+	std::array<units::length::inch_t, 6> m_scoringDistanceArray = {79.0_in, 89.0_in, 118.4_in, 140.5_in, 165.6_in, 197.0_in};
+	std::array<units::angle::turn_t, 6> m_scoringHoodAngleArray = {0.0_tr, 0.0_tr, 0.0_tr, 5.02_tr, 7.0_tr, 7.0_tr};
+	std::array<units::angular_velocity::revolutions_per_minute_t, 6> m_scoringLauncherVelocityArray = {2225.0_rpm, 2300.0_rpm, 2700.0_rpm, 2800.0_rpm, 2900.0_rpm, 3100.0_rpm};
 
 	std::array<units::length::foot_t, 7> m_passingDistanceArray = {10.0_ft, 15.0_ft, 20.0_ft, 25.0_ft, 30.0_ft, 35.0_ft, 40.0_ft};
 	std::array<units::angle::turn_t, 7> m_passingHoodAngleArray = {0.0_tr, 5.0_tr, 10.0_tr, 15.0_tr, 20.0_tr, 25.0_tr, 30.0_tr};
