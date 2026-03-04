@@ -40,6 +40,7 @@ intakeState = "STATE_INTAKE">
 choreoname = "BlueMRDrop3_F"
 time = "3.0"
 intakeState = "STATE_INTAKE">
+<zone filename = "BlueRightBumpZone.xml"/>
 </primitive>
 
 </auton>

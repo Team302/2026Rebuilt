@@ -27,7 +27,7 @@ time = "5.0">
 choreoname = "BlueMRDrop2_D"
 time = "5.0"
 intakeState = "STATE_INTAKE">
-<zone filename = "RedRightBumpZone.xml"/>
+<zone filename = "RedLeftBumpZone.xml"/>
 <zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
