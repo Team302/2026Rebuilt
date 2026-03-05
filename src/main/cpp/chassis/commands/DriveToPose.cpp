@@ -70,6 +70,16 @@ DriveToPose::DriveToPose(subsystems::CommandSwerveDrivetrain *chassis) : m_chass
     // Store initial pose for movement detection
     m_prevPose = m_chassis != nullptr ? m_chassis->GetPose() : frc::Pose2d();
 
+    kMaxVelocity = GetMaxVelocity();
+    kMaxAcceleration = GetMaxAcceleration();
+    m_translationKP = GetTranslationKP();
+    m_translationKI = GetTranslationKI();
+    m_translationKD = GetTranslationKD();
+
+    m_rotationKP = GetRotationKP();
+    m_rotationKI = GetRotationKI();
+    m_rotationKD = GetRotationKD();
+
     // Calculate the range over which feedforward velocity is ramped
     m_feedForwardRange = m_ffMaxRadius - m_ffMinRadius;
 }

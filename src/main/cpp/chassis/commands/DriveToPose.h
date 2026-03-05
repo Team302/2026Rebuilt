@@ -188,8 +188,20 @@ protected:
     //------------------------------------------------------------------
     subsystems::CommandSwerveDrivetrain *GetChassis() const { return m_chassis; }
 
+    units::velocity::meters_per_second_t GetMaxVelocity() const { return kMaxVelocity; }
+    units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const { return kMaxAcceleration; }
+
+    double GetTranslationKP() const { return m_translationKP; }
+    double GetTranslationKI() const { return m_translationKI; }
+    double GetTranslationKD() const { return m_translationKD; }
+
+    double GetRotationKP() const { return m_rotationKP; }
+    double GetRotationKI() const { return m_rotationKI; }
+    double GetRotationKD() const { return m_rotationKD; }
+
 private:
-    bool ShouldSkipMidPoint() const;
+    bool
+    ShouldSkipMidPoint() const;
 
     //------------------------------------------------------------------
     /// @brief      Calculates feedforward velocity component toward target
@@ -251,8 +263,8 @@ private:
     //------------------------------------------------------------------
 
     /// @brief Maximum translational velocity for the robot
-    const units::velocity::meters_per_second_t kMaxVelocity = 4_mps;
-    const units::acceleration::meters_per_second_squared_t kMaxAcceleration = 3_mps_sq;
+    units::velocity::meters_per_second_t kMaxVelocity = 4_mps;
+    units::acceleration::meters_per_second_squared_t kMaxAcceleration = 3_mps_sq;
 
     //------------------------------------------------------------------
     // NetworkTables Keys (Legacy)
@@ -269,26 +281,26 @@ private:
     //------------------------------------------------------------------
 
     /// @brief Proportional gain for X and Y translation controllers
-    const double m_translationKP = 5.0;
+    double m_translationKP = 5.0;
 
     /// @brief Integral gain for X and Y translation controllers (disabled)
-    const double m_translationKI = 2.5;
+    double m_translationKI = 2.5;
 
     /// @brief Derivative gain for X and Y translation controllers
-    const double m_translationKD = 0.0;
+    double m_translationKD = 0.0;
 
     //------------------------------------------------------------------
     // Rotation PID Gains
     //------------------------------------------------------------------
 
     /// @brief Proportional gain for heading controller
-    const double m_rotationKP = 6.0;
+    double m_rotationKP = 6.0;
 
     /// @brief Integral gain for heading controller (disabled)
-    const double m_rotationKI = 0.0;
+    double m_rotationKI = 0.0;
 
     /// @brief Derivative gain for heading controller (disabled)
-    const double m_rotationKD = 0.0;
+    double m_rotationKD = 0.0;
 
     //------------------------------------------------------------------
     // Runtime State Variables

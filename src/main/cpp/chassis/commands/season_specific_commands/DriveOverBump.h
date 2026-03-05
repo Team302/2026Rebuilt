@@ -75,6 +75,9 @@ protected:
     //------------------------------------------------------------------
     struct DriveToPoses GetDriveToPoses() override;
 
+    units::velocity::meters_per_second_t GetMaxVelocity() const override;
+    units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const override;
+
 private:
     units::angle::degree_t GetRotation(BUMP_ID bump, bool isInNeutralZone) const;
 
