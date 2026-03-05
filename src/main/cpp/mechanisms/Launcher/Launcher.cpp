@@ -778,11 +778,8 @@ bool Launcher::IsInLaunchZone() const
 
 void Launcher::CalculateTargets()
 {
-	units::angle::turn_t calculatorTurretTarget = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, units::degree_t(m_cachedTurretPosition.value())); // passing degree back to rebuilt calculator, everything in launcher is in turns due to sensor to mech ratio, but phyiscal units is degrees
-	if (units::math::abs(m_targetTurretAngle - calculatorTurretTarget) > 0.1_tr)
-	{
-		m_targetTurretAngle = calculatorTurretTarget;
-	}
+	m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, units::degree_t(m_cachedTurretPosition.value())); // passing degree back to rebuilt calculator, everything in launcher is in turns due to sensor to mech ratio, but phyiscal units is degrees
+
 	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateDistanceToTarget(m_lookaheadTime);
 
 	if (AllianceZoneManager::GetInstance()->IsInAllianceZone())
@@ -818,7 +815,11 @@ void Launcher::UpdateLauncherTargets()
 
 	UpdateTargetHoodPositionDegreesHood(m_targetHoodAngle);
 	UpdateTargetTurretPositionDegreesTurret(m_targetTurretAngle);
-	UpdateTargetLauncherVelocityRPS(m_targetLauncherAngularVelocity);
+
+	if (currentState == STATE_NAMES::STATE_LAUNCH || currentState == STATE_NAMES::STATE_PREPARE_TO_LAUNCH)
+	{
+		UpdateTargetLauncherVelocityRPS(m_targetLauncherAngularVelocity);
+	}
 }
 
 void Launcher::InitilaizeLauncher()
