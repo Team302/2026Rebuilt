@@ -752,8 +752,13 @@ bool Launcher::IsLauncherAtTarget()
 	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = m_cachedLauncherVelocity - m_targetLauncherAngularVelocity;
 	bool inLaunchzone = IsInLaunchZone();
 	auto chassisSpeeds = m_chassis != nullptr ? m_chassis->GetState().Speeds : frc::ChassisSpeeds();
-
 	auto Speed = units::math::sqrt(units::math::abs(chassisSpeeds.vx * chassisSpeeds.vx) + units::math::abs(chassisSpeeds.vy * chassisSpeeds.vy));
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Error", hoodError.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed Error", launcherSpeedError.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "In Launch Zone", inLaunchzone);
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Chassis Speed", Speed.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Turret At Target", IsTurretAtTarget());
 
 	return ((units::math::abs(hoodError) < m_hoodAngleThreshold) &&
 			IsTurretAtTarget() &&
