@@ -161,8 +161,8 @@ robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlB
     {TeleopControlFunctions::SYSID_MODIFER, driverSelectButton},
 
     // Season Specific Driver Controls
-    {TeleopControlFunctions::INTAKE, driverRBumper},
-    {TeleopControlFunctions::EXPEL, driverLBumper},
+    {TeleopControlFunctions::INTAKE, driverRTriggerPressed},
+    {TeleopControlFunctions::EXPEL, driverLTriggerPressed},
 
     {TeleopControlFunctions::DRIVE_TO_HUB, driverAButton},
     {TeleopControlFunctions::LEVEL1_CLIMB, driverAButton},
@@ -241,12 +241,13 @@ robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlA
     {TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE, driverLJoystickX},
     {TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE, driverRJoystickX},
 
+    {TeleopControlFunctions::CLIMB_MANUAL_ROTATE_DOWN, driverLTrigger},
+    {TeleopControlFunctions::CLIMB_MANUAL_ROTATE_UP, driverRTrigger},
     // Season Specific Co-Pilot Controls
     {TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_X, copilotLJoystickY},
     {TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_Y, copilotLJoystickX},
     {TeleopControlFunctions::UPDATE_OUTPOST_PASSING_TARGET_X, copilotRJoystickY},
     {TeleopControlFunctions::UPDATE_OUTPOST_PASSING_TARGET_Y, copilotRJoystickX},
-    {TeleopControlFunctions::CLIMB_MANUAL_ROTATE_DOWN, driverLTrigger},
-    {TeleopControlFunctions::CLIMB_MANUAL_ROTATE_UP, driverRTrigger},
+
     {TeleopControlFunctions::MANUAL_INTAKE_OUT, copilotRTrigger},
     {TeleopControlFunctions::MANUAL_INTAKE_IN, copilotLTrigger}};
