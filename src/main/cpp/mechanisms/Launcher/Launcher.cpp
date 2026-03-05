@@ -778,7 +778,7 @@ bool Launcher::IsInLaunchZone() const
 
 void Launcher::CalculateTargets()
 {
-	units::angle::turn_t calculatorTurretTarget = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_cachedTurretPosition);
+	units::angle::turn_t calculatorTurretTarget = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, units::degree_t(m_cachedTurretPosition.value())); // passing degree back to rebuilt calculator, everything in launcher is in turns due to sensor to mech ratio, but phyiscal units is degrees
 	if (units::math::abs(m_targetTurretAngle - calculatorTurretTarget) > 0.1_tr)
 	{
 		m_targetTurretAngle = calculatorTurretTarget;

@@ -16,6 +16,9 @@
 // Team 302 Includes
 #include "utils/PoseUtils.h"
 
+// Units Includes
+#include "units/math.h"
+
 //------------------------------------------------------------------
 /// @brief      Calculates the Euclidean distance between two poses
 /// @param[in]  pose1 - First pose to compare
@@ -35,17 +38,52 @@ units::length::meter_t PoseUtils::GetDeltaBetweenPoses(const frc::Pose2d &pose1,
 /// @brief      Checks if two poses are within tolerance of each other
 /// @param[in]  pose1 - First pose to compare
 /// @param[in]  pose2 - Second pose to compare
-/// @param[in]  tolerance - Maximum allowable distance in centimeters
-/// @return     true if distance between poses is less than tolerance
+/// @param[in]  positionTolerance - Maximum allowable distance in centimeters
+/// @return     true if distance between poses is less than positionTolerance
 /// @details    Uses GetDeltaBetweenPoses() to calculate separation and
 ///             compares against the provided tolerance threshold.
 ///             Useful for determining if robot has reached a target position.
 //------------------------------------------------------------------
 bool PoseUtils::IsSamePose(const frc::Pose2d &pose1,
                            const frc::Pose2d &pose2,
-                           units::length::centimeter_t tolerance)
+                           units::length::centimeter_t positionTolerance)
 {
-    return GetDeltaBetweenPoses(pose1, pose2) < tolerance;
+    // Compare squared distances to avoid an unnecessary sqrt; only take the
+    // sqrt (via GetDeltaBetweenPoses) when the caller actually needs the value.
+    auto dx = pose1.X() - pose2.X();
+    auto dy = pose1.Y() - pose2.Y();
+    auto toleranceM = units::length::meter_t{positionTolerance};
+    return (dx * dx + dy * dy) < (toleranceM * toleranceM);
+}
+
+//------------------------------------------------------------------
+/// @brief      Checks if two poses are within specified translational and rotational tolerances
+/// @param[in]  pose1 - First pose to compare
+/// @param[in]  pose2 - Second pose to compare
+/// @param[in]  tolerance - Maximum allowable distance in centimeters
+/// @param[in]  angleTolerance - Maximum allowable angular difference in degrees
+/// @return     true if both position and rotation are within tolerance
+/// @details    Calls the translational IsSamePose() first (short-circuits if positions
+///             differ), then checks the absolute heading difference against headingTolerance.
+//------------------------------------------------------------------
+bool PoseUtils::IsSamePose(const frc::Pose2d &pose1,
+                           const frc::Pose2d &pose2,
+                           units::length::centimeter_t positionTolerance,
+                           units::angle::degree_t headingTolerance)
+{
+    if (!IsSamePose(pose1, pose2, positionTolerance))
+    {
+        return false;
+    }
+
+    auto angleDiff = units::math::abs(pose1.Rotation().Degrees() - pose2.Rotation().Degrees());
+    // Normalize to [0°, 180°] to correctly handle wrap-around at the ±180° boundary.
+    // e.g. 170° vs -170° should be a 20° difference, not 340°.
+    if (angleDiff > units::angle::degree_t{180.0})
+    {
+        angleDiff = units::angle::degree_t{360.0} - angleDiff;
+    }
+    return angleDiff < headingTolerance;
 }
 
 //------------------------------------------------------------------
@@ -57,9 +95,10 @@ bool PoseUtils::IsSamePose(const frc::Pose2d &pose1,
 ///             against the default origin pose: Pose2d(0_m, 0_m, 0_deg).
 //------------------------------------------------------------------
 bool PoseUtils::IsPoseAtOrigin(const frc::Pose2d &pose,
-                               units::length::centimeter_t tolerance)
+                               units::length::centimeter_t positionTolerance)
 {
-    return IsSamePose(pose, frc::Pose2d(), tolerance);
+    static const frc::Pose2d kOrigin{};
+    return IsSamePose(pose, kOrigin, positionTolerance);
 }
 
 //------------------------------------------------------------------
@@ -103,10 +142,14 @@ FieldConstants::FIELD_ELEMENT PoseUtils::GetClosestFieldElement(const frc::Pose2
     auto firstElementPose = fieldConstants->GetFieldElementPose2d(firstElement);
     auto secondElementPose = fieldConstants->GetFieldElementPose2d(secondElement);
 
-    auto distanceToFirst = GetDeltaBetweenPoses(pose, firstElementPose);
-    auto distanceToSecond = GetDeltaBetweenPoses(pose, secondElementPose);
+    // Compare squared distances to avoid two sqrt calls — only the relative
+    // order matters here, not the actual distance values.
+    auto dxFirst = pose.X() - firstElementPose.X();
+    auto dyFirst = pose.Y() - firstElementPose.Y();
+    auto dxSecond = pose.X() - secondElementPose.X();
+    auto dySecond = pose.Y() - secondElementPose.Y();
 
-    if (distanceToFirst < distanceToSecond)
+    if ((dxFirst * dxFirst + dyFirst * dyFirst) < (dxSecond * dxSecond + dySecond * dySecond))
     {
         return firstElement;
     }

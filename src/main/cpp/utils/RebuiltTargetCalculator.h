@@ -340,4 +340,13 @@ private:
     bool m_prevRightPressed = false;
 
     /// @}
+
+    /// \name Cached Calculation Results
+    /// Cache for expensive calculations to avoid recalculation when pose hasn't changed
+    /// @{
+
+    /// Cached launcher target angle from last calculation (in turns)
+    units::angle::turn_t m_cachedLauncherTarget = 0_tr;
+
+    /// @}
 };

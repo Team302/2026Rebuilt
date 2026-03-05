@@ -157,6 +157,8 @@ protected:
      */
     void UpdateChassisSpeeds();
 
+    frc::Pose2d m_lastChassisPose{};
+
 private:
     static TargetCalculator *m_instance;
     frc::Translation2d m_mechanismOffset;
@@ -168,4 +170,9 @@ private:
     static constexpr units::radians_per_second_t m_rotationSpeedThreshold{0.25_deg_per_s};
 
     subsystems::CommandSwerveDrivetrain *m_chassis;
+
+    // Cached calculation results to avoid recalculation when pose hasn't changed
+    units::meter_t m_cachedDistanceToTarget = 0_m;
+    units::meter_t m_cachedMechanismDistanceToTarget = 0_m;
+    units::degree_t m_cachedMechanismAngleToTarget = 0_deg;
 };
