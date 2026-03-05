@@ -22,6 +22,11 @@ time = "5.0">
 <zone filename = "BlueLaunchZone.xml"/>
 </primitive>
 
+<primitive id = "DRIVE_STOP_MECH"
+time = "5.0">
+<zone filename = "BlueLaunchZone.xml"/>
+</primitive>
+
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMRDrop3_D"
 time = "5.0"

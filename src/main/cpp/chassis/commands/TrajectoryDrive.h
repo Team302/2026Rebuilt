@@ -67,11 +67,11 @@ private:
     units::time::second_t m_thresholdTime{0.0_s}; // pre-computed kPercentComplete * m_totalTrajectoryTime
     units::time::second_t m_elapsedTime{0.0_s};   // cached timer value, updated once per Execute() call
 
-    static constexpr double kPDrive{0.65};
+    static constexpr double kPDrive{2.00};
     static constexpr double kIDrive{0.0};
     static constexpr double kDDrive{0.0};
 
-    static constexpr double kPHeading{1.0};
+    static constexpr double kPHeading{2.0};
     static constexpr double kIHeading{0.0};
     static constexpr double kDHeading{0.0};
 
