@@ -266,7 +266,7 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
-	configs.MotorOutput.Inverted = InvertedValue::Clockwise_Positive;
+	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
 	configs.MotorOutput.NeutralMode = NeutralModeValue::Brake;
 	configs.MotorOutput.PeakForwardDutyCycle = 1;
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
@@ -278,7 +278,7 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 0.56761719;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.46541861405197305;
 
 	configs.Slot0.kI = m_positionDeg->GetI();
 	configs.Slot0.kD = m_positionDeg->GetD();
