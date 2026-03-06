@@ -83,7 +83,7 @@ public:
 	{
 		position = std::clamp(position, m_intakeExtendedPositionTarget, m_intakeRetractedPositionTarget);
 		m_extenderPositionDeg.Position = position;
-		if (m_cachedExtenderPositionDeg > position)
+		if (m_cachedExtenderPositionDeg < position)
 		{
 			m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
 		}
