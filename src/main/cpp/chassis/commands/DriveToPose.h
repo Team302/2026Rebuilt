@@ -188,16 +188,8 @@ protected:
     //------------------------------------------------------------------
     subsystems::CommandSwerveDrivetrain *GetChassis() const { return m_chassis; }
 
-    units::velocity::meters_per_second_t GetMaxVelocity() const { return kMaxVelocity; }
-    units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const { return kMaxAcceleration; }
-
-    double GetTranslationKP() const { return m_translationKP; }
-    double GetTranslationKI() const { return m_translationKI; }
-    double GetTranslationKD() const { return m_translationKD; }
-
-    double GetRotationKP() const { return m_rotationKP; }
-    double GetRotationKI() const { return m_rotationKI; }
-    double GetRotationKD() const { return m_rotationKD; }
+    virtual units::velocity::meters_per_second_t GetMaxVelocity() const { return kMaxVelocityDefault; }
+    virtual units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const { return kMaxAccelerationDefault; }
 
 private:
     bool
@@ -255,16 +247,19 @@ private:
     units::length::inch_t m_distanceThreshold{0.25};
 
     /// @brief Minimum radius for feedforward activation
-    const units::length::inch_t m_ffMinRadius{0.0};
-    const units::length::meter_t m_ffMaxRadius{1.0};
+    static constexpr units::length::inch_t m_ffMinRadius{0.0};
+    static constexpr units::length::meter_t m_ffMaxRadius{1.0};
 
     //------------------------------------------------------------------
     // Velocity and Acceleration Limits
     //------------------------------------------------------------------
 
     /// @brief Maximum translational velocity for the robot
-    units::velocity::meters_per_second_t kMaxVelocity = 4_mps;
-    units::acceleration::meters_per_second_squared_t kMaxAcceleration = 3_mps_sq;
+    units::velocity::meters_per_second_t kMaxVelocity;
+    static constexpr units::velocity::meters_per_second_t kMaxVelocityDefault = 4_mps;
+
+    units::acceleration::meters_per_second_squared_t kMaxAcceleration;
+    static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationDefault = 3_mps_sq;
 
     //------------------------------------------------------------------
     // NetworkTables Keys (Legacy)
@@ -284,7 +279,7 @@ private:
     double m_translationKP = 5.0;
 
     /// @brief Integral gain for X and Y translation controllers (disabled)
-    double m_translationKI = 2.5;
+    double m_translationKI = 0.0;
 
     /// @brief Derivative gain for X and Y translation controllers
     double m_translationKD = 0.0;
@@ -301,7 +296,6 @@ private:
 
     /// @brief Derivative gain for heading controller (disabled)
     double m_rotationKD = 0.0;
-
     //------------------------------------------------------------------
     // Runtime State Variables
     //------------------------------------------------------------------
@@ -319,12 +313,19 @@ private:
     // PID Controllers
     //------------------------------------------------------------------
 
-    /// @brief Trapezoidal motion profile constraints for both X and Y controllers
-    frc::TrapezoidProfile<units::length::meters>::Constraints m_translationConstraints{kMaxVelocity, kMaxAcceleration};
+    // /// @brief Trapezoidal motion profile constraints for both X and Y controllers
+    // frc::TrapezoidProfile<units::length::meters>::Constraints m_translationConstraints{kMaxVelocityDefault, kMaxAccelerationDefault};
 
+    // /// @brief Profiled PID controller for X-axis translation with tkMaxAccelerationrapezoidal velocity profiles
+    // frc::ProfiledPIDController<units::length::meters> m_translationPIDX{m_translationKP, m_translationKI, m_translationKD, m_translationConstraints, 20_ms};
+
+    // /// @brief Profiled PID controller for Y-axis translation with trapezoidal velocity profiles
+    // frc::ProfiledPIDController<units::length::meters> m_translationPIDY{m_translationKP, m_translationKI, m_translationKD, m_translationConstraints, 20_ms};
+
+    /// @brief Trapezoidal motion profile constraints for both X and Y controllers
+    frc::TrapezoidProfile<units::length::meters>::Constraints m_translationConstraints{kMaxVelocityDefault, kMaxAccelerationDefault};
     /// @brief Profiled PID controller for X-axis translation with trapezoidal velocity profiles
     frc::ProfiledPIDController<units::length::meters> m_translationPIDX{m_translationKP, m_translationKI, m_translationKD, m_translationConstraints, 20_ms};
-
     /// @brief Profiled PID controller for Y-axis translation with trapezoidal velocity profiles
     frc::ProfiledPIDController<units::length::meters> m_translationPIDY{m_translationKP, m_translationKI, m_translationKD, m_translationConstraints, 20_ms};
 };
