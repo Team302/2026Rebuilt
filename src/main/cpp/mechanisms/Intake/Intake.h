@@ -81,7 +81,7 @@ public:
 	}
 	void UpdateTargetExtenderPositionDeg(units::angle::turn_t position)
 	{
-		position = std::clamp(position, m_intakeRetractedPositionTarget, m_intakeExtendedPositionTarget);
+		position = std::clamp(position, m_intakeExtendedPositionTarget, m_intakeRetractedPositionTarget);
 		m_extenderPositionDeg.Position = position;
 		m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
 	}
