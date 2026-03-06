@@ -395,7 +395,7 @@ void Intake::ManualControl()
 			{
 
 				bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
-				bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE);
+				bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_IN);
 				if (intakeOutPressed)
 				{
 					UpdateTargetExtenderPositionDeg(m_intakeExtendedPositionTarget);
