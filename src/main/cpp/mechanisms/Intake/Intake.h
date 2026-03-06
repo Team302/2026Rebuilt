@@ -83,7 +83,14 @@ public:
 	{
 		position = std::clamp(position, m_intakeExtendedPositionTarget, m_intakeRetractedPositionTarget);
 		m_extenderPositionDeg.Position = position;
-		m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
+		if (m_cachedExtenderPositionDeg < position)
+		{
+			m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
+		}
+		else
+		{
+			m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(1);
+		}
 	}
 
 	void CreateAndRegisterStates();
@@ -98,7 +105,8 @@ public:
 	ctre::phoenix6::hardware::CANdi *GetIntakeCANdi() const { return m_intakeCANdi; }
 
 	ControlData *GetPercentOut() const { return m_percentOut; }
-	ControlData *GetPositionDeg() const { return m_positionDeg; }
+	ControlData *GetPositionDegUp() const { return m_positionDegUp; }
+	ControlData *GetPositionDegDown() const { return m_positionDegDown; }
 
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
 	static std::map<STATE_NAMES, std::string> STATE_NAMESEnumToStringMap;
@@ -125,7 +133,8 @@ private:
 	ctre::phoenix6::hardware::CANdi *m_intakeCANdi;
 
 	ControlData *m_percentOut;
-	ControlData *m_positionDeg;
+	ControlData *m_positionDegUp;
+	ControlData *m_positionDegDown;
 
 	void InitializeTalonFXIntakeCompBot302();
 	void InitializeTalonFXSExtenderCompBot302();
@@ -134,7 +143,7 @@ private:
 	ctre::phoenix6::controls::DutyCycleOut m_extenderPercentOut{0.0};
 	ctre::phoenix6::controls::MotionMagicVoltage m_extenderPositionDeg{0_tr};
 	ctre::phoenix6::controls::ControlRequest *m_intakeActiveTarget = &m_intakePercentOut;
-	ctre::phoenix6::controls::ControlRequest *m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
+	ctre::phoenix6::controls::ControlRequest *m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(1);
 
 	bool m_isInClimbMode = false;
 	bool m_isLaunching = false;
@@ -142,6 +151,9 @@ private:
 
 	units::angle::turn_t m_intakeRetractedPositionTarget{80.0};
 	units::angle::turn_t m_intakeExtendedPositionTarget{0.0};
+	units::angle::turn_t m_cachedExtenderPositionDeg{0.0};
+
+	void RefreshCachedMotorData();
 
 	// logging paths
 	static constexpr std::string_view m_intakeStatePath = "/Intake/State";
