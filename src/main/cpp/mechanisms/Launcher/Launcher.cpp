@@ -769,6 +769,7 @@ bool Launcher::IsLauncherAtTarget()
 
 bool Launcher::IsInLaunchZone() const
 {
+	return true;
 	if (!DeadZoneManager::GetInstance()->IsInDeadZone())
 	{
 		return !(AllianceZoneManager::GetInstance()->IsInAllianceZone() && !(m_isHubActive || m_shiftChangeIn3Seconds));
@@ -868,7 +869,6 @@ std::string Launcher::GetCurrentStateName()
 
 bool Launcher::IsTurretAtTarget()
 {
-	return true;
 	units::angle::degree_t turretError = m_cachedTurretPosition - m_targetTurretAngle;
 
 	return ((units::math::abs(turretError) < m_turretAngleThreshold));
