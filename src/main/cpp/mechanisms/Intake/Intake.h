@@ -81,7 +81,7 @@ public:
 	}
 	void UpdateTargetExtenderPositionDeg(units::angle::turn_t position)
 	{
-		position = std::clamp(position, m_intakeRetractedPositionTarget, m_intakeExtendedPositionTarget);
+		position = std::clamp(position, m_intakeExtendedPositionTarget, m_intakeRetractedPositionTarget);
 		m_extenderPositionDeg.Position = position;
 		m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
 	}
@@ -141,7 +141,7 @@ private:
 	bool m_prevIntakeSwitchState = false;
 
 	units::angle::turn_t m_intakeRetractedPositionTarget{80.0};
-	units::angle::turn_t m_intakeExtendedPositionTarget{-0.0};
+	units::angle::turn_t m_intakeExtendedPositionTarget{0.0};
 
 	// logging paths
 	static constexpr std::string_view m_intakeStatePath = "/Intake/State";

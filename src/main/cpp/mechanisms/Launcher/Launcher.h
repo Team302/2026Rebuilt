@@ -229,8 +229,8 @@ private:
 	units::angle::turn_t m_maxTurretAngle = 267_tr;
 
 	units::angle::turn_t m_turretAngleThreshold = 5.0_tr;
-	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 25.0_rpm;
-	units::angle::turn_t m_hoodAngleThreshold = 3.0_tr;
+	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 150.0_rpm;
+	units::angle::turn_t m_hoodAngleThreshold = 0.5_tr;
 	units::velocity::meters_per_second_t m_chassisSpeedThreshold = 3.0_mps;
 
 	RebuiltTargetCalculator *m_targetCalculator;
@@ -261,8 +261,8 @@ private:
 	units::angle::turn_t m_cachedHoodPosition = 0.0_tr;
 	units::angle::turn_t m_cachedTurretPosition = 0.0_tr;
 
-	units::angle::turn_t m_passingHoodTargetAngle = 30.0_tr;
-	units::angular_velocity::revolutions_per_minute_t m_passingLauncherTargetVelocity = 1000.0_rpm;
+	units::angle::turn_t m_passingHoodTargetAngle = 25.0_tr;
+	units::angular_velocity::revolutions_per_minute_t m_passingLauncherTargetVelocity = 2500.0_rpm;
 	// logging paths
 	static constexpr std::string_view m_loggingLauncherTargetPath = "/Launcher/TargetLauncherVelocity";
 	static constexpr std::string_view m_loggingHoodTargetPath = "/Launcher/HoodTargetAngle";

@@ -51,7 +51,7 @@ void LoadHopperState::Init()
 void LoadHopperState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
-	// m_mechanism->UpdateTargetExtenderPositionDeg(m_extenderTarget);
+	m_mechanism->UpdateTargetExtenderPositionDeg(m_extenderTarget);
 }
 
 void LoadHopperState::Run()

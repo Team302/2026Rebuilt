@@ -62,7 +62,8 @@ void LaunchState::Run()
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LaunchState"), string("Run"));
 	if (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH) &&
 		!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH_OVERRIDE) &&
-		!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::MANUAL_LAUNCH))
+		!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::MANUAL_LAUNCH) &&
+		frc::DriverStation::IsTeleop())
 	{
 		m_mechanism->UpdateTargetAgitatorPercentOut(0.0);
 	}

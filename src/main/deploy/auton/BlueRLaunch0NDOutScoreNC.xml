@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "auton.dtd">
+<auton>
+
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueROut"
+time = "3.5"
+intakeState = "STATE_INTAKE">
+<zone filename = "BlueLaunchZone.xml"/>
+</primitive>
+
+
+
+
+</auton>
