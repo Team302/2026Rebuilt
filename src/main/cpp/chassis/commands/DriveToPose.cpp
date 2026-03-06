@@ -72,13 +72,10 @@ DriveToPose::DriveToPose(subsystems::CommandSwerveDrivetrain *chassis) : m_chass
 
     kMaxVelocity = GetMaxVelocity();
     kMaxAcceleration = GetMaxAcceleration();
-    m_translationKP = GetTranslationKP();
-    m_translationKI = GetTranslationKI();
-    m_translationKD = GetTranslationKD();
 
-    m_rotationKP = GetRotationKP();
-    m_rotationKI = GetRotationKI();
-    m_rotationKD = GetRotationKD();
+    m_translationConstraints = frc::TrapezoidProfile<units::length::meters>::Constraints(kMaxVelocity, kMaxAcceleration);
+    m_translationPIDX = frc::ProfiledPIDController<units::length::meters>(m_translationKP, m_translationKI, m_translationKD, m_translationConstraints, 20_ms);
+    m_translationPIDY = frc::ProfiledPIDController<units::length::meters>(m_translationKP, m_translationKI, m_translationKD, m_translationConstraints, 20_ms);
 
     // Calculate the range over which feedforward velocity is ramped
     m_feedForwardRange = m_ffMaxRadius - m_ffMinRadius;
