@@ -263,6 +263,13 @@ private:
 
 	units::angle::turn_t m_passingHoodTargetAngle = 30.0_tr;
 	units::angular_velocity::revolutions_per_minute_t m_passingLauncherTargetVelocity = 1000.0_rpm;
+
+	units::angular_velocity::revolutions_per_minute_t m_launcherSpeedError = 0.0_rpm;
+	units::angle::degree_t m_hoodAngleError = 0.0_deg;
+	bool m_isInLaunchZone = false;
+	frc::ChassisSpeeds m_chassisSpeeds;
+	units::velocity::meters_per_second_t m_chassisSpeed = 0.0_mps;
+
 	// logging paths
 	static constexpr std::string_view m_loggingLauncherTargetPath = "/Launcher/TargetLauncherVelocity";
 	static constexpr std::string_view m_loggingHoodTargetPath = "/Launcher/HoodTargetAngle";
@@ -270,6 +277,18 @@ private:
 	static constexpr std::string_view m_loggingLauncherStatePath = "/Launcher/State";
 	static constexpr std::string_view m_loggingProtectedModePath = "/Launcher/IsProtectedMode";
 
+	static constexpr std::string_view m_loggingHoodErrorPath = "/Launcher/HoodError";
+	static constexpr std::string_view m_loggingLauncherSpeedErrorPath = "/Launcher/LauncherSpeedError";
+	static constexpr std::string_view m_loggingInLaunchZonePath = "/Launcher/InLaunchZone";
+	static constexpr std::string_view m_loggingChassisSpeedPath = "/Launcher/ChassisSpeed";
+	static constexpr std::string_view m_loggingTurretAtTargetPath = "/Launcher/TurretAtTarget";
+	static constexpr std::string_view m_loggingHoodAngleErrorPath = "/Launcher/HoodAngleError";
+	static constexpr std::string_view m_loggingTurretAngleErrorPath = "/Launcher/TurretAngleError";
+
+	static constexpr std::string_view m_loggingTurretAngleActualPath = "/Launcher/TurretAngleActual";
+
 	static constexpr std::string_view m_loggingTurnsUnits = "Turns";
 	static constexpr std::string_view m_loggingRPMUnits = "RPM";
+	static constexpr std::string_view m_loggingDegreesUnits = "Degrees";
+	static constexpr std::string_view m_loggingFPSUnits = "FPS";
 };

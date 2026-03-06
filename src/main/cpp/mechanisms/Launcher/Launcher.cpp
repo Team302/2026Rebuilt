@@ -748,23 +748,21 @@ bool Launcher::IsLauncherAtTarget()
 		return true;
 	}
 	// Launcher Speed error, Hood Angle error, Turret angle error are within a threshold, and if we are in launch zone. Also check chassis speed.
-	units::angle::degree_t hoodError = m_cachedHoodPosition - m_targetHoodAngle;
-	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = m_cachedLauncherVelocity - m_targetLauncherAngularVelocity;
-	bool inLaunchzone = IsInLaunchZone();
-	auto chassisSpeeds = m_chassis != nullptr ? m_chassis->GetState().Speeds : frc::ChassisSpeeds();
-	auto Speed = units::math::sqrt(units::math::abs(chassisSpeeds.vx * chassisSpeeds.vx) + units::math::abs(chassisSpeeds.vy * chassisSpeeds.vy));
-
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Error", hoodError.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed Error", launcherSpeedError.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "In Launch Zone", inLaunchzone);
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Chassis Speed", Speed.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Turret At Target", IsTurretAtTarget());
-
-	return ((units::math::abs(hoodError) < m_hoodAngleThreshold) &&
+	m_hoodAngleError = m_cachedHoodPosition - m_targetHoodAngle;
+	m_launcherSpeedError = m_cachedLauncherVelocity - m_targetLauncherAngularVelocity;
+	m_isInLaunchZone = IsInLaunchZone();
+	m_chassisSpeeds = m_chassis != nullptr ? m_chassis->GetState().Speeds : frc::ChassisSpeeds();
+	m_chassisSpeed = units::math::sqrt(units::math::abs(m_chassisSpeeds.vx * m_chassisSpeeds.vx) + units::math::abs(m_chassisSpeeds.vy * m_chassisSpeeds.vy));
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Error", m_hoodAngleError.value());
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed Error", m_launcherSpeedError.value());
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "In Launch Zone", m_isInLaunchZone);
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Chassis Speed", m_chassisSpeed.value());
+	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Turret At Target", IsTurretAtTarget());
+	return ((units::math::abs(m_hoodAngleError) < m_hoodAngleThreshold) &&
 			IsTurretAtTarget() &&
-			(units::math::abs(launcherSpeedError) < m_launcherVelocityThreshold) &&
-			(inLaunchzone) &&
-			(Speed < m_chassisSpeedThreshold));
+			(units::math::abs(m_launcherSpeedError) < m_launcherVelocityThreshold) &&
+			(m_isInLaunchZone) &&
+			(m_chassisSpeed < m_chassisSpeedThreshold));
 }
 
 bool Launcher::IsInLaunchZone() const
@@ -859,6 +857,13 @@ void Launcher::DataLog(uint64_t timestamp)
 	// Mechanism state
 	LogStringData(timestamp, m_loggingLauncherStatePath, GetCurrentStateName());
 	LogBoolData(timestamp, m_loggingProtectedModePath, m_launcherProtectedMode);
+	LogDoubleData(timestamp, m_loggingLauncherSpeedErrorPath, m_cachedLauncherVelocity.value(), m_loggingRPMUnits);
+
+	LogDoubleData(timestamp, m_loggingHoodAngleErrorPath, m_cachedHoodPosition.value(), m_loggingDegreesUnits);
+	LogDoubleData(timestamp, m_loggingLauncherSpeedErrorPath, m_launcherSpeedError.value(), m_loggingRPMUnits);
+	LogDoubleData(timestamp, m_loggingChassisSpeedPath, m_chassisSpeed.value(), m_loggingRPMUnits);
+	LogBoolData(timestamp, m_loggingInLaunchZonePath, m_isInLaunchZone);
+	LogDoubleData(timestamp, m_loggingTurretAngleActualPath, m_cachedTurretPosition.value(), m_loggingTurnsUnits);
 }
 std::string Launcher::GetCurrentStateName()
 {
