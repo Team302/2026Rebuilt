@@ -2,6 +2,6 @@
 <!DOCTYPE auton SYSTEM "zone.dtd">
 
 <auton>
-<zone circlex="16.4" circley="7.4" radius="40.0"
+<zone circlex="16.4" circley="7.4" radius="50.0"
 pathUpdateOption = "DRIVE_TO_OUTPOST"/>
 </auton>

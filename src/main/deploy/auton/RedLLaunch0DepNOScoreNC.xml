@@ -4,16 +4,18 @@
 
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueROut"
+choreoname = "BlueLDepotOutpost_A"
 time = "3.5"
 intakeState = "STATE_INTAKE">
 <zone filename = "RedLaunchZone.xml"/>
-<!-- <zone filename = "RedOutpostZone"/> -->
+<zone filename = "RedDepotZone.xml"/>
 </primitive>
 
-<primitive id = "DRIVE_STOP_MECH">
+<primitive id = "DRIVE_STOP_MECH"
+intakeState = "STATE_INTAKE">
 <zone filename = "RedLaunchZone.xml"/>
 </primitive>
+
 
 
 </auton>

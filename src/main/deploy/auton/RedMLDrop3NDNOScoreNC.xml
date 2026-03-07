@@ -46,8 +46,9 @@ launcherState = "STATE_IDLE">
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDrop3_D"
 time = "5.0"
-intakeState = "STATE_INTAKE">
-<zone filename = "RedLeftBumpZoneRect.xml"/>
+intakeState = "STATE_INTAKE"
+launcherState = "STATE_IDLE">
+<!-- <zone filename = "RedLeftBumpZoneRect.xml"/> -->
 <zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
@@ -55,7 +56,7 @@ intakeState = "STATE_INTAKE">
 choreoname = "BlueMLDrop3_E"
 time = "3.0"
 intakeState = "STATE_INTAKE"
-launcherState = "STATE_IDLE">
+>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
