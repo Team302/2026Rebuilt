@@ -38,7 +38,8 @@ time = "5.0">
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDrop3_C2"
 time = "5.0"
-intakeState = "STATE_INTAKE">
+intakeState = "STATE_INTAKE"
+launcherState = "STATE_IDLE">
 <zone filename = "RedLeftBumpZone.xml"/>
 </primitive>
 
@@ -53,7 +54,8 @@ intakeState = "STATE_INTAKE">
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDrop3_E"
 time = "3.0"
-intakeState = "STATE_INTAKE">
+intakeState = "STATE_INTAKE"
+launcherState = "STATE_IDLE">
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"

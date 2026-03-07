@@ -159,10 +159,32 @@ void Intake::CreateCompBot302()
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_positionDeg = new ControlData(
+	m_positionDegUp = new ControlData(
 		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_positionDeg",								  // std::string indentifier
+		"m_positionDegUp",								  // std::string indentifier
+		0,												  // double proportional
+		0,												  // double integral
+		0,												  // double derivative
+		0,												  // double feedforward
+		0,												  // double velocityGain
+		0,												  // double accelartionGain
+		0,												  // double staticFrictionGain,
+
+		ControlData::FEEDFORWARD_TYPE::VOLTAGE,					 // FEEDFORWARD_TYPE feedforwadType
+		0,														 // double integralZone
+		0,														 // double maxAcceleration
+		0,														 // double cruiseVelocity
+		0,														 // double peakValue
+		0,														 // double nominalValue
+		false,													 // bool enableFOC
+		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
+		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
+	);
+	m_positionDegDown = new ControlData(
+		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
+		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
+		"m_positionDegDown",							  // std::string indentifier
 		0,												  // double proportional
 		0,												  // double integral
 		0,												  // double derivative
@@ -280,15 +302,25 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
 	configs.ExternalFeedback.SensorToMechanismRatio = 0.46541861405197305;
 
-	configs.Slot0.kI = m_positionDeg->GetI();
-	configs.Slot0.kD = m_positionDeg->GetD();
-	configs.Slot0.kG = m_positionDeg->GetF();
-	configs.Slot0.kS = m_positionDeg->GetS();
-	configs.Slot0.kV = m_positionDeg->GetV();
-	configs.Slot0.kP = m_positionDeg->GetP();
-	configs.Slot0.kA = m_positionDeg->GetA();
+	configs.Slot0.kI = m_positionDegUp->GetI();
+	configs.Slot0.kD = m_positionDegUp->GetD();
+	configs.Slot0.kG = m_positionDegUp->GetF();
+	configs.Slot0.kS = m_positionDegUp->GetS();
+	configs.Slot0.kV = m_positionDegUp->GetV();
+	configs.Slot0.kP = m_positionDegUp->GetP();
+	configs.Slot0.kA = m_positionDegUp->GetA();
 	configs.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Arm_Cosine;
 	configs.Slot0.StaticFeedforwardSign = ctre::phoenix6::signals::StaticFeedforwardSignValue::UseVelocitySign;
+
+	configs.Slot1.kI = m_positionDegDown->GetI();
+	configs.Slot1.kD = m_positionDegDown->GetD();
+	configs.Slot1.kG = m_positionDegDown->GetF();
+	configs.Slot1.kS = m_positionDegDown->GetS();
+	configs.Slot1.kV = m_positionDegDown->GetV();
+	configs.Slot1.kP = m_positionDegDown->GetP();
+	configs.Slot1.kA = m_positionDegDown->GetA();
+	configs.Slot1.GravityType = ctre::phoenix6::signals::GravityTypeValue::Arm_Cosine;
+	configs.Slot1.StaticFeedforwardSign = ctre::phoenix6::signals::StaticFeedforwardSignValue::UseVelocitySign;
 
 	CANdiConfiguration CANdiConfig{};
 
@@ -321,9 +353,16 @@ void Intake::SetCurrentState(int state, bool run)
 	StateMgr::SetCurrentState(state, run);
 }
 
+void Intake::RefreshCachedMotorData()
+{
+	m_cachedExtenderPositionDeg = m_extender->GetPosition().GetValue();
+}
+
 void Intake::RunCommonTasks()
 {
 	// This function is called once per loop before the current state Run()
+	RefreshCachedMotorData();
+
 	ManualControl();
 	Cyclic();
 
@@ -336,8 +375,8 @@ void Intake::RunCommonTasks()
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentStateName());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeIn", IsIntakeIn());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IntakePercentOut", m_intakePercentOut.Output.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Intake Position", m_extender->GetPosition().GetValueAsDouble());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Intake Position", m_cachedExtenderPositionDeg.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Intake Target", m_extenderPositionDeg.Position.value());
 }
 /// @brief  Set the control constants (e.g. PIDF values).
 /// @param [in] ControlData*                                   pid:  the control constants
@@ -363,8 +402,10 @@ ControlData *Intake::GetControlData(string name)
 {
 	if (name.compare("PercentOut") == 0)
 		return m_percentOut;
-	else if (name.compare("PositionDegree") == 0)
-		return m_positionDeg;
+	else if (name.compare("PositionDegreeUp") == 0)
+		return m_positionDegUp;
+	else if (name.compare("PositionDegreeDown") == 0)
+		return m_positionDegDown;
 
 	return nullptr;
 }
@@ -395,7 +436,7 @@ void Intake::ManualControl()
 			{
 
 				bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
-				bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE);
+				bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_IN);
 				if (intakeOutPressed)
 				{
 					UpdateTargetExtenderPositionDeg(m_intakeExtendedPositionTarget);

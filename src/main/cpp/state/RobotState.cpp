@@ -65,14 +65,15 @@ void RobotState::Init()
 void RobotState::Run()
 {
     PublishGameStateChanges();
-    if (DriverStation::IsTeleopEnabled())
-    {
-        auto controller = TeleopControl::GetInstance();
-        if (controller != nullptr)
-        {
-            PublishClimbMode(controller);
-        }
-    }
+    // commented for week 1
+    //  if (DriverStation::IsTeleopEnabled())
+    //  {
+    //      auto controller = TeleopControl::GetInstance();
+    //      if (controller != nullptr)
+    //      {
+    //          PublishClimbMode(controller);
+    //      }
+    //  }
 }
 
 void RobotState::RegisterForStateChanges(IRobotStateChangeSubscriber *subscriber, RobotStateChanges::StateChange change)
@@ -182,7 +183,6 @@ void RobotState::PublishClimbMode(TeleopControl *controller)
         if (m_climbButtonReleased)
         {
             m_climbModeStatus = !m_climbModeStatus;
-
             PublishStateChange(RobotStateChanges::ClimbModeStatus_Bool, m_climbModeStatus);
         }
     }
