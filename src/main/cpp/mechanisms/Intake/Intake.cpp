@@ -276,7 +276,7 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 11;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(100);
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
@@ -285,7 +285,7 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 11;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
@@ -324,8 +324,8 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 
 	CANdiConfiguration CANdiConfig{};
 
-	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenHigh;
-	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::PullHigh;
+	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenFloating;
+	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::FloatDetect;
 
 	ctre::phoenix::StatusCode statusMotor = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
