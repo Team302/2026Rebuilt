@@ -478,14 +478,16 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	// MECH_TODO: Set limit switches
 	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 6;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
+	// configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(267);
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 6;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
+	// configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::turn_t(91);
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
@@ -824,15 +826,26 @@ void Launcher::UpdateLauncherTargets()
 
 void Launcher::InitilaizeLauncher()
 {
-	if (((m_turret->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround ||
-		  m_turret->GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround) &&
-		 (m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)) ||
+	auto turretReverseLimitSwitchTripped = m_turret->GetReverseLimit().GetValue();
+	auto turretForwardLimitSwitchTripped = m_turret->GetForwardLimit().GetValue();
+	auto hoodReverseLimitSwitchTripped = m_hood->GetReverseLimit().GetValue();
+
+	if (((turretReverseLimitSwitchTripped == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround ||
+		  turretForwardLimitSwitchTripped == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround) &&
+		 (hoodReverseLimitSwitchTripped == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)) ||
 		frc::RobotBase::IsSimulation())
 	{
+		if (turretReverseLimitSwitchTripped == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)
+		{
+			m_turret->SetPosition(m_minTurretAngle);
+		}
+		else
+		{
+			m_turret->SetPosition(m_maxTurretAngle);
+		}
 		m_launcherInitialized = true;
 	}
 }
-
 void Launcher::SetLauncherProtect()
 {
 	if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCHER_OFF))
