@@ -61,7 +61,6 @@ void DragonCANdle::Periodic()
     if (m_candle == nullptr)
         return;
 
-    UpdateDiagnostics();
     UpdateAnimation();
 
     if (frc::RobotBase::IsSimulation() && m_candle != nullptr)
@@ -71,6 +70,10 @@ void DragonCANdle::Periodic()
         simState.SetSupplyVoltage(12_V);
         simState.GetLastStatusCode();
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonCANdle", "AppliedControl", std::string(m_candle->GetAppliedControl().get()->GetName()));
+    }
+    else if (frc::DriverStation::IsDisabled())
+    {
+        UpdateDiagnostics();
     }
 }
 
@@ -214,78 +217,28 @@ void DragonCANdle::UpdateDiagnostics()
     // Alliance
     if (m_alliance != m_prevAlliance)
     {
-        if (m_alliance == frc::DriverStation::Alliance::kBlue)
-            m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{frc::Color::kBlue}));
-        else
-            m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{frc::Color::kRed}));
+        m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{m_alliance == frc::DriverStation::Alliance::kRed ? frc::Color::kRed : frc::Color::kBlue}));
         m_prevAlliance = m_alliance;
     }
 
     // Quest
     if (m_questOK != m_prevQuestOK)
     {
-        if (m_questOK)
-            m_candle->SetControl(controls::SolidColor{1, 1}.WithColor(RGBWColor{frc::Color::kGreen}));
-        else
-            m_candle->SetControl(controls::SolidColor{1, 1}.WithColor(RGBWColor{frc::Color::kRed}));
+        m_candle->SetControl(controls::SolidColor{1, 1}.WithColor(RGBWColor{m_questOK ? frc::Color::kGreen : frc::Color::kRed}));
         m_prevQuestOK = m_questOK;
     }
 
     // Limelights (aggregated)
-    int llCount = (m_ll1 ? 1 : 0) + (m_ll2 ? 1 : 0) + (m_ll3 ? 1 : 0);
-    bool llStateChanged = (m_ll1 != m_prevLL1) || (m_ll2 != m_prevLL2) || (m_ll3 != m_prevLL3);
-
-    if (llCount == 3)
+    if (m_limeLight != m_prevLimeLight)
     {
-        if (llStateChanged)
-        {
-            m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{frc::Color::kGreen}));
-            m_prevLL1 = m_ll1;
-            m_prevLL2 = m_ll2;
-            m_prevLL3 = m_ll3;
-        }
-    }
-    else if (llCount == 0)
-    {
-        if (llStateChanged)
-        {
-            m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{frc::Color::kRed}));
-            m_prevLL1 = m_ll1;
-            m_prevLL2 = m_ll2;
-            m_prevLL3 = m_ll3;
-        }
-    }
-    else
-    {
-        // Cycle through the 3 limelights, showing green for connected and red for missing
-        // Each limelight is displayed for m_limelightBlinkPeriod frames
-        m_limelightBlinkTimer++;
-        if (m_limelightBlinkTimer >= 3 * m_limelightBlinkPeriod)
-            m_limelightBlinkTimer = 0;
-
-        int currentLL = (m_limelightBlinkTimer / m_limelightBlinkPeriod) % 3;
-
-        frc::Color llColor = frc::Color::kRed;
-        if (currentLL == 0 && m_ll1)
-            llColor = frc::Color::kGreen;
-        else if (currentLL == 1 && m_ll2)
-            llColor = frc::Color::kGreen;
-        else if (currentLL == 2 && m_ll3)
-            llColor = frc::Color::kGreen;
-
-        m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{llColor}));
-        m_prevLL1 = m_ll1;
-        m_prevLL2 = m_ll2;
-        m_prevLL3 = m_ll3;
+        m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{m_limeLight ? frc::Color::kGreen : frc::Color::kRed}));
+        m_prevLimeLight = m_limeLight;
     }
 
     // Data Logger
     if (m_dataLoggerOK != m_prevDataLoggerOK)
     {
-        if (m_dataLoggerOK)
-            m_candle->SetControl(controls::SolidColor{3, 3}.WithColor(RGBWColor{frc::Color::kGreen}));
-        else
-            m_candle->SetControl(controls::SolidColor{3, 3}.WithColor(RGBWColor{frc::Color::kRed}));
+        m_candle->SetControl(controls::SolidColor{3, 3}.WithColor(RGBWColor{m_dataLoggerOK ? frc::Color::kGreen : frc::Color::kRed}));
         m_prevDataLoggerOK = m_dataLoggerOK;
     }
 

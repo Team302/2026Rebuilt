@@ -54,7 +54,7 @@ public:
                     bool climberStateChanged,
                     Launcher::STATE_NAMES launcherState,
                     Intake::STATE_NAMES intakeState,
-                    Climber::STATE_NAMES climberState); // create zones parameter of type ZonesParamsVector
+                    Climber::STATE_NAMES climberState);
 
     PrimitiveParams() = delete;
     virtual ~PrimitiveParams() = default; // Destructor
@@ -67,7 +67,7 @@ public:
     ChassisOptionEnums::HeadingOption GetHeadingOption() const { return m_headingOption; };
     float GetHeading() const { return m_heading; };
     std::string GetTrajectoryName() const { return m_choreoTrajectoryName; };
-    ZoneParamsVector GetZones() const { return m_zones; }; // create a GetZones() method to return the instance of zones m_zones
+    const ZoneParamsVector &GetZones() const { return m_zones; }; // return by const reference to avoid copying
     VISION_ALIGNMENT GetVisionAlignment() const { return m_visionAlignment; }
 
     void SetVisionAlignment(VISION_ALIGNMENT visionAlignment) { m_visionAlignment = visionAlignment; }

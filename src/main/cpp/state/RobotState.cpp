@@ -51,7 +51,7 @@ RobotState::RobotState() : m_brokers(),
 
 RobotState::~RobotState()
 {
-    for (auto broker : m_brokers)
+    for (auto *broker : m_brokers)
     {
         delete broker;
     }
@@ -65,14 +65,15 @@ void RobotState::Init()
 void RobotState::Run()
 {
     PublishGameStateChanges();
-    if (DriverStation::IsTeleopEnabled())
-    {
-        auto controller = TeleopControl::GetInstance();
-        if (controller != nullptr)
-        {
-            PublishClimbMode(controller);
-        }
-    }
+    // commented for week 1
+    //  if (DriverStation::IsTeleopEnabled())
+    //  {
+    //      auto controller = TeleopControl::GetInstance();
+    //      if (controller != nullptr)
+    //      {
+    //          PublishClimbMode(controller);
+    //      }
+    //  }
 }
 
 void RobotState::RegisterForStateChanges(IRobotStateChangeSubscriber *subscriber, RobotStateChanges::StateChange change)
@@ -133,7 +134,7 @@ void RobotState::PublishStateChange(RobotStateChanges::StateChange change, units
         m_brokers[slot]->Notify(newValue);
     }
 }
-void RobotState::PublishStateChange(RobotStateChanges::StateChange change, frc::Pose2d newValue)
+void RobotState::PublishStateChange(RobotStateChanges::StateChange change, const frc::Pose2d &newValue)
 {
     auto slot = static_cast<unsigned int>(change);
     if (slot < m_brokers.size())
@@ -182,7 +183,6 @@ void RobotState::PublishClimbMode(TeleopControl *controller)
         if (m_climbButtonReleased)
         {
             m_climbModeStatus = !m_climbModeStatus;
-
             PublishStateChange(RobotStateChanges::ClimbModeStatus_Bool, m_climbModeStatus);
         }
     }

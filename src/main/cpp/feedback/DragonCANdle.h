@@ -62,12 +62,7 @@ public:
 	void SetAlliance(frc::DriverStation::Alliance alliance) { m_alliance = alliance; };
 	void SetQuestStatus(bool connected) { m_questOK = connected; };
 	void SetDataLoggerStatus(bool connected) { m_dataLoggerOK = connected; };
-	void SetLimelightStatuses(bool ll1, bool ll2, bool ll3)
-	{
-		m_ll1 = ll1;
-		m_ll2 = ll2;
-		m_ll3 = ll3;
-	};
+	void SetLimelightStatuses(bool ll1) { m_limeLight = ll1; };
 	void SetIntakeSensor(bool triggered) { m_intake = triggered; };
 	void SetHoodSwitch(bool triggered) { m_hood = triggered; };
 	void SetTurretZero(bool triggered) { m_turretZero = triggered; };
@@ -95,9 +90,7 @@ private:
 	frc::DriverStation::Alliance m_alliance{frc::DriverStation::Alliance::kBlue};
 	bool m_questOK{false};
 	bool m_dataLoggerOK{false};
-	bool m_ll1{false};
-	bool m_ll2{false};
-	bool m_ll3{false};
+	bool m_limeLight{false};
 	bool m_intake{false};
 	bool m_hood{false};
 	bool m_turretZero{false};
@@ -127,9 +120,7 @@ private:
 	frc::DriverStation::Alliance m_prevAlliance{frc::DriverStation::Alliance::kBlue};
 	bool m_prevQuestOK{false};
 	bool m_prevDataLoggerOK{false};
-	bool m_prevLL1{false};
-	bool m_prevLL2{false};
-	bool m_prevLL3{false};
+	bool m_prevLimeLight{false};
 	bool m_prevIntake{false};
 	bool m_prevHood{false};
 	bool m_prevTurretZero{false};

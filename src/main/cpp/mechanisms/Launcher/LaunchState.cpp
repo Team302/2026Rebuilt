@@ -62,7 +62,8 @@ void LaunchState::Run()
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LaunchState"), string("Run"));
 	if (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH) &&
 		!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH_OVERRIDE) &&
-		!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::MANUAL_LAUNCH))
+		!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::MANUAL_LAUNCH) &&
+		frc::DriverStation::IsTeleop())
 	{
 		m_mechanism->UpdateTargetAgitatorPercentOut(0.0);
 	}
@@ -84,6 +85,6 @@ bool LaunchState::AtTarget()
 bool LaunchState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return ((m_mechanism->IsLauncherAtTarget()) ||
-			(considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH_OVERRIDE)));
+	return (((m_mechanism->IsLauncherAtTarget() && !(m_mechanism->GetCurrentState() == Launcher::STATE_LAUNCHER_TUNING))) ||
+			(considerGamepadTransitions && !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::EXTENDER_MODIFIER) && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH_OVERRIDE)));
 }

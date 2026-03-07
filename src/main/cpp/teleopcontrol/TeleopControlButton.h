@@ -27,4 +27,10 @@ struct TeleopControlButton
     TeleopControlMappingEnums::CONTROLLER controllerNumber = TeleopControlMappingEnums::CONTROLLER::UNKNOWN_CONTROLLER;
     TeleopControlMappingEnums::BUTTON_IDENTIFIER buttonId = TeleopControlMappingEnums::BUTTON_IDENTIFIER::UNDEFINED_BUTTON;
     TeleopControlMappingEnums::BUTTON_MODE mode = TeleopControlMappingEnums::BUTTON_MODE::STANDARD;
+
+    constexpr TeleopControlButton() = default;
+    constexpr TeleopControlButton(TeleopControlMappingEnums::CONTROLLER ctrl,
+                                  TeleopControlMappingEnums::BUTTON_IDENTIFIER btn,
+                                  TeleopControlMappingEnums::BUTTON_MODE m)
+        : controllerNumber(ctrl), buttonId(btn), mode(m) {}
 };

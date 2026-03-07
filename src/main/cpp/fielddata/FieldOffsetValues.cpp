@@ -130,18 +130,22 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueNeutralBumpEdgeX = blueHubCenter.X() + BUMP_OFFSET;  // Neutral side of blue bump
 
         // Calculate bump Y positions as midpoints between hub and trenches
-        m_redBumpDepotY = (redHubCenter.Y() +
-                           fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y()) /
-                          2.0;
-        m_redBumpOutpostY = (redHubCenter.Y() +
-                             fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y()) /
-                            2.0;
-        m_blueBumpDepotY = (blueHubCenter.Y() +
-                            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y()) /
-                           2.0;
-        m_blueBumpOutpostY = (blueHubCenter.Y() +
-                              fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y()) /
-                             2.0;
+        m_redBumpDepotY = (((redHubCenter.Y() +
+                             fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y()) /
+                            2.0) +
+                           1.0_ft);
+        m_redBumpOutpostY = ((redHubCenter.Y() +
+                              fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y()) /
+                             2.0) -
+                            1.0_ft;
+        m_blueBumpDepotY = ((blueHubCenter.Y() +
+                             fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y()) /
+                            2.0) -
+                           1.0_ft;
+        m_blueBumpOutpostY = ((blueHubCenter.Y() +
+                               fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y()) /
+                              2.0) +
+                             1.0_ft;
     }
     else
     {

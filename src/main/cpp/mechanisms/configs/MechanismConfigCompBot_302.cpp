@@ -17,12 +17,12 @@
 
 #include <string>
 
-#include "configs/MechanismConfigCompBot_302.h"
-#include "configs/MechanismConfigMgr.h"
-#include "configs/RobotElementNames.h"
 #include "feedback/DragonCANdle.h"
 #include "frc/Compressor.h"
 #include "frc/RobotBase.h"
+#include "mechanisms/configs/MechanismConfigCompBot_302.h"
+#include "mechanisms/configs/MechanismConfigMgr.h"
+#include "mechanisms/configs/RobotElementNames.h"
 #include "utils/PeriodicLooper.h"
 #include "utils/logging/debug/Logger.h"
 

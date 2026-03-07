@@ -22,6 +22,7 @@
 #include "auton/AutonGrid.h"
 
 // Thirdparty includes
+#include "units/math.h"
 
 AutonGrid *AutonGrid::m_instance = nullptr; // initialize m_instance as a nullptr
 
@@ -38,16 +39,21 @@ AutonGrid *AutonGrid::GetInstance()
 bool AutonGrid::IsPoseInZone(units::length::meter_t xgrid1, units::length::meter_t xgrid2, units::length::meter_t ygrid1, units::length::meter_t ygrid2, frc::Pose2d robotPose)
 // defining IsPoseInZone bool method and pulling in the arguements
 {
+    // Use min/max to remove dependency on order of x's and y's
+    auto xMin = units::math::min(xgrid1, xgrid2);
+    auto xMax = units::math::max(xgrid1, xgrid2);
+    auto yMin = units::math::min(ygrid1, ygrid2);
+    auto yMax = units::math::max(ygrid1, ygrid2);
 
-    // then it is determined whether or not the robotPose is in the zone defined by the 2 grids.
-    // TODO: remove dependency of order of x's and y's
-    return ((robotPose.X() >= xgrid1) && (robotPose.X() <= xgrid2) &&
-            (robotPose.Y() >= ygrid1) && (robotPose.Y() <= ygrid2));
+    return ((robotPose.X() >= xMin) && (robotPose.X() <= xMax) &&
+            (robotPose.Y() >= yMin) && (robotPose.Y() <= yMax));
 }
 bool AutonGrid::IsPoseInZone(frc::Pose2d circleZonePose, units::length::inch_t radius, frc::Pose2d robotPose)
 {
-    auto translationToCenter = circleZonePose.Translation().Distance(robotPose.Translation());
-    bool inZone = translationToCenter <= radius;
-
-    return inZone;
+    // Use squared distance comparison to avoid expensive sqrt in Distance()
+    auto dx = circleZonePose.X() - robotPose.X();
+    auto dy = circleZonePose.Y() - robotPose.Y();
+    auto distSquared = dx * dx + dy * dy;
+    auto radiusMeters = units::length::meter_t(radius);
+    return distSquared <= radiusMeters * radiusMeters;
 }

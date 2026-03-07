@@ -12,13 +12,13 @@ $$_GEN_NOTICE_$$
 $$_INCLUDE_FILES_$$
 
 #include "mechanisms/base/BaseMech.h"
-#include "state/StateMgr.h"
-#include "state/IRobotStateChangeSubscriber.h"
 #include "mechanisms/controllers/ControlData.h"
+#include "state/IRobotStateChangeSubscriber.h"
 #include "state/RobotStateChanges.h"
+#include "state/StateMgr.h"
 
-#include "configs/RobotElementNames.h"
-#include "configs/MechanismConfigMgr.h"
+#include "mechanisms/configs/MechanismConfigMgr.h"
+#include "mechanisms/configs/RobotElementNames.h"
 
 #include "RobotIdentifier.h"
 
@@ -83,7 +83,7 @@ protected:
 
 private:
     std::unordered_map<std::string, STATE_NAMES> m_stateMap;
-        
+
     $$_MECHANISM_ELEMENTS_$$
 
     $$_TUNABLE_PARAMETERS_$$

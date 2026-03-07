@@ -74,7 +74,7 @@ void RobotStateChangeBroker::Notify(units::angular_velocity::degrees_per_second_
         subscriber->NotifyStateUpdate(m_change, value);
     }
 }
-void RobotStateChangeBroker::Notify(frc::Pose2d value)
+void RobotStateChangeBroker::Notify(const frc::Pose2d &value)
 {
     for (auto subscriber : m_subscribers)
     {

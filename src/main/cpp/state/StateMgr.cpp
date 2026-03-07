@@ -24,8 +24,6 @@
 #include "state/StateMgr.h"
 #include "utils/logging/debug/Logger.h"
 
-State *myState;
-
 /// @brief    initialize the state manager, parse the configuration file and create the states.
 StateMgr::StateMgr() : m_checkGamePadTransitions(true),
                        m_currentState(),
@@ -40,7 +38,6 @@ void StateMgr::Init()
         m_currentState = m_stateVector[0];
         m_currentStateID = 0;
         m_currentState->Init();
-        myState = m_currentState;
     }
 }
 
@@ -63,20 +60,38 @@ void StateMgr::RunCurrentState()
 
 void StateMgr::CheckForStateTransition()
 {
-    CheckForSensorTransitions();
+    const auto &transitions = m_currentState->GetPossibleStateTransitions();
+
+    // Check sensor transitions first (higher priority)
+    for (auto state : transitions)
+    {
+        if (state->IsTransitionCondition(false))
+        {
+            SetCurrentState(state->GetStateId(), true);
+            return;
+        }
+    }
+
+    // Then check gamepad transitions if enabled
     if (m_checkGamePadTransitions)
     {
-        CheckForGamepadTransitions();
+        for (auto state : transitions)
+        {
+            if (state->IsTransitionCondition(true))
+            {
+                SetCurrentState(state->GetStateId(), true);
+                return;
+            }
+        }
     }
 }
 
 void StateMgr::CheckForSensorTransitions()
 {
-    auto transitions = m_currentState->GetPossibleStateTransitions();
-    for (auto state : transitions)
+    const auto &transitions = m_currentState->GetPossibleStateTransitions();
+    for (auto *state : transitions)
     {
-        auto transition = state->IsTransitionCondition(false);
-        if (transition)
+        if (state->IsTransitionCondition(false))
         {
             SetCurrentState(state->GetStateId(), true);
             break;
@@ -86,11 +101,10 @@ void StateMgr::CheckForSensorTransitions()
 
 void StateMgr::CheckForGamepadTransitions()
 {
-    auto transitions = m_currentState->GetPossibleStateTransitions();
-    for (auto state : transitions)
+    const auto &transitions = m_currentState->GetPossibleStateTransitions();
+    for (auto *state : transitions)
     {
-        auto transition = state->IsTransitionCondition(true);
-        if (transition)
+        if (state->IsTransitionCondition(true))
         {
             SetCurrentState(state->GetStateId(), true);
             break;

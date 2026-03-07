@@ -21,22 +21,22 @@
 #include <string>
 
 // FRC Includes
-#include "ctre/phoenix6/TalonFX.hpp"
-#include "ctre/phoenix6/controls/Follower.hpp"
-#include "ctre/phoenix6/configs/Configuration.hpp"
-#include "ctre/phoenix6/TalonFXS.hpp"
 #include "ctre/phoenix6/CANdi.hpp"
+#include "ctre/phoenix6/TalonFX.hpp"
+#include "ctre/phoenix6/TalonFXS.hpp"
+#include "ctre/phoenix6/configs/Configuration.hpp"
+#include "ctre/phoenix6/controls/Follower.hpp"
 
 #include "mechanisms/base/BaseMech.h"
-#include "state/StateMgr.h"
-#include "state/IRobotStateChangeSubscriber.h"
 #include "mechanisms/controllers/ControlData.h"
+#include "state/IRobotStateChangeSubscriber.h"
 #include "state/RobotStateChanges.h"
+#include "state/StateMgr.h"
 
-#include "configs/RobotElementNames.h"
-#include "configs/MechanismConfigMgr.h"
-#include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "RobotIdentifier.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "mechanisms/configs/MechanismConfigMgr.h"
+#include "mechanisms/configs/RobotElementNames.h"
 #include "utils/logging/signals/DragonDataLogger.h"
 
 // Includes after generation
@@ -229,8 +229,8 @@ private:
 	units::angle::turn_t m_maxTurretAngle = 267_tr;
 
 	units::angle::turn_t m_turretAngleThreshold = 5.0_tr;
-	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 25.0_rpm;
-	units::angle::turn_t m_hoodAngleThreshold = 3.0_tr;
+	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 150.0_rpm;
+	units::angle::turn_t m_hoodAngleThreshold = 0.5_tr;
 	units::velocity::meters_per_second_t m_chassisSpeedThreshold = 3.0_mps;
 
 	RebuiltTargetCalculator *m_targetCalculator;
@@ -240,13 +240,15 @@ private:
 	void RefreshCachedMotorData();
 
 	bool m_launcherInitialized = false;
-	bool m_tuningLauncher = true;
+	bool m_tuningLauncher = false;
 
 	// TODO MECH tune and change values in these arrays
 	// All values in turns are actually Degree's
-	std::array<units::length::inch_t, 10> m_scoringDistanceArray = {20.0_in, 40.0_in, 60.0_in, 80.0_in, 100.0_in, 120.0_in, 140.0_in, 160.0_in, 180.0_in, 200.0_in};
-	std::array<units::angle::turn_t, 10> m_scoringHoodAngleArray = {0.0_tr, 5.0_tr, 10.0_tr, 15.0_tr, 20.0_tr, 25.0_tr, 30.0_tr, 35.0_tr, 40.0_tr, 45.0_tr};
-	std::array<units::angular_velocity::revolutions_per_minute_t, 10> m_scoringLauncherVelocityArray = {500.0_rpm, 600.0_rpm, 700.0_rpm, 800.0_rpm, 900.0_rpm, 1000.0_rpm, 1100.0_rpm, 1200.0_rpm, 1300.0_rpm, 1400.0_rpm};
+
+	// droppeed down to 5 spots.Will need to increase when we have time to tune
+	std::array<units::length::inch_t, 6> m_scoringDistanceArray = {79.0_in, 89.0_in, 118.4_in, 140.5_in, 165.6_in, 197.0_in};
+	std::array<units::angle::turn_t, 6> m_scoringHoodAngleArray = {0.0_tr, 0.0_tr, 0.0_tr, 5.02_tr, 7.0_tr, 7.0_tr};
+	std::array<units::angular_velocity::revolutions_per_minute_t, 6> m_scoringLauncherVelocityArray = {2225.0_rpm, 2300.0_rpm, 2700.0_rpm, 2800.0_rpm, 2900.0_rpm, 3100.0_rpm};
 
 	std::array<units::length::foot_t, 7> m_passingDistanceArray = {10.0_ft, 15.0_ft, 20.0_ft, 25.0_ft, 30.0_ft, 35.0_ft, 40.0_ft};
 	std::array<units::angle::turn_t, 7> m_passingHoodAngleArray = {0.0_tr, 5.0_tr, 10.0_tr, 15.0_tr, 20.0_tr, 25.0_tr, 30.0_tr};
@@ -259,8 +261,8 @@ private:
 	units::angle::turn_t m_cachedHoodPosition = 0.0_tr;
 	units::angle::turn_t m_cachedTurretPosition = 0.0_tr;
 
-	units::angle::turn_t m_passingHoodTargetAngle = 30.0_tr;
-	units::angular_velocity::revolutions_per_minute_t m_passingLauncherTargetVelocity = 1000.0_rpm;
+	units::angle::turn_t m_passingHoodTargetAngle = 25.0_tr;
+	units::angular_velocity::revolutions_per_minute_t m_passingLauncherTargetVelocity = 2500.0_rpm;
 	// logging paths
 	static constexpr std::string_view m_loggingLauncherTargetPath = "/Launcher/TargetLauncherVelocity";
 	static constexpr std::string_view m_loggingHoodTargetPath = "/Launcher/HoodTargetAngle";

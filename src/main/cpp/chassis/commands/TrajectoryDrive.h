@@ -15,9 +15,9 @@
 
 #pragma once
 
-#include "frc2/command/CommandHelper.h"
-#include "frc2/command/Command.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "frc2/command/Command.h"
+#include "frc2/command/CommandHelper.h"
 
 // FRC Includes
 #include "frc/Timer.h"
@@ -51,11 +51,11 @@ private:
     subsystems::CommandSwerveDrivetrain *m_chassis;
     std::string m_pathName;
 
-    bool IsSamePose(frc::Pose2d currentPose, frc::Pose2d previousPose, frc::ChassisSpeeds velocity, double xyTolerance, double rotTolerance, double speedTolerance);
-
     std::optional<choreo::Trajectory<choreo::SwerveSample>> m_trajectory;
-    choreo::SwerveSample m_finalState;
+    frc::Pose2d m_finalPose;
+    frc::Pose2d m_previousPose;
     std::vector<choreo::SwerveSample> m_trajectoryStates;
+    int m_numberOfExecutions{0};
 
     frc::Pose2d m_prevPose;
     bool m_wasMoving;
@@ -64,12 +64,14 @@ private:
 
     std::string m_whyDone;
     units::time::second_t m_totalTrajectoryTime;
+    units::time::second_t m_thresholdTime{0.0_s}; // pre-computed kPercentComplete * m_totalTrajectoryTime
+    units::time::second_t m_elapsedTime{0.0_s};   // cached timer value, updated once per Execute() call
 
-    static constexpr double kPDrive{0.65};
+    static constexpr double kPDrive{3.5};
     static constexpr double kIDrive{0.0};
     static constexpr double kDDrive{0.0};
 
-    static constexpr double kPHeading{1.0};
+    static constexpr double kPHeading{2.0};
     static constexpr double kIHeading{0.0};
     static constexpr double kDHeading{0.0};
 
@@ -80,4 +82,9 @@ private:
     frc::ChassisSpeeds m_chassisSpeeds;
 
     swerve::requests::FieldCentric m_driveRequest;
+
+    static constexpr units::length::centimeter_t kPositionTolerance{10.0_cm}; // this is what we had; should we lower it? This is probably why we stopped short on straight path test.
+    static constexpr units::angle::degree_t kHeadingTolerance{3.0_deg};       // this is what we had; should we lower it?
+    static constexpr double kPercentComplete{0.9};                            // this is what we had; should we up it so we don't compare poses so often?
+    static constexpr int kMinExecutions{5};                                   // minimum number of executions before checking pose
 };

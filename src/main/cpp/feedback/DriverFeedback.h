@@ -14,7 +14,9 @@
 //====================================================================================================================================================
 #pragma once
 
+#include <array>
 #include <memory>
+#include <string>
 
 #include "chassis/ChassisOptionEnums.h"
 #include "feedback/DragonCANdle.h"
@@ -111,4 +113,17 @@ private:
     Intake *m_intake = nullptr;                                    ///< Cached intake mechanism
     DragonVision *m_dragonVision = nullptr;                        ///< Cached vision singleton
     std::shared_ptr<nt::NetworkTable> m_controllerTable = nullptr; ///< Cached NT table for controller status
+
+    // --- Throttle counters (avoid expensive work every 20 ms loop) ---
+    int m_diagnosticLoopCounter = 0;                      ///< Counts loops since last diagnostic update
+    static constexpr int m_diagnosticUpdateInterval = 10; ///< Run diagnostics every 10 loops (~200 ms)
+    int m_controllerLoopCounter = 0;                      ///< Counts loops since last controller check
+    static constexpr int m_controllerUpdateInterval = 25; ///< Check controllers every 25 loops (~500 ms)
+
+    // --- Pre-built NT key strings (avoid per-loop heap allocations) ---
+    static constexpr int kMaxJoystickPorts = 6;                  ///< DriverStation::kJoystickPorts
+    std::array<std::string, kMaxJoystickPorts> m_controllerKeys; ///< "Controller0" … "Controller5"
+
+    // --- Previous rumble state (avoid redundant SetRumble writes) ---
+    bool m_prevRumbleState = false;
 };

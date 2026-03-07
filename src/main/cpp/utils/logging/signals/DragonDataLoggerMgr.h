@@ -42,6 +42,7 @@ public:
     ISignalLogger *GetLogger() const { return m_logger.get(); }
 
     void RegisterItem(DragonDataLogger *item);
+    void PeriodicDataLogInit();
     void PeriodicDataLog();
 
     std::string GetLoggingDirectory() const;

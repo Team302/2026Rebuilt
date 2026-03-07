@@ -37,6 +37,7 @@
 #include "mechanisms/Intake/ExpelState.h"
 #include "mechanisms/Intake/LaunchState.h"
 #include "mechanisms/Intake/EmptyHopperState.h"
+#include "mechanisms/Intake/LoadHopperState.h"
 #include "teleopcontrol/TeleopControl.h"
 
 using ctre::phoenix6::configs::CANdiConfiguration;
@@ -75,10 +76,14 @@ void Intake::CreateAndRegisterStates()
 	EmptyHopperState *EmptyHopperStateInst = new EmptyHopperState(string("EmptyHopper"), 4, this, m_activeRobotId);
 	AddToStateVector(EmptyHopperStateInst);
 
+	LoadHopperState *LoadHopperStateInst = new LoadHopperState(string("LoadHopper"), 5, this, m_activeRobotId);
+	AddToStateVector(LoadHopperStateInst);
+
 	OffStateInst->RegisterTransitionState(IntakeStateInst);
 	OffStateInst->RegisterTransitionState(ExpelStateInst);
 	OffStateInst->RegisterTransitionState(LaunchStateInst);
 	OffStateInst->RegisterTransitionState(EmptyHopperStateInst);
+	OffStateInst->RegisterTransitionState(LoadHopperStateInst);
 	IntakeStateInst->RegisterTransitionState(OffStateInst);
 	IntakeStateInst->RegisterTransitionState(LaunchStateInst);
 	IntakeStateInst->RegisterTransitionState(EmptyHopperStateInst);
@@ -89,8 +94,11 @@ void Intake::CreateAndRegisterStates()
 	LaunchStateInst->RegisterTransitionState(IntakeStateInst);
 	LaunchStateInst->RegisterTransitionState(ExpelStateInst);
 	LaunchStateInst->RegisterTransitionState(EmptyHopperStateInst);
+	LaunchStateInst->RegisterTransitionState(LoadHopperStateInst);
 	EmptyHopperStateInst->RegisterTransitionState(OffStateInst);
 	EmptyHopperStateInst->RegisterTransitionState(IntakeStateInst);
+	LoadHopperStateInst->RegisterTransitionState(OffStateInst);
+	LoadHopperStateInst->RegisterTransitionState(IntakeStateInst);
 }
 
 Intake::Intake(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANISM_TYPE::INTAKE, std::string("Intake")),
@@ -109,6 +117,7 @@ std::map<std::string, Intake::STATE_NAMES>
 		{"STATE_EXPEL", Intake::STATE_NAMES::STATE_EXPEL},
 		{"STATE_LAUNCH", Intake::STATE_NAMES::STATE_LAUNCH},
 		{"STATE_EMPTY_HOPPER", Intake::STATE_NAMES::STATE_EMPTY_HOPPER},
+		{"STATE_LOAD_HOPPER", Intake::STATE_NAMES::STATE_LOAD_HOPPER},
 	};
 
 std::map<Intake::STATE_NAMES, std::string>
@@ -118,6 +127,7 @@ std::map<Intake::STATE_NAMES, std::string>
 		{Intake::STATE_NAMES::STATE_EXPEL, "STATE_EXPEL"},
 		{Intake::STATE_NAMES::STATE_LAUNCH, "STATE_LAUNCH"},
 		{Intake::STATE_NAMES::STATE_EMPTY_HOPPER, "STATE_EMPTY_HOPPER"},
+		{Intake::STATE_NAMES::STATE_LOAD_HOPPER, "STATE_LOAD_HOPPER"},
 	};
 
 void Intake::CreateCompBot302()
@@ -149,10 +159,32 @@ void Intake::CreateCompBot302()
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_positionDeg = new ControlData(
+	m_positionDegUp = new ControlData(
 		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_positionDeg",								  // std::string indentifier
+		"m_positionDegUp",								  // std::string indentifier
+		0,												  // double proportional
+		0,												  // double integral
+		0,												  // double derivative
+		0,												  // double feedforward
+		0,												  // double velocityGain
+		0,												  // double accelartionGain
+		0,												  // double staticFrictionGain,
+
+		ControlData::FEEDFORWARD_TYPE::VOLTAGE,					 // FEEDFORWARD_TYPE feedforwadType
+		0,														 // double integralZone
+		0,														 // double maxAcceleration
+		0,														 // double cruiseVelocity
+		0,														 // double peakValue
+		0,														 // double nominalValue
+		false,													 // bool enableFOC
+		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
+		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
+	);
+	m_positionDegDown = new ControlData(
+		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
+		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
+		"m_positionDegDown",							  // std::string indentifier
 		0,												  // double proportional
 		0,												  // double integral
 		0,												  // double derivative
@@ -208,7 +240,7 @@ void Intake::InitializeTalonFXIntakeCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::LimitSwitchPin;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
-	configs.MotorOutput.Inverted = InvertedValue::Clockwise_Positive;
+	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
 	configs.MotorOutput.NeutralMode = NeutralModeValue::Coast;
 	configs.MotorOutput.PeakForwardDutyCycle = 1;
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
@@ -242,40 +274,53 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
 	configs.OpenLoopRamps.VoltageOpenLoopRampPeriod = units::time::second_t(0);
 
-	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::LimitSwitchPin;
+	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
+	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 11;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(100);
+	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
-	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
+	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 11;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
-	configs.MotorOutput.NeutralMode = NeutralModeValue::Coast;
+	configs.MotorOutput.NeutralMode = NeutralModeValue::Brake;
 	configs.MotorOutput.PeakForwardDutyCycle = 1;
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
+	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::turns_per_second_t(150);
+	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(300);
+	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 0.56761719;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.46541861405197305;
 
-	configs.Slot0.kI = m_positionDeg->GetI();
-	configs.Slot0.kD = m_positionDeg->GetD();
-	configs.Slot0.kG = m_positionDeg->GetF();
-	configs.Slot0.kS = m_positionDeg->GetS();
-	configs.Slot0.kV = m_positionDeg->GetV();
-	configs.Slot0.kP = m_positionDeg->GetP();
-	configs.Slot0.kA = m_positionDeg->GetA();
-	configs.Slot0.GravityType = m_positionDeg->GetGravityType();
-	configs.Slot0.StaticFeedforwardSign = m_positionDeg->GetStaticFeedforwardSign();
+	configs.Slot0.kI = m_positionDegUp->GetI();
+	configs.Slot0.kD = m_positionDegUp->GetD();
+	configs.Slot0.kG = m_positionDegUp->GetF();
+	configs.Slot0.kS = m_positionDegUp->GetS();
+	configs.Slot0.kV = m_positionDegUp->GetV();
+	configs.Slot0.kP = m_positionDegUp->GetP();
+	configs.Slot0.kA = m_positionDegUp->GetA();
+	configs.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Arm_Cosine;
+	configs.Slot0.StaticFeedforwardSign = ctre::phoenix6::signals::StaticFeedforwardSignValue::UseVelocitySign;
+
+	configs.Slot1.kI = m_positionDegDown->GetI();
+	configs.Slot1.kD = m_positionDegDown->GetD();
+	configs.Slot1.kG = m_positionDegDown->GetF();
+	configs.Slot1.kS = m_positionDegDown->GetS();
+	configs.Slot1.kV = m_positionDegDown->GetV();
+	configs.Slot1.kP = m_positionDegDown->GetP();
+	configs.Slot1.kA = m_positionDegDown->GetA();
+	configs.Slot1.GravityType = ctre::phoenix6::signals::GravityTypeValue::Arm_Cosine;
+	configs.Slot1.StaticFeedforwardSign = ctre::phoenix6::signals::StaticFeedforwardSignValue::UseVelocitySign;
 
 	CANdiConfiguration CANdiConfig{};
 
@@ -308,9 +353,16 @@ void Intake::SetCurrentState(int state, bool run)
 	StateMgr::SetCurrentState(state, run);
 }
 
+void Intake::RefreshCachedMotorData()
+{
+	m_cachedExtenderPositionDeg = m_extender->GetPosition().GetValue();
+}
+
 void Intake::RunCommonTasks()
 {
 	// This function is called once per loop before the current state Run()
+	RefreshCachedMotorData();
+
 	ManualControl();
 	Cyclic();
 
@@ -323,8 +375,8 @@ void Intake::RunCommonTasks()
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentStateName());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeIn", IsIntakeIn());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IntakePercentOut", m_intakePercentOut.Output.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Intake Position", m_extender->GetPosition().GetValueAsDouble());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Intake Position", m_cachedExtenderPositionDeg.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Intake Target", m_extenderPositionDeg.Position.value());
 }
 /// @brief  Set the control constants (e.g. PIDF values).
 /// @param [in] ControlData*                                   pid:  the control constants
@@ -350,8 +402,10 @@ ControlData *Intake::GetControlData(string name)
 {
 	if (name.compare("PercentOut") == 0)
 		return m_percentOut;
-	else if (name.compare("PositionDegree") == 0)
-		return m_positionDeg;
+	else if (name.compare("PositionDegreeUp") == 0)
+		return m_positionDegUp;
+	else if (name.compare("PositionDegreeDown") == 0)
+		return m_positionDegDown;
 
 	return nullptr;
 }
@@ -374,14 +428,15 @@ void Intake::ManualControl()
 		if (controller->IsButtonPressed(TeleopControlFunctions::EXTENDER_MODIFIER))
 		{
 			double manualExtenderPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN);
-			UpdateTargetExtenderPercentOut(manualExtenderPercent);
+			UpdateTargetExtenderPercentOut(-manualExtenderPercent);
 		}
 		else
 		{
 			if (GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
 			{
+
 				bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
-				bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE);
+				bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_IN);
 				if (intakeOutPressed)
 				{
 					UpdateTargetExtenderPositionDeg(m_intakeExtendedPositionTarget);

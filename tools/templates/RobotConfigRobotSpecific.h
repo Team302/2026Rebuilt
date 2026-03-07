@@ -2,9 +2,9 @@ $$_COPYRIGHT_$$
 $$_GEN_NOTICE_$$
 
 #pragma once
-#include "configs/RobotConfig.h"
 #include "mechanisms/MechanismTypes.h"
-#include "mechanisms/base/StateMgr.h"
+#include "state/StateMgr.h"
+#include "mechanisms/configs/RobotConfig.h"
 $$_MECHANISM_INCLUDE_FILES_$$
 
 class RobotConfig$$_ROBOT_NAME_$$ : public RobotConfig

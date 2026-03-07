@@ -56,26 +56,41 @@ public:
     /// @brief      Checks if two poses are within a specified tolerance
     /// @param[in]  pose1 - First pose to compare
     /// @param[in]  pose2 - Second pose to compare
-    /// @param[in]  tolerance - Maximum distance in centimeters for poses to be considered the same
-    /// @return     true if poses are within tolerance, false otherwise
+    /// @param[in]  positionTolerance - Maximum distance in centimeters for poses to be considered the same
+    /// @return     true if poses are within positionTolerance, false otherwise
     /// @details    Compares only the translational component (x, y position),
     ///             not the rotational component. Useful for checking if the
     ///             robot has reached a target position.
     //------------------------------------------------------------------
     static bool IsSamePose(const frc::Pose2d &pose1,
                            const frc::Pose2d &pose2,
-                           units::length::centimeter_t tolerance);
+                           units::length::centimeter_t positionTolerance);
+
+    //------------------------------------------------------------------
+    /// @brief      Checks if two poses are within specified translational and rotational tolerances
+    /// @param[in]  pose1 - First pose to compare
+    /// @param[in]  pose2 - Second pose to compare
+    /// @param[in]  positionTolerance - Maximum distance in centimeters for poses to be considered the same
+    /// @param[in]  headingTolerance - Maximum heading difference in degrees for poses to be considered the same
+    /// @return     true if both position and rotation are within tolerance, false otherwise
+    /// @details    First checks translational proximity using IsSamePose(), then additionally
+    ///             compares the absolute difference between the two headings against headingTolerance.
+    //------------------------------------------------------------------
+    static bool IsSamePose(const frc::Pose2d &pose1,
+                           const frc::Pose2d &pose2,
+                           units::length::centimeter_t positionTolerance,
+                           units::angle::degree_t headingTolerance);
 
     //------------------------------------------------------------------
     /// @brief      Checks if a pose is at the origin (0, 0)
     /// @param[in]  pose - Pose to check
-    /// @param[in]  tolerance - Maximum distance from origin in centimeters
-    /// @return     true if pose is within tolerance of origin, false otherwise
+    /// @param[in]  positionTolerance - Maximum distance from origin in centimeters
+    /// @return     true if pose is within positionTolerance of origin, false otherwise
     /// @details    Convenience method that compares the given pose against
     ///             the default origin pose Pose2d(0, 0, 0°).
     //------------------------------------------------------------------
     static bool IsPoseAtOrigin(const frc::Pose2d &pose,
-                               units::length::centimeter_t tolerance);
+                               units::length::centimeter_t positionTolerance);
 
     //------------------------------------------------------------------
     /// @brief      Determines which of two field elements is closest to a pose

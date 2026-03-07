@@ -220,7 +220,7 @@ private:
 
     /// Mechanism position offset from robot center in robot frame (meters)
     /// Default: -3.333 inches (behind center), 4.604 inches (starboard/right of center)
-    frc::Translation2d m_mechanismOffset{-3.333_in, 4.604_in};
+    static constexpr frc::Translation2d m_mechanismOffset{-3.333_in, 4.604_in};
 
     /// @}
 
@@ -242,10 +242,10 @@ private:
     /// @{
 
     /// Minimum launcher angle in degrees (soft limit, angles below this are clamped)
-    const units::degree_t m_minLauncherAngle = 91_deg;
+    static constexpr units::degree_t m_minLauncherAngle = 91_deg;
 
     /// Maximum launcher angle in degrees (soft limit, angles above this are clamped)
-    const units::degree_t m_maxLauncherAngle = 267_deg;
+    static constexpr units::degree_t m_maxLauncherAngle = 267_deg;
 
     /// @}
 
@@ -338,6 +338,15 @@ private:
 
     /// Previous state of right button (for detecting rising edge)
     bool m_prevRightPressed = false;
+
+    /// @}
+
+    /// \name Cached Calculation Results
+    /// Cache for expensive calculations to avoid recalculation when pose hasn't changed
+    /// @{
+
+    /// Cached launcher target angle from last calculation (in turns)
+    units::angle::turn_t m_cachedLauncherTarget = 0_tr;
 
     /// @}
 };

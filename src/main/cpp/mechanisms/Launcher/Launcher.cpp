@@ -659,6 +659,7 @@ void Launcher::RunCommonTasks()
 	if (frc::DriverStation::IsDisabled())
 	{
 		InitilaizeLauncher();
+		m_targetCalculator->ForceUpdateChassisPose();
 	}
 
 	// This function is called once per loop before the current state Run()
@@ -666,7 +667,10 @@ void Launcher::RunCommonTasks()
 	SetLauncherProtect();
 
 	// Update Launcher Targets/Field
-	m_targetCalculator->UpdateTargetOffset();
+	if (!m_tuningLauncher)
+	{
+		m_targetCalculator->UpdateTargetOffset();
+	}
 	CalculateTargets();
 	UpdateLauncherTargets();
 
@@ -748,8 +752,13 @@ bool Launcher::IsLauncherAtTarget()
 	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = m_cachedLauncherVelocity - m_targetLauncherAngularVelocity;
 	bool inLaunchzone = IsInLaunchZone();
 	auto chassisSpeeds = m_chassis != nullptr ? m_chassis->GetState().Speeds : frc::ChassisSpeeds();
-
 	auto Speed = units::math::sqrt(units::math::abs(chassisSpeeds.vx * chassisSpeeds.vx) + units::math::abs(chassisSpeeds.vy * chassisSpeeds.vy));
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Error", hoodError.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed Error", launcherSpeedError.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "In Launch Zone", inLaunchzone);
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Chassis Speed", Speed.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Turret At Target", IsTurretAtTarget());
 
 	return ((units::math::abs(hoodError) < m_hoodAngleThreshold) &&
 			IsTurretAtTarget() &&
@@ -760,6 +769,7 @@ bool Launcher::IsLauncherAtTarget()
 
 bool Launcher::IsInLaunchZone() const
 {
+	return true;
 	if (!DeadZoneManager::GetInstance()->IsInDeadZone())
 	{
 		return !(AllianceZoneManager::GetInstance()->IsInAllianceZone() && !(m_isHubActive || m_shiftChangeIn3Seconds));
@@ -769,11 +779,8 @@ bool Launcher::IsInLaunchZone() const
 
 void Launcher::CalculateTargets()
 {
-	units::angle::turn_t calculatorTurretTarget = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, m_cachedTurretPosition);
-	if (units::math::abs(m_targetTurretAngle - calculatorTurretTarget) > 0.1_tr)
-	{
-		m_targetTurretAngle = calculatorTurretTarget;
-	}
+	m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, units::degree_t(m_cachedTurretPosition.value())); // passing degree back to rebuilt calculator, everything in launcher is in turns due to sensor to mech ratio, but phyiscal units is degrees
+
 	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateDistanceToTarget(m_lookaheadTime);
 
 	if (AllianceZoneManager::GetInstance()->IsInAllianceZone())
@@ -809,7 +816,11 @@ void Launcher::UpdateLauncherTargets()
 
 	UpdateTargetHoodPositionDegreesHood(m_targetHoodAngle);
 	UpdateTargetTurretPositionDegreesTurret(m_targetTurretAngle);
-	UpdateTargetLauncherVelocityRPS(m_targetLauncherAngularVelocity);
+
+	if (currentState == STATE_NAMES::STATE_LAUNCH || currentState == STATE_NAMES::STATE_PREPARE_TO_LAUNCH)
+	{
+		UpdateTargetLauncherVelocityRPS(m_targetLauncherAngularVelocity);
+	}
 }
 
 void Launcher::InitilaizeLauncher()

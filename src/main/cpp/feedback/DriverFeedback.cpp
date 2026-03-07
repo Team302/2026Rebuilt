@@ -28,9 +28,9 @@
 #include "vision/DragonVision.h"
 
 // Season Specific Includes
-#include "configs/MechanismConfigMgr.h"
 #include "mechanisms/Intake/Intake.h"
 #include "mechanisms/Launcher/Launcher.h"
+#include "mechanisms/configs/MechanismConfigMgr.h"
 
 using frc::DriverStation;
 
@@ -76,6 +76,12 @@ DriverFeedback::DriverFeedback() : IRobotStateChangeSubscriber()
     m_LEDStates->SetBlinkingFrequency(m_blinkingFrequency);
 
     m_LEDStates->SetBrightness(0.75);
+
+    // Pre-build NT key strings once to avoid per-loop heap allocations
+    for (int i = 0; i < kMaxJoystickPorts; ++i)
+    {
+        m_controllerKeys[i] = std::string("Controller") + std::to_string(i);
+    }
 }
 
 /// @brief Handles integer state changes — scoring mode and drive state type.
@@ -109,7 +115,11 @@ void DriverFeedback::UpdateFeedback()
 
     if (DriverStation::IsDisabled())
     {
-        UpdateDiagnosticLEDs();
+        if (++m_diagnosticLoopCounter >= m_diagnosticUpdateInterval)
+        {
+            m_diagnosticLoopCounter = 0;
+            UpdateDiagnosticLEDs();
+        }
     }
 
     UpdateRumble();
@@ -119,6 +129,7 @@ void DriverFeedback::UpdateFeedback()
 
 /// @brief Activates or deactivates controller rumble on both controllers.
 ///        Rumble is ON when a shift change is imminent (within 3 seconds).
+///        Only writes to the controller when the rumble state actually changes.
 void DriverFeedback::UpdateRumble()
 {
     if (m_teleopControl == nullptr)
@@ -126,15 +137,11 @@ void DriverFeedback::UpdateRumble()
         return;
     }
 
-    if (m_shiftChangeIn3Seconds)
+    if (m_shiftChangeIn3Seconds != m_prevRumbleState)
     {
-        m_teleopControl->SetRumble(0, true, true);
-        m_teleopControl->SetRumble(1, true, true);
-    }
-    else
-    {
-        m_teleopControl->SetRumble(0, false, false);
-        m_teleopControl->SetRumble(1, false, false);
+        m_prevRumbleState = m_shiftChangeIn3Seconds;
+        m_teleopControl->SetRumble(0, m_shiftChangeIn3Seconds, m_shiftChangeIn3Seconds);
+        m_teleopControl->SetRumble(1, m_shiftChangeIn3Seconds, m_shiftChangeIn3Seconds);
     }
 }
 
@@ -149,15 +156,6 @@ void DriverFeedback::UpdateLEDStates()
     DragonCANdle::AnimationMode desiredAnimation = m_prevAnimaiton;
     frc::Color desiredPrimaryColor = m_prevPrimaryColorState;
     frc::Color desiredSecondaryColor = m_prevSecondaryColorState;
-
-    auto currentLauncherState = Launcher::STATE_OFF;
-    bool isInLaunchZone = false;
-
-    if (m_launcher != nullptr)
-    {
-        currentLauncherState = static_cast<Launcher::STATE_NAMES>(m_launcher->GetCurrentState());
-        isInLaunchZone = m_launcher->IsInLaunchZone();
-    }
 
     if (frc::DriverStation::IsDisabled())
     {
@@ -185,6 +183,16 @@ void DriverFeedback::UpdateLEDStates()
         }
         else
         {
+            // Only query launcher when we actually need the state (not disabled, not drive-to, not climb)
+            auto currentLauncherState = Launcher::STATE_OFF;
+            bool isInLaunchZone = false;
+
+            if (m_launcher != nullptr)
+            {
+                currentLauncherState = static_cast<Launcher::STATE_NAMES>(m_launcher->GetCurrentState());
+                isInLaunchZone = m_launcher->IsInLaunchZone();
+            }
+
             switch (currentLauncherState)
             {
             case Launcher::STATE_OFF:
@@ -292,8 +300,6 @@ void DriverFeedback::UpdateDiagnosticLEDs()
 {
     bool questStatus = false;
     bool backLeftLL = false;
-    bool backRightLL = false;
-    bool climberLL = false;
 
     bool dataLoggerConnected = false;
 
@@ -304,17 +310,12 @@ void DriverFeedback::UpdateDiagnosticLEDs()
     if (m_dragonVision != nullptr)
     {
         auto limelightRunning = m_dragonVision->HealthCheckAllLimelights();
-        if (limelightRunning.size() == 3)
-        {
-            backLeftLL = limelightRunning[0];
-            backRightLL = limelightRunning[1];
-            climberLL = limelightRunning[2];
-        }
+        backLeftLL = limelightRunning[DragonVision::kBackLeftLimelightIndex];
 
         questStatus = m_dragonVision->HealthCheckQuest();
 
         m_LEDStates->SetQuestStatus(questStatus);
-        m_LEDStates->SetLimelightStatuses(backLeftLL, backRightLL, climberLL);
+        m_LEDStates->SetLimelightStatuses(backLeftLL);
     }
 
     // Add Data Logger Connection Status dataLoggerConnected = ...
@@ -338,14 +339,20 @@ void DriverFeedback::UpdateDiagnosticLEDs()
 }
 
 /// @brief While disabled, publishes Xbox controller connection status to NetworkTables
-///        re-fetching the NT table handle each call.
+///        using pre-built key strings. Throttled to every ~25 loops (~500 ms).
 void DriverFeedback::CheckControllers()
 {
     if (frc::DriverStation::IsDisabled())
     {
-        for (auto i = 0; i < DriverStation::kJoystickPorts; ++i)
+        if (++m_controllerLoopCounter < m_controllerUpdateInterval)
         {
-            m_controllerTable->PutBoolean(std::string("Controller") + std::to_string(i), DriverStation::GetJoystickIsXbox(i));
+            return;
+        }
+        m_controllerLoopCounter = 0;
+
+        for (int i = 0; i < kMaxJoystickPorts; ++i)
+        {
+            m_controllerTable->PutBoolean(m_controllerKeys[i], DriverStation::GetJoystickIsXbox(i));
         }
     }
 }

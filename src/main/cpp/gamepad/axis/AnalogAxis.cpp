@@ -17,24 +17,18 @@
 #include <cmath>
 #include <string>
 
-// FRC includes
-#include <frc/GenericHID.h>
-
-// Team 302 includes
-#include <gamepad/axis/AnalogAxis.h>
-#include <gamepad/axis/CubedProfile.h>
-#include <gamepad/axis/DeadbandValue.h>
-#include <gamepad/axis/InvertAxis.h>
-#include <gamepad/axis/LinearProfile.h>
-#include <gamepad/axis/NoDeadbandValue.h>
-#include <gamepad/axis/ScaledAxis.h>
-#include <gamepad/axis/ScaledDeadbandValue.h>
-#include <gamepad/axis/SquaredProfile.h>
-#include <gamepad/IDragonGamepad.h>
+#include "frc/GenericHID.h"
+#include "gamepad/axis/AnalogAxis.h"
+#include "gamepad/axis/CubedProfile.h"
+#include "gamepad/axis/DeadbandValue.h"
+#include "gamepad/axis/InvertAxis.h"
+#include "gamepad/axis/LinearProfile.h"
+#include "gamepad/axis/NoDeadbandValue.h"
+#include "gamepad/axis/ScaledAxis.h"
+#include "gamepad/axis/ScaledDeadbandValue.h"
+#include "gamepad/axis/SquaredProfile.h"
+#include "units/dimensionless.h"
 #include "utils/logging/debug/Logger.h"
-
-// Third Party Includes
-#include <units/dimensionless.h>
 
 using namespace std;
 using namespace frc;
@@ -69,7 +63,7 @@ double AnalogAxis::GetAxisValue()
 {
     if (m_gamepad != nullptr)
     {
-        auto value = GetRawValue();
+        auto value = m_gamepad->GetRawAxis(m_axis);
         m_deadband->ApplyDeadband(value);
         m_profile->ApplyProfile(value);
         m_scale->Scale(value);
@@ -184,7 +178,7 @@ void AnalogAxis::SetInverted(
 ///         0.0 will be returned and a debug message will be written.
 /// @return double - raw axis value
 //==================================================================================
-double AnalogAxis::GetRawValue()
+double AnalogAxis::GetRawValue() const
 {
     if (m_gamepad != nullptr)
     {
