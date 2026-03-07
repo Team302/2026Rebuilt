@@ -346,6 +346,8 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	}
 	if (!statusCANdi.IsOK())
 		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intakeCANdi", "m_intakeCANdi Status", statusCANdi.GetName());
+
+	m_extender->SetPosition(100_tr);
 }
 
 void Intake::SetCurrentState(int state, bool run)
