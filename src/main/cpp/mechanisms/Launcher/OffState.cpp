@@ -62,6 +62,18 @@ void OffState::InitCompBot302()
 
 void OffState::Run()
 {
+	double manualHoodPercentOut = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_X);
+	if (abs(manualHoodPercentOut) < 0.075)
+	{
+		manualHoodPercentOut = 0;
+	}
+	double manualTurretPercentOut = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::UPDATE_OUTPOST_PASSING_TARGET_Y);
+	if (abs(manualTurretPercentOut) < 0.075)
+	{
+		manualTurretPercentOut = 0;
+	}
+	m_mechanism->UpdateTargetTurretPercentOut(manualTurretPercentOut);
+	m_mechanism->UpdateTargetHoodPercentOut(manualHoodPercentOut);
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("OffState"), string("Run"));
 }
 
