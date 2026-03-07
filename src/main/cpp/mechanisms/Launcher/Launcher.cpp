@@ -369,8 +369,8 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
 	// MECH_TODO: Set Motion Magic params
-	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::radians_per_second_t(0);
-	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::radians_per_second_squared_t(0);
+	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::turns_per_second_t(52.5);
+	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(200);
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
@@ -399,8 +399,8 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 
 	CANdiConfiguration CANdiConfig{};
 
-	CANdiConfig.DigitalInputs.S1CloseState = signals::S1CloseStateValue::CloseWhenHigh;
-	CANdiConfig.DigitalInputs.S1FloatState = signals::S1FloatStateValue::PullHigh;
+	CANdiConfig.DigitalInputs.S1CloseState = signals::S1CloseStateValue::CloseWhenFloating;
+	CANdiConfig.DigitalInputs.S1FloatState = signals::S1FloatStateValue::FloatDetect;
 
 	ctre::phoenix::StatusCode statusCANdi = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
@@ -527,10 +527,10 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 
 	CANdiConfiguration CANdiConfig{};
 
-	CANdiConfig.DigitalInputs.S1CloseState = signals::S1CloseStateValue::CloseWhenHigh;
-	CANdiConfig.DigitalInputs.S1FloatState = signals::S1FloatStateValue::PullHigh;
-	CANdiConfig.DigitalInputs.S2CloseState = signals::S2CloseStateValue::CloseWhenHigh;
-	CANdiConfig.DigitalInputs.S2FloatState = signals::S2FloatStateValue::PullHigh;
+	CANdiConfig.DigitalInputs.S1CloseState = signals::S1CloseStateValue::CloseWhenFloating;
+	CANdiConfig.DigitalInputs.S1FloatState = signals::S1FloatStateValue::FloatDetect;
+	CANdiConfig.DigitalInputs.S2CloseState = signals::S2CloseStateValue::CloseWhenFloating;
+	CANdiConfig.DigitalInputs.S2FloatState = signals::S2FloatStateValue::FloatDetect;
 
 	ctre::phoenix::StatusCode statusCANdi = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
