@@ -64,6 +64,10 @@ void OffState::Run()
 			m_mechanism->UpdateTargetExtenderPercentOut(0.0);
 			m_mechanism->GetExtender()->SetPosition(0.0_tr);
 		}
+		else
+		{
+			m_mechanism->UpdateTargetExtenderPositionDeg(0.0_tr);
+		}
 	}
 }
 

@@ -276,7 +276,7 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 11;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(100);
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
