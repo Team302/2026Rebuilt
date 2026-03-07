@@ -119,6 +119,7 @@ public:
 	bool IsInClimbMode() const { return m_isInClimbMode; }
 	bool IsLaunching() const { return m_isLaunching; }
 	bool IsIntakeIn() const { return (m_extender->GetReverseLimit(false).GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround); }
+	units::angle::turn_t GetCahcedExtenderPositionDegrees() { return m_cachedExtenderPositionDeg; };
 
 protected:
 	RobotIdentifier m_activeRobotId;

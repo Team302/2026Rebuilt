@@ -46,6 +46,7 @@ namespace IntakeStates
 		RobotIdentifier m_RobotId;
 
 		const double m_intakeTarget = double(1);
-		const units::angle::turn_t m_extenderTarget = units::angle::turn_t(-30);
+		const units::angle::turn_t m_extenderTarget = units::angle::turn_t(-15);
+		static constexpr double m_holdIntakePercentOut = 0.05;
 	};
 }
