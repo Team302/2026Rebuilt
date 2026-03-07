@@ -17,6 +17,7 @@
 #include "state/RobotState.h"
 #include "utils/FMSData.h"
 #include "vision/DragonVision.h"
+#include "utils/logging/debug/Logger.h"
 
 // Note the simplified constructor and AddRequirements call
 TeleopFieldDrive::TeleopFieldDrive(subsystems::CommandSwerveDrivetrain *chassis,
@@ -60,12 +61,22 @@ void TeleopFieldDrive::Execute()
 {
     double forward = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_FORWARD);
     double strafe = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE);
-    double rotate = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE);
-
+    double manualRotate = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE);
+    Logger::GetLogger()->LogData(m_isLaunching);
+    if (m_isLaunching)
+    {
+        double calculatorRotate = (m_targetCalculator->GetLauncherTarget(0_s, 180_deg) - 180_tr).value();
+        m_chassis->SetControl(
+            m_fieldFacingRequest.WithVelocityX(forward * m_currentMaxSpeed)
+                .WithVelocityY(strafe * m_currentMaxSpeed)
+                .WithTargetDirection(units::angle::degree_t(calculatorRotate))
+                .WithHeadingPID(m_rotationKP, m_rotationKI, m_rotationKD)
+                .WithForwardPerspective(ctre::phoenix6::swerve::requests::ForwardPerspectiveValue::BlueAlliance));
+    }
     m_chassis->SetControl(
         m_fieldDriveRequest.WithVelocityX(forward * m_currentMaxSpeed)
             .WithVelocityY(strafe * m_currentMaxSpeed)
-            .WithRotationalRate(rotate * m_currentMaxAngularRate));
+            .WithRotationalRate(manualRotate * m_currentMaxAngularRate));
 }
 
 /**
@@ -107,6 +118,7 @@ void TeleopFieldDrive::NotifyStateUpdate(RobotStateChanges::StateChange change, 
 {
     if (change == RobotStateChanges::StateChange::IsLaunching_Bool)
     {
+        m_isLaunching = value;
         m_currentMaxSpeed = value ? m_maxSpeed * m_launchingSpeedScale : m_maxSpeed;
         m_currentMaxAngularRate = value ? m_maxAngularRate * m_launchingSpeedScale : m_maxAngularRate;
     }
