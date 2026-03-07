@@ -43,6 +43,12 @@ intakeState = "STATE_INTAKE">
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueMRDrop3_E2"
+time = "5.0"
+intakeState = "STATE_INTAKE">
+</primitive>
+
+<primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMRDrop3_F"
 time = "3.0"
 intakeState = "STATE_INTAKE">

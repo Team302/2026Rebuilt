@@ -70,6 +70,13 @@ DriveToPose::DriveToPose(subsystems::CommandSwerveDrivetrain *chassis) : m_chass
     // Store initial pose for movement detection
     m_prevPose = m_chassis != nullptr ? m_chassis->GetPose() : frc::Pose2d();
 
+    kMaxVelocity = GetMaxVelocity();
+    kMaxAcceleration = GetMaxAcceleration();
+
+    m_translationConstraints = frc::TrapezoidProfile<units::length::meters>::Constraints(kMaxVelocity, kMaxAcceleration);
+    m_translationPIDX = frc::ProfiledPIDController<units::length::meters>(m_translationKP, m_translationKI, m_translationKD, m_translationConstraints, 20_ms);
+    m_translationPIDY = frc::ProfiledPIDController<units::length::meters>(m_translationKP, m_translationKI, m_translationKD, m_translationConstraints, 20_ms);
+
     // Calculate the range over which feedforward velocity is ramped
     m_feedForwardRange = m_ffMaxRadius - m_ffMinRadius;
 }
