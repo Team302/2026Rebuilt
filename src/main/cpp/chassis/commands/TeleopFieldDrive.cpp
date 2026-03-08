@@ -18,7 +18,8 @@
 #include "utils/FMSData.h"
 #include "vision/DragonVision.h"
 #include "utils/logging/debug/Logger.h"
-
+#include "auton/AllianceZoneManager.h"
+#include "utils/RebuiltTargetCalculator.h"
 // Note the simplified constructor and AddRequirements call
 TeleopFieldDrive::TeleopFieldDrive(subsystems::CommandSwerveDrivetrain *chassis,
                                    TeleopControl *controller,
@@ -63,20 +64,22 @@ void TeleopFieldDrive::Execute()
     double strafe = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE);
     double manualRotate = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Feild Drive", "Is Launch Mode", m_isLaunching);
-    if (m_isLaunching)
+    if (m_isLaunching && AllianceZoneManager::GetInstance()->IsInAllianceZone())
     {
-        double calculatorRotate = (m_targetCalculator->GetLauncherTarget(0_s, m_chassis->GetPose().Rotation().Degrees()) - 180_tr).value();
-        m_chassis->SetControl(
-            m_fieldFacingRequest.WithVelocityX(forward * m_currentMaxSpeed)
-                .WithVelocityY(strafe * m_currentMaxSpeed)
-                .WithTargetDirection(units::angle::degree_t(calculatorRotate))
-                .WithHeadingPID(m_rotationKP, m_rotationKI, m_rotationKD)
-                .WithForwardPerspective(ctre::phoenix6::swerve::requests::ForwardPerspectiveValue::BlueAlliance));
+        units::angle::degree_t calculatorRotate = RebuiltTargetCalculator::GetInstance()->GetChassisTargetForLaunching(0.5_s);
+        m_chassis->SetControl(m_fieldFacingRequest.WithVelocityX(forward * m_currentMaxSpeed)
+                                  .WithVelocityY(strafe * m_currentMaxSpeed)
+                                  .WithTargetDirection(calculatorRotate)
+                                  .WithHeadingPID(m_rotationKP, m_rotationKI, m_rotationKD));
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Feild Drive", "Calculated angle", calculatorRotate.value());
     }
-    m_chassis->SetControl(
-        m_fieldDriveRequest.WithVelocityX(forward * m_currentMaxSpeed)
-            .WithVelocityY(strafe * m_currentMaxSpeed)
-            .WithRotationalRate(manualRotate * m_currentMaxAngularRate));
+    else
+    {
+        m_chassis->SetControl(
+            m_fieldDriveRequest.WithVelocityX(forward * m_currentMaxSpeed)
+                .WithVelocityY(strafe * m_currentMaxSpeed)
+                .WithRotationalRate(manualRotate * m_currentMaxAngularRate));
+    }
 }
 
 /**

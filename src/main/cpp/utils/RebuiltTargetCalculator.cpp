@@ -18,7 +18,7 @@
 #include "utils/FMSData.h"
 #include "utils/PoseUtils.h"
 #include "utils/logging/debug/Logger.h"
-
+#include "utils/AngleUtils.h"
 // Static string constants — constructed once, never copied on each call
 /// Identifies the outpost passing target visualization object on the field
 const std::string RebuiltTargetCalculator::kOutpostPassingTargetName = "Outpost Passing Target Position";
@@ -153,11 +153,11 @@ frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
  * 6. Considers 360-degree rotations to minimize launcher movement
  * 7. If no valid angle found in range, clamps to nearest limit
  *
- * \param looheadTime Time in seconds to predict target position movement
+ * \param lookAheadTime Time in seconds to predict target position movement
  * \param currentLauncherAngle Current launcher angle in degrees (for minimum-error optimization)
  * \return Optimal launcher angle in rotations (0-1.0 scale, where 1.0 = 360°)
  */
-units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle)
+units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::second_t lookAheadTime, units::angle::degree_t currentLauncherAngle)
 {
     ValidateAlliance();
     UpdateChassisSpeeds();
@@ -168,9 +168,9 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
         return m_cachedLauncherTarget;
     }
 
-    m_field->UpdateObject(kCurrentTargetName, GetVirtualTargetPose(looheadTime));
+    m_field->UpdateObject(kCurrentTargetName, GetVirtualTargetPose(lookAheadTime));
 
-    units::degree_t fieldAngleToTarget = CalculateMechanismAngleToTarget(looheadTime);
+    units::degree_t fieldAngleToTarget = CalculateMechanismAngleToTarget(lookAheadTime);
     auto robotPose = GetChassisPose();
 
     frc::Rotation2d relativeRot = frc::Rotation2d(fieldAngleToTarget) - robotPose.Rotation();
@@ -208,6 +208,20 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
     m_cachedLauncherTarget = units::angle::turn_t(bestAngle.value());
 
     return m_cachedLauncherTarget;
+}
+units::angle::degree_t RebuiltTargetCalculator::GetChassisTargetForLaunching(units::time::second_t lookAheadTime)
+{
+    ValidateAlliance();
+    UpdateChassisSpeeds();
+    UpdateChassisPose();
+
+    m_field->UpdateObject(kCurrentTargetName, GetVirtualTargetPose(lookAheadTime));
+
+    units::degree_t fieldAngleToTarget = CalculateMechanismAngleToTarget(lookAheadTime);
+
+    fieldAngleToTarget = fieldAngleToTarget - 180.0_deg;
+
+    return AngleUtils::GetEquivAngle(fieldAngleToTarget);
 }
 
 /**

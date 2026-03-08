@@ -98,10 +98,8 @@ private:
     bool m_isLaunching;
     /// @brief Proportional gain for heading controller
     double m_rotationKP = 6.0;
-
     /// @brief Integral gain for heading controller (disabled)
     double m_rotationKI = 0.0;
-
     /// @brief Derivative gain for heading controller (disabled)
     double m_rotationKD = 0.0;
     RebuiltTargetCalculator *m_targetCalculator = RebuiltTargetCalculator::GetInstance();
