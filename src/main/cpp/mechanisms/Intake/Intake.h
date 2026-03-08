@@ -83,14 +83,15 @@ public:
 	{
 		position = std::clamp(position, m_intakeExtendedPositionTarget, m_intakeRetractedPositionTarget);
 		m_extenderPositionDeg.Position = position;
-		if (m_cachedExtenderPositionDeg < position)
-		{
-			m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
-		}
-		else
-		{
-			m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(1);
-		}
+		// if (m_cachedExtenderPositionDeg < position)
+		// {
+		// 	m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
+		// }
+		// else
+		// {
+		// 	m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(1);
+		// }
+		m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
 	}
 
 	void CreateAndRegisterStates();
@@ -144,7 +145,7 @@ private:
 	ctre::phoenix6::controls::DutyCycleOut m_extenderPercentOut{0.0};
 	ctre::phoenix6::controls::MotionMagicVoltage m_extenderPositionDeg{0_tr};
 	ctre::phoenix6::controls::ControlRequest *m_intakeActiveTarget = &m_intakePercentOut;
-	ctre::phoenix6::controls::ControlRequest *m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(1);
+	ctre::phoenix6::controls::ControlRequest *m_extenderActiveTarget = &m_extenderPercentOut;
 
 	bool m_isInClimbMode = false;
 	bool m_isLaunching = false;
@@ -161,4 +162,6 @@ private:
 	static constexpr std::string_view m_intakePercentOutPath = "/Intake/TargetPercentOut";
 	static constexpr std::string_view m_extenderExtendedPath = "/Intake/Extender/Extended";
 	static constexpr std::string_view m_loggingpercentUnit = "Percent";
+	static constexpr std::string_view m_loggingExtenderTargetPath = "/Intake/ExtenderTarget";
+	static constexpr std::string_view m_loggingExtenderControlRequest = "/Intake/ExtenderControlRequest";
 };
