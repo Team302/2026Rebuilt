@@ -378,7 +378,7 @@ void Intake::RunCommonTasks()
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentStateName());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeIn", IsIntakeIn());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Intake Position", m_cachedExtenderPositionDeg.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Intake Target", m_extenderPositionDeg.Position.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Extender Target", m_extenderPositionDeg.Position.value());
 }
 /// @brief  Set the control constants (e.g. PIDF values).
 /// @param [in] ControlData*                                   pid:  the control constants
@@ -459,6 +459,8 @@ void Intake::DataLog(uint64_t timestamp)
 	// Mechanism state
 	LogStringData(timestamp, m_intakeStatePath, GetCurrentStateName());
 	LogBoolData(timestamp, m_extenderExtendedPath, !IsIntakeIn());
+	LogDoubleData(timestamp, m_loggingExtenderTargetPath, m_extenderPositionDeg.Position.value());
+	LogStringData(timestamp, m_loggingExtenderControlRequest, std::string(m_extenderActiveTarget->GetName()));
 }
 
 std::string Intake::GetCurrentStateName()
