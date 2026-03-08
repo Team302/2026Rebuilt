@@ -425,31 +425,42 @@ void Intake::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value
 void Intake::ManualControl()
 {
 	TeleopControl *controller = TeleopControl::GetInstance();
-	if (controller != nullptr)
+	if (controller != nullptr && frc::DriverStation::IsTeleop())
 	{
-		if (controller->IsButtonPressed(TeleopControlFunctions::EXTENDER_MODIFIER))
+		double manualExtenderPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN);
+		if (std::abs(manualExtenderPercent) > 0.05)
 		{
-			double manualExtenderPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN);
 			UpdateTargetExtenderPercentOut(-manualExtenderPercent);
 		}
 		else
 		{
-			if (GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
-			{
-
-				bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
-				bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_IN);
-				if (intakeOutPressed)
-				{
-					UpdateTargetExtenderPositionDeg(m_intakeExtendedPositionTarget);
-				}
-				else if (intakeInPressed)
-				{
-					UpdateTargetExtenderPositionDeg(m_intakeRetractedPositionTarget);
-				}
-			}
+			UpdateTargetExtenderPercentOut(0.0);
 		}
 	}
+
+	// 	if (controller->IsButtonPressed(TeleopControlFunctions::EXTENDER_MODIFIER))
+	// 	{
+	// 		double manualExtenderPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN);
+	// 		UpdateTargetExtenderPercentOut(-manualExtenderPercent);
+	// 	}
+	// 	else
+	// 	{
+	// 		if (GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
+	// 		{
+
+	// 			bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
+	// 			bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_IN);
+	// 			if (intakeOutPressed)
+	// 			{
+	// 				UpdateTargetExtenderPositionDeg(m_intakeExtendedPositionTarget);
+	// 			}
+	// 			else if (intakeInPressed)
+	// 			{
+	// 				UpdateTargetExtenderPositionDeg(m_intakeRetractedPositionTarget);
+	// 			}
+	// 		}
+	// 	}
+	// }
 }
 void Intake::DataLog(uint64_t timestamp)
 {
