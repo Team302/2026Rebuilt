@@ -62,10 +62,10 @@ void TeleopFieldDrive::Execute()
     double forward = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_FORWARD);
     double strafe = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE);
     double manualRotate = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE);
-    Logger::GetLogger()->LogData(m_isLaunching);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Feild Drive", "Is Launch Mode", m_isLaunching);
     if (m_isLaunching)
     {
-        double calculatorRotate = (m_targetCalculator->GetLauncherTarget(0_s, 180_deg) - 180_tr).value();
+        double calculatorRotate = (m_targetCalculator->GetLauncherTarget(0_s, m_chassis->GetPose().Rotation().Degrees()) - 180_tr).value();
         m_chassis->SetControl(
             m_fieldFacingRequest.WithVelocityX(forward * m_currentMaxSpeed)
                 .WithVelocityY(strafe * m_currentMaxSpeed)
