@@ -219,8 +219,7 @@ units::angle::degree_t RebuiltTargetCalculator::GetChassisTargetForLaunching(uni
 
     units::degree_t fieldAngleToTarget = CalculateMechanismAngleToTarget(lookAheadTime);
 
-    fieldAngleToTarget = fieldAngleToTarget - 180.0_deg;
-
+    fieldAngleToTarget = (m_cachedAlliance == frc::DriverStation::kBlue) ? fieldAngleToTarget - 180.0_deg : fieldAngleToTarget;
     return AngleUtils::GetEquivAngle(fieldAngleToTarget);
 }
 
