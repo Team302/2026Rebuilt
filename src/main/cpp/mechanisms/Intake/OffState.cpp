@@ -25,7 +25,7 @@
 #include "teleopcontrol/TeleopControl.h"
 #include "teleopcontrol/TeleopControlFunctions.h"
 #include "utils/logging/debug/Logger.h"
-
+#include "frc/DriverStation.h"
 // Third Party Includes
 
 using namespace std;
@@ -56,6 +56,19 @@ void OffState::InitCompBot302()
 void OffState::Run()
 {
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("OffState"), string("Run"));
+	if (frc::DriverStation::IsEnabled() && !m_hasEnabled)
+	{
+		m_hasEnabled = true;
+		if (frc::DriverStation::IsTeleop())
+		{
+			m_mechanism->UpdateTargetExtenderPercentOut(0.0);
+			m_mechanism->GetExtender()->SetPosition(0.0_tr);
+		}
+		else
+		{
+			m_mechanism->UpdateTargetExtenderPositionDeg(0.0_tr);
+		}
+	}
 }
 
 void OffState::Exit()

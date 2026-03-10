@@ -285,7 +285,7 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 11;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
@@ -324,8 +324,8 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 
 	CANdiConfiguration CANdiConfig{};
 
-	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenHigh;
-	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::PullHigh;
+	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenFloating;
+	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::FloatDetect;
 
 	ctre::phoenix::StatusCode statusMotor = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
@@ -346,6 +346,8 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	}
 	if (!statusCANdi.IsOK())
 		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intakeCANdi", "m_intakeCANdi Status", statusCANdi.GetName());
+
+	m_extender->SetPosition(100_tr);
 }
 
 void Intake::SetCurrentState(int state, bool run)
@@ -376,7 +378,7 @@ void Intake::RunCommonTasks()
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentStateName());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeIn", IsIntakeIn());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Intake Position", m_cachedExtenderPositionDeg.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Intake Target", m_extenderPositionDeg.Position.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Extender Target", m_extenderPositionDeg.Position.value());
 }
 /// @brief  Set the control constants (e.g. PIDF values).
 /// @param [in] ControlData*                                   pid:  the control constants
@@ -423,31 +425,42 @@ void Intake::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value
 void Intake::ManualControl()
 {
 	TeleopControl *controller = TeleopControl::GetInstance();
-	if (controller != nullptr)
+	if (controller != nullptr && frc::DriverStation::IsTeleop())
 	{
-		if (controller->IsButtonPressed(TeleopControlFunctions::EXTENDER_MODIFIER))
+		double manualExtenderPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN);
+		if (std::abs(manualExtenderPercent) > 0.05)
 		{
-			double manualExtenderPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN);
 			UpdateTargetExtenderPercentOut(-manualExtenderPercent);
 		}
 		else
 		{
-			if (GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
-			{
-
-				bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
-				bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_IN);
-				if (intakeOutPressed)
-				{
-					UpdateTargetExtenderPositionDeg(m_intakeExtendedPositionTarget);
-				}
-				else if (intakeInPressed)
-				{
-					UpdateTargetExtenderPositionDeg(m_intakeRetractedPositionTarget);
-				}
-			}
+			UpdateTargetExtenderPercentOut(0.0);
 		}
 	}
+
+	// 	if (controller->IsButtonPressed(TeleopControlFunctions::EXTENDER_MODIFIER))
+	// 	{
+	// 		double manualExtenderPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN);
+	// 		UpdateTargetExtenderPercentOut(-manualExtenderPercent);
+	// 	}
+	// 	else
+	// 	{
+	// 		if (GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
+	// 		{
+
+	// 			bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
+	// 			bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_IN);
+	// 			if (intakeOutPressed)
+	// 			{
+	// 				UpdateTargetExtenderPositionDeg(m_intakeExtendedPositionTarget);
+	// 			}
+	// 			else if (intakeInPressed)
+	// 			{
+	// 				UpdateTargetExtenderPositionDeg(m_intakeRetractedPositionTarget);
+	// 			}
+	// 		}
+	// 	}
+	// }
 }
 void Intake::DataLog(uint64_t timestamp)
 {
@@ -457,6 +470,8 @@ void Intake::DataLog(uint64_t timestamp)
 	// Mechanism state
 	LogStringData(timestamp, m_intakeStatePath, GetCurrentStateName());
 	LogBoolData(timestamp, m_extenderExtendedPath, !IsIntakeIn());
+	LogDoubleData(timestamp, m_loggingExtenderTargetPath, m_extenderPositionDeg.Position.value());
+	LogStringData(timestamp, m_loggingExtenderControlRequest, std::string(m_extenderActiveTarget->GetName()));
 }
 
 std::string Intake::GetCurrentStateName()

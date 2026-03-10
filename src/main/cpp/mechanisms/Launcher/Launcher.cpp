@@ -826,23 +826,23 @@ void Launcher::UpdateLauncherTargets()
 
 void Launcher::InitilaizeLauncher()
 {
-	auto turretReverseLimitSwitchTripped = m_turret->GetReverseLimit().GetValue();
-	auto turretForwardLimitSwitchTripped = m_turret->GetForwardLimit().GetValue();
+	// auto turretReverseLimitSwitchTripped = m_turret->GetReverseLimit().GetValue();
+	// auto turretForwardLimitSwitchTripped = m_turret->GetForwardLimit().GetValue();
 	auto hoodReverseLimitSwitchTripped = m_hood->GetReverseLimit().GetValue();
 
-	if (((turretReverseLimitSwitchTripped == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround ||
-		  turretForwardLimitSwitchTripped == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround) &&
-		 (hoodReverseLimitSwitchTripped == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)) ||
+	// if (((turretReverseLimitSwitchTripped == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround ||
+	// 	  turretForwardLimitSwitchTripped == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround) &&
+	if ((hoodReverseLimitSwitchTripped == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround) ||
 		frc::RobotBase::IsSimulation())
 	{
-		if (turretReverseLimitSwitchTripped == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)
-		{
-			m_turret->SetPosition(m_minTurretAngle);
-		}
-		else
-		{
-			m_turret->SetPosition(m_maxTurretAngle);
-		}
+		// if (turretReverseLimitSwitchTripped == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)
+		// {
+		// 	m_turret->SetPosition(m_minTurretAngle);
+		// }
+		// else
+		// {
+		// 	m_turret->SetPosition(m_maxTurretAngle);
+		// }
 		m_launcherInitialized = true;
 	}
 }
@@ -881,6 +881,7 @@ std::string Launcher::GetCurrentStateName()
 
 bool Launcher::IsTurretAtTarget()
 {
+	return true;
 	units::angle::degree_t turretError = m_cachedTurretPosition - m_targetTurretAngle;
 
 	return ((units::math::abs(turretError) < m_turretAngleThreshold));

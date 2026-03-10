@@ -92,14 +92,16 @@ public:
      * The algorithm searches for the closest valid angle to the ideal angle within mechanical limits,
      * considering 360-degree rotations to find the minimum travel path.
      *
-     * \param looheadTime Time in seconds to predict target position movement
+     * \param lookAheadTime Time in seconds to predict target position movement
      * \param currentLauncherAngle Current launcher angle in degrees (used for minimum error optimization)
      * \return Angle in rotations (0-1.0 scale, where 1.0 = 360°)
      *
      * \note Updates the field visualization with calculated launcher position
      * \see GetMechanismWorldPosition(), CalculateMechanismAngleToTarget()
      */
-    units::angle::turn_t GetLauncherTarget(units::time::second_t looheadTime, units::angle::degree_t currentLauncherAngle);
+    units::angle::turn_t GetLauncherTarget(units::time::second_t lookAheadTime, units::angle::degree_t currentLauncherAngle);
+
+    units::angle::degree_t GetChassisTargetForLaunching(units::time::second_t lookAheadTime);
 
     /**
      * \brief Process controller input to adjust target positions

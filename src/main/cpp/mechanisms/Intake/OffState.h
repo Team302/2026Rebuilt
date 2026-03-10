@@ -47,5 +47,6 @@ namespace IntakeStates
 
 		const double m_intakeTarget = double(0);
 		const units::angle::turn_t m_extenderTarget = units::angle::turn_t(20);
+		bool m_hasEnabled = false;
 	};
 }

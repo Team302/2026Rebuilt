@@ -2,10 +2,14 @@
 <!DOCTYPE auton SYSTEM "auton.dtd">
 <auton>
 
+<primitive id = "DRIVE_STOP_MECH"
+time = "0.25"
+intakeState = "STATE_OFF">
+</primitive>
+
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDrop3_Init"
-time = "3.0"
-intakeState = "STATE_INTAKE">
+time = "3.0">
 <zone filename = "RedLeftBumpZoneRect.xml"/>
 </primitive>
 
