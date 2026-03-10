@@ -261,7 +261,7 @@ private:
 	units::angle::turn_t m_cachedHoodPosition = 0.0_tr;
 	units::angle::turn_t m_cachedTurretPosition = 0.0_tr;
 
-	units::angle::turn_t m_passingHoodTargetAngle = 25.0_tr;
+	units::angle::turn_t m_passingHoodTargetAngle = 10.0_tr;
 	units::angular_velocity::revolutions_per_minute_t m_passingLauncherTargetVelocity = 2500.0_rpm;
 	// logging paths
 	static constexpr std::string_view m_loggingLauncherTargetPath = "/Launcher/TargetLauncherVelocity";

@@ -22,6 +22,7 @@
 #include "teleopcontrol/TeleopControl.h"
 #include "units/angular_velocity.h"
 #include "units/velocity.h"
+#include "utils/RebuiltTargetCalculator.h"
 
 /**
  * @brief Command for teleop field-centric driving of the swerve drivetrain.
@@ -92,6 +93,14 @@ private:
                                                              .WithRotationalDeadband(m_maxAngularRate * 0.1)                  // TODO: Investigate this deadband vs controller deadband
                                                              .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage) // Use open-loop voltage for drive
                                                              .WithDesaturateWheelSpeeds(true);
-
+    swerve::requests::FieldCentricFacingAngle m_fieldFacingRequest;
     void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
+    bool m_isLaunching;
+    /// @brief Proportional gain for heading controller
+    double m_rotationKP = 6.0;
+    /// @brief Integral gain for heading controller (disabled)
+    double m_rotationKI = 0.0;
+    /// @brief Derivative gain for heading controller (disabled)
+    double m_rotationKD = 0.0;
+    RebuiltTargetCalculator *m_targetCalculator = RebuiltTargetCalculator::GetInstance();
 };
