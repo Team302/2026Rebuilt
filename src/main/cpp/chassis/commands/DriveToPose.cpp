@@ -130,6 +130,9 @@ void DriveToPose::Initialize()
     // Reset completion flag so each run starts clean
     m_isFinished = false;
 
+    // Set current target speed based on which pose we're navigating to
+    m_currentTargetSpeed = m_beforeMidPose ? m_midPointSpeed : m_endPointSpeed;
+
     // Configure controllers with the target pose
     SetTargetPose(m_beforeMidPose ? m_midPose : m_endPose);
 
@@ -317,6 +320,7 @@ bool DriveToPose::IsFinished()
              units::math::abs(m_endPose.Y() - m_currentPose.Y()) < m_yToleranceForTransitionToEndPoint) ||
             ShouldSkipMidPoint())
         {
+            m_currentTargetSpeed = m_endPointSpeed;
             SetTargetPose(m_endPose);
             m_beforeMidPose = false;
             m_isFinished = false;
@@ -414,7 +418,7 @@ void DriveToPose::CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds)
     if (m_chassis != nullptr)
     {
         // Calculate Euclidean distance from current position to target
-        m_distanceError = m_currentPose.Translation().Distance(m_targetPose.Translation());
+        m_distanceError = m_currentPose.Translation().Distance(m_currentTargetSpeed > 0_mps ? CalculatePoseWithTargetSpeed(m_targetPose, m_currentTargetSpeed).Translation() : m_targetPose.Translation());
 
         // Determine feedforward speed based on distance using ramped profile
         units::velocity::meters_per_second_t feedforwardSpeed = 0.0_mps;
