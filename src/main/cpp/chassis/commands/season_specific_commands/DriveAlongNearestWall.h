@@ -35,6 +35,14 @@
 /// The selected trajectory is automatically flipped based on the current alliance color (Red/Blue),
 /// ensuring the robot follows the correct path regardless of which alliance the robot is on.
 ///
+/// **Smart Trajectory Entry:**
+/// Uses Y-coordinate matching to find the closest point on the trajectory to the robot's current
+/// position. This prevents the robot from driving backward if it's already on or past part of the
+/// path. The robot will:
+/// - Find the closest Y-coordinate match on the trajectory
+/// - Start trajectory following from that point
+/// - Only use this optimization if within 0.5m tolerance in Y-direction
+///
 /// **Usage:**
 /// ```cpp
 /// auto driveAlongWall = std::make_unique<DriveAlongNearestWall>(chassis);
@@ -61,9 +69,11 @@ public:
     /// @details    Overrides the base Initialize() to:
     ///             1. Determine the nearest wall (Depot or Outpost) using BumpHelper
     ///             2. Select the corresponding trajectory path name
-    ///             3. Call the base class Initialize() to load and prepare the trajectory
+    ///             3. Call InitializeForTeleop() with Y-only matching strategy
+    ///             4. Find the closest Y-coordinate on the trajectory and start from there
     ///
     ///             The trajectory will be automatically flipped for red alliance.
+    ///             Uses a 0.5m tolerance for Y-matching to allow intelligent path joining.
     //------------------------------------------------------------------
     void Initialize() override;
 
@@ -78,4 +88,8 @@ private:
     //------------------------------------------------------------------
     static constexpr const char *kDepotAllianceSweepPath = "DepotAllianceSweep";
     static constexpr const char *kOutpostAllianceSweepPath = "OutpostAllianceSweep";
+
+    //------------------------------------------------------------------
+    /// @brief      Tolerance for Y-coordinate matching when finding closest point on trajectory
+    static constexpr units::meter_t m_yDistanceThreshold = 0.25_m;
 };

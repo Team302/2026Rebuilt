@@ -24,6 +24,21 @@
 #include "frc/controller/PIDController.h"
 #include <choreo/trajectory/Trajectory.h>
 
+//====================================================================================================================================================
+/// @enum TrajectoryMatchStrategy
+/// @brief Defines how to match robot position to trajectory when finding the closest starting point
+///
+/// Used by InitializeForTeleop to determine which axis/axes to consider when finding the optimal
+/// point to begin trajectory following. This allows the robot to intelligently join a trajectory
+/// at the most appropriate point rather than always starting from the beginning.
+//====================================================================================================================================================
+enum class TrajectoryMatchStrategy
+{
+    MATCH_Y_ONLY, ///< Match only the Y coordinate (for horizontal sweeps along alliance wall)
+    MATCH_X_ONLY, ///< Match only the X coordinate (for vertical paths)
+    MATCH_XY      ///< Match both X and Y using Euclidean distance (default behavior)
+};
+
 class TrajectoryDrive : public frc2::CommandHelper<frc2::Command, TrajectoryDrive>
 {
 public:
@@ -41,7 +56,7 @@ public:
     bool IsFinished() override;
     void End(bool interrupted) override;
 
-    void InitializeForTeleop(bool generateRedTrajectory);
+    void InitializeForTeleop(bool generateRedTrajectory, TrajectoryMatchStrategy matchStrategy = TrajectoryMatchStrategy::MATCH_XY, units::length::meter_t distanceTolerance = 0.5_m);
 
     void SetPath(const std::string &pathName);
 
@@ -66,8 +81,17 @@ private:
 
     std::string m_whyDone;
     units::time::second_t m_totalTrajectoryTime;
-    units::time::second_t m_thresholdTime{0.0_s}; // pre-computed kPercentComplete * m_totalTrajectoryTime
-    units::time::second_t m_elapsedTime{0.0_s};   // cached timer value, updated once per Execute() call
+    units::time::second_t m_thresholdTime{0.0_s};   // pre-computed kPercentComplete * m_totalTrajectoryTime
+    units::time::second_t m_elapsedTime{0.0_s};     // cached timer value, updated once per Execute() call
+    units::time::second_t m_startTimeOffset{0.0_s}; // time offset when starting from a mid-trajectory point
+
+    // Smart trajectory joining state
+    bool m_useSmartJoin{false};                    // Whether to use smart trajectory joining
+    bool m_isApproachingPath{false};               // True when driving to path, false when following trajectory
+    TrajectoryMatchStrategy m_matchStrategy;       // Which axes to match when joining
+    units::length::meter_t m_joinTolerance{0.5_m}; // Distance tolerance for joining the path
+    frc::Pose2d m_targetJoinPose;                  // The pose on the trajectory we're driving to
+    size_t m_targetJoinIndex{0};                   // Index of the trajectory point we're joining at
 
     static constexpr double kPDrive{3.5};
     static constexpr double kIDrive{0.0};
@@ -89,4 +113,22 @@ private:
     static constexpr units::angle::degree_t kHeadingTolerance{3.0_deg};       // this is what we had; should we lower it?
     static constexpr double kPercentComplete{0.9};                            // this is what we had; should we up it so we don't compare poses so often?
     static constexpr int kMinExecutions{5};                                   // minimum number of executions before checking pose
+
+    //------------------------------------------------------------------
+    // Helper methods for smart trajectory initialization
+    //------------------------------------------------------------------
+
+    /// @brief Find the closest point in the trajectory to the robot's current position
+    /// @param currentPose The robot's current pose
+    /// @param matchStrategy How to match positions (X, Y, or XY)
+    /// @param tolerance The tolerance for considering a match
+    /// @return The index of the closest trajectory sample
+    size_t FindClosestTrajectoryPoint(const frc::Pose2d &currentPose, TrajectoryMatchStrategy matchStrategy, units::length::meter_t tolerance) const;
+
+    /// @brief Calculate distance between two poses based on match strategy
+    /// @param pose1 First pose
+    /// @param pose2 Second pose
+    /// @param matchStrategy How to calculate distance
+    /// @return Distance value in meters
+    units::length::meter_t CalculateDistance(const frc::Pose2d &pose1, const frc::Pose2d &pose2, TrajectoryMatchStrategy matchStrategy) const;
 };
