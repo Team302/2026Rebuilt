@@ -308,6 +308,14 @@ namespace subsystems
             m_debounceTimer.Reset();
             m_prevPose = GetPose();
         }
+        void SetTargetChassisRotation(units::angle::degree_t targetRotation)
+        {
+            m_targetChassisRotation = targetRotation;
+        }
+        bool IsChassisAtRotationTarget()
+        {
+            return (units::math::abs(GetPose().Rotation().Degrees() - m_targetChassisRotation) < m_chassisRotationThreshold);
+        }
         // Hand Coded*/
 
     private:
@@ -316,5 +324,7 @@ namespace subsystems
         const units::time::second_t m_samePoseTime = 0.5_s;
         const units::length::inch_t m_distanceThreshold{0.25};
         frc::Pose2d m_prevPose;
+        units::angle::degree_t m_targetChassisRotation;
+        const units::angle::degree_t m_chassisRotationThreshold{3.0_deg};
     };
 }

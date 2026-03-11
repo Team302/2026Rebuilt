@@ -63,7 +63,7 @@ void TeleopFieldDrive::Execute()
     double forward = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_FORWARD);
     double strafe = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE);
     double manualRotate = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Feild Drive", "Is Launch Mode", m_isLaunching);
+
     if (m_isLaunching && AllianceZoneManager::GetInstance()->IsInAllianceZone())
     {
         units::angle::degree_t calculatorRotate = RebuiltTargetCalculator::GetInstance()->GetChassisTargetForLaunching(0.5_s);
