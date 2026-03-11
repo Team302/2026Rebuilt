@@ -23,6 +23,7 @@
 #include "frc2/command/button/RobotModeTriggers.h"
 #include "state/RobotState.h"
 #include "utils/logging/debug/Logger.h"
+#include "auton/NeutralZoneManager.h"
 
 // Season Specific Commands
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"
@@ -162,7 +163,7 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     // Disabled during climb mode in favor of future climb navigation
     driveAlongNearestWall.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                              {
-    if (!m_climbModeStatus) {
+    if (!m_climbModeStatus && !NeutralZoneManager::GetInstance()->IsInNeutralZone()) {
         return frc2::ProxyCommand(m_driveAlongNearestWall.get()).ToPtr();
     } else {
         return frc2::cmd::None(); 
