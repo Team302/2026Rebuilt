@@ -109,11 +109,14 @@ void DriveToPose::Initialize()
 {
     // Get the target pose (may be overridden by derived classes)
     auto poses = GetDriveToPoses();
-    m_endPose = poses.endPose;
+    m_midPointSpeed = poses.midPointSpeed;
+    m_endPointSpeed = poses.endPointSpeed;
+    m_endPose = poses.endPointSpeed > 0_mps ? CalculatePoseWithTargetSpeed(poses.endPose, poses.endPointSpeed) : poses.endPose;
     m_hasMidPose = poses.hasMidPose;
+
     if (poses.hasMidPose)
     {
-        m_midPose = poses.midPose;
+        m_midPose = m_midPointSpeed > 0_mps ? CalculatePoseWithTargetSpeed(poses.midPose, m_midPointSpeed) : poses.midPose;
         m_beforeMidPose = ShouldSkipMidPoint() ? false : true; // Skip mid pose if angle to target is small
     }
     else
@@ -296,8 +299,19 @@ bool DriveToPose::IsFinished()
         return true;
     }
 
+    // Determine which distance threshold to use based on whether we have speed targets
+    units::length::inch_t distanceThreshold = m_distanceThreshold;
+    if (m_beforeMidPose && m_midPointSpeed > 0_mps)
+    {
+        distanceThreshold = m_distanceThresholdWithSpeed;
+    }
+    else if (!m_beforeMidPose && m_endPointSpeed > 0_mps)
+    {
+        distanceThreshold = m_distanceThresholdWithSpeed;
+    }
+
     // Check if we've reached the target pose within tolerance
-    bool isDone = PoseUtils::IsSamePose(m_currentPose, m_targetPose, m_distanceThreshold);
+    bool isDone = PoseUtils::IsSamePose(m_currentPose, m_targetPose, distanceThreshold);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToPose", "Is Done", isDone);
 
     if (m_hasMidPose && m_beforeMidPose)
@@ -449,4 +463,15 @@ bool DriveToPose::ShouldSkipMidPoint() const
     auto angleToEnd = units::math::abs(AngleUtils::GetEquivAngle(rotationToEnd.Degrees()));
     angleToEnd = std::min(angleToEnd, 180.0_deg - angleToEnd);
     return angleToEnd < m_angleTolerance;
+}
+
+frc::Pose2d DriveToPose::CalculatePoseWithTargetSpeed(const frc::Pose2d &targetPose, const units::velocity::meters_per_second_t &speed) const
+{
+    units::length::meter_t requiredDistance = ((speed / kMaxVelocity) * m_feedForwardRange) + m_ffMinRadius;
+
+    frc::Translation2d translationError = targetPose.Translation() - m_currentPose.Translation();
+    frc::Rotation2d approachAngle = translationError.Angle();
+    frc::Translation2d lookAheadOffset{requiredDistance, approachAngle};
+
+    return frc::Pose2d(targetPose.Translation() + lookAheadOffset, targetPose.Rotation());
 }
