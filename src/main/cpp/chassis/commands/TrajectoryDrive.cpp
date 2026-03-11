@@ -84,6 +84,43 @@ void TrajectoryDrive::Initialize()
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, false);
 }
 
+void TrajectoryDrive::InitializeForTeleop(bool generateRedTrajectory)
+{
+    m_trajectory = AutonUtils::GetTrajectoryFromPathFile(m_pathName, generateRedTrajectory);
+    if (m_trajectory.has_value())
+    {
+        auto trajectory = m_trajectory.value();
+        m_trajectoryStates = trajectory.samples;
+        m_totalTrajectoryTime = trajectory.GetTotalTime();
+        m_thresholdTime = m_totalTrajectoryTime * kPercentComplete;
+        auto finalPose = trajectory.GetFinalPose(generateRedTrajectory);
+        m_finalPose = finalPose.has_value() ? finalPose.value() : frc::Pose2d();
+    }
+    else
+    {
+        m_totalTrajectoryTime = 0_s;
+        m_thresholdTime = 0_s;
+        m_trajectoryStates.clear();
+        m_finalPose = frc::Pose2d();
+    }
+    m_previousPose = frc::Pose2d();
+    m_numberOfExecutions = 0;
+
+    // Reset and start the timer when the command begins
+    m_timer.get()->Reset();
+    m_timer.get()->Start();
+
+    // Reset PID controllers to clear any previous state
+    m_xController.Reset();
+    m_yController.Reset();
+    m_headingController.Reset();
+    m_chassisSpeeds.vx = 0_mps;
+    m_chassisSpeeds.vy = 0_mps;
+    m_chassisSpeeds.omega = units::angular_velocity::radians_per_second_t(0);
+
+    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, false);
+}
+
 void TrajectoryDrive::SetPath(const std::string &pathName)
 {
     m_pathName = pathName;

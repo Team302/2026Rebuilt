@@ -41,6 +41,8 @@ public:
     bool IsFinished() override;
     void End(bool interrupted) override;
 
+    void InitializeForTeleop(bool generateRedTrajectory);
+
     void SetPath(const std::string &pathName);
 
     std::string WhyDone() const { return m_whyDone; };
