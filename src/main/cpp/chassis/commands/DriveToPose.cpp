@@ -111,12 +111,12 @@ void DriveToPose::Initialize()
     auto poses = GetDriveToPoses();
     m_midPointSpeed = poses.midPointSpeed;
     m_endPointSpeed = poses.endPointSpeed;
-    m_endPose = poses.endPointSpeed > 0_mps ? CalculatePoseWithTargetSpeed(poses.endPose, poses.endPointSpeed) : poses.endPose;
+    m_endPose = poses.endPose;
     m_hasMidPose = poses.hasMidPose;
 
     if (poses.hasMidPose)
     {
-        m_midPose = m_midPointSpeed > 0_mps ? CalculatePoseWithTargetSpeed(poses.midPose, m_midPointSpeed) : poses.midPose;
+        m_midPose = poses.midPose;
         m_beforeMidPose = ShouldSkipMidPoint() ? false : true; // Skip mid pose if angle to target is small
     }
     else
@@ -300,32 +300,23 @@ bool DriveToPose::IsFinished()
     }
 
     // Determine which distance threshold to use based on whether we have speed targets
-    units::length::inch_t distanceThreshold = m_distanceThreshold;
-    if (m_beforeMidPose && m_midPointSpeed > 0_mps)
-    {
-        distanceThreshold = m_distanceThresholdWithSpeed;
-    }
-    else if (!m_beforeMidPose && m_endPointSpeed > 0_mps)
-    {
-        distanceThreshold = m_distanceThresholdWithSpeed;
-    }
+    auto distanceThreshold = (m_beforeMidPose && m_midPointSpeed > 0_mps) || (!m_beforeMidPose && m_endPointSpeed > 0_mps)
+                                 ? m_distanceThresholdWithSpeed
+                                 : m_distanceThreshold;
 
     // Check if we've reached the target pose within tolerance
     bool isDone = PoseUtils::IsSamePose(m_currentPose, m_targetPose, distanceThreshold);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToPose", "Is Done", isDone);
 
+    // Handle transition from mid pose to end pose
     if (m_hasMidPose && m_beforeMidPose)
     {
-        // Reached MidPose or withing the tolerance to transition to the end pose
-        auto xError = units::math::abs(m_endPose.X() - m_currentPose.X());
-        auto yError = units::math::abs(m_endPose.Y() - m_currentPose.Y());
-
-        auto transitionToEndPose = (isDone || // reached the mid pose
-                                    (xError < m_xtoleranceForTransitionToEndPoint && yError < m_yToleranceForTransitionToEndPoint));
-
-        if (transitionToEndPose)
+        // Transition if mid pose reached or within tolerance to end pose
+        if (isDone ||
+            (units::math::abs(m_endPose.X() - m_currentPose.X()) < m_xtoleranceForTransitionToEndPoint &&
+             units::math::abs(m_endPose.Y() - m_currentPose.Y()) < m_yToleranceForTransitionToEndPoint) ||
+            ShouldSkipMidPoint())
         {
-            // Transition to the final target pose
             SetTargetPose(m_endPose);
             m_beforeMidPose = false;
             m_isFinished = false;
@@ -334,13 +325,12 @@ bool DriveToPose::IsFinished()
     }
 
     // Check if robot has stopped moving (stuck or blocked)
-    auto isSamePose = m_chassis->IsSamePose();
+    bool isSamePose = m_chassis->IsSamePose();
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToPose", "Is SamePose", isSamePose);
 
     m_prevPose = m_currentPose; // Update for next cycle
 
-    m_isFinished = isDone || isSamePose; // Cache result for End() to avoid redundant recomputation
-    return m_isFinished;
+    return (m_isFinished = isDone || isSamePose);
 }
 
 //------------------------------------------------------------------
