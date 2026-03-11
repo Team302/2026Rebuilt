@@ -164,6 +164,7 @@ public:
 	void SetLauncherProtect();
 	bool IsTurretAtTarget();
 	units::angle::degree_t GetTargetTurretAngle() const { return m_targetTurretAngle; }
+	void UpdateTurretEnabled();
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -272,4 +273,6 @@ private:
 
 	static constexpr std::string_view m_loggingTurnsUnits = "Turns";
 	static constexpr std::string_view m_loggingRPMUnits = "RPM";
+	bool m_turretEnabled = true;
+	bool m_turretEnabledButtonReleased = true;
 };
