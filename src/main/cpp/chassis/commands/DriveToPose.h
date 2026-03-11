@@ -249,6 +249,7 @@ private:
     units::length::inch_t m_yToleranceForTransitionToEndPoint{0.25};
     units::velocity::meters_per_second_t m_midPointSpeed{0.0_mps};
     units::velocity::meters_per_second_t m_endPointSpeed{0.0_mps};
+    units::velocity::meters_per_second_t m_currentTargetSpeed{0.0_mps};
 
     //------------------------------------------------------------------
     // Threshold and Range Constants
