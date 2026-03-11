@@ -33,8 +33,8 @@ TeleopFieldDrive::TeleopFieldDrive(subsystems::CommandSwerveDrivetrain *chassis,
 {
     AddRequirements(m_chassis);
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsLaunching_Bool);
+    RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::TurretEnabled_Bool);
 }
-
 /**
  * @brief Initializes the teleop field drive command.
  *
@@ -124,5 +124,9 @@ void TeleopFieldDrive::NotifyStateUpdate(RobotStateChanges::StateChange change, 
         m_isLaunching = value;
         m_currentMaxSpeed = value ? m_maxSpeed * m_launchingSpeedScale : m_maxSpeed;
         m_currentMaxAngularRate = value ? m_maxAngularRate * m_launchingSpeedScale : m_maxAngularRate;
+    }
+    if (change == RobotStateChanges::StateChange::TurretEnabled_Bool)
+    {
+        m_turretEnabled = value;
     }
 }

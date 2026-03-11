@@ -103,4 +103,5 @@ private:
     /// @brief Derivative gain for heading controller (disabled)
     double m_rotationKD = 0.0;
     RebuiltTargetCalculator *m_targetCalculator = RebuiltTargetCalculator::GetInstance();
+    bool m_turretEnabled = true;
 };
