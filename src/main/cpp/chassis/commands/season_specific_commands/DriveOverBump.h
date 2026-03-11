@@ -82,14 +82,14 @@ private:
     units::angle::degree_t GetRotation(BUMP_ID bump, bool isInNeutralZone) const;
 
     static constexpr units::degree_t kBlueAllianceOutpostWallTowardHub{315.0};
-    static constexpr units::degree_t kNeutralZoneTowardHubBlueOutpost{225.0};
+    static constexpr units::degree_t kNeutralZoneTowardHubBlueOutpost{135.0};
     static constexpr units::degree_t kBlueAllianceDepotWallTowardHub{45.0};
-    static constexpr units::degree_t kNeutralZoneTowardHubBlueDepot{135.0};
+    static constexpr units::degree_t kNeutralZoneTowardHubBlueDepot{225.0};
 
     static constexpr units::degree_t kRedAllianceDepotWallTowardHub{225.0};
     static constexpr units::degree_t kNeutralZoneTowardHubRedDepot{315.0};
     static constexpr units::degree_t kRedAllianceOutpostWallTowardHub{135.0};
-    static constexpr units::degree_t kNeutralZoneTowardHubRedOutpost{45.0};
+    static constexpr units::degree_t kNeutralZoneTowardHubRedOutpost{225.0};
 
     static constexpr units::length::inch_t kDistanceThreshold = 12_in;
     static constexpr units::angle::degree_t kAngleTolerance = 15.0_deg;
