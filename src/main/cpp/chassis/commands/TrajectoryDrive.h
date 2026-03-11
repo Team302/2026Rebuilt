@@ -56,7 +56,7 @@ public:
     bool IsFinished() override;
     void End(bool interrupted) override;
 
-    void InitializeForTeleop(bool generateRedTrajectory, TrajectoryMatchStrategy matchStrategy = TrajectoryMatchStrategy::MATCH_XY, units::length::meter_t distanceTolerance = 0.5_m);
+    void InitializeForTeleop(bool generateRedTrajectory, TrajectoryMatchStrategy matchStrategy = TrajectoryMatchStrategy::MATCH_XY, units::length::meter_t distanceTolerance = 0.5_m, double maxPercentToJoinPath = 0.9);
 
     void SetPath(const std::string &pathName);
 
@@ -122,8 +122,9 @@ private:
     /// @param currentPose The robot's current pose
     /// @param matchStrategy How to match positions (X, Y, or XY)
     /// @param tolerance The tolerance for considering a match
+    /// @param maxPercentToJoinPath The maximum percentage of the trajectory to consider for joining
     /// @return The index of the closest trajectory sample
-    size_t FindClosestTrajectoryPoint(const frc::Pose2d &currentPose, TrajectoryMatchStrategy matchStrategy, units::length::meter_t tolerance) const;
+    size_t FindClosestTrajectoryPoint(const frc::Pose2d &currentPose, TrajectoryMatchStrategy matchStrategy, units::length::meter_t tolerance, double maxPercentToJoinPath) const;
 
     /// @brief Calculate distance between two poses based on match strategy
     /// @param pose1 First pose
