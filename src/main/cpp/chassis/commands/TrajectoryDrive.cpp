@@ -15,6 +15,7 @@
 
 #include <string>
 #include <cmath>
+#include <algorithm>
 
 // FRC Includes
 #include "auton/drivePrimitives/AutonUtils.h"
@@ -89,7 +90,7 @@ void TrajectoryDrive::Initialize()
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, false);
 }
 
-void TrajectoryDrive::InitializeForTeleop(bool generateRedTrajectory, TrajectoryMatchStrategy matchStrategy, units::length::meter_t distanceTolerance)
+void TrajectoryDrive::InitializeForTeleop(bool generateRedTrajectory, TrajectoryMatchStrategy matchStrategy, units::length::meter_t distanceTolerance, double maxPercentToJoinPath)
 {
     m_trajectory = AutonUtils::GetTrajectoryFromPathFile(m_pathName, generateRedTrajectory);
     if (m_trajectory.has_value())
@@ -105,7 +106,7 @@ void TrajectoryDrive::InitializeForTeleop(bool generateRedTrajectory, Trajectory
         if (m_chassis != nullptr && !m_trajectoryStates.empty())
         {
             auto currentPose = m_chassis->GetPose();
-            size_t closestIndex = FindClosestTrajectoryPoint(currentPose, matchStrategy, distanceTolerance);
+            size_t closestIndex = FindClosestTrajectoryPoint(currentPose, matchStrategy, distanceTolerance, maxPercentToJoinPath);
 
             // Calculate distance to the closest point
             const auto &closestSample = m_trajectoryStates[closestIndex];
@@ -325,7 +326,7 @@ void TrajectoryDrive::End(bool interrupted)
 ///                            then picks the one with closest X at that Y position
 ///          For MATCH_XY: Finds the point with minimum Euclidean distance
 //------------------------------------------------------------------
-size_t TrajectoryDrive::FindClosestTrajectoryPoint(const frc::Pose2d &currentPose, TrajectoryMatchStrategy matchStrategy, units::length::meter_t tolerance) const
+size_t TrajectoryDrive::FindClosestTrajectoryPoint(const frc::Pose2d &currentPose, TrajectoryMatchStrategy matchStrategy, units::length::meter_t tolerance, double maxPercentToJoinPath) const
 {
     if (m_trajectoryStates.empty())
     {
@@ -333,74 +334,73 @@ size_t TrajectoryDrive::FindClosestTrajectoryPoint(const frc::Pose2d &currentPos
     }
 
     size_t closestIndex = 0;
-    units::length::meter_t minDistance = std::numeric_limits<double>::max() * 1_m;
+
+    // Search only the first 90% of the trajectory to avoid selecting the end point
+    auto searchEndIt = std::next(m_trajectoryStates.begin(),
+                                 static_cast<size_t>(m_trajectoryStates.size() * maxPercentToJoinPath));
 
     if (matchStrategy == TrajectoryMatchStrategy::MATCH_Y_ONLY)
     {
-        // For Y-only matching: find the point closest in X, then check Y distance at that X
-        // This ensures we join the trajectory at our current X position (or closest to it)
-        units::length::meter_t minXDistance = std::numeric_limits<double>::max() * 1_m;
-        units::length::meter_t bestYDistance = std::numeric_limits<double>::max() * 1_m;
+        // For Y-only matching: find the point closest in X, then with minimum Y distance at that X
+        // Uses a two-pass approach: first filter by X proximity, then find minimum Y distance
+        auto it = std::min_element(m_trajectoryStates.begin(), searchEndIt,
+                                   [&currentPose](const choreo::SwerveSample &a, const choreo::SwerveSample &b)
+                                   {
+                                       // Calculate X and Y distances for both samples
+                                       auto xDistA = units::math::abs(a.x - currentPose.X());
+                                       auto xDistB = units::math::abs(b.x - currentPose.X());
+                                       auto yDistA = units::math::abs(a.y - currentPose.Y());
+                                       auto yDistB = units::math::abs(b.y - currentPose.Y());
 
-        for (size_t i = 0; i < m_trajectoryStates.size(); ++i)
-        {
-            const auto &sample = m_trajectoryStates[i];
-            units::length::meter_t xDistance = units::math::abs(sample.x - currentPose.X());
-            units::length::meter_t yDistance = units::math::abs(sample.y - currentPose.Y());
+                                       // If X distances are similar (within 0.1m), prefer the one with smaller Y distance
+                                       // Otherwise, prefer the one with smaller X distance
+                                       constexpr auto kXWindow = 0.1_m;
+                                       if (units::math::abs(xDistA - xDistB) < kXWindow)
+                                       {
+                                           return yDistA < yDistB;
+                                       }
+                                       return xDistA < xDistB;
+                                   });
 
-            // Find points that are close in X (within a reasonable window)
-            // Then among those, pick the one closest in Y
-            if (xDistance < minXDistance + 0.3_m) // 0.3m window for X matching
-            {
-                if (xDistance < minXDistance || (xDistance <= minXDistance + 0.1_m && yDistance < bestYDistance))
-                {
-                    minXDistance = xDistance;
-                    bestYDistance = yDistance;
-                    closestIndex = i;
-                }
-            }
-        }
+        closestIndex = std::distance(m_trajectoryStates.begin(), it);
     }
     else if (matchStrategy == TrajectoryMatchStrategy::MATCH_X_ONLY)
     {
-        // For X-only matching: find the point closest in Y, then check X distance at that Y
-        units::length::meter_t minYDistance = std::numeric_limits<double>::max() * 1_m;
-        units::length::meter_t bestXDistance = std::numeric_limits<double>::max() * 1_m;
+        // For X-only matching: find the point closest in Y, then with minimum X distance at that Y
+        auto it = std::min_element(m_trajectoryStates.begin(), searchEndIt,
+                                   [&currentPose](const choreo::SwerveSample &a, const choreo::SwerveSample &b)
+                                   {
+                                       auto xDistA = units::math::abs(a.x - currentPose.X());
+                                       auto xDistB = units::math::abs(b.x - currentPose.X());
+                                       auto yDistA = units::math::abs(a.y - currentPose.Y());
+                                       auto yDistB = units::math::abs(b.y - currentPose.Y());
 
-        for (size_t i = 0; i < m_trajectoryStates.size(); ++i)
-        {
-            const auto &sample = m_trajectoryStates[i];
-            units::length::meter_t xDistance = units::math::abs(sample.x - currentPose.X());
-            units::length::meter_t yDistance = units::math::abs(sample.y - currentPose.Y());
+                                       // If Y distances are similar (within 0.1m), prefer the one with smaller X distance
+                                       // Otherwise, prefer the one with smaller Y distance
+                                       constexpr auto kYWindow = 0.1_m;
+                                       if (units::math::abs(yDistA - yDistB) < kYWindow)
+                                       {
+                                           return xDistA < xDistB;
+                                       }
+                                       return yDistA < yDistB;
+                                   });
 
-            // Find points that are close in Y (within a reasonable window)
-            // Then among those, pick the one closest in X
-            if (yDistance < minYDistance + 0.3_m) // 0.3m window for Y matching
-            {
-                if (yDistance < minYDistance || (yDistance <= minYDistance + 0.1_m && xDistance < bestXDistance))
-                {
-                    minYDistance = yDistance;
-                    bestXDistance = xDistance;
-                    closestIndex = i;
-                }
-            }
-        }
+        closestIndex = std::distance(m_trajectoryStates.begin(), it);
     }
     else // MATCH_XY
     {
-        for (size_t i = 0; i < m_trajectoryStates.size(); ++i)
-        {
-            const auto &sample = m_trajectoryStates[i];
-            frc::Pose2d trajectoryPose{sample.x, sample.y, sample.heading};
+        // For XY matching: find the point with minimum Euclidean distance
+        auto it = std::min_element(m_trajectoryStates.begin(), searchEndIt,
+                                   [&currentPose](const choreo::SwerveSample &a, const choreo::SwerveSample &b)
+                                   {
+                                       frc::Pose2d poseA{a.x, a.y, a.heading};
+                                       frc::Pose2d poseB{b.x, b.y, b.heading};
+                                       auto distA = PoseUtils::GetDeltaBetweenPoses(currentPose, poseA);
+                                       auto distB = PoseUtils::GetDeltaBetweenPoses(currentPose, poseB);
+                                       return distA < distB;
+                                   });
 
-            units::length::meter_t distance = CalculateDistance(currentPose, trajectoryPose, matchStrategy);
-
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                closestIndex = i;
-            }
-        }
+        closestIndex = std::distance(m_trajectoryStates.begin(), it);
     }
 
     return closestIndex;

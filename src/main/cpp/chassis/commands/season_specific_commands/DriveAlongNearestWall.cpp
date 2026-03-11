@@ -77,6 +77,7 @@ void DriveAlongNearestWall::Initialize()
     SetPath(pathName);
 
     InitializeForTeleop(nearestBump == BUMP_ID::RED_DEPOT_BUMP || nearestBump == BUMP_ID::RED_OUTPOST_BUMP,
-                        TrajectoryMatchStrategy::MATCH_Y_ONLY,
-                        m_yDistanceThreshold);
+                        TrajectoryMatchStrategy::MATCH_XY,
+                        m_yDistanceThreshold,
+                        m_maxPercentToJoinPath);
 }
