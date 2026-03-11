@@ -8,27 +8,27 @@ intakeState = "STATE_OFF">
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLDrop3_Init"
+choreoname = "BlueMLKeep3_Init"
 time = "3.0">
 <zone filename = "BlueLeftBumpZoneRect.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLDrop3_A"
+choreoname = "BlueMLKeep3_A"
 time = "3.0"
 intakeState = "STATE_INTAKE">
 <!-- <zone filename = "BlueLeftBumpZoneRect.xml"/> -->
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLDrop3_B"
+choreoname = "BlueMLKeep3_B"
 time = "3.0"
 intakeState = "STATE_INTAKE">
 </primitive>
 
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLDrop3_C"
+choreoname = "BlueMLKeep3_C"
 time = "5.0">
 <zone filename = "BlueLeftBumpZoneRect.xml"/>
 <zone filename = "BlueLaunchZone.xml"/>
@@ -40,7 +40,7 @@ time = "5.0">
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLDrop3_C2"
+choreoname = "BlueMLKeep3_C2"
 time = "5.0"
 intakeState = "STATE_INTAKE"
 launcherState = "STATE_IDLE">
@@ -48,7 +48,7 @@ launcherState = "STATE_IDLE">
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLDrop3_D"
+choreoname = "BlueMLKeep3_D"
 time = "5.0"
 intakeState = "STATE_INTAKE"
 launcherState = "STATE_IDLE">
@@ -57,14 +57,14 @@ launcherState = "STATE_IDLE">
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLDrop3_E"
+choreoname = "BlueMLKeep3_E"
 time = "3.0"
 intakeState = "STATE_INTAKE"
 >
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLDrop3_F"
+choreoname = "BlueMLKeep3_F"
 time = "5.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "BlueLeftBumpZoneRect.xml"/>

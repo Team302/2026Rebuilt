@@ -192,7 +192,7 @@ void AutonSelector::PutChoicesOnDashboard()
 
 	// Preload Option
 	m_desiredPreload.AddOption("Launch", "Launch");
-	m_desiredPreload.AddOption("Drop", "Drop");
+	m_desiredPreload.AddOption("Keep", "Keep");
 	m_desiredPreload.SetDefaultOption("Launch", "Launch");
 	frc::SmartDashboard::PutData("Desired Preload", &m_desiredPreload);
 
