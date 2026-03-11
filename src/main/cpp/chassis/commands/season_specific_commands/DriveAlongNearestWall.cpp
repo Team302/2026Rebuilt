@@ -76,5 +76,7 @@ void DriveAlongNearestWall::Initialize()
     // Set the path for the base TrajectoryDrive class
     SetPath(pathName);
 
-    InitializeForTeleop(nearestBump == BUMP_ID::RED_DEPOT_BUMP || nearestBump == BUMP_ID::RED_OUTPOST_BUMP);
+    InitializeForTeleop(nearestBump == BUMP_ID::RED_DEPOT_BUMP || nearestBump == BUMP_ID::RED_OUTPOST_BUMP,
+                        TrajectoryMatchStrategy::MATCH_Y_ONLY,
+                        m_yDistanceThreshold);
 }
