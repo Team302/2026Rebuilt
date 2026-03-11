@@ -25,4 +25,5 @@ class AutonUtils
 {
 public:
     static std::optional<choreo::Trajectory<choreo::SwerveSample>> GetTrajectoryFromPathFile(std::string pathName);
+    static std::optional<choreo::Trajectory<choreo::SwerveSample>> GetTrajectoryFromPathFile(std::string pathName, bool generateRedTrajectory);
 };

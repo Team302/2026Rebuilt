@@ -29,3 +29,13 @@ std::optional<choreo::Trajectory<choreo::SwerveSample>> AutonUtils::GetTrajector
     }
     return trajectory;
 }
+
+std::optional<choreo::Trajectory<choreo::SwerveSample>> AutonUtils::GetTrajectoryFromPathFile(string pathName, bool generateRedTrajectory)
+{
+    auto trajectory = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>(pathName);
+    if (trajectory.has_value() && generateRedTrajectory)
+    {
+        return trajectory.value().Flipped();
+    }
+    return trajectory;
+}

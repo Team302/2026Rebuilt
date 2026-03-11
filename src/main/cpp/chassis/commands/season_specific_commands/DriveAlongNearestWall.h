@@ -1,0 +1,81 @@
+//====================================================================================================================================================
+// Copyright 2026 Lake Orion Robotics FIRST Team 302
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+// OR OTHER DEALINGS IN THE SOFTWARE.
+//====================================================================================================================================================
+#pragma once
+
+#include "chassis/commands/TrajectoryDrive.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "fielddata/BumpHelper.h"
+
+//====================================================================================================================================================
+/// @class DriveAlongNearestWall
+/// @brief Command to autonomously drive along the nearest alliance wall using a pre-defined trajectory
+///
+/// This command extends TrajectoryDrive to provide specialized functionality for navigating along the alliance
+/// wall. The command intelligently determines which wall (Depot or Outpost) is nearest to the robot's current
+/// position and selects the appropriate trajectory to follow.
+///
+/// **Path Selection:**
+/// The command uses BumpHelper to determine proximity and selects between two trajectories:
+/// - DepotAllianceSweep: Used when the depot wall is nearest
+/// - OutpostAllianceSweep: Used when the outpost wall is nearest
+///
+/// **Alliance-Aware:**
+/// The selected trajectory is automatically flipped based on the current alliance color (Red/Blue),
+/// ensuring the robot follows the correct path regardless of which alliance the robot is on.
+///
+/// **Usage:**
+/// ```cpp
+/// auto driveAlongWall = std::make_unique<DriveAlongNearestWall>(chassis);
+/// // Command will automatically select and follow the appropriate trajectory
+/// ```
+///
+/// @see TrajectoryDrive Base class providing trajectory following functionality
+/// @see BumpHelper Utility for identifying nearest bump/wall
+//====================================================================================================================================================
+class DriveAlongNearestWall : public TrajectoryDrive
+{
+public:
+    //------------------------------------------------------------------
+    /// @brief      Constructor for DriveAlongNearestWall command
+    /// @param[in]  chassis - Pointer to the swerve drive subsystem
+    /// @details    Initializes the base TrajectoryDrive command with the chassis.
+    ///             The actual path will be determined in Initialize() based on
+    ///             robot position and alliance color.
+    //------------------------------------------------------------------
+    explicit DriveAlongNearestWall(subsystems::CommandSwerveDrivetrain *chassis);
+
+    //------------------------------------------------------------------
+    /// @brief      Initialize the command and select appropriate trajectory
+    /// @details    Overrides the base Initialize() to:
+    ///             1. Determine the nearest wall (Depot or Outpost) using BumpHelper
+    ///             2. Select the corresponding trajectory path name
+    ///             3. Call the base class Initialize() to load and prepare the trajectory
+    ///
+    ///             The trajectory will be automatically flipped for red alliance.
+    //------------------------------------------------------------------
+    void Initialize() override;
+
+private:
+    //------------------------------------------------------------------
+    /// @brief      Pointer to BumpHelper singleton for wall proximity determination
+    //------------------------------------------------------------------
+    BumpHelper *m_bumpHelper;
+
+    //------------------------------------------------------------------
+    // Path name constants
+    //------------------------------------------------------------------
+    static constexpr const char *kDepotAllianceSweepPath = "DepotAllianceSweep";
+    static constexpr const char *kOutpostAllianceSweepPath = "OutpostAllianceSweep";
+};

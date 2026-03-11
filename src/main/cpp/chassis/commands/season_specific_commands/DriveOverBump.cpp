@@ -33,7 +33,6 @@
 DriveOverBump::DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis) : DriveToPose(chassis)
 {
     // Set distance threshold for pose completion detection (1 foot tolerance)
-    // SetDistanceThreshold(kDistanceThreshold);
     SetAngleTolerance(kAngleTolerance);
     SetYTransitionToEndPointTolerance(kYTransitionToEndPointTolerance); // Allow extra tolerance for Y due to bump crossing dynamics
 }
