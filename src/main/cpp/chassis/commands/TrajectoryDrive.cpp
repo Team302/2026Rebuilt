@@ -89,6 +89,61 @@ void TrajectoryDrive::Initialize()
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, false);
 }
 
+//------------------------------------------------------------------
+/// @brief Choose between forward and reverse trajectories based on closest entry point
+/// @details Finds the closest point on both trajectories and returns the one with
+///          the closer entry point. Caches the closest point information to avoid
+///          redundant calculations when InitializeWithTrajectory is called.
+//------------------------------------------------------------------
+std::pair<std::optional<choreo::Trajectory<choreo::SwerveSample>>, bool> TrajectoryDrive::SelectBestTrajectory(
+    const std::optional<choreo::Trajectory<choreo::SwerveSample>> &forwardTraj,
+    const std::optional<choreo::Trajectory<choreo::SwerveSample>> &reverseTraj,
+    const frc::Pose2d &currentPose,
+    TrajectoryMatchStrategy matchStrategy,
+    double maxPercentToJoinForForwardPath,
+    double maxPercentToJoinForReversePath)
+{
+    // If either trajectory is invalid, use the one that's valid
+    if (!forwardTraj.has_value())
+    {
+        // Cache the reverse trajectory's closest point
+        if (reverseTraj.has_value())
+        {
+            auto [sample, distance] = FindClosestPointOnTrajectory(reverseTraj.value(), currentPose, matchStrategy, maxPercentToJoinForReversePath);
+            m_cachedClosestSample = sample;
+            m_cachedClosestDistance = distance;
+            m_hasCachedClosestPoint = true;
+        }
+        return {reverseTraj, false}; // Use reverse if forward doesn't exist
+    }
+    if (!reverseTraj.has_value())
+    {
+        // Cache the forward trajectory's closest point
+        auto [sample, distance] = FindClosestPointOnTrajectory(forwardTraj.value(), currentPose, matchStrategy, maxPercentToJoinForForwardPath);
+        m_cachedClosestSample = sample;
+        m_cachedClosestDistance = distance;
+        m_hasCachedClosestPoint = true;
+        return {forwardTraj, true}; // Use forward if reverse doesn't exist
+    }
+
+    // Find closest points on both trajectories
+    auto [forwardSample, distToForward] = FindClosestPointOnTrajectory(
+        forwardTraj.value(), currentPose, matchStrategy, maxPercentToJoinForForwardPath);
+
+    auto [reverseSample, distToReverse] = FindClosestPointOnTrajectory(
+        reverseTraj.value(), currentPose, matchStrategy, maxPercentToJoinForReversePath);
+
+    // Use the trajectory with the closer entry point
+    bool useForward = distToForward < distToReverse;
+
+    // Cache the selected trajectory's closest point
+    m_cachedClosestSample = useForward ? forwardSample : reverseSample;
+    m_cachedClosestDistance = useForward ? distToForward : distToReverse;
+    m_hasCachedClosestPoint = true;
+
+    return {useForward ? forwardTraj : reverseTraj, useForward};
+}
+
 void TrajectoryDrive::InitializeWithTrajectory(std::optional<choreo::Trajectory<choreo::SwerveSample>> selectedTrajectory, bool generateRedTrajectory, TrajectoryMatchStrategy matchStrategy, units::length::meter_t distanceTolerance, double maxPercentToJoinPath)
 {
     m_trajectory = selectedTrajectory;
@@ -105,12 +160,38 @@ void TrajectoryDrive::InitializeWithTrajectory(std::optional<choreo::Trajectory<
         if (m_chassis != nullptr && !m_trajectoryStates.empty())
         {
             auto currentPose = m_chassis->GetPose();
-            size_t closestIndex = FindClosestTrajectoryPoint(currentPose, matchStrategy, distanceTolerance, maxPercentToJoinPath);
 
-            // Calculate distance to the closest point
-            const auto &closestSample = m_trajectoryStates[closestIndex];
-            frc::Pose2d closestPose{closestSample.x, closestSample.y, closestSample.heading};
-            units::length::meter_t distanceToPath = CalculateDistance(currentPose, closestPose, matchStrategy);
+            size_t closestIndex;
+            frc::Pose2d closestPose;
+            units::length::meter_t distanceToPath;
+
+            // Use cached closest point if available (from SelectBestTrajectory)
+            if (m_hasCachedClosestPoint)
+            {
+                // Find the index of the cached sample in our trajectory states
+                closestIndex = 0;
+                for (size_t i = 0; i < m_trajectoryStates.size(); ++i)
+                {
+                    if (m_trajectoryStates[i].timestamp == m_cachedClosestSample.timestamp)
+                    {
+                        closestIndex = i;
+                        break;
+                    }
+                }
+                closestPose = frc::Pose2d{m_cachedClosestSample.x, m_cachedClosestSample.y, m_cachedClosestSample.heading};
+                distanceToPath = m_cachedClosestDistance;
+
+                // Clear the cache
+                m_hasCachedClosestPoint = false;
+            }
+            else
+            {
+                // Calculate the closest point if not cached
+                closestIndex = FindClosestTrajectoryPoint(currentPose, matchStrategy, distanceTolerance, maxPercentToJoinPath);
+                const auto &closestSample = m_trajectoryStates[closestIndex];
+                closestPose = frc::Pose2d{closestSample.x, closestSample.y, closestSample.heading};
+                distanceToPath = CalculateDistance(currentPose, closestPose, matchStrategy);
+            }
 
             // If we're not within tolerance, we need to approach the path first
             if (distanceToPath > distanceTolerance)
@@ -128,7 +209,7 @@ void TrajectoryDrive::InitializeWithTrajectory(std::optional<choreo::Trajectory<
                 // We're already close enough, start following trajectory from this point
                 m_useSmartJoin = false;
                 m_isApproachingPath = false;
-                m_startTimeOffset = closestSample.timestamp;
+                m_startTimeOffset = m_trajectoryStates[closestIndex].timestamp;
             }
         }
         else
@@ -327,29 +408,68 @@ void TrajectoryDrive::End(bool interrupted)
 //------------------------------------------------------------------
 size_t TrajectoryDrive::FindClosestTrajectoryPoint(const frc::Pose2d &currentPose, TrajectoryMatchStrategy matchStrategy, units::length::meter_t tolerance, double maxPercentToJoinPath) const
 {
-    if (m_trajectoryStates.empty())
+    if (!m_trajectory.has_value() || m_trajectoryStates.empty())
     {
         return 0;
     }
 
-    size_t closestIndex = 0;
+    // Use the helper method to find the closest point
+    auto [closestSample, distance] = FindClosestPointOnTrajectory(
+        m_trajectory.value(), currentPose, matchStrategy, maxPercentToJoinPath);
 
-    // Search only the first 90% of the trajectory to avoid selecting the end point
-    auto searchEndIt = std::next(m_trajectoryStates.begin(),
-                                 static_cast<size_t>(m_trajectoryStates.size() * maxPercentToJoinPath));
+    // Find the index of this sample in our trajectory states
+    // We need to search for the matching sample
+    size_t closestIndex = 0;
+    for (size_t i = 0; i < m_trajectoryStates.size(); ++i)
+    {
+        const auto &sample = m_trajectoryStates[i];
+        // Compare timestamps to find the exact sample
+        if (sample.timestamp == closestSample.timestamp)
+        {
+            closestIndex = i;
+            break;
+        }
+    }
+
+    return closestIndex;
+}
+
+//------------------------------------------------------------------
+/// @brief Find the closest point on a given trajectory to a specific pose
+/// @details Uses std::min_element with custom comparators based on match strategy.
+///          Searches only the first maxPercentToJoinPath of the trajectory to avoid
+///          selecting end points when the robot is already near the path.
+//------------------------------------------------------------------
+std::pair<choreo::SwerveSample, units::length::meter_t> TrajectoryDrive::FindClosestPointOnTrajectory(
+    const choreo::Trajectory<choreo::SwerveSample> &trajectory,
+    const frc::Pose2d &currentPose,
+    TrajectoryMatchStrategy matchStrategy,
+    double maxPercentToJoinPath) const
+{
+    const auto &samples = trajectory.samples;
+
+    if (samples.empty())
+    {
+        // Return a default sample at origin with max distance
+        return {choreo::SwerveSample{}, units::meter_t{std::numeric_limits<double>::max()}};
+    }
+
+    // Limit search to first maxPercentToJoinPath of trajectory
+    auto searchEndIt = std::next(samples.begin(),
+                                 static_cast<size_t>(samples.size() * maxPercentToJoinPath));
+
+    choreo::SwerveSample closestSample;
 
     if (matchStrategy == TrajectoryMatchStrategy::MATCH_Y_ONLY)
     {
         // For Y-only matching: find the point closest in X, then with minimum Y distance at that X
-        // Uses a two-pass approach: first filter by X proximity, then find minimum Y distance
-        auto it = std::min_element(m_trajectoryStates.begin(), searchEndIt,
+        auto it = std::min_element(samples.begin(), searchEndIt,
                                    [&currentPose](const choreo::SwerveSample &a, const choreo::SwerveSample &b)
                                    {
-                                       // Calculate X and Y distances for both samples
-                                       auto xDistA = units::math::abs(a.x - currentPose.X());
-                                       auto xDistB = units::math::abs(b.x - currentPose.X());
                                        auto yDistA = units::math::abs(a.y - currentPose.Y());
                                        auto yDistB = units::math::abs(b.y - currentPose.Y());
+                                       auto xDistA = units::math::abs(a.x - currentPose.X());
+                                       auto xDistB = units::math::abs(b.x - currentPose.X());
 
                                        // If X distances are similar (within 0.1m), prefer the one with smaller Y distance
                                        // Otherwise, prefer the one with smaller X distance
@@ -361,12 +481,12 @@ size_t TrajectoryDrive::FindClosestTrajectoryPoint(const frc::Pose2d &currentPos
                                        return xDistA < xDistB;
                                    });
 
-        closestIndex = std::distance(m_trajectoryStates.begin(), it);
+        closestSample = *it;
     }
     else if (matchStrategy == TrajectoryMatchStrategy::MATCH_X_ONLY)
     {
         // For X-only matching: find the point closest in Y, then with minimum X distance at that Y
-        auto it = std::min_element(m_trajectoryStates.begin(), searchEndIt,
+        auto it = std::min_element(samples.begin(), searchEndIt,
                                    [&currentPose](const choreo::SwerveSample &a, const choreo::SwerveSample &b)
                                    {
                                        auto xDistA = units::math::abs(a.x - currentPose.X());
@@ -384,12 +504,12 @@ size_t TrajectoryDrive::FindClosestTrajectoryPoint(const frc::Pose2d &currentPos
                                        return yDistA < yDistB;
                                    });
 
-        closestIndex = std::distance(m_trajectoryStates.begin(), it);
+        closestSample = *it;
     }
     else // MATCH_XY
     {
         // For XY matching: find the point with minimum Euclidean distance
-        auto it = std::min_element(m_trajectoryStates.begin(), searchEndIt,
+        auto it = std::min_element(samples.begin(), searchEndIt,
                                    [&currentPose](const choreo::SwerveSample &a, const choreo::SwerveSample &b)
                                    {
                                        frc::Pose2d poseA{a.x, a.y, a.heading};
@@ -399,11 +519,17 @@ size_t TrajectoryDrive::FindClosestTrajectoryPoint(const frc::Pose2d &currentPos
                                        return distA < distB;
                                    });
 
-        closestIndex = std::distance(m_trajectoryStates.begin(), it);
+        closestSample = *it;
     }
 
-    return closestIndex;
-} //------------------------------------------------------------------
+    // Calculate the distance to the closest sample
+    frc::Pose2d closestPose{closestSample.x, closestSample.y, closestSample.heading};
+    units::length::meter_t distance = CalculateDistance(currentPose, closestPose, matchStrategy);
+
+    return {closestSample, distance};
+}
+
+//------------------------------------------------------------------
 /// @brief Calculate distance between two poses based on match strategy
 /// @details Supports three different matching strategies:
 ///          - MATCH_Y_ONLY: Only considers Y coordinate difference (for horizontal paths)

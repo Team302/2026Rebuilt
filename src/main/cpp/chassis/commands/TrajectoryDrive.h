@@ -64,6 +64,27 @@ public:
 
     units::time::second_t GetTotalTrajectoryTime() const { return m_totalTrajectoryTime; }
 
+protected:
+    subsystems::CommandSwerveDrivetrain *GetChassis() const { return m_chassis; }
+
+    /// @brief Choose between forward and reverse trajectories based on closest entry point
+    /// @param forwardTraj The forward trajectory option
+    /// @param reverseTraj The reverse trajectory option
+    /// @param currentPose The robot's current pose
+    /// @param matchStrategy How to match positions (X, Y, or XY)
+    /// @param maxPercentToJoinPath Maximum percentage of trajectory to search for entry point
+    /// @return The selected trajectory (forward or reverse) and whether it's the forward one
+    /// @details This method finds the closest point on both trajectories and returns the one
+    ///          with the closer entry point. It caches the closest point information to avoid
+    ///          redundant calculations in InitializeWithTrajectory.
+    std::pair<std::optional<choreo::Trajectory<choreo::SwerveSample>>, bool> SelectBestTrajectory(
+        const std::optional<choreo::Trajectory<choreo::SwerveSample>> &forwardTraj,
+        const std::optional<choreo::Trajectory<choreo::SwerveSample>> &reverseTraj,
+        const frc::Pose2d &currentPose,
+        TrajectoryMatchStrategy matchStrategy,
+        double maxPercentToJoinForForwardPath,
+        double maxPercentToJoinForReversePath);
+
 private:
     subsystems::CommandSwerveDrivetrain *m_chassis;
     std::string m_pathName;
@@ -92,6 +113,11 @@ private:
     units::length::meter_t m_joinTolerance{0.5_m}; // Distance tolerance for joining the path
     frc::Pose2d m_targetJoinPose;                  // The pose on the trajectory we're driving to
     size_t m_targetJoinIndex{0};                   // Index of the trajectory point we're joining at
+
+    // Cached closest point information from SelectBestTrajectory
+    bool m_hasCachedClosestPoint{false};                   // Whether we have cached closest point data
+    choreo::SwerveSample m_cachedClosestSample;            // The cached closest sample
+    units::length::meter_t m_cachedClosestDistance{0.0_m}; // The cached distance to closest point
 
     static constexpr double kPDrive{3.5};
     static constexpr double kIDrive{0.0};
@@ -125,6 +151,18 @@ private:
     /// @param maxPercentToJoinPath The maximum percentage of the trajectory to consider for joining
     /// @return The index of the closest trajectory sample
     size_t FindClosestTrajectoryPoint(const frc::Pose2d &currentPose, TrajectoryMatchStrategy matchStrategy, units::length::meter_t tolerance, double maxPercentToJoinPath) const;
+
+    /// @brief Find the closest point on a given trajectory to a specific pose
+    /// @param trajectory The trajectory to search
+    /// @param currentPose The pose to find the closest point to
+    /// @param matchStrategy How to match positions (X, Y, or XY)
+    /// @param maxPercentToJoinPath The maximum percentage of the trajectory to consider (0.0-1.0)
+    /// @return A pair containing the closest sample and the distance to it
+    std::pair<choreo::SwerveSample, units::length::meter_t> FindClosestPointOnTrajectory(
+        const choreo::Trajectory<choreo::SwerveSample> &trajectory,
+        const frc::Pose2d &currentPose,
+        TrajectoryMatchStrategy matchStrategy,
+        double maxPercentToJoinPath) const;
 
     /// @brief Calculate distance between two poses based on match strategy
     /// @param pose1 First pose
