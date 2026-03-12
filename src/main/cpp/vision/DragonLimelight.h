@@ -42,7 +42,7 @@
 
 // Third Party Includes
 
-// DragonLimelight needs to be a child of DragonCamera
+// DragonLimelight derives from DragonDataLogger for vision data logging and Limelight control
 class DragonLimelight : public DragonDataLogger
 {
 public:
