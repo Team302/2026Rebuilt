@@ -520,7 +520,7 @@ void DragonLimelight::SetRobotPoseWithMegaTag1()
 
 void DragonLimelight::DataLog(uint64_t timestamp)
 {
-    LogIntData(timestamp, "limelight" + m_networkTableName + "/pipeline", static_cast<int>(m_pipeline));
-    LogPose3dData(timestamp, "limelight" + m_networkTableName + "/cameraPose", m_cameraPose);
-    LogIntData(timestamp, "limelight" + m_networkTableName + "/identifier", static_cast<int>(LimelightHelpers::getRawFiducials(m_networkTableName).size()));
+    LogIntData(timestamp, m_loggingLimleightPath + m_networkTableName + "/pipeline", static_cast<int>(m_pipeline));
+    LogPose3dData(timestamp, m_loggingLimleightPath + m_networkTableName + "/cameraPose", m_cameraPose);
+    LogIntData(timestamp, m_loggingLimleightPath + m_networkTableName + "/identifier", static_cast<int>(LimelightHelpers::getRawFiducials(m_networkTableName).size()));
 }
