@@ -62,7 +62,7 @@ units::angle::degree_t SweepBehindBump::GetRotation(BUMP_ID bump) const
     else
     {
         // For Blue Outpost and Red Depot, use 90° heading
-        return kRedAllianceZDepotBump;
+        return kRedDepotBlueOutpost;
     }
 }
 // TODO: add if statement saying, if blue depot or red out post set 270  and if else set 90 if
@@ -122,13 +122,15 @@ struct DriveToPoses SweepBehindBump::GetDriveToPoses()
         {
             // First go to neutral side of bump, then to alliance side
             poses.midPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
-            poses.endPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
+
+            poses.endPose =
         }
         else // Drive from alliance zone over bump to neutral zone
         {
             // First go to alliance side of bump, then to neutral side
             poses.midPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
-            poses.endPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
+
+            poses.endPose =
         }
     }
     return poses;

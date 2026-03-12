@@ -84,7 +84,7 @@ private:
     units::angle::degree_t GetRotation(BUMP_ID bump) const;
 
     static constexpr units::degree_t kBlueDepotRedOutpost{270.0};
-    static constexpr units::degree_t kRedAllianceZDepotBump{90.0};
+    static constexpr units::degree_t kRedDepotBlueOutpost{90.0};
 
     // I hated the naming conventions for how these wer in the drive over bump command so i changed them a little but we can always change them back if we find that we need to
 
