@@ -16,6 +16,7 @@
 #include "chassis/commands/season_specific_commands/DriveAlongNearestWall.h"
 #include "auton/drivePrimitives/AutonUtils.h"
 #include "fielddata/BumpHelper.h"
+#include "utils/PoseUtils.h"
 #include "utils/logging/debug/Logger.h"
 
 //------------------------------------------------------------------
@@ -43,49 +44,75 @@ DriveAlongNearestWall::DriveAlongNearestWall(subsystems::CommandSwerveDrivetrain
 /// @details    Determines which wall is nearest to the robot and selects
 ///             the corresponding trajectory path. The logic works as follows:
 ///             1. Calls BumpHelper::CalcNearestBump() to identify the closest bump (wall)
-///             2. Based on the identified bump, selects the appropriate trajectory:
-///                - If nearest bump is BLUE_DEPOT_BUMP, selects m_blueDepotAllianceSweepTrajectory
-///                - If nearest bump is RED_DEPOT_BUMP, selects m_redDepotAllianceSweepTrajectory
-///                - If nearest bump is BLUE_OUTPOST_BUMP, selects m_blueOutpostAllianceSweepTrajectory
-///                - If nearest bump is RED_OUTPOST_BUMP, selects m_redOutpostAllianceSweepTrajectory
-///             3. Calls InitializeWithTrajectory() with the selected trajectory, Y-only matching strategy,
+///             2. Uses SelectBestTrajectory to choose between forward and reverse paths
+///                (this also caches the closest point for efficient initialization)
+///             3. Calls InitializeWithTrajectory() with the selected trajectory
 //------------------------------------------------------------------
 void DriveAlongNearestWall::Initialize()
 {
     // Determine which bump/wall is nearest to the robot's current position
     auto nearestBump = m_bumpHelper->CalcNearestBump();
+    auto currentPose = GetChassis()->GetPose();
+
+    std::optional<choreo::Trajectory<choreo::SwerveSample>> selectedTrajectory;
+    bool isRedAlliance = false;
+    bool isForward = true;
 
     switch (nearestBump)
     {
     case BUMP_ID::BLUE_DEPOT_BUMP:
-        InitializeWithTrajectory(m_blueDepotAllianceSweepTrajectory,
-                                 false,
-                                 TrajectoryMatchStrategy::MATCH_XY,
-                                 m_yDistanceThreshold,
-                                 m_maxPercentToJoinPath);
+    {
+        auto [trajectory, isForward] = SelectBestTrajectory(m_blueDepotAllianceSweepTrajectory,
+                                                            m_blueDepotAllianceSweepTrajectoryReverse,
+                                                            currentPose,
+                                                            TrajectoryMatchStrategy::MATCH_XY,
+                                                            m_maxPercentToJoinForwardPath, m_maxPercentToJoinReversePath);
+        selectedTrajectory = trajectory;
+        isRedAlliance = false;
         break;
+    }
     case BUMP_ID::RED_DEPOT_BUMP:
-        InitializeWithTrajectory(m_redDepotAllianceSweepTrajectory,
-                                 true,
-                                 TrajectoryMatchStrategy::MATCH_XY,
-                                 m_yDistanceThreshold,
-                                 m_maxPercentToJoinPath);
+    {
+        auto [trajectory, isForward] = SelectBestTrajectory(m_redDepotAllianceSweepTrajectory,
+                                                            m_redDepotAllianceSweepTrajectoryReverse,
+                                                            currentPose,
+                                                            TrajectoryMatchStrategy::MATCH_XY,
+                                                            m_maxPercentToJoinForwardPath, m_maxPercentToJoinReversePath);
+        selectedTrajectory = trajectory;
+        isRedAlliance = true;
         break;
+    }
     case BUMP_ID::BLUE_OUTPOST_BUMP:
-        InitializeWithTrajectory(m_blueOutpostAllianceSweepTrajectory,
-                                 false,
-                                 TrajectoryMatchStrategy::MATCH_XY,
-                                 m_yDistanceThreshold,
-                                 m_maxPercentToJoinPath);
+    {
+        auto [trajectory, isForward] = SelectBestTrajectory(m_blueOutpostAllianceSweepTrajectory,
+                                                            m_blueOutpostAllianceSweepTrajectoryReverse,
+                                                            currentPose,
+                                                            TrajectoryMatchStrategy::MATCH_XY,
+                                                            m_maxPercentToJoinForwardPath, m_maxPercentToJoinReversePath);
+        selectedTrajectory = trajectory;
+        isRedAlliance = false;
         break;
+    }
     case BUMP_ID::RED_OUTPOST_BUMP:
-        InitializeWithTrajectory(m_redOutpostAllianceSweepTrajectory,
-                                 true,
-                                 TrajectoryMatchStrategy::MATCH_XY,
-                                 m_yDistanceThreshold,
-                                 m_maxPercentToJoinPath);
+    {
+        auto [trajectory, isForward] = SelectBestTrajectory(m_redOutpostAllianceSweepTrajectory,
+                                                            m_redOutpostAllianceSweepTrajectoryReverse,
+                                                            currentPose,
+                                                            TrajectoryMatchStrategy::MATCH_XY,
+                                                            m_maxPercentToJoinForwardPath, m_maxPercentToJoinReversePath);
+        selectedTrajectory = trajectory;
+        isRedAlliance = true;
         break;
+    }
     default:
         Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "DriveAlongNearestWall", "Unknown nearest bump detected", static_cast<int>(nearestBump));
+        return;
     }
+
+    // Initialize with the selected trajectory (uses cached closest point from SelectBestTrajectory)
+    InitializeWithTrajectory(selectedTrajectory,
+                             isRedAlliance,
+                             TrajectoryMatchStrategy::MATCH_XY,
+                             m_yDistanceThreshold,
+                             isForward ? m_maxPercentToJoinForwardPath : m_maxPercentToJoinReversePath);
 }

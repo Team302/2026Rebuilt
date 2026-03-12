@@ -105,5 +105,6 @@ private:
     /// @brief      Tolerance for Y-coordinate matching when finding closest point on trajectory
     static constexpr units::meter_t m_yDistanceThreshold = 0.25_m;
 
-    static constexpr double m_maxPercentToJoinPath = 0.5; // Maximum percentage of the trajectory to consider for joining
+    static constexpr double m_maxPercentToJoinReversePath = 0.5;
+    static constexpr double m_maxPercentToJoinForwardPath = 0.4;
 };
