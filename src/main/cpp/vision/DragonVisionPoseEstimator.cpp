@@ -185,7 +185,7 @@ void DragonVisionPoseEstimator::AddVisionMeasurements()
         else
         {
             auto poses = m_vision->GetRobotPositionMegaTag2();
-            for (auto pose : poses)
+            for (const auto& pose : poses)
             {
                 m_chassis->AddVisionMeasurement(pose.estimatedPose.ToPose2d(), units::second_t{pose.timeStamp}, pose.visionMeasurementStdDevs);
             }
