@@ -28,7 +28,7 @@
 /// @enum TrajectoryMatchStrategy
 /// @brief Defines how to match robot position to trajectory when finding the closest starting point
 ///
-/// Used by InitializeForTeleop to determine which axis/axes to consider when finding the optimal
+/// Used by InitializeWithTrajectory to determine which axis/axes to consider when finding the optimal
 /// point to begin trajectory following. This allows the robot to intelligently join a trajectory
 /// at the most appropriate point rather than always starting from the beginning.
 //====================================================================================================================================================
@@ -56,7 +56,7 @@ public:
     bool IsFinished() override;
     void End(bool interrupted) override;
 
-    void InitializeForTeleop(bool generateRedTrajectory, TrajectoryMatchStrategy matchStrategy = TrajectoryMatchStrategy::MATCH_XY, units::length::meter_t distanceTolerance = 0.5_m, double maxPercentToJoinPath = 0.9);
+    void InitializeWithTrajectory(std::optional<choreo::Trajectory<choreo::SwerveSample>> selectedTrajectory, bool generateRedTrajectory, TrajectoryMatchStrategy matchStrategy = TrajectoryMatchStrategy::MATCH_XY, units::length::meter_t distanceTolerance = 0.5_m, double maxPercentToJoinPath = 0.9);
 
     void SetPath(const std::string &pathName);
 

@@ -13,9 +13,9 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include <string>
-#include <cmath>
 #include <algorithm>
+#include <cmath>
+#include <string>
 
 // FRC Includes
 #include "auton/drivePrimitives/AutonUtils.h"
@@ -32,7 +32,6 @@
 #include "utils/FMSData.h"
 #include "utils/PoseUtils.h"
 #include "utils/logging/debug/Logger.h"
-#include "utils/PoseUtils.h"
 
 TrajectoryDrive::TrajectoryDrive(
     subsystems::CommandSwerveDrivetrain *chassis) : m_chassis(chassis),
@@ -90,9 +89,9 @@ void TrajectoryDrive::Initialize()
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, false);
 }
 
-void TrajectoryDrive::InitializeForTeleop(bool generateRedTrajectory, TrajectoryMatchStrategy matchStrategy, units::length::meter_t distanceTolerance, double maxPercentToJoinPath)
+void TrajectoryDrive::InitializeWithTrajectory(std::optional<choreo::Trajectory<choreo::SwerveSample>> selectedTrajectory, bool generateRedTrajectory, TrajectoryMatchStrategy matchStrategy, units::length::meter_t distanceTolerance, double maxPercentToJoinPath)
 {
-    m_trajectory = AutonUtils::GetTrajectoryFromPathFile(m_pathName, generateRedTrajectory);
+    m_trajectory = selectedTrajectory;
     if (m_trajectory.has_value())
     {
         auto trajectory = m_trajectory.value();
