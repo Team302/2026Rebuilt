@@ -175,6 +175,13 @@ void AutonSelector::PutChoicesOnDashboard()
 	m_neutralZoneAmount.AddOption("5", "5");
 	frc::SmartDashboard::PutData("Times in Neutral Zone", &m_neutralZoneAmount);
 
+	// Area in NZ
+	m_neutralZoneArea.AddOption("half", "Half");
+	m_neutralZoneArea.AddOption("full", "Complete");
+	m_neutralZoneArea.AddOption("combo", "Combo");
+	m_neutralZoneArea.SetDefaultOption("half", "Half");
+	frc::SmartDashboard::PutData("Desired Area", &m_neutralZoneArea);
+
 	// Depot Option
 	m_targetDepot.AddOption("true", "Dep");
 	m_targetDepot.AddOption("false", "ND");
