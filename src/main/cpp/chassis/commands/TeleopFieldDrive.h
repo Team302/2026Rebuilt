@@ -86,7 +86,7 @@ private:
     units::velocity::meters_per_second_t m_currentMaxSpeed;                ///< Current maximum linear speed (may be scaled).
     units::angular_velocity::degrees_per_second_t m_maxAngularRate;        ///< Maximum angular rate for normal operation.
     units::angular_velocity::degrees_per_second_t m_currentMaxAngularRate; ///< Current maximum angular rate (may be scaled).
-    static constexpr double m_launchingSpeedScale = 0.5;                   ///< Scale factor for speed reduction during launching.
+    static constexpr double m_launchingSpeedScale = 0.25;                  ///< Scale factor for speed reduction during launching.
 
     swerve::requests::FieldCentric m_fieldDriveRequest = swerve::requests::FieldCentric{}
                                                              .WithDeadband(m_maxSpeed * 0.1)                                  // TODO: Investigate this deadband vs controller deadband
@@ -97,9 +97,9 @@ private:
     void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
     bool m_isLaunching;
     /// @brief Proportional gain for heading controller
-    double m_rotationKP = 6.0;
+    double m_rotationKP = 10.0;
     /// @brief Integral gain for heading controller (disabled)
-    double m_rotationKI = 0.0;
+    double m_rotationKI = 5.0;
     /// @brief Derivative gain for heading controller (disabled)
     double m_rotationKD = 0.0;
     RebuiltTargetCalculator *m_targetCalculator = RebuiltTargetCalculator::GetInstance();

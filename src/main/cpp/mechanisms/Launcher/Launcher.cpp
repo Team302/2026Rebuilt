@@ -273,9 +273,7 @@ void Launcher::InitializeCompBot302()
 	InitializeTalonFXIndexerCompBot302();
 	InitializeTalonFXAgitatorCompBot302();
 	if (m_turretEnabled)
-	{
 		InitializeTalonFXSTurretCompBot302();
-	};
 }
 
 void Launcher::InitializeTalonFXLauncherCompBot302()
@@ -653,7 +651,7 @@ void Launcher::RefreshCachedMotorData()
 {
 	m_cachedLauncherVelocity = m_launcher->GetVelocity().GetValue();
 	m_cachedHoodPosition = m_hood->GetPosition().GetValue();
-	m_cachedTurretPosition = m_turret->GetPosition().GetValue();
+	m_cachedTurretPosition = m_turretEnabled ? m_turret->GetPosition().GetValue() : 180_tr;
 }
 
 void Launcher::RunCommonTasks()
@@ -823,6 +821,7 @@ void Launcher::UpdateLauncherTargets()
 	}
 
 	UpdateTargetHoodPositionDegreesHood(m_targetHoodAngle);
+
 	if (m_turretEnabled)
 	{
 		UpdateTargetTurretPositionDegreesTurret(m_targetTurretAngle);
@@ -902,7 +901,7 @@ void Launcher::UpdateTurretEnabled()
 	if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::TURRET_ENABLE) && m_turretEnabledButtonReleased)
 	{
 		if (m_turretEnabledButtonReleased)
-			m_turretEnabled = true;
+			m_turretEnabled = !m_turretEnabled;
 	}
 	m_turretEnabledButtonReleased = !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::TURRET_ENABLE);
 	RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::TurretEnabled_Bool, m_turretEnabled);

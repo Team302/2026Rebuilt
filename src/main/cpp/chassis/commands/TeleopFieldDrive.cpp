@@ -64,14 +64,14 @@ void TeleopFieldDrive::Execute()
     double strafe = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE);
     double manualRotate = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE);
 
-    if (m_isLaunching && AllianceZoneManager::GetInstance()->IsInAllianceZone())
+    if (m_isLaunching && AllianceZoneManager::GetInstance()->IsInAllianceZone() && !m_turretEnabled)
     {
         units::angle::degree_t calculatorRotate = RebuiltTargetCalculator::GetInstance()->GetChassisTargetForLaunching(0.5_s);
         m_chassis->SetControl(m_fieldFacingRequest.WithVelocityX(forward * m_currentMaxSpeed)
                                   .WithVelocityY(strafe * m_currentMaxSpeed)
                                   .WithTargetDirection(calculatorRotate)
                                   .WithHeadingPID(m_rotationKP, m_rotationKI, m_rotationKD));
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Feild Drive", "Calculated angle", calculatorRotate.value());
+        m_chassis->SetTargetChassisRotation(calculatorRotate);
     }
     else
     {
