@@ -236,5 +236,5 @@ private:
 
     LIMELIGHT_IMU_MODE m_lastIMUMode = LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_ONLY;
 
-    static constexpr string_view m_loggingLimleightPath = "/Limelight/";
+    static constexpr std::string_view m_loggingLimleightPath = "/Limelight/";
 };
