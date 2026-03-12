@@ -14,6 +14,7 @@
 //====================================================================================================================================================
 
 #include "chassis/commands/season_specific_commands/DriveAlongNearestWall.h"
+#include "auton/drivePrimitives/AutonUtils.h"
 #include "fielddata/BumpHelper.h"
 #include "utils/logging/debug/Logger.h"
 
@@ -27,57 +28,64 @@ DriveAlongNearestWall::DriveAlongNearestWall(subsystems::CommandSwerveDrivetrain
     : TrajectoryDrive(chassis),
       m_bumpHelper(BumpHelper::GetInstance())
 {
+    m_blueDepotAllianceSweepTrajectory = AutonUtils::GetTrajectoryFromPathFile(kDepotAllianceSweepPath, false);
+    m_redDepotAllianceSweepTrajectory = AutonUtils::GetTrajectoryFromPathFile(kDepotAllianceSweepPath, true);
+    m_blueOutpostAllianceSweepTrajectory = AutonUtils::GetTrajectoryFromPathFile(kOutpostAllianceSweepPath, false);
+    m_redOutpostAllianceSweepTrajectory = AutonUtils::GetTrajectoryFromPathFile(kOutpostAllianceSweepPath, true);
+    m_blueDepotAllianceSweepTrajectoryReverse = AutonUtils::GetTrajectoryFromPathFile(kDepotAllianceSweepPathReverse, false);
+    m_redDepotAllianceSweepTrajectoryReverse = AutonUtils::GetTrajectoryFromPathFile(kDepotAllianceSweepPathReverse, true);
+    m_blueOutpostAllianceSweepTrajectoryReverse = AutonUtils::GetTrajectoryFromPathFile(kOutpostAllianceSweepPathReverse, false);
+    m_redOutpostAllianceSweepTrajectoryReverse = AutonUtils::GetTrajectoryFromPathFile(kOutpostAllianceSweepPathReverse, true);
 }
 
 //------------------------------------------------------------------
 /// @brief      Initialize the command and select appropriate trajectory
 /// @details    Determines which wall is nearest to the robot and selects
 ///             the corresponding trajectory path. The logic works as follows:
-///
-///             **Step 1: Determine Nearest Bump**
-///             Uses BumpHelper::CalcNearestBump() to identify which of the
-///             four field bumps (Red/Blue Depot/Outpost) is closest.
-///
-///             **Step 2: Select Trajectory**
-///             - If nearest bump is a DEPOT bump (Red or Blue): Use DepotAllianceSweep
-///             - If nearest bump is an OUTPOST bump (Red or Blue): Use OutpostAllianceSweep
-///
-///             **Step 3: Load Trajectory**
-///             Calls SetPath() with the selected path name, then calls the base
-///             class Initialize() which will handle:
-///             - Loading the trajectory from the path file
-///             - Automatically flipping for Red alliance if needed
-///             - Preparing controllers and timers
-///
-/// @note       The trajectory flipping for alliance color is handled automatically
-///             by the base TrajectoryDrive class's AutonUtils::GetTrajectoryFromPathFile()
+///             1. Calls BumpHelper::CalcNearestBump() to identify the closest bump (wall)
+///             2. Based on the identified bump, selects the appropriate trajectory:
+///                - If nearest bump is BLUE_DEPOT_BUMP, selects m_blueDepotAllianceSweepTrajectory
+///                - If nearest bump is RED_DEPOT_BUMP, selects m_redDepotAllianceSweepTrajectory
+///                - If nearest bump is BLUE_OUTPOST_BUMP, selects m_blueOutpostAllianceSweepTrajectory
+///                - If nearest bump is RED_OUTPOST_BUMP, selects m_redOutpostAllianceSweepTrajectory
+///             3. Calls InitializeWithTrajectory() with the selected trajectory, Y-only matching strategy,
 //------------------------------------------------------------------
 void DriveAlongNearestWall::Initialize()
 {
     // Determine which bump/wall is nearest to the robot's current position
-    BUMP_ID nearestBump = m_bumpHelper->CalcNearestBump();
+    auto nearestBump = m_bumpHelper->CalcNearestBump();
 
-    // Select the appropriate path based on whether the nearest bump is Depot or Outpost
-    std::string pathName;
     switch (nearestBump)
     {
     case BUMP_ID::BLUE_DEPOT_BUMP:
+        InitializeWithTrajectory(m_blueDepotAllianceSweepTrajectory,
+                                 false,
+                                 TrajectoryMatchStrategy::MATCH_XY,
+                                 m_yDistanceThreshold,
+                                 m_maxPercentToJoinPath);
+        break;
     case BUMP_ID::RED_DEPOT_BUMP:
-        pathName = kDepotAllianceSweepPath;
+        InitializeWithTrajectory(m_redDepotAllianceSweepTrajectory,
+                                 true,
+                                 TrajectoryMatchStrategy::MATCH_XY,
+                                 m_yDistanceThreshold,
+                                 m_maxPercentToJoinPath);
         break;
-
     case BUMP_ID::BLUE_OUTPOST_BUMP:
-    case BUMP_ID::RED_OUTPOST_BUMP:
-    default:
-        pathName = kOutpostAllianceSweepPath;
+        InitializeWithTrajectory(m_blueOutpostAllianceSweepTrajectory,
+                                 false,
+                                 TrajectoryMatchStrategy::MATCH_XY,
+                                 m_yDistanceThreshold,
+                                 m_maxPercentToJoinPath);
         break;
+    case BUMP_ID::RED_OUTPOST_BUMP:
+        InitializeWithTrajectory(m_redOutpostAllianceSweepTrajectory,
+                                 true,
+                                 TrajectoryMatchStrategy::MATCH_XY,
+                                 m_yDistanceThreshold,
+                                 m_maxPercentToJoinPath);
+        break;
+    default:
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "DriveAlongNearestWall", "Unknown nearest bump detected", static_cast<int>(nearestBump));
     }
-
-    // Set the path for the base TrajectoryDrive class
-    SetPath(pathName);
-
-    InitializeForTeleop(nearestBump == BUMP_ID::RED_DEPOT_BUMP || nearestBump == BUMP_ID::RED_OUTPOST_BUMP,
-                        TrajectoryMatchStrategy::MATCH_XY,
-                        m_yDistanceThreshold,
-                        m_maxPercentToJoinPath);
 }

@@ -32,8 +32,7 @@
 /// - OutpostAllianceSweep: Used when the outpost wall is nearest
 ///
 /// **Alliance-Aware:**
-/// The selected trajectory is automatically flipped based on the current alliance color (Red/Blue),
-/// ensuring the robot follows the correct path regardless of which alliance the robot is on.
+/// The selected trajectory is automatically flipped based on the current alliance zone
 ///
 /// **Smart Trajectory Entry:**
 /// Uses Y-coordinate matching to find the closest point on the trajectory to the robot's current
@@ -58,9 +57,8 @@ public:
     //------------------------------------------------------------------
     /// @brief      Constructor for DriveAlongNearestWall command
     /// @param[in]  chassis - Pointer to the swerve drive subsystem
-    /// @details    Initializes the base TrajectoryDrive command with the chassis.
-    ///             The actual path will be determined in Initialize() based on
-    ///             robot position and alliance color.
+    /// @details    Initializes the command with the specified chassis
+    ///            and retrieves the BumpHelper singleton for wall proximity detection.
     //------------------------------------------------------------------
     explicit DriveAlongNearestWall(subsystems::CommandSwerveDrivetrain *chassis);
 
@@ -69,7 +67,7 @@ public:
     /// @details    Overrides the base Initialize() to:
     ///             1. Determine the nearest wall (Depot or Outpost) using BumpHelper
     ///             2. Select the corresponding trajectory path name
-    ///             3. Call InitializeForTeleop() with Y-only matching strategy
+    ///             3. Call InitializeWithTrajectory() with Y-only matching strategy
     ///             4. Find the closest Y-coordinate on the trajectory and start from there
     ///
     ///             The trajectory will be automatically flipped for red alliance.
@@ -88,6 +86,20 @@ private:
     //------------------------------------------------------------------
     static constexpr const char *kDepotAllianceSweepPath = "DepotAllianceSweep";
     static constexpr const char *kOutpostAllianceSweepPath = "OutpostAllianceSweep";
+    static constexpr const char *kDepotAllianceSweepPathReverse = "DepotAllianceSweepReverse";
+    static constexpr const char *kOutpostAllianceSweepPathReverse = "OutpostAllianceSweepReverse";
+
+    //------------------------------------------------------------------
+    // Choreo Trajectories
+    //------------------------------------------------------------------
+    std::optional<choreo::Trajectory<choreo::SwerveSample>> m_blueDepotAllianceSweepTrajectory;
+    std::optional<choreo::Trajectory<choreo::SwerveSample>> m_blueDepotAllianceSweepTrajectoryReverse;
+    std::optional<choreo::Trajectory<choreo::SwerveSample>> m_redDepotAllianceSweepTrajectory;
+    std::optional<choreo::Trajectory<choreo::SwerveSample>> m_redDepotAllianceSweepTrajectoryReverse;
+    std::optional<choreo::Trajectory<choreo::SwerveSample>> m_blueOutpostAllianceSweepTrajectory;
+    std::optional<choreo::Trajectory<choreo::SwerveSample>> m_blueOutpostAllianceSweepTrajectoryReverse;
+    std::optional<choreo::Trajectory<choreo::SwerveSample>> m_redOutpostAllianceSweepTrajectory;
+    std::optional<choreo::Trajectory<choreo::SwerveSample>> m_redOutpostAllianceSweepTrajectoryReverse;
 
     //------------------------------------------------------------------
     /// @brief      Tolerance for Y-coordinate matching when finding closest point on trajectory
