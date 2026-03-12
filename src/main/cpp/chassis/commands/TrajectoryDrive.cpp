@@ -161,23 +161,14 @@ void TrajectoryDrive::InitializeWithTrajectory(std::optional<choreo::Trajectory<
         {
             auto currentPose = m_chassis->GetPose();
 
-            size_t closestIndex;
             frc::Pose2d closestPose;
             units::length::meter_t distanceToPath;
+            choreo::SwerveSample closestSample;
 
             // Use cached closest point if available (from SelectBestTrajectory)
             if (m_hasCachedClosestPoint)
             {
-                // Find the index of the cached sample in our trajectory states
-                closestIndex = 0;
-                for (size_t i = 0; i < m_trajectoryStates.size(); ++i)
-                {
-                    if (m_trajectoryStates[i].timestamp == m_cachedClosestSample.timestamp)
-                    {
-                        closestIndex = i;
-                        break;
-                    }
-                }
+                closestSample = m_cachedClosestSample;
                 closestPose = frc::Pose2d{m_cachedClosestSample.x, m_cachedClosestSample.y, m_cachedClosestSample.heading};
                 distanceToPath = m_cachedClosestDistance;
 
@@ -187,8 +178,8 @@ void TrajectoryDrive::InitializeWithTrajectory(std::optional<choreo::Trajectory<
             else
             {
                 // Calculate the closest point if not cached
-                closestIndex = FindClosestTrajectoryPoint(currentPose, matchStrategy, distanceTolerance, maxPercentToJoinPath);
-                const auto &closestSample = m_trajectoryStates[closestIndex];
+                size_t closestIndex = FindClosestTrajectoryPoint(currentPose, matchStrategy, distanceTolerance, maxPercentToJoinPath);
+                closestSample = m_trajectoryStates[closestIndex];
                 closestPose = frc::Pose2d{closestSample.x, closestSample.y, closestSample.heading};
                 distanceToPath = CalculateDistance(currentPose, closestPose, matchStrategy);
             }
@@ -200,7 +191,7 @@ void TrajectoryDrive::InitializeWithTrajectory(std::optional<choreo::Trajectory<
                 m_isApproachingPath = true;
                 m_matchStrategy = matchStrategy;
                 m_joinTolerance = distanceTolerance;
-                m_targetJoinIndex = closestIndex;
+                m_targetJoinTimestamp = closestSample.timestamp;
                 m_targetJoinPose = closestPose;
                 m_startTimeOffset = 0.0_s; // Don't start trajectory timer yet
             }
@@ -209,7 +200,7 @@ void TrajectoryDrive::InitializeWithTrajectory(std::optional<choreo::Trajectory<
                 // We're already close enough, start following trajectory from this point
                 m_useSmartJoin = false;
                 m_isApproachingPath = false;
-                m_startTimeOffset = m_trajectoryStates[closestIndex].timestamp;
+                m_startTimeOffset = closestSample.timestamp;
             }
         }
         else
@@ -269,7 +260,7 @@ void TrajectoryDrive::Execute()
         if (distanceToTarget <= m_joinTolerance)
         {
             m_isApproachingPath = false;
-            m_startTimeOffset = m_trajectoryStates[m_targetJoinIndex].timestamp;
+            m_startTimeOffset = m_targetJoinTimestamp;
             m_timer.get()->Reset();
             m_timer.get()->Start();
         }
