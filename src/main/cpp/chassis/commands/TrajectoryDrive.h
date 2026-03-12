@@ -107,12 +107,12 @@ private:
     units::time::second_t m_startTimeOffset{0.0_s}; // time offset when starting from a mid-trajectory point
 
     // Smart trajectory joining state
-    bool m_useSmartJoin{false};                    // Whether to use smart trajectory joining
-    bool m_isApproachingPath{false};               // True when driving to path, false when following trajectory
-    TrajectoryMatchStrategy m_matchStrategy;       // Which axes to match when joining
-    units::length::meter_t m_joinTolerance{0.5_m}; // Distance tolerance for joining the path
-    frc::Pose2d m_targetJoinPose;                  // The pose on the trajectory we're driving to
-    size_t m_targetJoinIndex{0};                   // Index of the trajectory point we're joining at
+    bool m_useSmartJoin{false};                         // Whether to use smart trajectory joining
+    bool m_isApproachingPath{false};                    // True when driving to path, false when following trajectory
+    TrajectoryMatchStrategy m_matchStrategy;            // Which axes to match when joining
+    units::length::meter_t m_joinTolerance{0.5_m};      // Distance tolerance for joining the path
+    frc::Pose2d m_targetJoinPose;                       // The pose on the trajectory we're driving to
+    units::time::second_t m_targetJoinTimestamp{0.0_s}; // Timestamp of the trajectory point we're joining at
 
     // Cached closest point information from SelectBestTrajectory
     bool m_hasCachedClosestPoint{false};                   // Whether we have cached closest point data
