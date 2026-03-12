@@ -125,7 +125,7 @@ void TeleopFieldDrive::NotifyStateUpdate(RobotStateChanges::StateChange change, 
         m_currentMaxSpeed = value ? m_maxSpeed * m_launchingSpeedScale : m_maxSpeed;
         m_currentMaxAngularRate = value ? m_maxAngularRate * m_launchingSpeedScale : m_maxAngularRate;
     }
-    if (change == RobotStateChanges::StateChange::TurretEnabled_Bool)
+    else if (change == RobotStateChanges::StateChange::TurretEnabled_Bool)
     {
         m_turretEnabled = value;
     }
