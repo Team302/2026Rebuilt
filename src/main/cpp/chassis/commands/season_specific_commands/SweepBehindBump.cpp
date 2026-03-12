@@ -44,7 +44,6 @@ SweepBehindBump::SweepBehindBump(subsystems::CommandSwerveDrivetrain *chassis) :
 //------------------------------------------------------------------
 /// @brief      Determines the appropriate rotation angle for driving over a bump
 /// @param[in]  bump - The identifier for which bump (Red/Blue, Depot/Outpost)
-/// @param[in]  isInNeutralZone - True if robot is in neutral zone, false if in alliance zone
 /// @return     units::angle::degree_t - The rotation angle in degrees for the robot heading
 /// @details    This method returns the correct robot heading based on:
 ///             - Which bump is being crossed (4 possibilities)
@@ -53,28 +52,21 @@ SweepBehindBump::SweepBehindBump(subsystems::CommandSwerveDrivetrain *chassis) :
 ///             These angles ensure the robot approaches and crosses the bump
 ///             at the optimal heading toward the hub center.
 //------------------------------------------------------------------
-units::angle::degree_t SweepBehindBump::GetRotation(BUMP_ID bump, bool isInNeutralZone) const
+units::angle::degree_t SweepBehindBump::GetRotation(BUMP_ID bump) const
 {
-    switch (bump)
+    if (bump == BUMP_ID::BLUE_DEPOT_BUMP || bump == BUMP_ID::RED_OUTPOST_BUMP)
     {
-    case BUMP_ID::RED_OUTPOST_BUMP:
-        // Red outpost side: 45° heading regardless of direction
-        return isInNeutralZone ? kNeutralZoneTowardHubRedOutpost : kRedAllianceOutpostWallTowardHub;
-    case BUMP_ID::BLUE_OUTPOST_BUMP:
-        // Blue outpost side: 315° heading regardless of direction
-        return isInNeutralZone ? kNeutralZoneTowardHubBlueOutpost : kBlueAllianceOutpostWallTowardHub;
-    case BUMP_ID::RED_DEPOT_BUMP:
-        // Red depot side: 315° heading regardless of direction
-        return isInNeutralZone ? kNeutralZoneTowardHubRedDepot : kRedAllianceDepotWallTowardHub;
-    case BUMP_ID::BLUE_DEPOT_BUMP:
-    default:
-        // Blue depot side (default): 45° heading regardless of direction
-        return isInNeutralZone ? kNeutralZoneTowardHubBlueDepot : kBlueAllianceDepotWallTowardHub;
+        // For Blue Depot and Red Outpost, use 270° heading
+        return kBlueDepotRedOutpost;
+    }
+    else
+    {
+        // For Blue Outpost and Red Depot, use 90° heading
+        return kRedAllianceZDepotBump;
     }
 }
-// TODO: Change logic so its going across--not sure how to do that...
+// TODO: add if statement saying, if blue depot or red out post set 270  and if else set 90 if
 
-//------------------------------------------------------------------
 /// @brief      Calculates the target poses for driving over a bump
 /// @return     DriveToPoses struct containing midpoint and endpoint poses
 /// @details    Determines which bump is nearest and calculates a two-stage path:
@@ -109,13 +101,8 @@ struct DriveToPoses SweepBehindBump::GetDriveToPoses()
         // Identify the nearest bump based on robot's current position
         auto bump = bumpHelper->CalcNearestBump();
 
-        // Determine if robot is currently in the neutral zone
-        auto isInNeutralZone = NeutralZoneManager::GetInstance()->IsInNeutralZone();
-        // ADD THIS AS A CHECK LIKE (maybe? idk) if not in neutreal stop...ask if that would mean returning a null pose or something else
-
         // Calculate the appropriate rotation angle for the bump and direction
-        auto rotation = GetRotation(bump, isInNeutralZone);
-        // Do I need a specific rotation?? or can I trust that billy lines it up? ¯\_(ツ)_/¯ prob not but idk what the rotation is going to look like so prob need to change this
+        auto rotation = GetRotation(bump);
 
         // Determine if this is a red alliance bump (depot or outpost)
         auto isRed = (bump == BUMP_ID::RED_DEPOT_BUMP || bump == BUMP_ID::RED_OUTPOST_BUMP);
@@ -128,19 +115,21 @@ struct DriveToPoses SweepBehindBump::GetDriveToPoses()
         auto allianceX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X);
         auto allianceY = neutralY; // Y coordinate is the same for both sides of the same bump
 
-        // if (isInNeutralZone) // Drive from neutral zone over bump to alliance zone
-        // {
-        //     // First go to neutral side of bump, then to alliance side
-        //     poses.midPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
-        //     poses.endPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
-        // }
-        // else // Drive from alliance zone over bump to neutral zone
-        // {
-        //     // First go to alliance side of bump, then to neutral side
-        //     poses.midPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
-        //     poses.endPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
-        // }
-        // as what new logic is goingto look like to go from outpost t o depot and vise versa
+        // Determine if robot is currently in the neutral zone
+        auto isInNeutralZone = NeutralZoneManager::GetInstance()->IsInNeutralZone();
+
+        if (isInNeutralZone) // Drive from neutral zone over bump to alliance zone
+        {
+            // First go to neutral side of bump, then to alliance side
+            poses.midPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
+            poses.endPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
+        }
+        else // Drive from alliance zone over bump to neutral zone
+        {
+            // First go to alliance side of bump, then to neutral side
+            poses.midPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
+            poses.endPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
+        }
     }
     return poses;
 }

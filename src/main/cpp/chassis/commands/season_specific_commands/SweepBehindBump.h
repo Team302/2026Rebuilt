@@ -77,20 +77,14 @@ protected:
 
     // units::velocity::meters_per_second_t GetMaxVelocity() const override { return kMaxVelocityDriveOverBump; }                     // Limit max velocity for safe bump crossing;
     // units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const override { return kMaxAccelerationDriveOverBump; } // Limit max acceleration for safe bump crossing;
-    //(Not sure if these are nessesary for this command since we want to sweep behind the bump instead of drive over it but we can always add them back in if we find that we need them)
+
+    //(Not sure if these are nessesary for this command but we can always add them back in if we find that we need them)
 
 private:
-    units::angle::degree_t GetRotation(BUMP_ID bump, bool isInNeutralZone) const;
+    units::angle::degree_t GetRotation(BUMP_ID bump) const;
 
-    static constexpr units::degree_t kBlueAllianceZDepotBump{270.0};
-    static constexpr units::degree_t kBlueNeutralZDepotBump{270.0};
-    static constexpr units::degree_t kBlueAllianceZOutpostBump{90.0};
-    static constexpr units::degree_t kBlueNeutralZOutpostBump{90.0};
-
+    static constexpr units::degree_t kBlueDepotRedOutpost{270.0};
     static constexpr units::degree_t kRedAllianceZDepotBump{90.0};
-    static constexpr units::degree_t kRedNeutralZDepotBump{90.0};
-    static constexpr units::degree_t kRedAllianceZOutpostBump{270.0};
-    static constexpr units::degree_t kRedNeutralZOutpostBump{270.0};
 
     // I hated the naming conventions for how these wer in the drive over bump command so i changed them a little but we can always change them back if we find that we need to
 
