@@ -177,16 +177,18 @@ void DragonVisionPoseEstimator::AddVisionMeasurements()
             return;
         }
 
-        auto poses = m_vision->GetRobotPositionMegaTag2();
-        for (auto pose : poses)
-        {
-            m_chassis->AddVisionMeasurement(pose.estimatedPose.ToPose2d(), units::second_t{pose.timeStamp}, pose.visionMeasurementStdDevs);
-        }
-
         auto questPose = m_vision->GetRobotPositionQuest();
         if (questPose.m_confidenceLevel == DragonVisionPoseEstimatorStruct::ConfidenceLevel::HIGH)
         {
             m_chassis->AddVisionMeasurement(questPose.m_visionPose, questPose.m_timeStamp, questPose.m_stds);
+        }
+        else
+        {
+            auto poses = m_vision->GetRobotPositionMegaTag2();
+            for (auto pose : poses)
+            {
+                m_chassis->AddVisionMeasurement(pose.estimatedPose.ToPose2d(), units::second_t{pose.timeStamp}, pose.visionMeasurementStdDevs);
+            }
         }
     }
 }
