@@ -236,5 +236,5 @@ private:
 
     LIMELIGHT_IMU_MODE m_lastIMUMode = LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_ONLY;
 
-    const std::string m_loggingLimleightPath = "/Limelight/";
+    const std::string m_loggingLimelightPath = "/Limelight/";
 };
