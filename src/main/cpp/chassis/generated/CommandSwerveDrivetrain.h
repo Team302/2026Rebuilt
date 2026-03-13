@@ -12,7 +12,7 @@
 
 #include "chassis/generated/TunerSwerveBase.h"
 #include <frc/geometry/Pose2d.h>
-
+#include "utils/AngleUtils.h"
 using namespace ctre::phoenix6;
 
 /**
@@ -308,6 +308,14 @@ namespace subsystems
             m_debounceTimer.Reset();
             m_prevPose = GetPose();
         }
+        void SetTargetChassisRotation(units::angle::degree_t targetRotation)
+        {
+            m_targetChassisRotation = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed ? AngleUtils::GetEquivAngle(targetRotation += 180_deg) : targetRotation;
+        }
+        bool IsChassisAtRotationTarget()
+        {
+            return (units::math::abs(GetPose().Rotation().Degrees() - m_targetChassisRotation) < m_chassisRotationThreshold);
+        }
         // Hand Coded*/
 
     private:
@@ -316,5 +324,7 @@ namespace subsystems
         const units::time::second_t m_samePoseTime = 0.5_s;
         const units::length::inch_t m_distanceThreshold{0.25};
         frc::Pose2d m_prevPose;
+        units::angle::degree_t m_targetChassisRotation;
+        const units::angle::degree_t m_chassisRotationThreshold{2.0_deg};
     };
 }

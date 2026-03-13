@@ -224,6 +224,11 @@ std::optional<double> QuestNav::GetAppTimestamp()
 bool QuestNav::IsTracking()
 {
 #ifdef __FRC_ROBORIO__
+    if (!IsConnected())
+    {
+        return false;
+    }
+
     auto rawData = m_frameDataSubscriber.Get();
     if (rawData.empty())
     {
