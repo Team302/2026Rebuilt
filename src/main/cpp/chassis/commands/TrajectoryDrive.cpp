@@ -47,6 +47,18 @@ TrajectoryDrive::TrajectoryDrive(
     AddRequirements(m_chassis);
     // Enable continuous input for the heading controller for proper wrap-around
     m_headingController.EnableContinuousInput(-std::numbers::pi, std::numbers::pi);
+
+    // Set up translation constraints for the profiled PID controllers TOD DO: Add Getters/Setters for childeren, but for now PID max's can be the same
+    m_translationConstraints.maxVelocity = 4.0_mps;
+    m_translationConstraints.maxAcceleration = 5.0_mps_sq;
+
+    m_translationPIDX.SetConstraints(m_translationConstraints);
+    m_translationPIDY.SetConstraints(m_translationConstraints);
+    m_translationPIDX.SetPID(m_translationKP, m_translationKI, m_translationKD);
+    m_translationPIDY.SetPID(m_translationKP, m_translationKI, m_translationKD);
+
+    m_translationPIDX.SetIZone(m_translationIZone);
+    m_translationPIDY.SetIZone(m_translationIZone);
 }
 
 void TrajectoryDrive::Initialize()
@@ -79,12 +91,14 @@ void TrajectoryDrive::Initialize()
     m_timer.get()->Start();
 
     // Reset PID controllers to clear any previous state
-    m_xController.Reset();
-    m_yController.Reset();
+    m_chassisSpeeds = m_chassis->GetState().Speeds;
+    auto currentPose = m_chassis->GetPose();
+    m_translationPIDX.Reset(currentPose.X(), m_chassisSpeeds.vx);
+    m_translationPIDY.Reset(currentPose.Y(), m_chassisSpeeds.vy);
     m_headingController.Reset();
-    m_chassisSpeeds.vx = 0_mps;
-    m_chassisSpeeds.vy = 0_mps;
-    m_chassisSpeeds.omega = units::angular_velocity::radians_per_second_t(0);
+
+    m_translationPIDX.SetGoal(m_trajectoryStates.front().x);
+    m_translationPIDY.SetGoal(m_trajectoryStates.front().y);
 
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, false);
 }
@@ -147,6 +161,8 @@ std::pair<std::optional<choreo::Trajectory<choreo::SwerveSample>>, bool> Traject
 void TrajectoryDrive::InitializeWithTrajectory(std::optional<choreo::Trajectory<choreo::SwerveSample>> selectedTrajectory, bool generateRedTrajectory, TrajectoryMatchStrategy matchStrategy, units::length::meter_t distanceTolerance, double maxPercentToJoinPath)
 {
     m_trajectory = selectedTrajectory;
+    frc::Pose2d closestPose;
+
     if (m_trajectory.has_value())
     {
         auto trajectory = m_trajectory.value();
@@ -161,7 +177,6 @@ void TrajectoryDrive::InitializeWithTrajectory(std::optional<choreo::Trajectory<
         {
             auto currentPose = m_chassis->GetPose();
 
-            frc::Pose2d closestPose;
             units::length::meter_t distanceToPath;
             choreo::SwerveSample closestSample;
 
@@ -228,12 +243,14 @@ void TrajectoryDrive::InitializeWithTrajectory(std::optional<choreo::Trajectory<
     m_timer.get()->Start();
 
     // Reset PID controllers to clear any previous state
-    m_xController.Reset();
-    m_yController.Reset();
+    m_chassisSpeeds = m_chassis->GetState().Speeds;
+    auto currentPose = m_chassis->GetPose();
+    m_translationPIDX.Reset(currentPose.X(), m_chassisSpeeds.vx);
+    m_translationPIDY.Reset(currentPose.Y(), m_chassisSpeeds.vy);
     m_headingController.Reset();
-    m_chassisSpeeds.vx = 0_mps;
-    m_chassisSpeeds.vy = 0_mps;
-    m_chassisSpeeds.omega = units::angular_velocity::radians_per_second_t(0);
+
+    m_translationPIDX.SetGoal(closestPose.X());
+    m_translationPIDY.SetGoal(closestPose.Y());
 
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, false);
 }
@@ -272,20 +289,20 @@ void TrajectoryDrive::Execute()
 
             if (m_matchStrategy == TrajectoryMatchStrategy::MATCH_Y_ONLY)
             {
-                units::meters_per_second_t yFeedback{m_yController.Calculate(currentPose.Y().value(), m_targetJoinPose.Y().value())};
+                units::meters_per_second_t yFeedback{m_translationPIDY.Calculate(currentPose.Y(), m_targetJoinPose.Y())};
                 vy = yFeedback;
                 vx = 0_mps;
             }
             else if (m_matchStrategy == TrajectoryMatchStrategy::MATCH_X_ONLY)
             {
-                units::meters_per_second_t xFeedback{m_xController.Calculate(currentPose.X().value(), m_targetJoinPose.X().value())};
+                units::meters_per_second_t xFeedback{m_translationPIDX.Calculate(currentPose.X(), m_targetJoinPose.X())};
                 vx = xFeedback;
                 vy = 0_mps;
             }
             else // MATCH_XY
             {
-                vx = units::meters_per_second_t{m_xController.Calculate(currentPose.X().value(), m_targetJoinPose.X().value())};
-                vy = units::meters_per_second_t{m_yController.Calculate(currentPose.Y().value(), m_targetJoinPose.Y().value())};
+                vx = units::meters_per_second_t{m_translationPIDX.Calculate(currentPose.X(), m_targetJoinPose.X())};
+                vy = units::meters_per_second_t{m_translationPIDY.Calculate(currentPose.Y(), m_targetJoinPose.Y())};
             }
 
             units::radians_per_second_t omega{m_headingController.Calculate(currentPose.Rotation().Radians().value(), m_targetJoinPose.Rotation().Radians().value())};
@@ -313,8 +330,8 @@ void TrajectoryDrive::Execute()
         {
             auto currentPose = m_chassis->GetPose();
 
-            units::meters_per_second_t xFeedback{m_xController.Calculate(currentPose.X().value(), desiredState.x.value())};
-            units::meters_per_second_t yFeedback{m_yController.Calculate(currentPose.Y().value(), desiredState.y.value())};
+            units::meters_per_second_t xFeedback{m_translationPIDX.Calculate(currentPose.X(), desiredState.x)};
+            units::meters_per_second_t yFeedback{m_translationPIDY.Calculate(currentPose.Y(), desiredState.y)};
             units::radians_per_second_t headingFeedback{m_headingController.Calculate(currentPose.Rotation().Radians().value(), desiredState.heading.value())};
 
             m_chassisSpeeds.vx = desiredState.vx + xFeedback;

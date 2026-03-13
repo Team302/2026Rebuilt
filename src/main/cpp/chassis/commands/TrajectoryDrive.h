@@ -21,8 +21,8 @@
 
 // FRC Includes
 #include "frc/Timer.h"
-#include "frc/controller/PIDController.h"
 #include <choreo/trajectory/Trajectory.h>
+#include <frc/controller/ProfiledPIDController.h>
 
 //====================================================================================================================================================
 /// @enum TrajectoryMatchStrategy
@@ -119,16 +119,26 @@ private:
     choreo::SwerveSample m_cachedClosestSample;            // The cached closest sample
     units::length::meter_t m_cachedClosestDistance{0.0_m}; // The cached distance to closest point
 
-    static constexpr double kPDrive{3.5};
-    static constexpr double kIDrive{0.0};
-    static constexpr double kDDrive{0.0};
+    //------------------------------------------------------------------
+    //  PID Constants
+    //------------------------------------------------------------------
+
+    /// @brief Proportional gain for X and Y translation controllers
+    static constexpr double m_translationKP = 5.0;
+
+    /// @brief Integral gain for X and Y translation controllers (disabled)
+    static constexpr double m_translationKI = 0.0;
+
+    /// @brief Derivative gain for X and Y translation controllers
+    static constexpr double m_translationKD = 0.0;
+
+    // @brief Izone for translation controllers
+    static constexpr double m_translationIZone = 0.2; // meters
 
     static constexpr double kPHeading{6.0};
     static constexpr double kIHeading{0.0};
     static constexpr double kDHeading{0.0};
 
-    frc::PIDController m_xController{kPDrive, kIDrive, kDDrive};
-    frc::PIDController m_yController{kPDrive, kIDrive, kDDrive};
     frc::PIDController m_headingController{kPHeading, kIHeading, kDHeading};
 
     frc::ChassisSpeeds m_chassisSpeeds;
@@ -170,4 +180,10 @@ private:
     /// @param matchStrategy How to calculate distance
     /// @return Distance value in meters
     units::length::meter_t CalculateDistance(const frc::Pose2d &pose1, const frc::Pose2d &pose2, TrajectoryMatchStrategy matchStrategy) const;
+
+    frc::TrapezoidProfile<units::length::meters>::Constraints m_translationConstraints;
+    /// @brief Profiled PID controller for X-axis translation with trapezoidal velocity profiles
+    frc::ProfiledPIDController<units::length::meters> m_translationPIDX{m_translationKP, m_translationKI, m_translationKD, m_translationConstraints};
+    /// @brief Profiled PID controller for Y-axis translation with trapezoidal velocity profiles
+    frc::ProfiledPIDController<units::length::meters> m_translationPIDY{m_translationKP, m_translationKI, m_translationKD, m_translationConstraints};
 };
