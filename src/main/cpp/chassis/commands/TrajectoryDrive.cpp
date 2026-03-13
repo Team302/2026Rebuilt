@@ -249,8 +249,18 @@ void TrajectoryDrive::InitializeWithTrajectory(std::optional<choreo::Trajectory<
     m_translationPIDY.Reset(currentPose.Y(), m_chassisSpeeds.vy);
     m_headingController.Reset();
 
-    m_translationPIDX.SetGoal(closestPose.X());
-    m_translationPIDY.SetGoal(closestPose.Y());
+    // Set the goal for the profiled PID controllers
+    // If we're approaching the path, the goal is the join point; otherwise it's where we start on the trajectory
+    if (m_isApproachingPath)
+    {
+        m_translationPIDX.SetGoal(m_targetJoinPose.X());
+        m_translationPIDY.SetGoal(m_targetJoinPose.Y());
+    }
+    else
+    {
+        m_translationPIDX.SetGoal(closestPose.X());
+        m_translationPIDY.SetGoal(closestPose.Y());
+    }
 
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, false);
 }
@@ -283,26 +293,25 @@ void TrajectoryDrive::Execute()
         }
         else
         {
-            // Drive toward the join point
+            // Drive toward the join point using profiled PID controllers
             units::meters_per_second_t vx = 0_mps;
             units::meters_per_second_t vy = 0_mps;
 
             if (m_matchStrategy == TrajectoryMatchStrategy::MATCH_Y_ONLY)
             {
-                units::meters_per_second_t yFeedback{m_translationPIDY.Calculate(currentPose.Y(), m_targetJoinPose.Y())};
-                vy = yFeedback;
+                vy = units::velocity::meters_per_second_t{m_translationPIDY.Calculate(currentPose.Y())};
                 vx = 0_mps;
             }
             else if (m_matchStrategy == TrajectoryMatchStrategy::MATCH_X_ONLY)
             {
-                units::meters_per_second_t xFeedback{m_translationPIDX.Calculate(currentPose.X(), m_targetJoinPose.X())};
-                vx = xFeedback;
+                vx = units::velocity::meters_per_second_t{m_translationPIDX.Calculate(currentPose.X())};
+
                 vy = 0_mps;
             }
             else // MATCH_XY
             {
-                vx = units::meters_per_second_t{m_translationPIDX.Calculate(currentPose.X(), m_targetJoinPose.X())};
-                vy = units::meters_per_second_t{m_translationPIDY.Calculate(currentPose.Y(), m_targetJoinPose.Y())};
+                vx = units::velocity::meters_per_second_t{m_translationPIDX.Calculate(currentPose.X())};
+                vy = units::velocity::meters_per_second_t{m_translationPIDY.Calculate(currentPose.Y())};
             }
 
             units::radians_per_second_t omega{m_headingController.Calculate(currentPose.Rotation().Radians().value(), m_targetJoinPose.Rotation().Radians().value())};
