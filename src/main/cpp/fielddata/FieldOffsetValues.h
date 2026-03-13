@@ -14,9 +14,8 @@
 //====================================================================================================================================================
 #pragma once
 
-// C++ includes
-
 #include "units/length.h"
+#include <vector>
 
 //====================================================================================================================================================
 /// @enum FIELD_OFFSET_ITEMS
@@ -129,6 +128,28 @@ public:
     //------------------------------------------------------------------
     units::length::meter_t GetValue(bool isRedSide, FIELD_OFFSET_ITEMS item) const;
 
+    //------------------------------------------------------------------
+    /// @brief      Get all relevant position values for a specific field element
+    /// @param[in]  isRedSide - true to retrieve red alliance values, false for blue alliance
+    /// @param[in]  item - The field offset item type to retrieve (from FIELD_OFFSET_ITEMS enum)
+    /// @return     std::vector<units::length::meter_t> - Ordered list of coordinate values in meters
+    /// @details    Returns a vector of values for item types that have multiple relevant positions.
+    ///
+    ///             **Bump Y queries (BUMP_ALLIANCE_Y / BUMP_NEUTRAL_Y):**
+    ///             Returns two Y-coordinates ordered by proximity to the robot:
+    ///             1. Nearest bump Y coordinate
+    ///             2. Farthest bump Y coordinate (same alliance, opposite side)
+    ///             This ordering allows callers to consume waypoints in nearest-first order.
+    ///
+    ///             **All other item types:**
+    ///             Returns a single-element vector equivalent to calling GetValue().
+    ///
+    /// @note       Bump identification uses BumpHelper::CalcNearestBump() on each call
+    /// @see        FIELD_OFFSET_ITEMS for all available item types
+    /// @see        GetValue() for single-value queries
+    //------------------------------------------------------------------
+    std::vector<units::length::meter_t> GetValues(bool isRedSide, FIELD_OFFSET_ITEMS items) const;
+
 private:
     //------------------------------------------------------------------
     /// @brief      Private constructor for singleton pattern
@@ -196,21 +217,33 @@ private:
 
     //------------------------------------------------------------------
     // Tower Coordinates
+    // Positions are computed relative to the tower center pose retrieved from
+    // FieldConstants::RED_TOWER_CENTER / BLUE_TOWER_CENTER, with TOWER_X_OFFSET
+    // and TOWER_Y_OFFSET applied to derive outpost and depot approach points.
     //------------------------------------------------------------------
+
+    /// @brief X-coordinate of red tower aligned with the outpost side (tower center X - TOWER_X_OFFSET)
     units::length::meter_t m_redTowerOutpostX;
 
+    /// @brief X-coordinate of red tower aligned with the depot side (tower center X - TOWER_X_OFFSET)
     units::length::meter_t m_redTowerDepotX;
 
+    /// @brief Y-coordinate of red tower on the outpost side (tower center Y + TOWER_Y_OFFSET)
     units::length::meter_t m_redTowerOutpostY;
 
+    /// @brief Y-coordinate of red tower on the depot side (tower center Y - TOWER_Y_OFFSET)
     units::length::meter_t m_redTowerDepotY;
 
+    /// @brief X-coordinate of blue tower aligned with the outpost side (tower center X + TOWER_X_OFFSET)
     units::length::meter_t m_blueTowerOutpostX;
 
+    /// @brief X-coordinate of blue tower aligned with the depot side (tower center X + TOWER_X_OFFSET)
     units::length::meter_t m_blueTowerDepotX;
 
+    /// @brief Y-coordinate of blue tower on the outpost side (tower center Y - TOWER_Y_OFFSET)
     units::length::meter_t m_blueTowerOutpostY;
 
+    /// @brief Y-coordinate of blue tower on the depot side (tower center Y + TOWER_Y_OFFSET)
     units::length::meter_t m_blueTowerDepotY;
 
     //------------------------------------------------------------------
@@ -261,6 +294,8 @@ private:
 
     /// @brief Hub offset distance for navigation positioning (2.0 meters toward neutral zone)
     static constexpr units::length::meter_t HUB_OFFSET = 2.0_m;
+
+    /// @brief Small inward nudge applied to depot neutral-side X positions (3 inches)
     static constexpr units::length::inch_t DEPOT_OFFSET = 3.0_in;
 
     /// @brief Bump offset distance from hub center (1.5 meters on each side)

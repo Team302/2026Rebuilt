@@ -17,11 +17,17 @@
 /// @file FieldOffsetValues.cpp
 /// @brief Implementation of FieldOffsetValues singleton for field element position management
 /// @details This file implements the storage and retrieval of alliance-specific field element positions
-///          for the 2026 game field. It calculates strategic offsets for navigation targets like hubs
-///          and bumps, and provides a unified interface for querying field coordinates throughout the codebase.
+///          for the 2026 game field. It calculates strategic offsets for navigation targets including
+///          hubs, bumps, depots, outposts, and towers, and provides a unified interface for querying
+///          field coordinates throughout the codebase.
 ///
 ///          The implementation queries FieldConstants for base positions and applies game-specific offsets
 ///          to optimize navigation paths and bump crossing trajectories.
+///
+///          **Public API:**
+///          - GetInstance()  – Lazy-initialization singleton accessor
+///          - GetValue()     – Returns a single alliance-aware coordinate for a given FIELD_OFFSET_ITEMS type
+///          - GetValues()    – Returns an ordered vector of coordinates (nearest-first for bump Y queries)
 //====================================================================================================================================================
 
 #include "fielddata/FieldOffsetValues.h"
@@ -312,4 +318,68 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
     {
         return units::length::meter_t{0.0}; // Fallback for invalid queries
     }
+}
+
+//------------------------------------------------------------------
+/// @brief      Retrieves an ordered list of position values for a field element
+/// @param[in]  isRedSide - true for red alliance, false for blue alliance
+/// @param[in]  item - The type of field offset coordinate to retrieve
+/// @return     std::vector<units::length::meter_t> - Ordered coordinate values in meters
+/// @details    For bump Y queries (BUMP_ALLIANCE_Y / BUMP_NEUTRAL_Y) this method
+///             uses BumpHelper::CalcNearestBump() to identify the nearest bump and
+///             returns **two** Y-coordinates ordered nearest-first so callers can
+///             consume waypoints in proximity order:
+///
+///             | Nearest bump        | Index 0 (nearest)    | Index 1 (farthest)   |
+///             |---------------------|----------------------|----------------------|
+///             | RED_OUTPOST_BUMP    | m_redBumpOutpostY    | m_redBumpDepotY      |
+///             | RED_DEPOT_BUMP      | m_redBumpDepotY      | m_redBumpOutpostY    |
+///             | BLUE_OUTPOST_BUMP   | m_blueBumpOutpostY   | m_blueBumpDepotY     |
+///             | BLUE_DEPOT_BUMP     | m_blueBumpDepotY     | m_blueBumpOutpostY   |
+///
+///             For all other item types a single-element vector is returned that is
+///             equivalent to calling GetValue(isRedSide, item).
+///
+/// @note       Bump identification queries BumpHelper on every call (not cached)
+/// @see        GetValue() for single-value queries
+/// @see        BumpHelper::CalcNearestBump() for bump identification
+//------------------------------------------------------------------
+std::vector<units::length::meter_t> FieldOffsetValues::GetValues(bool isRedSide, FIELD_OFFSET_ITEMS item) const
+{
+    std::vector<units::length::meter_t> values;
+    // Bump Y-coordinate query (dynamic based on nearest bump)
+    if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_Y || item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_Y)
+    {
+        // Identify which of the four bumps is nearest to robot
+        auto bump = BumpHelper::GetInstance()->CalcNearestBump();
+
+        // Return corresponding Y-coordinate for the identified bump
+        if (bump == BUMP_ID::RED_OUTPOST_BUMP)
+        {
+            values.emplace_back(m_redBumpOutpostY);
+            values.emplace_back(m_redBumpDepotY);
+            return values;
+        }
+        else if (bump == BUMP_ID::RED_DEPOT_BUMP)
+        {
+            values.emplace_back(m_redBumpDepotY);
+            values.emplace_back(m_redBumpOutpostY);
+            return values;
+        }
+        else if (bump == BUMP_ID::BLUE_OUTPOST_BUMP)
+        {
+            values.emplace_back(m_blueBumpOutpostY);
+            values.emplace_back(m_blueBumpDepotY);
+            return values;
+        }
+        else if (bump == BUMP_ID::BLUE_DEPOT_BUMP)
+        {
+            values.emplace_back(m_blueBumpDepotY);
+            values.emplace_back(m_blueBumpOutpostY);
+            return values;
+        }
+    }
+
+    values.emplace_back(GetValue(isRedSide, item)); // Fallback for quantities that only have one value
+    return values;
 }
