@@ -52,14 +52,41 @@ TrajectoryDrive::TrajectoryDrive(
 void TrajectoryDrive::Initialize()
 {
     m_trajectory = AutonUtils::GetTrajectoryFromPathFile(m_pathName);
+
     if (m_trajectory.has_value())
     {
         auto trajectory = m_trajectory.value();
+        bool isRedAlliance = FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed;
+
+        // Check if we should use smart joining based on distance from start
+        if (m_chassis != nullptr && !trajectory.samples.empty())
+        {
+            auto currentPose = m_chassis->GetPose();
+            auto startPose = trajectory.samples[0].GetPose();
+            units::length::meter_t distanceFromStart = PoseUtils::GetDeltaBetweenPoses(currentPose, startPose);
+
+            // If we're too far from the start, use smart joining with default XY matching
+            if (distanceFromStart > m_joinTolerance)
+            {
+                // Use InitializeWithTrajectory for smart joining logic
+                InitializeWithTrajectory(m_trajectory,
+                                         isRedAlliance,
+                                         TrajectoryMatchStrategy::MATCH_XY,
+                                         m_joinTolerance,
+                                         0.9); // Default to searching 90% of trajectory
+                return;
+            }
+        }
+
+        // We're close enough to the start, proceed with normal initialization
         m_trajectoryStates = trajectory.samples;
         m_totalTrajectoryTime = trajectory.GetTotalTime();
         m_thresholdTime = m_totalTrajectoryTime * kPercentComplete;
-        auto finalPose = trajectory.GetFinalPose(FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed);
+        auto finalPose = trajectory.GetFinalPose(isRedAlliance);
         m_finalPose = finalPose.has_value() ? finalPose.value() : frc::Pose2d();
+        m_startTimeOffset = 0.0_s;
+        m_useSmartJoin = false;
+        m_isApproachingPath = false;
     }
     else
     {
@@ -67,12 +94,13 @@ void TrajectoryDrive::Initialize()
         m_thresholdTime = 0_s;
         m_trajectoryStates.clear();
         m_finalPose = frc::Pose2d();
+        m_startTimeOffset = 0.0_s;
+        m_useSmartJoin = false;
+        m_isApproachingPath = false;
     }
+
     m_previousPose = frc::Pose2d();
     m_numberOfExecutions = 0;
-    m_startTimeOffset = 0.0_s;
-    m_useSmartJoin = false;
-    m_isApproachingPath = false;
 
     // Reset and start the timer when the command begins
     m_timer.get()->Reset();
