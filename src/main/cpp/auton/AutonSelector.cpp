@@ -159,11 +159,11 @@ string AutonSelector::GetFuelStrategy()
 void AutonSelector::PutChoicesOnDashboard()
 {
 	// Starting Position
-	m_startposchooser.AddOption("Trench Depot Side", "L");
-	m_startposchooser.AddOption("Bump Depot Side", "ML");
-	m_startposchooser.AddOption("Hub", "M");
-	m_startposchooser.AddOption("Bump Outpost Side", "MR");
-	m_startposchooser.SetDefaultOption("Trench Outpost Side", "R");
+	m_startposchooser.AddOption("Trench Depot Side", "TDep");
+	m_startposchooser.AddOption("Bump Depot Side", "BDep");
+	m_startposchooser.AddOption("Hub", "Hub");
+	m_startposchooser.AddOption("Bump Outpost Side", "BOut");
+	m_startposchooser.SetDefaultOption("Trench Outpost Side", "TOut");
 	frc::SmartDashboard::PutData("StartPos", &m_startposchooser);
 
 	// Amount of times going into NZ
@@ -184,17 +184,17 @@ void AutonSelector::PutChoicesOnDashboard()
 
 	// Depot Option
 	m_targetDepot.AddOption("true", "Dep");
-	m_targetDepot.AddOption("false", "ND");
+	m_targetDepot.AddOption("false", "NDep");
 	frc::SmartDashboard::PutData("Has Depot?", &m_targetDepot);
 
 	// Outpost Option
 	m_targetOutpost.AddOption("true", "Out");
-	m_targetOutpost.AddOption("false", "NO");
+	m_targetOutpost.AddOption("false", "NOut");
 	frc::SmartDashboard::PutData("Has Outpost?", &m_targetOutpost);
 
 	// Climbing Option
 	m_climbing.AddOption("true", "Climb");
-	m_climbing.AddOption("false", "NC");
+	m_climbing.AddOption("false", "NCli");
 	frc::SmartDashboard::PutData("Climb?", &m_climbing);
 
 	// Preload Option
