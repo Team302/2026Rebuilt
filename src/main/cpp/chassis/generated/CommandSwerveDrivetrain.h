@@ -12,7 +12,6 @@
 
 #include "chassis/generated/TunerSwerveBase.h"
 #include <frc/geometry/Pose2d.h>
-#include "utils/logging/debug/Logger.h"
 #include "utils/AngleUtils.h"
 using namespace ctre::phoenix6;
 
