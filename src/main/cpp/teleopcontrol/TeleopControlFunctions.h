@@ -73,6 +73,7 @@ public:
         LAUNCH,
         LAUNCH_OVERRIDE,
         MANUAL_LAUNCH,
+        TURRET_ENABLE,
 
         // TARGET OFFSETS
         UPDATE_TARGET_OFFSET_UP,

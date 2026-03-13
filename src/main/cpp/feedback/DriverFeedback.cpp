@@ -59,7 +59,7 @@ DriverFeedback::DriverFeedback() : IRobotStateChangeSubscriber()
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool);
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool);
-
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::TurretEnabled_Bool);
     auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
     if (config != nullptr)
     {
@@ -104,6 +104,8 @@ void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, bo
         m_shiftChangeIn5Seconds = value;
     else if (RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool == change)
         m_shiftChangeIn3Seconds = value;
+    else if (RobotStateChanges::StateChange::TurretEnabled_Bool == change)
+        m_turretEnabled = value;
 }
 
 /// @brief Main periodic entry point. Runs every robot loop (~20 ms).
@@ -324,8 +326,11 @@ void DriverFeedback::UpdateDiagnosticLEDs()
     if (m_launcher != nullptr)
     {
         hoodZeroSwitch = m_launcher->GetHood()->GetReverseLimit(false).GetValue().value;
-        turretZero = m_launcher->GetTurret()->GetReverseLimit(false).GetValue().value;
-        turretEnd = m_launcher->GetTurret()->GetForwardLimit(false).GetValue().value;
+        if (m_turretEnabled)
+        {
+            turretZero = m_launcher->GetTurret()->GetReverseLimit(false).GetValue().value;
+            turretEnd = m_launcher->GetTurret()->GetForwardLimit(false).GetValue().value;
+        }
     }
 
     if (m_intake != nullptr)

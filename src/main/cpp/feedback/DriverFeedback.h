@@ -126,4 +126,5 @@ private:
 
     // --- Previous rumble state (avoid redundant SetRumble writes) ---
     bool m_prevRumbleState = false;
+    bool m_turretEnabled = false;
 };
