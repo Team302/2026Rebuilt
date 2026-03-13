@@ -190,7 +190,8 @@ robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlB
 
     {TeleopControlFunctions::INTAKE_IN, copilotLTriggerPressed},
     {TeleopControlFunctions::INTAKE_OUT, copilotRTriggerPressed},
-    {TeleopControlFunctions::EXTENDER_MODIFIER, copilotSelectButton}};
+    {TeleopControlFunctions::EXTENDER_MODIFIER, copilotSelectButton},
+    {TeleopControlFunctions::TURRET_ENABLE, copilotLStickPressed}};
 
 constexpr TeleopControlAxis driverLJoystickX = {TeleopControlMappingEnums::DRIVER, TeleopControlMappingEnums::LEFT_JOYSTICK_X, TeleopControlMappingEnums::APPLY_STANDARD_DEADBAND, TeleopControlMappingEnums::AXIS_PROFILE::LINEAR, TeleopControlMappingEnums::REVERSED, 1.0};
 constexpr TeleopControlAxis driverLJoystickY = {TeleopControlMappingEnums::DRIVER, TeleopControlMappingEnums::LEFT_JOYSTICK_Y, TeleopControlMappingEnums::APPLY_STANDARD_DEADBAND, TeleopControlMappingEnums::AXIS_PROFILE::LINEAR, TeleopControlMappingEnums::REVERSED, 1.0};
