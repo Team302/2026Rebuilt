@@ -263,11 +263,11 @@ void Intake::InitializeTalonFXIntakeCompBot302()
 void Intake::InitializeTalonFXSExtenderCompBot302()
 {
 	TalonFXSConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
+	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(30);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
+	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(30);
 	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLowerLimit = units::current::ampere_t(35);
+	configs.CurrentLimits.SupplyCurrentLowerLimit = units::current::ampere_t(20);
 	configs.CurrentLimits.SupplyCurrentLowerTime = units::time::second_t(0);
 
 	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
@@ -300,7 +300,7 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 0.46541861405197305;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.4229050603528319;
 
 	configs.Slot0.kI = m_positionDegUp->GetI();
 	configs.Slot0.kD = m_positionDegUp->GetD();
