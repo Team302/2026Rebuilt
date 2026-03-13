@@ -25,7 +25,7 @@ time = "5.0">
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLDrop2_D"
+choreoname = "BlueMLDropu2_D"
 time = "5.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "BlueRightBumpZone.xml"/>
