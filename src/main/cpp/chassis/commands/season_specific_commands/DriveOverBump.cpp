@@ -56,13 +56,13 @@ units::angle::degree_t DriveOverBump::GetRotation(BUMP_ID bump, bool isInNeutral
     {
     case BUMP_ID::RED_OUTPOST_BUMP:
         // Red outpost side: if in neutral zone, 135° heading; if in alliance zone, 45° heading
-        return isInNeutralZone ? kNeutralZoneTowardHubRedOutpost : kRedAllianceOutpostWallTowardHub;
+        return isInNeutralZone ? kNeutralZoneTowardHubRedOutpost : kRedAllianceDepotWallTowardHub;
     case BUMP_ID::BLUE_OUTPOST_BUMP:
         // Blue outpost side: if in neutral zone, 315° heading; if in alliance zone, 225° heading
         return isInNeutralZone ? kNeutralZoneTowardHubBlueOutpost : kBlueAllianceOutpostWallTowardHub;
     case BUMP_ID::RED_DEPOT_BUMP:
         // Red depot side: if in neutral zone, 225° heading; if in alliance zone, 315° heading
-        return isInNeutralZone ? kNeutralZoneTowardHubRedDepot : kRedAllianceDepotWallTowardHub;
+        return isInNeutralZone ? kNeutralZoneTowardHubRedDepot : kRedAllianceOutpostWallTowardHub;
     case BUMP_ID::BLUE_DEPOT_BUMP:
     default:
         // Blue depot side (default): if in neutral zone, 45° heading; if in alliance zone, 135° heading
