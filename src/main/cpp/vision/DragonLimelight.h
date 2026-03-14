@@ -19,6 +19,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <optional>
 
 // FRC includes
 #include "fielddata/FieldConstants.h"
@@ -38,11 +39,12 @@
 #include "vision/DragonVisionEnums.h"
 #include "vision/DragonVisionStruct.h"
 #include "vision/VisionPose.h"
+#include "utils/logging/signals/DragonDataLogger.h"
 
 // Third Party Includes
 
-// DragonLimelight needs to be a child of DragonCamera
-class DragonLimelight
+// DragonLimelight derives from DragonDataLogger for vision data logging and Limelight control
+class DragonLimelight : public DragonDataLogger
 {
 public:
     ///-----------------------------------------------------------------------------------
@@ -172,6 +174,11 @@ public:
     ///-----------------------------------------------------------------------------------
     void StopRewind();
 
+    ///-----------------------------------------------------------------------------------
+    /// @brief Log relevant Limelight data to the data logger.
+    ///-----------------------------------------------------------------------------------
+    void DataLog(uint64_t timestamp) override;
+
 private:
     ///-----------------------------------------------------------------------------------
     /// @brief Set the priority AprilTag ID used by Limelight pose selection logic.
@@ -223,11 +230,15 @@ private:
     const double m_roll = 0.0;
     const double m_rollRate = 0.0;
 
-    int m_numberOfTags;             ///< last count of tags reported
     bool m_megatag1PosBool = false; ///< flag: have MegaTag1 estimate
     VisionPose m_megatag1Pos;       ///< last MegaTag1 pose
     bool m_megatag2PosBool = false; ///< flag: have MegaTag2 estimate
     VisionPose m_megatag2Pos;       ///< last MegaTag2 pose
 
     LIMELIGHT_IMU_MODE m_lastIMUMode = LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_ONLY;
+
+    const std::string m_loggingLimelightPath = "/Limelight/";
+    const std::string m_loggingCameraPoseKey = "cameraPose/";
+    const std::string m_loggingPipelineKey = "pipeline/";
+    const std::string m_loggingTagIDKey = "number of fiducials/";
 };
