@@ -166,18 +166,14 @@ FieldOffsetValues::FieldOffsetValues()
                              1.0_ft;
 
         // Calculate bump Y positions as trench entrance Y values (aligns bumps with trench entrances for optimal crossing)
-        m_redBumpTrenchDepotY =                                                                                     // ((m_redBumpDepotY +
-            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y();    //) /
-                                                                                                                    // 2.0);
-        m_redBumpTrenchOutpostY =                                                                                   //((m_redBumpOutpostY +
-            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y();  //) /
-                                                                                                                    // 2.0);
-        m_blueBumpTrenchDepotY =                                                                                    //((m_blueBumpDepotY +
-            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y();   //) /
-                                                                                                                    // 2.0);
-        m_blueBumpTrenchOutpostY =                                                                                  //((m_blueBumpOutpostY +
-            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y(); //) /
-                                                                                                                    // 2.0);
+        m_redBumpTrenchDepotY =
+            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y();
+        m_redBumpTrenchOutpostY =
+            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y();
+        m_blueBumpTrenchDepotY =
+            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y();
+        m_blueBumpTrenchOutpostY =
+            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y();
     }
     else
     {
