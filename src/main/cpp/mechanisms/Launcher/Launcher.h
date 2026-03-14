@@ -137,7 +137,7 @@ public:
 	ctre::phoenix6::hardware::TalonFX *GetIndexer() const { return m_indexer; }
 	ctre::phoenix6::hardware::TalonFX *GetAgitator() const { return m_agitator; }
 	ctre::phoenix6::hardware::CANdi *GetHoodCANdi() const { return m_hoodCANdi; }
-	ctre::phoenix6::hardware::CANdi *GetTurretCANdi() const { return m_turretCANdi; }
+	// ctre::phoenix6::hardware::CANdi *GetTurretCANdi() const { return m_turretCANdi; }
 
 	ControlData *GetPercentOut() const { return m_percentOut; }
 	ControlData *GetVelocityRPS() const { return m_velocityRPS; }
@@ -182,8 +182,8 @@ private:
 	ctre::phoenix6::hardware::TalonFX *m_indexer;
 	ctre::phoenix6::hardware::TalonFX *m_agitator;
 	ctre::phoenix6::hardware::CANdi *m_hoodCANdi;
-	ctre::phoenix6::hardware::CANdi *m_turretCANdi;
-
+	// ctre::phoenix6::hardware::CANdi *m_turretCANdi;
+	ctre::phoenix6::hardware::CANcoder *m_turretAngleSensor;
 	ControlData *m_percentOut;
 	ControlData *m_velocityRPS;
 	ControlData *m_positionDegreesHood;
