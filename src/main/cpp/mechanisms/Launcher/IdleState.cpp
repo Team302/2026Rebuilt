@@ -51,7 +51,7 @@ void IdleState::Init()
 
 void IdleState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetLauncherPercentOut(m_launcherTarget);
+	m_mechanism->UpdateTargetLauncherVelocityRPS(m_launcherTarget);
 	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
 	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
 	m_mechanism->UpdateTargetAgitatorPercentOut(m_agitatorTarget);
@@ -93,5 +93,6 @@ bool IdleState::IsTransitionCondition(bool considerGamepadTransitions)
 	}
 	return (m_mechanism->IsLauncherInitialized() && m_mechanism->GetCurrentState() == Launcher::STATE_INITIALIZE) ||
 		   (launchingDone) ||
-		   (!m_mechanism->IsInClimbMode() && (m_mechanism->GetCurrentState() == Launcher::STATE_CLIMB || m_mechanism->GetCurrentState() == Launcher::STATE_EMPTY_HOPPER));
+		   (!m_mechanism->IsInClimbMode() && (m_mechanism->GetCurrentState() == Launcher::STATE_CLIMB || m_mechanism->GetCurrentState() == Launcher::STATE_EMPTY_HOPPER)) ||
+		   (frc::DriverStation::IsAutonomous() && m_mechanism->IsFinishedLaunching());
 }

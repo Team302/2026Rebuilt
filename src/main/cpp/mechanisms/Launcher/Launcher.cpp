@@ -906,3 +906,18 @@ void Launcher::UpdateTurretEnabled()
 	m_turretEnabledButtonReleased = !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::TURRET_ENABLE);
 	RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::TurretEnabled_Bool, m_turretEnabled);
 }
+bool Launcher::IsFinishedLaunching()
+{
+	if (m_launcher->GetStatorCurrent().GetValue() > m_isLaunchingCurrentThreshold)
+	{
+		m_launchCurrentTimer.Reset();
+		m_launchCurrentTimer.Start();
+	}
+	else if (m_launchCurrentTimer.Get() > m_isLaunchingTimeThreshold)
+	{
+		m_launchCurrentTimer.Stop();
+		m_launchCurrentTimer.Reset();
+		return true;
+	}
+	return false;
+}

@@ -165,6 +165,8 @@ public:
 	bool IsTurretAtTarget();
 	units::angle::degree_t GetTargetTurretAngle() const { return m_targetTurretAngle; }
 	void UpdateTurretEnabled();
+	bool IsFinishedLaunching();
+	void StartLaunchCurrentTimer() { m_launchCurrentTimer.Start(); }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -275,4 +277,7 @@ private:
 	static constexpr std::string_view m_loggingRPMUnits = "RPM";
 	bool m_turretEnabled = false;
 	bool m_turretEnabledButtonReleased = true;
+	units::current::ampere_t m_isLaunchingCurrentThreshold = 21.0_A;
+	frc::Timer m_launchCurrentTimer;
+	units::time::second_t m_isLaunchingTimeThreshold = 1.0_s;
 };
