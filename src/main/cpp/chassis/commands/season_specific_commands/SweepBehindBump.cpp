@@ -35,7 +35,7 @@ SweepBehindBump::SweepBehindBump(subsystems::CommandSwerveDrivetrain *chassis) :
     SetAngleTolerance(kAngleTolerance);
     SetYTransitionToEndPointTolerance(kYTransitionToEndPointTolerance); // Allow extra tolerance for Y due to bump crossing dynamics
 }
-// might want to change threshold making it smaller bc this is a path specificly to get as close to hub as possible--not sure but should ask at very least
+// TODO: Evaluate whether kDistanceThreshold should be reduced for this command so the robot can approach the hub as closely as field rules and safety allow.
 
 //------------------------------------------------------------------
 /// @brief      Determines the appropriate rotation angle for driving over a bump
