@@ -24,10 +24,10 @@
 #include "units/time.h"
 
 // Team 302 includes
-#include "chassis/ChassisOptionEnums.h"
-#include "state/State.h"
 #include "auton/ZoneParams.h"
+#include "chassis/ChassisOptionEnums.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "state/State.h"
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 
 // Third Party Includes
@@ -62,7 +62,7 @@ protected:
 
 private:
     void SetMechanismStatesFromParam(PrimitiveParams *params);
-    void SetMechanismStatesFromZone(ZoneParams *params);
+    bool SetMechanismStatesFromZone(std::pair<ZoneParams *, bool> *params);
     void CacheMechanismPointers();
 
     std::vector<PrimitiveParams *> m_primParams;
