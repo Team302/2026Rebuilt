@@ -161,16 +161,16 @@ public:
     ///             Y coordinate uses the trench-entrance series so the sweep endpoint aligns
     ///             with the trench entrance.
     ///
-    ///             | Nearest bump      | inNeutralZone | Index 0 (nearest)                              | Index 1 (cross-field)                           |
-    ///             |-------------------|---------------|------------------------------------------------|-------------------------------------------------|
-    ///             | RED_OUTPOST_BUMP  | true          | {RED_OUTPOST,  redNeutralX,  redTrenchOutpostY} | {RED_DEPOT,    redNeutralX,  redTrenchDepotY}   |
-    ///             | RED_OUTPOST_BUMP  | false         | {RED_OUTPOST,  redAllianceX, redTrenchOutpostY} | {RED_DEPOT,    redAllianceX, redTrenchDepotY}   |
-    ///             | RED_DEPOT_BUMP    | true          | {RED_DEPOT,    redNeutralX,  redTrenchDepotY}   | {RED_OUTPOST,  redNeutralX,  redTrenchOutpostY} |
-    ///             | RED_DEPOT_BUMP    | false         | {RED_DEPOT,    redAllianceX, redTrenchDepotY}   | {RED_OUTPOST,  redAllianceX, redTrenchOutpostY} |
-    ///             | BLUE_OUTPOST_BUMP | true          | {BLUE_OUTPOST, blueNeutralX, blueTrenchOutpostY}| {BLUE_DEPOT,   blueNeutralX, blueTrenchDepotY}  |
-    ///             | BLUE_OUTPOST_BUMP | false         | {BLUE_OUTPOST, blueAllianceX,blueTrenchOutpostY}| {BLUE_DEPOT,   blueAllianceX,blueTrenchDepotY}  |
-    ///             | BLUE_DEPOT_BUMP   | true          | {BLUE_DEPOT,   blueNeutralX, blueTrenchDepotY}  | {BLUE_OUTPOST, blueNeutralX, blueTrenchOutpostY}|
-    ///             | BLUE_DEPOT_BUMP   | false         | {BLUE_DEPOT,   blueAllianceX,blueTrenchDepotY}  | {BLUE_OUTPOST, blueAllianceX,blueTrenchOutpostY}|
+    ///             | Nearest bump      | inNeutralZone | Index 0 (nearest)                                          | Index 1 (cross-field)                                       |
+    ///             |-------------------|---------------|------------------------------------------------------------|-------------------------------------------------------------|
+    ///             | RED_OUTPOST_BUMP  | true          | {BUMP_ID::RED_OUTPOST_BUMP,  redNeutralX,  redTrenchOutpostY} | {BUMP_ID::RED_DEPOT_BUMP,    redNeutralX,  redTrenchDepotY}   |
+    ///             | RED_OUTPOST_BUMP  | false         | {BUMP_ID::RED_OUTPOST_BUMP,  redAllianceX, redTrenchOutpostY} | {BUMP_ID::RED_DEPOT_BUMP,    redAllianceX, redTrenchDepotY}   |
+    ///             | RED_DEPOT_BUMP    | true          | {BUMP_ID::RED_DEPOT_BUMP,    redNeutralX,  redTrenchDepotY}   | {BUMP_ID::RED_OUTPOST_BUMP,  redNeutralX,  redTrenchOutpostY} |
+    ///             | RED_DEPOT_BUMP    | false         | {BUMP_ID::RED_DEPOT_BUMP,    redAllianceX, redTrenchDepotY}   | {BUMP_ID::RED_OUTPOST_BUMP,  redAllianceX, redTrenchOutpostY} |
+    ///             | BLUE_OUTPOST_BUMP | true          | {BUMP_ID::BLUE_OUTPOST_BUMP, blueNeutralX, blueTrenchOutpostY}| {BUMP_ID::BLUE_DEPOT_BUMP,   blueNeutralX, blueTrenchDepotY}  |
+    ///             | BLUE_OUTPOST_BUMP | false         | {BUMP_ID::BLUE_OUTPOST_BUMP, blueAllianceX,blueTrenchOutpostY}| {BUMP_ID::BLUE_DEPOT_BUMP,   blueAllianceX,blueTrenchDepotY}  |
+    ///             | BLUE_DEPOT_BUMP   | true          | {BUMP_ID::BLUE_DEPOT_BUMP,   blueNeutralX, blueTrenchDepotY}  | {BUMP_ID::BLUE_OUTPOST_BUMP, blueNeutralX, blueTrenchOutpostY}|
+    ///             | BLUE_DEPOT_BUMP   | false         | {BUMP_ID::BLUE_DEPOT_BUMP,   blueAllianceX,blueTrenchDepotY}  | {BUMP_ID::BLUE_OUTPOST_BUMP, blueAllianceX,blueTrenchOutpostY}|
     ///
     /// @note       Bump identification queries BumpHelper on every call (not cached)
     /// @note       Method is const - does not modify object state
