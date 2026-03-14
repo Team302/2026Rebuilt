@@ -139,11 +139,11 @@ void DriverFeedback::UpdateRumble()
         return;
     }
 
-    if (m_startLaunching != m_prevRumbleState)
+    if (m_shiftChangeIn5Seconds != m_prevRumbleState)
     {
-        m_prevRumbleState = m_startLaunching;
-        m_teleopControl->SetRumble(0, m_startLaunching, m_startLaunching);
-        m_teleopControl->SetRumble(1, m_startLaunching, m_startLaunching);
+        m_prevRumbleState = m_shiftChangeIn5Seconds;
+        m_teleopControl->SetRumble(0, m_shiftChangeIn5Seconds, m_shiftChangeIn5Seconds);
+        m_teleopControl->SetRumble(1, m_shiftChangeIn5Seconds, m_shiftChangeIn5Seconds);
     }
 }
 
