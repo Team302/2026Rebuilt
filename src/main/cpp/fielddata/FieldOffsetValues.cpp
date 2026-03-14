@@ -27,7 +27,7 @@
 ///          **Public API:**
 ///          - GetInstance()  – Lazy-initialization singleton accessor
 ///          - GetValue()     – Returns a single alliance-aware coordinate for a given FIELD_OFFSET_ITEMS type
-///          - GetValues()    – Returns an ordered vector of coordinates (nearest-first for bump Y queries)
+///          - GetNearestAndCrossFieldBumpEdges()    – Returns an ordered vector of coordinates (nearest-first for bump Y queries)
 //====================================================================================================================================================
 
 #include "fielddata/FieldOffsetValues.h"
@@ -152,6 +152,20 @@ FieldOffsetValues::FieldOffsetValues()
                                fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y()) /
                               2.0) +
                              1.0_ft;
+
+        // Calculate bump Y positions as midpoints between trench and bump
+        m_redBumpTrenchDepotY =                                                                                     // ((m_redBumpDepotY +
+            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y();    //) /
+                                                                                                                    // 2.0);
+        m_redBumpTrenchOutpostY =                                                                                   //((m_redBumpOutpostY +
+            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y();  //) /
+                                                                                                                    // 2.0);
+        m_blueBumpTrenchDepotY =                                                                                    //((m_blueBumpDepotY +
+            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y();   //) /
+                                                                                                                    // 2.0);
+        m_blueBumpTrenchOutpostY =                                                                                  //((m_blueBumpOutpostY +
+            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y(); //) /
+                                                                                                                    // 2.0);
     }
     else
     {
@@ -185,6 +199,11 @@ FieldOffsetValues::FieldOffsetValues()
         m_redBumpOutpostY = units::length::meter_t{0.0};
         m_blueBumpDepotY = units::length::meter_t{0.0};
         m_blueBumpOutpostY = units::length::meter_t{0.0};
+
+        m_redBumpTrenchDepotY = units::length::meter_t{0.0};
+        m_redBumpTrenchOutpostY = units::length::meter_t{0.0};
+        m_blueBumpTrenchDepotY = units::length::meter_t{0.0};
+        m_blueBumpTrenchOutpostY = units::length::meter_t{0.0};
     }
 }
 
@@ -344,42 +363,65 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
 /// @see        GetValue() for single-value queries
 /// @see        BumpHelper::CalcNearestBump() for bump identification
 //------------------------------------------------------------------
-std::vector<units::length::meter_t> FieldOffsetValues::GetValues(bool isRedSide, FIELD_OFFSET_ITEMS item) const
+std::vector<BumpPosition> FieldOffsetValues::GetNearestAndCrossFieldBumpEdges(bool isInNeutralZone) const
 {
-    std::vector<units::length::meter_t> values;
-    // Bump Y-coordinate query (dynamic based on nearest bump)
-    if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_Y || item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_Y)
-    {
-        // Identify which of the four bumps is nearest to robot
-        auto bump = BumpHelper::GetInstance()->CalcNearestBump();
+    std::vector<BumpPosition> values;
 
-        // Return corresponding Y-coordinate for the identified bump
-        if (bump == BUMP_ID::RED_OUTPOST_BUMP)
+    // Identify which of the four bumps is nearest to robot
+    auto bump = BumpHelper::GetInstance()->CalcNearestBump();
+
+    // Return corresponding BumpPosition for the identified bump (nearest first)
+    if (bump == BUMP_ID::RED_OUTPOST_BUMP)
+    {
+        if (isInNeutralZone)
         {
-            values.emplace_back(m_redBumpOutpostY);
-            values.emplace_back(m_redBumpDepotY);
-            return values;
+            values.emplace_back(BumpPosition{BUMP_ID::RED_OUTPOST_BUMP, m_redNeutralBumpEdgeX, m_redBumpTrenchOutpostY});
+            values.emplace_back(BumpPosition{BUMP_ID::RED_DEPOT_BUMP, m_redNeutralBumpEdgeX, m_redBumpTrenchDepotY});
         }
-        else if (bump == BUMP_ID::RED_DEPOT_BUMP)
+        else
         {
-            values.emplace_back(m_redBumpDepotY);
-            values.emplace_back(m_redBumpOutpostY);
-            return values;
-        }
-        else if (bump == BUMP_ID::BLUE_OUTPOST_BUMP)
-        {
-            values.emplace_back(m_blueBumpOutpostY);
-            values.emplace_back(m_blueBumpDepotY);
-            return values;
-        }
-        else if (bump == BUMP_ID::BLUE_DEPOT_BUMP)
-        {
-            values.emplace_back(m_blueBumpDepotY);
-            values.emplace_back(m_blueBumpOutpostY);
-            return values;
+            values.emplace_back(BumpPosition{BUMP_ID::RED_OUTPOST_BUMP, m_redNeutralBumpEdgeX, m_redBumpTrenchOutpostY});
+            values.emplace_back(BumpPosition{BUMP_ID::RED_DEPOT_BUMP, m_redNeutralBumpEdgeX, m_redBumpTrenchDepotY});
         }
     }
-
-    values.emplace_back(GetValue(isRedSide, item)); // Fallback for quantities that only have one value
+    else if (bump == BUMP_ID::RED_DEPOT_BUMP)
+    {
+        if (isInNeutralZone)
+        {
+            values.emplace_back(BumpPosition{BUMP_ID::RED_DEPOT_BUMP, m_redNeutralBumpEdgeX, m_redBumpTrenchDepotY});
+            values.emplace_back(BumpPosition{BUMP_ID::RED_OUTPOST_BUMP, m_redNeutralBumpEdgeX, m_redBumpTrenchOutpostY});
+        }
+        else
+        {
+            values.emplace_back(BumpPosition{BUMP_ID::RED_DEPOT_BUMP, m_redAllianceBumpEdgeX, m_redBumpTrenchDepotY});
+            values.emplace_back(BumpPosition{BUMP_ID::RED_OUTPOST_BUMP, m_redAllianceBumpEdgeX, m_redBumpTrenchOutpostY});
+        }
+    }
+    else if (bump == BUMP_ID::BLUE_OUTPOST_BUMP)
+    {
+        if (isInNeutralZone)
+        {
+            values.emplace_back(BumpPosition{BUMP_ID::BLUE_OUTPOST_BUMP, m_blueNeutralBumpEdgeX, m_blueBumpTrenchOutpostY});
+            values.emplace_back(BumpPosition{BUMP_ID::BLUE_DEPOT_BUMP, m_blueNeutralBumpEdgeX, m_blueBumpTrenchDepotY});
+        }
+        else
+        {
+            values.emplace_back(BumpPosition{BUMP_ID::BLUE_OUTPOST_BUMP, m_blueAllianceBumpEdgeX, m_blueBumpTrenchOutpostY});
+            values.emplace_back(BumpPosition{BUMP_ID::BLUE_DEPOT_BUMP, m_blueAllianceBumpEdgeX, m_blueBumpTrenchDepotY});
+        }
+    }
+    else if (bump == BUMP_ID::BLUE_DEPOT_BUMP)
+    {
+        if (isInNeutralZone)
+        {
+            values.emplace_back(BumpPosition{BUMP_ID::BLUE_DEPOT_BUMP, m_blueNeutralBumpEdgeX, m_blueBumpTrenchDepotY});
+            values.emplace_back(BumpPosition{BUMP_ID::BLUE_OUTPOST_BUMP, m_blueNeutralBumpEdgeX, m_blueBumpTrenchOutpostY});
+        }
+        else
+        {
+            values.emplace_back(BumpPosition{BUMP_ID::BLUE_DEPOT_BUMP, m_blueAllianceBumpEdgeX, m_blueBumpTrenchDepotY});
+            values.emplace_back(BumpPosition{BUMP_ID::BLUE_OUTPOST_BUMP, m_blueAllianceBumpEdgeX, m_blueBumpTrenchOutpostY});
+        }
+    }
     return values;
 }

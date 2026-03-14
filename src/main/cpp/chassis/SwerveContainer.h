@@ -23,6 +23,7 @@
 #include "chassis/commands/season_specific_commands/DriveToHub.h"
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
+#include "chassis/commands/season_specific_commands/SweepBehindBump.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "chassis/generated/Telemetry.h"
 #include "frc2/command/CommandPtr.h"
@@ -148,6 +149,8 @@ private:
     std::unique_ptr<DriveToOutpost> m_driveToOutpost;
 
     std::unique_ptr<DriveToTower> m_driveToTower;
+
+    std::unique_ptr<SweepBehindBump> m_sweepBehindBump;
 
     //------------------------------------------------------------------
     /// @brief      Configures button bindings for chassis control

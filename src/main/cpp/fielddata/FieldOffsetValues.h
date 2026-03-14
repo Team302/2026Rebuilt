@@ -14,8 +14,20 @@
 //====================================================================================================================================================
 #pragma once
 
+#include "fielddata/BumpHelper.h"
 #include "units/length.h"
 #include <vector>
+
+//====================================================================================================================================================
+/// @struct BumpPosition
+/// @brief Holds the X and Y coordinates for a bump identified by a BUMP_ID
+//====================================================================================================================================================
+struct BumpPosition
+{
+    BUMP_ID bumpId;           ///< Identifier for the bump
+    units::length::meter_t x; ///< X-coordinate of the bump (meters)
+    units::length::meter_t y; ///< Y-coordinate of the bump (meters)
+};
 
 //====================================================================================================================================================
 /// @enum FIELD_OFFSET_ITEMS
@@ -132,13 +144,13 @@ public:
     /// @brief      Get all relevant position values for a specific field element
     /// @param[in]  isRedSide - true to retrieve red alliance values, false for blue alliance
     /// @param[in]  item - The field offset item type to retrieve (from FIELD_OFFSET_ITEMS enum)
-    /// @return     std::vector<units::length::meter_t> - Ordered list of coordinate values in meters
-    /// @details    Returns a vector of values for item types that have multiple relevant positions.
+    /// @return     std::vector<BumpPosition> - Ordered list of bump positions (id, x, y) in meters
+    /// @details    Returns a vector of BumpPosition for item types that have multiple relevant positions.
     ///
     ///             **Bump Y queries (BUMP_ALLIANCE_Y / BUMP_NEUTRAL_Y):**
-    ///             Returns two Y-coordinates ordered by proximity to the robot:
-    ///             1. Nearest bump Y coordinate
-    ///             2. Farthest bump Y coordinate (same alliance, opposite side)
+    ///             Returns two BumpPositions ordered by proximity to the robot:
+    ///             1. Nearest bump position (id, X, Y)
+    ///             2. Farthest bump position (id, X, Y) (same alliance, opposite side)
     ///             This ordering allows callers to consume waypoints in nearest-first order.
     ///
     ///             **All other item types:**
@@ -147,8 +159,9 @@ public:
     /// @note       Bump identification uses BumpHelper::CalcNearestBump() on each call
     /// @see        FIELD_OFFSET_ITEMS for all available item types
     /// @see        GetValue() for single-value queries
+    /// @see        BumpPosition for the returned struct definition
     //------------------------------------------------------------------
-    std::vector<units::length::meter_t> GetValues(bool isRedSide, FIELD_OFFSET_ITEMS items) const;
+    std::vector<BumpPosition> GetNearestAndCrossFieldBumpEdges(bool inNeutralZone) const;
 
 private:
     //------------------------------------------------------------------
@@ -273,20 +286,20 @@ private:
     units::length::meter_t m_blueNeutralBumpEdgeX;
 
     //------------------------------------------------------------------
-    // Bump Y-Coordinates
+    // Bump Midpoint Y-Coordinates (midpoint between hub and trench)
     //------------------------------------------------------------------
-
-    /// @brief Y-coordinate of red depot bump (midpoint between hub and depot trench)
     units::length::meter_t m_redBumpDepotY;
-
-    /// @brief Y-coordinate of red outpost bump (midpoint between hub and outpost trench)
     units::length::meter_t m_redBumpOutpostY;
-
-    /// @brief Y-coordinate of blue depot bump (midpoint between hub and depot trench)
     units::length::meter_t m_blueBumpDepotY;
-
-    /// @brief Y-coordinate of blue outpost bump (midpoint between hub and outpost trench)
     units::length::meter_t m_blueBumpOutpostY;
+
+    //------------------------------------------------------------------
+    // Bump-Trench Edge Y-Coordinates (midpoint between bump and trench)
+    //------------------------------------------------------------------
+    units::length::meter_t m_redBumpTrenchDepotY;
+    units::length::meter_t m_redBumpTrenchOutpostY;
+    units::length::meter_t m_blueBumpTrenchDepotY;
+    units::length::meter_t m_blueBumpTrenchOutpostY;
 
     //------------------------------------------------------------------
     // Offset Constants
