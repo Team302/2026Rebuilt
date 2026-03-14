@@ -44,10 +44,11 @@ public:
 
         // Season Specific Drive Commands
         DRIVE_OVER_BUMP,
-        DRIVE_TO_DEPOT,
+        DRIVE_ALONG_NEAREST_WALL,
         DRIVE_TO_HUB,
         DRIVE_TO_OUTPOST,
         DRIVE_TO_TOWER,
+        DRIVE_TO_DEPOT,
 
         // Mechanisms specific
         // Intake
@@ -73,6 +74,7 @@ public:
         LAUNCH,
         LAUNCH_OVERRIDE,
         MANUAL_LAUNCH,
+        TURRET_ENABLE,
 
         // TARGET OFFSETS
         UPDATE_TARGET_OFFSET_UP,

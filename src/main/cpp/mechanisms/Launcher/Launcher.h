@@ -164,6 +164,7 @@ public:
 	void SetLauncherProtect();
 	bool IsTurretAtTarget();
 	units::angle::degree_t GetTargetTurretAngle() const { return m_targetTurretAngle; }
+	void UpdateTurretEnabled();
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -216,7 +217,7 @@ private:
 	bool m_isClimbMode = false;
 	bool m_isAllowedToClimb = false;
 	bool m_isHubActive = false;
-	bool m_shiftChangeIn3Seconds = false;
+	bool m_startLaunching = false;
 
 	units::time::second_t m_lookaheadTime = 0.5_s;
 
@@ -272,4 +273,6 @@ private:
 
 	static constexpr std::string_view m_loggingTurnsUnits = "Turns";
 	static constexpr std::string_view m_loggingRPMUnits = "RPM";
+	bool m_turretEnabled = false;
+	bool m_turretEnabledButtonReleased = true;
 };

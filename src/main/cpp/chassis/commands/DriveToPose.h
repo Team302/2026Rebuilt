@@ -25,6 +25,8 @@ struct DriveToPoses
     frc::Pose2d endPose{};
     bool hasMidPose = false;
     frc::Pose2d midPose{};
+    units::velocity::meters_per_second_t midPointSpeed{0.0_mps};
+    units::velocity::meters_per_second_t endPointSpeed{0.0_mps};
 };
 
 //====================================================================================================================================================
@@ -192,8 +194,15 @@ protected:
     virtual units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const { return kMaxAccelerationDefault; }
 
 private:
-    bool
-    ShouldSkipMidPoint() const;
+    bool ShouldSkipMidPoint() const;
+
+    ///------------------------------------------------------------------
+    /// @brief      Calculates a target pose with a specified approach speed
+    /// @param[in]  pose - The target pose to calculate from
+    /// @param[in]  speed - The desired approach speed toward the target
+    /// @return     A new Pose2d that is through the target pose but with a velocity component for feedforward control
+    /// @details    This method computes a pose that is effectively a "lookahead" point along the path to the target, that is at the specified speed at the given pose. This allows the feedforward control to generate velocity commands that are appropriate for the distance to the target.
+    frc::Pose2d CalculatePoseWithTargetSpeed(const frc::Pose2d &pose, const units::velocity::meters_per_second_t &speed) const;
 
     //------------------------------------------------------------------
     /// @brief      Calculates feedforward velocity component toward target
@@ -238,6 +247,9 @@ private:
     units::angle::degree_t m_angleTolerance{20.0};
     units::length::inch_t m_xtoleranceForTransitionToEndPoint{0.25};
     units::length::inch_t m_yToleranceForTransitionToEndPoint{0.25};
+    units::velocity::meters_per_second_t m_midPointSpeed{0.0_mps};
+    units::velocity::meters_per_second_t m_endPointSpeed{0.0_mps};
+    units::velocity::meters_per_second_t m_currentTargetSpeed{0.0_mps};
 
     //------------------------------------------------------------------
     // Threshold and Range Constants
@@ -245,6 +257,7 @@ private:
 
     /// @brief Distance threshold for considering target reached
     units::length::inch_t m_distanceThreshold{0.25};
+    units::length::inch_t m_distanceThresholdWithSpeed{12.0};
 
     /// @brief Minimum radius for feedforward activation
     static constexpr units::length::inch_t m_ffMinRadius{0.0};

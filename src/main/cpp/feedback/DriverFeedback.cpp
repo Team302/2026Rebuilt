@@ -58,8 +58,8 @@ DriverFeedback::DriverFeedback() : IRobotStateChangeSubscriber()
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveStateType_Int);
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool);
-    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool);
-
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::StartLaunching_Bool);
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::TurretEnabled_Bool);
     auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
     if (config != nullptr)
     {
@@ -102,8 +102,10 @@ void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, bo
         m_climbMode = value;
     else if (RobotStateChanges::StateChange::ShiftChangeIn5Seconds_Bool == change)
         m_shiftChangeIn5Seconds = value;
-    else if (RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool == change)
-        m_shiftChangeIn3Seconds = value;
+    else if (RobotStateChanges::StateChange::StartLaunching_Bool == change)
+        m_startLaunching = value;
+    else if (RobotStateChanges::StateChange::TurretEnabled_Bool == change)
+        m_turretEnabled = value;
 }
 
 /// @brief Main periodic entry point. Runs every robot loop (~20 ms).
@@ -128,7 +130,7 @@ void DriverFeedback::UpdateFeedback()
 }
 
 /// @brief Activates or deactivates controller rumble on both controllers.
-///        Rumble is ON when a shift change is imminent (within 3 seconds).
+///        Rumble is ON when a shift change is imminent (within 1.5 seconds).
 ///        Only writes to the controller when the rumble state actually changes.
 void DriverFeedback::UpdateRumble()
 {
@@ -137,11 +139,11 @@ void DriverFeedback::UpdateRumble()
         return;
     }
 
-    if (m_shiftChangeIn3Seconds != m_prevRumbleState)
+    if (m_shiftChangeIn5Seconds != m_prevRumbleState)
     {
-        m_prevRumbleState = m_shiftChangeIn3Seconds;
-        m_teleopControl->SetRumble(0, m_shiftChangeIn3Seconds, m_shiftChangeIn3Seconds);
-        m_teleopControl->SetRumble(1, m_shiftChangeIn3Seconds, m_shiftChangeIn3Seconds);
+        m_prevRumbleState = m_shiftChangeIn5Seconds;
+        m_teleopControl->SetRumble(0, m_shiftChangeIn5Seconds, m_shiftChangeIn5Seconds);
+        m_teleopControl->SetRumble(1, m_shiftChangeIn5Seconds, m_shiftChangeIn5Seconds);
     }
 }
 
@@ -324,8 +326,11 @@ void DriverFeedback::UpdateDiagnosticLEDs()
     if (m_launcher != nullptr)
     {
         hoodZeroSwitch = m_launcher->GetHood()->GetReverseLimit(false).GetValue().value;
-        turretZero = m_launcher->GetTurret()->GetReverseLimit(false).GetValue().value;
-        turretEnd = m_launcher->GetTurret()->GetForwardLimit(false).GetValue().value;
+        if (m_turretEnabled)
+        {
+            turretZero = m_launcher->GetTurret()->GetReverseLimit(false).GetValue().value;
+            turretEnd = m_launcher->GetTurret()->GetForwardLimit(false).GetValue().value;
+        }
     }
 
     if (m_intake != nullptr)

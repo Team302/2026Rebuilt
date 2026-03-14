@@ -33,8 +33,8 @@ TeleopFieldDrive::TeleopFieldDrive(subsystems::CommandSwerveDrivetrain *chassis,
 {
     AddRequirements(m_chassis);
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsLaunching_Bool);
+    RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::TurretEnabled_Bool);
 }
-
 /**
  * @brief Initializes the teleop field drive command.
  *
@@ -63,15 +63,15 @@ void TeleopFieldDrive::Execute()
     double forward = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_FORWARD);
     double strafe = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE);
     double manualRotate = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Feild Drive", "Is Launch Mode", m_isLaunching);
-    if (m_isLaunching && AllianceZoneManager::GetInstance()->IsInAllianceZone())
+
+    if (m_isLaunching && AllianceZoneManager::GetInstance()->IsInAllianceZone() && !m_turretEnabled)
     {
         units::angle::degree_t calculatorRotate = RebuiltTargetCalculator::GetInstance()->GetChassisTargetForLaunching(0.5_s);
         m_chassis->SetControl(m_fieldFacingRequest.WithVelocityX(forward * m_currentMaxSpeed)
                                   .WithVelocityY(strafe * m_currentMaxSpeed)
                                   .WithTargetDirection(calculatorRotate)
                                   .WithHeadingPID(m_rotationKP, m_rotationKI, m_rotationKD));
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Feild Drive", "Calculated angle", calculatorRotate.value());
+        m_chassis->SetTargetChassisRotation(calculatorRotate);
     }
     else
     {
@@ -124,5 +124,9 @@ void TeleopFieldDrive::NotifyStateUpdate(RobotStateChanges::StateChange change, 
         m_isLaunching = value;
         m_currentMaxSpeed = value ? m_maxSpeed * m_launchingSpeedScale : m_maxSpeed;
         m_currentMaxAngularRate = value ? m_maxAngularRate * m_launchingSpeedScale : m_maxAngularRate;
+    }
+    else if (change == RobotStateChanges::StateChange::TurretEnabled_Bool)
+    {
+        m_turretEnabled = value;
     }
 }
