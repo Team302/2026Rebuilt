@@ -38,8 +38,10 @@
 /// - If starting in the alliance zone: Drive toward the neutral zone
 ///
 /// **Rotation Handling:**
-/// Each bump has predefined rotation angles (45° or 315°) that orient the robot toward the hub center
-/// while crossing, ensuring optimal positioning for game play after the transition.
+/// Each bump has predefined rotation angles (90° or 270°) that orient the robot toward the hub center
+/// while sweeping, ensuring optimal positioning for game play after the transition.
+/// - Blue Depot / Red Outpost bumps use 270°
+/// - Red Depot / Blue Outpost bumps use 90°
 ///
 /// The command uses BumpHelper for bump identification, FieldOffsetValues for coordinates, and
 /// NeutralZoneManager for zone detection, making it fully autonomous and field-aware.
@@ -67,26 +69,27 @@ public:
 
 protected:
     //------------------------------------------------------------------
-    /// @brief      Calculates target poses for two-stage bump crossing
-    /// @return     DriveToPoses struct with midpoint (bump side) and endpoint (opposite side)
-    /// @details    Overrides base class to provide bump-specific navigation.
+    /// @brief      Calculates target poses for two-stage field crossing
+    /// @return     DriveToPoses struct with midpoint (starting location)
+    ///             and endpoint (opposite side of the field) poses for navigation
+    /// @details    Overrides base class to provide field-specific navigation.
     ///             See implementation for detailed pose calculation logic.
-    /// @see        DriveOverBump.cpp for full implementation details
     //------------------------------------------------------------------
     struct DriveToPoses GetDriveToPoses() override;
 
-    // units::velocity::meters_per_second_t GetMaxVelocity() const override { return kMaxVelocityDriveOverBump; }                     // Limit max velocity for safe bump crossing;
-    // units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const override { return kMaxAccelerationDriveOverBump; } // Limit max acceleration for safe bump crossing;
-
-    //(Not sure if these are nessesary for this command but we can always add them back in if we find that we need them)
-
 private:
+    //------------------------------------------------------------------
+    /// @brief      Returns the heading angle for crossing the given bump
+    /// @param[in]  bump - BUMP_ID identifying which bump the robot is approaching
+    /// @return     units::angle::degree_t - 270° for Blue Depot / Red Outpost bumps,
+    ///             90° for Red Depot / Blue Outpost bumps
+    /// @details    The returned angle orients the robot toward the hub center during
+    ///             the sweep maneuver so it is in an optimal position after crossing.
+    //------------------------------------------------------------------
     units::angle::degree_t GetRotation(BUMP_ID bump) const;
 
     static constexpr units::degree_t kBlueDepotRedOutpost{270.0};
     static constexpr units::degree_t kRedDepotBlueOutpost{90.0};
-
-    // I hated the naming conventions for how these wer in the drive over bump command so i changed them a little but we can always change them back if we find that we need to
 
     static constexpr units::length::inch_t kDistanceThreshold = 12_in;
     static constexpr units::angle::degree_t kAngleTolerance = 15.0_deg;
@@ -95,5 +98,3 @@ private:
     static constexpr units::velocity::meters_per_second_t kMaxVelocitySweepBehindBump = 2.0_mps;
     static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationSweepBehindBump = 1.0_mps_sq;
 };
-
-// ask what this needs to be changed to for the sweep behind bump command since we want to sweep behind the bump instead of drive over it

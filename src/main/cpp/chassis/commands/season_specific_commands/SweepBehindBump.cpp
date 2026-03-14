@@ -12,7 +12,6 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-#include "chassis/commands/season_specific_commands/DriveOverBump.h"
 #include "fielddata/BumpHelper.h"
 
 #include "auton/AllianceZoneManager.h"
@@ -25,13 +24,10 @@
 /// @brief      Constructor for SweepBehindBump command
 /// @param[in]  chassis - Pointer to the swerve drive subsystem
 /// @details    Initializes the base DriveToPose command with the chassis.
-///             This command autonomously drives the robot over a bump,
-///             using a two-stage approach (midpoint and endpoint) to ensure
-///             proper trajectory over the field obstacles. The command
-///             determines the nearest bump and calculates appropriate poses
-///             based on whether the robot is in the alliance or neutral zone.
+///             This command autonomously identifies the nearest bump and calculates
+///             appropriate poses to drive parallel to the trench/bump/hub/bump/trench line
+///             to sweep across the field.
 //------------------------------------------------------------------
-// TODO: not sure where to put this but were doing eighht of these so one on each side of each bump, using location to decide which one to use instead of what allience were on--i think drive to depot/outpost should have smth to ref
 SweepBehindBump::SweepBehindBump(subsystems::CommandSwerveDrivetrain *chassis) : DriveToPose(chassis)
 {
     // Set distance threshold for pose completion detection (1 foot tolerance)
@@ -65,8 +61,8 @@ units::angle::degree_t SweepBehindBump::GetRotation(BUMP_ID bump) const
         return kRedDepotBlueOutpost;
     }
 }
-// TODO: add if statement saying, if blue depot or red out post set 270  and if else set 90 if
 
+///------------------------------------------------------------------
 /// @brief      Calculates the target poses for driving over a bump
 /// @return     DriveToPoses struct containing midpoint and endpoint poses
 /// @details    Determines which bump is nearest and calculates a two-stage path:
@@ -102,7 +98,7 @@ struct DriveToPoses SweepBehindBump::GetDriveToPoses()
         auto pose = GetChassis()->GetPose(); // Get current robot pose
         auto bump = nearestBumps.front();    // Get the nearest bump (first in the list)
         auto rotation = GetRotation(bump.bumpId);
-        poses.midPose = frc::Pose2d(bump.x, pose.Y(), rotation); // Create a pose for the bump position (rotation will be set later)
+        poses.midPose = frc::Pose2d(bump.x, pose.Y(), rotation); // Create a pose for the bump position
 
         bump = nearestBumps.back(); // Get the cross-field bump (last in the list)
         poses.endPose = frc::Pose2d(bump.x, bump.y, rotation);
