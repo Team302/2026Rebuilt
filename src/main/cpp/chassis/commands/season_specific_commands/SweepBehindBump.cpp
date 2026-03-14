@@ -12,13 +12,13 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-#include "fielddata/BumpHelper.h"
-
-#include "auton/AllianceZoneManager.h"
-#include "auton/NeutralZoneManager.h"
 #include "chassis/commands/season_specific_commands/SweepBehindBump.h"
+
+#include "auton/NeutralZoneManager.h"
 #include "fielddata/FieldOffsetValues.h"
-#include "utils/PoseUtils.h"
+
+
+
 
 //------------------------------------------------------------------
 /// @brief      Constructor for SweepBehindBump command
