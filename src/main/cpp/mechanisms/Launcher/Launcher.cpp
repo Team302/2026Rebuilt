@@ -652,6 +652,7 @@ void Launcher::RefreshCachedMotorData()
 	m_cachedLauncherVelocity = m_launcher->GetVelocity().GetValue();
 	m_cachedHoodPosition = m_hood->GetPosition().GetValue();
 	m_cachedTurretPosition = m_turretEnabled ? m_turret->GetPosition().GetValue() : 180_tr;
+	m_cachedLauncherCurrent = 0.0_A; // m_launcher->GetStatorCurrent().GetValue();
 }
 
 void Launcher::RunCommonTasks()
@@ -908,7 +909,7 @@ void Launcher::UpdateTurretEnabled()
 }
 bool Launcher::IsFinishedLaunching()
 {
-	if (m_launcher->GetStatorCurrent().GetValue() > m_isLaunchingCurrentThreshold)
+	if (m_cachedLauncherCurrent > m_isLaunchingCurrentThreshold)
 	{
 		m_launchCurrentTimer.Reset();
 		m_launchCurrentTimer.Start();
@@ -919,5 +920,7 @@ bool Launcher::IsFinishedLaunching()
 		m_launchCurrentTimer.Reset();
 		return true;
 	}
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launching Current", m_cachedLauncherCurrent.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launch Current Timer", m_launchCurrentTimer.Get().value());
 	return false;
 }
