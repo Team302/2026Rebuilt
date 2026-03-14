@@ -16,17 +16,13 @@
 #include "chassis/commands/VisionDrive.h"
 
 // Note the simplified constructor and AddRequirements call
-VisionDrive::VisionDrive(subsystems::CommandSwerveDrivetrain *chassis,
-                         TeleopControl *controller,
-                         units::velocity::meters_per_second_t maxSpeed,
-                         units::angular_velocity::degrees_per_second_t maxAngularRate) : m_chassis(chassis),
-                                                                                         m_controller(controller),
-                                                                                         m_maxSpeed(maxSpeed),
-                                                                                         m_maxAngularRate(maxAngularRate)
+VisionDrive::VisionDrive(subsystems::CommandSwerveDrivetrain *chassis) : m_chassis(chassis)
 {
     AddRequirements(m_chassis);
     m_drivePID.SetIZone(5.0);
     m_rotatePID.SetIZone(5.0);
+    kMaxVelocity = GetMaxVelocity();
+    kMaxAcceleration = GetMaxAcceleration();
 }
 
 void VisionDrive::Initialize()
@@ -37,7 +33,6 @@ void VisionDrive::Initialize()
 
 void VisionDrive::Execute()
 {
-
     // bool hasTarget = m_vision->HasTarget(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);  TODO until this uses visionstruct
     auto hasTarget = true;
     if (hasTarget)

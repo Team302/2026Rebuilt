@@ -15,27 +15,27 @@
 
 #pragma once
 
-#include "frc2/command/CommandHelper.h"
-#include "frc2/command/Command.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
-#include "vision/DragonVision.h"
-#include "teleopcontrol/TeleopControl.h"
-#include "units/velocity.h"
-#include "units/angular_velocity.h"
 #include "frc/controller/PIDController.h"
+#include "frc2/command/Command.h"
+#include "frc2/command/CommandHelper.h"
+#include "teleopcontrol/TeleopControl.h"
+#include "units/angular_velocity.h"
+#include "units/velocity.h"
+#include "vision/DragonVision.h"
 
 class VisionDrive : public frc2::CommandHelper<frc2::Command, VisionDrive>
 {
 public:
-    VisionDrive(subsystems::CommandSwerveDrivetrain *chassis,
-                TeleopControl *controller,
-                units::velocity::meters_per_second_t maxSpeed,
-                units::angular_velocity::degrees_per_second_t maxAngularRate);
+    VisionDrive(subsystems::CommandSwerveDrivetrain *chassis);
 
     void Initialize() override;
     void Execute() override;
     bool IsFinished() override;
     void End(bool interrupted) override;
+
+    virtual units::velocity::meters_per_second_t GetMaxVelocity() const { return kMaxVelocityDefault; }
+    virtual units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const { return kMaxAccelerationDefault; }
 
 private:
     subsystems::CommandSwerveDrivetrain *m_chassis;
@@ -53,6 +53,13 @@ private:
     double m_rotationkP = 5.0;
     double m_rotationkI = 1.5;
     double m_rotationkD = 0.0;
+
+    /// @brief Maximum translational velocity for the robot
+    units::velocity::meters_per_second_t kMaxVelocity;
+    static constexpr units::velocity::meters_per_second_t kMaxVelocityDefault = 4_mps;
+
+    units::acceleration::meters_per_second_squared_t kMaxAcceleration;
+    static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationDefault = 3_mps_sq;
 
     frc::PIDController m_drivePID{m_forwardkP, m_forwardkI, m_forwardkD};
     frc::PIDController m_rotatePID{m_rotationkP, m_rotationkI, m_rotationkD};
