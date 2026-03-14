@@ -12,13 +12,13 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-#include "fielddata/BumpHelper.h"
-
-#include "auton/AllianceZoneManager.h"
-#include "auton/NeutralZoneManager.h"
 #include "chassis/commands/season_specific_commands/SweepBehindBump.h"
+
+#include "auton/NeutralZoneManager.h"
 #include "fielddata/FieldOffsetValues.h"
-#include "utils/PoseUtils.h"
+
+
+
 
 //------------------------------------------------------------------
 /// @brief      Constructor for SweepBehindBump command
@@ -35,7 +35,7 @@ SweepBehindBump::SweepBehindBump(subsystems::CommandSwerveDrivetrain *chassis) :
     SetAngleTolerance(kAngleTolerance);
     SetYTransitionToEndPointTolerance(kYTransitionToEndPointTolerance); // Allow extra tolerance for Y due to bump crossing dynamics
 }
-// might want to change threshold making it smaller bc this is a path specificly to get as close to hub as possible--not sure but should ask at very least
+// TODO: Evaluate whether kDistanceThreshold should be reduced for this command so the robot can approach the hub as closely as field rules and safety allow.
 
 //------------------------------------------------------------------
 /// @brief      Determines the appropriate rotation angle for driving over a bump

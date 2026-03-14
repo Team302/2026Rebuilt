@@ -17,7 +17,6 @@
 #include "chassis/commands/DriveToPose.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "fielddata/BumpHelper.h"
-#include "fielddata/FieldConstants.h"
 #include "units/angle.h"
 
 //====================================================================================================================================================
@@ -95,6 +94,6 @@ private:
     static constexpr units::angle::degree_t kAngleTolerance = 15.0_deg;
     static constexpr units::length::inch_t kYTransitionToEndPointTolerance = 15.5_in;
 
-    static constexpr units::velocity::meters_per_second_t kMaxVelocitySweepBehindBump = 2.0_mps;
-    static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationSweepBehindBump = 1.0_mps_sq;
+    // static constexpr units::velocity::meters_per_second_t kMaxVelocitySweepBehindBump = 2.0_mps;
+    // static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationSweepBehindBump = 1.0_mps_sq;
 };
