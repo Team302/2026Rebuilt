@@ -108,7 +108,7 @@ void CyclePrimitives::Run()
 
             for (auto zone : m_zones)
             {
-                if (zone != nullptr && zone->IsPoseInZone(robotPose))
+                if (zone.first != nullptr && zone.first->IsPoseInZone(robotPose) && !zone.second) // Check if pose is in zone and if we haven't already applied the zone actions
                 {
                     SetMechanismStatesFromZone(zone);
 

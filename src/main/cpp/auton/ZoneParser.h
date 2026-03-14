@@ -16,8 +16,8 @@
 #pragma once
 
 // C++ Includes
-#include <string>
 #include "auton/ZoneParams.h"
+#include <string>
 // FRC includes
 
 // Team 302 includes
@@ -27,5 +27,5 @@
 class ZoneParser
 {
 public:
-    static ZoneParams *ParseXML(std::string fulldirfile); // declare a new xml_node called zonenode for the zone element
+    static std::pair<ZoneParams *, bool> ParseXML(std::string fulldirfile); // declare a new xml_node called zonenode for the zone element
 };

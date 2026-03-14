@@ -32,7 +32,7 @@
 using namespace std;
 using namespace pugi;
 
-ZoneParams *ZoneParser::ParseXML(string fulldirfile)
+std::pair<ZoneParams *, bool> ZoneParser::ParseXML(string fulldirfile)
 {
     auto hasError = false;
 
@@ -277,28 +277,31 @@ ZoneParams *ZoneParser::ParseXML(string fulldirfile)
             {
 
                 auto circlePose2d = frc::Pose2d(units::length::meter_t(circleX), units::length::meter_t(circleY), units::degree_t(0));
-                return (new ZoneParams(circlePose2d,
-                                       units::inch_t(radius),
-                                       xgrid1rect,
-                                       xgrid2rect,
-                                       ygrid1rect,
-                                       ygrid2rect,
-                                       chassisChosenOption,
-                                       chosenHeadingOption,
-                                       chosenUpdateOption,
-                                       avoidChosenOption,
-                                       chosenAllianceColor,
-                                       zoneMode,
-                                       isLauncherStateChanged,
-                                       isIntakeStateChanged,
-                                       isClimberStateChanged,
-                                       launcherState,
-                                       intakeState,
-                                       climberState));
+
+                std::pair<ZoneParams *, bool> zoneParamPair = std::make_pair(new ZoneParams(circlePose2d,
+                                                                                            units::inch_t(radius),
+                                                                                            xgrid1rect,
+                                                                                            xgrid2rect,
+                                                                                            ygrid1rect,
+                                                                                            ygrid2rect,
+                                                                                            chassisChosenOption,
+                                                                                            chosenHeadingOption,
+                                                                                            chosenUpdateOption,
+                                                                                            avoidChosenOption,
+                                                                                            chosenAllianceColor,
+                                                                                            zoneMode,
+                                                                                            isLauncherStateChanged,
+                                                                                            isIntakeStateChanged,
+                                                                                            isClimberStateChanged,
+                                                                                            launcherState,
+                                                                                            intakeState,
+                                                                                            climberState),
+                                                                             false);
+                return zoneParamPair;
             }
 
             Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("ZoneParser"), string("ParseXML"), string("Has Error"));
         }
     }
-    return nullptr; // if error, return nullptr
+    return std::make_pair(nullptr, false); // if error, return nullptr
 }
