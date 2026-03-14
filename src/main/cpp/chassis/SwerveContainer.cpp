@@ -24,6 +24,7 @@
 #include "frc2/command/button/RobotModeTriggers.h"
 #include "state/RobotState.h"
 #include "utils/logging/debug/Logger.h"
+#include "auton/NeutralZoneManager.h"
 
 // Season Specific Commands
 #include "chassis/commands/season_specific_commands/DriveOverBump.h"
@@ -32,6 +33,7 @@
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
 #include "chassis/commands/season_specific_commands/SweepBehindBump.h"
+#include "chassis/commands/season_specific_commands/DriveAlongNearestWall.h"
 
 //------------------------------------------------------------------
 /// @brief      Static method to create or return the singleton instance
@@ -65,7 +67,8 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
                                      m_driveToHub(std::make_unique<DriveToHub>(m_chassis)),
                                      m_driveToOutpost(std::make_unique<DriveToOutpost>(m_chassis)),
                                      m_driveToTower(std::make_unique<DriveToTower>(m_chassis)),
-                                     m_sweepBehindBump(std::make_unique<SweepBehindBump>(m_chassis))
+                                     m_sweepBehindBump(std::make_unique<SweepBehindBump>(m_chassis)),
+                                     m_driveAlongNearestWall(std::make_unique<DriveAlongNearestWall>(m_chassis))
 
 {
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
@@ -143,7 +146,7 @@ void SwerveContainer::CreateStandardDriveCommands(TeleopControl *controller)
 void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
 {
     auto driveOverBump = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_OVER_BUMP);
-    auto driveToDepot = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_DEPOT);
+    auto driveAlongNearestWall = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_ALONG_NEAREST_WALL);
     auto driveToHub = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_HUB);
     auto driveToOutpost = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_OUTPOST);
     auto driveToTower = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_TOWER);
@@ -159,12 +162,12 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
         return frc2::cmd::None(); // TODO add drive to Tower for Climb mode
     } }));
 
-    // Drive To Depot - Autonomous navigation to depot scoring location
+    // Drive Along Nearest Wall - Autonomous navigation along the nearest wall
     // Disabled during climb mode in favor of future climb navigation
-    driveToDepot.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
-                                                    {
-    if (!m_climbModeStatus) {
-        return frc2::ProxyCommand(m_driveToDepot.get()).ToPtr();
+    driveAlongNearestWall.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
+                                                             {
+    if (!m_climbModeStatus && !NeutralZoneManager::GetInstance()->IsInNeutralZone()) {
+        return frc2::ProxyCommand(m_driveAlongNearestWall.get()).ToPtr();
     } else {
         return frc2::cmd::None(); 
     } }));

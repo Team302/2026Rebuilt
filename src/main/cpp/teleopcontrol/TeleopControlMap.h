@@ -171,7 +171,7 @@ robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlB
     {TeleopControlFunctions::DRIVE_TO_OUTPOST, driverBButton},
     {TeleopControlFunctions::DRIVE_TO_TOWER, driverBButton},
 
-    {TeleopControlFunctions::DRIVE_TO_DEPOT, driverXButton},
+    {TeleopControlFunctions::DRIVE_ALONG_NEAREST_WALL, driverXButton},
     {TeleopControlFunctions::DRIVE_TO_TOWER, driverXButton},
 
     {TeleopControlFunctions::DRIVE_OVER_BUMP, driverYButton},

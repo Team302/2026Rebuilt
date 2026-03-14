@@ -24,6 +24,7 @@
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
 #include "chassis/commands/season_specific_commands/SweepBehindBump.h"
+#include "chassis/commands/season_specific_commands/DriveAlongNearestWall.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "chassis/generated/Telemetry.h"
 #include "frc2/command/CommandPtr.h"
@@ -96,8 +97,21 @@ public:
     //------------------------------------------------------------------
     DriveToOutpost *GetDriveToOutpostCommand() { return m_driveToOutpost.get(); }
 
+    //------------------------------------------------------------------
+    /// @brief      Get the drive to tower command for autonomous navigation (climb mode)
+    /// @return     DriveToTower* - Pointer to the drive to tower command
+    /// @details    Provides access to the command that autonomously drives
+    ///             the robot to the tower location
+    //------------------------------------------------------------------
     DriveToTower *GetDriveToTowerCommand() { return m_driveToTower.get(); }
-    // filepath: src/main/cpp/commands/DriveToTowerOutpost.h
+
+    //------------------------------------------------------------------
+    /// @brief      Get the drive along nearest wall command for autonomous navigation
+    /// @return     DriveAlongNearestWall* - Pointer to the drive along nearest wall command
+    /// @details    Provides access to the command that autonomously drives
+    ///             the robot along the nearest wall
+    //------------------------------------------------------------------
+    DriveAlongNearestWall *GetDriveAlongNearestWallCommand() { return m_driveAlongNearestWall.get(); }
 
 private:
     //------------------------------------------------------------------
@@ -148,9 +162,13 @@ private:
     /// @brief Drive to outpost command for season-specific autonomous navigation
     std::unique_ptr<DriveToOutpost> m_driveToOutpost;
 
+    /// @brief Drive to tower command for season-specific autonomous navigation (climb mode)
     std::unique_ptr<DriveToTower> m_driveToTower;
 
     std::unique_ptr<SweepBehindBump> m_sweepBehindBump;
+    
+    /// @brief Drive along nearest wall command for season-specific autonomous navigation
+    std::unique_ptr<DriveAlongNearestWall> m_driveAlongNearestWall;
 
     //------------------------------------------------------------------
     /// @brief      Configures button bindings for chassis control

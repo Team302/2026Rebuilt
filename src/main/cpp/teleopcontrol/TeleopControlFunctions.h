@@ -44,11 +44,12 @@ public:
 
         // Season Specific Drive Commands
         DRIVE_OVER_BUMP,
-        DRIVE_TO_DEPOT,
+        DRIVE_ALONG_NEAREST_WALL,
         DRIVE_TO_HUB,
         DRIVE_TO_OUTPOST,
         DRIVE_TO_TOWER,
         SWEEP_BEHIND_BUMP,
+        DRIVE_TO_DEPOT,
 
         // Mechanisms specific
         // Intake
