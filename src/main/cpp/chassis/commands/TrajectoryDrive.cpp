@@ -110,8 +110,7 @@ void TrajectoryDrive::Initialize()
     m_xController.Reset();
     m_yController.Reset();
     m_headingController.Reset();
-    m_chassisSpeeds.vx = 0_mps;
-    m_chassisSpeeds.vy = 0_mps;
+    m_chassisSpeeds = m_chassis->GetState().Speeds;
     m_chassisSpeeds.omega = units::angular_velocity::radians_per_second_t(0);
 
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFinished_Bool, false);
