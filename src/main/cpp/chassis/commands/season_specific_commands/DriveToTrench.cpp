@@ -18,6 +18,7 @@
 #include "auton/AllianceZoneManager.h"
 #include "auton/NeutralZoneManager.h"
 #include "fielddata/FieldOffsetValues.h"
+#include "utils/FMSData.h"
 #include "utils/PoseUtils.h"
 
 //------------------------------------------------------------------
@@ -32,6 +33,10 @@
 //------------------------------------------------------------------
 DriveToTrench::DriveToTrench(subsystems::CommandSwerveDrivetrain *chassis) : DriveToPose(chassis)
 {
+    // Set distance threshold for pose completion detection (1 foot tolerance)
+    SetDistanceThreshold(kDistanceThreshold);
+    SetAngleTolerance(kAngleTolerance);
+    SetYTransitionToEndPointTolerance(kYTransitionToEndPointTolerance); // Allow extra tolerance for Y due to bump crossing dynamics
 }
 
 //------------------------------------------------------------------
@@ -48,16 +53,7 @@ DriveToTrench::DriveToTrench(subsystems::CommandSwerveDrivetrain *chassis) : Dri
 //------------------------------------------------------------------
 units::angle::degree_t DriveToTrench::GetRotation() const
 {
-    if (NeutralZoneManager::GetInstance()->IsInNeutralZone())
-    {
-        // If in neutral zone, face toward the alliance side of the bump
-        return (FMSData::GetInstance()->GetAlliance() == frc::DriverStation::Alliance::kBlue) ? kNeutralZoneTowardBlueAlliance : kNeutralZoneTowardRedAlliance;
-    }
-    else
-    {
-        // If in alliance zone, face toward the neutral side of the bump
-        return (FMSData::GetInstance()->GetAlliance() == frc::DriverStation::Alliance::kBlue) ? kNeutralZoneTowardRedAlliance : kNeutralZoneTowardBlueAlliance;
-    }
+    return (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kBlue) ? kTowardBlueAllianceWall : kTowardRedAllianceWall;
 }
 
 //------------------------------------------------------------------
@@ -88,42 +84,10 @@ struct DriveToPoses DriveToTrench::GetDriveToPoses()
     struct DriveToPoses poses;
     poses.hasMidPose = true;
 
-    // Get the BumpHelper singleton to determine which bump to drive over
-    auto bumpHelper = BumpHelper::GetInstance();
-    if (bumpHelper != nullptr)
-    {
-        // Identify the nearest bump based on robot's current position
-        auto bump = bumpHelper->CalcNearestBump();
+    auto targetPoses = FieldOffsetValues::GetInstance()->GetTrenchDrivePositions(FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed); // Get trench drive positions for the current alliance
 
-        // Determine if robot is currently in the neutral zone
-        auto isInNeutralZone = NeutralZoneManager::GetInstance()->IsInNeutralZone();
+    poses.midPose = targetPoses.front(); // Mid pose is the first position (trench side)
+    poses.endPose = targetPoses.back();  // End pose is the last position (opposite side)
 
-        // Calculate the appropriate rotation angle for the bump and direction
-        auto rotation = GetRotation(bump, isInNeutralZone);
-
-        // Determine if this is a red alliance bump (depot or outpost)
-        auto isRed = (bump == BUMP_ID::RED_DEPOT_BUMP || bump == BUMP_ID::RED_OUTPOST_BUMP);
-
-        // Retrieve field coordinates for both sides of the bump
-        auto offsetVals = FieldOffsetValues::GetInstance();
-        auto neutralX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X);
-        auto neutralY = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_Y);
-
-        auto allianceX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X);
-        auto allianceY = neutralY; // Y coordinate is the same for both sides of the same bump
-
-        if (isInNeutralZone) // Drive from neutral zone over bump to alliance zone
-        {
-            // First go to neutral side of bump, then to alliance side
-            poses.midPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
-            poses.endPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
-        }
-        else // Drive from alliance zone over bump to neutral zone
-        {
-            // First go to alliance side of bump, then to neutral side
-            poses.midPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
-            poses.endPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
-        }
-    }
     return poses;
 }

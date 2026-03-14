@@ -15,6 +15,7 @@
 #pragma once
 
 #include "fielddata/BumpHelper.h"
+#include "fielddata/TrenchHelper.h"
 #include "units/length.h"
 #include <vector>
 
@@ -27,6 +28,13 @@ struct BumpPosition
     BUMP_ID bumpId;           ///< Identifier for the bump
     units::length::meter_t x; ///< X-coordinate of the bump (meters)
     units::length::meter_t y; ///< Y-coordinate of the bump (meters)
+};
+
+struct TrenchPosition
+{
+    TRENCH_ID trenchId;       ///< Identifier for the trench
+    units::length::meter_t x; ///< X-coordinate of the trench (meters)
+    units::length::meter_t y; ///< Y-coordinate of the trench (meters)
 };
 
 //====================================================================================================================================================
@@ -179,6 +187,8 @@ public:
     /// @see        BumpPosition for the returned struct definition
     //------------------------------------------------------------------
     std::vector<BumpPosition> GetNearestAndCrossFieldBumpEdges(bool inNeutralZone) const;
+
+    std::vector<frc::Pose2d> GetTrenchDrivePositions(bool isRedAlliance) const;
 
 private:
     //------------------------------------------------------------------
@@ -333,6 +343,17 @@ private:
     units::length::meter_t m_blueBumpTrenchDepotY;   ///< Y of BLUE_TRENCH_ALLIANCE_DEPOT (trench entrance for blue depot bump)
     units::length::meter_t m_blueBumpTrenchOutpostY; ///< Y of BLUE_TRENCH_ALLIANCE_OUTPOST (trench entrance for blue outpost bump)
 
+    // trench offsets
+    units::length::meter_t m_redTrenchX;         ///< X of RED_TRENCH_ALLIANCE_OUTPOST (trench entrance for red outpost)
+    units::length::meter_t m_neutralRedTrenchX;  ///< X of RED_TRENCH_ALLIANCE_OUTPOST (trench entrance for red outpost)
+    units::length::meter_t m_blueTrenchX;        ///< X of BLUE_TRENCH_ALLIANCE_OUTPOST (trench entrance for blue outpost)
+    units::length::meter_t m_neutralBlueTrenchX; ///< X of BLUE_TRENCH_ALLIANCE_OUTPOST (trench entrance for blue outpost)
+
+    units::length::meter_t m_redDepotTrenchY;    ///< Y of RED_TRENCH_ALLIANCE_DEPOT (trench entrance for red depot)
+    units::length::meter_t m_redOutpostTrenchY;  ///< Y of RED_TRENCH_ALLIANCE_OUTPOST (trench entrance for red outpost)
+    units::length::meter_t m_blueDepotTrenchY;   ///< Y of BLUE_TRENCH_ALLIANCE_DEPOT (trench entrance for blue depot)
+    units::length::meter_t m_blueOutpostTrenchY; ///< Y of BLUE_TRENCH_ALLIANCE_OUTPOST (trench entrance for blue outpost)
+
     //------------------------------------------------------------------
     // Offset Constants
     //------------------------------------------------------------------
@@ -354,4 +375,11 @@ private:
 
     /// @brief Y-offset from tower center to the outpost/depot side approach position (meters)
     static constexpr units::length::meter_t TOWER_Y_OFFSET = 0.5_m;
+
+    static constexpr units::angle::degree_t FACE_RED_ALLIANCE_WALL = 0_deg;
+    static constexpr units::angle::degree_t FACE_BLUE_ALLIANCE_WALL = 180_deg;
+    static constexpr units::angle::degree_t FACE_ORIGIN_SIDE_WALL = 270_deg;
+    static constexpr units::angle::degree_t FACE_NON_ORIGIN_SIDE_WALL = 90_deg;
+
+    static constexpr units::length::meter_t TRENCH_OFFSET = 1.5_m;
 };

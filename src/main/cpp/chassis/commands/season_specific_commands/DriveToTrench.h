@@ -14,14 +14,14 @@
 //====================================================================================================================================================
 #pragma once
 
-#include "chassis/commands/DriveToPose.h"
-#include "chassis/generated/CommandSwerveDrivetrain.h"
-#include "fielddata/TrenchHelper.h"
-#include "fielddata/FieldConstants.h"
-#include "units/angle.h"
-#include "utils/FMSData.h"
 #include "auton/AllianceZoneManager.h"
 #include "auton/NeutralZoneManager.h"
+#include "chassis/commands/DriveToPose.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "fielddata/FieldConstants.h"
+#include "fielddata/TrenchHelper.h"
+#include "units/angle.h"
+#include "utils/FMSData.h"
 
 //====================================================================================================================================================
 /// @class DriveToTrench
@@ -78,14 +78,14 @@ protected:
     //------------------------------------------------------------------
     struct DriveToPoses GetDriveToPoses() override;
 
-    units::velocity::meters_per_second_t GetMaxVelocity() const override { return kMaxVelocityDriveOverTrench; }                     // Limit max velocity for safe trench crossing;
-    units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const override { return kMaxAccelerationDriveOverTrench; } // Limit max acceleration for safe trench crossing;
+    units::velocity::meters_per_second_t GetMaxVelocity() const override { return kMaxVelocityDriveToTrench; }                     // Limit max velocity for safe trench crossing;
+    units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const override { return kMaxAccelerationDriveToTrench; } // Limit max acceleration for safe trench crossing;
 
 private:
     units::angle::degree_t GetRotation() const;
 
-    static constexpr units::degree_t kNeutralZoneTowardBlueAlliance{0.0};
-    static constexpr units::degree_t kNeutralZoneTowardRedAlliance{180.0};
+    static constexpr units::degree_t kTowardBlueAllianceWall{0.0};
+    static constexpr units::degree_t kTowardRedAllianceWall{180.0};
 
     static constexpr units::length::inch_t kDistanceThreshold = 12_in;
     static constexpr units::angle::degree_t kAngleTolerance = 15.0_deg;

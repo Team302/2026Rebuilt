@@ -17,56 +17,53 @@
 // C++ includes
 
 #include "chassis/generated/CommandSwerveDrivetrain.h"
-#include "fielddata/FieldConstants.h"
-#include "frc/geometry/Pose2d.h"
 #include "fielddata/BumpHelper.h"
+#include "fielddata/FieldConstants.h"
 
 //====================================================================================================================================================
-/// @enum BUMP_ID
-/// @brief Enumeration identifying the four field bumps that separate alliance and neutral zones
+/// @enum TRENCH_ID
+/// @brief Enumeration identifying the four trenches on the 2026 game field
 ///
-/// The 2026 game field has bumps at the boundaries between alliance zones and the neutral zone.
-/// There are four bumps total - one on each side (red/blue) at both the depot and outpost positions.
-/// These bumps are physical field obstacles that robots must navigate over when transitioning between zones.
+/// Each trench runs along the boundary between an alliance zone and the neutral zone.
+/// There are four trenches total — one on each side (red/blue) at both the depot and outpost positions.
+/// Robots must navigate through or around a trench when transitioning between zones.
 //====================================================================================================================================================
 enum class TRENCH_ID
 {
-    BLUE_DEPOT_TRENCH,   ///< Bump at the blue alliance depot, separating blue alliance zone from neutral zone
-    BLUE_OUTPOST_TRENCH, ///< Bump at the blue alliance outpost, separating blue alliance zone from neutral zone
-    RED_DEPOT_TRENCH,    ///< Bump at the red alliance depot, separating red alliance zone from neutral zone
-    RED_OUTPOST_TRENCH   ///< Bump at the red alliance outpost, separating red alliance zone from neutral zone
+    BLUE_DEPOT_TRENCH,   ///< Trench on the blue alliance depot side
+    BLUE_OUTPOST_TRENCH, ///< Trench on the blue alliance outpost side
+    RED_DEPOT_TRENCH,    ///< Trench on the red alliance depot side
+    RED_OUTPOST_TRENCH   ///< Trench on the red alliance outpost side
 };
 
 //====================================================================================================================================================
 /// @class TrenchHelper
-/// @brief Singleton helper class for bump-related calculations and identification
+/// @brief Singleton helper class for trench identification
 ///
-/// This utility class provides services for determining which field bump is nearest to the robot's
-/// current position. It's primarily used by navigation commands that need to cross between the
-/// alliance zone and neutral zone, such as DriveOverBump.
+/// This utility class provides a convenient interface for determining which field trench is nearest
+/// to the robot's current position. It delegates the underlying proximity calculation to BumpHelper
+/// and maps the resulting BUMP_ID to the corresponding TRENCH_ID.
 ///
 /// **Key Functionality:**
-/// - Identifies the nearest bump among the four field bumps using a two-stage comparison algorithm
-/// - First determines which alliance side (red or blue) is closer
-/// - Then determines whether depot or outpost is closer on that side
+/// - Identifies the nearest trench among the four field trenches
+/// - Wraps BumpHelper::CalcNearestBump() and translates BUMP_ID → TRENCH_ID
 ///
 /// **Usage Pattern:**
 /// ```cpp
-/// auto TrenchHelper = TrenchHelper::GetInstance();
-/// BUMP_ID nearestBump = TrenchHelper->CalcNearestBump();
-/// // Use nearestBump to determine navigation strategy
+/// auto trenchHelper = TrenchHelper::GetInstance();
+/// TRENCH_ID nearestTrench = trenchHelper->CalcNearestTrench();
+/// // Use nearestTrench to determine navigation strategy
 /// ```
 ///
 /// **Integration:**
 /// The class works in conjunction with:
-/// - FieldConstants: For bump position reference points
-/// - PoseUtils: For distance calculations
-/// - DriveOverBump: Primary consumer for bump crossing navigation
-/// - FieldOffsetValues: For retrieving bump coordinates
+/// - BumpHelper: Performs the actual nearest-bump distance calculation
+/// - FieldConstants: For field element position reference data (via BumpHelper)
+/// - ChassisConfigMgr: For access to current robot pose (via BumpHelper)
 ///
 /// @note This is a singleton class - use GetInstance() to access
-/// @see BUMP_ID for the four possible bump identifications
-/// @see DriveOverBump for primary usage example
+/// @see TRENCH_ID for the four possible trench identifications
+/// @see BumpHelper for the underlying bump identification logic
 //====================================================================================================================================================
 class TrenchHelper
 {
@@ -81,40 +78,21 @@ public:
     static TrenchHelper *GetInstance();
 
     //------------------------------------------------------------------
-    /// @brief      Calculate the ID of the nearest bump to the robot
-    /// @return     BUMP_ID - Enumeration indicating which of the four bumps is closest
-    /// @details    Uses a two-stage hierarchical comparison algorithm to efficiently
-    ///             determine the nearest bump:
+    /// @brief      Identifies the trench nearest to the robot's current position
+    /// @return     TRENCH_ID - Enumeration indicating which of the four trenches is closest
+    /// @details    Delegates to BumpHelper::CalcNearestBump() and maps the result:
     ///
-    ///             **Stage 1: Alliance Side Determination**
-    ///             - Compares robot distance to blue hub center vs red hub center
-    ///             - This determines which half of the field the robot is on
-    ///             - Hub centers provide the most accurate alliance side determination
+    ///             | BUMP_ID             | TRENCH_ID            |
+    ///             |---------------------|----------------------|
+    ///             | BLUE_DEPOT_BUMP     | BLUE_DEPOT_TRENCH    |
+    ///             | BLUE_OUTPOST_BUMP   | BLUE_OUTPOST_TRENCH  |
+    ///             | RED_DEPOT_BUMP      | RED_DEPOT_TRENCH     |
+    ///             | RED_OUTPOST_BUMP    | RED_OUTPOST_TRENCH   |
     ///
-    ///             **Stage 2: Depot vs Outpost Selection**
-    ///             - On the identified alliance side, compares distances to depot and outpost
-    ///             - Returns the corresponding BUMP_ID for the closest combination
-    ///
-    ///             **Distance Calculation:**
-    ///             Uses Euclidean distance from current robot pose to field element reference points:
-    ///             - BLUE_HUB_CENTER (Stage 1)
-    ///             - RED_HUB_CENTER (Stage 1)
-    ///             - BLUE_DEPOT_NEUTRAL_SIDE (Stage 2)
-    ///             - BLUE_OUTPOST_CENTER (Stage 2)
-    ///             - RED_DEPOT_NEUTRAL_SIDE (Stage 2)
-    ///             - RED_OUTPOST_CENTER (Stage 2)
-    ///
-    ///             **Return Values:**
-    ///             - BLUE_DEPOT_BUMP: Robot closest to blue alliance depot area
-    ///             - BLUE_OUTPOST_BUMP: Robot closest to blue alliance outpost area
-    ///             - RED_DEPOT_BUMP: Robot closest to red alliance depot area
-    ///             - RED_OUTPOST_BUMP: Robot closest to red alliance outpost area
-    ///
-    /// @note       If chassis is unavailable, uses default origin pose (0,0) for calculations
     /// @note       Method is const - does not modify TrenchHelper state
-    /// @see        PoseUtils::GetClosestFieldElement() for distance comparison implementation
+    /// @see        BumpHelper::CalcNearestBump() for the underlying bump identification logic
     //------------------------------------------------------------------
-    BUMP_ID CalcNearestTrench() const;
+    TRENCH_ID CalcNearestTrench() const;
 
 private:
     //------------------------------------------------------------------

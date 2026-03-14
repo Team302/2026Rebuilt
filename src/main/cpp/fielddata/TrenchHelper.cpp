@@ -15,21 +15,17 @@
 
 //====================================================================================================================================================
 /// @file TrenchHelper.cpp
-/// @brief Implementation of TrenchHelper singleton for bump identification and distance calculations
-/// @details This file implements the bump identification logic for the 2026 game field. The helper uses a
-///          hierarchical distance comparison strategy to efficiently determine which of the four field bumps
-///          (red/blue depot/outpost) is nearest to the robot's current position.
-///
-///          The implementation leverages existing utility functions from PoseUtils and field element data
-///          from FieldConstants to provide fast, accurate bump identification for navigation commands.
+/// @brief Implementation of TrenchHelper singleton for trench identification
+/// @details This file implements the trench identification logic for the 2026 game field. The helper
+///          delegates nearest-bump identification to BumpHelper and maps the resulting BUMP_ID to the
+///          corresponding TRENCH_ID, providing a unified interface for commands that need to navigate
+///          into or through a trench.
 //====================================================================================================================================================
 
-#include "auton/AllianceZoneManager.h"
-#include "auton/NeutralZoneManager.h"
 #include "fielddata/TrenchHelper.h"
+#include "auton/NeutralZoneManager.h"
 #include "chassis/ChassisConfigMgr.h"
-#include "frc/geometry/Pose2d.h"
-#include "utils/FMSData.h"
+#include "fielddata/BumpHelper.h"
 
 /// @brief Singleton instance pointer - initialized to nullptr for lazy instantiation
 TrenchHelper *TrenchHelper::m_instance = nullptr;
@@ -65,143 +61,42 @@ TrenchHelper::TrenchHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwe
 }
 
 //------------------------------------------------------------------
-/// @brief      Calculates which bump is nearest to the robot's current position
-/// @return     TRENCH_ID - Enumeration identifying the closest bump
-/// @details    Implements a two-stage hierarchical comparison algorithm for efficient bump identification:
+/// @brief      Identifies the trench nearest to the robot's current position
+/// @return     TRENCH_ID - Enumeration identifying the closest trench
+/// @details    Delegates to BumpHelper::CalcNearestBump() to identify the nearest bump,
+///             then maps the result to the corresponding TRENCH_ID:
 ///
-///             **Algorithm Overview:**
-///             The method uses a divide-and-conquer approach to avoid comparing all four bumps directly:
+///             | BUMP_ID             | TRENCH_ID            |
+///             |---------------------|----------------------|
+///             | BLUE_DEPOT_BUMP     | BLUE_DEPOT_TRENCH    |
+///             | BLUE_OUTPOST_BUMP   | BLUE_OUTPOST_TRENCH  |
+///             | RED_DEPOT_BUMP      | RED_DEPOT_TRENCH     |
+///             | RED_OUTPOST_BUMP    | RED_OUTPOST_TRENCH   |
 ///
-///             **Stage 1: Determine Alliance Side (Red vs Blue)**
-///             - Gets current robot pose from chassis (or origin if chassis unavailable)
-///             - Compares distance to BLUE_HUB_CENTER vs RED_HUB_CENTER
-///             - Uses hub centers as reference points for more accurate alliance side determination
-///             - Result: Identifies which half of the field the robot is on
-///
-///             **Stage 2: Determine Position on Side (Depot vs Outpost)**
-///             Based on the alliance side determined in Stage 1:
-///
-///             *If Blue Side:*
-///             - Compares distance to BLUE_DEPOT_NEUTRAL_SIDE vs BLUE_OUTPOST_CENTER
-///             - Returns BLUE_DEPOT_BUMP if depot is closer
-///             - Returns BLUE_OUTPOST_BUMP if outpost is closer
-///
-///             *If Red Side:*
-///             - Compares distance to RED_DEPOT_NEUTRAL_SIDE vs RED_OUTPOST_CENTER
-///             - Returns RED_DEPOT_BUMP if depot is closer
-///             - Returns RED_OUTPOST_BUMP if outpost is closer
-///
-///             **Efficiency:**
-///             This hierarchical approach requires only 2 distance comparisons instead of
-///             evaluating all 4 bumps, reducing computation time by 50%.
-///
-///             **Field Element References:**
-///             - BLUE_HUB_CENTER: Center of blue alliance hub (Stage 1)
-///             - RED_HUB_CENTER: Center of red alliance hub (Stage 1)
-///             - BLUE_DEPOT_NEUTRAL_SIDE: Neutral zone side of blue depot (Stage 2)
-///             - RED_DEPOT_NEUTRAL_SIDE: Neutral zone side of red depot (Stage 2)
-///             - BLUE_OUTPOST_CENTER: Center of blue outpost area (Stage 2)
-///             - RED_OUTPOST_CENTER: Center of red outpost area (Stage 2)
-///
-/// @note       Returns a valid TRENCH_ID even if chassis is unavailable (uses origin pose)
-/// @note       Method is const - safe to call from multiple contexts without side effects
-/// @see        PoseUtils::GetClosestFieldElement() for distance comparison implementation
-/// @see        TRENCH_ID for possible return values
-/// @see        DriveOverBump for primary consumer of this method
+/// @note       Method is const - does not modify TrenchHelper state
+/// @see        BumpHelper::CalcNearestBump() for the underlying bump identification logic
+/// @see        TRENCH_ID for all possible return values
 //------------------------------------------------------------------
 TRENCH_ID TrenchHelper::CalcNearestTrench() const
 {
-    // Get current robot pose using cached chassis pointer (defaults to origin if chassis unavailable)
-    auto currentPose = (m_chassis != nullptr) ? m_chassis->GetPose() : frc::Pose2d();
+    auto nearestTrench = TrenchHelper::GetInstance()->CalcNearestTrench();
+    auto isInNeutralZone = NeutralZoneManager::GetInstance()->IsInNeutralZone();
 
-    if (m_fieldConstants == nullptr)
+    auto nearestBump = BumpHelper::GetInstance()->CalcNearestBump();
+    if (nearestBump == BUMP_ID::BLUE_DEPOT_BUMP)
     {
         return TRENCH_ID::BLUE_DEPOT_TRENCH;
     }
 
-    // Stage 1: Determine which alliance side we are on if we are in the neutral zone by using fms data
-    // Compare distance to hub centers as reference points for each side
-    // Use cached m_fieldConstants instead of re-fetching singleton through PoseUtils
-    if (NeutralZoneManager::GetInstance()->IsInNeutralZone())
+    if (nearestBump == BUMP_ID::BLUE_OUTPOST_BUMP)
     {
-        if (FMSData::GetInstance()->GetAlliance() == frc::DriverStation::Alliance::kBlue)
-        {
-            if (BumpHelper::GetInstance()->CalcNearestBump(currentPose) == TRENCH_ID::BLUE_DEPOT_BUMP)
-            {
-                return TRENCH_ID::BLUE_DEPOT_TRENCH;
-            }
-            else
-            {
-                return TRENCH_ID::BLUE_OUTPOST_TRENCH;
-            }
-        }
-        else
-        {
-            if (BumpHelper::GetInstance()->CalcNearestBump(currentPose) == TRENCH_ID::RED_DEPOT_BUMP)
-            {
-                return TRENCH_ID::RED_DEPOT_TRENCH;
-            }
-            else
-            {
-                return TRENCH_ID::RED_OUTPOST_TRENCH;
-            }
-        }
-    }
-    else if (AllianceZoneManager::GetInstance()->IsInAllianceZone())
-    {
-        if (FMSData::GetInstance()->GetAlliance() == frc::DriverStation::Alliance::kBlue)
-        {
-            if (BumpHelper::GetInstance()->CalcNearestBump(currentPose) == TRENCH_ID::BLUE_DEPOT_BUMP)
-            {
-                return TRENCH_ID::BLUE_DEPOT_TRENCH;
-            }
-            else
-            {
-                return TRENCH_ID::BLUE_OUTPOST_TRENCH;
-            }
-        }
-        else
-        {
-            if (BumpHelper::GetInstance()->CalcNearestBump(currentPose) == TRENCH_ID::RED_DEPOT_BUMP)
-            {
-                return TRENCH_ID::RED_DEPOT_TRENCH;
-            }
-            else
-            {
-                return TRENCH_ID::RED_OUTPOST_TRENCH;
-            }
-        }
-    }
-    else
-    {
+        return TRENCH_ID::BLUE_OUTPOST_TRENCH;
     }
 
-    auto blueHubPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER);
-
-    if (closerToBlue) // Robot is closer to blue side
+    if (nearestBump == BUMP_ID::RED_DEPOT_BUMP)
     {
-        // Stage 2: On blue side, determine if depot or outpost is closer
-        // Use cached m_fieldConstants directly for distance calculations
-        auto blueDepotPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT);
-        auto blueOutpostPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST);
-        auto distToDepot = currentPose.Translation().Distance(blueDepotPose.Translation());
-        auto distToOutpost = currentPose.Translation().Distance(blueOutpostPose.Translation());
-        if (distToDepot < distToOutpost)
-        {
-            return TRENCH_ID::BLUE_DEPOT_BUMP; // Blue depot bump is nearest
-        }
-        return TRENCH_ID::BLUE_OUTPOST_BUMP; // Blue outpost bump is nearest
+        return TRENCH_ID::RED_DEPOT_TRENCH;
     }
 
-    // Robot is closer to red side
-    // Stage 2: On red side, determine if depot or outpost is closer
-    auto redDepotPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT);
-    auto redOutpostPose = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST);
-    auto distToDepot = currentPose.Translation().Distance(redDepotPose.Translation());
-    auto distToOutpost = currentPose.Translation().Distance(redOutpostPose.Translation());
-    if (distToDepot < distToOutpost)
-    {
-        return TRENCH_ID::RED_DEPOT_BUMP; // Red depot bump is nearest
-    }
-    return TRENCH_ID::RED_OUTPOST_BUMP; // Red outpost bump is nearest
+    return TRENCH_ID::RED_OUTPOST_TRENCH;
 }
