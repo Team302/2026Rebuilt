@@ -91,8 +91,10 @@ bool IdleState::IsTransitionCondition(bool considerGamepadTransitions)
 			m_Timer->Reset();
 		}
 	}
+	bool isfinishedlaunching = frc::DriverStation::IsAutonomous() && m_mechanism->IsFinishedLaunching();
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "IdleState", isfinishedlaunching ? "Finished Launching" : "Not Finished Launching");
 	return (m_mechanism->IsLauncherInitialized() && m_mechanism->GetCurrentState() == Launcher::STATE_INITIALIZE) ||
 		   (launchingDone) ||
 		   (!m_mechanism->IsInClimbMode() && (m_mechanism->GetCurrentState() == Launcher::STATE_CLIMB || m_mechanism->GetCurrentState() == Launcher::STATE_EMPTY_HOPPER)) ||
-		   (frc::DriverStation::IsAutonomous() && m_mechanism->IsFinishedLaunching());
+		   (isfinishedlaunching);
 }
