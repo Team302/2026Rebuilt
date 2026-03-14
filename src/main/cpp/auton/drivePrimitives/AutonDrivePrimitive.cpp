@@ -29,6 +29,7 @@ AutonDrivePrimitive::AutonDrivePrimitive() : m_chassis(ChassisConfigMgr::GetInst
                                              m_maxTime(0_s),
                                              m_visionTransition(false),
                                              m_checkForDriveToUpdate(false),
+                                             m_launcher(nullptr),
                                              m_zone(nullptr)
 {
     // Get mechanism handles once in the constructor
@@ -106,6 +107,7 @@ void AutonDrivePrimitive::Run()
 bool AutonDrivePrimitive::IsDone()
 {
     bool timeout = m_timer->HasElapsed(m_maxTime);
+    auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
 
     switch (m_activeId)
     {
@@ -113,8 +115,20 @@ bool AutonDrivePrimitive::IsDone()
         return timeout || !m_managedCommand.IsScheduled();
 
     case PRIMITIVE_IDENTIFIER::DO_NOTHING_MECHANISMS:
+        if (config != nullptr)
+        {
+            auto launcherStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::LAUNCHER);
+            m_launcher = launcherStateMgr != nullptr ? dynamic_cast<Launcher *>(launcherStateMgr) : nullptr;
+            if (m_launcher != nullptr)
+            {
+                bool launcherIdle = (m_launcher->GetCurrentState() == Launcher::STATE_NAMES::STATE_IDLE);
+                return timeout || launcherIdle;
+            }
+        }
+
     case PRIMITIVE_IDENTIFIER::HOLD_POSITION:
     case PRIMITIVE_IDENTIFIER::DO_NOTHING:
+
     default:
         break;
     }
