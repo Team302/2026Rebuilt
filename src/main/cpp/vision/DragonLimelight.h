@@ -19,6 +19,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <optional>
 
 // FRC includes
 #include "fielddata/FieldConstants.h"
@@ -237,4 +238,7 @@ private:
     LIMELIGHT_IMU_MODE m_lastIMUMode = LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_ONLY;
 
     const std::string m_loggingLimelightPath = "/Limelight/";
+    const std::string m_loggingCameraPoseKey = "cameraPose/";
+    const std::string m_loggingPipelineKey = "pipeline/";
+    const std::string m_loggingTagIDKey = "number of fiducials/";
 };
