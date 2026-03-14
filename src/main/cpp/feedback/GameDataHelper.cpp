@@ -38,12 +38,12 @@ void GameDataHelper::PublishHubActive(bool value)
     }
 }
 
-void GameDataHelper::PublishShiftChangeIn3seconds(bool value)
+void GameDataHelper::PublishStartLaunching(bool value)
 {
-    if (m_shiftChangeIn3seconds != value)
+    if (m_startLaunching != value)
     {
-        m_shiftChangeIn3seconds = value;
-        RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::ShiftChangeIn3Seconds_Bool, value);
+        m_startLaunching = value;
+        RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::StartLaunching_Bool, value);
     }
 }
 
@@ -62,7 +62,7 @@ void GameDataHelper::RunCurrentState()
     if (frc::DriverStation::IsAutonomousEnabled())
     {
         PublishHubActive(true);
-        PublishShiftChangeIn3seconds(false);
+        PublishStartLaunching(false);
         PublishShiftChangeIn5seconds(false);
     }
     else
@@ -122,6 +122,6 @@ void GameDataHelper::RunCurrentState()
 
         frc::SmartDashboard::PutNumber(m_allianceShiftTime, timeToNextShift.value());
         PublishShiftChangeIn5seconds(timeToNextShift <= 5.0_s && timeToNextShift > 0_s);
-        PublishShiftChangeIn3seconds(timeToNextShift <= 3.0_s && timeToNextShift > 0_s);
+        PublishStartLaunching(timeToNextShift <= 1.5_s && timeToNextShift > 0_s);
     }
 }

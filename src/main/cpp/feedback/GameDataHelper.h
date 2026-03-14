@@ -29,10 +29,10 @@ public:
 private:
     void PublishHubActive(bool value);
     void PublishShiftChangeIn5seconds(bool value);
-    void PublishShiftChangeIn3seconds(bool value);
+    void PublishStartLaunching(bool value);
 
     bool m_hubActive = false;
-    bool m_shiftChangeIn3seconds = true;
+    bool m_startLaunching = false;
     bool m_shiftChangeIn5seconds = true;
 
     const units::time::second_t m_shift1Start = 130_s; // 2:10

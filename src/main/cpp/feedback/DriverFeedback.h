@@ -104,7 +104,7 @@ private:
     bool m_isValidAutonFile = false;      ///< True when a valid autonomous file is loaded
     bool m_isIntakeIn = false;            ///< True when the intake extender reverse limit is tripped
     bool m_shiftChangeIn5Seconds = false; ///< True when a mode shift is approaching (~5 s)
-    bool m_shiftChangeIn3Seconds = false; ///< True when a mode shift is imminent (~3 s, triggers rumble)
+    bool m_startLaunching = false;        ///< True when a mode shift is imminent (~1.5 s, triggers rumble)
     ChassisOptionEnums::DriveStateType m_driveStateType = ChassisOptionEnums::DriveStateType::ROBOT_DRIVE;
 
     // --- Cached pointers (resolved once in constructor to avoid per-loop lookups) ---
