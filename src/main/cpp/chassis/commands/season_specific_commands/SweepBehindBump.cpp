@@ -99,9 +99,10 @@ struct DriveToPoses SweepBehindBump::GetDriveToPoses()
 
     if (!nearestBumps.empty())
     {
-        auto bump = nearestBumps.front(); // Get the nearest bump (first in the list)
+        auto pose = GetChassis()->GetPose(); // Get current robot pose
+        auto bump = nearestBumps.front();    // Get the nearest bump (first in the list)
         auto rotation = GetRotation(bump.bumpId);
-        poses.midPose = frc::Pose2d(bump.x, bump.y, rotation); // Create a pose for the bump position (rotation will be set later)
+        poses.midPose = frc::Pose2d(bump.x, pose.Y(), rotation); // Create a pose for the bump position (rotation will be set later)
 
         bump = nearestBumps.back(); // Get the cross-field bump (last in the list)
         poses.endPose = frc::Pose2d(bump.x, bump.y, rotation);

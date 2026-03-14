@@ -192,8 +192,7 @@ protected:
     virtual units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const { return kMaxAccelerationDefault; }
 
 private:
-    bool
-    ShouldSkipMidPoint() const;
+    bool ShouldSkipMidPoint() const;
 
     //------------------------------------------------------------------
     /// @brief      Calculates feedforward velocity component toward target

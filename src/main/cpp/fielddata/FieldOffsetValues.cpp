@@ -380,8 +380,8 @@ std::vector<BumpPosition> FieldOffsetValues::GetNearestAndCrossFieldBumpEdges(bo
         }
         else
         {
-            values.emplace_back(BumpPosition{BUMP_ID::RED_OUTPOST_BUMP, m_redNeutralBumpEdgeX, m_redBumpTrenchOutpostY});
-            values.emplace_back(BumpPosition{BUMP_ID::RED_DEPOT_BUMP, m_redNeutralBumpEdgeX, m_redBumpTrenchDepotY});
+            values.emplace_back(BumpPosition{BUMP_ID::RED_OUTPOST_BUMP, m_redAllianceBumpEdgeX, m_redBumpTrenchOutpostY});
+            values.emplace_back(BumpPosition{BUMP_ID::RED_DEPOT_BUMP, m_redAllianceBumpEdgeX, m_redBumpTrenchDepotY});
         }
     }
     else if (bump == BUMP_ID::RED_DEPOT_BUMP)
