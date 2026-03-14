@@ -133,7 +133,7 @@ struct DriveToPoses DriveOverBump::GetDriveToPoses()
             poses.midPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
             poses.endPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
             poses.midPointSpeed = 0_mps;
-            poses.endPointSpeed = 2_mps;
+            poses.endPointSpeed = 1_mps;
         }
     }
     return poses;
