@@ -21,7 +21,7 @@
 class DriveToFuel : public VisionDrive
 {
 public:
-    DriveToFuel(subsystems::CommandSwerveDrivetrain *chassis) : VisionDrive(chassis) {}
+    DriveToFuel(subsystems::CommandSwerveDrivetrain *chassis);
     void Initialize() override;
     void Execute() override;
     bool IsFinished() override;
@@ -29,4 +29,18 @@ public:
 
 private:
     DragonVision *m_vision;
+
+    static constexpr double kPDrive{2};
+    static constexpr double kIDrive{0.0};
+    static constexpr double kDDrive{0.0};
+
+    static constexpr double kPYaw{1.5};
+    static constexpr double kIYaw{0.0};
+    static constexpr double kDYaw{0.0};
+
+    frc::PIDController m_xController{kPDrive, kIDrive, kDDrive};
+    frc::PIDController m_yController{kPDrive, kIDrive, kDDrive};
+    frc::PIDController m_yawController{kPYaw, kIYaw, kDYaw};
+
+    int m_visionCacheI = 0;
 };

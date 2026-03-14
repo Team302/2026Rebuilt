@@ -173,7 +173,6 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetAprilTagVis
 std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetObjectDetectionTargetInfo(const std::vector<int> &validClasses) const
 {
     std::vector<std::unique_ptr<DragonVisionStruct>> targets;
-    return targets;
     auto objects = LimelightHelpers::getRawDetections(m_networkTableName);
 
     for (auto object : objects)

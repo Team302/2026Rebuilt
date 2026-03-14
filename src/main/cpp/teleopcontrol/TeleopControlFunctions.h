@@ -49,6 +49,7 @@ public:
         DRIVE_TO_OUTPOST,
         DRIVE_TO_TOWER,
         DRIVE_TO_DEPOT,
+        DRIVE_TO_FUEL,
 
         // Mechanisms specific
         // Intake

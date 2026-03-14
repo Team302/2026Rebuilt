@@ -37,8 +37,15 @@ public:
     virtual units::velocity::meters_per_second_t GetMaxVelocity() const { return kMaxVelocityDefault; }
     virtual units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const { return kMaxAccelerationDefault; }
 
-private:
+protected:
     subsystems::CommandSwerveDrivetrain *m_chassis;
+    swerve::requests::RobotCentric m_RobotDriveRequest = swerve::requests::RobotCentric{}
+                                                             .WithDeadband(m_maxSpeed * 0.1)
+                                                             .WithRotationalDeadband(m_maxAngularRate * 0.1)
+                                                             .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage)
+                                                             .WithDesaturateWheelSpeeds(true);
+
+private:
     TeleopControl *m_controller;
     units::velocity::meters_per_second_t m_maxSpeed;
     units::velocity::meters_per_second_t m_maxVisionSpeed = 1.25_mps;
@@ -63,12 +70,6 @@ private:
 
     frc::PIDController m_drivePID{m_forwardkP, m_forwardkI, m_forwardkD};
     frc::PIDController m_rotatePID{m_rotationkP, m_rotationkI, m_rotationkD};
-
-    swerve::requests::RobotCentric m_RobotDriveRequest = swerve::requests::RobotCentric{}
-                                                             .WithDeadband(m_maxSpeed * 0.1)
-                                                             .WithRotationalDeadband(m_maxAngularRate * 0.1) // Add a 10% deadband
-                                                             .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage)
-                                                             .WithDesaturateWheelSpeeds(true); // Use open-loop control for drive motors
 
     swerve::requests::FieldCentric m_fieldDriveRequest = swerve::requests::FieldCentric{}
                                                              .WithDeadband(m_maxSpeed * 0.1)                                  // TODO: Investigate this deadband vs controller deadband
