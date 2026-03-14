@@ -2,10 +2,10 @@
 <!DOCTYPE auton SYSTEM "auton.dtd">
 <auton>
 
-<primitive id = "DRIVE_STOP_MECH"
-time = "0.25"
+<!-- <primitive id = "DRIVE_STOP_MECH"
+time = "0.1"
 intakeState = "STATE_OFF">
-</primitive>
+</primitive> -->
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDrop3_Init"
@@ -19,13 +19,6 @@ time = "3.0"
 intakeState = "STATE_INTAKE">
 <!-- <zone filename = "BlueLeftBumpZoneRect.xml"/> -->
 </primitive>
-
-<primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLDrop3_B"
-time = "3.0"
-intakeState = "STATE_INTAKE">
-</primitive>
-
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDrop3_C"
@@ -54,13 +47,6 @@ intakeState = "STATE_INTAKE"
 launcherState = "STATE_IDLE">
 <!-- <zone filename = "BlueLeftBumpZoneRect.xml"/> -->
 <zone filename = "BlueLaunchZone.xml"/>
-</primitive>
-
-<primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLDrop3_E"
-time = "3.0"
-intakeState = "STATE_INTAKE"
->
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
