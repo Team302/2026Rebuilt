@@ -110,14 +110,14 @@ void CyclePrimitives::Run()
             {
                 if (zone.first != nullptr && zone.first->IsPoseInZone(robotPose) && !zone.second) // Check if pose is in zone and if we haven't already applied the zone actions
                 {
-                    SetMechanismStatesFromZone(zone);
+                    zone.second = SetMechanismStatesFromZone(&zone); // Pass pointer to current zone pair
 
-                    if (zone->GetChassisOption() != ChassisOptionEnums::AutonChassisOptions::NO_VISION)
+                    if (zone.first->GetChassisOption() != ChassisOptionEnums::AutonChassisOptions::NO_VISION)
                     {
                         // TODO:  plug in vision drive options
                     }
 
-                    if (zone->GetAvoidOption() != ChassisOptionEnums::AutonAvoidOptions::NO_AVOID_OPTION)
+                    if (zone.first->GetAvoidOption() != ChassisOptionEnums::AutonAvoidOptions::NO_AVOID_OPTION)
                     {
                         // TODO:  plug in avoid options
                     }
@@ -238,25 +238,29 @@ void CyclePrimitives::SetMechanismStatesFromParam(PrimitiveParams *params)
         }
     }
 }
-void CyclePrimitives::SetMechanismStatesFromZone(ZoneParams *params)
+bool CyclePrimitives::SetMechanismStatesFromZone(std::pair<ZoneParams *, bool> *params)
 {
     if (params != nullptr)
     {
-        if (m_cachedLauncher != nullptr && params->IsLauncherStateChanging())
+        if (m_cachedLauncher != nullptr && params->first->IsLauncherStateChanging())
         {
-            m_cachedLauncher->SetCurrentState(params->GetLauncherState(), true);
+            m_cachedLauncher->SetCurrentState(params->first->GetLauncherState(), true);
+            return true; // Return true if we changed a mechanism state based on zone params
         }
 
-        if (m_cachedIntake != nullptr && params->IsIntakeStateChanging())
+        if (m_cachedIntake != nullptr && params->first->IsIntakeStateChanging())
         {
-            m_cachedIntake->SetCurrentState(params->GetIntakeState(), true);
+            m_cachedIntake->SetCurrentState(params->first->GetIntakeState(), true);
+            return true; // Return true if we changed a mechanism state based on zone params
         }
 
-        if (m_cachedClimber != nullptr && params->IsClimberStateChanging())
+        if (m_cachedClimber != nullptr && params->first->IsClimberStateChanging())
         {
-            m_cachedClimber->SetCurrentState(params->GetClimberState(), true);
+            m_cachedClimber->SetCurrentState(params->first->GetClimberState(), true);
+            return true; // Return true if we changed a mechanism state based on zone params
         }
     }
+    return false; // Return false if no mechanism states were changed
 }
 
 void CyclePrimitives::DataLog(uint64_t timestamp)

@@ -29,8 +29,8 @@ AutonDrivePrimitive::AutonDrivePrimitive() : m_chassis(ChassisConfigMgr::GetInst
                                              m_maxTime(0_s),
                                              m_visionTransition(false),
                                              m_checkForDriveToUpdate(false),
-                                             m_launcher(nullptr),
-                                             m_zone(nullptr)
+                                             m_zone(nullptr),
+                                             m_launcher(nullptr)
 {
     // Get mechanism handles once in the constructor
     // TODO: add mechanism state mgr retrievals here
@@ -63,7 +63,7 @@ void AutonDrivePrimitive::Init(PrimitiveParams *params)
         int index = FindDriveToZoneIndex(params->GetZones());
         if (index != -1)
         {
-            m_zone = params->GetZones()[index];
+            m_zone = params->GetZones()[index].first;
             m_checkForDriveToUpdate = (m_zone != nullptr);
         }
         break;
@@ -141,7 +141,7 @@ int AutonDrivePrimitive::FindDriveToZoneIndex(ZoneParamsVector zones)
     {
         for (unsigned int i = 0; i < zones.size(); i++)
         {
-            if (zones[i]->GetPathUpdateOption() != ChassisOptionEnums::DriveStateType::STOP_DRIVE)
+            if (zones[i].first->GetPathUpdateOption() != ChassisOptionEnums::DriveStateType::STOP_DRIVE)
             {
                 return i;
             }
