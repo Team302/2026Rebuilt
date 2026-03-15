@@ -14,6 +14,7 @@
 //====================================================================================================================================================
 
 #pragma once
+#include <memory>
 
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "frc/controller/PIDController.h"
@@ -30,6 +31,8 @@ public:
     VisionDrive(subsystems::CommandSwerveDrivetrain *chassis);
 
     void Initialize() override;
+    virtual units::length::meter_t GetObjectHeight() = 0;
+    virtual std::vector<std::unique_ptr<DragonVisionStruct>> GetObjectSelection() = 0;
     void Execute() override;
     bool IsFinished() override;
     void End(bool interrupted) override;
@@ -46,20 +49,23 @@ protected:
                                                              .WithDesaturateWheelSpeeds(true);
 
 private:
-    TeleopControl *m_controller;
-    units::velocity::meters_per_second_t m_maxSpeed;
+    TeleopControl *m_controller = TeleopControl::GetInstance();
+    units::velocity::meters_per_second_t m_maxSpeed = 4_mps;
     units::velocity::meters_per_second_t m_maxVisionSpeed = 1.25_mps;
     units::angular_velocity::degrees_per_second_t m_visionAngularRate = 360_deg_per_s;
     units::angular_velocity::degrees_per_second_t m_maxAngularRate;
 
     DragonVision *m_vision = DragonVision::GetDragonVision();
 
-    double m_forwardkP = 0.12;
-    double m_forwardkI = 0.1;
-    double m_forwardkD = 0.0;
-    double m_rotationkP = 5.0;
-    double m_rotationkI = 1.5;
-    double m_rotationkD = 0.0;
+    static constexpr double m_forwardkP = 0.12;
+    static constexpr double m_forwardkI = 0.1;
+    static constexpr double m_forwardkD = 0.0;
+    static constexpr double m_strafekP = 0.0;
+    static constexpr double m_strafekI = 0.0;
+    static constexpr double m_strafekD = 0.0;
+    static constexpr double m_rotationkP = 5.0;
+    static constexpr double m_rotationkI = 1.5;
+    static constexpr double m_rotationkD = 0.0;
 
     /// @brief Maximum translational velocity for the robot
     units::velocity::meters_per_second_t kMaxVelocity;
@@ -68,12 +74,21 @@ private:
     units::acceleration::meters_per_second_squared_t kMaxAcceleration;
     static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationDefault = 3_mps_sq;
 
-    frc::PIDController m_drivePID{m_forwardkP, m_forwardkI, m_forwardkD};
-    frc::PIDController m_rotatePID{m_rotationkP, m_rotationkI, m_rotationkD};
+    frc::PIDController m_xController{m_forwardkP, m_forwardkI, m_forwardkD};
+
+    frc::PIDController m_yController{m_strafekP, m_strafekI, m_strafekD};
+
+    frc::PIDController m_yawController{m_rotationkP, m_rotationkI, m_rotationkD};
 
     swerve::requests::FieldCentric m_fieldDriveRequest = swerve::requests::FieldCentric{}
                                                              .WithDeadband(m_maxSpeed * 0.1)                                  // TODO: Investigate this deadband vs controller deadband
                                                              .WithRotationalDeadband(m_maxAngularRate * 0.1)                  // TODO: Investigate this deadband vs controller deadband
                                                              .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage) // Use open-loop voltage for drive
                                                              .WithDesaturateWheelSpeeds(true);
+
+    int m_visionCacheI = 0;
+
+    frc::Transform2d m_targetPoseOffset{frc::Translation2d{0_m, 0_m}, frc::Rotation2d{0_deg}};
+
+    std::vector<std::unique_ptr<DragonVisionStruct>> m_visionCache;
 };

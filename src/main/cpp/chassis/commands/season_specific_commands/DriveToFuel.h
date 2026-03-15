@@ -14,6 +14,8 @@
 //====================================================================================================================================================
 #pragma once
 
+#include <memory>
+
 #include "chassis/commands/VisionDrive.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "vision/DragonVision.h"
@@ -22,13 +24,11 @@ class DriveToFuel : public VisionDrive
 {
 public:
     DriveToFuel(subsystems::CommandSwerveDrivetrain *chassis);
-    void Initialize() override;
-    void Execute() override;
-    bool IsFinished() override;
-    void End(bool interrupted) override;
+    units::length::meter_t GetObjectHeight() override { return 5.5_in; };
+    std::vector<std::unique_ptr<DragonVisionStruct>> GetObjectSelection() override;
 
 private:
-    DragonVision *m_vision;
+    DragonVision *m_vision = nullptr;
 
     static constexpr double kPDrive{2};
     static constexpr double kIDrive{0.0};
@@ -42,5 +42,10 @@ private:
     frc::PIDController m_yController{kPDrive, kIDrive, kDDrive};
     frc::PIDController m_yawController{kPYaw, kIYaw, kDYaw};
 
+    units::length::meter_t m_XdistLimit = 3_m;
+    units::length::meter_t m_IntakeXOffset = 1_m;
+
     int m_visionCacheI = 0;
+
+    subsystems::CommandSwerveDrivetrain *m_chassis;
 };
