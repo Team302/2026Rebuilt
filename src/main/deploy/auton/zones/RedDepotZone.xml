@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE auton SYSTEM "zone.dtd">
-
-<auton>
-<zone circlex="16.2" circley="2.1" radius="50.0"
-pathUpdateOption = "DRIVE_TO_DEPOT"/>
-</auton>
