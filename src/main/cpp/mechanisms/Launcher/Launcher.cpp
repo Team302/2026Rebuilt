@@ -652,7 +652,7 @@ void Launcher::RefreshCachedMotorData()
 	m_cachedLauncherVelocity = m_launcher->GetVelocity().GetValue();
 	m_cachedHoodPosition = m_hood->GetPosition().GetValue();
 	m_cachedTurretPosition = m_turretEnabled ? m_turret->GetPosition().GetValue() : 180_tr;
-	m_cachedLauncherCurrent = 0.0_A; // m_launcher->GetStatorCurrent().GetValue();
+	m_cachedLauncherCurrent = m_launcher->GetStatorCurrent().GetValue();
 }
 
 void Launcher::RunCommonTasks()
