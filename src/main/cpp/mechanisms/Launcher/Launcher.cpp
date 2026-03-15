@@ -170,9 +170,9 @@ void Launcher::CreateCompBot302()
 	m_indexer = new ctre::phoenix6::hardware::TalonFX(5, ctre::phoenix6::CANBus("canivore"));
 	m_agitator = new ctre::phoenix6::hardware::TalonFX(18, ctre::phoenix6::CANBus("canivore"));
 	m_hoodCANdi = new ctre::phoenix6::hardware::CANdi(7, ctre::phoenix6::CANBus("canivore"));
-	// m_turretCANdi = new ctre::phoenix6::hardware::CANdi(6, ctre::phoenix6::CANBus("canivore"));
+	m_turretCANdi = new ctre::phoenix6::hardware::CANdi(6, ctre::phoenix6::CANBus("canivore"));
 	m_turret = m_turretEnabled ? new ctre::phoenix6::hardware::TalonFXS(6, ctre::phoenix6::CANBus("canivore")) : nullptr;
-	m_turretAngleSensor = new ctre::phoenix6::hardware::CANcoder(6, ctre::phoenix6::CANBus("canivore"));
+	// m_turretAngleSensor = new ctre::phoenix6::hardware::CANcoder(6, ctre::phoenix6::CANBus("canivore"));
 
 	m_percentOut = new ControlData(
 		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
@@ -480,14 +480,15 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
 
 	// MECH_TODO: Set limit switches
-	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 7;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
+	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
+	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 6;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(270);
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 7;
+	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 6;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::turn_t(90);
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
@@ -522,20 +523,20 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.Slot0.GravityType = m_positionDegreesTurret->GetGravityType();
 	configs.Slot0.StaticFeedforwardSign = m_positionDegreesTurret->GetStaticFeedforwardSign();
 
-	ctre::phoenix6::configs::CANcoderConfiguration turretAngleSensorConfig{};
-	turretAngleSensorConfig.MagnetSensor.MagnetOffset = 0.1633377777778_tr;
-	turretAngleSensorConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1_tr;
-	turretAngleSensorConfig.MagnetSensor.SensorDirection = ctre::phoenix6::signals::SensorDirectionValue::Clockwise_Positive;
+	// ctre::phoenix6::configs::CANcoderConfiguration turretAngleSensorConfig{};
+	// turretAngleSensorConfig.MagnetSensor.MagnetOffset = 0.1633377777778_tr;
+	// turretAngleSensorConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1_tr;
+	// turretAngleSensorConfig.MagnetSensor.SensorDirection = ctre::phoenix6::signals::SensorDirectionValue::Clockwise_Positive;
 
-	ctre::phoenix::StatusCode statusCANCoder = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
-	for (int i = 0; i < 5; ++i)
-	{
-		statusCANCoder = m_turretAngleSensor->GetConfigurator().Apply(turretAngleSensorConfig, units::time::second_t(0.25));
-		if (statusCANCoder.IsOK())
-			break;
-	}
-	if (!statusCANCoder.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_turret", "m_turretCACoder Status", statusCANCoder.GetName());
+	// ctre::phoenix::StatusCode statusCANCoder = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	// for (int i = 0; i < 5; ++i)
+	// {
+	// 	statusCANCoder = m_turretAngleSensor->GetConfigurator().Apply(turretAngleSensorConfig, units::time::second_t(0.25));
+	// 	if (statusCANCoder.IsOK())
+	// 		break;
+	// }
+	// if (!statusCANCoder.IsOK())
+	// 	Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_turret", "m_turretCACoder Status", statusCANCoder.GetName());
 
 	ctre::phoenix::StatusCode statusMotor = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
@@ -547,22 +548,22 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	if (!statusMotor.IsOK())
 		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_turret", "m_turret Status", statusMotor.GetName());
 
-	// CANdiConfiguration CANdiConfig{};
+	CANdiConfiguration CANdiConfig{};
 
-	// CANdiConfig.DigitalInputs.S1CloseState = signals::S1CloseStateValue::CloseWhenFloating;
-	// CANdiConfig.DigitalInputs.S1FloatState = signals::S1FloatStateValue::FloatDetect;
-	// CANdiConfig.DigitalInputs.S2CloseState = signals::S2CloseStateValue::CloseWhenFloating;
-	// CANdiConfig.DigitalInputs.S2FloatState = signals::S2FloatStateValue::FloatDetect;
+	CANdiConfig.DigitalInputs.S1CloseState = signals::S1CloseStateValue::CloseWhenFloating;
+	CANdiConfig.DigitalInputs.S1FloatState = signals::S1FloatStateValue::FloatDetect;
+	CANdiConfig.DigitalInputs.S2CloseState = signals::S2CloseStateValue::CloseWhenFloating;
+	CANdiConfig.DigitalInputs.S2FloatState = signals::S2FloatStateValue::FloatDetect;
 
-	// ctre::phoenix::StatusCode statusCANdi = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
-	//  for (int i = 0; i < 5; ++i)
-	//  {
-	//  	statusCANdi = m_turretCANdi->GetConfigurator().Apply(CANdiConfig, units::time::second_t(0.25));
-	//  	if (statusCANdi.IsOK())
-	//  		break;
-	//  }
-	//  if (!statusCANdi.IsOK())
-	//  	Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_turret", "m_turretCANdi Status", statusCANdi.GetName());
+	ctre::phoenix::StatusCode statusCANdi = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	for (int i = 0; i < 5; ++i)
+	{
+		statusCANdi = m_turretCANdi->GetConfigurator().Apply(CANdiConfig, units::time::second_t(0.25));
+		if (statusCANdi.IsOK())
+			break;
+	}
+	if (!statusCANdi.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_turret", "m_turretCANdi Status", statusCANdi.GetName());
 }
 
 void Launcher::InitializeTalonFXIndexerCompBot302()
@@ -855,7 +856,7 @@ void Launcher::UpdateLauncherTargets()
 
 void Launcher::InitilaizeLauncher()
 {
-	if ((m_turretEnabled && (m_turret->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround) &&
+	if ((m_turretEnabled && (m_turret->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround || m_turret->GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround) &&
 		 (m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)) ||
 		(!m_turretEnabled && (m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)) ||
 		frc::RobotBase::IsSimulation())
