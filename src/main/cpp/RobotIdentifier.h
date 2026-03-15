@@ -19,6 +19,7 @@
 
 enum class RobotIdentifier
 {
+	CHASSIS_BOT_9999 = 9999,
 	CHASSIS_BOT_9998 = 9998,
 	CHASSIS_BOT_9997 = 9997,
 	COMP_BOT_302 = 302,

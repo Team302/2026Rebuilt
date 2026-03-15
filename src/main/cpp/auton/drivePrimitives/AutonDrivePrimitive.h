@@ -14,14 +14,14 @@
 //====================================================================================================================================================
 #pragma once
 
+#include "auton/PrimitiveEnums.h"
+#include "auton/ZoneParams.h"
 #include "auton/drivePrimitives/IPrimitive.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "frc/Timer.h"
 #include "frc2/command/Command.h"
+#include "mechanisms/Launcher/Launcher.h"
 #include <frc2/command/CommandScheduler.h>
-#include "auton/ZoneParams.h"
-#include "chassis/generated/CommandSwerveDrivetrain.h"
-#include "auton/PrimitiveEnums.h"
-
 class AutonDrivePrimitive : public IPrimitive
 {
 public:
@@ -46,4 +46,5 @@ private:
     bool m_visionTransition;
     bool m_checkForDriveToUpdate;
     ZoneParams *m_zone;
+    Launcher *m_launcher;
 };

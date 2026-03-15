@@ -165,12 +165,13 @@ robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlB
     {TeleopControlFunctions::EXPEL, driverLTriggerPressed},
 
     {TeleopControlFunctions::DRIVE_TO_HUB, driverAButton},
+    {TeleopControlFunctions::SWEEP_BEHIND_BUMP, driverAButton},
     {TeleopControlFunctions::LEVEL1_CLIMB, driverAButton},
 
     {TeleopControlFunctions::DRIVE_TO_OUTPOST, driverBButton},
     {TeleopControlFunctions::DRIVE_TO_TOWER, driverBButton},
 
-    {TeleopControlFunctions::DRIVE_TO_DEPOT, driverXButton},
+    {TeleopControlFunctions::DRIVE_ALONG_NEAREST_WALL, driverXButton},
     {TeleopControlFunctions::DRIVE_TO_TOWER, driverXButton},
 
     {TeleopControlFunctions::DRIVE_OVER_BUMP, driverYButton},
@@ -190,7 +191,8 @@ robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlB
 
     {TeleopControlFunctions::INTAKE_IN, copilotLTriggerPressed},
     {TeleopControlFunctions::INTAKE_OUT, copilotRTriggerPressed},
-    {TeleopControlFunctions::EXTENDER_MODIFIER, copilotSelectButton}};
+    {TeleopControlFunctions::EXTENDER_MODIFIER, copilotSelectButton},
+    {TeleopControlFunctions::TURRET_ENABLE, copilotLStickPressed}};
 
 constexpr TeleopControlAxis driverLJoystickX = {TeleopControlMappingEnums::DRIVER, TeleopControlMappingEnums::LEFT_JOYSTICK_X, TeleopControlMappingEnums::APPLY_STANDARD_DEADBAND, TeleopControlMappingEnums::AXIS_PROFILE::LINEAR, TeleopControlMappingEnums::REVERSED, 1.0};
 constexpr TeleopControlAxis driverLJoystickY = {TeleopControlMappingEnums::DRIVER, TeleopControlMappingEnums::LEFT_JOYSTICK_Y, TeleopControlMappingEnums::APPLY_STANDARD_DEADBAND, TeleopControlMappingEnums::AXIS_PROFILE::LINEAR, TeleopControlMappingEnums::REVERSED, 1.0};

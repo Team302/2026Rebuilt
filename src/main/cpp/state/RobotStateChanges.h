@@ -34,8 +34,9 @@ public:
         DriveToFinished_Bool,
         DriveStateType_Int,
         HubActive_Bool,
-        ShiftChangeIn3Seconds_Bool,
+        StartLaunching_Bool,
         ShiftChangeIn5Seconds_Bool,
+        TurretEnabled_Bool,
         LoopCounterEnd // Must be last Enum for the loop counter
 
     };

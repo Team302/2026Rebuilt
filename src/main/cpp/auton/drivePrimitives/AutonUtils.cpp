@@ -23,9 +23,11 @@ using std::string;
 std::optional<choreo::Trajectory<choreo::SwerveSample>> AutonUtils::GetTrajectoryFromPathFile(string pathName)
 {
     auto trajectory = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>(pathName);
-    if (trajectory.has_value() && FMSData::GetAllianceColor() == DriverStation::Alliance::kRed)
-    {
-        return trajectory.value().Flipped();
-    }
-    return trajectory;
+    return (trajectory.has_value() && FMSData::GetAllianceColor() == DriverStation::Alliance::kRed) ? trajectory.value().Flipped() : trajectory;
+}
+
+std::optional<choreo::Trajectory<choreo::SwerveSample>> AutonUtils::GetTrajectoryFromPathFile(string pathName, bool generateRedTrajectory)
+{
+    auto trajectory = choreo::Choreo::LoadTrajectory<choreo::SwerveSample>(pathName);
+    return (trajectory.has_value() && generateRedTrajectory) ? trajectory.value().Flipped() : trajectory;
 }

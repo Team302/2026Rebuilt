@@ -33,7 +33,6 @@
 DriveOverBump::DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis) : DriveToPose(chassis)
 {
     // Set distance threshold for pose completion detection (1 foot tolerance)
-    SetDistanceThreshold(kDistanceThreshold);
     SetAngleTolerance(kAngleTolerance);
     SetYTransitionToEndPointTolerance(kYTransitionToEndPointTolerance); // Allow extra tolerance for Y due to bump crossing dynamics
 }
@@ -48,24 +47,24 @@ DriveOverBump::DriveOverBump(subsystems::CommandSwerveDrivetrain *chassis) : Dri
 ///             - Direction of travel (neutral->alliance or alliance->neutral)
 ///
 ///             These angles ensure the robot approaches and crosses the bump
-///             at the optimal heading toward the hub center.
+///             at the optimal heading toward the hub center
 //------------------------------------------------------------------
 units::angle::degree_t DriveOverBump::GetRotation(BUMP_ID bump, bool isInNeutralZone) const
 {
     switch (bump)
     {
     case BUMP_ID::RED_OUTPOST_BUMP:
-        // Red outpost side: 45° heading regardless of direction
-        return isInNeutralZone ? kNeutralZoneTowardHubRedOutpost : kRedAllianceOutpostWallTowardHub;
+        // Red outpost side: if in neutral zone, 135° heading; if in alliance zone, 45° heading
+        return isInNeutralZone ? kNeutralZoneTowardHubRedOutpost : kRedAllianceDepotWallTowardHub;
     case BUMP_ID::BLUE_OUTPOST_BUMP:
-        // Blue outpost side: 315° heading regardless of direction
+        // Blue outpost side: if in neutral zone, 315° heading; if in alliance zone, 225° heading
         return isInNeutralZone ? kNeutralZoneTowardHubBlueOutpost : kBlueAllianceOutpostWallTowardHub;
     case BUMP_ID::RED_DEPOT_BUMP:
-        // Red depot side: 315° heading regardless of direction
-        return isInNeutralZone ? kNeutralZoneTowardHubRedDepot : kRedAllianceDepotWallTowardHub;
+        // Red depot side: if in neutral zone, 225° heading; if in alliance zone, 315° heading
+        return isInNeutralZone ? kNeutralZoneTowardHubRedDepot : kRedAllianceOutpostWallTowardHub;
     case BUMP_ID::BLUE_DEPOT_BUMP:
     default:
-        // Blue depot side (default): 45° heading regardless of direction
+        // Blue depot side (default): if in neutral zone, 45° heading; if in alliance zone, 135° heading
         return isInNeutralZone ? kNeutralZoneTowardHubBlueDepot : kBlueAllianceDepotWallTowardHub;
     }
 }
@@ -133,6 +132,8 @@ struct DriveToPoses DriveOverBump::GetDriveToPoses()
             // First go to alliance side of bump, then to neutral side
             poses.midPose = frc::Pose2d(allianceX, allianceY, frc::Rotation2d(rotation));
             poses.endPose = frc::Pose2d(neutralX, neutralY, frc::Rotation2d(rotation));
+            poses.midPointSpeed = 0_mps;
+            poses.endPointSpeed = 1_mps;
         }
     }
     return poses;
