@@ -105,12 +105,12 @@ void CyclePrimitives::Run()
         if (m_chassis != nullptr && !m_zones.empty())
         {
             auto robotPose = m_chassis->GetPose(); // Get pose once per cycle instead of once per zone
-
+            int counter = 0;
             for (auto zone : m_zones)
             {
                 if (zone.first != nullptr && zone.first->IsPoseInZone(robotPose) && !zone.second) // Check if pose is in zone and if we haven't already applied the zone actions
                 {
-                    zone.second = SetMechanismStatesFromZone(&zone); // Pass pointer to current zone pair
+                    m_zones.at(counter).second = SetMechanismStatesFromZone(&zone); // Pass pointer to current zone pair
 
                     if (zone.first->GetChassisOption() != ChassisOptionEnums::AutonChassisOptions::NO_VISION)
                     {
@@ -122,6 +122,7 @@ void CyclePrimitives::Run()
                         // TODO:  plug in avoid options
                     }
                 }
+                counter++;
             }
         }
 

@@ -47,6 +47,8 @@ void IdleState::Init()
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
 		InitCompBot302();
 	m_mechanism->PublishLaunchMode(false);
+
+	m_mechanism->ResetLaunchCurrentTimer();
 }
 
 void IdleState::InitCompBot302()
@@ -91,10 +93,9 @@ bool IdleState::IsTransitionCondition(bool considerGamepadTransitions)
 			m_Timer->Reset();
 		}
 	}
-	bool isfinishedlaunching = frc::DriverStation::IsAutonomous() && m_mechanism->IsFinishedLaunching();
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Launcher", "IdleState", isfinishedlaunching ? "Finished Launching" : "Not Finished Launching");
+
 	return (m_mechanism->IsLauncherInitialized() && m_mechanism->GetCurrentState() == Launcher::STATE_INITIALIZE) ||
 		   (launchingDone) ||
 		   (!m_mechanism->IsInClimbMode() && (m_mechanism->GetCurrentState() == Launcher::STATE_CLIMB || m_mechanism->GetCurrentState() == Launcher::STATE_EMPTY_HOPPER)) ||
-		   (isfinishedlaunching);
+		   (frc::DriverStation::IsAutonomous() && m_mechanism->IsFinishedLaunching());
 }

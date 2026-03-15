@@ -167,6 +167,11 @@ public:
 	void UpdateTurretEnabled();
 	bool IsFinishedLaunching();
 	void StartLaunchCurrentTimer() { m_launchCurrentTimer.Start(); }
+	void ResetLaunchCurrentTimer()
+	{
+		m_launchCurrentTimer.Stop();
+		m_launchCurrentTimer.Reset();
+	}
 
 protected:
 	RobotIdentifier m_activeRobotId;

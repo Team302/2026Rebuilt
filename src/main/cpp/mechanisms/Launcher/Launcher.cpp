@@ -916,8 +916,6 @@ bool Launcher::IsFinishedLaunching()
 	}
 	else if (m_launchCurrentTimer.Get() > m_isLaunchingTimeThreshold)
 	{
-		m_launchCurrentTimer.Stop();
-		m_launchCurrentTimer.Reset();
 		return true;
 	}
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launching Current", m_cachedLauncherCurrent.value());
