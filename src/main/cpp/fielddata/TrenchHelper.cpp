@@ -118,7 +118,7 @@ std::vector<frc::Pose2d> TrenchHelper::GetTrenchDrivePositions(bool isRedAllianc
     auto blueTrench = isRedDepotPair ? TRENCH_ID::BLUE_OUTPOST_TRENCH : TRENCH_ID::BLUE_DEPOT_TRENCH;
 
     auto startingTrench = isRedAlliance ? blueTrench : redTrench;
-    auto endTrench = isRedAlliance ? redTrench : blueTrench;
+    auto endTrench = isInOtherAllianceZone ? startingTrench : (isRedAlliance ? redTrench : blueTrench);
 
     auto offsetVals = FieldOffsetValues::GetInstance();
     std::vector<frc::Pose2d> poses;
@@ -153,7 +153,14 @@ std::vector<frc::Pose2d> TrenchHelper::GetTrenchDrivePositions(bool isRedAllianc
         }
     };
 
-    poses.emplace_back(frc::Pose2d{GetTrenchX(startingTrench), GetTrenchY(startingTrench), rotation});
-    poses.emplace_back(frc::Pose2d{GetTrenchX(endTrench), GetTrenchY(endTrench), rotation});
+    if (isInOtherAllianceZone)
+    {
+        poses.emplace_back(frc::Pose2d{GetTrenchX(endTrench), GetTrenchY(endTrench), rotation});
+    }
+    else
+    {
+        poses.emplace_back(frc::Pose2d{GetTrenchX(startingTrench), GetTrenchY(startingTrench), rotation});
+        poses.emplace_back(frc::Pose2d{GetTrenchX(endTrench), GetTrenchY(endTrench), rotation});
+    }
     return poses;
 }

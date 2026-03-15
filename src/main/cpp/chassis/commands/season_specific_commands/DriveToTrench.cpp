@@ -87,9 +87,10 @@ struct DriveToPoses DriveToTrench::GetDriveToPoses()
     auto targetPoses = TrenchHelper::GetInstance()->GetTrenchDrivePositions(FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed); // Get trench drive positions for the current alliance
 
     auto currentPose = GetChassis()->GetPose();
+
     auto firstPose = targetPoses.front();
     poses.midPose = frc::Pose2d(currentPose.X(), firstPose.Y(), firstPose.Rotation().Degrees()); // Create a pose for the bump position
-    poses.endPose = targetPoses.back();                                                          // End pose is the last position (opposite side)
+    poses.endPose = targetPoses.size() > 1 ? targetPoses.back() : firstPose;                     // If there's only one pose, use it as the end pose as well
 
     return poses;
 }
