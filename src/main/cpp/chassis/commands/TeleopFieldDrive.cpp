@@ -14,12 +14,14 @@
 //====================================================================================================================================================
 
 #include "chassis/commands/TeleopFieldDrive.h"
+#include "auton/AllianceZoneManager.h"
+#include "auton/DeadZoneManager.h"
+#include "auton/NeutralZoneManager.h"
 #include "state/RobotState.h"
 #include "utils/FMSData.h"
-#include "vision/DragonVision.h"
-#include "utils/logging/debug/Logger.h"
-#include "auton/AllianceZoneManager.h"
 #include "utils/RebuiltTargetCalculator.h"
+#include "utils/logging/debug/Logger.h"
+#include "vision/DragonVision.h"
 // Note the simplified constructor and AddRequirements call
 TeleopFieldDrive::TeleopFieldDrive(subsystems::CommandSwerveDrivetrain *chassis,
                                    TeleopControl *controller,
@@ -65,6 +67,15 @@ void TeleopFieldDrive::Execute()
     double manualRotate = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE);
 
     if (m_isLaunching && AllianceZoneManager::GetInstance()->IsInAllianceZone() && !m_turretEnabled)
+    {
+        units::angle::degree_t calculatorRotate = RebuiltTargetCalculator::GetInstance()->GetChassisTargetForLaunching(0.5_s);
+        m_chassis->SetControl(m_fieldFacingRequest.WithVelocityX(forward * m_currentMaxSpeed)
+                                  .WithVelocityY(strafe * m_currentMaxSpeed)
+                                  .WithTargetDirection(calculatorRotate)
+                                  .WithHeadingPID(m_rotationKP, m_rotationKI, m_rotationKD));
+        m_chassis->SetTargetChassisRotation(calculatorRotate);
+    }
+    else if (m_isLaunching && NeutralZoneManager::GetInstance()->IsInNeutralZone() && !DeadZoneManager::GetInstance()->IsInDeadZone() && !m_turretEnabled)
     {
         units::angle::degree_t calculatorRotate = RebuiltTargetCalculator::GetInstance()->GetChassisTargetForLaunching(0.5_s);
         m_chassis->SetControl(m_fieldFacingRequest.WithVelocityX(forward * m_currentMaxSpeed)
