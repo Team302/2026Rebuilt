@@ -15,6 +15,7 @@
 #pragma once
 
 #include "fielddata/BumpHelper.h"
+#include "fielddata/TrenchHelper.h"
 #include "units/length.h"
 #include <vector>
 
@@ -27,6 +28,13 @@ struct BumpPosition
     BUMP_ID bumpId;           ///< Identifier for the bump
     units::length::meter_t x; ///< X-coordinate of the bump (meters)
     units::length::meter_t y; ///< Y-coordinate of the bump (meters)
+};
+
+struct TrenchPosition
+{
+    TRENCH_ID trenchId;       ///< Identifier for the trench
+    units::length::meter_t x; ///< X-coordinate of the trench (meters)
+    units::length::meter_t y; ///< Y-coordinate of the trench (meters)
 };
 
 //====================================================================================================================================================
@@ -180,6 +188,188 @@ public:
     //------------------------------------------------------------------
     std::vector<BumpPosition> GetNearestAndCrossFieldBumpEdges(bool inNeutralZone) const;
 
+    std::vector<frc::Pose2d> GetTrenchDrivePositions(bool isRedAlliance) const;
+
+    //------------------------------------------------------------------
+    // Depot X-Coordinate Getters
+    //------------------------------------------------------------------
+
+    /// @brief      Get the blue alliance depot neutral-side X-coordinate
+    /// @return     units::length::meter_t - Blue depot X position (meters)
+    units::length::meter_t GetBlueDepotX() const { return m_blueDepotX; }
+
+    /// @brief      Get the red alliance depot neutral-side X-coordinate
+    /// @return     units::length::meter_t - Red depot X position (meters)
+    units::length::meter_t GetRedDepotX() const { return m_redDepotX; }
+
+    //------------------------------------------------------------------
+    // Outpost X-Coordinate Getters
+    //------------------------------------------------------------------
+
+    /// @brief      Get the blue alliance outpost X-coordinate
+    /// @return     units::length::meter_t - Blue outpost X position (meters, equal to depot X)
+    units::length::meter_t GetBlueOutpostX() const { return m_blueOutpostX; }
+
+    /// @brief      Get the red alliance outpost X-coordinate
+    /// @return     units::length::meter_t - Red outpost X position (meters, equal to depot X)
+    units::length::meter_t GetRedOutpostX() const { return m_redOutpostX; }
+
+    /// @brief      Get the blue alliance outpost approach X-coordinate
+    /// @return     units::length::meter_t - Blue outpost approach X position (meters, outpostX + OUTPOST_APPROACH_OFFSET)
+    units::length::meter_t GetBlueOutpostApproachX() const { return m_blueOutpostApproachX; }
+
+    /// @brief      Get the red alliance outpost approach X-coordinate
+    /// @return     units::length::meter_t - Red outpost approach X position (meters, outpostX - OUTPOST_APPROACH_OFFSET)
+    units::length::meter_t GetRedOutpostApproachX() const { return m_redOutpostApproachX; }
+
+    //------------------------------------------------------------------
+    // Tower Coordinate Getters
+    //------------------------------------------------------------------
+
+    /// @brief      Get the red tower X-coordinate on the outpost side
+    /// @return     units::length::meter_t - Red tower outpost-side X (tower center X - TOWER_X_OFFSET)
+    units::length::meter_t GetRedTowerOutpostX() const { return m_redTowerOutpostX; }
+
+    /// @brief      Get the red tower X-coordinate on the depot side
+    /// @return     units::length::meter_t - Red tower depot-side X (tower center X - TOWER_X_OFFSET)
+    units::length::meter_t GetRedTowerDepotX() const { return m_redTowerDepotX; }
+
+    /// @brief      Get the red tower Y-coordinate on the outpost side
+    /// @return     units::length::meter_t - Red tower outpost-side Y (tower center Y + TOWER_Y_OFFSET)
+    units::length::meter_t GetRedTowerOutpostY() const { return m_redTowerOutpostY; }
+
+    /// @brief      Get the red tower Y-coordinate on the depot side
+    /// @return     units::length::meter_t - Red tower depot-side Y (tower center Y - TOWER_Y_OFFSET)
+    units::length::meter_t GetRedTowerDepotY() const { return m_redTowerDepotY; }
+
+    /// @brief      Get the blue tower X-coordinate on the outpost side
+    /// @return     units::length::meter_t - Blue tower outpost-side X (tower center X + TOWER_X_OFFSET)
+    units::length::meter_t GetBlueTowerOutpostX() const { return m_blueTowerOutpostX; }
+
+    /// @brief      Get the blue tower X-coordinate on the depot side
+    /// @return     units::length::meter_t - Blue tower depot-side X (tower center X + TOWER_X_OFFSET)
+    units::length::meter_t GetBlueTowerDepotX() const { return m_blueTowerDepotX; }
+
+    /// @brief      Get the blue tower Y-coordinate on the outpost side
+    /// @return     units::length::meter_t - Blue tower outpost-side Y (tower center Y - TOWER_Y_OFFSET)
+    units::length::meter_t GetBlueTowerOutpostY() const { return m_blueTowerOutpostY; }
+
+    /// @brief      Get the blue tower Y-coordinate on the depot side
+    /// @return     units::length::meter_t - Blue tower depot-side Y (tower center Y + TOWER_Y_OFFSET)
+    units::length::meter_t GetBlueTowerDepotY() const { return m_blueTowerDepotY; }
+
+    //------------------------------------------------------------------
+    // Hub X-Coordinate Getters
+    //------------------------------------------------------------------
+
+    /// @brief      Get the blue hub X-coordinate with neutral-zone offset applied
+    /// @return     units::length::meter_t - Blue hub X position (hub center X - HUB_OFFSET)
+    units::length::meter_t GetBlueHubX() const { return m_blueHubX; }
+
+    /// @brief      Get the red hub X-coordinate with neutral-zone offset applied
+    /// @return     units::length::meter_t - Red hub X position (hub center X + HUB_OFFSET)
+    units::length::meter_t GetRedHubX() const { return m_redHubX; }
+
+    //------------------------------------------------------------------
+    // Bump X-Coordinate Getters
+    //------------------------------------------------------------------
+
+    /// @brief      Get the red alliance-side bump edge X-coordinate
+    /// @return     units::length::meter_t - Red alliance bump X (hub center X + BUMP_OFFSET)
+    units::length::meter_t GetRedAllianceBumpEdgeX() const { return m_redAllianceBumpEdgeX; }
+
+    /// @brief      Get the red neutral-side bump edge X-coordinate
+    /// @return     units::length::meter_t - Red neutral bump X (hub center X - BUMP_OFFSET)
+    units::length::meter_t GetRedNeutralBumpEdgeX() const { return m_redNeutralBumpEdgeX; }
+
+    /// @brief      Get the blue alliance-side bump edge X-coordinate
+    /// @return     units::length::meter_t - Blue alliance bump X (hub center X - BUMP_OFFSET)
+    units::length::meter_t GetBlueAllianceBumpEdgeX() const { return m_blueAllianceBumpEdgeX; }
+
+    /// @brief      Get the blue neutral-side bump edge X-coordinate
+    /// @return     units::length::meter_t - Blue neutral bump X (hub center X + BUMP_OFFSET)
+    units::length::meter_t GetBlueNeutralBumpEdgeX() const { return m_blueNeutralBumpEdgeX; }
+
+    //------------------------------------------------------------------
+    // Bump Midpoint Y-Coordinate Getters
+    //------------------------------------------------------------------
+
+    /// @brief      Get the red depot-side bump midpoint Y-coordinate
+    /// @return     units::length::meter_t - Red depot bump Y (hub–trench midpoint + 1 ft)
+    units::length::meter_t GetRedBumpDepotY() const { return m_redBumpDepotY; }
+
+    /// @brief      Get the red outpost-side bump midpoint Y-coordinate
+    /// @return     units::length::meter_t - Red outpost bump Y (hub–trench midpoint - 1 ft)
+    units::length::meter_t GetRedBumpOutpostY() const { return m_redBumpOutpostY; }
+
+    /// @brief      Get the blue depot-side bump midpoint Y-coordinate
+    /// @return     units::length::meter_t - Blue depot bump Y (hub–trench midpoint - 1 ft)
+    units::length::meter_t GetBlueBumpDepotY() const { return m_blueBumpDepotY; }
+
+    /// @brief      Get the blue outpost-side bump midpoint Y-coordinate
+    /// @return     units::length::meter_t - Blue outpost bump Y (hub–trench midpoint + 1 ft)
+    units::length::meter_t GetBlueBumpOutpostY() const { return m_blueBumpOutpostY; }
+
+    //------------------------------------------------------------------
+    // Bump Trench-Entrance Y-Coordinate Getters
+    //------------------------------------------------------------------
+
+    /// @brief      Get the red depot-side bump trench-entrance Y-coordinate
+    /// @return     units::length::meter_t - Y of RED_TRENCH_ALLIANCE_DEPOT (trench entrance for red depot bump)
+    units::length::meter_t GetRedBumpTrenchDepotY() const { return m_redBumpTrenchDepotY; }
+
+    /// @brief      Get the red outpost-side bump trench-entrance Y-coordinate
+    /// @return     units::length::meter_t - Y of RED_TRENCH_ALLIANCE_OUTPOST (trench entrance for red outpost bump)
+    units::length::meter_t GetRedBumpTrenchOutpostY() const { return m_redBumpTrenchOutpostY; }
+
+    /// @brief      Get the blue depot-side bump trench-entrance Y-coordinate
+    /// @return     units::length::meter_t - Y of BLUE_TRENCH_ALLIANCE_DEPOT (trench entrance for blue depot bump)
+    units::length::meter_t GetBlueBumpTrenchDepotY() const { return m_blueBumpTrenchDepotY; }
+
+    /// @brief      Get the blue outpost-side bump trench-entrance Y-coordinate
+    /// @return     units::length::meter_t - Y of BLUE_TRENCH_ALLIANCE_OUTPOST (trench entrance for blue outpost bump)
+    units::length::meter_t GetBlueBumpTrenchOutpostY() const { return m_blueBumpTrenchOutpostY; }
+
+    //------------------------------------------------------------------
+    // Trench X-Coordinate Getters
+    //------------------------------------------------------------------
+
+    /// @brief      Get the red alliance trench X-coordinate
+    /// @return     units::length::meter_t - X of red alliance trench entrance
+    units::length::meter_t GetRedTrenchX() const { return m_redTrenchX; }
+
+    /// @brief      Get the red neutral-side trench X-coordinate
+    /// @return     units::length::meter_t - X of red trench on the neutral side
+    units::length::meter_t GetNeutralRedTrenchX() const { return m_neutralRedTrenchX; }
+
+    /// @brief      Get the blue alliance trench X-coordinate
+    /// @return     units::length::meter_t - X of blue alliance trench entrance
+    units::length::meter_t GetBlueTrenchX() const { return m_blueTrenchX; }
+
+    /// @brief      Get the blue neutral-side trench X-coordinate
+    /// @return     units::length::meter_t - X of blue trench on the neutral side
+    units::length::meter_t GetNeutralBlueTrenchX() const { return m_neutralBlueTrenchX; }
+
+    //------------------------------------------------------------------
+    // Trench Y-Coordinate Getters
+    //------------------------------------------------------------------
+
+    /// @brief      Get the red depot trench Y-coordinate
+    /// @return     units::length::meter_t - Y of RED_TRENCH_ALLIANCE_DEPOT
+    units::length::meter_t GetRedDepotTrenchY() const { return m_redDepotTrenchY; }
+
+    /// @brief      Get the red outpost trench Y-coordinate
+    /// @return     units::length::meter_t - Y of RED_TRENCH_ALLIANCE_OUTPOST
+    units::length::meter_t GetRedOutpostTrenchY() const { return m_redOutpostTrenchY; }
+
+    /// @brief      Get the blue depot trench Y-coordinate
+    /// @return     units::length::meter_t - Y of BLUE_TRENCH_ALLIANCE_DEPOT
+    units::length::meter_t GetBlueDepotTrenchY() const { return m_blueDepotTrenchY; }
+
+    /// @brief      Get the blue outpost trench Y-coordinate
+    /// @return     units::length::meter_t - Y of BLUE_TRENCH_ALLIANCE_OUTPOST
+    units::length::meter_t GetBlueOutpostTrenchY() const { return m_blueOutpostTrenchY; }
+
 private:
     //------------------------------------------------------------------
     /// @brief      Private constructor for singleton pattern
@@ -230,28 +420,22 @@ private:
 
     //------------------------------------------------------------------
     // Depot X-Coordinates
-    //------------------------------------------------------------------
-
     /// @brief X-coordinate of blue alliance depot neutral side (meters)
-    units::length::meter_t m_blueDepotX;
-
     /// @brief X-coordinate of red alliance depot neutral side (meters)
+    //------------------------------------------------------------------
+    units::length::meter_t m_blueDepotX;
     units::length::meter_t m_redDepotX;
 
     //------------------------------------------------------------------
     // Outpost X-Coordinates
-    //------------------------------------------------------------------
-
     /// @brief X-coordinate of blue alliance outpost (meters, equal to depot X)
-    units::length::meter_t m_blueOutpostX;
-
     /// @brief X-coordinate of red alliance outpost (meters, equal to depot X)
-    units::length::meter_t m_redOutpostX;
-
     /// @brief X-coordinate of blue alliance outpost approach position (meters, outpostX + OUTPOST_APPROACH_OFFSET)
-    units::length::meter_t m_blueOutpostApproachX;
-
     /// @brief X-coordinate of red alliance outpost approach position (meters, outpostX - OUTPOST_APPROACH_OFFSET)
+    //------------------------------------------------------------------
+    units::length::meter_t m_blueOutpostX;
+    units::length::meter_t m_redOutpostX;
+    units::length::meter_t m_blueOutpostApproachX;
     units::length::meter_t m_redOutpostApproachX;
 
     //------------------------------------------------------------------
@@ -259,56 +443,42 @@ private:
     // Positions are computed relative to the tower center pose retrieved from
     // FieldConstants::RED_TOWER_CENTER / BLUE_TOWER_CENTER, with TOWER_X_OFFSET
     // and TOWER_Y_OFFSET applied to derive outpost and depot approach points.
-    //------------------------------------------------------------------
-
     /// @brief X-coordinate of red tower aligned with the outpost side (tower center X - TOWER_X_OFFSET)
-    units::length::meter_t m_redTowerOutpostX;
-
     /// @brief X-coordinate of red tower aligned with the depot side (tower center X - TOWER_X_OFFSET)
-    units::length::meter_t m_redTowerDepotX;
-
     /// @brief Y-coordinate of red tower on the outpost side (tower center Y + TOWER_Y_OFFSET)
-    units::length::meter_t m_redTowerOutpostY;
-
     /// @brief Y-coordinate of red tower on the depot side (tower center Y - TOWER_Y_OFFSET)
-    units::length::meter_t m_redTowerDepotY;
-
     /// @brief X-coordinate of blue tower aligned with the outpost side (tower center X + TOWER_X_OFFSET)
-    units::length::meter_t m_blueTowerOutpostX;
-
     /// @brief X-coordinate of blue tower aligned with the depot side (tower center X + TOWER_X_OFFSET)
-    units::length::meter_t m_blueTowerDepotX;
-
     /// @brief Y-coordinate of blue tower on the outpost side (tower center Y - TOWER_Y_OFFSET)
-    units::length::meter_t m_blueTowerOutpostY;
-
     /// @brief Y-coordinate of blue tower on the depot side (tower center Y + TOWER_Y_OFFSET)
+    //------------------------------------------------------------------
+    units::length::meter_t m_redTowerOutpostX;
+    units::length::meter_t m_redTowerDepotX;
+    units::length::meter_t m_redTowerOutpostY;
+    units::length::meter_t m_redTowerDepotY;
+    units::length::meter_t m_blueTowerOutpostX;
+    units::length::meter_t m_blueTowerDepotX;
+    units::length::meter_t m_blueTowerOutpostY;
     units::length::meter_t m_blueTowerDepotY;
 
     //------------------------------------------------------------------
     // Hub X-Coordinates with Offsets
-    //------------------------------------------------------------------
-
     /// @brief X-coordinate of blue hub center minus 2.0m offset (toward neutral zone)
-    units::length::meter_t m_blueHubX;
-
     /// @brief X-coordinate of red hub center plus 2.0m offset (toward neutral zone)
+    //------------------------------------------------------------------
+    units::length::meter_t m_blueHubX;
     units::length::meter_t m_redHubX;
 
     //------------------------------------------------------------------
     // Bump X-Coordinates
-    //------------------------------------------------------------------
-
     /// @brief X-coordinate of red alliance side bump edge (hub + 1.5m)
-    units::length::meter_t m_redAllianceBumpEdgeX;
-
     /// @brief X-coordinate of red neutral side bump edge (hub - 1.5m)
-    units::length::meter_t m_redNeutralBumpEdgeX;
-
     /// @brief X-coordinate of blue alliance side bump edge (hub - 1.5m)
-    units::length::meter_t m_blueAllianceBumpEdgeX;
-
     /// @brief X-coordinate of blue neutral side bump edge (hub + 1.5m)
+    //------------------------------------------------------------------
+    units::length::meter_t m_redAllianceBumpEdgeX;
+    units::length::meter_t m_redNeutralBumpEdgeX;
+    units::length::meter_t m_blueAllianceBumpEdgeX;
     units::length::meter_t m_blueNeutralBumpEdgeX;
 
     //------------------------------------------------------------------
@@ -333,6 +503,17 @@ private:
     units::length::meter_t m_blueBumpTrenchDepotY;   ///< Y of BLUE_TRENCH_ALLIANCE_DEPOT (trench entrance for blue depot bump)
     units::length::meter_t m_blueBumpTrenchOutpostY; ///< Y of BLUE_TRENCH_ALLIANCE_OUTPOST (trench entrance for blue outpost bump)
 
+    // trench offsets
+    units::length::meter_t m_redTrenchX;         ///< X of RED_TRENCH_ALLIANCE_OUTPOST (trench entrance for red outpost)
+    units::length::meter_t m_neutralRedTrenchX;  ///< X of RED_TRENCH_ALLIANCE_OUTPOST (trench entrance for red outpost)
+    units::length::meter_t m_blueTrenchX;        ///< X of BLUE_TRENCH_ALLIANCE_OUTPOST (trench entrance for blue outpost)
+    units::length::meter_t m_neutralBlueTrenchX; ///< X of BLUE_TRENCH_ALLIANCE_OUTPOST (trench entrance for blue outpost)
+
+    units::length::meter_t m_redDepotTrenchY;    ///< Y of RED_TRENCH_ALLIANCE_DEPOT (trench entrance for red depot)
+    units::length::meter_t m_redOutpostTrenchY;  ///< Y of RED_TRENCH_ALLIANCE_OUTPOST (trench entrance for red outpost)
+    units::length::meter_t m_blueDepotTrenchY;   ///< Y of BLUE_TRENCH_ALLIANCE_DEPOT (trench entrance for blue depot)
+    units::length::meter_t m_blueOutpostTrenchY; ///< Y of BLUE_TRENCH_ALLIANCE_OUTPOST (trench entrance for blue outpost)
+
     //------------------------------------------------------------------
     // Offset Constants
     //------------------------------------------------------------------
@@ -354,4 +535,11 @@ private:
 
     /// @brief Y-offset from tower center to the outpost/depot side approach position (meters)
     static constexpr units::length::meter_t TOWER_Y_OFFSET = 0.5_m;
+
+    static constexpr units::angle::degree_t FACE_RED_ALLIANCE_WALL = 0_deg;
+    static constexpr units::angle::degree_t FACE_BLUE_ALLIANCE_WALL = 180_deg;
+    static constexpr units::angle::degree_t FACE_ORIGIN_SIDE_WALL = 270_deg;
+    static constexpr units::angle::degree_t FACE_NON_ORIGIN_SIDE_WALL = 90_deg;
+
+    static constexpr units::length::meter_t TRENCH_OFFSET = 1.5_m;
 };

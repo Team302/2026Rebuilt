@@ -31,6 +31,7 @@
 //====================================================================================================================================================
 
 #include "fielddata/FieldOffsetValues.h"
+#include "auton/NeutralZoneManager.h"
 #include "fielddata/BumpHelper.h"
 #include "fielddata/FieldConstants.h"
 
@@ -166,14 +167,20 @@ FieldOffsetValues::FieldOffsetValues()
                              1.0_ft;
 
         // Calculate bump Y positions as trench entrance Y values (aligns bumps with trench entrances for optimal crossing)
-        m_redBumpTrenchDepotY =
-            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y();
-        m_redBumpTrenchOutpostY =
-            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y();
-        m_blueBumpTrenchDepotY =
-            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y();
-        m_blueBumpTrenchOutpostY =
-            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y();
+        m_redBumpTrenchDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y();
+        m_redBumpTrenchOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y();
+        m_blueBumpTrenchDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y();
+        m_blueBumpTrenchOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y();
+
+        m_redTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).X() + TRENCH_OFFSET;
+        m_neutralRedTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_NEUTRAL_DEPOT).X() - TRENCH_OFFSET;
+        m_blueTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).X() - TRENCH_OFFSET;
+        m_neutralBlueTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_DEPOT).X() + TRENCH_OFFSET;
+
+        m_redDepotTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y();
+        m_redOutpostTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y();
+        m_blueDepotTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y();
+        m_blueOutpostTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y();
     }
     else
     {
@@ -212,6 +219,16 @@ FieldOffsetValues::FieldOffsetValues()
         m_redBumpTrenchOutpostY = units::length::meter_t{0.0};
         m_blueBumpTrenchDepotY = units::length::meter_t{0.0};
         m_blueBumpTrenchOutpostY = units::length::meter_t{0.0};
+
+        m_redTrenchX = units::length::meter_t{0.0};
+        m_neutralRedTrenchX = units::length::meter_t{0.0};
+        m_blueTrenchX = units::length::meter_t{0.0};
+        m_neutralBlueTrenchX = units::length::meter_t{0.0};
+
+        m_redDepotTrenchY = units::length::meter_t{0.0};
+        m_redOutpostTrenchY = units::length::meter_t{0.0};
+        m_blueDepotTrenchY = units::length::meter_t{0.0};
+        m_blueOutpostTrenchY = units::length::meter_t{0.0};
     }
 }
 
@@ -448,4 +465,39 @@ std::vector<BumpPosition> FieldOffsetValues::GetNearestAndCrossFieldBumpEdges(bo
         }
     }
     return values;
+}
+
+std::vector<frc::Pose2d> FieldOffsetValues::GetTrenchDrivePositions(bool isRedAlliance) const
+{
+    auto rotation = isRedAlliance ? frc::Rotation2d{0_rad} : frc::Rotation2d{180_deg};
+    auto isInNeutralZone = NeutralZoneManager::GetInstance()->IsInNeutralZone();
+    auto endTrench = TrenchHelper::GetInstance()->CalcNearestTrench();
+    auto startingTrench = endTrench;
+
+    if (endTrench == TRENCH_ID::RED_DEPOT_TRENCH || endTrench == TRENCH_ID::BLUE_OUTPOST_TRENCH)
+    {
+        if (isRedAlliance)
+        {
+            startingTrench = TRENCH_ID::BLUE_OUTPOST_TRENCH;
+            endTrench = TRENCH_ID::RED_DEPOT_TRENCH;
+        }
+        else
+        {
+            startingTrench = TRENCH_ID::RED_DEPOT_TRENCH;
+            endTrench = TRENCH_ID::BLUE_OUTPOST_TRENCH;
+        }
+    }
+    else if (endTrench == TRENCH_ID::RED_OUTPOST_TRENCH || endTrench == TRENCH_ID::BLUE_DEPOT_TRENCH)
+    {
+        if (isRedAlliance)
+        {
+            startingTrench = TRENCH_ID::BLUE_DEPOT_TRENCH;
+            endTrench = TRENCH_ID::RED_OUTPOST_TRENCH;
+        }
+        else
+        {
+            startingTrench = TRENCH_ID::RED_OUTPOST_TRENCH;
+            endTrench = TRENCH_ID::BLUE_DEPOT_TRENCH;
+        }
+    }
 }
