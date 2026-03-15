@@ -167,10 +167,10 @@ FieldOffsetValues::FieldOffsetValues()
                              1.0_ft;
 
         // Calculate bump Y positions as trench entrance Y values (aligns bumps with trench entrances for optimal crossing)
-        m_redBumpTrenchDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y();
-        m_redBumpTrenchOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y();
-        m_blueBumpTrenchDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y();
-        m_blueBumpTrenchOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y();
+        m_redBumpTrenchDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y() + 1_ft;
+        m_redBumpTrenchOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y() - 1_ft;
+        m_blueBumpTrenchDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y() - 1_ft;
+        m_blueBumpTrenchOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y() + 1_ft;
 
         m_redTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).X() + TRENCH_OFFSET;
         m_neutralRedTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_NEUTRAL_DEPOT).X() - TRENCH_OFFSET;
@@ -371,133 +371,5 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
     else
     {
         return units::length::meter_t{0.0}; // Fallback for invalid queries
-    }
-}
-
-//------------------------------------------------------------------
-/// @brief      Retrieves an ordered pair of BumpPositions for a cross-field sweep
-/// @param[in]  isInNeutralZone - true if the robot is currently in the neutral zone,
-///             false if it is in the alliance zone
-/// @return     std::vector<BumpPosition> - Two BumpPosition entries (bumpId, x, y) ordered
-///             nearest-first, where index 0 is the starting bump and index 1 is the
-///             cross-field destination bump
-/// @details    Uses BumpHelper::CalcNearestBump() to identify the nearest bump, then
-///             returns two BumpPosition entries ordered nearest-first. The X coordinate
-///             reflects the side the robot is currently on (alliance or neutral), and the
-///             Y coordinate uses the trench-entrance (BumpTrench) series so the sweep
-///             endpoint aligns with the trench entrance.
-///
-///             | Nearest bump      | isInNeutralZone | Index 0 (nearest)                            | Index 1 (cross-field)                         |
-///             |-------------------|-----------------|----------------------------------------------|-----------------------------------------------|
-///             | RED_OUTPOST_BUMP  | true            | {RED_OUTPOST,  redNeutralX,  redTrenchOutpostY} | {RED_DEPOT,   redNeutralX,  redTrenchDepotY}  |
-///             | RED_OUTPOST_BUMP  | false           | {RED_OUTPOST,  redAllianceX, redTrenchOutpostY} | {RED_DEPOT,   redAllianceX, redTrenchDepotY}  |
-///             | RED_DEPOT_BUMP    | true            | {RED_DEPOT,    redNeutralX,  redTrenchDepotY}   | {RED_OUTPOST, redNeutralX,  redTrenchOutpostY}|
-///             | RED_DEPOT_BUMP    | false           | {RED_DEPOT,    redAllianceX, redTrenchDepotY}   | {RED_OUTPOST, redAllianceX, redTrenchOutpostY}|
-///             | BLUE_OUTPOST_BUMP | true            | {BLUE_OUTPOST, blueNeutralX, blueTrenchOutpostY}| {BLUE_DEPOT,  blueNeutralX, blueTrenchDepotY} |
-///             | BLUE_OUTPOST_BUMP | false           | {BLUE_OUTPOST, blueAllianceX,blueTrenchOutpostY}| {BLUE_DEPOT,  blueAllianceX,blueTrenchDepotY} |
-///             | BLUE_DEPOT_BUMP   | true            | {BLUE_DEPOT,   blueNeutralX, blueTrenchDepotY}  | {BLUE_OUTPOST,blueNeutralX, blueTrenchOutpostY}|
-///             | BLUE_DEPOT_BUMP   | false           | {BLUE_DEPOT,   blueAllianceX,blueTrenchDepotY}  | {BLUE_OUTPOST,blueAllianceX,blueTrenchOutpostY}|
-///
-/// @note       Bump identification queries BumpHelper on every call (not cached)
-/// @note       Method is const - does not modify object state
-/// @see        GetValue() for single scalar coordinate queries
-/// @see        BumpHelper::CalcNearestBump() for bump identification
-/// @see        BumpPosition for the returned struct definition
-//------------------------------------------------------------------
-std::vector<BumpPosition> FieldOffsetValues::GetNearestAndCrossFieldBumpEdges(bool isInNeutralZone) const
-{
-    std::vector<BumpPosition> values;
-
-    // Identify which of the four bumps is nearest to robot
-    auto bump = BumpHelper::GetInstance()->CalcNearestBump();
-
-    // Return corresponding BumpPosition for the identified bump (nearest first)
-    if (bump == BUMP_ID::RED_OUTPOST_BUMP)
-    {
-        if (isInNeutralZone)
-        {
-            values.emplace_back(BumpPosition{BUMP_ID::RED_OUTPOST_BUMP, m_redNeutralBumpEdgeX, m_redBumpTrenchOutpostY});
-            values.emplace_back(BumpPosition{BUMP_ID::RED_DEPOT_BUMP, m_redNeutralBumpEdgeX, m_redBumpTrenchDepotY});
-        }
-        else
-        {
-            values.emplace_back(BumpPosition{BUMP_ID::RED_OUTPOST_BUMP, m_redAllianceBumpEdgeX, m_redBumpTrenchOutpostY});
-            values.emplace_back(BumpPosition{BUMP_ID::RED_DEPOT_BUMP, m_redAllianceBumpEdgeX, m_redBumpTrenchDepotY});
-        }
-    }
-    else if (bump == BUMP_ID::RED_DEPOT_BUMP)
-    {
-        if (isInNeutralZone)
-        {
-            values.emplace_back(BumpPosition{BUMP_ID::RED_DEPOT_BUMP, m_redNeutralBumpEdgeX, m_redBumpTrenchDepotY});
-            values.emplace_back(BumpPosition{BUMP_ID::RED_OUTPOST_BUMP, m_redNeutralBumpEdgeX, m_redBumpTrenchOutpostY});
-        }
-        else
-        {
-            values.emplace_back(BumpPosition{BUMP_ID::RED_DEPOT_BUMP, m_redAllianceBumpEdgeX, m_redBumpTrenchDepotY});
-            values.emplace_back(BumpPosition{BUMP_ID::RED_OUTPOST_BUMP, m_redAllianceBumpEdgeX, m_redBumpTrenchOutpostY});
-        }
-    }
-    else if (bump == BUMP_ID::BLUE_OUTPOST_BUMP)
-    {
-        if (isInNeutralZone)
-        {
-            values.emplace_back(BumpPosition{BUMP_ID::BLUE_OUTPOST_BUMP, m_blueNeutralBumpEdgeX, m_blueBumpTrenchOutpostY});
-            values.emplace_back(BumpPosition{BUMP_ID::BLUE_DEPOT_BUMP, m_blueNeutralBumpEdgeX, m_blueBumpTrenchDepotY});
-        }
-        else
-        {
-            values.emplace_back(BumpPosition{BUMP_ID::BLUE_OUTPOST_BUMP, m_blueAllianceBumpEdgeX, m_blueBumpTrenchOutpostY});
-            values.emplace_back(BumpPosition{BUMP_ID::BLUE_DEPOT_BUMP, m_blueAllianceBumpEdgeX, m_blueBumpTrenchDepotY});
-        }
-    }
-    else if (bump == BUMP_ID::BLUE_DEPOT_BUMP)
-    {
-        if (isInNeutralZone)
-        {
-            values.emplace_back(BumpPosition{BUMP_ID::BLUE_DEPOT_BUMP, m_blueNeutralBumpEdgeX, m_blueBumpTrenchDepotY});
-            values.emplace_back(BumpPosition{BUMP_ID::BLUE_OUTPOST_BUMP, m_blueNeutralBumpEdgeX, m_blueBumpTrenchOutpostY});
-        }
-        else
-        {
-            values.emplace_back(BumpPosition{BUMP_ID::BLUE_DEPOT_BUMP, m_blueAllianceBumpEdgeX, m_blueBumpTrenchDepotY});
-            values.emplace_back(BumpPosition{BUMP_ID::BLUE_OUTPOST_BUMP, m_blueAllianceBumpEdgeX, m_blueBumpTrenchOutpostY});
-        }
-    }
-    return values;
-}
-
-std::vector<frc::Pose2d> FieldOffsetValues::GetTrenchDrivePositions(bool isRedAlliance) const
-{
-    auto rotation = isRedAlliance ? frc::Rotation2d{0_rad} : frc::Rotation2d{180_deg};
-    auto isInNeutralZone = NeutralZoneManager::GetInstance()->IsInNeutralZone();
-    auto endTrench = TrenchHelper::GetInstance()->CalcNearestTrench();
-    auto startingTrench = endTrench;
-
-    if (endTrench == TRENCH_ID::RED_DEPOT_TRENCH || endTrench == TRENCH_ID::BLUE_OUTPOST_TRENCH)
-    {
-        if (isRedAlliance)
-        {
-            startingTrench = TRENCH_ID::BLUE_OUTPOST_TRENCH;
-            endTrench = TRENCH_ID::RED_DEPOT_TRENCH;
-        }
-        else
-        {
-            startingTrench = TRENCH_ID::RED_DEPOT_TRENCH;
-            endTrench = TRENCH_ID::BLUE_OUTPOST_TRENCH;
-        }
-    }
-    else if (endTrench == TRENCH_ID::RED_OUTPOST_TRENCH || endTrench == TRENCH_ID::BLUE_DEPOT_TRENCH)
-    {
-        if (isRedAlliance)
-        {
-            startingTrench = TRENCH_ID::BLUE_DEPOT_TRENCH;
-            endTrench = TRENCH_ID::RED_OUTPOST_TRENCH;
-        }
-        else
-        {
-            startingTrench = TRENCH_ID::RED_OUTPOST_TRENCH;
-            endTrench = TRENCH_ID::BLUE_DEPOT_TRENCH;
-        }
     }
 }

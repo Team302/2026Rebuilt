@@ -22,6 +22,7 @@ class AllianceZoneManager : public ZoneHelper
 public:
     static AllianceZoneManager *GetInstance();
     bool IsInAllianceZone();
+    bool IsInOtherAllianceZone();
 
 private:
     AllianceZoneManager();

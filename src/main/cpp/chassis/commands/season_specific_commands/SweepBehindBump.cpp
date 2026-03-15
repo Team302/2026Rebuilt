@@ -17,9 +17,6 @@
 #include "auton/NeutralZoneManager.h"
 #include "fielddata/FieldOffsetValues.h"
 
-
-
-
 //------------------------------------------------------------------
 /// @brief      Constructor for SweepBehindBump command
 /// @param[in]  chassis - Pointer to the swerve drive subsystem
@@ -90,8 +87,7 @@ struct DriveToPoses SweepBehindBump::GetDriveToPoses()
     struct DriveToPoses poses;
     poses.hasMidPose = true;
 
-    auto offsetVals = FieldOffsetValues::GetInstance();
-    auto nearestBumps = offsetVals->GetNearestAndCrossFieldBumpEdges(NeutralZoneManager::GetInstance()->IsInNeutralZone()); // Get all bump positions for both sides of the field
+    auto nearestBumps = BumpHelper::GetInstance()->GetNearestAndCrossFieldBumpEdges(NeutralZoneManager::GetInstance()->IsInNeutralZone()); // Get all bump positions for both sides of the field
 
     if (!nearestBumps.empty())
     {

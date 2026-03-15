@@ -15,10 +15,12 @@
 #pragma once
 
 // C++ includes
+#include <vector>
 
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "fielddata/BumpHelper.h"
 #include "fielddata/FieldConstants.h"
+#include "frc/geometry/Pose2d.h"
 
 //====================================================================================================================================================
 /// @enum TRENCH_ID
@@ -94,6 +96,19 @@ public:
     //------------------------------------------------------------------
     TRENCH_ID CalcNearestTrench() const;
 
+    //------------------------------------------------------------------
+    /// @brief      Returns an ordered list of Pose2d drive targets for navigating through a trench
+    /// @param[in]  isRedAlliance - true for red alliance, false for blue alliance
+    /// @return     std::vector<frc::Pose2d> - Ordered poses: index 0 is the mid (near-trench)
+    ///             pose, index 1 is the end (far-side) pose
+    /// @details    Determines the nearest trench via CalcNearestTrench(), selects the correct
+    ///             starting and ending trench pair for the given alliance, and builds Pose2d
+    ///             waypoints using FieldOffsetValues trench X/Y coordinates.
+    /// @see        CalcNearestTrench() for trench identification
+    /// @see        FieldOffsetValues for the coordinate source data
+    //------------------------------------------------------------------
+    std::vector<frc::Pose2d> GetTrenchDrivePositions(bool isRedAlliance) const;
+
 private:
     //------------------------------------------------------------------
     /// @brief      Private constructor for singleton pattern
@@ -124,4 +139,7 @@ private:
 
     /// @brief Singleton instance pointer (lazy initialization)
     static TrenchHelper *m_instance;
+
+    static constexpr units::angle::degree_t kFaceRedWallRotation{0_deg};    ///< Rotation to face the red alliance wall (used for trench navigation)
+    static constexpr units::angle::degree_t kFaceBlueWallRotation{180_deg}; ///< Rotation to face the blue alliance wall (used for trench navigation)
 };

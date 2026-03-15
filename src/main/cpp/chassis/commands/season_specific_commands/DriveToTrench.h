@@ -88,8 +88,8 @@ private:
     static constexpr units::degree_t kTowardRedAllianceWall{180.0};
 
     static constexpr units::length::inch_t kDistanceThreshold = 12_in;
-    static constexpr units::angle::degree_t kAngleTolerance = 15.0_deg;
-    static constexpr units::length::inch_t kYTransitionToEndPointTolerance = 15.5_in;
+    static constexpr units::angle::degree_t kAngleTolerance = 1.0_deg;
+    static constexpr units::length::inch_t kYTransitionToEndPointTolerance = 3.0_in;
 
     static constexpr units::velocity::meters_per_second_t kMaxVelocityDriveToTrench = 2.0_mps;
     static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationDriveToTrench = 1.0_mps_sq;
