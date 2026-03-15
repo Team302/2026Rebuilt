@@ -13,15 +13,16 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include "frc/RobotController.h"
 #include "chassis/ChassisConfigMgr.h"
-#include "units/velocity.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "frc/RobotController.h"
+#include "units/velocity.h"
 
-#include "chassis/generated/TunerConstants302.h"
-#include "chassis/generated/TunerConstants9998.h"
-#include "chassis/generated/TunerConstants9997.h"
 #include "RobotIdentifier.h"
+#include "chassis/generated/TunerConstants302.h"
+#include "chassis/generated/TunerConstants9997.h"
+#include "chassis/generated/TunerConstants9998.h"
+#include "chassis/generated/TunerConstants9999.h"
 
 ChassisConfigMgr *ChassisConfigMgr::m_instance = nullptr;
 
@@ -49,6 +50,10 @@ void ChassisConfigMgr::CreateDrivetrain()
     case RobotIdentifier::COMP_BOT_302:
         m_maxSpeed = TunerConstants302::kSpeedAt12Volts;
         m_chassis = TunerConstants302::CreateDrivetrain();
+        break;
+    case RobotIdentifier::CHASSIS_BOT_9999:
+        m_maxSpeed = TunerConstants9999::kSpeedAt12Volts;
+        m_chassis = TunerConstants9999::CreateDrivetrain();
         break;
 
     case RobotIdentifier::CHASSIS_BOT_9998:
