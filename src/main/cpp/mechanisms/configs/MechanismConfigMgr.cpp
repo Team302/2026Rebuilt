@@ -55,6 +55,9 @@ void MechanismConfigMgr::InitRobot(RobotIdentifier id)
 		Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing robot "), string("CHASSIS_BOT_9998"), string(""));
 		m_config = new MechanismConfig();
 		break;
+	case RobotIdentifier::CHASSIS_BOT_9999:
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing robot "), string("CHASSIS_BOT_9999"), string(""));
+		break;
 	case RobotIdentifier::SIM_BOT_0:
 		Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing robot "), string("SIM_BOT_0"), string(""));
 		m_config = new MechanismConfigCompBot_302();

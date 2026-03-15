@@ -14,6 +14,7 @@
 //====================================================================================================================================================
 
 #include "chassis/SwerveContainer.h"
+#include "auton/AllianceZoneManager.h"
 #include "auton/NeutralZoneManager.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "chassis/commands/TeleopFieldDrive.h"
@@ -32,6 +33,8 @@
 #include "chassis/commands/season_specific_commands/DriveToHub.h"
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
+#include "chassis/commands/season_specific_commands/SweepBehindBump.h"
+
 //------------------------------------------------------------------
 /// @brief      Static method to create or return the singleton instance
 //------------------------------------------------------------------
@@ -66,6 +69,8 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
                                      m_driveToTower(std::make_unique<DriveToTower>(m_chassis)),
                                      m_driveAlongNearestWall(std::make_unique<DriveAlongNearestWall>(m_chassis)),
                                      m_driveToFuel(std::make_unique<DriveToFuel>(m_chassis))
+                                     m_sweepBehindBump(std::make_unique<SweepBehindBump>(m_chassis)),
+                                     m_driveAlongNearestWall(std::make_unique<DriveAlongNearestWall>(m_chassis))
 
 {
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
@@ -148,6 +153,9 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     auto driveToOutpost = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_OUTPOST);
     auto driveToTower = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_TOWER);
     auto driveToFuel = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_FUEL);
+    // Sweep behind bump is on the same button as DriveToHub, so comment this out.
+    // leaving it here so it is easy if we change this mapping.
+    // auto sweepBehindBump = controller->GetCommandTrigger(TeleopControlFunctions::SWEEP_BEHIND_BUMP);
 
     // Drive over Bump - Navigates over field obstacles/bumps
     // Uses DeferredProxy to check climb mode status at execution time
@@ -174,7 +182,11 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     driveToHub.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                   {
     if (!m_climbModeStatus) {
-        return frc2::ProxyCommand(m_driveToHub.get()).ToPtr();
+        if (AllianceZoneManager::GetInstance()->IsInAllianceZone())  {
+            return frc2::ProxyCommand(m_driveToHub.get()).ToPtr();
+        } else {
+            return frc2::ProxyCommand(m_sweepBehindBump.get()).ToPtr();
+        }
     } else {
         return frc2::cmd::None(); 
     } }));

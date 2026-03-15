@@ -17,11 +17,17 @@
 /// @file FieldOffsetValues.cpp
 /// @brief Implementation of FieldOffsetValues singleton for field element position management
 /// @details This file implements the storage and retrieval of alliance-specific field element positions
-///          for the 2026 game field. It calculates strategic offsets for navigation targets like hubs
-///          and bumps, and provides a unified interface for querying field coordinates throughout the codebase.
+///          for the 2026 game field. It calculates strategic offsets for navigation targets including
+///          hubs, bumps, depots, outposts, and towers, and provides a unified interface for querying
+///          field coordinates throughout the codebase.
 ///
 ///          The implementation queries FieldConstants for base positions and applies game-specific offsets
 ///          to optimize navigation paths and bump crossing trajectories.
+///
+///          **Public API:**
+///          - GetInstance()  – Lazy-initialization singleton accessor
+///          - GetValue()     – Returns a single alliance-aware coordinate for a given FIELD_OFFSET_ITEMS type
+///          - GetNearestAndCrossFieldBumpEdges()    – Returns an ordered vector of coordinates (nearest-first for bump Y queries)
 //====================================================================================================================================================
 
 #include "fielddata/FieldOffsetValues.h"
@@ -54,34 +60,46 @@ FieldOffsetValues *FieldOffsetValues::GetInstance()
 ///             strategic offsets for navigation optimization:
 ///
 ///             **Depot and Outpost Positions:**
-///             - Retrieves X coordinates from depot neutral side positions
+///             - Retrieves X coordinates from depot neutral side positions, applying DEPOT_OFFSET
 ///             - Sets outpost X equal to depot X (aligned on the 2026 field)
+///             - Outpost approach X is further offset by OUTPOST_APPROACH_OFFSET
+///
+///             **Tower Positions:**
+///             - Caches red and blue tower center poses from FieldConstants
+///             - Applies TOWER_X_OFFSET and TOWER_Y_OFFSET to produce four positions:
+///               outpost side (X, Y) and depot side (X, Y) for each alliance
 ///
 ///             **Hub Positions with Navigation Offsets:**
-///             - Applies 2.0m offset toward neutral zone for optimal approach angles
-///             - Red hub: Base X + 2.0m (moves toward center)
-///             - Blue hub: Base X - 2.0m (moves toward center)
+///             - Caches red and blue hub center poses from FieldConstants
+///             - Applies HUB_OFFSET toward the neutral zone for optimal approach angles:
+///               Red hub: Hub center X + HUB_OFFSET, Blue hub: Hub center X - HUB_OFFSET
 ///
-///             **Bump Edge Positions:**
-///             Calculates bump locations 1.5m from hub centers on both sides:
-///             - Red alliance bump: Hub X + 1.5m
-///             - Red neutral bump: Hub X - 1.5m
-///             - Blue alliance bump: Hub X - 1.5m
-///             - Blue neutral bump: Hub X + 1.5m
+///             **Bump Edge X-Positions:**
+///             Calculates bump X locations BUMP_OFFSET from hub centers on both sides:
+///             - Red alliance bump: Hub center X + BUMP_OFFSET
+///             - Red neutral bump:  Hub center X - BUMP_OFFSET
+///             - Blue alliance bump: Hub center X - BUMP_OFFSET
+///             - Blue neutral bump:  Hub center X + BUMP_OFFSET
 ///
-///             **Bump Y-Coordinates:**
-///             Calculates Y positions as midpoints between hub and corresponding trenches:
-///             - Depot bumps: Midpoint of (hub Y, depot trench Y)
-///             - Outpost bumps: Midpoint of (hub Y, outpost trench Y)
-///             - Ensures bumps align with trench entrances
+///             **Bump Y-Coordinates (midpoint series):**
+///             Calculates Y positions as midpoints between hub center and corresponding
+///             trench alliance positions, with a 1 ft fine-tune adjustment:
+///             - m_redBumpDepotY:   Midpoint(red hub Y, red depot trench Y)   + 1 ft
+///             - m_redBumpOutpostY: Midpoint(red hub Y, red outpost trench Y)  - 1 ft
+///             - m_blueBumpDepotY:  Midpoint(blue hub Y, blue depot trench Y)  - 1 ft
+///             - m_blueBumpOutpostY:Midpoint(blue hub Y, blue outpost trench Y) + 1 ft
 ///
-///             **Debug Logging:**
-///             Logs all calculated bump positions to NetworkTables for field verification
-///             and tuning during testing.
+///             **Bump Y-Coordinates (trench entrance series):**
+///             Directly uses the trench alliance position Y values so that the
+///             cross-field sweep endpoint aligns with the trench entrance:
+///             - m_redBumpTrenchDepotY   = RED_TRENCH_ALLIANCE_DEPOT Y
+///             - m_redBumpTrenchOutpostY = RED_TRENCH_ALLIANCE_OUTPOST Y
+///             - m_blueBumpTrenchDepotY  = BLUE_TRENCH_ALLIANCE_DEPOT Y
+///             - m_blueBumpTrenchOutpostY= BLUE_TRENCH_ALLIANCE_OUTPOST Y
 ///
 ///             **Fallback Behavior:**
-///             If FieldConstants is unavailable (initialization error), sets all values
-///             to 0.0m to prevent undefined behavior.
+///             If FieldConstants is unavailable (initialization error), all member
+///             variables are set to 0.0 m to prevent undefined behavior.
 ///
 /// @note       This constructor is private and called only by GetInstance()
 /// @note       All calculations use WPILib units for type safety
@@ -146,6 +164,16 @@ FieldOffsetValues::FieldOffsetValues()
                                fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y()) /
                               2.0) +
                              1.0_ft;
+
+        // Calculate bump Y positions as trench entrance Y values (aligns bumps with trench entrances for optimal crossing)
+        m_redBumpTrenchDepotY =
+            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y();
+        m_redBumpTrenchOutpostY =
+            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y();
+        m_blueBumpTrenchDepotY =
+            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y();
+        m_blueBumpTrenchOutpostY =
+            fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y();
     }
     else
     {
@@ -179,6 +207,11 @@ FieldOffsetValues::FieldOffsetValues()
         m_redBumpOutpostY = units::length::meter_t{0.0};
         m_blueBumpDepotY = units::length::meter_t{0.0};
         m_blueBumpOutpostY = units::length::meter_t{0.0};
+
+        m_redBumpTrenchDepotY = units::length::meter_t{0.0};
+        m_redBumpTrenchOutpostY = units::length::meter_t{0.0};
+        m_blueBumpTrenchDepotY = units::length::meter_t{0.0};
+        m_blueBumpTrenchOutpostY = units::length::meter_t{0.0};
     }
 }
 
@@ -190,43 +223,53 @@ FieldOffsetValues::FieldOffsetValues()
 /// @details    Provides a unified interface for querying field element positions with
 ///             alliance awareness. Handles both X and Y coordinates for various element types.
 ///
-///             **Switch Logic by Item Type:**
+///             **Item Types:**
 ///
 ///             **OUTPOST_X:**
-///             Returns X-coordinate of outpost position for specified alliance
+///             Returns X-coordinate of the outpost position for the specified alliance
+///
+///             **OUTPOST_APPROACH_X:**
+///             Returns X-coordinate of the outpost approach position (OUTPOST_APPROACH_OFFSET
+///             beyond the outpost X) for the specified alliance
 ///
 ///             **DEPOT_X:**
-///             Returns X-coordinate of depot neutral side for specified alliance
+///             Returns X-coordinate of the depot neutral side for the specified alliance
+///
+///             **TOWER_OUTPOST_X / TOWER_DEPOT_X:**
+///             Returns X-coordinate of the tower (outpost or depot side) for the specified alliance
+///
+///             **TOWER_OUTPOST_Y / TOWER_DEPOT_Y:**
+///             Returns Y-coordinate of the tower (outpost or depot side) for the specified alliance
 ///
 ///             **HUB_X:**
-///             Returns X-coordinate of hub with 2.0m navigation offset applied:
-///             - Red: Hub center + 2.0m
-///             - Blue: Hub center - 2.0m
+///             Returns X-coordinate of the hub with HUB_OFFSET applied toward the neutral zone:
+///             - Red: Hub center X + HUB_OFFSET
+///             - Blue: Hub center X - HUB_OFFSET
 ///
 ///             **BUMP_ALLIANCE_X:**
-///             Returns X-coordinate of bump edge on alliance zone side:
-///             - Red: Hub center + 1.5m
-///             - Blue: Hub center - 1.5m
+///             Returns X-coordinate of the bump edge on the alliance zone side:
+///             - Red: Hub center X + BUMP_OFFSET
+///             - Blue: Hub center X - BUMP_OFFSET
 ///
 ///             **BUMP_NEUTRAL_X:**
-///             Returns X-coordinate of bump edge on neutral zone side:
-///             - Red: Hub center - 1.5m
-///             - Blue: Hub center + 1.5m
+///             Returns X-coordinate of the bump edge on the neutral zone side:
+///             - Red: Hub center X - BUMP_OFFSET
+///             - Blue: Hub center X + BUMP_OFFSET
 ///
 ///             **BUMP_ALLIANCE_Y or BUMP_NEUTRAL_Y:**
 ///             Dynamically determines Y-coordinate based on nearest bump:
 ///             1. Calls BumpHelper::CalcNearestBump() to identify which bump
-///             2. Returns corresponding Y position:
-///                - RED_OUTPOST_BUMP → m_redBumpOutpostY
-///                - RED_DEPOT_BUMP → m_redBumpDepotY
+///             2. Returns the corresponding midpoint-series Y position:
+///                - RED_OUTPOST_BUMP  → m_redBumpOutpostY
+///                - RED_DEPOT_BUMP    → m_redBumpDepotY
 ///                - BLUE_OUTPOST_BUMP → m_blueBumpOutpostY
-///                - BLUE_DEPOT_BUMP → m_blueBumpDepotY (default)
-///             Note: Same Y value for both alliance and neutral sides of the same bump
+///                - BLUE_DEPOT_BUMP   → m_blueBumpDepotY (default)
+///             Note: The same Y value is returned for both alliance and neutral sides of the same bump
 ///
 ///             **Unknown Item:**
-///             Returns 0.0m as safe fallback for invalid item types
+///             Returns 0.0 m as a safe fallback for invalid item types
 ///
-/// @note       For bump Y queries, the nearest bump is determined dynamically each call
+/// @note       For bump Y queries, the nearest bump is determined dynamically on every call (not cached)
 /// @note       Method is const - does not modify object state
 /// @see        FIELD_OFFSET_ITEMS for available item types
 /// @see        BumpHelper::CalcNearestBump() for bump identification
@@ -312,4 +355,97 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
     {
         return units::length::meter_t{0.0}; // Fallback for invalid queries
     }
+}
+
+//------------------------------------------------------------------
+/// @brief      Retrieves an ordered pair of BumpPositions for a cross-field sweep
+/// @param[in]  isInNeutralZone - true if the robot is currently in the neutral zone,
+///             false if it is in the alliance zone
+/// @return     std::vector<BumpPosition> - Two BumpPosition entries (bumpId, x, y) ordered
+///             nearest-first, where index 0 is the starting bump and index 1 is the
+///             cross-field destination bump
+/// @details    Uses BumpHelper::CalcNearestBump() to identify the nearest bump, then
+///             returns two BumpPosition entries ordered nearest-first. The X coordinate
+///             reflects the side the robot is currently on (alliance or neutral), and the
+///             Y coordinate uses the trench-entrance (BumpTrench) series so the sweep
+///             endpoint aligns with the trench entrance.
+///
+///             | Nearest bump      | isInNeutralZone | Index 0 (nearest)                            | Index 1 (cross-field)                         |
+///             |-------------------|-----------------|----------------------------------------------|-----------------------------------------------|
+///             | RED_OUTPOST_BUMP  | true            | {RED_OUTPOST,  redNeutralX,  redTrenchOutpostY} | {RED_DEPOT,   redNeutralX,  redTrenchDepotY}  |
+///             | RED_OUTPOST_BUMP  | false           | {RED_OUTPOST,  redAllianceX, redTrenchOutpostY} | {RED_DEPOT,   redAllianceX, redTrenchDepotY}  |
+///             | RED_DEPOT_BUMP    | true            | {RED_DEPOT,    redNeutralX,  redTrenchDepotY}   | {RED_OUTPOST, redNeutralX,  redTrenchOutpostY}|
+///             | RED_DEPOT_BUMP    | false           | {RED_DEPOT,    redAllianceX, redTrenchDepotY}   | {RED_OUTPOST, redAllianceX, redTrenchOutpostY}|
+///             | BLUE_OUTPOST_BUMP | true            | {BLUE_OUTPOST, blueNeutralX, blueTrenchOutpostY}| {BLUE_DEPOT,  blueNeutralX, blueTrenchDepotY} |
+///             | BLUE_OUTPOST_BUMP | false           | {BLUE_OUTPOST, blueAllianceX,blueTrenchOutpostY}| {BLUE_DEPOT,  blueAllianceX,blueTrenchDepotY} |
+///             | BLUE_DEPOT_BUMP   | true            | {BLUE_DEPOT,   blueNeutralX, blueTrenchDepotY}  | {BLUE_OUTPOST,blueNeutralX, blueTrenchOutpostY}|
+///             | BLUE_DEPOT_BUMP   | false           | {BLUE_DEPOT,   blueAllianceX,blueTrenchDepotY}  | {BLUE_OUTPOST,blueAllianceX,blueTrenchOutpostY}|
+///
+/// @note       Bump identification queries BumpHelper on every call (not cached)
+/// @note       Method is const - does not modify object state
+/// @see        GetValue() for single scalar coordinate queries
+/// @see        BumpHelper::CalcNearestBump() for bump identification
+/// @see        BumpPosition for the returned struct definition
+//------------------------------------------------------------------
+std::vector<BumpPosition> FieldOffsetValues::GetNearestAndCrossFieldBumpEdges(bool isInNeutralZone) const
+{
+    std::vector<BumpPosition> values;
+
+    // Identify which of the four bumps is nearest to robot
+    auto bump = BumpHelper::GetInstance()->CalcNearestBump();
+
+    // Return corresponding BumpPosition for the identified bump (nearest first)
+    if (bump == BUMP_ID::RED_OUTPOST_BUMP)
+    {
+        if (isInNeutralZone)
+        {
+            values.emplace_back(BumpPosition{BUMP_ID::RED_OUTPOST_BUMP, m_redNeutralBumpEdgeX, m_redBumpTrenchOutpostY});
+            values.emplace_back(BumpPosition{BUMP_ID::RED_DEPOT_BUMP, m_redNeutralBumpEdgeX, m_redBumpTrenchDepotY});
+        }
+        else
+        {
+            values.emplace_back(BumpPosition{BUMP_ID::RED_OUTPOST_BUMP, m_redAllianceBumpEdgeX, m_redBumpTrenchOutpostY});
+            values.emplace_back(BumpPosition{BUMP_ID::RED_DEPOT_BUMP, m_redAllianceBumpEdgeX, m_redBumpTrenchDepotY});
+        }
+    }
+    else if (bump == BUMP_ID::RED_DEPOT_BUMP)
+    {
+        if (isInNeutralZone)
+        {
+            values.emplace_back(BumpPosition{BUMP_ID::RED_DEPOT_BUMP, m_redNeutralBumpEdgeX, m_redBumpTrenchDepotY});
+            values.emplace_back(BumpPosition{BUMP_ID::RED_OUTPOST_BUMP, m_redNeutralBumpEdgeX, m_redBumpTrenchOutpostY});
+        }
+        else
+        {
+            values.emplace_back(BumpPosition{BUMP_ID::RED_DEPOT_BUMP, m_redAllianceBumpEdgeX, m_redBumpTrenchDepotY});
+            values.emplace_back(BumpPosition{BUMP_ID::RED_OUTPOST_BUMP, m_redAllianceBumpEdgeX, m_redBumpTrenchOutpostY});
+        }
+    }
+    else if (bump == BUMP_ID::BLUE_OUTPOST_BUMP)
+    {
+        if (isInNeutralZone)
+        {
+            values.emplace_back(BumpPosition{BUMP_ID::BLUE_OUTPOST_BUMP, m_blueNeutralBumpEdgeX, m_blueBumpTrenchOutpostY});
+            values.emplace_back(BumpPosition{BUMP_ID::BLUE_DEPOT_BUMP, m_blueNeutralBumpEdgeX, m_blueBumpTrenchDepotY});
+        }
+        else
+        {
+            values.emplace_back(BumpPosition{BUMP_ID::BLUE_OUTPOST_BUMP, m_blueAllianceBumpEdgeX, m_blueBumpTrenchOutpostY});
+            values.emplace_back(BumpPosition{BUMP_ID::BLUE_DEPOT_BUMP, m_blueAllianceBumpEdgeX, m_blueBumpTrenchDepotY});
+        }
+    }
+    else if (bump == BUMP_ID::BLUE_DEPOT_BUMP)
+    {
+        if (isInNeutralZone)
+        {
+            values.emplace_back(BumpPosition{BUMP_ID::BLUE_DEPOT_BUMP, m_blueNeutralBumpEdgeX, m_blueBumpTrenchDepotY});
+            values.emplace_back(BumpPosition{BUMP_ID::BLUE_OUTPOST_BUMP, m_blueNeutralBumpEdgeX, m_blueBumpTrenchOutpostY});
+        }
+        else
+        {
+            values.emplace_back(BumpPosition{BUMP_ID::BLUE_DEPOT_BUMP, m_blueAllianceBumpEdgeX, m_blueBumpTrenchDepotY});
+            values.emplace_back(BumpPosition{BUMP_ID::BLUE_OUTPOST_BUMP, m_blueAllianceBumpEdgeX, m_blueBumpTrenchOutpostY});
+        }
+    }
+    return values;
 }
