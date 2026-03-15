@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "auton.dtd">
+<auton>
+
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueLDepotOutpost_A"
+time = "3.5"
+intakeState = "STATE_INTAKE">
+<zone filename = "RedLaunchZone.xml"/>
+<zone filename = "RedDepotZone.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+intakeState = "STATE_INTAKE">
+<zone filename = "RedLaunchZone.xml"/>
+</primitive>
+
+
+
+</auton>

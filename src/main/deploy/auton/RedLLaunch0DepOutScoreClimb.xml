@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "auton.dtd">
+<auton>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueLDepotOutpost_A"
+time = "3.0"> 
+<zone filename = "RedLaunchZone.xml"/>
+<!-- <zone filename = "RedDepotZone.xml"/> -->
+<!--This is only commented out because I like the swoop, but up to testing-->
+</primitive>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueLDepotOutpost_B"
+time = "4.0"
+intakeState = "STATE_INTAKE">
+<zone filename = "RedLaunchZone.xml"/>
+<zone filename = "RedOutpostZone.xml"/>
+</primitive>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueLDepotOutpost_C"
+time = "4.0"/>
+
+<primitive id = "DRIVE_STOP_MECH">
+<zone filename = "RedClimbingZone.xml"/>
+</primitive>
+
+
+
+</auton>
