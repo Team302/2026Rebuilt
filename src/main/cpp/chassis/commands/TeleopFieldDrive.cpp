@@ -75,7 +75,7 @@ void TeleopFieldDrive::Execute()
                                   .WithHeadingPID(m_rotationKP, m_rotationKI, m_rotationKD));
         m_chassis->SetTargetChassisRotation(calculatorRotate);
     }
-    else if (m_isLaunching && NeutralZoneManager::GetInstance()->IsInNeutralZone() && !DeadZoneManager::GetInstance()->IsInDeadZone() && !m_turretEnabled)
+    else if ((NeutralZoneManager::GetInstance()->IsInNeutralZone() || AllianceZoneManager::GetInstance()->IsInOtherAllianceZone()) && m_isLaunching && !DeadZoneManager::GetInstance()->IsInDeadZone() && !m_turretEnabled)
     {
         units::angle::degree_t calculatorRotate = RebuiltTargetCalculator::GetInstance()->GetChassisTargetForLaunching(0.5_s);
         m_chassis->SetControl(m_fieldFacingRequest.WithVelocityX(forward * m_currentMaxSpeed)
