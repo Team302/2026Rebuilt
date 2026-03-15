@@ -13,11 +13,11 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
+#include "utils/logging/debug/Logger.h"
+#include <algorithm>
 #include <auton/ZoneHelper.h>
 #include <auton/ZoneParams.h>
 #include <auton/ZoneParser.h>
-#include "utils/logging/debug/Logger.h"
-#include <algorithm>
 
 using frc::DriverStation;
 
@@ -31,7 +31,7 @@ void ZoneHelper::ParseZoneFiles()
 {
     for (auto file : GetZoneFiles())
     {
-        m_zones->emplace_back(*ZoneParser::ParseXML(file));
+        m_zones->emplace_back(*ZoneParser::ParseXML(file).first);
     }
 }
 

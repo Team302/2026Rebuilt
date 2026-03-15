@@ -161,7 +161,6 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetAprilTagVis
         aprilTagValue.get()->aprilTagData.ambiguity = aprilTag.ambiguity;
         targets.emplace_back(std::move(aprilTagValue));
     }
-
     return targets;
 }
 
@@ -517,4 +516,11 @@ void DragonLimelight::SetRobotPoseWithMegaTag1()
     {
         SetRobotPose(visionPose.value().estimatedPose.ToPose2d());
     }
+}
+
+void DragonLimelight::DataLog(uint64_t timestamp)
+{
+    LogIntData(timestamp, std::string(m_loggingLimelightPath + m_networkTableName + m_loggingPipelineKey), static_cast<int>(m_pipeline));
+    LogPose3dData(timestamp, std::string(m_loggingLimelightPath + m_networkTableName + m_loggingCameraPoseKey), m_megatag2Pos.estimatedPose);
+    LogIntData(timestamp, std::string(m_loggingLimelightPath + m_networkTableName + m_loggingTagIDKey), static_cast<int>(LimelightHelpers::getRawFiducials(m_networkTableName).size()));
 }

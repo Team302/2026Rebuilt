@@ -22,11 +22,11 @@
 
 // Team 302 includes
 #include "auton/AutonGrid.h"
-#include "chassis/ChassisOptionEnums.h"
 #include "auton/PrimitiveEnums.h"
-#include "mechanisms/Launcher/Launcher.h"
-#include "mechanisms/Intake/Intake.h"
+#include "chassis/ChassisOptionEnums.h"
 #include "mechanisms/Climber/Climber.h"
+#include "mechanisms/Intake/Intake.h"
+#include "mechanisms/Launcher/Launcher.h"
 
 // Third Party Includes
 
@@ -122,4 +122,4 @@ private:
     Climber::STATE_NAMES m_climberState;
 };
 
-typedef std::vector<ZoneParams *> ZoneParamsVector; // create typedef ZoneParamsVector
+typedef std::vector<std::pair<ZoneParams *, bool>> ZoneParamsVector; // create typedef ZoneParamsVector
