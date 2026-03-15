@@ -3,7 +3,7 @@
 <auton>
 
 <!-- <primitive id = "DRIVE_STOP_MECH"
-time = "0.25"
+time = "0.1"
 intakeState = "STATE_OFF">
 </primitive> -->
 
@@ -17,7 +17,6 @@ time = "3.0">
 choreoname = "BlueMLDrop3_A"
 time = "3.0"
 intakeState = "STATE_INTAKE">
-<!-- <zone filename = "RedLeftBumpZoneRect.xml"/> -->
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
@@ -29,7 +28,6 @@ time = "5.0">
 
 <primitive id = "DRIVE_STOP_MECH"
 time = "5.0">
-<zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
@@ -37,18 +35,14 @@ choreoname = "BlueMLDrop3_C2"
 time = "5.0"
 intakeState = "STATE_INTAKE"
 launcherState = "STATE_IDLE">
-<zone filename = "RedLeftBumpZone.xml"/>
+<zone filename = "RedLeftBumpZoneRect.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDrop3_D"
 time = "5.0"
-intakeState = "STATE_INTAKE"
-launcherState = "STATE_IDLE">
-<!-- <zone filename = "RedLeftBumpZoneRect.xml"/> -->
-<zone filename = "RedLaunchZone.xml"/>
+intakeState = "STATE_INTAKE">
 </primitive>
-
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDrop3_F"
@@ -56,6 +50,10 @@ time = "5.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "RedLeftBumpZoneRect.xml"/>
 <zone filename = "RedLaunchZone.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+time = "5.0">
 </primitive>
 
 </auton>
