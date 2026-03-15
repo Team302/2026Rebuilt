@@ -18,27 +18,27 @@
 #include <string>
 
 // FRC Includes
-#include <networktables/NetworkTableInstance.h>
 #include <frc/Timer.h>
+#include <networktables/NetworkTableInstance.h>
 
 #include "Intake.h"
-#include "utils/logging/debug/Logger.h"
-#include "utils/PeriodicLooper.h"
 #include "state/RobotState.h"
 #include "utils/DragonPower.h"
+#include "utils/PeriodicLooper.h"
+#include "utils/logging/debug/Logger.h"
 
 #include "ctre/phoenix6/TalonFX.hpp"
-#include "ctre/phoenix6/controls/Follower.hpp"
-#include "ctre/phoenix6/configs/Configuration.hpp"
 #include "ctre/phoenix6/TalonFXS.hpp"
-#include "utils/logging/signals/DragonDataLogger.h"
-#include "mechanisms/Intake/OffState.h"
-#include "mechanisms/Intake/IntakeState.h"
-#include "mechanisms/Intake/ExpelState.h"
-#include "mechanisms/Intake/LaunchState.h"
+#include "ctre/phoenix6/configs/Configuration.hpp"
+#include "ctre/phoenix6/controls/Follower.hpp"
 #include "mechanisms/Intake/EmptyHopperState.h"
+#include "mechanisms/Intake/ExpelState.h"
+#include "mechanisms/Intake/IntakeState.h"
+#include "mechanisms/Intake/LaunchState.h"
 #include "mechanisms/Intake/LoadHopperState.h"
+#include "mechanisms/Intake/OffState.h"
 #include "teleopcontrol/TeleopControl.h"
+#include "utils/logging/signals/DragonDataLogger.h"
 
 using ctre::phoenix6::configs::CANdiConfiguration;
 using ctre::phoenix6::configs::Slot0Configs;
@@ -281,10 +281,10 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
-	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
+	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 11;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(-10); // Need to verify
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
@@ -427,41 +427,26 @@ void Intake::ManualControl()
 	TeleopControl *controller = TeleopControl::GetInstance();
 	if (controller != nullptr && frc::DriverStation::IsTeleop())
 	{
-		double manualExtenderPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN);
+		double manualExtenderPercent = m_percentModifier * (TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN));
 		if (std::abs(manualExtenderPercent) > 0.05)
 		{
 			UpdateTargetExtenderPercentOut(-manualExtenderPercent);
 		}
 		else
 		{
-			UpdateTargetExtenderPercentOut(0.0);
+			if (GetCurrentState() == STATE_INTAKE || GetCurrentState() == STATE_EXPEL)
+			{
+				if (m_cachedExtenderPositionDeg < m_protectExtenderPositionDeg)
+				{
+					UpdateTargetExtenderPercentOut(0.0);
+				}
+			}
+			else
+				UpdateTargetExtenderPercentOut(0.0);
 		}
 	}
-
-	// 	if (controller->IsButtonPressed(TeleopControlFunctions::EXTENDER_MODIFIER))
-	// 	{
-	// 		double manualExtenderPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN);
-	// 		UpdateTargetExtenderPercentOut(-manualExtenderPercent);
-	// 	}
-	// 	else
-	// 	{
-	// 		if (GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
-	// 		{
-
-	// 			bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
-	// 			bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_IN);
-	// 			if (intakeOutPressed)
-	// 			{
-	// 				UpdateTargetExtenderPositionDeg(m_intakeExtendedPositionTarget);
-	// 			}
-	// 			else if (intakeInPressed)
-	// 			{
-	// 				UpdateTargetExtenderPositionDeg(m_intakeRetractedPositionTarget);
-	// 			}
-	// 		}
-	// 	}
-	// }
 }
+
 void Intake::DataLog(uint64_t timestamp)
 {
 	// Control data
