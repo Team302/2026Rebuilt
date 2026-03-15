@@ -2,25 +2,25 @@
 <!DOCTYPE auton SYSTEM "auton.dtd">
 <auton>
 
-<primitive id = "DRIVE_STOP_MECH"
-time = "0.25"
+<!-- <primitive id = "DRIVE_STOP_MECH"
+time = "0.1"
 intakeState = "STATE_OFF">
-</primitive>
+</primitive> -->
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMRKeep3_A"
+choreoname = "BlueMRDrop3_Init"
 time = "3.0">
-<zone filename = "BlueRightBumpZone.xml"/>
+<zone filename = "BlueRightBumpZoneRect.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMRKeep3_B"
-time = "5.0"
-intakeState = "STATE_INTAKE">
+choreoname = "BlueMRDrop3_A"
+intakeState = "STATE_INTAKE"
+time = "3.0">
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMRKeep3_C"
+choreoname = "BlueMRDrop3_C"
 time = "5.0">
 <zone filename = "BlueRightBumpZone.xml"/>
 <zone filename = "BlueLaunchZone.xml"/>
@@ -28,11 +28,10 @@ time = "5.0">
 
 <primitive id = "DRIVE_STOP_MECH"
 time = "5.0">
-<zone filename = "BlueLaunchZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMRKeep3_D"
+choreoname = "BlueMRDrop3_D"
 time = "5.0"
 intakeState = "STATE_INTAKE"
 launcherState = "STATE_IDLE">
@@ -40,28 +39,20 @@ launcherState = "STATE_IDLE">
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMRKeep3_E"
+choreoname = "BlueMRDrop3_E"
 time = "5.0"
 intakeState = "STATE_INTAKE">
+</primitive>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueMRDrop3_F"
+time = "3.0">
 <zone filename = "BlueLaunchZone.xml"/>
-</primitive>
-
-<primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMRKeep3_E2"
-time = "5.0"
-intakeState = "STATE_INTAKE">
-</primitive>
-
-<primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMRKeep3_F"
-time = "3.0"
-intakeState = "STATE_INTAKE">
 <zone filename = "BlueRightBumpZone.xml"/>
 </primitive>
 
 <primitive id = "DRIVE_STOP_MECH"
 time = "5.0">
-<zone filename = "BlueLaunchZone.xml"/>
 </primitive>
 
 </auton>

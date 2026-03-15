@@ -3,28 +3,28 @@
 <auton>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMRKeep2_A"
+choreoname = "BlueMRDrop2_A"
 time = "5.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "RedRightBumpZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMRKeep2_B"
+choreoname = "BlueMRDrop2_B"
 time = "5.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMRKeep2_C"
+choreoname = "BlueMRDrop2_C"
 time = "5.0">
 <zone filename = "RedLeftBumpZone.xml"/>
 <zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMRKeep2_D"
+choreoname = "BlueMRDrop2_D"
 time = "5.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "RedLeftBumpZone.xml"/>
@@ -32,14 +32,14 @@ intakeState = "STATE_INTAKE">
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMRKeep2_E"
+choreoname = "BlueMRDrop2_E"
 time = "5.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMRKeep2_F"
+choreoname = "BlueMRDrop2_F"
 time = "5.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "RedRightBumpZone.xml"/>

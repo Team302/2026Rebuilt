@@ -3,14 +3,14 @@
 <auton>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLKeep2_A"
+choreoname = "BlueMLDrop2_A"
 time = "4.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "RedLeftBumpZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLKeep2_B"
+choreoname = "BlueMLDrop2_B"
 time = "4.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "RedRightBumpZone.xml"/>
@@ -18,14 +18,14 @@ intakeState = "STATE_INTAKE">
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLKeep2_C"
+choreoname = "BlueMLDrop2_C"
 time = "4.0">
 <zone filename = "RedRightBumpZone.xml"/>
 <zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLKeep2_D"
+choreoname = "BlueMLDrop2_D"
 time = "4.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "RedLeftBumpZone.xml"/>
