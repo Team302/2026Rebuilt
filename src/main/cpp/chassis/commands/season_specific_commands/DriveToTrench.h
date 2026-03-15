@@ -74,23 +74,48 @@ protected:
     /// @return     DriveToPoses struct with midpoint (trench side) and endpoint (opposite side)
     /// @details    Overrides base class to provide trench-specific navigation.
     ///             See implementation for detailed pose calculation logic.
-    /// @see        DriveOverTrench.cpp for full implementation details
+    /// @see        DriveToTrench.cpp for full implementation details
     //------------------------------------------------------------------
     struct DriveToPoses GetDriveToPoses() override;
 
-    units::velocity::meters_per_second_t GetMaxVelocity() const override { return kMaxVelocityDriveToTrench; }                     // Limit max velocity for safe trench crossing;
-    units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const override { return kMaxAccelerationDriveToTrench; } // Limit max acceleration for safe trench crossing;
+    //------------------------------------------------------------------
+    /// @brief      Returns the maximum translational velocity for trench crossing
+    /// @return     units::velocity::meters_per_second_t - Maximum velocity (2.0 m/s)
+    /// @details    Limits speed to ensure safe crossing of the trench obstacle.
+    //------------------------------------------------------------------
+    units::velocity::meters_per_second_t GetMaxVelocity() const override { return kMaxVelocityDriveToTrench; }
+
+    //------------------------------------------------------------------
+    /// @brief      Returns the maximum translational acceleration for trench crossing
+    /// @return     units::acceleration::meters_per_second_squared_t - Maximum acceleration (1.0 m/s²)
+    /// @details    Limits acceleration to reduce jerk when approaching and leaving the trench.
+    //------------------------------------------------------------------
+    units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const override { return kMaxAccelerationDriveToTrench; }
 
 private:
+    //------------------------------------------------------------------
+    /// @brief      Determines the robot heading for the current trench crossing
+    /// @return     units::angle::degree_t - Target rotation angle in degrees
+    /// @details    Returns kTowardBlueAllianceWall (0°) for blue alliance or
+    ///             kTowardRedAllianceWall (180°) for red alliance, orienting the
+    ///             robot toward its own alliance wall while crossing.
+    //------------------------------------------------------------------
     units::angle::degree_t GetRotation() const;
 
+    /// @brief Rotation to face the blue alliance wall (0°) — used when alliance is blue
     static constexpr units::degree_t kTowardBlueAllianceWall{0.0};
+    /// @brief Rotation to face the red alliance wall (180°) — used when alliance is red
     static constexpr units::degree_t kTowardRedAllianceWall{180.0};
 
+    /// @brief Maximum lateral distance from the target pose before the command considers itself complete
     static constexpr units::length::inch_t kDistanceThreshold = 12_in;
+    /// @brief Maximum heading error before the command considers the rotation complete
     static constexpr units::angle::degree_t kAngleTolerance = 1.0_deg;
+    /// @brief Additional Y-axis tolerance applied during the transition from midpoint to endpoint
     static constexpr units::length::inch_t kYTransitionToEndPointTolerance = 3.0_in;
 
+    /// @brief Maximum translational velocity allowed while crossing the trench
     static constexpr units::velocity::meters_per_second_t kMaxVelocityDriveToTrench = 2.0_mps;
+    /// @brief Maximum translational acceleration allowed while crossing the trench
     static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationDriveToTrench = 1.0_mps_sq;
 };

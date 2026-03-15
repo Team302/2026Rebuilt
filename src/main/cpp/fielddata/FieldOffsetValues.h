@@ -459,10 +459,10 @@ private:
     units::length::meter_t m_blueBumpTrenchOutpostY; ///< Y of BLUE_TRENCH_ALLIANCE_OUTPOST (trench entrance for blue outpost bump)
 
     // trench offsets
-    units::length::meter_t m_redTrenchX;         ///< X of RED_TRENCH_ALLIANCE_OUTPOST (trench entrance for red outpost)
-    units::length::meter_t m_neutralRedTrenchX;  ///< X of RED_TRENCH_ALLIANCE_OUTPOST (trench entrance for red outpost)
-    units::length::meter_t m_blueTrenchX;        ///< X of BLUE_TRENCH_ALLIANCE_OUTPOST (trench entrance for blue outpost)
-    units::length::meter_t m_neutralBlueTrenchX; ///< X of BLUE_TRENCH_ALLIANCE_OUTPOST (trench entrance for blue outpost)
+    units::length::meter_t m_redTrenchX;         ///< X of the red alliance-side trench entrance (alliance zone side)
+    units::length::meter_t m_neutralRedTrenchX;  ///< X of the red trench on the neutral-zone side (neutral zone side)
+    units::length::meter_t m_blueTrenchX;        ///< X of the blue alliance-side trench entrance (alliance zone side)
+    units::length::meter_t m_neutralBlueTrenchX; ///< X of the blue trench on the neutral-zone side (neutral zone side)
 
     units::length::meter_t m_redDepotTrenchY;    ///< Y of RED_TRENCH_ALLIANCE_DEPOT (trench entrance for red depot)
     units::length::meter_t m_redOutpostTrenchY;  ///< Y of RED_TRENCH_ALLIANCE_OUTPOST (trench entrance for red outpost)
@@ -491,10 +491,15 @@ private:
     /// @brief Y-offset from tower center to the outpost/depot side approach position (meters)
     static constexpr units::length::meter_t TOWER_Y_OFFSET = 0.5_m;
 
+    /// @brief Robot heading to face the red alliance wall (0°)
     static constexpr units::angle::degree_t FACE_RED_ALLIANCE_WALL = 0_deg;
+    /// @brief Robot heading to face the blue alliance wall (180°)
     static constexpr units::angle::degree_t FACE_BLUE_ALLIANCE_WALL = 180_deg;
+    /// @brief Robot heading to face the origin-side field wall (270°)
     static constexpr units::angle::degree_t FACE_ORIGIN_SIDE_WALL = 270_deg;
+    /// @brief Robot heading to face the non-origin-side field wall (90°)
     static constexpr units::angle::degree_t FACE_NON_ORIGIN_SIDE_WALL = 90_deg;
 
+    /// @brief Half-width offset applied to position the robot at the trench entrance (meters)
     static constexpr units::length::meter_t TRENCH_OFFSET = 0.5_m;
 };

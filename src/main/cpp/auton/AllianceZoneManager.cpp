@@ -16,6 +16,15 @@
 #include "utils/FMSData.h"
 #include <auton/AllianceZoneManager.h>
 
+//====================================================================================================================================================
+/// @file AllianceZoneManager.cpp
+/// @brief Implementation of the AllianceZoneManager singleton
+/// @details Provides zone containment checks for the robot's own alliance zone and the opposing
+///          alliance zone. Zone definitions are loaded from XML files at construction time;
+///          the alliance color used for each check is queried live from FMSData so the correct
+///          zone is selected automatically without requiring a re-init after alliance assignment.
+//====================================================================================================================================================
+
 AllianceZoneManager::AllianceZoneManager() : ZoneHelper()
 {
     ParseZoneFiles();
