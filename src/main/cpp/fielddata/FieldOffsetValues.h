@@ -19,17 +19,6 @@
 #include "units/length.h"
 #include <vector>
 
-//====================================================================================================================================================
-/// @struct BumpPosition
-/// @brief Holds the X and Y coordinates for a bump identified by a BUMP_ID
-//====================================================================================================================================================
-struct BumpPosition
-{
-    BUMP_ID bumpId;           ///< Identifier for the bump
-    units::length::meter_t x; ///< X-coordinate of the bump (meters)
-    units::length::meter_t y; ///< Y-coordinate of the bump (meters)
-};
-
 struct TrenchPosition
 {
     TRENCH_ID trenchId;       ///< Identifier for the trench
@@ -155,40 +144,6 @@ public:
     /// @see        BumpHelper::CalcNearestBump() for bump identification logic
     //------------------------------------------------------------------
     units::length::meter_t GetValue(bool isRedSide, FIELD_OFFSET_ITEMS item) const;
-
-    //------------------------------------------------------------------
-    /// @brief      Retrieves an ordered pair of BumpPositions for a cross-field sweep
-    /// @param[in]  inNeutralZone - true if the robot is currently in the neutral zone,
-    ///             false if it is in the alliance zone
-    /// @return     std::vector<BumpPosition> - Two BumpPosition entries (bumpId, x, y) ordered
-    ///             nearest-first, where index 0 is the starting bump and index 1 is the
-    ///             cross-field destination bump
-    /// @details    Uses BumpHelper::CalcNearestBump() to identify the nearest bump, then
-    ///             returns two BumpPosition entries ordered nearest-first. The X coordinate
-    ///             reflects the side the robot is currently on (alliance or neutral), and the
-    ///             Y coordinate uses the trench-entrance series so the sweep endpoint aligns
-    ///             with the trench entrance.
-    ///
-    ///             | Nearest bump      | inNeutralZone | Index 0 (nearest)                                          | Index 1 (cross-field)                                       |
-    ///             |-------------------|---------------|------------------------------------------------------------|-------------------------------------------------------------|
-    ///             | RED_OUTPOST_BUMP  | true          | {BUMP_ID::RED_OUTPOST_BUMP,  redNeutralX,  redTrenchOutpostY} | {BUMP_ID::RED_DEPOT_BUMP,    redNeutralX,  redTrenchDepotY}   |
-    ///             | RED_OUTPOST_BUMP  | false         | {BUMP_ID::RED_OUTPOST_BUMP,  redAllianceX, redTrenchOutpostY} | {BUMP_ID::RED_DEPOT_BUMP,    redAllianceX, redTrenchDepotY}   |
-    ///             | RED_DEPOT_BUMP    | true          | {BUMP_ID::RED_DEPOT_BUMP,    redNeutralX,  redTrenchDepotY}   | {BUMP_ID::RED_OUTPOST_BUMP,  redNeutralX,  redTrenchOutpostY} |
-    ///             | RED_DEPOT_BUMP    | false         | {BUMP_ID::RED_DEPOT_BUMP,    redAllianceX, redTrenchDepotY}   | {BUMP_ID::RED_OUTPOST_BUMP,  redAllianceX, redTrenchOutpostY} |
-    ///             | BLUE_OUTPOST_BUMP | true          | {BUMP_ID::BLUE_OUTPOST_BUMP, blueNeutralX, blueTrenchOutpostY}| {BUMP_ID::BLUE_DEPOT_BUMP,   blueNeutralX, blueTrenchDepotY}  |
-    ///             | BLUE_OUTPOST_BUMP | false         | {BUMP_ID::BLUE_OUTPOST_BUMP, blueAllianceX,blueTrenchOutpostY}| {BUMP_ID::BLUE_DEPOT_BUMP,   blueAllianceX,blueTrenchDepotY}  |
-    ///             | BLUE_DEPOT_BUMP   | true          | {BUMP_ID::BLUE_DEPOT_BUMP,   blueNeutralX, blueTrenchDepotY}  | {BUMP_ID::BLUE_OUTPOST_BUMP, blueNeutralX, blueTrenchOutpostY}|
-    ///             | BLUE_DEPOT_BUMP   | false         | {BUMP_ID::BLUE_DEPOT_BUMP,   blueAllianceX,blueTrenchDepotY}  | {BUMP_ID::BLUE_OUTPOST_BUMP, blueAllianceX,blueTrenchOutpostY}|
-    ///
-    /// @note       Bump identification queries BumpHelper on every call (not cached)
-    /// @note       Method is const - does not modify object state
-    /// @see        GetValue() for single scalar coordinate queries
-    /// @see        BumpHelper::CalcNearestBump() for bump identification
-    /// @see        BumpPosition for the returned struct definition
-    //------------------------------------------------------------------
-    std::vector<BumpPosition> GetNearestAndCrossFieldBumpEdges(bool inNeutralZone) const;
-
-    std::vector<frc::Pose2d> GetTrenchDrivePositions(bool isRedAlliance) const;
 
     //------------------------------------------------------------------
     // Depot X-Coordinate Getters
@@ -541,5 +496,5 @@ private:
     static constexpr units::angle::degree_t FACE_ORIGIN_SIDE_WALL = 270_deg;
     static constexpr units::angle::degree_t FACE_NON_ORIGIN_SIDE_WALL = 90_deg;
 
-    static constexpr units::length::meter_t TRENCH_OFFSET = 1.5_m;
+    static constexpr units::length::meter_t TRENCH_OFFSET = 0.5_m;
 };

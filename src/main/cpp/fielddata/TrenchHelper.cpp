@@ -23,9 +23,11 @@
 //====================================================================================================================================================
 
 #include "fielddata/TrenchHelper.h"
+#include "auton/AllianceZoneManager.h"
 #include "auton/NeutralZoneManager.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "fielddata/BumpHelper.h"
+#include "fielddata/FieldOffsetValues.h"
 
 /// @brief Singleton instance pointer - initialized to nullptr for lazy instantiation
 TrenchHelper *TrenchHelper::m_instance = nullptr;
@@ -79,24 +81,79 @@ TrenchHelper::TrenchHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwe
 //------------------------------------------------------------------
 TRENCH_ID TrenchHelper::CalcNearestTrench() const
 {
-    auto nearestTrench = TrenchHelper::GetInstance()->CalcNearestTrench();
-    auto isInNeutralZone = NeutralZoneManager::GetInstance()->IsInNeutralZone();
-
     auto nearestBump = BumpHelper::GetInstance()->CalcNearestBump();
-    if (nearestBump == BUMP_ID::BLUE_DEPOT_BUMP)
+    switch (nearestBump)
     {
+    case BUMP_ID::BLUE_DEPOT_BUMP:
         return TRENCH_ID::BLUE_DEPOT_TRENCH;
-    }
-
-    if (nearestBump == BUMP_ID::BLUE_OUTPOST_BUMP)
-    {
+    case BUMP_ID::BLUE_OUTPOST_BUMP:
         return TRENCH_ID::BLUE_OUTPOST_TRENCH;
-    }
-
-    if (nearestBump == BUMP_ID::RED_DEPOT_BUMP)
-    {
+    case BUMP_ID::RED_DEPOT_BUMP:
         return TRENCH_ID::RED_DEPOT_TRENCH;
+    case BUMP_ID::RED_OUTPOST_BUMP:
+        return TRENCH_ID::RED_OUTPOST_TRENCH;
+    default:
+        return TRENCH_ID::RED_OUTPOST_TRENCH;
     }
 
+    // Fallback return to satisfy compiler warnings about non-void function possibly not returning
     return TRENCH_ID::RED_OUTPOST_TRENCH;
+}
+
+//------------------------------------------------------------------
+/// @brief      Returns an ordered list of Pose2d drive targets for navigating through a trench
+/// @param[in]  isRedAlliance - true for red alliance, false for blue alliance
+/// @return     std::vector<frc::Pose2d> - Ordered poses: index 0 is the mid (near-trench)
+///             pose, index 1 is the end (far-side) pose
+//------------------------------------------------------------------
+std::vector<frc::Pose2d> TrenchHelper::GetTrenchDrivePositions(bool isRedAlliance) const
+{
+    auto rotation = isRedAlliance ? frc::Rotation2d{kFaceBlueWallRotation} : frc::Rotation2d{kFaceRedWallRotation};
+    auto isInNeutralZone = NeutralZoneManager::GetInstance()->IsInNeutralZone();
+    auto isInOtherAllianceZone = AllianceZoneManager::GetInstance()->IsInOtherAllianceZone();
+    auto nearest = CalcNearestTrench();
+
+    bool isRedDepotPair = (nearest == TRENCH_ID::RED_DEPOT_TRENCH || nearest == TRENCH_ID::BLUE_OUTPOST_TRENCH);
+    auto redTrench = isRedDepotPair ? TRENCH_ID::RED_DEPOT_TRENCH : TRENCH_ID::RED_OUTPOST_TRENCH;
+    auto blueTrench = isRedDepotPair ? TRENCH_ID::BLUE_OUTPOST_TRENCH : TRENCH_ID::BLUE_DEPOT_TRENCH;
+
+    auto startingTrench = isRedAlliance ? blueTrench : redTrench;
+    auto endTrench = isRedAlliance ? redTrench : blueTrench;
+
+    auto offsetVals = FieldOffsetValues::GetInstance();
+    std::vector<frc::Pose2d> poses;
+
+    auto GetTrenchX = [&](TRENCH_ID id) -> units::length::meter_t
+    {
+        switch (id)
+        {
+        case TRENCH_ID::RED_DEPOT_TRENCH:
+        case TRENCH_ID::RED_OUTPOST_TRENCH:
+            return isInNeutralZone ? offsetVals->GetNeutralRedTrenchX() : offsetVals->GetRedTrenchX();
+        case TRENCH_ID::BLUE_DEPOT_TRENCH:
+        case TRENCH_ID::BLUE_OUTPOST_TRENCH:
+        default:
+            return isInNeutralZone ? offsetVals->GetNeutralBlueTrenchX() : offsetVals->GetBlueTrenchX();
+        }
+    };
+
+    auto GetTrenchY = [&](TRENCH_ID id) -> units::length::meter_t
+    {
+        switch (id)
+        {
+        case TRENCH_ID::RED_DEPOT_TRENCH:
+            return offsetVals->GetRedDepotTrenchY();
+        case TRENCH_ID::RED_OUTPOST_TRENCH:
+            return offsetVals->GetRedOutpostTrenchY();
+        case TRENCH_ID::BLUE_DEPOT_TRENCH:
+            return offsetVals->GetBlueDepotTrenchY();
+        case TRENCH_ID::BLUE_OUTPOST_TRENCH:
+        default:
+            return offsetVals->GetBlueOutpostTrenchY();
+        }
+    };
+
+    poses.emplace_back(frc::Pose2d{GetTrenchX(startingTrench), GetTrenchY(startingTrench), rotation});
+    poses.emplace_back(frc::Pose2d{GetTrenchX(endTrench), GetTrenchY(endTrench), rotation});
+    return poses;
 }
