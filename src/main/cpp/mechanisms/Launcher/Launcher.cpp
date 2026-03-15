@@ -479,18 +479,14 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 
 	// MECH_TODO: Set limit switches
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
-	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 6;
+	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 7;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
-	// configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(267);
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 6;
+	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 7;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
-	// configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::turn_t(91);
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
@@ -509,9 +505,9 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	// configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
 	// configs.ExternalFeedback.SensorToMechanismRatio = 0.60050076744186046511627906976744;
 	configs.ExternalFeedback.FeedbackRemoteSensorID = 6;
-	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::FusedCANcoder;
+	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RemoteCANcoder;
 	configs.ExternalFeedback.SensorToMechanismRatio = 1;
-	configs.ExternalFeedback.RotorToSensorRatio = 1;
+	// configs.ExternalFeedback.RotorToSensorRatio = 1; // Uncomment and use if fused/sync feedback
 
 	configs.Slot0.kI = m_positionDegreesTurret->GetI();
 	configs.Slot0.kD = m_positionDegreesTurret->GetD();
@@ -523,6 +519,21 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.Slot0.GravityType = m_positionDegreesTurret->GetGravityType();
 	configs.Slot0.StaticFeedforwardSign = m_positionDegreesTurret->GetStaticFeedforwardSign();
 
+	ctre::phoenix6::configs::CANcoderConfiguration turretAngleSensorConfig{};
+	turretAngleSensorConfig.MagnetSensor.MagnetOffset = 0_tr;
+	turretAngleSensorConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1_tr;
+	turretAngleSensorConfig.MagnetSensor.SensorDirection = ctre::phoenix6::signals::SensorDirectionValue::Clockwise_Positive;
+
+	ctre::phoenix::StatusCode statusCANCoder = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+	for (int i = 0; i < 5; ++i)
+	{
+		statusCANCoder = m_turretAngleSensor->GetConfigurator().Apply(turretAngleSensorConfig, units::time::second_t(0.25));
+		if (statusCANCoder.IsOK())
+			break;
+	}
+	if (!statusCANCoder.IsOK())
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_turret", "m_turretCACoder Status", statusCANCoder.GetName());
+
 	ctre::phoenix::StatusCode statusMotor = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
@@ -533,11 +544,6 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	if (!statusMotor.IsOK())
 		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_turret", "m_turret Status", statusMotor.GetName());
 
-	ctre::phoenix6::configs::CANcoderConfiguration turretAngleSensorConfig{};
-	turretAngleSensorConfig.MagnetSensor.MagnetOffset = 0_tr;
-	turretAngleSensorConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1_tr;
-	turretAngleSensorConfig.MagnetSensor.SensorDirection = ctre::phoenix6::signals::SensorDirectionValue::Clockwise_Positive;
-	m_turretAngleSensor->GetConfigurator().Apply(turretAngleSensorConfig);
 	// CANdiConfiguration CANdiConfig{};
 
 	// CANdiConfig.DigitalInputs.S1CloseState = signals::S1CloseStateValue::CloseWhenFloating;
