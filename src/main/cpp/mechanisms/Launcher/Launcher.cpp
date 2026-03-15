@@ -668,6 +668,7 @@ void Launcher::RefreshCachedMotorData()
 	m_cachedLauncherVelocity = m_launcher->GetVelocity().GetValue();
 	m_cachedHoodPosition = m_hood->GetPosition().GetValue();
 	m_cachedTurretPosition = m_turretEnabled ? m_turret->GetPosition().GetValue() : 180_tr;
+	m_cachedLauncherCurrent = m_launcher->GetStatorCurrent().GetValue();
 }
 
 void Launcher::RunCommonTasks()
@@ -922,4 +923,19 @@ void Launcher::UpdateTurretEnabled()
 	}
 	m_turretEnabledButtonReleased = !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::TURRET_ENABLE);
 	RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::TurretEnabled_Bool, m_turretEnabled);
+}
+bool Launcher::IsFinishedLaunching()
+{
+	if (m_cachedLauncherCurrent > m_isLaunchingCurrentThreshold)
+	{
+		m_launchCurrentTimer.Reset();
+		m_launchCurrentTimer.Start();
+	}
+	else if (m_launchCurrentTimer.Get() > m_isLaunchingTimeThreshold)
+	{
+		return true;
+	}
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launching Current", m_cachedLauncherCurrent.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launch Current Timer", m_launchCurrentTimer.Get().value());
+	return false;
 }

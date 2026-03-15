@@ -15,6 +15,7 @@ time = "3.0">
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMRDrop3_A"
+intakeState = "STATE_INTAKE"
 time = "3.0">
 </primitive>
 
@@ -27,7 +28,6 @@ time = "5.0">
 
 <primitive id = "DRIVE_STOP_MECH"
 time = "5.0">
-<zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
@@ -42,19 +42,17 @@ launcherState = "STATE_IDLE">
 choreoname = "BlueMRDrop3_E"
 time = "5.0"
 intakeState = "STATE_INTAKE">
-<zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMRDrop3_F"
-time = "3.0"
-intakeState = "STATE_INTAKE">
+time = "3.0">
+<zone filename = "RedLaunchZone.xml"/>
 <zone filename = "RedRightBumpZone.xml"/>
 </primitive>
 
 <primitive id = "DRIVE_STOP_MECH"
 time = "5.0">
-<zone filename = "RedLaunchZone.xml"/>
 </primitive>
 
 </auton>
