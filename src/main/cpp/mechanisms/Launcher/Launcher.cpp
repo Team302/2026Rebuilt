@@ -403,6 +403,8 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 
 	CANdiConfig.DigitalInputs.S1CloseState = signals::S1CloseStateValue::CloseWhenFloating;
 	CANdiConfig.DigitalInputs.S1FloatState = signals::S1FloatStateValue::FloatDetect;
+	CANdiConfig.DigitalInputs.S2CloseState = signals::S1CloseStateValue::CloseWhenFloating;
+	CANdiConfig.DigitalInputs.S2FloatState = signals::S1FloatStateValue::FloatDetect;
 
 	ctre::phoenix::StatusCode statusCANdi = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
@@ -484,13 +486,14 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
-	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
+	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 7;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::turn_t(90);
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
-	configs.MotorOutput.Inverted = InvertedValue::Clockwise_Positive;
+	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
 	configs.MotorOutput.NeutralMode = NeutralModeValue::Brake;
 	configs.MotorOutput.PeakForwardDutyCycle = 1;
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
@@ -502,11 +505,11 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
-	// configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	// configs.ExternalFeedback.SensorToMechanismRatio = 0.60050076744186046511627906976744;
-	configs.ExternalFeedback.FeedbackRemoteSensorID = 6;
-	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RemoteCANcoder;
-	configs.ExternalFeedback.SensorToMechanismRatio = 1;
+	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.60050076744186046511627906976744;
+	// configs.ExternalFeedback.FeedbackRemoteSensorID = 6;
+	// configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RemoteCANcoder;
+	// configs.ExternalFeedback.SensorToMechanismRatio = 7.251952;
 	// configs.ExternalFeedback.RotorToSensorRatio = 1; // Uncomment and use if fused/sync feedback
 
 	configs.Slot0.kI = m_positionDegreesTurret->GetI();
@@ -520,7 +523,7 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.Slot0.StaticFeedforwardSign = m_positionDegreesTurret->GetStaticFeedforwardSign();
 
 	ctre::phoenix6::configs::CANcoderConfiguration turretAngleSensorConfig{};
-	turretAngleSensorConfig.MagnetSensor.MagnetOffset = 0_tr;
+	turretAngleSensorConfig.MagnetSensor.MagnetOffset = 0.1633377777778_tr;
 	turretAngleSensorConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1_tr;
 	turretAngleSensorConfig.MagnetSensor.SensorDirection = ctre::phoenix6::signals::SensorDirectionValue::Clockwise_Positive;
 
@@ -852,11 +855,11 @@ void Launcher::UpdateLauncherTargets()
 
 void Launcher::InitilaizeLauncher()
 {
-	// if ((m_turretEnabled && (m_turret->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround || m_turret->GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround) &&
-	// 	 (m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)) ||
-	// 	(!m_turretEnabled && (m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)) ||
-	// 	frc::RobotBase::IsSimulation())
-	if (frc::RobotBase::IsSimulation() || (m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround))
+	if ((m_turretEnabled && (m_turret->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround) &&
+		 (m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)) ||
+		(!m_turretEnabled && (m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)) ||
+		frc::RobotBase::IsSimulation())
+	// if (frc::RobotBase::IsSimulation() || (m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround))
 	{
 		// if (turretReverseLimitSwitchTripped == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)
 		// {
