@@ -18,9 +18,10 @@
 
 #include "chassis/commands/VisionDrive.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "frc2/command/CommandHelper.h"
 #include "vision/DragonVision.h"
 
-class DriveToFuel : public VisionDrive
+class DriveToFuel : public frc2::CommandHelper<VisionDrive, DriveToFuel>
 {
 public:
     DriveToFuel(subsystems::CommandSwerveDrivetrain *chassis);

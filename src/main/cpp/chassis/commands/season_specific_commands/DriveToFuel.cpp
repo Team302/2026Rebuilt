@@ -16,7 +16,7 @@
 #include "chassis/commands/season_specific_commands/DriveToFuel.h"
 #include "vision/PoseOffsetUtils.h"
 
-DriveToFuel::DriveToFuel(subsystems::CommandSwerveDrivetrain *chassis) : VisionDrive(chassis)
+DriveToFuel::DriveToFuel(subsystems::CommandSwerveDrivetrain *chassis) : frc2::CommandHelper<VisionDrive, DriveToFuel>(chassis)
 {
 }
 

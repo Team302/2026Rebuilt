@@ -25,7 +25,7 @@
 #include "units/velocity.h"
 #include "vision/DragonVision.h"
 
-class VisionDrive : public frc2::CommandHelper<frc2::Command, VisionDrive>
+class VisionDrive : public frc2::Command
 {
 public:
     VisionDrive(subsystems::CommandSwerveDrivetrain *chassis);
