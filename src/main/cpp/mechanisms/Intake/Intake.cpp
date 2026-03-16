@@ -434,7 +434,7 @@ void Intake::ManualControl()
 		}
 		else
 		{
-			if (GetCurrentState() == STATE_INTAKE || GetCurrentState() == STATE_EXPEL)
+			if (GetCurrentState() == STATE_INTAKE || GetCurrentState() == STATE_EXPEL || GetCurrentState() == STATE_LAUNCH)
 			{
 				if (m_cachedExtenderPositionDeg < m_protectExtenderPositionDeg)
 				{
