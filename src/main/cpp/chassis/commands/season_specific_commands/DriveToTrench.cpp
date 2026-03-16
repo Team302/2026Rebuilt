@@ -13,8 +13,6 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include "chassis/commands/season_specific_commands/DriveToTrench.h"
-#include "fielddata/BumpHelper.h"
-
 #include "auton/AllianceZoneManager.h"
 #include "auton/NeutralZoneManager.h"
 #include "fielddata/FieldOffsetValues.h"
@@ -24,60 +22,41 @@
 //------------------------------------------------------------------
 /// @brief      Constructor for DriveToTrench command
 /// @param[in]  chassis - Pointer to the swerve drive subsystem
-/// @details    Initializes the base DriveToPose command with the chassis.
-///             This command autonomously drives the robot over a bump,
-///             using a two-stage approach (midpoint and endpoint) to ensure
-///             proper trajectory over the field obstacles. The command
-///             determines the nearest bump and calculates appropriate poses
-///             based on whether the robot is in the alliance or neutral zone.
+/// @details    Initializes the base DriveToPose command with the chassis and
+///             configures the distance, angle, and Y-transition tolerances used
+///             to detect when each stage of the trench crossing is complete.
 //------------------------------------------------------------------
 DriveToTrench::DriveToTrench(subsystems::CommandSwerveDrivetrain *chassis) : DriveToPose(chassis)
 {
     // Set distance threshold for pose completion detection (1 foot tolerance)
     SetDistanceThreshold(kDistanceThreshold);
     SetAngleTolerance(kAngleTolerance);
-    SetYTransitionToEndPointTolerance(kYTransitionToEndPointTolerance); // Allow extra tolerance for Y due to bump crossing dynamics
+    SetYTransitionToEndPointTolerance(kYTransitionToEndPointTolerance);
 }
 
 //------------------------------------------------------------------
-/// @brief      Determines the appropriate rotation angle for driving over a bump
-/// @param[in]  bump - The identifier for which bump (Red/Blue, Depot/Outpost)
-/// @param[in]  isInNeutralZone - True if robot is in neutral zone, false if in alliance zone
-/// @return     units::angle::degree_t - The rotation angle in degrees for the robot heading
-/// @details    This method returns the correct robot heading based on:
-///             - Which bump is being crossed (4 possibilities)
-///             - Direction of travel (neutral->alliance or alliance->neutral)
-///
-///             These angles ensure the robot approaches and crosses the bump
-///             at the optimal heading toward the hub center.
-//------------------------------------------------------------------
-units::angle::degree_t DriveToTrench::GetRotation() const
-{
-    return (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kBlue) ? kTowardBlueAllianceWall : kTowardRedAllianceWall;
-}
-
-//------------------------------------------------------------------
-/// @brief      Calculates the target poses for driving over a bump
-/// @return     DriveToPoses struct containing midpoint and endpoint poses
-/// @details    Determines which bump is nearest and calculates a two-stage path:
+/// @brief      Calculates the target poses for driving through a trench
+/// @return     DriveToPoses struct containing a mid pose and an end pose
+/// @details    Delegates to TrenchHelper to obtain the ordered drive positions
+///             for the nearest trench on the current alliance side, then builds
+///             the two-stage path as follows:
 ///
 ///             **Mid Pose**
-///             - If in neutral zone: Target is neutral side of bump
-///             - If in alliance zone: Target is alliance side of bump
+///             - X: robot's current X-coordinate (no lateral shift yet)
+///             - Y: Y-coordinate of the first (near-trench) position returned
+///               by TrenchHelper::GetTrenchDrivePositions()
+///             - Rotation: as specified by TrenchHelper for the near side
 ///
 ///             **End Pose**
-///             - If in neutral zone: Target is alliance side of bump
-///             - If in alliance zone: Target is neutral side of bump
+///             - The last position in the TrenchHelper vector (far side of trench)
+///             - If TrenchHelper returns only one pose, that pose is used for both
+///               mid and end
 ///
-///             The method uses BumpHelper to identify the nearest bump,
-///             NeutralZoneManager to determine current zone, and
-///             FieldOffsetValues to retrieve the exact field coordinates.
+///             The mid pose keeps the robot's current X so it first aligns on
+///             the Y axis before committing to the full trench crossing.
 ///
-///             Rotation angles are set to point toward the hub center
-///
-/// @note       This override enables the two-stage navigation required
-///             to safely cross over field bumps
-/// @see        GetRotation() for rotation angle calculation
+/// @note       This override enables the two-stage navigation required to
+///             safely align with and cross through the field trench
 //------------------------------------------------------------------
 struct DriveToPoses DriveToTrench::GetDriveToPoses()
 {
@@ -89,8 +68,8 @@ struct DriveToPoses DriveToTrench::GetDriveToPoses()
     auto currentPose = GetChassis()->GetPose();
 
     auto firstPose = targetPoses.front();
-    poses.midPose = frc::Pose2d(currentPose.X(), firstPose.Y(), firstPose.Rotation().Degrees()); // Create a pose for the bump position
-    poses.endPose = targetPoses.size() > 1 ? targetPoses.back() : firstPose;                     // If there's only one pose, use it as the end pose as well
+    poses.midPose = frc::Pose2d(currentPose.X(), firstPose.Y(), firstPose.Rotation().Degrees());
+    poses.endPose = targetPoses.size() > 1 ? targetPoses.back() : firstPose; // If there's only one pose, use it as the end pose as well
 
     return poses;
 }

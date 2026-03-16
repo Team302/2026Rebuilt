@@ -14,13 +14,10 @@
 //====================================================================================================================================================
 #pragma once
 
-// C++ includes
-#include <vector>
-
-#include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "fielddata/BumpHelper.h"
-#include "fielddata/FieldConstants.h"
 #include "frc/geometry/Pose2d.h"
+#include "units/angle.h"
+#include <vector>
 
 //====================================================================================================================================================
 /// @enum TRENCH_ID
@@ -60,8 +57,6 @@ enum class TRENCH_ID
 /// **Integration:**
 /// The class works in conjunction with:
 /// - BumpHelper: Performs the actual nearest-bump distance calculation
-/// - FieldConstants: For field element position reference data (via BumpHelper)
-/// - ChassisConfigMgr: For access to current robot pose (via BumpHelper)
 ///
 /// @note This is a singleton class - use GetInstance() to access
 /// @see TRENCH_ID for the four possible trench identifications
@@ -113,8 +108,6 @@ private:
     //------------------------------------------------------------------
     /// @brief      Private constructor for singleton pattern
     /// @details    Initializes member pointers by retrieving singleton instances:
-    ///             - ChassisConfigMgr: For access to swerve drivetrain and robot pose
-    ///             - FieldConstants: For field element position reference data
     ///
     ///             Called only by GetInstance() on first access to create the singleton.
     //------------------------------------------------------------------
@@ -130,12 +123,6 @@ private:
     //------------------------------------------------------------------
     // Member Variables
     //------------------------------------------------------------------
-
-    /// @brief Pointer to the swerve drivetrain subsystem for robot pose queries
-    subsystems::CommandSwerveDrivetrain *m_chassis;
-
-    /// @brief Pointer to field constants singleton for field element positions
-    FieldConstants *m_fieldConstants;
 
     /// @brief Singleton instance pointer (lazy initialization)
     static TrenchHelper *m_instance;

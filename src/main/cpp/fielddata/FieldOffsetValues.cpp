@@ -27,11 +27,10 @@
 ///          **Public API:**
 ///          - GetInstance()  – Lazy-initialization singleton accessor
 ///          - GetValue()     – Returns a single alliance-aware coordinate for a given FIELD_OFFSET_ITEMS type
-///          - GetNearestAndCrossFieldBumpEdges()    – Returns an ordered vector of coordinates (nearest-first for bump Y queries)
+///          - Get*() accessors – Direct getters for all depot, outpost, hub, bump, tower, and trench coordinates
 //====================================================================================================================================================
 
 #include "fielddata/FieldOffsetValues.h"
-#include "auton/NeutralZoneManager.h"
 #include "fielddata/BumpHelper.h"
 #include "fielddata/FieldConstants.h"
 
@@ -91,12 +90,12 @@ FieldOffsetValues *FieldOffsetValues::GetInstance()
 ///             - m_blueBumpOutpostY:Midpoint(blue hub Y, blue outpost trench Y) + 1 ft
 ///
 ///             **Bump Y-Coordinates (trench entrance series):**
-///             Directly uses the trench alliance position Y values so that the
-///             cross-field sweep endpoint aligns with the trench entrance:
-///             - m_redBumpTrenchDepotY   = RED_TRENCH_ALLIANCE_DEPOT Y
-///             - m_redBumpTrenchOutpostY = RED_TRENCH_ALLIANCE_OUTPOST Y
-///             - m_blueBumpTrenchDepotY  = BLUE_TRENCH_ALLIANCE_DEPOT Y
-///             - m_blueBumpTrenchOutpostY= BLUE_TRENCH_ALLIANCE_OUTPOST Y
+///             Uses the trench alliance position Y values with a ±1 ft fine-tune adjustment
+///             so the cross-field sweep endpoint lands just inside the trench entrance:
+///             - m_redBumpTrenchDepotYOffset   = RED_TRENCH_ALLIANCE_DEPOT Y   + 1 ft
+///             - m_redBumpTrenchOutpostYOffset = RED_TRENCH_ALLIANCE_OUTPOST Y  - 1 ft
+///             - m_blueBumpTrenchDepotYOffset  = BLUE_TRENCH_ALLIANCE_DEPOT Y   - 1 ft
+///             - m_blueBumpTrenchOutpostYOffset= BLUE_TRENCH_ALLIANCE_OUTPOST Y  + 1 ft
 ///
 ///             **Fallback Behavior:**
 ///             If FieldConstants is unavailable (initialization error), all member
@@ -167,10 +166,10 @@ FieldOffsetValues::FieldOffsetValues()
                              1.0_ft;
 
         // Calculate bump Y positions as trench entrance Y values (aligns bumps with trench entrances for optimal crossing)
-        m_redBumpTrenchDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y() + 1_ft;
-        m_redBumpTrenchOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y() - 1_ft;
-        m_blueBumpTrenchDepotY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y() - 1_ft;
-        m_blueBumpTrenchOutpostY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y() + 1_ft;
+        m_redBumpTrenchDepotYOffset = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y() + 1_ft;
+        m_redBumpTrenchOutpostYOffset = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y() - 1_ft;
+        m_blueBumpTrenchDepotYOffset = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y() - 1_ft;
+        m_blueBumpTrenchOutpostYOffset = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y() + 1_ft;
 
         m_redTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).X() + TRENCH_OFFSET;
         m_neutralRedTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_NEUTRAL_DEPOT).X() - TRENCH_OFFSET;
@@ -215,10 +214,10 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueBumpDepotY = units::length::meter_t{0.0};
         m_blueBumpOutpostY = units::length::meter_t{0.0};
 
-        m_redBumpTrenchDepotY = units::length::meter_t{0.0};
-        m_redBumpTrenchOutpostY = units::length::meter_t{0.0};
-        m_blueBumpTrenchDepotY = units::length::meter_t{0.0};
-        m_blueBumpTrenchOutpostY = units::length::meter_t{0.0};
+        m_redBumpTrenchDepotYOffset = units::length::meter_t{0.0};
+        m_redBumpTrenchOutpostYOffset = units::length::meter_t{0.0};
+        m_blueBumpTrenchDepotYOffset = units::length::meter_t{0.0};
+        m_blueBumpTrenchOutpostYOffset = units::length::meter_t{0.0};
 
         m_redTrenchX = units::length::meter_t{0.0};
         m_neutralRedTrenchX = units::length::meter_t{0.0};

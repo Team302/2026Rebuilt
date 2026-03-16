@@ -15,8 +15,6 @@
 #include "chassis/commands/season_specific_commands/SweepBehindBump.h"
 
 #include "auton/NeutralZoneManager.h"
-#include "fielddata/FieldOffsetValues.h"
-
 //------------------------------------------------------------------
 /// @brief      Constructor for SweepBehindBump command
 /// @param[in]  chassis - Pointer to the swerve drive subsystem

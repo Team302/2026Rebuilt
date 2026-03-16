@@ -25,7 +25,6 @@
 #include "fielddata/TrenchHelper.h"
 #include "auton/AllianceZoneManager.h"
 #include "auton/NeutralZoneManager.h"
-#include "chassis/ChassisConfigMgr.h"
 #include "fielddata/BumpHelper.h"
 #include "fielddata/FieldOffsetValues.h"
 
@@ -51,14 +50,11 @@ TrenchHelper *TrenchHelper::GetInstance()
 //------------------------------------------------------------------
 /// @brief      Constructor for TrenchHelper
 /// @details    Initializes the singleton by retrieving references to required subsystems:
-///             - Swerve chassis from ChassisConfigMgr for robot pose queries
-///             - FieldConstants singleton for field element positions
 ///
 ///             This constructor is private and called only by GetInstance() during
 ///             first-time initialization of the singleton.
 //------------------------------------------------------------------
-TrenchHelper::TrenchHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
-                               m_fieldConstants(FieldConstants::GetInstance())
+TrenchHelper::TrenchHelper()
 {
 }
 
@@ -92,8 +88,6 @@ TRENCH_ID TrenchHelper::CalcNearestTrench() const
         return TRENCH_ID::RED_DEPOT_TRENCH;
     case BUMP_ID::RED_OUTPOST_BUMP:
         return TRENCH_ID::RED_OUTPOST_TRENCH;
-    default:
-        return TRENCH_ID::RED_OUTPOST_TRENCH;
     }
 
     // Fallback return to satisfy compiler warnings about non-void function possibly not returning
@@ -105,7 +99,14 @@ TRENCH_ID TrenchHelper::CalcNearestTrench() const
 /// @param[in]  isRedAlliance - true for red alliance, false for blue alliance
 /// @return     std::vector<frc::Pose2d> - Ordered poses: index 0 is the mid (near-trench)
 ///             pose, index 1 is the end (far-side) pose
-//------------------------------------------------------------------
+/// @details    Determines the nearest trench via CalcNearestTrench(), selects the correct
+///             starting and ending trench pair for the given alliance, and builds Pose2d waypoints
+///             using FieldOffsetValues trench X/Y coordinates. If the robot is in the other alliance's
+///             zone, only the far-side pose is returned since the near-trench pose would be inaccessible.
+/// @see        CalcNearestTrench() for trench identification
+/// @see        FieldOffsetValues for the coordinate source data
+/// @note       The back of the robot faces the alliance wall, so when on red alliance, the robot faces the blue alliance wall.
+///------------------------------------------------------------------
 std::vector<frc::Pose2d> TrenchHelper::GetTrenchDrivePositions(bool isRedAlliance) const
 {
     auto rotation = isRedAlliance ? frc::Rotation2d{kFaceBlueWallRotation} : frc::Rotation2d{kFaceRedWallRotation};

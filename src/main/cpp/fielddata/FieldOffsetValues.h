@@ -16,6 +16,7 @@
 
 #include "fielddata/BumpHelper.h"
 #include "fielddata/TrenchHelper.h"
+#include "units/angle.h"
 #include "units/length.h"
 #include <vector>
 
@@ -269,21 +270,21 @@ public:
     // Bump Trench-Entrance Y-Coordinate Getters
     //------------------------------------------------------------------
 
-    /// @brief      Get the red depot-side bump trench-entrance Y-coordinate
-    /// @return     units::length::meter_t - Y of RED_TRENCH_ALLIANCE_DEPOT (trench entrance for red depot bump)
-    units::length::meter_t GetRedBumpTrenchDepotY() const { return m_redBumpTrenchDepotY; }
+    /// @brief      Get the red depot-side bump trench-entrance Y-coordinate offset
+    /// @return     units::length::meter_t - Y of RED_TRENCH_ALLIANCE_DEPOT + 1 ft (trench entrance for red depot bump)
+    units::length::meter_t GetRedBumpTrenchDepotYOffset() const { return m_redBumpTrenchDepotYOffset; }
 
-    /// @brief      Get the red outpost-side bump trench-entrance Y-coordinate
-    /// @return     units::length::meter_t - Y of RED_TRENCH_ALLIANCE_OUTPOST (trench entrance for red outpost bump)
-    units::length::meter_t GetRedBumpTrenchOutpostY() const { return m_redBumpTrenchOutpostY; }
+    /// @brief      Get the red outpost-side bump trench-entrance Y-coordinate offset
+    /// @return     units::length::meter_t - Y of RED_TRENCH_ALLIANCE_OUTPOST - 1 ft (trench entrance for red outpost bump)
+    units::length::meter_t GetRedBumpTrenchOutpostYOffset() const { return m_redBumpTrenchOutpostYOffset; }
 
-    /// @brief      Get the blue depot-side bump trench-entrance Y-coordinate
-    /// @return     units::length::meter_t - Y of BLUE_TRENCH_ALLIANCE_DEPOT (trench entrance for blue depot bump)
-    units::length::meter_t GetBlueBumpTrenchDepotY() const { return m_blueBumpTrenchDepotY; }
+    /// @brief      Get the blue depot-side bump trench-entrance Y-coordinate offset
+    /// @return     units::length::meter_t - Y of BLUE_TRENCH_ALLIANCE_DEPOT - 1 ft (trench entrance for blue depot bump)
+    units::length::meter_t GetBlueBumpTrenchDepotYOffset() const { return m_blueBumpTrenchDepotYOffset; }
 
-    /// @brief      Get the blue outpost-side bump trench-entrance Y-coordinate
-    /// @return     units::length::meter_t - Y of BLUE_TRENCH_ALLIANCE_OUTPOST (trench entrance for blue outpost bump)
-    units::length::meter_t GetBlueBumpTrenchOutpostY() const { return m_blueBumpTrenchOutpostY; }
+    /// @brief      Get the blue outpost-side bump trench-entrance Y-coordinate offset
+    /// @return     units::length::meter_t - Y of BLUE_TRENCH_ALLIANCE_OUTPOST + 1 ft (trench entrance for blue outpost bump)
+    units::length::meter_t GetBlueBumpTrenchOutpostYOffset() const { return m_blueBumpTrenchOutpostYOffset; }
 
     //------------------------------------------------------------------
     // Trench X-Coordinate Getters
@@ -352,8 +353,8 @@ private:
     ///               with a ±1 ft fine-tune adjustment per bump
     ///
     ///             **Bump Y-Coordinates (trench entrance series):**
-    ///             - Directly uses the trench alliance position Y so the cross-field
-    ///               sweep endpoint aligns with the trench entrance
+    ///             - Trench alliance position Y with a ±1 ft fine-tune adjustment so the
+    ///               cross-field sweep endpoint lands just inside the trench entrance
     ///
     ///             **Fallback:**
     ///             If FieldConstants unavailable, initializes all values to 0.0 m
@@ -449,14 +450,13 @@ private:
 
     //------------------------------------------------------------------
     // Bump Trench-Entrance Y-Coordinates
-    // Directly equal to the trench alliance position Y from FieldConstants.
-    // Used by GetNearestAndCrossFieldBumpEdges() so the cross-field sweep
-    // endpoint aligns with the trench entrance.
+    // Trench alliance position Y from FieldConstants with ±1 ft fine-tune adjustment.
+    // Used by BumpHelper so the cross-field sweep endpoint lands just inside the trench entrance.
     //------------------------------------------------------------------
-    units::length::meter_t m_redBumpTrenchDepotY;    ///< Y of RED_TRENCH_ALLIANCE_DEPOT (trench entrance for red depot bump)
-    units::length::meter_t m_redBumpTrenchOutpostY;  ///< Y of RED_TRENCH_ALLIANCE_OUTPOST (trench entrance for red outpost bump)
-    units::length::meter_t m_blueBumpTrenchDepotY;   ///< Y of BLUE_TRENCH_ALLIANCE_DEPOT (trench entrance for blue depot bump)
-    units::length::meter_t m_blueBumpTrenchOutpostY; ///< Y of BLUE_TRENCH_ALLIANCE_OUTPOST (trench entrance for blue outpost bump)
+    units::length::meter_t m_redBumpTrenchDepotYOffset;    ///< Y of RED_TRENCH_ALLIANCE_DEPOT + 1 ft (trench entrance for red depot bump)
+    units::length::meter_t m_redBumpTrenchOutpostYOffset;  ///< Y of RED_TRENCH_ALLIANCE_OUTPOST - 1 ft (trench entrance for red outpost bump)
+    units::length::meter_t m_blueBumpTrenchDepotYOffset;   ///< Y of BLUE_TRENCH_ALLIANCE_DEPOT - 1 ft (trench entrance for blue depot bump)
+    units::length::meter_t m_blueBumpTrenchOutpostYOffset; ///< Y of BLUE_TRENCH_ALLIANCE_OUTPOST + 1 ft (trench entrance for blue outpost bump)
 
     // trench offsets
     units::length::meter_t m_redTrenchX;         ///< X of the red alliance-side trench entrance (alliance zone side)

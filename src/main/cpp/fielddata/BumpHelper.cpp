@@ -179,8 +179,8 @@ std::vector<BumpPosition> BumpHelper::GetNearestAndCrossFieldBumpEdges(bool isIn
                      : (isInNeutralZone ? offsetVals->GetBlueNeutralBumpEdgeX() : offsetVals->GetBlueAllianceBumpEdgeX());
 
     // Select Y coordinates for outpost and depot bumps on this alliance side
-    auto outpostY = isRed ? offsetVals->GetRedBumpTrenchOutpostY() : offsetVals->GetBlueBumpTrenchOutpostY();
-    auto depotY = isRed ? offsetVals->GetRedBumpTrenchDepotY() : offsetVals->GetBlueBumpTrenchDepotY();
+    auto outpostY = isRed ? offsetVals->GetRedBumpTrenchOutpostYOffset() : offsetVals->GetBlueBumpTrenchOutpostYOffset();
+    auto depotY = isRed ? offsetVals->GetRedBumpTrenchDepotYOffset() : offsetVals->GetBlueBumpTrenchDepotYOffset();
 
     auto outpostId = isRed ? BUMP_ID::RED_OUTPOST_BUMP : BUMP_ID::BLUE_OUTPOST_BUMP;
     auto depotId = isRed ? BUMP_ID::RED_DEPOT_BUMP : BUMP_ID::BLUE_DEPOT_BUMP;

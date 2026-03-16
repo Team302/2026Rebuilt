@@ -25,31 +25,27 @@
 
 //====================================================================================================================================================
 /// @class DriveToTrench
-/// @brief Command to autonomously drive the robot over a field trench using a two-stage navigation approach
+/// @brief Command to autonomously drive the robot through a field trench using a two-stage navigation approach
 ///
-/// This command extends DriveToPose to provide specialized functionality for safely navigating over the trenches
-/// that separate the alliance zone from the neutral zone on the 2026 game field. The command intelligently
-/// determines which trench (Red/Blue, Depot/Outpost) is nearest and calculates an optimal path over it.
+/// This command extends DriveToPose to provide specialized functionality for navigating through the trenches
+/// that separate the alliance zone from the neutral zone on the 2026 game field. The command uses
+/// TrenchHelper to identify the nearest trench and obtain an ordered list of drive waypoints.
 ///
 /// **Two-Stage Navigation:**
-/// The command uses a midpoint-to-endpoint strategy to ensure the robot successfully crosses the trench:
-/// 1. First, drive to the midpoint pose (near side of the trench)
-/// 2. Then, drive to the endpoint pose (far side of the trench)
-///
-/// **Directional Intelligence:**
-/// - If starting in the neutral zone: Drive toward the alliance zone
-/// - If starting in the alliance zone: Drive toward the neutral zone
+/// The command uses a mid-pose-to-end-pose strategy to align the robot before committing to the crossing:
+/// 1. Mid pose  — robot's current X with the trench near-side Y (aligns laterally first)
+/// 2. End pose  — the far-side trench position returned by TrenchHelper
 ///
 /// **Rotation Handling:**
-/// Each bump has predefined rotation angles (45° or 315°) that orient the robot toward the hub center
-/// while crossing, ensuring optimal positioning for game play after the transition.
+/// Waypoint rotations are supplied by TrenchHelper and orient the robot to face the appropriate
+/// alliance wall while transiting the trench.
 ///
-/// The command uses BumpHelper for bump identification, FieldOffsetValues for coordinates, and
-/// NeutralZoneManager for zone detection, making it fully autonomous and field-aware.
+/// The command uses TrenchHelper for trench identification and waypoint generation, making it
+/// fully autonomous and field-aware.
 ///
-/// @see DriveToPose Base class providing PID-controlled pose navigation
-/// @see BumpHelper Utility for identifying nearest bump
-/// @see FieldOffsetValues Field coordinate management
+/// @see DriveToPose       Base class providing PID-controlled pose navigation
+/// @see TrenchHelper      Utility for identifying the nearest trench and building drive waypoints
+/// @see FieldOffsetValues Field coordinate management used internally by TrenchHelper
 //====================================================================================================================================================
 class DriveToTrench : public DriveToPose
 {
@@ -57,8 +53,8 @@ public:
     //------------------------------------------------------------------
     /// @brief      Constructor for DriveToTrench command
     /// @param[in]  chassis - Pointer to the swerve drive subsystem that will execute the movement
-    /// @details    Initializes the command with the chassis reference for autonomous navigation.
-    ///             The constructor sets up the base DriveToPose functionality.
+    /// @details    Initializes the base DriveToPose functionality and configures the distance,
+    ///             angle, and Y-transition tolerances for trench crossing completion detection.
     //------------------------------------------------------------------
     DriveToTrench(subsystems::CommandSwerveDrivetrain *chassis);
 
@@ -71,51 +67,38 @@ public:
 protected:
     //------------------------------------------------------------------
     /// @brief      Calculates target poses for two-stage trench crossing
-    /// @return     DriveToPoses struct with midpoint (trench side) and endpoint (opposite side)
-    /// @details    Overrides base class to provide trench-specific navigation.
-    ///             See implementation for detailed pose calculation logic.
-    /// @see        DriveToTrench.cpp for full implementation details
+    /// @return     DriveToPoses struct with mid pose (current X, near-trench Y) and
+    ///             end pose (far side of trench) from TrenchHelper
+    /// @details    Overrides base class to provide trench-specific navigation waypoints.
+    ///             See DriveToTrench.cpp for full implementation details.
+    /// @see        TrenchHelper::GetTrenchDrivePositions()
     //------------------------------------------------------------------
     struct DriveToPoses GetDriveToPoses() override;
 
     //------------------------------------------------------------------
     /// @brief      Returns the maximum translational velocity for trench crossing
-    /// @return     units::velocity::meters_per_second_t - Maximum velocity (2.0 m/s)
-    /// @details    Limits speed to ensure safe crossing of the trench obstacle.
+    /// @return     units::velocity::meters_per_second_t - Maximum velocity (kMaxVelocityDriveToTrench)
+    /// @details    Limits speed to ensure safe alignment and crossing of the field trench.
     //------------------------------------------------------------------
     units::velocity::meters_per_second_t GetMaxVelocity() const override { return kMaxVelocityDriveToTrench; }
 
     //------------------------------------------------------------------
     /// @brief      Returns the maximum translational acceleration for trench crossing
-    /// @return     units::acceleration::meters_per_second_squared_t - Maximum acceleration (1.0 m/s²)
-    /// @details    Limits acceleration to reduce jerk when approaching and leaving the trench.
+    /// @return     units::acceleration::meters_per_second_squared_t - Maximum acceleration (kMaxAccelerationDriveToTrench)
+    /// @details    Limits acceleration to reduce jerk when approaching and clearing the trench.
     //------------------------------------------------------------------
     units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const override { return kMaxAccelerationDriveToTrench; }
 
 private:
-    //------------------------------------------------------------------
-    /// @brief      Determines the robot heading for the current trench crossing
-    /// @return     units::angle::degree_t - Target rotation angle in degrees
-    /// @details    Returns kTowardBlueAllianceWall (0°) for blue alliance or
-    ///             kTowardRedAllianceWall (180°) for red alliance, orienting the
-    ///             robot toward its own alliance wall while crossing.
-    //------------------------------------------------------------------
-    units::angle::degree_t GetRotation() const;
-
-    /// @brief Rotation to face the blue alliance wall (0°) — used when alliance is blue
-    static constexpr units::degree_t kTowardBlueAllianceWall{0.0};
-    /// @brief Rotation to face the red alliance wall (180°) — used when alliance is red
-    static constexpr units::degree_t kTowardRedAllianceWall{180.0};
-
-    /// @brief Maximum lateral distance from the target pose before the command considers itself complete
+    /// @brief Translational distance tolerance for pose completion (robot must be within 12 in of target)
     static constexpr units::length::inch_t kDistanceThreshold = 12_in;
-    /// @brief Maximum heading error before the command considers the rotation complete
+    /// @brief Heading tolerance for pose completion (robot heading must be within 1°)
     static constexpr units::angle::degree_t kAngleTolerance = 1.0_deg;
-    /// @brief Additional Y-axis tolerance applied during the transition from midpoint to endpoint
+    /// @brief Extra Y-axis tolerance applied during the transition from mid pose to end pose
     static constexpr units::length::inch_t kYTransitionToEndPointTolerance = 3.0_in;
 
-    /// @brief Maximum translational velocity allowed while crossing the trench
+    /// @brief Maximum translational velocity while crossing the trench (2.0 m/s)
     static constexpr units::velocity::meters_per_second_t kMaxVelocityDriveToTrench = 2.0_mps;
-    /// @brief Maximum translational acceleration allowed while crossing the trench
+    /// @brief Maximum translational acceleration while crossing the trench (1.0 m/s²)
     static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationDriveToTrench = 1.0_mps_sq;
 };
