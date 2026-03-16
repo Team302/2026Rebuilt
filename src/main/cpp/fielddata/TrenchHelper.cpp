@@ -88,6 +88,8 @@ TRENCH_ID TrenchHelper::CalcNearestTrench() const
         return TRENCH_ID::RED_DEPOT_TRENCH;
     case BUMP_ID::RED_OUTPOST_BUMP:
         return TRENCH_ID::RED_OUTPOST_TRENCH;
+    default:
+        return TRENCH_ID::RED_OUTPOST_TRENCH; // Default case to satisfy compiler, should not occur if BumpHelper returns valid BUMP_ID
     }
 
     // Fallback return to satisfy compiler warnings about non-void function possibly not returning

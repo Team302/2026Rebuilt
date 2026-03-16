@@ -14,18 +14,9 @@
 //====================================================================================================================================================
 #pragma once
 
-#include "fielddata/BumpHelper.h"
-#include "fielddata/TrenchHelper.h"
 #include "units/angle.h"
 #include "units/length.h"
 #include <vector>
-
-struct TrenchPosition
-{
-    TRENCH_ID trenchId;       ///< Identifier for the trench
-    units::length::meter_t x; ///< X-coordinate of the trench (meters)
-    units::length::meter_t y; ///< Y-coordinate of the trench (meters)
-};
 
 //====================================================================================================================================================
 /// @enum FIELD_OFFSET_ITEMS
