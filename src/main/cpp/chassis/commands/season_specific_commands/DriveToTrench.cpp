@@ -13,11 +13,7 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include "chassis/commands/season_specific_commands/DriveToTrench.h"
-#include "auton/AllianceZoneManager.h"
-#include "auton/NeutralZoneManager.h"
-#include "fielddata/FieldOffsetValues.h"
 #include "utils/FMSData.h"
-#include "utils/PoseUtils.h"
 
 //------------------------------------------------------------------
 /// @brief      Constructor for DriveToTrench command

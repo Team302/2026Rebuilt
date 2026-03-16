@@ -14,14 +14,10 @@
 //====================================================================================================================================================
 #pragma once
 
-#include "auton/AllianceZoneManager.h"
-#include "auton/NeutralZoneManager.h"
 #include "chassis/commands/DriveToPose.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
-#include "fielddata/FieldConstants.h"
 #include "fielddata/TrenchHelper.h"
 #include "units/angle.h"
-#include "utils/FMSData.h"
 
 //====================================================================================================================================================
 /// @class DriveToTrench
