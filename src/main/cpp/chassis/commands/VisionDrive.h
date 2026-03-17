@@ -31,8 +31,6 @@ public:
     VisionDrive(subsystems::CommandSwerveDrivetrain *chassis);
 
     void Initialize() override;
-    virtual units::length::meter_t GetObjectHeight() = 0;
-    virtual std::vector<std::unique_ptr<DragonVisionStruct>> GetObjectSelection() = 0;
     void Execute() override;
     bool IsFinished() override;
     void End(bool interrupted) override;
@@ -41,6 +39,8 @@ public:
     virtual units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const { return kMaxAccelerationDefault; }
 
 protected:
+    virtual swerve::requests::RobotCentric GetRobotDriveRequest() = 0;
+
     subsystems::CommandSwerveDrivetrain *m_chassis;
     swerve::requests::RobotCentric m_RobotDriveRequest = swerve::requests::RobotCentric{}
                                                              .WithDeadband(m_maxSpeed * 0.1)
@@ -57,28 +57,12 @@ private:
 
     DragonVision *m_vision = DragonVision::GetDragonVision();
 
-    static constexpr double m_forwardkP = 0.12;
-    static constexpr double m_forwardkI = 0.1;
-    static constexpr double m_forwardkD = 0.0;
-    static constexpr double m_strafekP = 0.0;
-    static constexpr double m_strafekI = 0.0;
-    static constexpr double m_strafekD = 0.0;
-    static constexpr double m_rotationkP = 5.0;
-    static constexpr double m_rotationkI = 1.5;
-    static constexpr double m_rotationkD = 0.0;
-
     /// @brief Maximum translational velocity for the robot
     units::velocity::meters_per_second_t kMaxVelocity;
     static constexpr units::velocity::meters_per_second_t kMaxVelocityDefault = 4_mps;
 
     units::acceleration::meters_per_second_squared_t kMaxAcceleration;
     static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationDefault = 3_mps_sq;
-
-    frc::PIDController m_xController{m_forwardkP, m_forwardkI, m_forwardkD};
-
-    frc::PIDController m_yController{m_strafekP, m_strafekI, m_strafekD};
-
-    frc::PIDController m_yawController{m_rotationkP, m_rotationkI, m_rotationkD};
 
     swerve::requests::FieldCentric m_fieldDriveRequest = swerve::requests::FieldCentric{}
                                                              .WithDeadband(m_maxSpeed * 0.1)                                  // TODO: Investigate this deadband vs controller deadband
@@ -89,6 +73,4 @@ private:
     int m_visionCacheI = 0;
 
     frc::Transform2d m_targetPoseOffset{frc::Translation2d{0_m, 0_m}, frc::Rotation2d{0_deg}};
-
-    std::vector<std::unique_ptr<DragonVisionStruct>> m_visionCache;
 };

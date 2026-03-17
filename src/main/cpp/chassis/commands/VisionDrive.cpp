@@ -20,48 +20,34 @@
 VisionDrive::VisionDrive(subsystems::CommandSwerveDrivetrain *chassis) : m_chassis(chassis)
 {
     AddRequirements(m_chassis);
-    m_xController.SetIZone(5.0);
-    m_yawController.SetIZone(5.0);
     kMaxVelocity = GetMaxVelocity();
     kMaxAcceleration = GetMaxAcceleration();
 }
 
 void VisionDrive::Initialize()
 {
-    m_xController.Reset();
-    m_yawController.Reset();
-    m_visionCache = GetObjectSelection();
+    m_RobotDriveRequest = GetRobotDriveRequest();
 }
 
 void VisionDrive::Execute()
 {
-    // auto targets = GetObjectSelection();
-    // if (!targets.empty() && targets[0] != nullptr)
-    // {
-    //     // units::angle::degree_t yawError = targets[0]->horizontalOffset;
-    //     // units::length::meter_t rangeToTarget = PoseOffsetUtils::CalculateDistanceFromObject(*targets[0], GetObjectHeight());
+    if (m_RobotDriveRequest.VelocityX == 0_mps && m_RobotDriveRequest.VelocityY == 0_mps && m_RobotDriveRequest.RotationalRate == 0_deg_per_s && m_visionCacheI < 5)
+    {
+        m_chassis->SetControl(m_RobotDriveRequest);
+        m_visionCacheI = 0;
+    }
+    else
+    {
+        double forward = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_FORWARD);
+        double strafe = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE);
+        double rotate = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE);
 
-    //     // auto xVel = units::velocity::meters_per_second_t(m_xController.Calculate(rangeToTarget.value()));
-    //     // auto rotVel = units::angular_velocity::degrees_per_second_t(m_yawController.Calculate(yawError.value()));
-
-    //     // m_chassis->SetControl(
-    //     //     m_RobotDriveRequest.WithVelocityX(xVel)
-    //     //         .WithVelocityY(0.0_mps)
-    //     //         .WithRotationalRate(rotVel));
-    //     // m_visionCacheI = 0;
-    // }
-    // else
-    // {
-    //     double forward = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_FORWARD);
-    //     double strafe = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE);
-    //     double rotate = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE);
-
-    //     m_chassis->SetControl(
-    //         m_fieldDriveRequest.WithVelocityX(forward * m_maxSpeed)
-    //             .WithVelocityY(strafe * m_maxSpeed)
-    //             .WithRotationalRate(rotate * m_maxAngularRate));
-    // }
-    // m_visionCacheI++;
+        m_chassis->SetControl(
+            m_fieldDriveRequest.WithVelocityX(forward * m_maxSpeed)
+                .WithVelocityY(strafe * m_maxSpeed)
+                .WithRotationalRate(rotate * m_maxAngularRate));
+    }
+    m_visionCacheI++;
 }
 
 bool VisionDrive::IsFinished()

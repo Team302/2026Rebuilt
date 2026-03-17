@@ -25,8 +25,9 @@ class DriveToFuel : public frc2::CommandHelper<VisionDrive, DriveToFuel>
 {
 public:
     DriveToFuel(subsystems::CommandSwerveDrivetrain *chassis);
-    units::length::meter_t GetObjectHeight() override { return 5.5_in; };
-    std::vector<std::unique_ptr<DragonVisionStruct>> GetObjectSelection() override;
+
+protected:
+    swerve::requests::RobotCentric GetRobotDriveRequest() override;
 
 private:
     DragonVision *m_vision = nullptr;
@@ -46,7 +47,12 @@ private:
     units::length::meter_t m_XdistLimit = 3_m;
     units::length::meter_t m_IntakeXOffset = 1_m;
 
+    units::velocity::meters_per_second_t m_maxXSpeed = 3_mps;
+    units::angular_velocity::degrees_per_second_t m_maxRotationalSpeed = 45_deg_per_s;
+
     int m_visionCacheI = 0;
 
     subsystems::CommandSwerveDrivetrain *m_chassis;
+
+    std::vector<std::unique_ptr<DragonVisionStruct>> m_visionCache;
 };
