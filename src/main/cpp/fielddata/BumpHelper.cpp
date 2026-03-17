@@ -26,6 +26,7 @@
 
 #include "fielddata/BumpHelper.h"
 #include "chassis/ChassisConfigMgr.h"
+#include "fielddata/FieldOffsetValues.h"
 #include "frc/geometry/Pose2d.h"
 
 /// @brief Singleton instance pointer - initialized to nullptr for lazy instantiation
@@ -151,4 +152,49 @@ BUMP_ID BumpHelper::CalcNearestBump() const
         return BUMP_ID::RED_DEPOT_BUMP; // Red depot bump is nearest
     }
     return BUMP_ID::RED_OUTPOST_BUMP; // Red outpost bump is nearest
+}
+
+//------------------------------------------------------------------
+/// @brief      Retrieves an ordered pair of BumpPositions for a cross-field sweep
+/// @param[in]  isInNeutralZone - true if the robot is currently in the neutral zone,
+///             false if it is in the alliance zone
+/// @return     std::vector<BumpPosition> - Two BumpPosition entries (bumpId, x, y) ordered
+///             nearest-first, where index 0 is the starting bump and index 1 is the
+///             cross-field destination bump
+//------------------------------------------------------------------
+std::vector<BumpPosition> BumpHelper::GetNearestAndCrossFieldBumpEdges(bool isInNeutralZone) const
+{
+    std::vector<BumpPosition> values;
+
+    auto offsetVals = FieldOffsetValues::GetInstance();
+    auto bump = CalcNearestBump();
+
+    // Determine alliance side and whether nearest bump is depot or outpost
+    bool isRed = (bump == BUMP_ID::RED_OUTPOST_BUMP || bump == BUMP_ID::RED_DEPOT_BUMP);
+    bool nearestIsOutpost = (bump == BUMP_ID::RED_OUTPOST_BUMP || bump == BUMP_ID::BLUE_OUTPOST_BUMP);
+
+    // Select the X coordinate for the current side of the bump (neutral vs alliance)
+    auto bumpX = isRed
+                     ? (isInNeutralZone ? offsetVals->GetRedNeutralBumpEdgeX() : offsetVals->GetRedAllianceBumpEdgeX())
+                     : (isInNeutralZone ? offsetVals->GetBlueNeutralBumpEdgeX() : offsetVals->GetBlueAllianceBumpEdgeX());
+
+    // Select Y coordinates for outpost and depot bumps on this alliance side
+    auto outpostY = isRed ? offsetVals->GetRedBumpTrenchOutpostYOffset() : offsetVals->GetBlueBumpTrenchOutpostYOffset();
+    auto depotY = isRed ? offsetVals->GetRedBumpTrenchDepotYOffset() : offsetVals->GetBlueBumpTrenchDepotYOffset();
+
+    auto outpostId = isRed ? BUMP_ID::RED_OUTPOST_BUMP : BUMP_ID::BLUE_OUTPOST_BUMP;
+    auto depotId = isRed ? BUMP_ID::RED_DEPOT_BUMP : BUMP_ID::BLUE_DEPOT_BUMP;
+
+    // Nearest bump first, cross-field bump second
+    if (nearestIsOutpost)
+    {
+        values.emplace_back(BumpPosition{outpostId, bumpX, outpostY});
+        values.emplace_back(BumpPosition{depotId, bumpX, depotY});
+    }
+    else
+    {
+        values.emplace_back(BumpPosition{depotId, bumpX, depotY});
+        values.emplace_back(BumpPosition{outpostId, bumpX, outpostY});
+    }
+    return values;
 }

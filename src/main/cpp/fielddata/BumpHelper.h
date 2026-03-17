@@ -15,10 +15,12 @@
 #pragma once
 
 // C++ includes
+#include <vector>
 
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/geometry/Pose2d.h"
+#include "units/length.h"
 
 //====================================================================================================================================================
 /// @enum BUMP_ID
@@ -34,6 +36,17 @@ enum class BUMP_ID
     BLUE_OUTPOST_BUMP, ///< Bump at the blue alliance outpost, separating blue alliance zone from neutral zone
     RED_DEPOT_BUMP,    ///< Bump at the red alliance depot, separating red alliance zone from neutral zone
     RED_OUTPOST_BUMP   ///< Bump at the red alliance outpost, separating red alliance zone from neutral zone
+};
+
+//====================================================================================================================================================
+/// @struct BumpPosition
+/// @brief Holds the X and Y coordinates for a bump identified by a BUMP_ID
+//====================================================================================================================================================
+struct BumpPosition
+{
+    BUMP_ID bumpId;           ///< Identifier for the bump
+    units::length::meter_t x; ///< X-coordinate of the bump (meters)
+    units::length::meter_t y; ///< Y-coordinate of the bump (meters)
 };
 
 //====================================================================================================================================================
@@ -114,6 +127,22 @@ public:
     /// @see        PoseUtils::GetClosestFieldElement() for distance comparison implementation
     //------------------------------------------------------------------
     BUMP_ID CalcNearestBump() const;
+
+    //------------------------------------------------------------------
+    /// @brief      Retrieves an ordered pair of BumpPositions for a cross-field sweep
+    /// @param[in]  isInNeutralZone - true if the robot is currently in the neutral zone,
+    ///             false if it is in the alliance zone
+    /// @return     std::vector<BumpPosition> - Two BumpPosition entries (bumpId, x, y) ordered
+    ///             nearest-first, where index 0 is the starting bump and index 1 is the
+    ///             cross-field destination bump
+    /// @details    Identifies the nearest bump, then returns two BumpPosition entries ordered
+    ///             nearest-first. The X coordinate reflects the side the robot is currently on
+    ///             (alliance or neutral), and the Y coordinate uses the trench-entrance series
+    ///             so the sweep endpoint aligns with the trench entrance.
+    /// @see        CalcNearestBump() for bump identification
+    /// @see        FieldOffsetValues for the coordinate source data
+    //------------------------------------------------------------------
+    std::vector<BumpPosition> GetNearestAndCrossFieldBumpEdges(bool isInNeutralZone) const;
 
 private:
     //------------------------------------------------------------------

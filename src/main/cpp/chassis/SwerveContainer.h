@@ -18,13 +18,14 @@
 #include <memory>
 
 #include "chassis/commands/TrajectoryDrive.h"
+#include "chassis/commands/season_specific_commands/DriveAlongNearestWall.h"
 #include "chassis/commands/season_specific_commands/DriveOverBump.h"
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"
 #include "chassis/commands/season_specific_commands/DriveToHub.h"
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
+#include "chassis/commands/season_specific_commands/DriveToTrench.h"
 #include "chassis/commands/season_specific_commands/SweepBehindBump.h"
-#include "chassis/commands/season_specific_commands/DriveAlongNearestWall.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "chassis/generated/Telemetry.h"
 #include "frc2/command/CommandPtr.h"
@@ -165,10 +166,14 @@ private:
     /// @brief Drive to tower command for season-specific autonomous navigation (climb mode)
     std::unique_ptr<DriveToTower> m_driveToTower;
 
+    /// @brief Sweep behind bump command for season-specific autonomous navigation
     std::unique_ptr<SweepBehindBump> m_sweepBehindBump;
-    
+
     /// @brief Drive along nearest wall command for season-specific autonomous navigation
     std::unique_ptr<DriveAlongNearestWall> m_driveAlongNearestWall;
+
+    /// @brief Drive to trench command for season-specific autonomous navigation
+    std::unique_ptr<DriveToTrench> m_driveToTrench;
 
     //------------------------------------------------------------------
     /// @brief      Configures button bindings for chassis control
