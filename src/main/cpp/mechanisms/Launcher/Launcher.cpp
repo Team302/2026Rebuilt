@@ -841,8 +841,15 @@ void Launcher::UpdateLauncherTargets()
 
 void Launcher::InitilaizeLauncher()
 {
-	auto turretReverseLimitSwitchTripped = m_turret->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround;
-	auto turretForwardLimitSwitchTripped = m_turret->GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround;
+	bool turretReverseLimitSwitchTripped = false;
+	bool turretForwardLimitSwitchTripped = false;
+
+	if (m_turretEnabled)
+	{
+		m_turret->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround;
+		m_turret->GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround;
+	}
+
 	auto hoodReverseLimitSwitchTripped = m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround;
 
 	if ((m_turretEnabled && (turretReverseLimitSwitchTripped || turretForwardLimitSwitchTripped) && hoodReverseLimitSwitchTripped) ||
