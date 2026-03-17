@@ -31,7 +31,7 @@ void VisionDrive::Initialize()
 
 void VisionDrive::Execute()
 {
-    if (m_RobotDriveRequest.VelocityX == 0_mps && m_RobotDriveRequest.VelocityY == 0_mps && m_RobotDriveRequest.RotationalRate == 0_deg_per_s && m_visionCacheI < 5)
+    if (m_RobotDriveRequest.VelocityX != 0_mps && m_RobotDriveRequest.VelocityY != 0_mps && m_RobotDriveRequest.RotationalRate != 0_deg_per_s && m_visionCacheI < 5)
     {
         m_chassis->SetControl(m_RobotDriveRequest);
         m_visionCacheI = 0;

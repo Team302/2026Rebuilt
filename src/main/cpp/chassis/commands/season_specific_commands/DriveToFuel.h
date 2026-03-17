@@ -52,7 +52,5 @@ private:
 
     int m_visionCacheI = 0;
 
-    subsystems::CommandSwerveDrivetrain *m_chassis;
-
     std::vector<std::unique_ptr<DragonVisionStruct>> m_visionCache;
 };

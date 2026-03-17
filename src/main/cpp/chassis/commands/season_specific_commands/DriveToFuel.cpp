@@ -33,16 +33,14 @@ swerve::requests::RobotCentric DriveToFuel::GetRobotDriveRequest()
     auto m_visionCache = m_vision->GetObjectDetectionTargetInfo(VisionTargetOption::CLOSEST_VALID_TARGET, std::vector<int>{});
     if (!m_visionCache.empty() && m_visionCache[0].get() != nullptr)
     {
-        m_visionCache[0]->horizontalOffset;
-
         units::angular_velocity::degrees_per_second_t rotRate = units::degrees_per_second_t(m_yawController.Calculate(m_visionCache[0]->horizontalOffset.value()));
-        std::clamp(rotRate, -m_maxRotationalSpeed, m_maxRotationalSpeed);
+        rotRate = std::clamp(rotRate, -m_maxRotationalSpeed, m_maxRotationalSpeed);
 
         units::length::meter_t xDist = PoseOffsetUtils::CalculateXYDistanceFromObject(*m_visionCache[0], 5.5_in).first;
-        std::clamp(xDist, 0_m, m_XdistLimit);
+        xDist = std::clamp(xDist, 0_m, m_XdistLimit);
         xDist -= m_IntakeXOffset;
         units::velocity::meters_per_second_t xspeed = units::meters_per_second_t(m_xController.Calculate(xDist.value()));
-        std::clamp(xspeed, 0_mps, m_maxXSpeed);
+        xspeed = std::clamp(xspeed, 0_mps, m_maxXSpeed);
 
         auto request = swerve::requests::RobotCentric{}.WithVelocityX(xspeed).WithVelocityY(0_mps).WithRotationalRate(rotRate);
         request.Deadband = 0.1_mps;
