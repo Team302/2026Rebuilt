@@ -21,11 +21,11 @@
 // FRC includes
 
 // Team 302 includes
+#include "frc/DriverStation.h"
 #include "mechanisms/Intake/OffState.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "teleopcontrol/TeleopControlFunctions.h"
 #include "utils/logging/debug/Logger.h"
-#include "frc/DriverStation.h"
 // Third Party Includes
 
 using namespace std;
@@ -66,7 +66,7 @@ void OffState::Run()
 		}
 		else
 		{
-			m_mechanism->UpdateTargetExtenderPositionDeg(0.0_tr);
+			m_mechanism->UpdateTargetExtenderPositionDeg(0.0_tr); // MECH_TODO: Verify the correct value
 		}
 	}
 }

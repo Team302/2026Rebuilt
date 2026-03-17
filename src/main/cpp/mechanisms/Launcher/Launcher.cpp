@@ -338,7 +338,7 @@ void Launcher::InitializeTalonFXLauncherCompBot302()
 void Launcher::InitializeTalonFXSHoodCompBot302()
 {
 	TalonFXSConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
+	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100); // MECH_TODO: Go to full speed and find current draw, then set limits accordingly
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
 	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -349,19 +349,18 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
 	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
 
-	// MECH_TODO: Set limit switches
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 7;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::degree_t(0);
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 7;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true; // MECH_TODO: verify this works again with new launcher (may have to turn off again and set in LauncherInitialize)
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::turn_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1; // MECH_TODO: Verify this is correct with additoinal CANdi for turret being added back on
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
@@ -370,7 +369,6 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
-	// MECH_TODO: Set Motion Magic params
 	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::turns_per_second_t(52.5);
 	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(200);
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
@@ -403,8 +401,6 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 
 	CANdiConfig.DigitalInputs.S1CloseState = signals::S1CloseStateValue::CloseWhenFloating;
 	CANdiConfig.DigitalInputs.S1FloatState = signals::S1FloatStateValue::FloatDetect;
-	CANdiConfig.DigitalInputs.S2CloseState = signals::S1CloseStateValue::CloseWhenFloating;
-	CANdiConfig.DigitalInputs.S2FloatState = signals::S1FloatStateValue::FloatDetect;
 
 	ctre::phoenix::StatusCode statusCANdi = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
@@ -468,7 +464,7 @@ void Launcher::InitializeTalonFXTransferCompBot302()
 void Launcher::InitializeTalonFXSTurretCompBot302()
 {
 	TalonFXSConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
+	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100); // MECH_TODO: Go to full speed and find current draw, then set limits accordingly
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
 	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -479,19 +475,18 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
 	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
 
-	// MECH_TODO: Set limit switches
 	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 6;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(270);
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;					 // MECH_TODO: verify this works again with new launcher (may have to turn off again and set in LauncherInitialize)
+	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1; // MECH_TODO: Verify this is correct with additoinal CANdi for turret being added back on
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(m_maxTurretAngle);
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 6;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::turn_t(90);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true; // MECH_TODO: verify this works again with new launcher (may have to turn off again and set in LauncherInitialize)
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::turn_t(m_minTurretAngle);
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2; // MECH_TODO: Verify this is correct with additoinal CANdi for turret being added back on
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
@@ -500,14 +495,13 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
-	// MECH_TODO: Set Motion Magic params
 	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::turns_per_second_t(220);
 	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(400);
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 0.60050076744186046511627906976744;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.60050076744186046511627906976744; // MECH_TODO: set new ratio
 	// configs.ExternalFeedback.FeedbackRemoteSensorID = 6;
 	// configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RemoteCANcoder;
 	// configs.ExternalFeedback.SensorToMechanismRatio = 7.251952;
@@ -695,6 +689,7 @@ void Launcher::RunCommonTasks()
 	{
 		m_targetCalculator->UpdateTargetOffset();
 	}
+
 	CalculateTargets();
 	UpdateLauncherTargets();
 
@@ -806,7 +801,7 @@ void Launcher::CalculateTargets()
 
 	m_targetTurretAngle = m_turretEnabled ? m_targetCalculator->GetLauncherTarget(m_lookaheadTime, units::degree_t(m_cachedTurretPosition.value())) : 180_tr; // passing degree back to rebuilt calculator, everything in launcher is in turns due to sensor to mech ratio, but phyiscal units is degrees
 
-	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateDistanceToTarget(m_lookaheadTime);
+	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateMechanismDistanceToTarget(m_lookaheadTime);
 
 	if (AllianceZoneManager::GetInstance()->IsInAllianceZone())
 	{
@@ -820,16 +815,6 @@ void Launcher::CalculateTargets()
 		// m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingHoodAngleArray, units::length::foot_t(distanceToTarget));
 		// m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingLauncherVelocityArray, units::length::foot_t(distanceToTarget));
 	}
-
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Distance To Target", distanceToTarget.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Angle Target", m_targetHoodAngle.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Turret Angle", m_cachedTurretPosition.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Turret Target", m_targetTurretAngle.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Turret Enabled", m_turretEnabled);
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Turret is at target", IsTurretAtTarget());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed Target", m_targetLauncherAngularVelocity.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed RPM", units::angular_velocity::revolutions_per_minute_t(m_cachedLauncherVelocity).value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Angle", m_cachedHoodPosition.value());
 }
 
 void Launcher::UpdateLauncherTargets()
@@ -856,20 +841,27 @@ void Launcher::UpdateLauncherTargets()
 
 void Launcher::InitilaizeLauncher()
 {
-	if ((m_turretEnabled && (m_turret->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround || m_turret->GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround) &&
-		 (m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)) ||
-		(!m_turretEnabled && (m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)) ||
+	auto turretReverseLimitSwitchTripped = m_turret->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround;
+	auto turretForwardLimitSwitchTripped = m_turret->GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround;
+	auto hoodReverseLimitSwitchTripped = m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround;
+
+	if ((m_turretEnabled && (turretReverseLimitSwitchTripped || turretForwardLimitSwitchTripped) && hoodReverseLimitSwitchTripped) ||
+		(!m_turretEnabled && hoodReverseLimitSwitchTripped) ||
 		frc::RobotBase::IsSimulation())
-	// if (frc::RobotBase::IsSimulation() || (m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround))
 	{
-		// if (turretReverseLimitSwitchTripped == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)
+		// if (m_turretEnabled) // MECH_TODO: verify auto reseting limitswitches work with new launcher. May have to enable if we are using the remote sensor as well
 		// {
-		// 	m_turret->SetPosition(m_minTurretAngle);
+		// 	if (turretReverseLimitSwitchTripped == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)
+		// 	{
+		// 		m_turret->SetPosition(m_minTurretAngle);
+		// 	}
+		// 	else
+		// 	{
+		// 		m_turret->SetPosition(m_maxTurretAngle);
+		// 	}
 		// }
-		// else
-		// {
-		// 	m_turret->SetPosition(m_maxTurretAngle);
-		// }
+		// m_hood->SetPosition(m_minHoodAngle);
+
 		m_launcherInitialized = true;
 	}
 }
@@ -939,7 +931,6 @@ bool Launcher::IsFinishedLaunching()
 	{
 		return true;
 	}
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launching Current", m_cachedLauncherCurrent.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launch Current Timer", m_launchCurrentTimer.Get().value());
+
 	return false;
 }

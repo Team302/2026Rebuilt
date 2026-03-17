@@ -225,6 +225,7 @@ void Intake::InitializeTalonFXIntakeCompBot302()
 	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
 	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
+	configs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = units::time::second_t(0.1);
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
@@ -263,7 +264,7 @@ void Intake::InitializeTalonFXIntakeCompBot302()
 void Intake::InitializeTalonFXSExtenderCompBot302()
 {
 	TalonFXSConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
+	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100); // MECH_TODO: I thought these were set in a previous commit, drive at full speed and set
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
 	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -272,19 +273,19 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 
 	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
-	configs.OpenLoopRamps.VoltageOpenLoopRampPeriod = units::time::second_t(0);
+	configs.OpenLoopRamps.VoltageOpenLoopRampPeriod = units::time::second_t(0.1);
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 11;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(100);
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(100); // MECH_TODO: Verify this value, by driving to the limit switch
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 11;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(-10); // Need to verify
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;						// MECH_TODO: once value is verifed, set to true
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(-10); // MECH_TODO: verify this value, by driving to the limit switch and seeing what position it sets to with autoset enabled, then set this value to match that position
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 

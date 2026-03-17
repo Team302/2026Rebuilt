@@ -86,5 +86,5 @@ bool LaunchState::AtTarget()
 bool LaunchState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return (m_mechanism->IsLaunching());
+	return (m_mechanism->IsLaunching() && !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE));
 }

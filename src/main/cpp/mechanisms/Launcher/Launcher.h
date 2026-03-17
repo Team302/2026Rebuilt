@@ -233,11 +233,11 @@ private:
 	units::angular_velocity::revolutions_per_minute_t m_targetLauncherAngularVelocity = 0.0_rpm;
 	units::angle::turn_t m_targetHoodAngle = 0.0_tr;
 	units::angle::turn_t m_minHoodAngle = 0.0_tr;
-	units::angle::turn_t m_maxHoodAngle = 30.0_tr;
-	units::angle::turn_t m_minTurretAngle = 91_tr;
-	units::angle::turn_t m_maxTurretAngle = 267_tr;
+	units::angle::turn_t m_maxHoodAngle = 30.0_tr;	// MECH_TODO: verify and change values for new launcher
+	units::angle::turn_t m_minTurretAngle = 91_tr;	// MECH_TODO: verify and change values for new launcher
+	units::angle::turn_t m_maxTurretAngle = 267_tr; // MECH_TODO: verify and change values for new launcher
 
-	units::angle::turn_t m_turretAngleThreshold = 5.0_tr;
+	units::angle::turn_t m_turretAngleThreshold = 3.0_tr;
 	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 150.0_rpm;
 	units::angle::turn_t m_hoodAngleThreshold = 0.5_tr;
 	units::velocity::meters_per_second_t m_chassisSpeedThreshold = 3.0_mps;
@@ -253,8 +253,6 @@ private:
 
 	// TODO MECH tune and change values in these arrays
 	// All values in turns are actually Degree's
-
-	// droppeed down to 5 spots.Will need to increase when we have time to tune
 	std::array<units::length::inch_t, 6> m_scoringDistanceArray = {79.0_in, 89.0_in, 118.4_in, 140.5_in, 165.6_in, 197.0_in};
 	std::array<units::angle::turn_t, 6> m_scoringHoodAngleArray = {0.0_tr, 0.0_tr, 0.0_tr, 5.02_tr, 7.0_tr, 7.0_tr};
 	std::array<units::angular_velocity::revolutions_per_minute_t, 6> m_scoringLauncherVelocityArray = {2225.0_rpm, 2300.0_rpm, 2700.0_rpm, 2800.0_rpm, 2900.0_rpm, 3100.0_rpm};
@@ -271,8 +269,9 @@ private:
 	units::angle::turn_t m_cachedTurretPosition = 0.0_tr;
 	units::current::ampere_t m_cachedLauncherCurrent = 0.0_A;
 
-	units::angle::turn_t m_passingHoodTargetAngle = 10.0_tr;
+	units::angle::turn_t m_passingHoodTargetAngle = 15.0_tr;
 	units::angular_velocity::revolutions_per_minute_t m_passingLauncherTargetVelocity = 2500.0_rpm;
+
 	// logging paths
 	static constexpr std::string_view m_loggingLauncherTargetPath = "/Launcher/TargetLauncherVelocity";
 	static constexpr std::string_view m_loggingHoodTargetPath = "/Launcher/HoodTargetAngle";
@@ -282,8 +281,10 @@ private:
 
 	static constexpr std::string_view m_loggingTurnsUnits = "Turns";
 	static constexpr std::string_view m_loggingRPMUnits = "RPM";
+
 	bool m_turretEnabled = false;
 	bool m_turretEnabledButtonReleased = true;
+
 	units::current::ampere_t m_isLaunchingCurrentThreshold = 21.0_A;
 	frc::Timer m_launchCurrentTimer;
 	units::time::second_t m_isLaunchingTimeThreshold = 1.0_s;
