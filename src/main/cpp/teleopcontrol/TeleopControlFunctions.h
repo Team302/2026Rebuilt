@@ -51,6 +51,7 @@ public:
         SWEEP_BEHIND_BUMP,
         DRIVE_TO_DEPOT,
         DRIVE_TO_FUEL,
+        AUTO_DEFEND,
 
         // Mechanisms specific
         // Intake

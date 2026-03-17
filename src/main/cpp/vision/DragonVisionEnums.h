@@ -118,7 +118,8 @@ enum class DRAGON_LIMELIGHT_PIPELINE
 {
     UNKNOWN = -1,
     APRIL_TAG = 0,
-    MACHINE_LEARNING_PL = 2,
+    BUMPERS = 1,
+    FUEL_PL = 2,
     COLOR_THRESHOLD
 };
 

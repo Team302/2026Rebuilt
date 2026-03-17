@@ -13,22 +13,22 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include "chassis/commands/season_specific_commands/DriveToFuel.h"
+#include "chassis/commands/season_specific_commands/AutoDefend.h"
 #include "vision/DragonVision.h"
 #include "vision/PoseOffsetUtils.h"
 
-DriveToFuel::DriveToFuel(subsystems::CommandSwerveDrivetrain *chassis) : frc2::CommandHelper<VisionDrive, DriveToFuel>(chassis)
+AutoDefend::AutoDefend(subsystems::CommandSwerveDrivetrain *chassis) : frc2::CommandHelper<VisionDrive, AutoDefend>(chassis)
 {
     m_vision = DragonVision::GetDragonVision();
 }
 
-swerve::requests::RobotCentric DriveToFuel::GetRobotDriveRequest()
+swerve::requests::RobotCentric AutoDefend::GetRobotDriveRequest()
 {
     if (m_vision == nullptr)
     {
         return swerve::requests::RobotCentric{};
     }
-    m_vision->SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION, DRAGON_LIMELIGHT_PIPELINE::FUEL_PL);
+    m_vision->SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION, DRAGON_LIMELIGHT_PIPELINE::BUMPERS);
 
     auto m_visionCache = m_vision->GetObjectDetectionTargetInfo(VisionTargetOption::CLOSEST_VALID_TARGET, std::vector<int>{});
     if (!m_visionCache.empty() && m_visionCache[0].get() != nullptr)
@@ -38,13 +38,19 @@ swerve::requests::RobotCentric DriveToFuel::GetRobotDriveRequest()
         units::angular_velocity::degrees_per_second_t rotRate = units::degrees_per_second_t(m_yawController.Calculate(m_visionCache[0]->horizontalOffset.value()));
         std::clamp(rotRate, -m_maxRotationalSpeed, m_maxRotationalSpeed);
 
-        units::length::meter_t xDist = PoseOffsetUtils::CalculateXYDistanceFromObject(*m_visionCache[0], 5.5_in).first;
+        auto targetinfo = PoseOffsetUtils::CalculateXYDistanceFromObject(*m_visionCache[0], 5.5_in);
+        units::length::meter_t xDist = targetinfo.first;
         std::clamp(xDist, 0_m, m_XdistLimit);
         xDist -= m_IntakeXOffset;
         units::velocity::meters_per_second_t xspeed = units::meters_per_second_t(m_xController.Calculate(xDist.value()));
         std::clamp(xspeed, 0_mps, m_maxXSpeed);
 
-        auto request = swerve::requests::RobotCentric{}.WithVelocityX(xspeed).WithVelocityY(0_mps).WithRotationalRate(rotRate);
+        units::length::meter_t yDist = targetinfo.second;
+        std::clamp(yDist, -m_YdistLimit, m_YdistLimit);
+        units::velocity::meters_per_second_t yspeed = units::meters_per_second_t(m_yController.Calculate(yDist.value()));
+        std::clamp(yspeed, -m_maxYSpeed, m_maxYSpeed);
+
+        auto request = swerve::requests::RobotCentric{}.WithVelocityX(xspeed).WithVelocityY(0.0_mps).WithRotationalRate(0.0_deg_per_s);
         request.Deadband = 0.1_mps;
         return request;
     }

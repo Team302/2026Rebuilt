@@ -40,7 +40,7 @@ void CameraConfig_9998::BuildCameraConfig()
                                                    units::angle::degree_t(-20),                     // units::angle::degree_t pitch,          /// <I> - Pitch of camera
                                                    units::angle::degree_t(0),                       // units::angle::degree_t yaw,            /// <I> - Yaw of camera
                                                    units::angle::degree_t(0),                       // units::angle::degree_t roll,           /// <I> - Roll of camera
-                                                   DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL,  /// <I> enum for starting pipeline
+                                                   DRAGON_LIMELIGHT_PIPELINE::FUEL_PL,              /// <I> enum for starting pipeline
                                                    DRAGON_LIMELIGHT_LED_MODE::LED_OFF               // DRAGON_LIMELIGHT_LED_MODE ledMode
     );                                                                                              // additional parameter
     vision->AddLimelight(std::move(front), DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION);
