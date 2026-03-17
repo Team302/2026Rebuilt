@@ -50,6 +50,7 @@ public:
         DRIVE_TO_TOWER,
         SWEEP_BEHIND_BUMP,
         DRIVE_TO_DEPOT,
+        DRIVE_TO_TRENCH,
 
         // Mechanisms specific
         // Intake
