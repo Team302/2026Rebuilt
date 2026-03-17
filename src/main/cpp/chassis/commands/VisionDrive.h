@@ -36,7 +36,6 @@ public:
     void End(bool interrupted) override;
 
     virtual units::velocity::meters_per_second_t GetMaxVelocity() const { return kMaxVelocityDefault; }
-    virtual units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const { return kMaxAccelerationDefault; }
 
 protected:
     virtual swerve::requests::RobotCentric GetRobotDriveRequest() = 0;
@@ -47,9 +46,7 @@ protected:
 private:
     TeleopControl *m_controller = TeleopControl::GetInstance();
     units::velocity::meters_per_second_t m_maxSpeed = 4_mps;
-    units::velocity::meters_per_second_t m_maxVisionSpeed = 1.25_mps;
-    units::angular_velocity::degrees_per_second_t m_visionAngularRate = 360_deg_per_s;
-    units::angular_velocity::degrees_per_second_t m_maxAngularRate;
+    units::angular_velocity::degrees_per_second_t m_maxAngularRate = 360_deg_per_s;
 
     DragonVision *m_vision = DragonVision::GetDragonVision();
 

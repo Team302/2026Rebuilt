@@ -44,7 +44,7 @@ private:
     frc::PIDController m_yController{kPDrive, kIDrive, kDDrive};
     frc::PIDController m_yawController{kPYaw, kIYaw, kDYaw};
 
-    units::length::meter_t m_XdistLimit = 3_m;
+    units::length::meter_t m_XdistLimit = 10_m;
     units::length::meter_t m_IntakeXOffset = 1_m;
 
     units::velocity::meters_per_second_t m_maxXSpeed = 3_mps;

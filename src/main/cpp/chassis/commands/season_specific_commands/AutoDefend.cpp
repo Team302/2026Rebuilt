@@ -30,7 +30,7 @@ swerve::requests::RobotCentric AutoDefend::GetRobotDriveRequest()
     }
     m_vision->SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION, DRAGON_LIMELIGHT_PIPELINE::BUMPERS);
 
-    auto m_visionCache = m_vision->GetObjectDetectionTargetInfo(VisionTargetOption::CLOSEST_VALID_TARGET, std::vector<int>{});
+    m_visionCache = m_vision->GetObjectDetectionTargetInfo(VisionTargetOption::CLOSEST_VALID_TARGET, std::vector<int>{});
     if (!m_visionCache.empty() && m_visionCache[0].get() != nullptr)
     {
         units::angular_velocity::degrees_per_second_t rotRate = units::degrees_per_second_t(m_yawController.Calculate(m_visionCache[0]->horizontalOffset.value()));
@@ -48,7 +48,7 @@ swerve::requests::RobotCentric AutoDefend::GetRobotDriveRequest()
         units::velocity::meters_per_second_t yspeed = units::meters_per_second_t(m_yController.Calculate(yDist.value()));
         yspeed = std::clamp(yspeed, -m_maxYSpeed, m_maxYSpeed);
 
-        auto request = swerve::requests::RobotCentric{}.WithVelocityX(xspeed).WithVelocityY(0.0_mps).WithRotationalRate(0.0_deg_per_s);
+        auto request = swerve::requests::RobotCentric{}.WithVelocityX(-xspeed).WithVelocityY(yspeed).WithRotationalRate(0.0_deg_per_s);
         request.Deadband = 0.1_mps;
         return request;
     }

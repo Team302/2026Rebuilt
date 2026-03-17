@@ -30,7 +30,7 @@ swerve::requests::RobotCentric DriveToFuel::GetRobotDriveRequest()
     }
     m_vision->SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION, DRAGON_LIMELIGHT_PIPELINE::FUEL_PL);
 
-    auto m_visionCache = m_vision->GetObjectDetectionTargetInfo(VisionTargetOption::CLOSEST_VALID_TARGET, std::vector<int>{});
+    m_visionCache = m_vision->GetObjectDetectionTargetInfo(VisionTargetOption::CLOSEST_VALID_TARGET, std::vector<int>{});
     if (!m_visionCache.empty() && m_visionCache[0].get() != nullptr)
     {
         units::angular_velocity::degrees_per_second_t rotRate = units::degrees_per_second_t(m_yawController.Calculate(m_visionCache[0]->horizontalOffset.value()));
@@ -40,9 +40,9 @@ swerve::requests::RobotCentric DriveToFuel::GetRobotDriveRequest()
         xDist = std::clamp(xDist, 0_m, m_XdistLimit);
         xDist -= m_IntakeXOffset;
         units::velocity::meters_per_second_t xspeed = units::meters_per_second_t(m_xController.Calculate(xDist.value()));
-        xspeed = std::clamp(xspeed, 0_mps, m_maxXSpeed);
+        xspeed = std::clamp(xspeed, -m_maxXSpeed, m_maxXSpeed);
 
-        auto request = swerve::requests::RobotCentric{}.WithVelocityX(xspeed).WithVelocityY(0_mps).WithRotationalRate(rotRate);
+        auto request = swerve::requests::RobotCentric{}.WithVelocityX(-xspeed).WithVelocityY(0_mps).WithRotationalRate(rotRate);
         request.Deadband = 0.1_mps;
         return request;
     }

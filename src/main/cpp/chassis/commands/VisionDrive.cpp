@@ -20,23 +20,17 @@
 VisionDrive::VisionDrive(subsystems::CommandSwerveDrivetrain *chassis) : m_chassis(chassis)
 {
     AddRequirements(m_chassis);
-    kMaxVelocity = GetMaxVelocity();
-    kMaxAcceleration = GetMaxAcceleration();
+    m_maxSpeed = GetMaxVelocity();
 }
 
 void VisionDrive::Initialize()
 {
-    m_RobotDriveRequest = GetRobotDriveRequest();
 }
 
 void VisionDrive::Execute()
 {
-    if (m_RobotDriveRequest.VelocityX != 0_mps && m_RobotDriveRequest.VelocityY != 0_mps && m_RobotDriveRequest.RotationalRate != 0_deg_per_s && m_visionCacheI < 5)
-    {
-        m_chassis->SetControl(m_RobotDriveRequest);
-        m_visionCacheI = 0;
-    }
-    else
+    m_RobotDriveRequest = GetRobotDriveRequest();
+    if (m_RobotDriveRequest.VelocityX == 0_mps && m_RobotDriveRequest.VelocityY == 0_mps && m_RobotDriveRequest.RotationalRate == 0_deg_per_s)
     {
         double forward = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_FORWARD);
         double strafe = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE);
@@ -47,7 +41,15 @@ void VisionDrive::Execute()
                 .WithVelocityY(strafe * m_maxSpeed)
                 .WithRotationalRate(rotate * m_maxAngularRate));
     }
-    m_visionCacheI++;
+    else
+    {
+        if (m_visionCacheI < 10)
+        {
+            m_chassis->SetControl(m_RobotDriveRequest);
+            m_visionCacheI = 0;
+        }
+        m_visionCacheI++;
+    }
 }
 
 bool VisionDrive::IsFinished()
