@@ -42,11 +42,7 @@ protected:
     virtual swerve::requests::RobotCentric GetRobotDriveRequest() = 0;
 
     subsystems::CommandSwerveDrivetrain *m_chassis;
-    swerve::requests::RobotCentric m_RobotDriveRequest = swerve::requests::RobotCentric{}
-                                                             .WithDeadband(m_maxSpeed * 0.1)
-                                                             .WithRotationalDeadband(m_maxAngularRate * 0.1)
-                                                             .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage)
-                                                             .WithDesaturateWheelSpeeds(true);
+    swerve::requests::RobotCentric m_RobotDriveRequest = swerve::requests::RobotCentric{};
 
 private:
     TeleopControl *m_controller = TeleopControl::GetInstance();
@@ -71,6 +67,4 @@ private:
                                                              .WithDesaturateWheelSpeeds(true);
 
     int m_visionCacheI = 0;
-
-    frc::Transform2d m_targetPoseOffset{frc::Translation2d{0_m, 0_m}, frc::Rotation2d{0_deg}};
 };
