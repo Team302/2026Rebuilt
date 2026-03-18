@@ -288,7 +288,7 @@ void Launcher::InitializeTalonFXLauncherCompBot302()
 	configs.CurrentLimits.SupplyCurrentLowerTime = units::time::second_t(0);
 
 	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
-	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
+	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-3.5);
 	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
@@ -475,18 +475,18 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
 	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
 
-	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
+	configs.HardwareLimitSwitch.ForwardLimitEnable = false; //  true;/// MECH_TODO: Re enable once we have a swithc
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 6;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;					 // MECH_TODO: verify this works again with new launcher (may have to turn off again and set in LauncherInitialize)
-	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1; // MECH_TODO: Verify this is correct with additoinal CANdi for turret being added back on
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false; // true; // MECH_TODO: verify this works again with new launcher (may have to turn off again and set in LauncherInitialize)
+	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(m_maxTurretAngle);
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 6;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true; // MECH_TODO: verify this works again with new launcher (may have to turn off again and set in LauncherInitialize)
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::turn_t(m_minTurretAngle);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2; // MECH_TODO: Verify this is correct with additoinal CANdi for turret being added back on
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = m_minTurretAngle;
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
@@ -501,7 +501,7 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 0.60050076744186046511627906976744; // MECH_TODO: set new ratio
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.672080457282649604817;
 	// configs.ExternalFeedback.FeedbackRemoteSensorID = 6;
 	// configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RemoteCANcoder;
 	// configs.ExternalFeedback.SensorToMechanismRatio = 7.251952;

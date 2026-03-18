@@ -279,14 +279,14 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 11;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(100); // MECH_TODO: Verify this value, by driving to the limit switch
-	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
+	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 11;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;						// MECH_TODO: once value is verifed, set to true
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(-10); // MECH_TODO: verify this value, by driving to the limit switch and seeing what position it sets to with autoset enabled, then set this value to match that position
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
@@ -325,8 +325,8 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 
 	CANdiConfiguration CANdiConfig{};
 
-	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenFloating;
-	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::FloatDetect;
+	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenNotHigh;
+	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::PullHigh;
 	CANdiConfig.DigitalInputs.S2CloseState = ctre::phoenix6::signals::S2CloseStateValue::CloseWhenFloating;
 	CANdiConfig.DigitalInputs.S2FloatState = ctre::phoenix6::signals::S2FloatStateValue::FloatDetect;
 

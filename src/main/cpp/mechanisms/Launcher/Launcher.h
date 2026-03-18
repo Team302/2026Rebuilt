@@ -233,8 +233,8 @@ private:
 	units::angular_velocity::revolutions_per_minute_t m_targetLauncherAngularVelocity = 0.0_rpm;
 	units::angle::turn_t m_targetHoodAngle = 0.0_tr;
 	units::angle::turn_t m_minHoodAngle = 0.0_tr;
-	units::angle::turn_t m_maxHoodAngle = 30.0_tr;	// MECH_TODO: verify and change values for new launcher
-	units::angle::turn_t m_minTurretAngle = 91_tr;	// MECH_TODO: verify and change values for new launcher
+	units::angle::turn_t m_maxHoodAngle = 30.0_tr; // MECH_TODO: verify and change values for new launcher
+	units::angle::turn_t m_minTurretAngle = 87_tr;
 	units::angle::turn_t m_maxTurretAngle = 267_tr; // MECH_TODO: verify and change values for new launcher
 
 	units::angle::turn_t m_turretAngleThreshold = 3.0_tr;
@@ -282,7 +282,7 @@ private:
 	static constexpr std::string_view m_loggingTurnsUnits = "Turns";
 	static constexpr std::string_view m_loggingRPMUnits = "RPM";
 
-	bool m_turretEnabled = false;
+	bool m_turretEnabled = true;
 	bool m_turretEnabledButtonReleased = true;
 
 	units::current::ampere_t m_isLaunchingCurrentThreshold = 21.0_A;
