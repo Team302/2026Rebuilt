@@ -805,8 +805,6 @@ void Launcher::CalculateTargets()
 	m_targetTurretAngle = m_turretEnabled ? m_targetCalculator->GetLauncherTarget(m_lookaheadTime, units::degree_t(m_cachedTurretPosition.value())) : 180_tr; // passing degree back to rebuilt calculator, everything in launcher is in turns due to sensor to mech ratio, but phyiscal units is degrees
 
 	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateMechanismDistanceToTarget(m_lookaheadTime);
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Distance", distanceToTarget.value());
-
 	if (AllianceZoneManager::GetInstance()->IsInAllianceZone())
 	{
 		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_scoringDistanceArray, m_scoringHoodAngleArray, distanceToTarget);
@@ -819,6 +817,10 @@ void Launcher::CalculateTargets()
 		// m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingHoodAngleArray, units::length::foot_t(distanceToTarget));
 		// m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingLauncherVelocityArray, units::length::foot_t(distanceToTarget));
 	}
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Distance", distanceToTarget.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Target Hood", m_targetHoodAngle.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Target Launcher Velocity", m_targetLauncherAngularVelocity.value());
 }
 
 void Launcher::UpdateLauncherTargets()
