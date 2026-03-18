@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ctre/phoenix6/swerve/SwerveDrivetrain.hpp"
 #include "ctre/phoenix6/CANcoder.hpp"
 #include "ctre/phoenix6/TalonFX.hpp"
+#include "ctre/phoenix6/swerve/SwerveDrivetrain.hpp"
 
 using namespace ctre::phoenix6;
 
@@ -155,7 +155,7 @@ private:
     static constexpr int kFrontRightDriveMotorId = 3;
     static constexpr int kFrontRightSteerMotorId = 2;
     static constexpr int kFrontRightEncoderId = 2;
-    static constexpr units::turn_t kFrontRightEncoderOffset = 0.2646484375_tr;
+    static constexpr units::turn_t kFrontRightEncoderOffset = 0.264404296875_tr;
     static constexpr bool kFrontRightSteerMotorInverted = false;
     static constexpr bool kFrontRightEncoderInverted = false;
 

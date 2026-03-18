@@ -68,7 +68,7 @@ void LauncherTuningState::Run()
 		if (m_speedUpButtonReleased)
 		{
 			m_launcherPercentOut += 0.05;
-			m_launcherTarget += units::angular_velocity::revolutions_per_minute_t(100);
+			m_launcherTarget += units::angular_velocity::revolutions_per_minute_t(50);
 		}
 		m_speedUpButtonReleased = false;
 	}
@@ -77,7 +77,7 @@ void LauncherTuningState::Run()
 		if (m_speedDownButtonReleased)
 		{
 			m_launcherPercentOut -= 0.05;
-			m_launcherTarget -= units::angular_velocity::revolutions_per_minute_t(100);
+			m_launcherTarget -= units::angular_velocity::revolutions_per_minute_t(50);
 		}
 		m_speedDownButtonReleased = false;
 	}
@@ -107,6 +107,8 @@ void LauncherTuningState::Run()
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("LauncherTuningState"), string("Launcher Target RPM"), m_launcherTarget.value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("LauncherTuningState"), string("Launcher Percent Out"), m_launcherPercentOut);
+	units::length::inch_t distanceToTarget = RebuiltTargetCalculator::GetInstance()->CalculateMechanismDistanceToTarget();
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("LauncherTuningState"), "Distance", distanceToTarget.value());
 }
 
 void LauncherTuningState::Exit()

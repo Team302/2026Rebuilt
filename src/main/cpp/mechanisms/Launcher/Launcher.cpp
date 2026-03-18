@@ -667,6 +667,9 @@ void Launcher::RefreshCachedMotorData()
 	m_cachedHoodPosition = m_hood->GetPosition().GetValue();
 	m_cachedTurretPosition = m_turretEnabled ? m_turret->GetPosition().GetValue() : 180_tr;
 	m_cachedLauncherCurrent = m_launcher->GetStatorCurrent().GetValue();
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed", units::angular_velocity::revolutions_per_minute_t(m_cachedLauncherVelocity).value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Position", m_cachedHoodPosition.value());
 }
 
 void Launcher::RunCommonTasks()
@@ -802,6 +805,7 @@ void Launcher::CalculateTargets()
 	m_targetTurretAngle = m_turretEnabled ? m_targetCalculator->GetLauncherTarget(m_lookaheadTime, units::degree_t(m_cachedTurretPosition.value())) : 180_tr; // passing degree back to rebuilt calculator, everything in launcher is in turns due to sensor to mech ratio, but phyiscal units is degrees
 
 	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateMechanismDistanceToTarget(m_lookaheadTime);
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Distance", distanceToTarget.value());
 
 	if (AllianceZoneManager::GetInstance()->IsInAllianceZone())
 	{
