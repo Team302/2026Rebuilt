@@ -802,8 +802,15 @@ bool Launcher::IsInLaunchZone() const
 void Launcher::CalculateTargets()
 {
 
-	m_targetTurretAngle = m_turretEnabled ? m_targetCalculator->GetLauncherTarget(m_lookaheadTime, units::degree_t(m_cachedTurretPosition.value())) : 180_tr; // passing degree back to rebuilt calculator, everything in launcher is in turns due to sensor to mech ratio, but phyiscal units is degrees
-
+	if (m_turretEnabled)
+	{
+		m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, units::degree_t(m_cachedTurretPosition.value())); // passing degree back to rebuilt calculator, everything in launcher is in turns due to sensor to mech ratio, but phyiscal units is degrees
+	}
+	else
+	{
+		m_targetTurretAngle = 180_deg;
+		m_chassis->SetTargetChassisRotation(m_targetCalculator->GetChassisTargetForLaunching(m_lookaheadTime));
+	}
 	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateMechanismDistanceToTarget(m_lookaheadTime);
 	if (AllianceZoneManager::GetInstance()->IsInAllianceZone())
 	{

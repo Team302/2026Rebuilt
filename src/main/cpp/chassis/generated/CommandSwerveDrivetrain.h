@@ -308,9 +308,10 @@ namespace subsystems
             m_debounceTimer.Reset();
             m_prevPose = GetPose();
         }
+
         void SetTargetChassisRotation(units::angle::degree_t targetRotation)
         {
-            m_targetChassisRotation = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed ? AngleUtils::GetEquivAngle(targetRotation += 180_deg) : targetRotation;
+            m_targetChassisRotation = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ? AngleUtils::GetEquivAngle(targetRotation += 180_deg) : targetRotation;
         }
 
         units::angle::degree_t GetTargetChassisRotation()
