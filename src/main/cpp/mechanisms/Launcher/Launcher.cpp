@@ -196,7 +196,7 @@ void Launcher::CreateCompBot302()
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_velocityRPS = new ControlData(
+	m_velocityRPS = new ControlData(					  // MECH_TODO: Retune PIDs
 		ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
 		"m_velocityRPS",								  // std::string indentifier
@@ -218,7 +218,7 @@ void Launcher::CreateCompBot302()
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_positionDegreesHood = new ControlData(
+	m_positionDegreesHood = new ControlData(			  // MECH_TODO: Retune PIDs
 		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
 		"m_positionDegreesHood",						  // std::string indentifier
