@@ -196,7 +196,7 @@ void Launcher::CreateCompBot302()
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_velocityRPS = new ControlData(
+	m_velocityRPS = new ControlData(					  // MECH_TODO: Retune PIDs
 		ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
 		"m_velocityRPS",								  // std::string indentifier
@@ -218,7 +218,7 @@ void Launcher::CreateCompBot302()
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_positionDegreesHood = new ControlData(
+	m_positionDegreesHood = new ControlData(			  // MECH_TODO: Retune PIDs
 		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
 		"m_positionDegreesHood",						  // std::string indentifier
@@ -288,7 +288,7 @@ void Launcher::InitializeTalonFXLauncherCompBot302()
 	configs.CurrentLimits.SupplyCurrentLowerTime = units::time::second_t(0);
 
 	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
-	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
+	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0); // MECH_TODO: Change to -4V and see if it helps with overshooting and oscillation at target velocity
 	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
