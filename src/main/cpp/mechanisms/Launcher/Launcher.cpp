@@ -944,7 +944,7 @@ void Launcher::UpdateTurretEnabled()
 }
 bool Launcher::IsFinishedLaunching()
 {
-	if (m_cachedLauncherCurrent > m_isLaunchingCurrentThreshold)
+	if (m_cachedLauncherCurrent > m_isLaunchingCurrentThreshold) // MECH_TODO: verify this current threshold with new launcher
 	{
 		m_launchCurrentTimer.Reset();
 		m_launchCurrentTimer.Start();
