@@ -18,8 +18,8 @@
 #include <string>
 
 // FRC Includes
-#include <frc/Timer.h>
-#include <networktables/NetworkTableInstance.h>
+#include "frc/Timer.h"
+#include "networktables/NetworkTableInstance.h"
 
 #include "Intake.h"
 #include "state/RobotState.h"
