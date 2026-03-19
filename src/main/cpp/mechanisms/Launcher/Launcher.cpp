@@ -475,9 +475,9 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
 	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
 
-	configs.HardwareLimitSwitch.ForwardLimitEnable = false; //  true;/// MECH_TODO: Re enable once we have a swithc
+	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 6;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false; // true; // MECH_TODO: verify this works again with new launcher (may have to turn off again and set in LauncherInitialize)
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true; // MECH_TODO: verify this works again with new launcher (may have to turn off again and set in LauncherInitialize)
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(m_maxTurretAngle);
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
@@ -859,8 +859,8 @@ void Launcher::InitilaizeLauncher()
 
 	if (m_turretEnabled)
 	{
-		m_turret->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround;
-		m_turret->GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround;
+		turretReverseLimitSwitchTripped = m_turret->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround;
+		turretForwardLimitSwitchTripped = m_turret->GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround;
 	}
 
 	auto hoodReverseLimitSwitchTripped = m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround;
