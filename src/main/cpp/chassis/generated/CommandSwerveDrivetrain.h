@@ -2,17 +2,17 @@
 
 #include "ctre/phoenix6/SignalLogger.hpp"
 
+#include <ctre/phoenix6/swerve/SwerveDrivetrain.hpp>
 #include <frc/DriverStation.h>
 #include <frc/Notifier.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/Commands.h>
 #include <frc2/command/SubsystemBase.h>
 #include <frc2/command/sysid/SysIdRoutine.h>
-#include <ctre/phoenix6/swerve/SwerveDrivetrain.hpp>
 
 #include "chassis/generated/TunerSwerveBase.h"
-#include <frc/geometry/Pose2d.h>
 #include "utils/AngleUtils.h"
+#include <frc/geometry/Pose2d.h>
 using namespace ctre::phoenix6;
 
 /**
@@ -308,10 +308,17 @@ namespace subsystems
             m_debounceTimer.Reset();
             m_prevPose = GetPose();
         }
+
         void SetTargetChassisRotation(units::angle::degree_t targetRotation)
         {
-            m_targetChassisRotation = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kRed ? AngleUtils::GetEquivAngle(targetRotation += 180_deg) : targetRotation;
+            m_targetChassisRotation = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ? AngleUtils::GetEquivAngle(targetRotation += 180_deg) : targetRotation;
         }
+
+        units::angle::degree_t GetTargetChassisRotation()
+        {
+            return m_targetChassisRotation;
+        }
+
         bool IsChassisAtRotationTarget()
         {
             return (units::math::abs(GetPose().Rotation().Degrees() - m_targetChassisRotation) < m_chassisRotationThreshold);
