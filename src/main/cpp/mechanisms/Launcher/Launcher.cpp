@@ -670,6 +670,7 @@ void Launcher::RefreshCachedMotorData()
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed", units::angular_velocity::revolutions_per_minute_t(m_cachedLauncherVelocity).value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Position", m_cachedHoodPosition.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "turret position", m_cachedTurretPosition.value());
 }
 
 void Launcher::RunCommonTasks()
@@ -828,6 +829,7 @@ void Launcher::CalculateTargets()
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Distance", distanceToTarget.value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Target Hood", m_targetHoodAngle.value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Target Launcher Velocity", m_targetLauncherAngularVelocity.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "turret Target", m_targetTurretAngle.value());
 }
 
 void Launcher::UpdateLauncherTargets()
