@@ -43,7 +43,7 @@ void VisionDrive::Execute()
     }
     else
     {
-        if (m_visionCacheI < 10)
+        if (m_visionCacheI < 5)
         {
             m_chassis->SetControl(m_RobotDriveRequest);
             m_visionCacheI = 0;

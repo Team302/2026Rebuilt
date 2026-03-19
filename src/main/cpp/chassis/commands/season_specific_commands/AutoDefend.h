@@ -32,7 +32,7 @@ protected:
 private:
     DragonVision *m_vision = nullptr;
 
-    static constexpr double kPDrive{2};
+    static constexpr double kPDrive{4.0};
     static constexpr double kIDrive{0.0};
     static constexpr double kDDrive{0.0};
 
@@ -44,8 +44,8 @@ private:
     frc::PIDController m_yController{kPDrive, kIDrive, kDDrive};
     frc::PIDController m_yawController{kPYaw, kIYaw, kDYaw};
 
-    units::length::meter_t m_XdistLimit = 3_m;
-    units::length::meter_t m_YdistLimit = 2_m;
+    units::length::meter_t m_XdistLimit = 100_m;
+    units::length::meter_t m_YdistLimit = 100_m;
 
     units::length::meter_t m_IntakeXOffset = 1_m;
 

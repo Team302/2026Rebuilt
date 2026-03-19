@@ -15,12 +15,12 @@
 
 #pragma once
 
+#include <cmath>
 #include <memory>
 #include <utility>
-#include <cmath>
 
-#include "units/length.h"
 #include "units/angle.h"
+#include "units/length.h"
 #include "vision/DragonVisionStruct.h"
 
 class PoseOffsetUtils
@@ -33,6 +33,11 @@ public:
     /// @param target The vision target data (ObjectDetection).
     /// @return std::pair<units::length::meter_t, units::length::meter_t> where first is X (Forward), second is Y (Left).
     static std::pair<units::length::meter_t, units::length::meter_t> CalculateXYDistanceFromObject(const DragonVisionStruct &target, units::length::inch_t objectHeight);
+
+    /// @brief Calculates the X and Y distance from the center of the robot to the detected target group.
+    /// @param target The vision target data (ObjectDetection).
+    /// @return std::pair<units::length::meter_t, units::length::meter_t> where first is X (Forward), second is Y (Left).
+    static std::pair<units::length::meter_t, units::length::meter_t> CalculateXYDistanceFromTargetGroup(const DragonVisionStruct &target, units::length::inch_t objectHeight);
 
     /// @brief Calculates the straight-line ground distance (hypotenuse) from the center of the robot to the object.
     /// @param target The vision target data (ObjectDetection).

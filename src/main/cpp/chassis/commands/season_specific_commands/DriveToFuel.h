@@ -36,7 +36,7 @@ private:
     static constexpr double kIDrive{0.0};
     static constexpr double kDDrive{0.0};
 
-    static constexpr double kPYaw{1.5};
+    static constexpr double kPYaw{3};
     static constexpr double kIYaw{0.0};
     static constexpr double kDYaw{0.0};
 
@@ -45,7 +45,7 @@ private:
     frc::PIDController m_yawController{kPYaw, kIYaw, kDYaw};
 
     units::length::meter_t m_XdistLimit = 10_m;
-    units::length::meter_t m_IntakeXOffset = 1_m;
+    units::length::meter_t m_IntakeXOffset = 0.5_m;
 
     units::velocity::meters_per_second_t m_maxXSpeed = 3_mps;
     units::angular_velocity::degrees_per_second_t m_maxRotationalSpeed = 45_deg_per_s;

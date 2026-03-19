@@ -55,6 +55,9 @@ struct ObjectDectcionSpecificData
     units::angle::degree_t camPitch;       /// <I> - Pitch of camera
     units::angle::degree_t camYaw;         /// <I> - Yaw of camera
     units::angle::degree_t camRoll;        /// <I> - Roll of camera
+
+    units::angle::degree_t targetGroupHorizontalAngle; ///< Horizontal angle to target from camera center (positive = target is to the left)
+    units::angle::degree_t targetGroupVerticalAngle;   ///< Vertical angle to target from camera center (positive = target is above)
 };
 
 /// @brief Generic vision detection container used by Dragon vision subsystems.
