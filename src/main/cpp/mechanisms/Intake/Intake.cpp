@@ -278,14 +278,14 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 11;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(100); // MECH_TODO: Verify this value, by driving to the limit switch
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(102.8); // MECH_TODO: Verify this value, by driving to the limit switch
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 11;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;						// MECH_TODO: once value is verifed, set to true
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(-10); // MECH_TODO: verify this value, by driving to the limit switch and seeing what position it sets to with autoset enabled, then set this value to match that position
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(-14); // MECH_TODO: verify this value, by driving to the limit switch and seeing what position it sets to with autoset enabled, then set this value to match that position
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
@@ -301,7 +301,7 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 0.46541861405197305;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.40025033775117571611799914493373;
 
 	configs.Slot0.kI = m_positionDegUp->GetI();
 	configs.Slot0.kD = m_positionDegUp->GetD();
@@ -350,7 +350,7 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	if (!statusCANdi.IsOK())
 		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intakeCANdi", "m_intakeCANdi Status", statusCANdi.GetName());
 
-	m_extender->SetPosition(100_tr);
+	m_extender->SetPosition(102.8_tr);
 }
 
 void Intake::SetCurrentState(int state, bool run)
