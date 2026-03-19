@@ -233,11 +233,11 @@ private:
 	units::angular_velocity::revolutions_per_minute_t m_targetLauncherAngularVelocity = 0.0_rpm;
 	units::angle::turn_t m_targetHoodAngle = 0.0_tr;
 	units::angle::turn_t m_minHoodAngle = 0.0_tr;
-	units::angle::turn_t m_maxHoodAngle = 30.0_tr; // MECH_TODO: verify and change values for new launcher
+	units::angle::turn_t m_maxHoodAngle = 30.0_tr;
 	units::angle::turn_t m_minTurretAngle = 87_tr;
 	units::angle::turn_t m_maxTurretAngle = 267_tr; // MECH_TODO: verify and change values for new launcher
 
-	units::angle::turn_t m_turretAngleThreshold = 3.0_tr;
+	units::angle::turn_t m_turretAngleThreshold = 3.0_tr; // MECH_TODO: tune and change value for new turret
 	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 150.0_rpm;
 	units::angle::turn_t m_hoodAngleThreshold = 0.5_tr;
 	units::velocity::meters_per_second_t m_chassisSpeedThreshold = 3.0_mps;

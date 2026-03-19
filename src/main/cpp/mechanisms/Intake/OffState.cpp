@@ -66,7 +66,7 @@ void OffState::Run()
 		}
 		else
 		{
-			m_mechanism->UpdateTargetExtenderPositionDeg(0.0_tr); // MECH_TODO: Verify the correct value
+			m_mechanism->UpdateTargetExtenderPositionDeg(0.0_tr);
 		}
 	}
 }

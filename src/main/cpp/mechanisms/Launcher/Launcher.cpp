@@ -360,7 +360,7 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 7;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true; // MECH_TODO: verify this works again with new launcher (may have to turn off again and set in LauncherInitialize)
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::turn_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1; // MECH_TODO: Verify this is correct with additoinal CANdi for turret being added back on
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
