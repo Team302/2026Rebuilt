@@ -163,6 +163,11 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
     UpdateChassisSpeeds();
     UpdateChassisPose();
 
+    // if (GetChassisPose() == m_lastChassisPose) //Need to verify that we aren't super jittery on the turret
+    // {
+    //     return m_cachedLauncherTarget;
+    // }
+
     m_field->UpdateObject(kCurrentTargetName, GetVirtualTargetPose(lookAheadTime));
 
     units::degree_t fieldAngleToTarget = CalculateMechanismAngleToTarget(lookAheadTime);
