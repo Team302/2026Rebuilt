@@ -41,8 +41,9 @@ private:
     const units::time::second_t m_shift4Start = 55_s;  // 0:55
     const units::time::second_t m_endgameStart = 30_s; // 0:30
     units::time::second_t m_shiftLength = 25_s;
+    std::string m_firstActiveHub = "Undecided";
 
     std::string m_hubActiveNT = "Hub Active";
     std::string m_allianceShiftTime = "Time Left In Shift";
-    std::string m_firstActiveHub = "Undecided";
+    std::string m_firstActiveHubNT = "First Active Hub";
 };

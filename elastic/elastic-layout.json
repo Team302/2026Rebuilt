@@ -342,14 +342,14 @@
             }
           },
           {
-            "title": "FirstActiveHub",
+            "title": "First Active Hub",
             "x": 1408.0,
             "y": 576.0,
-            "width": 256.0,
+            "width": 384.0,
             "height": 256.0,
             "type": "Large Text Display",
             "properties": {
-              "topic": "/SmartDashboard/FirstActiveHub",
+              "topic": "/SmartDashboard/First Active Hub",
               "period": 0.06,
               "data_type": "string"
             }
