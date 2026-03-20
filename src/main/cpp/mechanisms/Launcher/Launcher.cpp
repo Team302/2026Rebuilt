@@ -288,7 +288,7 @@ void Launcher::InitializeTalonFXLauncherCompBot302()
 	configs.CurrentLimits.SupplyCurrentLowerTime = units::time::second_t(0);
 
 	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
-	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-3.5);
+	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(0.0); // -3.5 V
 	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
@@ -477,14 +477,14 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 6;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true; // MECH_TODO: verify this works again with new launcher (may have to turn off again and set in LauncherInitialize)
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(m_maxTurretAngle);
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 6;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true; // MECH_TODO: verify this works again with new launcher (may have to turn off again and set in LauncherInitialize)
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = m_minTurretAngle;
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;

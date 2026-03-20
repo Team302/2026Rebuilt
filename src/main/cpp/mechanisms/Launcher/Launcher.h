@@ -253,9 +253,9 @@ private:
 
 	// TODO MECH tune and change values in these arrays
 	// All values in turns are actually Degree's
-	std::array<units::length::inch_t, 8> m_scoringDistanceArray = {44.0_in, 61.0_in, 80_in, 115_in, 133_in, 147_in, 169.5_in, 193_in};
-	std::array<units::angle::turn_t, 8> m_scoringHoodAngleArray = {0.0_tr, 0.0_tr, 0.5_tr, 10.9_tr, 15.0_tr, 18.3_tr, 20.7_tr, 21_tr};
-	std::array<units::angular_velocity::revolutions_per_minute_t, 8> m_scoringLauncherVelocityArray = {2000.0_rpm, 2200.0_rpm, 2400.0_rpm, 2500.0_rpm, 2500.0_rpm, 2600.0_rpm, 2750.0_rpm, 2850.0_rpm};
+	std::array<units::length::inch_t, 11> m_scoringDistanceArray = {44.0_in, 61.0_in, 80_in, 115_in, 133_in, 147_in, 169.5_in, 193_in, 210_in, 230_in, 250_in};
+	std::array<units::angle::turn_t, 11> m_scoringHoodAngleArray = {0.0_tr, 0.0_tr, 0.5_tr, 10.9_tr, 15.0_tr, 18.3_tr, 20.7_tr, 21_tr, 21_tr, 21_tr, 21_tr};
+	std::array<units::angular_velocity::revolutions_per_minute_t, 11> m_scoringLauncherVelocityArray = {2000.0_rpm, 2200.0_rpm, 2400.0_rpm, 2500.0_rpm, 2500.0_rpm, 2600.0_rpm, 2750.0_rpm, 2850.0_rpm, 2950.0_rpm, 3050.0_rpm, 3150.0_rpm};
 
 	std::array<units::length::foot_t, 7> m_passingDistanceArray = {10.0_ft, 15.0_ft, 20.0_ft, 25.0_ft, 30.0_ft, 35.0_ft, 40.0_ft};
 	std::array<units::angle::turn_t, 7> m_passingHoodAngleArray = {0.0_tr, 5.0_tr, 10.0_tr, 15.0_tr, 20.0_tr, 25.0_tr, 30.0_tr};
