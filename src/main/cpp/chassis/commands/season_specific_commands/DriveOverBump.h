@@ -91,7 +91,7 @@ private:
     static constexpr units::degree_t kBlueAllianceDepotWallTowardHub{45.0};
     static constexpr units::degree_t kBlueAllianceOutpostWallTowardHub{315.0};
 
-    static constexpr units::angle::degree_t kAngleTolerance = 9.0_deg;
+    static constexpr units::angle::degree_t kAngleTolerance = 5.0_deg;
     static constexpr units::length::inch_t kYTransitionToEndPointTolerance = 10_in;
 
     static constexpr units::velocity::meters_per_second_t kMaxVelocityDriveOverBump = 2.0_mps;
