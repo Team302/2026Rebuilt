@@ -44,4 +44,5 @@ private:
 
     std::string m_hubActiveNT = "Hub Active";
     std::string m_allianceShiftTime = "Time Left In Shift";
+    std::string m_firstActiveHub = "Undecided";
 };
