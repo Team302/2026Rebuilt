@@ -113,7 +113,7 @@ void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, bo
 ///        m_diagnosticUpdateInterval loops to reduce CAN bus and network overhead.
 void DriverFeedback::UpdateFeedback()
 {
-    if (DragonCANdle::GetInstance() != nullptr)
+    if (m_LEDStates != nullptr)
     {
         UpdateLEDStates();
 
@@ -127,6 +127,7 @@ void DriverFeedback::UpdateFeedback()
         }
         m_LEDStates->Periodic();
     }
+
     UpdateRumble();
     CheckControllers();
 }
