@@ -21,15 +21,16 @@
 #include "frc/geometry/Rotation3d.h"
 #include "frc/geometry/Transform3d.h"
 #include "frc/geometry/Translation3d.h"
+#include "networktables/NetworkTableInstance.h"
 #include "state/IRobotStateChangeSubscriber.h"
 #include "state/RobotState.h"
 #include "state/RobotStateChanges.h"
 #include "units/length.h"
 #include "units/time.h"
 #include "utils/DragonField.h"
+#include "utils/PoseUtils.h"
 #include "utils/logging/debug/Logger.h"
 #include "vision/Questnavlib/PoseFrame.h"
-#include "networktables/NetworkTableInstance.h"
 
 // Static strings to avoid repeated heap allocations in logging
 static const std::string kQuestNavDebug = "questnavdebug";
@@ -129,6 +130,11 @@ void DragonQuest::GetEstimatedPose()
     // Use the most recent frame
     const PoseFrame &latest = frames.back();
     frc::Pose3d robotPose = QuestPoseToRobotPose3d(latest.questPose3d);
+
+    if (PoseUtils::GetDeltaBetweenPoses(robotPose.ToPose2d(), m_lastCalculatedPose.ToPose2d()) > 5_m)
+    {
+        m_isQuestGoofy = true;
+    }
 
     m_lastCalculatedPose = robotPose;
     m_lastPoseTimestamp = units::time::second_t{latest.dataTimestamp};
@@ -233,7 +239,7 @@ DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogIsQuestEnabled, m_isQuestEnabled);
 
     DragonVisionPoseEstimatorStruct str;
-    if (!m_hasReset || !connected || !m_isQuestEnabled)
+    if (!m_hasReset || !connected || !m_isQuestEnabled || m_isQuestGoofy)
     {
         str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE;
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogConfidence, kLogConfidenceNone);

@@ -281,7 +281,7 @@ private:
 	static constexpr std::string_view m_loggingTurnsUnits = "Turns";
 	static constexpr std::string_view m_loggingRPMUnits = "RPM";
 
-	bool m_turretEnabled = true;
+	bool m_turretEnabled = false;
 	bool m_turretEnabledButtonReleased = true;
 
 	units::current::ampere_t m_isLaunchingCurrentThreshold = 21.0_A;
