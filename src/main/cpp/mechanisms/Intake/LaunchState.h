@@ -45,7 +45,7 @@ namespace IntakeStates
 		void InitCompBot302();
 		RobotIdentifier m_RobotId;
 
-		static constexpr double m_intakeTarget = double(0.0);
+		static constexpr double m_intakeTarget = double(0.5);
 		// const units::angle::turn_t m_extenderTargetUp = units::angle::turn_t(50);
 		// const units::angle::turn_t m_extenderTargetDown = units::angle::turn_t(0);
 		static constexpr double m_extenderTargetUp = double(0.25);
