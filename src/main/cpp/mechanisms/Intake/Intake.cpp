@@ -264,7 +264,7 @@ void Intake::InitializeTalonFXIntakeCompBot302()
 void Intake::InitializeTalonFXSExtenderCompBot302()
 {
 	TalonFXSConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100); // MECH_TODO: I thought these were set in a previous commit, drive at full speed and set
+	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(35);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
 	configs.CurrentLimits.SupplyCurrentLimitEnable = true;

@@ -464,7 +464,7 @@ void Launcher::InitializeTalonFXTransferCompBot302()
 void Launcher::InitializeTalonFXSTurretCompBot302()
 {
 	TalonFXSConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100); // MECH_TODO: Go to full speed and find current draw, then set limits accordingly
+	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(50);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
 	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
