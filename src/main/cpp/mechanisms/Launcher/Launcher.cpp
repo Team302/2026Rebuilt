@@ -218,7 +218,7 @@ void Launcher::CreateCompBot302()
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_positionDegreesHood = new ControlData(			  // MECH_TODO: Retune PIDs
+	m_positionDegreesHood = new ControlData(
 		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
 		"m_positionDegreesHood",						  // std::string indentifier
@@ -464,7 +464,7 @@ void Launcher::InitializeTalonFXTransferCompBot302()
 void Launcher::InitializeTalonFXSTurretCompBot302()
 {
 	TalonFXSConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100); // MECH_TODO: Go to full speed and find current draw, then set limits accordingly
+	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(50);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
 	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
