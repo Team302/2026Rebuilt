@@ -677,7 +677,7 @@ void Launcher::RunCommonTasks()
 {
 	// Refresh all motor data once at the start of the loop to avoid multiple CAN bus queries
 	RefreshCachedMotorData();
-
+	UpdateCachedLoggingValues(); // MECH_TODO rename
 	if (frc::DriverStation::IsDisabled())
 	{
 		InitilaizeLauncher();
@@ -766,29 +766,18 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 
 bool Launcher::IsLauncherAtTarget()
 {
+	return true;
 
 	if (frc::RobotBase::IsSimulation() && !(GetCurrentState() == STATE_NAMES::STATE_LAUNCHER_TUNING))
 	{
 		return true;
 	}
-	// Launcher Speed error, Hood Angle error, Turret angle error are within a threshold, and if we are in launch zone. Also check chassis speed.
-	units::angle::degree_t hoodError = m_cachedHoodPosition - m_targetHoodAngle;
-	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = m_cachedLauncherVelocity - m_targetLauncherAngularVelocity;
-	bool inLaunchzone = IsInLaunchZone();
-	auto chassisSpeeds = m_chassis != nullptr ? m_chassis->GetState().Speeds : frc::ChassisSpeeds();
-	auto Speed = units::math::sqrt(units::math::abs(chassisSpeeds.vx * chassisSpeeds.vx) + units::math::abs(chassisSpeeds.vy * chassisSpeeds.vy));
 
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Hood Error", hoodError.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed Error", launcherSpeedError.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "In Launch Zone", inLaunchzone);
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Chassis Speed", Speed.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Turret At Target", IsTurretAtTarget());
-
-	return ((units::math::abs(hoodError) < m_hoodAngleThreshold) &&
-			IsTurretAtTarget() &&
-			(units::math::abs(launcherSpeedError) < m_launcherVelocityThreshold) &&
-			(inLaunchzone) &&
-			(Speed < m_chassisSpeedThreshold));
+	// return ((units::math::abs(hoodError) < m_hoodAngleThreshold) && //MECH_TODO: Use Cached Values
+	// 		IsTurretAtTarget() &&
+	// 		(units::math::abs(launcherSpeedError) < m_launcherVelocityThreshold) &&
+	// 		(inLaunchzone) &&
+	// 		(Speed < m_chassisSpeedThreshold));
 }
 
 bool Launcher::IsInLaunchZone() const
@@ -913,6 +902,11 @@ void Launcher::DataLog(uint64_t timestamp)
 	// Mechanism state
 	LogStringData(timestamp, m_loggingLauncherStatePath, GetCurrentStateName());
 	LogBoolData(timestamp, m_loggingProtectedModePath, m_launcherProtectedMode);
+	LogBoolData(timestamp, m_loggingChassisSpeedPath, m_cachedIsChassisSpeed);
+	LogBoolData(timestamp, m_loggingHoodErrorPath, m_cachedHoodError);
+	LogBoolData(timestamp, m_loggingLauncherSpeedErrorPath, m_cachedLauncherSpeedError);
+	LogBoolData(timestamp, m_loggingTurretAtTargetPath, m_cachedTurretAtTarget);
+	LogBoolData(timestamp, m_loggingLaunchingZonePath, m_cachedinLaunchzone);
 }
 std::string Launcher::GetCurrentStateName()
 {
@@ -925,12 +919,13 @@ bool Launcher::IsTurretAtTarget()
 	if (m_turretEnabled)
 	{
 		units::angle::degree_t turretError = m_cachedTurretPosition - m_targetTurretAngle;
-		return ((units::math::abs(turretError) < m_turretAngleThreshold));
+		m_cachedTurretAtTarget = ((units::math::abs(turretError) < m_turretAngleThreshold));
 	}
 	else
 	{
-		return m_chassis->IsChassisAtRotationTarget();
+		m_cachedTurretAtTarget = m_chassis->IsChassisAtRotationTarget();
 	}
+	return m_cachedTurretAtTarget;
 }
 void Launcher::UpdateTurretEnabled()
 {
@@ -955,4 +950,16 @@ bool Launcher::IsFinishedLaunching()
 	}
 
 	return false;
+}
+void Launcher::UpdateCachedLoggingValues()
+{
+	units::angle::degree_t hoodError = m_cachedHoodPosition - m_targetHoodAngle;
+	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = m_cachedLauncherVelocity - m_targetLauncherAngularVelocity;
+	bool inLaunchzone = IsInLaunchZone();
+	auto chassisSpeeds = m_chassis != nullptr ? m_chassis->GetState().Speeds : frc::ChassisSpeeds();
+	auto Speed = units::math::sqrt(units::math::abs(chassisSpeeds.vx * chassisSpeeds.vx) + units::math::abs(chassisSpeeds.vy * chassisSpeeds.vy));
+	bool m_cachedHoodError = (hoodError < m_hoodAngleThreshold);
+	bool m_cachedLauncherSpeedError = launcherSpeedError < m_launcherVelocityThreshold;
+	bool m_cachedinLaunchzone = (inLaunchzone);
+	bool m_cachedIsChassisSpeed = (Speed < m_chassisSpeedThreshold);
 }

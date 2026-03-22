@@ -135,6 +135,10 @@ void DragonQuest::GetEstimatedPose()
     {
         m_isQuestGoofy = true;
     }
+    else
+    {
+        m_isQuestGoofy = false;
+    }
 
     m_lastCalculatedPose = robotPose;
     m_lastPoseTimestamp = units::time::second_t{latest.dataTimestamp};
@@ -147,8 +151,10 @@ void DragonQuest::GetEstimatedPose()
 void DragonQuest::DataLog(uint64_t timestamp)
 {
     LogPose3dData(timestamp, m_questPosePath, m_lastCalculatedPose);
-    LogBoolData(timestamp, m_questHasResetPath, m_hasReset);
     LogBoolData(timestamp, m_questIsEnabledPath, m_isQuestEnabled);
+    LogBoolData(timestamp, m_questHasResetPath, m_hasReset);
+    LogBoolData(timestamp, m_questIsConnectedPath, m_isConnected);
+    LogBoolData(timestamp, m_questIsGoofyPath, m_isQuestGoofy);
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -232,14 +238,14 @@ void DragonQuest::NotifyStateUpdate(RobotStateChanges::StateChange change, bool 
 // ──────────────────────────────────────────────────────────────────────────────
 DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
 {
-    bool connected = m_questNav.IsConnected();
+    m_isConnected = m_questNav.IsConnected();
 
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogHasReset, m_hasReset);
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogIsConnected, connected);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogIsConnected, m_isConnected);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogIsQuestEnabled, m_isQuestEnabled);
 
     DragonVisionPoseEstimatorStruct str;
-    if (!m_hasReset || !connected || !m_isQuestEnabled || m_isQuestGoofy)
+    if (!m_hasReset || !m_isConnected || !m_isQuestEnabled || m_isQuestGoofy)
     {
         str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE;
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogConfidence, kLogConfidenceNone);

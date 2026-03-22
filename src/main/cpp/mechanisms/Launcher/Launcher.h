@@ -166,6 +166,7 @@ public:
 	units::angle::degree_t GetTargetTurretAngle() const { return m_targetTurretAngle; }
 	void UpdateTurretEnabled();
 	bool IsFinishedLaunching();
+	void UpdateCachedLoggingValues();
 	void StartLaunchCurrentTimer() { m_launchCurrentTimer.Start(); }
 	void ResetLaunchCurrentTimer()
 	{
@@ -277,8 +278,15 @@ private:
 	static constexpr std::string_view m_loggingTurretAngleTargetPath = "/Launcher/TargetTurretAngle";
 	static constexpr std::string_view m_loggingLauncherStatePath = "/Launcher/State";
 	static constexpr std::string_view m_loggingProtectedModePath = "/Launcher/IsProtectedMode";
-
 	static constexpr std::string_view m_loggingTurnsUnits = "Turns";
+
+	static constexpr std::string_view m_loggingHoodErrorPath = "Launcher/HoodError";
+	static constexpr std::string_view m_loggingLauncherSpeedErrorPath = "/Launcher/LauncherSpeedError";
+	static constexpr std::string_view m_loggingLaunchingZonePath = "Launcher/IsLaunchingZone";
+	static constexpr std::string_view m_loggingTurretAtTargetPath = "Launcher/IsTurretAtTarget";
+	static constexpr std::string_view m_loggingChassisSpeedPath = "Launcher/IsChassisSpeed";
+
+	static constexpr std::string_view m_loggingTurnsUnitsPath = "Turns";
 	static constexpr std::string_view m_loggingRPMUnits = "RPM";
 
 	bool m_turretEnabled = false;
@@ -287,4 +295,10 @@ private:
 	units::current::ampere_t m_isLaunchingCurrentThreshold = 21.0_A;
 	frc::Timer m_launchCurrentTimer;
 	units::time::second_t m_isLaunchingTimeThreshold = 1.0_s;
+
+	bool m_cachedHoodError = false;
+	bool m_cachedLauncherSpeedError = false;
+	bool m_cachedinLaunchzone = false;
+	bool m_cachedIsChassisSpeed = false;
+	bool m_cachedTurretAtTarget = false;
 };
