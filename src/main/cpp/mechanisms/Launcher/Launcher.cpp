@@ -464,7 +464,7 @@ void Launcher::InitializeTalonFXTransferCompBot302()
 void Launcher::InitializeTalonFXSTurretCompBot302()
 {
 	TalonFXSConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(50);
+	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(30);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
 	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -693,11 +693,8 @@ void Launcher::RunCommonTasks()
 	{
 		m_targetCalculator->UpdateTargetOffset();
 	}
-
 	CalculateTargets();
 	UpdateLauncherTargets();
-
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Current State", GetCurrentStateName());
 }
 
 /// @brief  Set the control constants (e.g. PIDF values).
@@ -766,18 +763,18 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 
 bool Launcher::IsLauncherAtTarget()
 {
-	return true;
-
 	if (frc::RobotBase::IsSimulation() && !(GetCurrentState() == STATE_NAMES::STATE_LAUNCHER_TUNING))
 	{
 		return true;
 	}
-
-	// return ((units::math::abs(hoodError) < m_hoodAngleThreshold) && //MECH_TODO: Use Cached Values
-	// 		IsTurretAtTarget() &&
-	// 		(units::math::abs(launcherSpeedError) < m_launcherVelocityThreshold) &&
-	// 		(inLaunchzone) &&
-	// 		(Speed < m_chassisSpeedThreshold));
+	if (m_turretEnabled)
+	{
+		return (m_cachedHoodError && m_cachedinLaunchzone && m_cachedIsChassisSpeed && m_cachedLauncherSpeedError && m_cachedTurretAtTarget);
+	}
+	else
+	{
+		return true;
+	}
 }
 
 bool Launcher::IsInLaunchZone() const
@@ -902,6 +899,8 @@ void Launcher::DataLog(uint64_t timestamp)
 	// Mechanism state
 	LogStringData(timestamp, m_loggingLauncherStatePath, GetCurrentStateName());
 	LogBoolData(timestamp, m_loggingProtectedModePath, m_launcherProtectedMode);
+
+	// Is At Target Conditions
 	LogBoolData(timestamp, m_loggingChassisSpeedPath, m_cachedIsChassisSpeed);
 	LogBoolData(timestamp, m_loggingHoodErrorPath, m_cachedHoodError);
 	LogBoolData(timestamp, m_loggingLauncherSpeedErrorPath, m_cachedLauncherSpeedError);
@@ -953,13 +952,15 @@ bool Launcher::IsFinishedLaunching()
 }
 void Launcher::UpdateCachedLoggingValues()
 {
-	units::angle::degree_t hoodError = m_cachedHoodPosition - m_targetHoodAngle;
-	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = m_cachedLauncherVelocity - m_targetLauncherAngularVelocity;
+	units::angle::degree_t hoodError = units::angle::degree_t(std::abs((m_cachedHoodPosition - m_targetHoodAngle).value()));
+	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = units::angular_velocity::revolutions_per_minute_t(std::abs((m_cachedLauncherVelocity - m_targetLauncherAngularVelocity).value()));
 	bool inLaunchzone = IsInLaunchZone();
 	auto chassisSpeeds = m_chassis != nullptr ? m_chassis->GetState().Speeds : frc::ChassisSpeeds();
 	auto Speed = units::math::sqrt(units::math::abs(chassisSpeeds.vx * chassisSpeeds.vx) + units::math::abs(chassisSpeeds.vy * chassisSpeeds.vy));
-	bool m_cachedHoodError = (hoodError < m_hoodAngleThreshold);
-	bool m_cachedLauncherSpeedError = launcherSpeedError < m_launcherVelocityThreshold;
-	bool m_cachedinLaunchzone = (inLaunchzone);
-	bool m_cachedIsChassisSpeed = (Speed < m_chassisSpeedThreshold);
+
+	m_cachedHoodError = (hoodError < m_hoodAngleThreshold);
+	m_cachedLauncherSpeedError = launcherSpeedError < m_launcherVelocityThreshold;
+	m_cachedinLaunchzone = (inLaunchzone);
+	m_cachedIsChassisSpeed = (Speed < m_chassisSpeedThreshold);
+	m_cachedTurretAtTarget = IsTurretAtTarget();
 }
