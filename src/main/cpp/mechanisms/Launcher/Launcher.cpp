@@ -695,6 +695,7 @@ void Launcher::RunCommonTasks()
 	}
 	CalculateTargets();
 	UpdateLauncherTargets();
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Current State", GetCurrentStateName());
 }
 
 /// @brief  Set the control constants (e.g. PIDF values).
