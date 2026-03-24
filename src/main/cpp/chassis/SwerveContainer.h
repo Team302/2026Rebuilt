@@ -25,7 +25,7 @@
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
 #include "chassis/commands/season_specific_commands/DriveToTrench.h"
-#include "chassis/commands/season_specific_commands/SweepBehindBump.h"
+#include "chassis/commands/season_specific_commands/SweepBehindHub.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "chassis/generated/Telemetry.h"
 #include "frc2/command/CommandPtr.h"
@@ -167,7 +167,7 @@ private:
     std::unique_ptr<DriveToTower> m_driveToTower;
 
     /// @brief Sweep behind bump command for season-specific autonomous navigation
-    std::unique_ptr<SweepBehindBump> m_sweepBehindBump;
+    std::unique_ptr<SweepBehindHub> m_sweepBehindHub;
 
     /// @brief Drive along nearest wall command for season-specific autonomous navigation
     std::unique_ptr<DriveAlongNearestWall> m_driveAlongNearestWall;

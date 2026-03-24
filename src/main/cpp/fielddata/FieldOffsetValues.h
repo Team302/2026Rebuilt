@@ -79,7 +79,7 @@ enum class FIELD_OFFSET_ITEMS
 /// ```
 ///
 /// **Primary Consumers:**
-/// - SweepBehindBump: Uses bump X/Y coordinates for cross-field waypoint navigation
+/// - SweepBehindHub: Uses bump X/Y coordinates for cross-field waypoint navigation
 /// - Navigation commands: Use hub, depot, outpost, and tower positions for targeting
 /// - Autonomous routines: Alliance-specific positioning for game strategy
 ///

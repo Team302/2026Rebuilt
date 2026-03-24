@@ -12,18 +12,18 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-#include "chassis/commands/season_specific_commands/SweepBehindBump.h"
+#include "chassis/commands/season_specific_commands/SweepBehindHub.h"
 
 #include "auton/NeutralZoneManager.h"
 //------------------------------------------------------------------
-/// @brief      Constructor for SweepBehindBump command
+/// @brief      Constructor for SweepBehindHub command
 /// @param[in]  chassis - Pointer to the swerve drive subsystem
 /// @details    Initializes the base DriveToPose command with the chassis.
 ///             This command autonomously identifies the nearest bump and calculates
 ///             appropriate poses to drive parallel to the trench/bump/hub/bump/trench line
 ///             to sweep across the field.
 //------------------------------------------------------------------
-SweepBehindBump::SweepBehindBump(subsystems::CommandSwerveDrivetrain *chassis) : DriveToPose(chassis)
+SweepBehindHub::SweepBehindHub(subsystems::CommandSwerveDrivetrain *chassis) : DriveToPose(chassis)
 {
     // Set distance threshold for pose completion detection (1 foot tolerance)
     SetDistanceThreshold(kDistanceThreshold);
@@ -43,7 +43,7 @@ SweepBehindBump::SweepBehindBump(subsystems::CommandSwerveDrivetrain *chassis) :
 ///             These angles ensure the robot approaches and crosses the bump
 ///             at the optimal heading toward the hub center.
 //------------------------------------------------------------------
-units::angle::degree_t SweepBehindBump::GetRotation(BUMP_ID bump) const
+units::angle::degree_t SweepBehindHub::GetRotation(BUMP_ID bump) const
 {
     if (bump == BUMP_ID::BLUE_DEPOT_BUMP || bump == BUMP_ID::RED_OUTPOST_BUMP)
     {
@@ -80,7 +80,7 @@ units::angle::degree_t SweepBehindBump::GetRotation(BUMP_ID bump) const
 ///             to safely cross over field bumps
 /// @see        GetRotation() for rotation angle calculation
 //------------------------------------------------------------------
-struct DriveToPoses SweepBehindBump::GetDriveToPoses()
+struct DriveToPoses SweepBehindHub::GetDriveToPoses()
 {
     struct DriveToPoses poses;
     poses.hasMidPose = true;

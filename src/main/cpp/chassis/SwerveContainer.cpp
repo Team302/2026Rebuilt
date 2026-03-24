@@ -34,7 +34,7 @@
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
 #include "chassis/commands/season_specific_commands/DriveToTrench.h"
-#include "chassis/commands/season_specific_commands/SweepBehindBump.h"
+#include "chassis/commands/season_specific_commands/SweepBehindHub.h"
 
 //------------------------------------------------------------------
 /// @brief      Static method to create or return the singleton instance
@@ -68,7 +68,7 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
                                      m_driveToHub(std::make_unique<DriveToHub>(m_chassis)),
                                      m_driveToOutpost(std::make_unique<DriveToOutpost>(m_chassis)),
                                      m_driveToTower(std::make_unique<DriveToTower>(m_chassis)),
-                                     m_sweepBehindBump(std::make_unique<SweepBehindBump>(m_chassis)),
+                                     m_sweepBehindHub(std::make_unique<SweepBehindHub>(m_chassis)),
                                      m_driveAlongNearestWall(std::make_unique<DriveAlongNearestWall>(m_chassis)),
                                      m_driveToTrench(std::make_unique<DriveToTrench>(m_chassis))
 
@@ -154,7 +154,7 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     auto driveToTower = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_TOWER);
     // Sweep behind bump is on the same button as DriveToHub, so comment this out.
     // leaving it here so it is easy if we change this mapping.
-    // auto sweepBehindBump = controller->GetCommandTrigger(TeleopControlFunctions::SWEEP_BEHIND_BUMP);
+    // auto sweepBehindHub = controller->GetCommandTrigger(TeleopControlFunctions::SWEEP_BEHIND_BUMP);
 
     // Drive to trench is on the same button as DriveAlongNearestWall, so comment this out.
     // leaving it here so it is easy if we change this mapping.
@@ -190,7 +190,7 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
         if (AllianceZoneManager::GetInstance()->IsInAllianceZone())  {
             return frc2::ProxyCommand(m_driveToHub.get()).ToPtr();
         } else {
-            return frc2::ProxyCommand(m_sweepBehindBump.get()).ToPtr();
+            return frc2::ProxyCommand(m_sweepBehindHub.get()).ToPtr();
         }
     } else {
         return frc2::cmd::None(); 
