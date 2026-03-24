@@ -46,14 +46,112 @@ stateDiagram-v2
 
 | Step | Primitive | Trajectory | Timeout | Intake | Launcher | Climber | Zones |
 |------|-----------|------------|---------|--------|----------|---------|-------|
-| 1 | TRAJECTORY_DRIVE | BlueMRDrop3_Init | 3.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueRightBumpZoneRect |
-| 2 | TRAJECTORY_DRIVE | BlueMRDrop3_A | 3.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | ? |
-| 3 | TRAJECTORY_DRIVE | BlueMRDrop3_C | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueRightBumpZone, BlueLaunchZone |
-| 4 | DRIVE_STOP_MECH | -- | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | ? |
-| 5 | TRAJECTORY_DRIVE | BlueMRDrop3_D | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueRightBumpZone |
-| 6 | TRAJECTORY_DRIVE | BlueMRDrop3_E | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | ? |
-| 7 | TRAJECTORY_DRIVE | BlueMRDrop3_F | 3.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueLaunchZone, BlueRightBumpZone |
-| 8 | DRIVE_STOP_MECH | -- | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | ? |
+| 1 | TRAJECTORY_DRIVE | [BlueMRDrop3_Init](../../src/main/deploy/choreo/BlueMRDrop3_Init.traj) | 3.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueRightBumpZoneRect |
+| 2 | TRAJECTORY_DRIVE | [BlueMRDrop3_A](../../src/main/deploy/choreo/BlueMRDrop3_A.traj) | 3.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | -- |
+| 3 | TRAJECTORY_DRIVE | [BlueMRDrop3_C](../../src/main/deploy/choreo/BlueMRDrop3_C.traj) | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueRightBumpZone, BlueLaunchZone |
+| 4 | DRIVE_STOP_MECH | -- | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
+| 5 | TRAJECTORY_DRIVE | [BlueMRDrop3_D](../../src/main/deploy/choreo/BlueMRDrop3_D.traj) | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueRightBumpZone |
+| 6 | TRAJECTORY_DRIVE | [BlueMRDrop3_E](../../src/main/deploy/choreo/BlueMRDrop3_E.traj) | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | -- |
+| 7 | TRAJECTORY_DRIVE | [BlueMRDrop3_F](../../src/main/deploy/choreo/BlueMRDrop3_F.traj) | 3.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueLaunchZone, BlueRightBumpZone |
+| 8 | DRIVE_STOP_MECH | -- | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
+
+## Trajectory Details
+
+### All Trajectories Overview
+
+<img src="svg/traj/BlueBOutKeep3NDepNOutScoreNCli_all_traj.svg" alt="All trajectories for BlueBOutKeep3NDepNOutScoreNCli" width="900"/>
+
+### Step 1 -- BlueMRDrop3_Init
+
+- **File:** [`BlueMRDrop3_Init.traj`](../../src/main/deploy/choreo/BlueMRDrop3_Init.traj)
+- **Duration:** 0.865 s
+- **Timeout in auton XML:** 3.0 s
+- **Colour in overview:** `#00d4ff`
+
+<img src="svg/traj/BlueBOutKeep3NDepNOutScoreNCli_step1_BlueMRDrop3_Init.svg" alt="Trajectory BlueMRDrop3_Init" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 3.463 | 1.858 | 322.1 |
+| 2 | 3.463 | 2.605 | 335.3 |
+
+### Step 2 -- BlueMRDrop3_A
+
+- **File:** [`BlueMRDrop3_A.traj`](../../src/main/deploy/choreo/BlueMRDrop3_A.traj)
+- **Duration:** 3.342 s
+- **Timeout in auton XML:** 3.0 s
+- **Colour in overview:** `#ffcc00`
+
+<img src="svg/traj/BlueBOutKeep3NDepNOutScoreNCli_step2_BlueMRDrop3_A.svg" alt="Trajectory BlueMRDrop3_A" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 4.812 | 4.253 | 315.0 |
+| 2 | 5.942 | 2.426 | 315.0 |
+| 3 | 6.511 | 1.43 | 8.2 |
+| 4 | 8.012 | 1.496 | 118.0 |
+| 5 | 7.824 | 3.646 | 150.4 |
+| 6 | 6.363 | 3.876 | 226.2 |
+| 7 | 5.945 | 2.44 | 224.1 |
+
+### Step 3 -- BlueMRDrop3_C
+
+- **File:** [`BlueMRDrop3_C.traj`](../../src/main/deploy/choreo/BlueMRDrop3_C.traj)
+- **Duration:** 2.19 s
+- **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#ff6688`
+
+<img src="svg/traj/BlueBOutKeep3NDepNOutScoreNCli_step3_BlueMRDrop3_C.svg" alt="Trajectory BlueMRDrop3_C" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 5.723 | 2.554 | 221.4 |
+| 2 | 3.327 | 2.546 | 221.1 |
+
+### Step 5 -- BlueMRDrop3_D
+
+- **File:** [`BlueMRDrop3_D.traj`](../../src/main/deploy/choreo/BlueMRDrop3_D.traj)
+- **Duration:** 2.213 s
+- **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#88ff44`
+
+<img src="svg/traj/BlueBOutKeep3NDepNOutScoreNCli_step5_BlueMRDrop3_D.svg" alt="Trajectory BlueMRDrop3_D" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 3.311 | 2.605 | 138.6 |
+| 2 | 5.758 | 2.573 | 135.0 |
+
+### Step 6 -- BlueMRDrop3_E
+
+- **File:** [`BlueMRDrop3_E.traj`](../../src/main/deploy/choreo/BlueMRDrop3_E.traj)
+- **Duration:** 2.602 s
+- **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#ff8800`
+
+<img src="svg/traj/BlueBOutKeep3NDepNOutScoreNCli_step6_BlueMRDrop3_E.svg" alt="Trajectory BlueMRDrop3_E" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 5.822 | 2.464 | 75.9 |
+| 2 | 5.813 | 3.482 | 45.5 |
+| 3 | 6.642 | 3.638 | 296.6 |
+| 4 | 6.79 | 1.274 | 245.5 |
+| 5 | 5.797 | 2.448 | 245.8 |
+
+### Step 7 -- BlueMRDrop3_F
+
+- **File:** [`BlueMRDrop3_F.traj`](../../src/main/deploy/choreo/BlueMRDrop3_F.traj)
+- **Duration:** 2.293 s
+- **Timeout in auton XML:** 3.0 s
+- **Colour in overview:** `#cc88ff`
+
+<img src="svg/traj/BlueBOutKeep3NDepNOutScoreNCli_step7_BlueMRDrop3_F.svg" alt="Trajectory BlueMRDrop3_F" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 5.942 | 2.426 | 225.0 |
+| 2 | 3.316 | 2.354 | 225.0 |
 
 ## Zone Legend
 

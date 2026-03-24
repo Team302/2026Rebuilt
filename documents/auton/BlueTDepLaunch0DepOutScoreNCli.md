@@ -28,8 +28,44 @@ stateDiagram-v2
 
 | Step | Primitive | Trajectory | Timeout | Intake | Launcher | Climber | Zones |
 |------|-----------|------------|---------|--------|----------|---------|-------|
-| 1 | TRAJECTORY_DRIVE | BlueLDepotOutpost_A | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone |
-| 2 | TRAJECTORY_DRIVE | BlueLDepotOutpost_B | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone, BlueOutpostZone |
+| 1 | TRAJECTORY_DRIVE | [BlueLDepotOutpost_A](../../src/main/deploy/choreo/BlueLDepotOutpost_A.traj) | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone |
+| 2 | TRAJECTORY_DRIVE | [BlueLDepotOutpost_B](../../src/main/deploy/choreo/BlueLDepotOutpost_B.traj) | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone, BlueOutpostZone |
+
+## Trajectory Details
+
+### All Trajectories Overview
+
+<img src="svg/traj/BlueTDepLaunch0DepOutScoreNCli_all_traj.svg" alt="All trajectories for BlueTDepLaunch0DepOutScoreNCli" width="900"/>
+
+### Step 1 -- BlueLDepotOutpost_A
+
+- **File:** [`BlueLDepotOutpost_A.traj`](../../src/main/deploy/choreo/BlueLDepotOutpost_A.traj)
+- **Duration:** 2.653 s
+- **Timeout in auton XML:** 4.0 s
+- **Colour in overview:** `#00d4ff`
+
+<img src="svg/traj/BlueTDepLaunch0DepOutScoreNCli_step1_BlueLDepotOutpost_A.svg" alt="Trajectory BlueLDepotOutpost_A" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 3.66 | 7.482 | 137.7 |
+| 2 | 1.078 | 7.183 | 0.0 |
+| 3 | 0.806 | 5.828 | 270.0 |
+
+### Step 2 -- BlueLDepotOutpost_B
+
+- **File:** [`BlueLDepotOutpost_B.traj`](../../src/main/deploy/choreo/BlueLDepotOutpost_B.traj)
+- **Duration:** 4.033 s
+- **Timeout in auton XML:** 4.0 s
+- **Colour in overview:** `#ffcc00`
+
+<img src="svg/traj/BlueTDepLaunch0DepOutScoreNCli_step2_BlueLDepotOutpost_B.svg" alt="Trajectory BlueLDepotOutpost_B" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 0.806 | 5.828 | 270.0 |
+| 2 | 2.609 | 3.668 | 180.0 |
+| 3 | 0.962 | 0.697 | 180.0 |
 
 ## Zone Legend
 

@@ -31,9 +31,44 @@ stateDiagram-v2
 
 | Step | Primitive | Trajectory | Timeout | Intake | Launcher | Climber | Zones |
 |------|-----------|------------|---------|--------|----------|---------|-------|
-| 1 | TRAJECTORY_DRIVE | BlueLDepotOutpost_A | 3.5 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLaunchZone |
-| 2 | TRAJECTORY_DRIVE | BlueLDepNO_b | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLaunchZone |
+| 1 | TRAJECTORY_DRIVE | [BlueLDepotOutpost_A](../../src/main/deploy/choreo/BlueLDepotOutpost_A.traj) | 3.5 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLaunchZone |
+| 2 | TRAJECTORY_DRIVE | [BlueLDepNO_b](../../src/main/deploy/choreo/BlueLDepNO_b.traj) | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLaunchZone |
 | 3 | DRIVE_STOP_MECH | -- | -- s | STATE_OFF | STATE_IDLE | STATE_OFF | RedClimbingZone |
+
+## Trajectory Details
+
+### All Trajectories Overview
+
+<img src="svg/traj/RedTDepLaunch0DepNOutScoreClimb_all_traj.svg" alt="All trajectories for RedTDepLaunch0DepNOutScoreClimb" width="900"/>
+
+### Step 1 -- BlueLDepotOutpost_A
+
+- **File:** [`BlueLDepotOutpost_A.traj`](../../src/main/deploy/choreo/BlueLDepotOutpost_A.traj)
+- **Duration:** 2.653 s
+- **Timeout in auton XML:** 3.5 s
+- **Colour in overview:** `#00d4ff`
+
+<img src="svg/traj/RedTDepLaunch0DepNOutScoreClimb_step1_BlueLDepotOutpost_A.svg" alt="Trajectory BlueLDepotOutpost_A" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 3.66 | 7.482 | 137.7 |
+| 2 | 1.078 | 7.183 | 0.0 |
+| 3 | 0.806 | 5.828 | 270.0 |
+
+### Step 2 -- BlueLDepNO_b
+
+- **File:** [`BlueLDepNO_b.traj`](../../src/main/deploy/choreo/BlueLDepNO_b.traj)
+- **Duration:** 1.181 s
+- **Timeout in auton XML:** 4.0 s
+- **Colour in overview:** `#ffcc00`
+
+<img src="svg/traj/RedTDepLaunch0DepNOutScoreClimb_step2_BlueLDepNO_b.svg" alt="Trajectory BlueLDepNO_b" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 0.806 | 5.828 | 270.0 |
+| 2 | 1.059 | 4.814 | 180.0 |
 
 ## Zone Legend
 

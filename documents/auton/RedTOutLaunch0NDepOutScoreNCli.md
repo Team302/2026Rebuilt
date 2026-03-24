@@ -28,8 +28,29 @@ stateDiagram-v2
 
 | Step | Primitive | Trajectory | Timeout | Intake | Launcher | Climber | Zones |
 |------|-----------|------------|---------|--------|----------|---------|-------|
-| 1 | TRAJECTORY_DRIVE | BlueROut | 3.5 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLaunchZone |
+| 1 | TRAJECTORY_DRIVE | [BlueROut](../../src/main/deploy/choreo/BlueROut.traj) | 3.5 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLaunchZone |
 | 2 | DRIVE_STOP_MECH | -- | -- s | STATE_OFF | STATE_IDLE | STATE_OFF | RedLaunchZone |
+
+## Trajectory Details
+
+### All Trajectories Overview
+
+<img src="svg/traj/RedTOutLaunch0NDepOutScoreNCli_all_traj.svg" alt="All trajectories for RedTOutLaunch0NDepOutScoreNCli" width="900"/>
+
+### Step 1 -- BlueROut
+
+- **File:** [`BlueROut.traj`](../../src/main/deploy/choreo/BlueROut.traj)
+- **Duration:** 3.182 s
+- **Timeout in auton XML:** 3.5 s
+- **Colour in overview:** `#00d4ff`
+
+<img src="svg/traj/RedTOutLaunch0NDepOutScoreNCli_step1_BlueROut.svg" alt="Trajectory BlueROut" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 3.615 | 0.748 | 234.3 |
+| 2 | 0.485 | 0.748 | 180.0 |
+| 3 | 1.417 | 1.181 | 220.8 |
 
 ## Zone Legend
 
