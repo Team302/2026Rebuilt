@@ -20,7 +20,6 @@ The script resolves zone XML files relative to:
 """
 
 import sys
-import os
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
