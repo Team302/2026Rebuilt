@@ -34,10 +34,73 @@ stateDiagram-v2
 
 | Step | Primitive | Trajectory | Timeout | Intake | Launcher | Climber | Zones |
 |------|-----------|------------|---------|--------|----------|---------|-------|
-| 1 | TRAJECTORY_DRIVE | BlueMLDrop2_A | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLeftBumpZone |
-| 2 | TRAJECTORY_DRIVE | BlueMLDrop2_B | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedRightBumpZone, RedLaunchZone |
-| 3 | TRAJECTORY_DRIVE | BlueMLDrop2_C | 4.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | RedRightBumpZone, RedLaunchZone |
-| 4 | TRAJECTORY_DRIVE | BlueMLDrop2_D | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLeftBumpZone, RedLaunchZone |
+| 1 | TRAJECTORY_DRIVE | [BlueMLDrop2_A](../../src/main/deploy/choreo/BlueMLDrop2_A.traj) | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLeftBumpZone |
+| 2 | TRAJECTORY_DRIVE | [BlueMLDrop2_B](../../src/main/deploy/choreo/BlueMLDrop2_B.traj) | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedRightBumpZone, RedLaunchZone |
+| 3 | TRAJECTORY_DRIVE | [BlueMLDrop2_C](../../src/main/deploy/choreo/BlueMLDrop2_C.traj) | 4.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | RedRightBumpZone, RedLaunchZone |
+| 4 | TRAJECTORY_DRIVE | [BlueMLDrop2_D](../../src/main/deploy/choreo/BlueMLDrop2_D.traj) | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLeftBumpZone, RedLaunchZone |
+
+## Trajectory Details
+
+### All Trajectories Overview
+
+<img src="svg/traj/RedBDepDrop2NDepNOutScoreNCli_all_traj.svg" alt="All trajectories for RedBDepDrop2NDepNOutScoreNCli" width="900"/>
+
+### Step 1 -- BlueMLDrop2_A
+
+- **File:** [`BlueMLDrop2_A.traj`](../../src/main/deploy/choreo/BlueMLDrop2_A.traj)
+- **Duration:** 2.374 s
+- **Timeout in auton XML:** 4.0 s
+
+<img src="svg/traj/RedBDepDrop2NDepNOutScoreNCli_step1_BlueMLDrop2_A.svg" alt="Trajectory BlueMLDrop2_A" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 3.474 | 5.523 | 315.0 |
+| 2 | 5.823 | 5.545 | 315.0 |
+| 3 | 7.697 | 5.545 | 270.0 |
+
+### Step 2 -- BlueMLDrop2_B
+
+- **File:** [`BlueMLDrop2_B.traj`](../../src/main/deploy/choreo/BlueMLDrop2_B.traj)
+- **Duration:** 3.945 s
+- **Timeout in auton XML:** 4.0 s
+
+<img src="svg/traj/RedBDepDrop2NDepNOutScoreNCli_step2_BlueMLDrop2_B.svg" alt="Trajectory BlueMLDrop2_B" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 7.697 | 5.545 | 270.0 |
+| 2 | 7.859 | 2.611 | 270.0 |
+| 3 | 5.65 | 2.438 | 227.9 |
+| 4 | 3.463 | 2.492 | 240.8 |
+
+### Step 3 -- BlueMLDrop2_C
+
+- **File:** [`BlueMLDrop2_C.traj`](../../src/main/deploy/choreo/BlueMLDrop2_C.traj)
+- **Duration:** 4.322 s
+- **Timeout in auton XML:** 4.0 s
+
+<img src="svg/traj/RedBDepDrop2NDepNOutScoreNCli_step3_BlueMLDrop2_C.svg" alt="Trajectory BlueMLDrop2_C" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 3.463 | 2.492 | 315.0 |
+| 2 | 5.65 | 2.438 | 315.0 |
+| 3 | 7.079 | 2.643 | 90.0 |
+| 4 | 6.993 | 5.383 | 90.0 |
+
+### Step 4 -- BlueMLDrop2_D
+
+- **File:** [`BlueMLDrop2_D.traj`](../../src/main/deploy/choreo/BlueMLDrop2_D.traj)
+- **Duration:** 1.331 s
+- **Timeout in auton XML:** 4.0 s
+
+<img src="svg/traj/RedBDepDrop2NDepNOutScoreNCli_step4_BlueMLDrop2_D.svg" alt="Trajectory BlueMLDrop2_D" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 7.036 | 5.404 | 90.0 |
+| 2 | 3.16 | 5.523 | 141.4 |
 
 ## Zone Legend
 

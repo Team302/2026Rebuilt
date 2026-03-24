@@ -40,12 +40,67 @@ stateDiagram-v2
 
 | Step | Primitive | Trajectory | Timeout | Intake | Launcher | Climber | Zones |
 |------|-----------|------------|---------|--------|----------|---------|-------|
-| 1 | DRIVE_STOP_MECH | -- | -- s | STATE_OFF | STATE_LAUNCH | STATE_OFF | ? |
-| 2 | TRAJECTORY_DRIVE | BlueMLDepotOutpost_A | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone, BlueDepotZone |
-| 3 | TRAJECTORY_DRIVE | BlueMLDepotOutpost_B | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone, BlueOutpostZone |
-| 4 | TRAJECTORY_DRIVE | BlueMLDepotOutpost_C | 3.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone |
+| 1 | DRIVE_STOP_MECH | -- | -- s | STATE_OFF | STATE_LAUNCH | STATE_OFF | -- |
+| 2 | TRAJECTORY_DRIVE | [BlueMLDepotOutpost_A](../../src/main/deploy/choreo/BlueMLDepotOutpost_A.traj) | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone, BlueDepotZone |
+| 3 | TRAJECTORY_DRIVE | [BlueMLDepotOutpost_B](../../src/main/deploy/choreo/BlueMLDepotOutpost_B.traj) | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone, BlueOutpostZone |
+| 4 | TRAJECTORY_DRIVE | [BlueMLDepotOutpost_C](../../src/main/deploy/choreo/BlueMLDepotOutpost_C.traj) | 3.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone |
 | 5 | TRAJECTORY_DRIVE | BlueMLDepotOutpost_D | 3.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone |
 | 6 | DRIVE_STOP_MECH | -- | -- s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueClimbingZone |
+
+## Trajectory Details
+
+### All Trajectories Overview
+
+<img src="svg/traj/BlueHubLaunch0DepOutScoreClimb_all_traj.svg" alt="All trajectories for BlueHubLaunch0DepOutScoreClimb" width="900"/>
+
+### Step 2 -- BlueMLDepotOutpost_A
+
+- **File:** [`BlueMLDepotOutpost_A.traj`](../../src/main/deploy/choreo/BlueMLDepotOutpost_A.traj)
+- **Duration:** 3.563 s
+- **Timeout in auton XML:** 4.0 s
+
+<img src="svg/traj/BlueHubLaunch0DepOutScoreClimb_step2_BlueMLDepotOutpost_A.svg" alt="Trajectory BlueMLDepotOutpost_A" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 3.545 | 5.55 | 151.9 |
+| 2 | 0.422 | 5.976 | 180.0 |
+| 3 | 1.813 | 4.798 | 341.6 |
+| 4 | 2.722 | 3.776 | 180.0 |
+
+### Step 3 -- BlueMLDepotOutpost_B
+
+- **File:** [`BlueMLDepotOutpost_B.traj`](../../src/main/deploy/choreo/BlueMLDepotOutpost_B.traj)
+- **Duration:** 2.786 s
+- **Timeout in auton XML:** 4.0 s
+
+<img src="svg/traj/BlueHubLaunch0DepOutScoreClimb_step3_BlueMLDepotOutpost_B.svg" alt="Trajectory BlueMLDepotOutpost_B" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 2.722 | 3.776 | 180.0 |
+| 2 | 2.594 | 1.605 | 180.0 |
+| 3 | 0.352 | 0.64 | 180.0 |
+
+### Step 4 -- BlueMLDepotOutpost_C
+
+- **File:** [`BlueMLDepotOutpost_C.traj`](../../src/main/deploy/choreo/BlueMLDepotOutpost_C.traj)
+- **Duration:** 3.118 s
+- **Timeout in auton XML:** 3.0 s
+
+<img src="svg/traj/BlueHubLaunch0DepOutScoreClimb_step4_BlueMLDepotOutpost_C.svg" alt="Trajectory BlueMLDepotOutpost_C" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 0.352 | 0.64 | 180.0 |
+| 2 | 2.381 | 2.137 | 233.7 |
+| 3 | 0.863 | 2.947 | 357.9 |
+
+### Step 5 -- BlueMLDepotOutpost_D
+
+- **File:** `BlueMLDepotOutpost_D.traj` *(not found)*
+- **Duration:** unknown
+- **Timeout in auton XML:** 3.0 s
 
 ## Zone Legend
 

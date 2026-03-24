@@ -40,12 +40,90 @@ stateDiagram-v2
 
 | Step | Primitive | Trajectory | Timeout | Intake | Launcher | Climber | Zones |
 |------|-----------|------------|---------|--------|----------|---------|-------|
-| 1 | DRIVE_STOP_MECH | -- | -- s | STATE_OFF | STATE_LAUNCH | STATE_OFF | ? |
-| 2 | TRAJECTORY_DRIVE | BlueLeftBumpNZNZ_A | 2.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLeftBumpZone |
-| 3 | TRAJECTORY_DRIVE | LeftToRightNZ | 3.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueRightBumpZone |
-| 4 | TRAJECTORY_DRIVE | BlueLeftBumpNZNZ_C | 1.5 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueLaunchZone |
-| 5 | TRAJECTORY_DRIVE | RightToLeftNZ | 3.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueRightBumpZone, BlueLeftBumpZone |
-| 6 | TRAJECTORY_DRIVE | BlueLeftBumpNZNZ_D | 2.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueLaunchZone |
+| 1 | DRIVE_STOP_MECH | -- | -- s | STATE_OFF | STATE_LAUNCH | STATE_OFF | -- |
+| 2 | TRAJECTORY_DRIVE | [BlueLeftBumpNZNZ_A](../../src/main/deploy/choreo/BlueLeftBumpNZNZ_A.traj) | 2.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLeftBumpZone |
+| 3 | TRAJECTORY_DRIVE | [LeftToRightNZ](../../src/main/deploy/choreo/LeftToRightNZ.traj) | 3.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueRightBumpZone |
+| 4 | TRAJECTORY_DRIVE | [BlueLeftBumpNZNZ_C](../../src/main/deploy/choreo/BlueLeftBumpNZNZ_C.traj) | 1.5 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueLaunchZone |
+| 5 | TRAJECTORY_DRIVE | [RightToLeftNZ](../../src/main/deploy/choreo/RightToLeftNZ.traj) | 3.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueRightBumpZone, BlueLeftBumpZone |
+| 6 | TRAJECTORY_DRIVE | [BlueLeftBumpNZNZ_D](../../src/main/deploy/choreo/BlueLeftBumpNZNZ_D.traj) | 2.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueLaunchZone |
+
+## Trajectory Details
+
+### All Trajectories Overview
+
+<img src="svg/traj/BlueTDepLaunch2NDepNOutScoreNCli_all_traj.svg" alt="All trajectories for BlueTDepLaunch2NDepNOutScoreNCli" width="900"/>
+
+### Step 2 -- BlueLeftBumpNZNZ_A
+
+- **File:** [`BlueLeftBumpNZNZ_A.traj`](../../src/main/deploy/choreo/BlueLeftBumpNZNZ_A.traj)
+- **Duration:** 3.316 s
+- **Timeout in auton XML:** 2.0 s
+
+<img src="svg/traj/BlueTDepLaunch2NDepNOutScoreNCli_step2_BlueLeftBumpNZNZ_A.svg" alt="Trajectory BlueLeftBumpNZNZ_A" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 3.612 | 7.289 | 125.0 |
+| 2 | 2.716 | 5.594 | 125.0 |
+| 3 | 5.581 | 5.516 | 125.0 |
+
+### Step 3 -- LeftToRightNZ
+
+- **File:** [`LeftToRightNZ.traj`](../../src/main/deploy/choreo/LeftToRightNZ.traj)
+- **Duration:** 4.612 s
+- **Timeout in auton XML:** 3.0 s
+
+<img src="svg/traj/BlueTDepLaunch2NDepNOutScoreNCli_step3_LeftToRightNZ.svg" alt="Trajectory LeftToRightNZ" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 5.404 | 5.635 | 225.0 |
+| 2 | 7.323 | 5.639 | 310.7 |
+| 3 | 7.532 | 2.798 | 225.0 |
+| 4 | 3.729 | 2.74 | 225.0 |
+
+### Step 4 -- BlueLeftBumpNZNZ_C
+
+- **File:** [`BlueLeftBumpNZNZ_C.traj`](../../src/main/deploy/choreo/BlueLeftBumpNZNZ_C.traj)
+- **Duration:** 2.681 s
+- **Timeout in auton XML:** 1.5 s
+
+<img src="svg/traj/BlueTDepLaunch2NDepNOutScoreNCli_step4_BlueLeftBumpNZNZ_C.svg" alt="Trajectory BlueLeftBumpNZNZ_C" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 4.561 | 2.666 | 227.6 |
+| 2 | 3.204 | 2.598 | 227.5 |
+| 3 | 4.538 | 2.669 | 227.1 |
+
+### Step 5 -- RightToLeftNZ
+
+- **File:** [`RightToLeftNZ.traj`](../../src/main/deploy/choreo/RightToLeftNZ.traj)
+- **Duration:** 4.779 s
+- **Timeout in auton XML:** 3.0 s
+
+<img src="svg/traj/BlueTDepLaunch2NDepNOutScoreNCli_step5_RightToLeftNZ.svg" alt="Trajectory RightToLeftNZ" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 5.347 | 2.797 | 45.0 |
+| 2 | 7.741 | 2.506 | 90.0 |
+| 3 | 7.636 | 5.169 | 173.2 |
+| 4 | 3.672 | 5.579 | 225.0 |
+
+### Step 6 -- BlueLeftBumpNZNZ_D
+
+- **File:** [`BlueLeftBumpNZNZ_D.traj`](../../src/main/deploy/choreo/BlueLeftBumpNZNZ_D.traj)
+- **Duration:** 2.02 s
+- **Timeout in auton XML:** 2.0 s
+
+<img src="svg/traj/BlueTDepLaunch2NDepNOutScoreNCli_step6_BlueLeftBumpNZNZ_D.svg" alt="Trajectory BlueLeftBumpNZNZ_D" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 3.807 | 5.068 | 225.0 |
+| 2 | 2.821 | 4.174 | 180.0 |
+| 3 | 1.402 | 4.216 | 180.0 |
 
 ## Zone Legend
 

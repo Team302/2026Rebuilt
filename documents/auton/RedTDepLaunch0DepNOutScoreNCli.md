@@ -28,8 +28,28 @@ stateDiagram-v2
 
 | Step | Primitive | Trajectory | Timeout | Intake | Launcher | Climber | Zones |
 |------|-----------|------------|---------|--------|----------|---------|-------|
-| 1 | TRAJECTORY_DRIVE | BlueLDepotOutpost_A | 3.5 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLaunchZone, RedDepotZone |
+| 1 | TRAJECTORY_DRIVE | [BlueLDepotOutpost_A](../../src/main/deploy/choreo/BlueLDepotOutpost_A.traj) | 3.5 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLaunchZone, RedDepotZone |
 | 2 | DRIVE_STOP_MECH | -- | -- s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLaunchZone |
+
+## Trajectory Details
+
+### All Trajectories Overview
+
+<img src="svg/traj/RedTDepLaunch0DepNOutScoreNCli_all_traj.svg" alt="All trajectories for RedTDepLaunch0DepNOutScoreNCli" width="900"/>
+
+### Step 1 -- BlueLDepotOutpost_A
+
+- **File:** [`BlueLDepotOutpost_A.traj`](../../src/main/deploy/choreo/BlueLDepotOutpost_A.traj)
+- **Duration:** 2.653 s
+- **Timeout in auton XML:** 3.5 s
+
+<img src="svg/traj/RedTDepLaunch0DepNOutScoreNCli_step1_BlueLDepotOutpost_A.svg" alt="Trajectory BlueLDepotOutpost_A" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 3.66 | 7.482 | 137.7 |
+| 2 | 1.078 | 7.183 | 0.0 |
+| 3 | 0.806 | 5.828 | 270.0 |
 
 ## Zone Legend
 

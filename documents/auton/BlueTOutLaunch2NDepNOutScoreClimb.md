@@ -37,11 +37,88 @@ stateDiagram-v2
 
 | Step | Primitive | Trajectory | Timeout | Intake | Launcher | Climber | Zones |
 |------|-----------|------------|---------|--------|----------|---------|-------|
-| 1 | TRAJECTORY_DRIVE | BlueRightBumpNZNZ_A | 2.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueRightBumpZone |
-| 2 | TRAJECTORY_DRIVE | RightToLeftNZ | 3.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | ? |
-| 3 | TRAJECTORY_DRIVE | BlueRightBumpNZNZ_C | 1.5 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueLeftBumpZone |
-| 4 | TRAJECTORY_DRIVE | LeftToRightNZ | 3.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueRightBumpZone |
-| 5 | TRAJECTORY_DRIVE | BlueRightBumpNZNZ_E | 2.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | ? |
+| 1 | TRAJECTORY_DRIVE | [BlueRightBumpNZNZ_A](../../src/main/deploy/choreo/BlueRightBumpNZNZ_A.traj) | 2.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueRightBumpZone |
+| 2 | TRAJECTORY_DRIVE | [RightToLeftNZ](../../src/main/deploy/choreo/RightToLeftNZ.traj) | 3.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
+| 3 | TRAJECTORY_DRIVE | [BlueRightBumpNZNZ_C](../../src/main/deploy/choreo/BlueRightBumpNZNZ_C.traj) | 1.5 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueLeftBumpZone |
+| 4 | TRAJECTORY_DRIVE | [LeftToRightNZ](../../src/main/deploy/choreo/LeftToRightNZ.traj) | 3.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueRightBumpZone |
+| 5 | TRAJECTORY_DRIVE | [BlueRightBumpNZNZ_E](../../src/main/deploy/choreo/BlueRightBumpNZNZ_E.traj) | 2.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
+
+## Trajectory Details
+
+### All Trajectories Overview
+
+<img src="svg/traj/BlueTOutLaunch2NDepNOutScoreClimb_all_traj.svg" alt="All trajectories for BlueTOutLaunch2NDepNOutScoreClimb" width="900"/>
+
+### Step 1 -- BlueRightBumpNZNZ_A
+
+- **File:** [`BlueRightBumpNZNZ_A.traj`](../../src/main/deploy/choreo/BlueRightBumpNZNZ_A.traj)
+- **Duration:** 3.118 s
+- **Timeout in auton XML:** 2.0 s
+
+<img src="svg/traj/BlueTOutLaunch2NDepNOutScoreClimb_step1_BlueRightBumpNZNZ_A.svg" alt="Trajectory BlueRightBumpNZNZ_A" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 3.736 | 0.604 | 233.2 |
+| 2 | 2.513 | 2.342 | 180.0 |
+| 3 | 4.561 | 2.666 | 215.0 |
+
+### Step 2 -- RightToLeftNZ
+
+- **File:** [`RightToLeftNZ.traj`](../../src/main/deploy/choreo/RightToLeftNZ.traj)
+- **Duration:** 4.779 s
+- **Timeout in auton XML:** 3.0 s
+
+<img src="svg/traj/BlueTOutLaunch2NDepNOutScoreClimb_step2_RightToLeftNZ.svg" alt="Trajectory RightToLeftNZ" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 5.347 | 2.797 | 45.0 |
+| 2 | 7.741 | 2.506 | 90.0 |
+| 3 | 7.636 | 5.169 | 173.2 |
+| 4 | 3.672 | 5.579 | 225.0 |
+
+### Step 3 -- BlueRightBumpNZNZ_C
+
+- **File:** [`BlueRightBumpNZNZ_C.traj`](../../src/main/deploy/choreo/BlueRightBumpNZNZ_C.traj)
+- **Duration:** 1.665 s
+- **Timeout in auton XML:** 1.5 s
+
+<img src="svg/traj/BlueTOutLaunch2NDepNOutScoreClimb_step3_BlueRightBumpNZNZ_C.svg" alt="Trajectory BlueRightBumpNZNZ_C" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 4.649 | 5.569 | 315.0 |
+| 2 | 2.572 | 5.525 | 156.4 |
+
+### Step 4 -- LeftToRightNZ
+
+- **File:** [`LeftToRightNZ.traj`](../../src/main/deploy/choreo/LeftToRightNZ.traj)
+- **Duration:** 4.612 s
+- **Timeout in auton XML:** 3.0 s
+
+<img src="svg/traj/BlueTOutLaunch2NDepNOutScoreClimb_step4_LeftToRightNZ.svg" alt="Trajectory LeftToRightNZ" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 5.404 | 5.635 | 225.0 |
+| 2 | 7.323 | 5.639 | 310.7 |
+| 3 | 7.532 | 2.798 | 225.0 |
+| 4 | 3.729 | 2.74 | 225.0 |
+
+### Step 5 -- BlueRightBumpNZNZ_E
+
+- **File:** [`BlueRightBumpNZNZ_E.traj`](../../src/main/deploy/choreo/BlueRightBumpNZNZ_E.traj)
+- **Duration:** 2.501 s
+- **Timeout in auton XML:** 2.0 s
+
+<img src="svg/traj/BlueTOutLaunch2NDepNOutScoreClimb_step5_BlueRightBumpNZNZ_E.svg" alt="Trajectory BlueRightBumpNZNZ_E" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 3.788 | 2.69 | 135.0 |
+| 2 | 2.896 | 3.874 | 180.0 |
+| 3 | 1.143 | 3.108 | 180.0 |
 
 ## Zone Legend
 

@@ -37,11 +37,69 @@ stateDiagram-v2
 
 | Step | Primitive | Trajectory | Timeout | Intake | Launcher | Climber | Zones |
 |------|-----------|------------|---------|--------|----------|---------|-------|
-| 1 | RESET_POSITION | Square1 | -- s | STATE_OFF | STATE_IDLE | STATE_OFF | ? |
-| 2 | TRAJECTORY_DRIVE | Square1 | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | ? |
-| 3 | TRAJECTORY_DRIVE | Square2 | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | ? |
-| 4 | TRAJECTORY_DRIVE | Square3 | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | ? |
-| 5 | TRAJECTORY_DRIVE | Square4 | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | ? |
+| 1 | RESET_POSITION | Square1 | -- s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
+| 2 | TRAJECTORY_DRIVE | [Square1](../../src/main/deploy/choreo/Square1.traj) | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
+| 3 | TRAJECTORY_DRIVE | [Square2](../../src/main/deploy/choreo/Square2.traj) | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
+| 4 | TRAJECTORY_DRIVE | [Square3](../../src/main/deploy/choreo/Square3.traj) | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
+| 5 | TRAJECTORY_DRIVE | [Square4](../../src/main/deploy/choreo/Square4.traj) | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
+
+## Trajectory Details
+
+### All Trajectories Overview
+
+<img src="svg/traj/SquareTest_all_traj.svg" alt="All trajectories for SquareTest" width="900"/>
+
+### Step 2 -- Square1
+
+- **File:** [`Square1.traj`](../../src/main/deploy/choreo/Square1.traj)
+- **Duration:** 2.829 s
+- **Timeout in auton XML:** 5.0 s
+
+<img src="svg/traj/SquareTest_step2_Square1.svg" alt="Trajectory Square1" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 6.0 | 5.0 | 0.0 |
+| 2 | 8.0 | 5.0 | 270.0 |
+
+### Step 3 -- Square2
+
+- **File:** [`Square2.traj`](../../src/main/deploy/choreo/Square2.traj)
+- **Duration:** 2.829 s
+- **Timeout in auton XML:** 5.0 s
+
+<img src="svg/traj/SquareTest_step3_Square2.svg" alt="Trajectory Square2" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 8.0 | 5.0 | 270.0 |
+| 2 | 8.0 | 3.0 | 180.0 |
+
+### Step 4 -- Square3
+
+- **File:** [`Square3.traj`](../../src/main/deploy/choreo/Square3.traj)
+- **Duration:** 2.829 s
+- **Timeout in auton XML:** 5.0 s
+
+<img src="svg/traj/SquareTest_step4_Square3.svg" alt="Trajectory Square3" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 8.0 | 3.0 | 180.0 |
+| 2 | 6.0 | 3.0 | 90.0 |
+
+### Step 5 -- Square4
+
+- **File:** [`Square4.traj`](../../src/main/deploy/choreo/Square4.traj)
+- **Duration:** 2.829 s
+- **Timeout in auton XML:** 5.0 s
+
+<img src="svg/traj/SquareTest_step5_Square4.svg" alt="Trajectory Square4" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 6.0 | 3.0 | 90.0 |
+| 2 | 6.0 | 5.0 | 0.0 |
 
 ## Zone Legend
 
