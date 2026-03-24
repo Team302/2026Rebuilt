@@ -25,6 +25,8 @@
 #include "state/IRobotStateChangeSubscriber.h"
 #include "state/RobotState.h"
 #include "state/RobotStateChanges.h"
+#include "auton/AllianceZoneManager.h"
+#include "auton/NeutralZoneManager.h"
 #include "units/length.h"
 #include "units/time.h"
 #include "utils/DragonField.h"
@@ -132,6 +134,15 @@ void DragonQuest::GetEstimatedPose()
     frc::Pose3d robotPose = QuestPoseToRobotPose3d(latest.questPose3d);
 
     if (PoseUtils::GetDeltaBetweenPoses(robotPose.ToPose2d(), m_lastCalculatedPose.ToPose2d()) > 5_m)
+    {
+        m_isQuestGoofy = true;
+    }
+    else
+    {
+        m_isQuestGoofy = false;
+    }
+
+    if (AllianceZoneManager::GetInstance()->IsInOtherAllianceZone() == false && AllianceZoneManager::GetInstance()->IsInAllianceZone() == false && NeutralZoneManager::GetInstance()->IsInNeutralZone() == false)
     {
         m_isQuestGoofy = true;
     }
