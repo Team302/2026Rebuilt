@@ -203,10 +203,10 @@ def _robot_svg(px: float, py: float, heading_rad: float,
     # Also note SVG y-flip inverts the rotation sign.
     rot_deg = -math.degrees(heading_rad)
 
-    chassis_pw = ROBOT_W * SCALE
-    chassis_pl = ROBOT_L * SCALE
-    bumper_pw  = BUMPER_W * SCALE
-    bumper_pl  = BUMPER_L * SCALE
+    chassis_pw = ROBOT_L * SCALE   # side-to-side (long side = 0.762 m)
+    chassis_pl = ROBOT_W * SCALE   # forward      (short side = 0.6096 m)
+    bumper_pw  = BUMPER_L * SCALE  # side-to-side (long side = 0.9144 m)
+    bumper_pl  = BUMPER_W * SCALE  # forward      (short side = 0.762 m)
 
     lines = []
     gid = f"pose{idx}"
@@ -252,16 +252,18 @@ def _robot_svg(px: float, py: float, heading_rad: float,
 _TRAJ_COLORS = ["#00d4ff", "#ffcc00", "#ff6688", "#88ff44", "#ff8800", "#cc88ff"]
 
 
-def render_traj_svg(trajs: list[tuple[int, str, dict]]) -> str:
+def render_traj_svg(trajs: list[tuple[int, str, dict, int]]) -> str:
     """Render one SVG showing the field + all provided trajectories overlaid.
 
-    trajs: list of (step_number, choreo_name, traj_dict)
+    trajs: list of (step_number, choreo_name, traj_dict, color_index)
+    color_index fixes which entry in _TRAJ_COLORS to use, so per-step SVGs
+    use the same colour as the overview diagram.
     Returns the full SVG string.
     """
     body_lines = [_field_bg_svg()]
 
-    for traj_idx, (step_num, choreo_name, traj) in enumerate(trajs):
-        color = _TRAJ_COLORS[traj_idx % len(_TRAJ_COLORS)]
+    for step_num, choreo_name, traj, color_idx in trajs:
+        color = _TRAJ_COLORS[color_idx % len(_TRAJ_COLORS)]
         samples = traj["samples"]
         waypoints_xy = [(wp["x"], wp["y"]) for wp in traj["waypoints"]]
         waypoint_set = {(round(x, 2), round(y, 2)) for x, y in waypoints_xy}
@@ -279,7 +281,7 @@ def render_traj_svg(trajs: list[tuple[int, str, dict]]) -> str:
             is_wp = (round(s["x"], 2), round(s["y"], 2)) in waypoint_set
             body_lines.append(
                 _robot_svg(s["x"], s["y"], s["heading"], color,
-                           opacity=0.55, idx=traj_idx * 1000 + si, is_waypoint=is_wp)
+                           opacity=0.55, idx=color_idx * 1000 + si, is_waypoint=is_wp)
             )
 
         # Legend label near start of path
@@ -315,12 +317,15 @@ def generate_traj_section(step_data: list[dict], auton_stem: str) -> str:
 
     TRAJ_SVG_DIR.mkdir(parents=True, exist_ok=True)
 
-    # --- Combined overview SVG (all steps on one field) ---
+    # --- Build list of (step, choreo, traj, color_idx) assigning colours in
+    #     order of appearance -- same index used for both overview and per-step SVGs.
     all_trajs = []
-    for d in traj_steps:
+    color_idx_map: dict[str, int] = {}   # choreo_name -> colour index
+    for ci, d in enumerate(traj_steps):
         traj = parse_traj(d["choreo"])
         if traj:
-            all_trajs.append((d["step"], d["choreo"], traj))
+            color_idx_map[d["choreo"]] = ci
+            all_trajs.append((d["step"], d["choreo"], traj, ci))
 
     overview_svg_name = f"{auton_stem}_all_traj.svg"
     overview_svg_path = TRAJ_SVG_DIR / overview_svg_name
@@ -332,6 +337,12 @@ def generate_traj_section(step_data: list[dict], auton_stem: str) -> str:
     lines = ["## Trajectory Details", ""]
 
     if all_trajs:
+        # Legend for overview colours
+        legend_items = " ".join(
+            f'<span style="color:{_TRAJ_COLORS[ci % len(_TRAJ_COLORS)]}">'
+            f'&#9632; S{step}: {name}</span>'
+            for step, name, _, ci in all_trajs
+        )
         rel = f"svg/traj/{overview_svg_name}"
         lines.append("### All Trajectories Overview")
         lines.append("")
@@ -347,20 +358,23 @@ def generate_traj_section(step_data: list[dict], auton_stem: str) -> str:
             if traj else f"`{choreo_name}.traj` *(not found)*"
         )
         duration_str = f"{traj['duration']} s" if traj and traj["duration"] is not None else "unknown"
+        ci = color_idx_map.get(choreo_name, 0)
+        color = _TRAJ_COLORS[ci % len(_TRAJ_COLORS)]
 
         lines.append(f"### Step {d['step']} -- {choreo_name}")
         lines.append("")
         lines.append(f"- **File:** {traj_link}")
         lines.append(f"- **Duration:** {duration_str}")
         lines.append(f"- **Timeout in auton XML:** {d['timeout']} s")
+        lines.append(f"- **Colour in overview:** `{color}`")
         lines.append("")
 
-        # Per-step SVG
+        # Per-step SVG rendered with the same colour index as the overview
         if traj:
             svg_name = f"{auton_stem}_step{d['step']}_{choreo_name}.svg"
             svg_path = TRAJ_SVG_DIR / svg_name
             svg_path.write_text(
-                render_traj_svg([(d["step"], choreo_name, traj)]),
+                render_traj_svg([(d["step"], choreo_name, traj, ci)]),
                 encoding="ascii", errors="replace"
             )
             rel = f"svg/traj/{svg_name}"

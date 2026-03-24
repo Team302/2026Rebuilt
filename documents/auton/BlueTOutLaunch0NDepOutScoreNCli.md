@@ -42,6 +42,7 @@ stateDiagram-v2
 - **File:** [`BlueROut.traj`](../../src/main/deploy/choreo/BlueROut.traj)
 - **Duration:** 3.182 s
 - **Timeout in auton XML:** 3.5 s
+- **Colour in overview:** `#00d4ff`
 
 <img src="svg/traj/BlueTOutLaunch0NDepOutScoreNCli_step1_BlueROut.svg" alt="Trajectory BlueROut" width="900"/>
 

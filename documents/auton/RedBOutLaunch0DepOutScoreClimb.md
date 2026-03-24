@@ -54,6 +54,7 @@ stateDiagram-v2
 - **File:** [`BlueMiddleRightToOutpost.traj`](../../src/main/deploy/choreo/BlueMiddleRightToOutpost.traj)
 - **Duration:** 2.257 s
 - **Timeout in auton XML:** 2.5 s
+- **Colour in overview:** `#00d4ff`
 
 <img src="svg/traj/RedBOutLaunch0DepOutScoreClimb_step2_BlueMiddleRightToOutpost.svg" alt="Trajectory BlueMiddleRightToOutpost" width="900"/>
 
@@ -67,6 +68,7 @@ stateDiagram-v2
 - **File:** [`RightToLeftAlliance.traj`](../../src/main/deploy/choreo/RightToLeftAlliance.traj)
 - **Duration:** 3.459 s
 - **Timeout in auton XML:** 2.5 s
+- **Colour in overview:** `#ffcc00`
 
 <img src="svg/traj/RedBOutLaunch0DepOutScoreClimb_step3_RightToLeftAlliance.svg" alt="Trajectory RightToLeftAlliance" width="900"/>
 
@@ -81,6 +83,7 @@ stateDiagram-v2
 - **File:** [`DepotToLaunchToClimb.traj`](../../src/main/deploy/choreo/DepotToLaunchToClimb.traj)
 - **Duration:** 1.778 s
 - **Timeout in auton XML:** 2.5 s
+- **Colour in overview:** `#ff6688`
 
 <img src="svg/traj/RedBOutLaunch0DepOutScoreClimb_step4_DepotToLaunchToClimb.svg" alt="Trajectory DepotToLaunchToClimb" width="900"/>
 

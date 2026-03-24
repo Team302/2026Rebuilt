@@ -58,6 +58,7 @@ stateDiagram-v2
 - **File:** [`BlueMLDepotOutpost_A.traj`](../../src/main/deploy/choreo/BlueMLDepotOutpost_A.traj)
 - **Duration:** 3.563 s
 - **Timeout in auton XML:** 3.0 s
+- **Colour in overview:** `#00d4ff`
 
 <img src="svg/traj/BlueBDepLaunch0DepOutScoreClimb_step2_BlueMLDepotOutpost_A.svg" alt="Trajectory BlueMLDepotOutpost_A" width="900"/>
 
@@ -73,6 +74,7 @@ stateDiagram-v2
 - **File:** [`BlueMLDepotOutpost_B.traj`](../../src/main/deploy/choreo/BlueMLDepotOutpost_B.traj)
 - **Duration:** 2.786 s
 - **Timeout in auton XML:** 3.0 s
+- **Colour in overview:** `#ffcc00`
 
 <img src="svg/traj/BlueBDepLaunch0DepOutScoreClimb_step3_BlueMLDepotOutpost_B.svg" alt="Trajectory BlueMLDepotOutpost_B" width="900"/>
 
@@ -87,6 +89,7 @@ stateDiagram-v2
 - **File:** [`BlueMLDepotOutpost_C.traj`](../../src/main/deploy/choreo/BlueMLDepotOutpost_C.traj)
 - **Duration:** 3.118 s
 - **Timeout in auton XML:** 3.0 s
+- **Colour in overview:** `#ff6688`
 
 <img src="svg/traj/BlueBDepLaunch0DepOutScoreClimb_step4_BlueMLDepotOutpost_C.svg" alt="Trajectory BlueMLDepotOutpost_C" width="900"/>
 
@@ -101,6 +104,7 @@ stateDiagram-v2
 - **File:** `BlueMLDepotOutpost_D.traj` *(not found)*
 - **Duration:** unknown
 - **Timeout in auton XML:** 3.0 s
+- **Colour in overview:** `#00d4ff`
 
 ## Zone Legend
 

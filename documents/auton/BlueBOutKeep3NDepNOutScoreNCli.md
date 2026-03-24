@@ -66,6 +66,7 @@ stateDiagram-v2
 - **File:** [`BlueMRDrop3_Init.traj`](../../src/main/deploy/choreo/BlueMRDrop3_Init.traj)
 - **Duration:** 0.865 s
 - **Timeout in auton XML:** 3.0 s
+- **Colour in overview:** `#00d4ff`
 
 <img src="svg/traj/BlueBOutKeep3NDepNOutScoreNCli_step1_BlueMRDrop3_Init.svg" alt="Trajectory BlueMRDrop3_Init" width="900"/>
 
@@ -79,6 +80,7 @@ stateDiagram-v2
 - **File:** [`BlueMRDrop3_A.traj`](../../src/main/deploy/choreo/BlueMRDrop3_A.traj)
 - **Duration:** 3.342 s
 - **Timeout in auton XML:** 3.0 s
+- **Colour in overview:** `#ffcc00`
 
 <img src="svg/traj/BlueBOutKeep3NDepNOutScoreNCli_step2_BlueMRDrop3_A.svg" alt="Trajectory BlueMRDrop3_A" width="900"/>
 
@@ -97,6 +99,7 @@ stateDiagram-v2
 - **File:** [`BlueMRDrop3_C.traj`](../../src/main/deploy/choreo/BlueMRDrop3_C.traj)
 - **Duration:** 2.19 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#ff6688`
 
 <img src="svg/traj/BlueBOutKeep3NDepNOutScoreNCli_step3_BlueMRDrop3_C.svg" alt="Trajectory BlueMRDrop3_C" width="900"/>
 
@@ -110,6 +113,7 @@ stateDiagram-v2
 - **File:** [`BlueMRDrop3_D.traj`](../../src/main/deploy/choreo/BlueMRDrop3_D.traj)
 - **Duration:** 2.213 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#88ff44`
 
 <img src="svg/traj/BlueBOutKeep3NDepNOutScoreNCli_step5_BlueMRDrop3_D.svg" alt="Trajectory BlueMRDrop3_D" width="900"/>
 
@@ -123,6 +127,7 @@ stateDiagram-v2
 - **File:** [`BlueMRDrop3_E.traj`](../../src/main/deploy/choreo/BlueMRDrop3_E.traj)
 - **Duration:** 2.602 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#ff8800`
 
 <img src="svg/traj/BlueBOutKeep3NDepNOutScoreNCli_step6_BlueMRDrop3_E.svg" alt="Trajectory BlueMRDrop3_E" width="900"/>
 
@@ -139,6 +144,7 @@ stateDiagram-v2
 - **File:** [`BlueMRDrop3_F.traj`](../../src/main/deploy/choreo/BlueMRDrop3_F.traj)
 - **Duration:** 2.293 s
 - **Timeout in auton XML:** 3.0 s
+- **Colour in overview:** `#cc88ff`
 
 <img src="svg/traj/BlueBOutKeep3NDepNOutScoreNCli_step7_BlueMRDrop3_F.svg" alt="Trajectory BlueMRDrop3_F" width="900"/>
 

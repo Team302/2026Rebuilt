@@ -50,6 +50,7 @@ stateDiagram-v2
 - **File:** [`BlueMLDrop2_A.traj`](../../src/main/deploy/choreo/BlueMLDrop2_A.traj)
 - **Duration:** 2.374 s
 - **Timeout in auton XML:** 4.0 s
+- **Colour in overview:** `#00d4ff`
 
 <img src="svg/traj/RedBDepDrop2NDepNOutScoreNCli_step1_BlueMLDrop2_A.svg" alt="Trajectory BlueMLDrop2_A" width="900"/>
 
@@ -64,6 +65,7 @@ stateDiagram-v2
 - **File:** [`BlueMLDrop2_B.traj`](../../src/main/deploy/choreo/BlueMLDrop2_B.traj)
 - **Duration:** 3.945 s
 - **Timeout in auton XML:** 4.0 s
+- **Colour in overview:** `#ffcc00`
 
 <img src="svg/traj/RedBDepDrop2NDepNOutScoreNCli_step2_BlueMLDrop2_B.svg" alt="Trajectory BlueMLDrop2_B" width="900"/>
 
@@ -79,6 +81,7 @@ stateDiagram-v2
 - **File:** [`BlueMLDrop2_C.traj`](../../src/main/deploy/choreo/BlueMLDrop2_C.traj)
 - **Duration:** 4.322 s
 - **Timeout in auton XML:** 4.0 s
+- **Colour in overview:** `#ff6688`
 
 <img src="svg/traj/RedBDepDrop2NDepNOutScoreNCli_step3_BlueMLDrop2_C.svg" alt="Trajectory BlueMLDrop2_C" width="900"/>
 
@@ -94,6 +97,7 @@ stateDiagram-v2
 - **File:** [`BlueMLDrop2_D.traj`](../../src/main/deploy/choreo/BlueMLDrop2_D.traj)
 - **Duration:** 1.331 s
 - **Timeout in auton XML:** 4.0 s
+- **Colour in overview:** `#88ff44`
 
 <img src="svg/traj/RedBDepDrop2NDepNOutScoreNCli_step4_BlueMLDrop2_D.svg" alt="Trajectory BlueMLDrop2_D" width="900"/>
 

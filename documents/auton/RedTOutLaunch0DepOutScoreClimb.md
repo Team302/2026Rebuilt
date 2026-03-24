@@ -46,6 +46,7 @@ stateDiagram-v2
 - **File:** [`BlueRightNoneOutpostDepot_A.traj`](../../src/main/deploy/choreo/BlueRightNoneOutpostDepot_A.traj)
 - **Duration:** 2.065 s
 - **Timeout in auton XML:** 3.0 s
+- **Colour in overview:** `#00d4ff`
 
 <img src="svg/traj/RedTOutLaunch0DepOutScoreClimb_step1_BlueRightNoneOutpostDepot_A.svg" alt="Trajectory BlueRightNoneOutpostDepot_A" width="900"/>
 
@@ -59,6 +60,7 @@ stateDiagram-v2
 - **File:** [`BlueRightNoneOutpostDepot_B.traj`](../../src/main/deploy/choreo/BlueRightNoneOutpostDepot_B.traj)
 - **Duration:** 3.812 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#ffcc00`
 
 <img src="svg/traj/RedTOutLaunch0DepOutScoreClimb_step2_BlueRightNoneOutpostDepot_B.svg" alt="Trajectory BlueRightNoneOutpostDepot_B" width="900"/>
 

@@ -54,6 +54,7 @@ stateDiagram-v2
 - **File:** [`Square1.traj`](../../src/main/deploy/choreo/Square1.traj)
 - **Duration:** 2.829 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#00d4ff`
 
 <img src="svg/traj/SquareTest_step2_Square1.svg" alt="Trajectory Square1" width="900"/>
 
@@ -67,6 +68,7 @@ stateDiagram-v2
 - **File:** [`Square2.traj`](../../src/main/deploy/choreo/Square2.traj)
 - **Duration:** 2.829 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#ffcc00`
 
 <img src="svg/traj/SquareTest_step3_Square2.svg" alt="Trajectory Square2" width="900"/>
 
@@ -80,6 +82,7 @@ stateDiagram-v2
 - **File:** [`Square3.traj`](../../src/main/deploy/choreo/Square3.traj)
 - **Duration:** 2.829 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#ff6688`
 
 <img src="svg/traj/SquareTest_step4_Square3.svg" alt="Trajectory Square3" width="900"/>
 
@@ -93,6 +96,7 @@ stateDiagram-v2
 - **File:** [`Square4.traj`](../../src/main/deploy/choreo/Square4.traj)
 - **Duration:** 2.829 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#88ff44`
 
 <img src="svg/traj/SquareTest_step5_Square4.svg" alt="Trajectory Square4" width="900"/>
 

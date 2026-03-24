@@ -66,6 +66,7 @@ stateDiagram-v2
 - **File:** [`BlueMLDrop3_Init.traj`](../../src/main/deploy/choreo/BlueMLDrop3_Init.traj)
 - **Duration:** 2.525 s
 - **Timeout in auton XML:** 3.0 s
+- **Colour in overview:** `#00d4ff`
 
 <img src="svg/traj/BlueBDepKeep3NDepNOutScoreNCli_step1_BlueMLDrop3_Init.svg" alt="Trajectory BlueMLDrop3_Init" width="900"/>
 
@@ -81,6 +82,7 @@ stateDiagram-v2
 - **File:** [`BlueMLDrop3_A.traj`](../../src/main/deploy/choreo/BlueMLDrop3_A.traj)
 - **Duration:** 3.52 s
 - **Timeout in auton XML:** 3.0 s
+- **Colour in overview:** `#ffcc00`
 
 <img src="svg/traj/BlueBDepKeep3NDepNOutScoreNCli_step2_BlueMLDrop3_A.svg" alt="Trajectory BlueMLDrop3_A" width="900"/>
 
@@ -101,6 +103,7 @@ stateDiagram-v2
 - **File:** [`BlueMLDrop3_C.traj`](../../src/main/deploy/choreo/BlueMLDrop3_C.traj)
 - **Duration:** 1.877 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#ff6688`
 
 <img src="svg/traj/BlueBDepKeep3NDepNOutScoreNCli_step3_BlueMLDrop3_C.svg" alt="Trajectory BlueMLDrop3_C" width="900"/>
 
@@ -114,6 +117,7 @@ stateDiagram-v2
 - **File:** [`BlueMLDrop3_C2.traj`](../../src/main/deploy/choreo/BlueMLDrop3_C2.traj)
 - **Duration:** 1.809 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#88ff44`
 
 <img src="svg/traj/BlueBDepKeep3NDepNOutScoreNCli_step5_BlueMLDrop3_C2.svg" alt="Trajectory BlueMLDrop3_C2" width="900"/>
 
@@ -127,6 +131,7 @@ stateDiagram-v2
 - **File:** [`BlueMLDrop3_D.traj`](../../src/main/deploy/choreo/BlueMLDrop3_D.traj)
 - **Duration:** 2.641 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#ff8800`
 
 <img src="svg/traj/BlueBDepKeep3NDepNOutScoreNCli_step6_BlueMLDrop3_D.svg" alt="Trajectory BlueMLDrop3_D" width="900"/>
 
@@ -144,6 +149,7 @@ stateDiagram-v2
 - **File:** [`BlueMLDrop3_F.traj`](../../src/main/deploy/choreo/BlueMLDrop3_F.traj)
 - **Duration:** 1.843 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#cc88ff`
 
 <img src="svg/traj/BlueBDepKeep3NDepNOutScoreNCli_step7_BlueMLDrop3_F.svg" alt="Trajectory BlueMLDrop3_F" width="900"/>
 

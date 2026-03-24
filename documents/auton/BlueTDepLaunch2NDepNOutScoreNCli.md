@@ -58,6 +58,7 @@ stateDiagram-v2
 - **File:** [`BlueLeftBumpNZNZ_A.traj`](../../src/main/deploy/choreo/BlueLeftBumpNZNZ_A.traj)
 - **Duration:** 3.316 s
 - **Timeout in auton XML:** 2.0 s
+- **Colour in overview:** `#00d4ff`
 
 <img src="svg/traj/BlueTDepLaunch2NDepNOutScoreNCli_step2_BlueLeftBumpNZNZ_A.svg" alt="Trajectory BlueLeftBumpNZNZ_A" width="900"/>
 
@@ -72,6 +73,7 @@ stateDiagram-v2
 - **File:** [`LeftToRightNZ.traj`](../../src/main/deploy/choreo/LeftToRightNZ.traj)
 - **Duration:** 4.612 s
 - **Timeout in auton XML:** 3.0 s
+- **Colour in overview:** `#ffcc00`
 
 <img src="svg/traj/BlueTDepLaunch2NDepNOutScoreNCli_step3_LeftToRightNZ.svg" alt="Trajectory LeftToRightNZ" width="900"/>
 
@@ -87,6 +89,7 @@ stateDiagram-v2
 - **File:** [`BlueLeftBumpNZNZ_C.traj`](../../src/main/deploy/choreo/BlueLeftBumpNZNZ_C.traj)
 - **Duration:** 2.681 s
 - **Timeout in auton XML:** 1.5 s
+- **Colour in overview:** `#ff6688`
 
 <img src="svg/traj/BlueTDepLaunch2NDepNOutScoreNCli_step4_BlueLeftBumpNZNZ_C.svg" alt="Trajectory BlueLeftBumpNZNZ_C" width="900"/>
 
@@ -101,6 +104,7 @@ stateDiagram-v2
 - **File:** [`RightToLeftNZ.traj`](../../src/main/deploy/choreo/RightToLeftNZ.traj)
 - **Duration:** 4.779 s
 - **Timeout in auton XML:** 3.0 s
+- **Colour in overview:** `#88ff44`
 
 <img src="svg/traj/BlueTDepLaunch2NDepNOutScoreNCli_step5_RightToLeftNZ.svg" alt="Trajectory RightToLeftNZ" width="900"/>
 
@@ -116,6 +120,7 @@ stateDiagram-v2
 - **File:** [`BlueLeftBumpNZNZ_D.traj`](../../src/main/deploy/choreo/BlueLeftBumpNZNZ_D.traj)
 - **Duration:** 2.02 s
 - **Timeout in auton XML:** 2.0 s
+- **Colour in overview:** `#ff8800`
 
 <img src="svg/traj/BlueTDepLaunch2NDepNOutScoreNCli_step6_BlueLeftBumpNZNZ_D.svg" alt="Trajectory BlueLeftBumpNZNZ_D" width="900"/>
 

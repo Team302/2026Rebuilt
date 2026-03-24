@@ -46,6 +46,7 @@ stateDiagram-v2
 - **File:** [`BlueLDepotOutpost_A.traj`](../../src/main/deploy/choreo/BlueLDepotOutpost_A.traj)
 - **Duration:** 2.653 s
 - **Timeout in auton XML:** 3.5 s
+- **Colour in overview:** `#00d4ff`
 
 <img src="svg/traj/BlueTDepLaunch0DepNOutScoreClimb_step1_BlueLDepotOutpost_A.svg" alt="Trajectory BlueLDepotOutpost_A" width="900"/>
 
@@ -60,6 +61,7 @@ stateDiagram-v2
 - **File:** [`BlueLDepNO_b.traj`](../../src/main/deploy/choreo/BlueLDepNO_b.traj)
 - **Duration:** 1.181 s
 - **Timeout in auton XML:** 4.0 s
+- **Colour in overview:** `#ffcc00`
 
 <img src="svg/traj/BlueTDepLaunch0DepNOutScoreClimb_step2_BlueLDepNO_b.svg" alt="Trajectory BlueLDepNO_b" width="900"/>
 

@@ -58,6 +58,7 @@ stateDiagram-v2
 - **File:** [`BlueMRDrop2_A.traj`](../../src/main/deploy/choreo/BlueMRDrop2_A.traj)
 - **Duration:** 2.54 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#00d4ff`
 
 <img src="svg/traj/RedBOutDrop2NDepNOutScoreNCli_step1_BlueMRDrop2_A.svg" alt="Trajectory BlueMRDrop2_A" width="900"/>
 
@@ -71,6 +72,7 @@ stateDiagram-v2
 - **File:** [`BlueMRDrop2_B.traj`](../../src/main/deploy/choreo/BlueMRDrop2_B.traj)
 - **Duration:** 2.732 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#ffcc00`
 
 <img src="svg/traj/RedBOutDrop2NDepNOutScoreNCli_step2_BlueMRDrop2_B.svg" alt="Trajectory BlueMRDrop2_B" width="900"/>
 
@@ -87,6 +89,7 @@ stateDiagram-v2
 - **File:** [`BlueMRDrop2_C.traj`](../../src/main/deploy/choreo/BlueMRDrop2_C.traj)
 - **Duration:** 2.393 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#ff6688`
 
 <img src="svg/traj/RedBOutDrop2NDepNOutScoreNCli_step3_BlueMRDrop2_C.svg" alt="Trajectory BlueMRDrop2_C" width="900"/>
 
@@ -100,12 +103,14 @@ stateDiagram-v2
 - **File:** `BlueMRDrop2_D.traj` *(not found)*
 - **Duration:** unknown
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#00d4ff`
 
 ### Step 5 -- BlueMRDrop2_E
 
 - **File:** [`BlueMRDrop2_E.traj`](../../src/main/deploy/choreo/BlueMRDrop2_E.traj)
 - **Duration:** 3.1 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#ff8800`
 
 <img src="svg/traj/RedBOutDrop2NDepNOutScoreNCli_step5_BlueMRDrop2_E.svg" alt="Trajectory BlueMRDrop2_E" width="900"/>
 
@@ -122,6 +127,7 @@ stateDiagram-v2
 - **File:** [`BlueMRDrop2_F.traj`](../../src/main/deploy/choreo/BlueMRDrop2_F.traj)
 - **Duration:** 2.054 s
 - **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#cc88ff`
 
 <img src="svg/traj/RedBOutDrop2NDepNOutScoreNCli_step6_BlueMRDrop2_F.svg" alt="Trajectory BlueMRDrop2_F" width="900"/>
 

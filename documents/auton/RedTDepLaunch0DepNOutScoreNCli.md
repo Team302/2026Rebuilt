@@ -42,6 +42,7 @@ stateDiagram-v2
 - **File:** [`BlueLDepotOutpost_A.traj`](../../src/main/deploy/choreo/BlueLDepotOutpost_A.traj)
 - **Duration:** 2.653 s
 - **Timeout in auton XML:** 3.5 s
+- **Colour in overview:** `#00d4ff`
 
 <img src="svg/traj/RedTDepLaunch0DepNOutScoreNCli_step1_BlueLDepotOutpost_A.svg" alt="Trajectory BlueLDepotOutpost_A" width="900"/>
 
