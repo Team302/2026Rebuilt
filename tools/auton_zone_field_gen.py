@@ -30,6 +30,9 @@ REPO_ROOT = SCRIPT_DIR.parent
 ZONES_DIR = REPO_ROOT / "src" / "main" / "deploy" / "auton" / "zones"
 OUT_PATH = REPO_ROOT / "documents" / "auton" / "FieldZones.md"
 ZONE_PAGES_DIR = REPO_ROOT / "documents" / "auton" / "zones"
+# SVG files live next to their .md files so relative <img> paths work on GitHub
+SVG_DIR = REPO_ROOT / "documents" / "auton" / "svg"
+ZONE_SVG_DIR = REPO_ROOT / "documents" / "auton" / "zones" / "svg"
 
 # ---------------------------------------------------------------------------
 # Field dimensions (metres)
@@ -481,8 +484,11 @@ def generate_individual_svg(focus: dict, all_shapes: list[dict]) -> str:
     )
 
 
-def generate_zone_page(shape: dict, all_shapes: list[dict]) -> str:
-    """Generate full markdown content for an individual zone page."""
+def generate_zone_page(shape: dict, svg_rel: str) -> str:
+    """Generate full markdown content for an individual zone page.
+
+    svg_rel -- path to the SVG file relative to the zone .md file.
+    """
     name = shape["name"]
     alliance = shape["alliance"]
     effects = shape["effects"]
@@ -507,9 +513,7 @@ def generate_zone_page(shape: dict, all_shapes: list[dict]) -> str:
         ]
 
     geom_table = "| Property | Value |\n|----------|-------|\n" + "\n".join(geom_lines)
-
     effects_str = ", ".join(effects) if effects else "None"
-    svg = generate_individual_svg(shape, all_shapes)
 
     return f"""# Zone: {name}
 
@@ -521,7 +525,7 @@ def generate_zone_page(shape: dict, all_shapes: list[dict]) -> str:
 
 ## Field Diagram
 
-{svg}
+<img src="{svg_rel}" alt="Field diagram highlighting {name}" width="{SVG_W}"/>
 
 ## Zone Properties
 
@@ -552,7 +556,15 @@ def main() -> None:
         else:
             skipped.append(zf.stem)
 
-    svg = generate_svg(shapes)
+    # -----------------------------------------------------------------------
+    # Write the combined field SVG and FieldZones.md
+    # -----------------------------------------------------------------------
+    SVG_DIR.mkdir(parents=True, exist_ok=True)
+    combined_svg = generate_svg(shapes)
+    combined_svg_path = SVG_DIR / "FieldZones.svg"
+    combined_svg_path.write_text(combined_svg, encoding="ascii", errors="replace")
+    print(f"[OK] written -> {combined_svg_path.relative_to(REPO_ROOT)}")
+
     table = generate_table(shapes)
     legend = generate_legend()
 
@@ -565,10 +577,12 @@ def main() -> None:
             + "\n"
         )
 
-    # Build per-zone links for the table of contents
     zone_links = "\n".join(
         f"- [{s['name']}](zones/{s['name']}.md)" for s in shapes
     )
+
+    # Path from FieldZones.md (documents/auton/) to the SVG (documents/auton/svg/)
+    field_svg_rel = "svg/FieldZones.svg"
 
     doc = f"""# Auton Field Zones
 
@@ -582,7 +596,7 @@ def main() -> None:
 {skipped_note}
 ## Field Diagram
 
-{svg}
+<img src="{field_svg_rel}" alt="All auton field zones" width="{SVG_W}"/>
 
 ## Individual Zone Pages
 
@@ -597,15 +611,26 @@ def main() -> None:
 {table}
 """
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    # Write as ASCII -- non-ASCII bytes cause Mermaid/GitHub rendering issues
     OUT_PATH.write_text(doc, encoding="ascii", errors="replace")
     print(f"[OK] written -> {OUT_PATH.relative_to(REPO_ROOT)}")
 
-    # Generate one page per zone
+    # -----------------------------------------------------------------------
+    # Write one SVG + one .md page per zone
+    # -----------------------------------------------------------------------
     ZONE_PAGES_DIR.mkdir(parents=True, exist_ok=True)
+    ZONE_SVG_DIR.mkdir(parents=True, exist_ok=True)
     for shape in shapes:
-        page_path = ZONE_PAGES_DIR / f"{shape['name']}.md"
-        page_content = generate_zone_page(shape, shapes)
+        name = shape["name"]
+        # Write SVG file
+        zone_svg = generate_individual_svg(shape, shapes)
+        zone_svg_path = ZONE_SVG_DIR / f"{name}.svg"
+        zone_svg_path.write_text(zone_svg, encoding="ascii", errors="replace")
+        print(f"[OK] written -> {zone_svg_path.relative_to(REPO_ROOT)}")
+
+        # Path from zones/<Name>.md to zones/svg/<Name>.svg
+        svg_rel = f"svg/{name}.svg"
+        page_path = ZONE_PAGES_DIR / f"{name}.md"
+        page_content = generate_zone_page(shape, svg_rel)
         page_path.write_text(page_content, encoding="ascii", errors="replace")
         print(f"[OK] written -> {page_path.relative_to(REPO_ROOT)}")
 
