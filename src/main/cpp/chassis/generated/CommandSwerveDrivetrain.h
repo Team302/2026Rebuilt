@@ -332,6 +332,6 @@ namespace subsystems
         const units::length::inch_t m_distanceThreshold{0.25};
         frc::Pose2d m_prevPose;
         units::angle::degree_t m_targetChassisRotation;
-        const units::angle::degree_t m_chassisRotationThreshold{2.0_deg};
+        const units::angle::degree_t m_chassisRotationThreshold{5.0_deg};
     };
 }

@@ -60,9 +60,9 @@ void LaunchState::InitCompBot302()
 
 void LaunchState::Run()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LaunchState"), string("Run"));
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LaunchState"), string("Run"));
 
-	if (m_timer.Get() > m_bumpDuration)
+	if ((m_timer.Get() > m_bumpDuration) && frc::DriverStation::IsAutonomous())
 	{
 		m_currentExtenderTarget = (m_currentExtenderTarget > 0) ? m_extenderTargetDown : m_extenderTargetUp;
 		m_mechanism->UpdateTargetExtenderPercentOut(m_currentExtenderTarget);
