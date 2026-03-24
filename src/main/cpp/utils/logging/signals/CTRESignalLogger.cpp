@@ -20,6 +20,7 @@
 #include <filesystem>
 #include <iostream>
 #include <string>
+#include <span>
 
 using ctre::phoenix6::SignalLogger;
 
