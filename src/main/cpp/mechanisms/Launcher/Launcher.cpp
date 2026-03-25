@@ -914,7 +914,7 @@ std::string Launcher::GetCurrentStateName()
 
 bool Launcher::IsTurretAtTarget()
 {
-	if (m_turretEnabled)
+	if (m_turretEnabled && RebuiltTargetCalculator::GetInstance()->IsValidTurretAngle())
 	{
 		units::angle::degree_t turretError = m_cachedTurretPosition - m_targetTurretAngle;
 		m_cachedTurretAtTarget = ((units::math::abs(turretError) < m_turretAngleThreshold));
@@ -923,6 +923,7 @@ bool Launcher::IsTurretAtTarget()
 	{
 		m_cachedTurretAtTarget = m_chassis->IsChassisAtRotationTarget();
 	}
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Turret At Target", RebuiltTargetCalculator::GetInstance()->IsValidTurretAngle());
 	return m_cachedTurretAtTarget;
 }
 void Launcher::UpdateTurretEnabled()

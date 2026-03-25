@@ -204,6 +204,7 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
         bestAngle = std::clamp(normalizedGoal, m_minLauncherAngle, m_maxLauncherAngle);
     }
 
+    m_hasFoundValidAngle = hasFoundValidAngle;
     m_field->UpdateObject(kLauncherPositionName, frc::Pose2d(GetMechanismWorldPosition(), robotPose.Rotation() + frc::Rotation2d(bestAngle)));
     m_cachedLauncherTarget = units::angle::turn_t(bestAngle.value());
 
