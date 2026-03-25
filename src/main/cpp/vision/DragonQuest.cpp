@@ -148,6 +148,23 @@ void DragonQuest::DataLog(uint64_t timestamp)
     LogBoolData(timestamp, m_questHasResetPath, m_hasReset);
     LogBoolData(timestamp, m_questIsConnectedPath, m_isConnected);
     LogBoolData(timestamp, m_questIsGoofyPath, m_isQuestGoofy);
+
+    if (auto batt = m_questNav.GetBatteryPercent())
+    {
+        LogIntData(timestamp, m_questBatteryPath, batt.value());
+    }
+    if (auto frames = m_questNav.GetFrameCount())
+    {
+        LogIntData(timestamp, m_questFrameCountPath, frames.value());
+    }
+    if (auto lost = m_questNav.GetTrackingLostCounter())
+    {
+        LogIntData(timestamp, m_questTrackingLostCountPath, lost.value());
+    }
+    if (auto appTime = m_questNav.GetAppTimestamp())
+    {
+        LogDoubleData(timestamp, m_questAppTimestampPath, appTime.value());
+    }
 }
 
 // ──────────────────────────────────────────────────────────────────────────────

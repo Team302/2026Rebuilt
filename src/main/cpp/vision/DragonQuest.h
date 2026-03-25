@@ -124,6 +124,10 @@ private:
     static constexpr std::string_view m_questPosePath = "/Chassis/QuestPose3d";
     static constexpr std::string_view m_questIsConnectedPath = "Chassis/QuestConnected";
     static constexpr std::string_view m_questIsGoofyPath = "Chassis/QuestIsGoofy";
+    static constexpr std::string_view m_questBatteryPath = "Chassis/QuestBatteryPercent";
+    static constexpr std::string_view m_questFrameCountPath = "Chassis/QuestFrameCount";
+    static constexpr std::string_view m_questTrackingLostCountPath = "Chassis/QuestTrackingLostCount";
+    static constexpr std::string_view m_questAppTimestampPath = "Chassis/QuestAppTimestamp";
 
     bool m_isQuestGoofy = false;
 
