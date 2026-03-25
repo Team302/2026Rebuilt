@@ -13,30 +13,36 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # ── Cache the WPILib Docker image layers ─────────────────────────────────
-      # This avoids re-pulling the entire ~2 GB image on every run.
-      - name: Cache Docker layers
+      # ── Cache the WPILib Docker image via docker save/load ───────────────────
+      # docker pull ignores buildx cache dirs, so we save the image as a tar
+      # and restore it directly into the Docker daemon. On a cache hit the pull
+      # is skipped entirely; on a miss we pull and save for the next run.
+      - name: Cache WPILib Docker image
+        id: docker-cache
         uses: actions/cache@v4
         with:
-          path: /tmp/.buildx-cache
+          path: /tmp/wpilib-image.tar
           key: ${{ runner.os }}-wpilib-docker-2025-22.04
-          restore-keys: |
-            ${{ runner.os }}-wpilib-docker-
 
-      - name: Pull WPILib cross-compiler image
+      - name: Load WPILib image from cache
+        if: steps.docker-cache.outputs.cache-hit == 'true'
+        run: docker load -i /tmp/wpilib-image.tar
+
+      - name: Pull WPILib image and save to cache
+        if: steps.docker-cache.outputs.cache-hit != 'true'
         run: |
           docker pull wpilib/roborio-cross-ubuntu:2025-22.04
+          docker save wpilib/roborio-cross-ubuntu:2025-22.04 -o /tmp/wpilib-image.tar
 
       # ── Cache Gradle dependencies and build outputs ───────────────────────────
-      # Gradle re-downloads WPILib vendordeps and re-compiles unchanged code
-      # without this cache, adding 1-3 min on cold runs.
+      # Stored at .gradle-home/ inside the workspace so it is always owned by
+      # the runner user — never written to by root inside the container.
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
           path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-            .gradle
+            ${{ github.workspace }}/.gradle-home/caches
+            ${{ github.workspace }}/.gradle-home/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/vendordeps/*.json') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
@@ -51,9 +57,12 @@ jobs:
 
       - name: Compile and run tests on robot code
         run: |
+          # Run as the current runner user (not root) so all files written into
+          # .gradle-home/ are owned by the runner and safe for cache save/restore.
           docker run --rm \
+            --user "$(id -u):$(id -g)" \
             -v "$GITHUB_WORKSPACE:/workspace" \
-            -v "$HOME/.gradle:/root/.gradle" \
             -w /workspace \
+            -e GRADLE_USER_HOME=/workspace/.gradle-home \
             wpilib/roborio-cross-ubuntu:2025-22.04 \
             ./gradlew frcProgramReleaseExecutable --no-daemon --build-cache
