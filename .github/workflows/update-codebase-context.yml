@@ -120,16 +120,7 @@ jobs:
             echo "Changes detected."
           fi
 
-      # ── 5. Ensure required labels exist ──────────────────────────────────────
-      - name: Ensure PR labels exist
-        if: steps.diff.outputs.changed == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh label create "documentation" --color "0075ca" --description "Improvements or additions to documentation" 2>/dev/null || true
-          gh label create "automated"     --color "e4e669" --description "Opened automatically by a GitHub Actions bot"  2>/dev/null || true
-
-      # ── 6. Commit to a new branch and open a PR ───────────────────────────────
+      # ── 5. Commit to a new branch and open a PR ───────────────────────────────
       - name: Create PR with updated context
         if: steps.diff.outputs.changed == 'true'
         env:

@@ -129,10 +129,6 @@ jobs:
             ZONE_NOTE=$'\n'"- \`documents/auton/field_zones.md\` (field zone diagram)"
           fi
 
-          # ── Ensure labels exist (idempotent) ─────────────────────────────────
-          gh label create "documentation" --color "0075ca" --description "Improvements or additions to documentation" 2>/dev/null || true
-          gh label create "automated"     --color "e4e669" --description "Opened automatically by a GitHub Actions bot"  2>/dev/null || true
-
           # ── Open the PR ───────────────────────────────────────────────────────
           gh pr create \
             --title "docs(auton): regenerate Mermaid diagrams" \
