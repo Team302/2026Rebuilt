@@ -214,7 +214,7 @@ void DragonCANdle::UpdateDiagnostics()
     // Set individual onboard LEDs for diagnostics
     // Only send CAN commands if state changed (reduces bus traffic significantly)
 
-    // Alliance)
+    // Alliance
     if (m_firstRun)
     {
         m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{m_alliance == frc::DriverStation::Alliance::kRed ? frc::Color::kRed : frc::Color::kBlue}));
@@ -225,6 +225,7 @@ void DragonCANdle::UpdateDiagnostics()
         m_candle->SetControl(controls::SolidColor{5, 5}.WithColor(RGBWColor{m_hood ? frc::Color::kBlack : frc::Color::kYellow}));
         m_candle->SetControl(controls::SolidColor{6, 6}.WithColor(RGBWColor{m_turretZero ? frc::Color::kBlack : frc::Color::kYellow}));
         m_candle->SetControl(controls::SolidColor{7, 7}.WithColor(RGBWColor{m_turretEnd ? frc::Color::kBlack : frc::Color::kYellow}));
+        m_firstRun = false;
     }
     else
     {

@@ -131,6 +131,6 @@ private:
 	frc::Color m_prevPrimaryColor{frc::Color::kGreen};
 	frc::Color m_prevSecondaryColor{frc::Color::kBlack};
 
-	// isfirstrun
+	// is this the first run of periodic? Used to force initial LED state setup
 	bool m_firstRun{true};
 };
