@@ -17,6 +17,8 @@
 #include <cmath>
 #include <string>
 
+#include "auton/AllianceZoneManager.h"
+#include "auton/NeutralZoneManager.h"
 #include "frc/geometry/Pose3d.h"
 #include "frc/geometry/Rotation3d.h"
 #include "frc/geometry/Transform3d.h"
@@ -25,8 +27,6 @@
 #include "state/IRobotStateChangeSubscriber.h"
 #include "state/RobotState.h"
 #include "state/RobotStateChanges.h"
-#include "auton/AllianceZoneManager.h"
-#include "auton/NeutralZoneManager.h"
 #include "units/length.h"
 #include "units/time.h"
 #include "utils/DragonField.h"
@@ -133,23 +133,9 @@ void DragonQuest::GetEstimatedPose()
     const PoseFrame &latest = frames.back();
     frc::Pose3d robotPose = QuestPoseToRobotPose3d(latest.questPose3d);
 
-    if (PoseUtils::IsPoseJumping(robotPose.ToPose2d(), m_lastCalculatedPose.ToPose2d()) == true)
-    {
-        m_isQuestGoofy = true;
-    }
-    else
-    {
-        m_isQuestGoofy = false;
-    }
+    m_isQuestGoofy = PoseUtils::IsPoseJumping(robotPose.ToPose2d(), m_lastCalculatedPose.ToPose2d());
 
-    if (PoseUtils::IsPoseOffField(robotPose.ToPose2d()) == true)
-    {
-        m_isQuestGoofy = true;
-    }
-    else
-    {
-        m_isQuestGoofy = false;
-    }
+    m_isQuestGoofy = PoseUtils::IsPoseOffField(robotPose.ToPose2d());
 
     m_lastCalculatedPose = robotPose;
     m_lastPoseTimestamp = units::time::second_t{latest.dataTimestamp};
