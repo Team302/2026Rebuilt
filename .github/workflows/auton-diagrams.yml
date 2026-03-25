@@ -1,7 +1,7 @@
 name: Auton Diagrams
 
-# Regenerates documents/auton/<name>.md whenever the corresponding
-# src/main/deploy/auton/<name>.xml changes and opens a PR with the result.
+# Regenerates documents/auton/<n>.md whenever the corresponding
+# src/main/deploy/auton/<n>.xml changes and opens a PR with the result.
 # Never pushes directly to main.
 
 on:
@@ -11,6 +11,13 @@ on:
       - 'src/main/deploy/auton/**/*.xml'
       - 'tools/auton_diagram_gen.py'
       - 'tools/auton_zone_field_gen.py'
+
+# ── Prevent race conditions from overlapping pushes ──────────────────────────
+# If a second push lands before this run finishes, cancel the in-progress run
+# and start fresh. Only one run of this workflow executes at a time.
+concurrency:
+  group: auton-diagrams
+  cancel-in-progress: true
 
 jobs:
   regenerate-diagrams:
@@ -58,7 +65,14 @@ jobs:
           echo "$CHANGED"   >> "$GITHUB_OUTPUT"
           echo "EOF"        >> "$GITHUB_OUTPUT"
 
-          echo "zones_changed=$( [ -n "$ZONE_CHANGED" ] && echo 'true' || echo 'false' )" >> "$GITHUB_OUTPUT"
+          # Fix: avoid nested double-quotes by computing the value into a
+          # variable first, then writing it to GITHUB_OUTPUT separately.
+          if [ -n "$ZONE_CHANGED" ]; then
+            ZONES_OUT="true"
+          else
+            ZONES_OUT="false"
+          fi
+          echo "zones_changed=$ZONES_OUT" >> "$GITHUB_OUTPUT"
 
       # ── Regenerate diagrams ───────────────────────────────────────────────────
       - name: Regenerate Markdown diagrams
@@ -92,7 +106,8 @@ jobs:
           fi
 
           # ── Close any existing open bot PR for auton diagrams ────────────────
-          # Avoids piling up stale PRs if multiple pushes happen before review.
+          # concurrency: cancel-in-progress handles overlapping runs, but a PR
+          # from a previous run may still be open if it was never merged.
           EXISTING_PR=$(gh pr list \
             --head "bot/auton-diagrams" \
             --state open \
@@ -108,7 +123,7 @@ jobs:
           # ── Commit to a fixed branch name (force-push to keep it tidy) ───────
           BRANCH="bot/auton-diagrams"
 
-          # If the branch already exists remotely, delete it first for a clean slate
+          # Delete the remote branch if it exists so we start clean
           git push origin --delete "$BRANCH" 2>/dev/null || true
 
           git checkout -b "$BRANCH"
