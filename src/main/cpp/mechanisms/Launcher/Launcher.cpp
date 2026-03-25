@@ -807,10 +807,8 @@ void Launcher::CalculateTargets()
 	}
 	else
 	{
-		m_targetHoodAngle = m_passingHoodTargetAngle;
-		m_targetLauncherAngularVelocity = m_passingLauncherTargetVelocity;
-		// m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingHoodAngleArray, units::length::foot_t(distanceToTarget));
-		// m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingLauncherVelocityArray, units::length::foot_t(distanceToTarget));
+		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingHoodAngleArray, units::length::foot_t(distanceToTarget));
+		m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingLauncherVelocityArray, units::length::foot_t(distanceToTarget));
 	}
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Distance", distanceToTarget.value());
@@ -964,4 +962,9 @@ void Launcher::UpdateCachedLoggingValues()
 	m_cachedinLaunchzone = (inLaunchzone);
 	m_cachedIsChassisSpeed = (Speed < m_chassisSpeedThreshold);
 	m_cachedTurretAtTarget = IsTurretAtTarget();
+
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_cachedHoodError", m_cachedHoodError);
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_cachedLauncherSpeedError", m_cachedLauncherSpeedError);
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_cachedinLaunchzone", m_cachedinLaunchzone);
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_targetTurretAngle", m_targetTurretAngle.value());
 }

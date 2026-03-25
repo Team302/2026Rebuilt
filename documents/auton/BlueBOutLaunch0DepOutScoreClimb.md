@@ -37,11 +37,61 @@ stateDiagram-v2
 
 | Step | Primitive | Trajectory | Timeout | Intake | Launcher | Climber | Zones |
 |------|-----------|------------|---------|--------|----------|---------|-------|
-| 1 | DRIVE_STOP_MECH | -- | -- s | STATE_OFF | STATE_LAUNCH | STATE_OFF | ? |
-| 2 | TRAJECTORY_DRIVE | BlueMiddleRightToOutpost | 2.5 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone, BlueOutpostZone |
-| 3 | TRAJECTORY_DRIVE | RightToLeftAlliance | 2.5 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone |
-| 4 | TRAJECTORY_DRIVE | DepotToLaunchToClimb | 2.5 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone, BlueDepotZone |
+| 1 | DRIVE_STOP_MECH | -- | -- s | STATE_OFF | STATE_LAUNCH | STATE_OFF | -- |
+| 2 | TRAJECTORY_DRIVE | [BlueMiddleRightToOutpost](../../src/main/deploy/choreo/BlueMiddleRightToOutpost.traj) | 2.5 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone, BlueOutpostZone |
+| 3 | TRAJECTORY_DRIVE | [RightToLeftAlliance](../../src/main/deploy/choreo/RightToLeftAlliance.traj) | 2.5 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone |
+| 4 | TRAJECTORY_DRIVE | [DepotToLaunchToClimb](../../src/main/deploy/choreo/DepotToLaunchToClimb.traj) | 2.5 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone, BlueDepotZone |
 | 5 | DRIVE_STOP_MECH | -- | -- s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueClimbingZone |
+
+## Trajectory Details
+
+### All Trajectories Overview
+
+<img src="svg/traj/BlueBOutLaunch0DepOutScoreClimb_all_traj.svg" alt="All trajectories for BlueBOutLaunch0DepOutScoreClimb" width="900"/>
+
+### Step 2 -- BlueMiddleRightToOutpost
+
+- **File:** [`BlueMiddleRightToOutpost.traj`](../../src/main/deploy/choreo/BlueMiddleRightToOutpost.traj)
+- **Duration:** 2.257 s
+- **Timeout in auton XML:** 2.5 s
+- **Colour in overview:** `#00d4ff`
+
+<img src="svg/traj/BlueBOutLaunch0DepOutScoreClimb_step2_BlueMiddleRightToOutpost.svg" alt="Trajectory BlueMiddleRightToOutpost" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 3.89 | 2.588 | 233.0 |
+| 2 | 0.652 | 0.567 | 180.0 |
+
+### Step 3 -- RightToLeftAlliance
+
+- **File:** [`RightToLeftAlliance.traj`](../../src/main/deploy/choreo/RightToLeftAlliance.traj)
+- **Duration:** 3.459 s
+- **Timeout in auton XML:** 2.5 s
+- **Colour in overview:** `#ffcc00`
+
+<img src="svg/traj/BlueBOutLaunch0DepOutScoreClimb_step3_RightToLeftAlliance.svg" alt="Trajectory RightToLeftAlliance" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 0.652 | 0.567 | 182.5 |
+| 2 | 2.445 | 3.98 | 180.0 |
+| 3 | 0.461 | 6.151 | 210.9 |
+
+### Step 4 -- DepotToLaunchToClimb
+
+- **File:** [`DepotToLaunchToClimb.traj`](../../src/main/deploy/choreo/DepotToLaunchToClimb.traj)
+- **Duration:** 1.778 s
+- **Timeout in auton XML:** 2.5 s
+- **Colour in overview:** `#ff6688`
+
+<img src="svg/traj/BlueBOutLaunch0DepOutScoreClimb_step4_DepotToLaunchToClimb.svg" alt="Trajectory DepotToLaunchToClimb" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 0.461 | 6.151 | 210.9 |
+| 2 | 1.463 | 5.368 | 159.0 |
+| 3 | 1.349 | 4.741 | 180.0 |
 
 ## Zone Legend
 

@@ -257,9 +257,9 @@ private:
 	std::array<units::angle::turn_t, 11> m_scoringHoodAngleArray = {0.0_tr, 0.0_tr, 0.5_tr, 10.9_tr, 15.0_tr, 18.3_tr, 20.7_tr, 21_tr, 21_tr, 21_tr, 21_tr};
 	std::array<units::angular_velocity::revolutions_per_minute_t, 11> m_scoringLauncherVelocityArray = {2000.0_rpm, 2200.0_rpm, 2400.0_rpm, 2500.0_rpm, 2500.0_rpm, 2600.0_rpm, 2750.0_rpm, 2850.0_rpm, 2950.0_rpm, 3050.0_rpm, 3150.0_rpm};
 
-	std::array<units::length::foot_t, 7> m_passingDistanceArray = {10.0_ft, 15.0_ft, 20.0_ft, 25.0_ft, 30.0_ft, 35.0_ft, 40.0_ft};
-	std::array<units::angle::turn_t, 7> m_passingHoodAngleArray = {0.0_tr, 5.0_tr, 10.0_tr, 15.0_tr, 20.0_tr, 25.0_tr, 30.0_tr};
-	std::array<units::angular_velocity::revolutions_per_minute_t, 7> m_passingLauncherVelocityArray = {500.0_rpm, 600.0_rpm, 700.0_rpm, 800.0_rpm, 900.0_rpm, 1000.0_rpm, 1100.0_rpm};
+	std::array<units::length::foot_t, 7> m_passingDistanceArray = {10.0_ft, 16.66666667_ft, 20.0_ft, 23.08333333_ft, 26.33333333_ft, 30.0_ft, 42.33333333_ft};
+	std::array<units::angle::turn_t, 7> m_passingHoodAngleArray = {23.5_tr, 23.5_tr, 23.5_tr, 29.7_tr, 30.0_tr, 30.0_tr, 30.0_tr};
+	std::array<units::angular_velocity::revolutions_per_minute_t, 7> m_passingLauncherVelocityArray = {1900.0_rpm, 2150.0_rpm, 2450.0_rpm, 2500.0_rpm, 2900.0_rpm, 3200.0_rpm, 3600.0_rpm};
 	// All values in turns are actually Degree's
 
 	// Cached motor status signals for performance optimization

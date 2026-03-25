@@ -123,12 +123,12 @@ void GameDataHelper::RunCurrentState()
 
         if (gameData == "R" && m_firstActiveHub == "Undecided")
         {
-            m_firstActiveHub = "Red";
+            m_firstActiveHub = "Blue";
             frc::SmartDashboard::PutString(m_firstActiveHubNT, m_firstActiveHub);
         }
         else if (gameData == "B" && m_firstActiveHub == "Undecided")
         {
-            m_firstActiveHub = "Blue";
+            m_firstActiveHub = "Red";
             frc::SmartDashboard::PutString(m_firstActiveHubNT, m_firstActiveHub);
         }
         frc::SmartDashboard::PutNumber(m_allianceShiftTime, timeToNextShift.value());
