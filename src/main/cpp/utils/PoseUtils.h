@@ -93,11 +93,14 @@ public:
                                units::length::centimeter_t positionTolerance);
 
     //-------------------------------------------------------------------
-    /// @brief      Checks if a pose is outside the field boundaries
+    /// @brief      Checks if a pose is considered outside the playable field area
     /// @param[in]  pose - Pose to check
-    /// @return     true if pose is outside the field boundaries, false otherwise
-    /// @details    Compares the pose's x and y coordinates against the known field dimensions defined in FieldConstants. Useful for validating pose estimates and
-    ///             detecting potential sensor errors that result in impossible positions. Assumes the field is a rectangle defined by (0,0) to (fieldLength, fieldWidth).
+    /// @return     true if pose is outside all defined gameplay zones, false otherwise
+    /// @details    Determines whether the pose lies within any valid gameplay region
+    ///             (e.g., alliance-specific zones or the neutral zone). If the pose does not
+    ///             belong to any of these zones, it is treated as being off the field. Useful
+    ///             for validating pose estimates and detecting potential sensor errors that
+    ///             result in impossible or out-of-bounds positions.
     //-------------------------------------------------------------------
     static bool IsPoseOffField(const frc::Pose2d &pose);
 
