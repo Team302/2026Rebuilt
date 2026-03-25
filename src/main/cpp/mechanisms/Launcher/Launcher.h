@@ -166,6 +166,7 @@ public:
 	units::angle::degree_t GetTargetTurretAngle() const { return m_targetTurretAngle; }
 	void UpdateTurretEnabled();
 	bool IsFinishedLaunching();
+	void UpdateCachedLoggingValues();
 	void StartLaunchCurrentTimer() { m_launchCurrentTimer.Start(); }
 	void ResetLaunchCurrentTimer()
 	{
@@ -190,6 +191,7 @@ private:
 	ctre::phoenix6::hardware::TalonFX *m_agitator;
 	ctre::phoenix6::hardware::CANdi *m_hoodCANdi;
 	ctre::phoenix6::hardware::CANdi *m_turretCANdi;
+	// ctre::phoenix6::hardware::CANcoder *m_turretAngleSensor;
 
 	ControlData *m_percentOut;
 	ControlData *m_velocityRPS;
@@ -226,17 +228,16 @@ private:
 	bool m_isHubActive = false;
 	bool m_startLaunching = false;
 
-	units::time::second_t m_lookaheadTime = 0.5_s;
+	units::time::second_t m_lookaheadTime = 1.0_s;
 
 	units::angle::turn_t m_targetTurretAngle = 0.0_tr;
 	units::angular_velocity::revolutions_per_minute_t m_targetLauncherAngularVelocity = 0.0_rpm;
 	units::angle::turn_t m_targetHoodAngle = 0.0_tr;
 	units::angle::turn_t m_minHoodAngle = 0.0_tr;
 	units::angle::turn_t m_maxHoodAngle = 30.0_tr;
-	units::angle::turn_t m_minTurretAngle = 91_tr;
-	units::angle::turn_t m_maxTurretAngle = 267_tr;
-
-	units::angle::turn_t m_turretAngleThreshold = 5.0_tr;
+	units::angle::turn_t m_minTurretAngle = 87_tr;
+	units::angle::turn_t m_maxTurretAngle = 266.5_tr;
+	units::angle::turn_t m_turretAngleThreshold = 3.0_tr; // MECH_TODO: tune and change value for new turret
 	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 150.0_rpm;
 	units::angle::turn_t m_hoodAngleThreshold = 0.5_tr;
 	units::velocity::meters_per_second_t m_chassisSpeedThreshold = 3.0_mps;
@@ -252,11 +253,9 @@ private:
 
 	// TODO MECH tune and change values in these arrays
 	// All values in turns are actually Degree's
-
-	// droppeed down to 5 spots.Will need to increase when we have time to tune
-	std::array<units::length::inch_t, 6> m_scoringDistanceArray = {79.0_in, 89.0_in, 118.4_in, 140.5_in, 165.6_in, 197.0_in};
-	std::array<units::angle::turn_t, 6> m_scoringHoodAngleArray = {0.0_tr, 0.0_tr, 0.0_tr, 5.02_tr, 7.0_tr, 7.0_tr};
-	std::array<units::angular_velocity::revolutions_per_minute_t, 6> m_scoringLauncherVelocityArray = {2225.0_rpm, 2300.0_rpm, 2700.0_rpm, 2800.0_rpm, 2900.0_rpm, 3100.0_rpm};
+	std::array<units::length::inch_t, 11> m_scoringDistanceArray = {44.0_in, 61.0_in, 80_in, 115_in, 133_in, 147_in, 169.5_in, 193_in, 210_in, 230_in, 250_in};
+	std::array<units::angle::turn_t, 11> m_scoringHoodAngleArray = {0.0_tr, 0.0_tr, 0.5_tr, 10.9_tr, 15.0_tr, 18.3_tr, 20.7_tr, 21_tr, 21_tr, 21_tr, 21_tr};
+	std::array<units::angular_velocity::revolutions_per_minute_t, 11> m_scoringLauncherVelocityArray = {2000.0_rpm, 2200.0_rpm, 2400.0_rpm, 2500.0_rpm, 2500.0_rpm, 2600.0_rpm, 2750.0_rpm, 2850.0_rpm, 2950.0_rpm, 3050.0_rpm, 3150.0_rpm};
 
 	std::array<units::length::foot_t, 7> m_passingDistanceArray = {10.0_ft, 15.0_ft, 20.0_ft, 25.0_ft, 30.0_ft, 35.0_ft, 40.0_ft};
 	std::array<units::angle::turn_t, 7> m_passingHoodAngleArray = {0.0_tr, 5.0_tr, 10.0_tr, 15.0_tr, 20.0_tr, 25.0_tr, 30.0_tr};
@@ -270,20 +269,36 @@ private:
 	units::angle::turn_t m_cachedTurretPosition = 0.0_tr;
 	units::current::ampere_t m_cachedLauncherCurrent = 0.0_A;
 
-	units::angle::turn_t m_passingHoodTargetAngle = 10.0_tr;
+	units::angle::turn_t m_passingHoodTargetAngle = 25.0_tr;
 	units::angular_velocity::revolutions_per_minute_t m_passingLauncherTargetVelocity = 2500.0_rpm;
+
 	// logging paths
 	static constexpr std::string_view m_loggingLauncherTargetPath = "/Launcher/TargetLauncherVelocity";
 	static constexpr std::string_view m_loggingHoodTargetPath = "/Launcher/HoodTargetAngle";
 	static constexpr std::string_view m_loggingTurretAngleTargetPath = "/Launcher/TargetTurretAngle";
 	static constexpr std::string_view m_loggingLauncherStatePath = "/Launcher/State";
 	static constexpr std::string_view m_loggingProtectedModePath = "/Launcher/IsProtectedMode";
-
 	static constexpr std::string_view m_loggingTurnsUnits = "Turns";
+
+	static constexpr std::string_view m_loggingHoodErrorPath = "Launcher/HoodError";
+	static constexpr std::string_view m_loggingLauncherSpeedErrorPath = "/Launcher/LauncherSpeedError";
+	static constexpr std::string_view m_loggingLaunchingZonePath = "Launcher/IsLaunchingZone";
+	static constexpr std::string_view m_loggingTurretAtTargetPath = "Launcher/IsTurretAtTarget";
+	static constexpr std::string_view m_loggingChassisSpeedPath = "Launcher/IsChassisSpeed";
+
+	static constexpr std::string_view m_loggingTurnsUnitsPath = "Turns";
 	static constexpr std::string_view m_loggingRPMUnits = "RPM";
-	bool m_turretEnabled = false;
+
+	bool m_turretEnabled = true;
 	bool m_turretEnabledButtonReleased = true;
+
 	units::current::ampere_t m_isLaunchingCurrentThreshold = 21.0_A;
 	frc::Timer m_launchCurrentTimer;
 	units::time::second_t m_isLaunchingTimeThreshold = 1.0_s;
+
+	bool m_cachedHoodError = false;
+	bool m_cachedLauncherSpeedError = false;
+	bool m_cachedinLaunchzone = false;
+	bool m_cachedIsChassisSpeed = false;
+	bool m_cachedTurretAtTarget = false;
 };

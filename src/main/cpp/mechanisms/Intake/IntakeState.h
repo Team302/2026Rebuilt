@@ -18,8 +18,8 @@
 #pragma once
 #include <string>
 
-#include "state/State.h"
 #include "mechanisms/Intake/Intake.h"
+#include "state/State.h"
 
 using namespace std;
 
@@ -46,7 +46,6 @@ namespace IntakeStates
 		RobotIdentifier m_RobotId;
 
 		double m_intakeTarget = double(1);
-		const units::angle::turn_t m_extenderTarget = units::angle::turn_t(-15);
-		static constexpr double m_holdIntakePercentOut = -0.05;
+		const double m_extenderTarget = -0.25;
 	};
 }

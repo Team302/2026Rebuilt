@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ctre/phoenix6/swerve/SwerveDrivetrain.hpp"
 #include "ctre/phoenix6/CANcoder.hpp"
 #include "ctre/phoenix6/TalonFX.hpp"
+#include "ctre/phoenix6/swerve/SwerveDrivetrain.hpp"
 
 using namespace ctre::phoenix6;
 
@@ -62,7 +62,7 @@ class TunerConstants302
 
     // The stator current at which the wheels start to slip;
     // This needs to be tuned to your individual robot
-    static constexpr units::ampere_t kSlipCurrent = 120_A;
+    static constexpr units::ampere_t kSlipCurrent = 100_A; // 120A
 
     // Initial configs for the drive and steer motors and the azimuth encoder; these cannot be null.
     // Some configs will be overwritten; check the `With*InitialConfigs()` API documentation.
@@ -144,7 +144,7 @@ private:
     static constexpr int kFrontLeftDriveMotorId = 20;
     static constexpr int kFrontLeftSteerMotorId = 21;
     static constexpr int kFrontLeftEncoderId = 21;
-    static constexpr units::turn_t kFrontLeftEncoderOffset = -0.219970703125_tr;
+    static constexpr units::turn_t kFrontLeftEncoderOffset = 0.2919921875_tr;
     static constexpr bool kFrontLeftSteerMotorInverted = false;
     static constexpr bool kFrontLeftEncoderInverted = false;
 
@@ -155,7 +155,7 @@ private:
     static constexpr int kFrontRightDriveMotorId = 3;
     static constexpr int kFrontRightSteerMotorId = 2;
     static constexpr int kFrontRightEncoderId = 2;
-    static constexpr units::turn_t kFrontRightEncoderOffset = 0.2646484375_tr;
+    static constexpr units::turn_t kFrontRightEncoderOffset = 0.264404296875_tr;
     static constexpr bool kFrontRightSteerMotorInverted = false;
     static constexpr bool kFrontRightEncoderInverted = false;
 

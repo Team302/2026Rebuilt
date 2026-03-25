@@ -1,0 +1,89 @@
+name: Auton Diagrams
+
+# Regenerates documents/auton/<name>.md whenever the corresponding
+# src/main/deploy/auton/<name>.xml changes and commits the result back
+# to the same branch.
+
+on:
+  push:
+    paths:
+      - 'src/main/deploy/auton/**/*.xml'
+      - 'tools/auton_diagram_gen.py'
+      - 'tools/auton_zone_field_gen.py'
+
+jobs:
+  regenerate-diagrams:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed to push the regenerated markdown
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # fetch full history so the push step can fast-forward
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Determine changed auton XML files
+        id: changed
+        run: |
+          # Collect every auton XML touched in this push.
+          # Falls back to all XMLs if either generator script itself changed.
+          GENERATOR="tools/auton_diagram_gen.py"
+          ZONE_GENERATOR="tools/auton_zone_field_gen.py"
+          CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+                    -- 'src/main/deploy/auton/*.xml' || true)
+
+          GEN_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+                        -- "$GENERATOR" "$ZONE_GENERATOR" || true)
+
+          if [ -n "$GEN_CHANGED" ]; then
+            echo "Generator script changed -- regenerating ALL auton XMLs"
+            CHANGED=$(find src/main/deploy/auton -maxdepth 1 -name '*.xml' | sort)
+          fi
+
+          # Check if any zone XMLs changed (for field diagram regeneration)
+          ZONE_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+                         -- 'src/main/deploy/auton/zones/*.xml' || true)
+          if [ -n "$GEN_CHANGED" ]; then
+            ZONE_CHANGED="yes"  # generator changed, rebuild field diagram too
+          fi
+
+          echo "files<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$CHANGED"   >> "$GITHUB_OUTPUT"
+          echo "EOF"        >> "$GITHUB_OUTPUT"
+
+          echo "zones_changed=$( [ -n "$ZONE_CHANGED" ] && echo 'true' || echo 'false' )" >> "$GITHUB_OUTPUT"
+
+      - name: Regenerate Markdown diagrams
+        if: steps.changed.outputs.files != ''
+        run: |
+          while IFS= read -r xmlfile; do
+            [ -z "$xmlfile" ] && continue
+            echo "Generating diagram for: $xmlfile"
+            python3 tools/auton_diagram_gen.py "$xmlfile"
+          done <<< "${{ steps.changed.outputs.files }}"
+
+      - name: Regenerate field zone diagram
+        if: steps.changed.outputs.zones_changed == 'true'
+        run: python3 tools/auton_zone_field_gen.py
+
+      - name: Commit and push updated diagrams
+        if: steps.changed.outputs.files != '' || steps.changed.outputs.zones_changed == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add documents/auton/
+
+          if git diff --cached --quiet; then
+            echo "No diagram changes to commit."
+          else
+            git commit -m "docs(auton): regenerate Mermaid diagrams [skip ci]"
+            git push
+          fi

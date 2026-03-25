@@ -51,7 +51,7 @@ void IntakeState::Init()
 void IntakeState::InitCompBot302()
 {
 	// m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
-	// m_mechanism->UpdateTargetExtenderPositionDeg(m_extenderTarget);
+	m_mechanism->UpdateTargetExtenderPercentOut(m_extenderTarget);
 }
 
 void IntakeState::Run()
@@ -59,7 +59,6 @@ void IntakeState::Run()
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("IntakeState"), string("Run"));
 	if (m_mechanism->GetCahcedExtenderPositionDegrees() < 30.0_tr)
 	{
-		// m_mechanism->UpdateTargetExtenderPercentOut(m_holdIntakePercentOut);
 		m_intakeTarget = 1.0;
 	}
 	else

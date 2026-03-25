@@ -79,4 +79,5 @@ private:
 	frc::SendableChooser<std::string> m_climbing;
 	frc::SendableChooser<std::string> m_desiredPreload;
 	frc::SendableChooser<std::string> m_fuelStrategy;
+	frc::SendableChooser<std::string> m_neutralZoneArea;
 };

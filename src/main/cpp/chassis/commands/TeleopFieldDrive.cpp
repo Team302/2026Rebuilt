@@ -14,12 +14,12 @@
 //====================================================================================================================================================
 
 #include "chassis/commands/TeleopFieldDrive.h"
+#include "auton/AllianceZoneManager.h"
 #include "state/RobotState.h"
 #include "utils/FMSData.h"
-#include "vision/DragonVision.h"
-#include "utils/logging/debug/Logger.h"
-#include "auton/AllianceZoneManager.h"
 #include "utils/RebuiltTargetCalculator.h"
+#include "utils/logging/debug/Logger.h"
+#include "vision/DragonVision.h"
 // Note the simplified constructor and AddRequirements call
 TeleopFieldDrive::TeleopFieldDrive(subsystems::CommandSwerveDrivetrain *chassis,
                                    TeleopControl *controller,
@@ -66,12 +66,10 @@ void TeleopFieldDrive::Execute()
 
     if (m_isLaunching && AllianceZoneManager::GetInstance()->IsInAllianceZone() && !m_turretEnabled)
     {
-        units::angle::degree_t calculatorRotate = RebuiltTargetCalculator::GetInstance()->GetChassisTargetForLaunching(0.5_s);
         m_chassis->SetControl(m_fieldFacingRequest.WithVelocityX(forward * m_currentMaxSpeed)
                                   .WithVelocityY(strafe * m_currentMaxSpeed)
-                                  .WithTargetDirection(calculatorRotate)
+                                  .WithTargetDirection(m_chassis->GetTargetChassisRotation())
                                   .WithHeadingPID(m_rotationKP, m_rotationKI, m_rotationKD));
-        m_chassis->SetTargetChassisRotation(calculatorRotate);
     }
     else
     {

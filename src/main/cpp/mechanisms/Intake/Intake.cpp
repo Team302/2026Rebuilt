@@ -18,27 +18,27 @@
 #include <string>
 
 // FRC Includes
-#include <networktables/NetworkTableInstance.h>
-#include <frc/Timer.h>
+#include "frc/Timer.h"
+#include "networktables/NetworkTableInstance.h"
 
 #include "Intake.h"
-#include "utils/logging/debug/Logger.h"
-#include "utils/PeriodicLooper.h"
 #include "state/RobotState.h"
 #include "utils/DragonPower.h"
+#include "utils/PeriodicLooper.h"
+#include "utils/logging/debug/Logger.h"
 
 #include "ctre/phoenix6/TalonFX.hpp"
-#include "ctre/phoenix6/controls/Follower.hpp"
-#include "ctre/phoenix6/configs/Configuration.hpp"
 #include "ctre/phoenix6/TalonFXS.hpp"
-#include "utils/logging/signals/DragonDataLogger.h"
-#include "mechanisms/Intake/OffState.h"
-#include "mechanisms/Intake/IntakeState.h"
-#include "mechanisms/Intake/ExpelState.h"
-#include "mechanisms/Intake/LaunchState.h"
+#include "ctre/phoenix6/configs/Configuration.hpp"
+#include "ctre/phoenix6/controls/Follower.hpp"
 #include "mechanisms/Intake/EmptyHopperState.h"
+#include "mechanisms/Intake/ExpelState.h"
+#include "mechanisms/Intake/IntakeState.h"
+#include "mechanisms/Intake/LaunchState.h"
 #include "mechanisms/Intake/LoadHopperState.h"
+#include "mechanisms/Intake/OffState.h"
 #include "teleopcontrol/TeleopControl.h"
+#include "utils/logging/signals/DragonDataLogger.h"
 
 using ctre::phoenix6::configs::CANdiConfiguration;
 using ctre::phoenix6::configs::Slot0Configs;
@@ -215,7 +215,7 @@ void Intake::InitializeCompBot302()
 void Intake::InitializeTalonFXIntakeCompBot302()
 {
 	TalonFXConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
+	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(120);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
 	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -225,6 +225,7 @@ void Intake::InitializeTalonFXIntakeCompBot302()
 	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
 	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
+	configs.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = units::time::second_t(0.1);
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
@@ -263,7 +264,7 @@ void Intake::InitializeTalonFXIntakeCompBot302()
 void Intake::InitializeTalonFXSExtenderCompBot302()
 {
 	TalonFXSConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
+	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(35);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
 	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -272,20 +273,20 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 
 	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
-	configs.OpenLoopRamps.VoltageOpenLoopRampPeriod = units::time::second_t(0);
+	configs.OpenLoopRamps.VoltageOpenLoopRampPeriod = units::time::second_t(0.1);
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 11;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(100);
-	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS1;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(102.8);
+	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
-	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
+	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 11;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(0);
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS2;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::degree_t(-14);
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
@@ -300,7 +301,7 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 0.46541861405197305;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.40025033775117571611799914493373;
 
 	configs.Slot0.kI = m_positionDegUp->GetI();
 	configs.Slot0.kD = m_positionDegUp->GetD();
@@ -324,8 +325,10 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 
 	CANdiConfiguration CANdiConfig{};
 
-	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenFloating;
-	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::FloatDetect;
+	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenNotHigh;
+	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::PullHigh;
+	CANdiConfig.DigitalInputs.S2CloseState = ctre::phoenix6::signals::S2CloseStateValue::CloseWhenFloating;
+	CANdiConfig.DigitalInputs.S2FloatState = ctre::phoenix6::signals::S2FloatStateValue::FloatDetect;
 
 	ctre::phoenix::StatusCode statusMotor = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
@@ -347,7 +350,7 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	if (!statusCANdi.IsOK())
 		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_intakeCANdi", "m_intakeCANdi Status", statusCANdi.GetName());
 
-	m_extender->SetPosition(100_tr);
+	m_extender->SetPosition(102.8_tr);
 }
 
 void Intake::SetCurrentState(int state, bool run)
@@ -427,41 +430,26 @@ void Intake::ManualControl()
 	TeleopControl *controller = TeleopControl::GetInstance();
 	if (controller != nullptr && frc::DriverStation::IsTeleop())
 	{
-		double manualExtenderPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN);
+		double manualExtenderPercent = m_percentModifier * (TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN));
 		if (std::abs(manualExtenderPercent) > 0.05)
 		{
 			UpdateTargetExtenderPercentOut(-manualExtenderPercent);
 		}
 		else
 		{
-			UpdateTargetExtenderPercentOut(0.0);
+			if (GetCurrentState() == STATE_INTAKE || GetCurrentState() == STATE_EXPEL || GetCurrentState() == STATE_LAUNCH)
+			{
+				if (m_cachedExtenderPositionDeg < m_protectExtenderPositionDeg)
+				{
+					UpdateTargetExtenderPercentOut(0.0);
+				}
+			}
+			else
+				UpdateTargetExtenderPercentOut(0.0);
 		}
 	}
-
-	// 	if (controller->IsButtonPressed(TeleopControlFunctions::EXTENDER_MODIFIER))
-	// 	{
-	// 		double manualExtenderPercent = TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN);
-	// 		UpdateTargetExtenderPercentOut(-manualExtenderPercent);
-	// 	}
-	// 	else
-	// 	{
-	// 		if (GetCurrentState() != STATE_INTAKE && GetCurrentState() != STATE_EXPEL)
-	// 		{
-
-	// 			bool intakeOutPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_OUT);
-	// 			bool intakeInPressed = controller->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE_IN);
-	// 			if (intakeOutPressed)
-	// 			{
-	// 				UpdateTargetExtenderPositionDeg(m_intakeExtendedPositionTarget);
-	// 			}
-	// 			else if (intakeInPressed)
-	// 			{
-	// 				UpdateTargetExtenderPositionDeg(m_intakeRetractedPositionTarget);
-	// 			}
-	// 		}
-	// 	}
-	// }
 }
+
 void Intake::DataLog(uint64_t timestamp)
 {
 	// Control data

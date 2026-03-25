@@ -16,10 +16,11 @@
 #include "utils/logging/signals/CTRESignalLogger.h"
 #include "utils/logging/debug/Logger.h"
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
-#include <filesystem>
 #include <ctime>
-#include <string>
+#include <filesystem>
 #include <iostream>
+#include <string>
+#include <span>
 
 using ctre::phoenix6::SignalLogger;
 
@@ -77,14 +78,7 @@ void CTRESignalLogger::WriteGamePadState(std::string_view signalID, const std::a
         SignalLogger::WriteDoubleArray(id + std::string(kSubpathAxes), axesVec, "", 0_s);
     }
 
-    // Log buttons as doubles (0.0 or 1.0)
-    {
-        std::vector<double> buttonsVec;
-        buttonsVec.reserve(buttons.size());
-        for (bool b : buttons)
-            buttonsVec.push_back(b ? 1.0 : 0.0);
-        SignalLogger::WriteDoubleArray(id + std::string(kSubpathButtons), buttonsVec, "", 0_s);
-    }
+    SignalLogger::WriteBooleanArray(id + std::string(kSubpathButtons), std::span(buttons), 0_s);
 
     // Log POVs
     {

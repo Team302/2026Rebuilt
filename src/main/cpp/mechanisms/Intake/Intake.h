@@ -155,6 +155,9 @@ private:
 	units::angle::turn_t m_intakeExtendedPositionTarget{0.0};
 	units::angle::turn_t m_cachedExtenderPositionDeg{0.0};
 
+	static constexpr double m_percentModifier = 0.5;
+	static constexpr units::angle::turn_t m_protectExtenderPositionDeg{-20.0};
+
 	void RefreshCachedMotorData();
 
 	// logging paths

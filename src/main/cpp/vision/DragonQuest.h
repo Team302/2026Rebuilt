@@ -23,12 +23,12 @@
 #include "frc/geometry/Transform3d.h"
 #include "frc/smartdashboard/SendableChooser.h"
 #include "frc/smartdashboard/SmartDashboard.h"
+#include "networktables/NetworkTable.h"
 #include "state/IRobotStateChangeSubscriber.h"
 #include "utils/DragonField.h"
 #include "utils/logging/signals/DragonDataLogger.h"
 #include "vision/DragonVisionPoseEstimatorStruct.h"
 #include "vision/Questnavlib/QuestNav.h"
-#include "networktables/NetworkTable.h"
 
 class DragonQuest : public IRobotStateChangeSubscriber, public DragonDataLogger
 {
@@ -122,4 +122,10 @@ private:
     static constexpr std::string_view m_questHasResetPath = "/Chassis/QuestHasReset";
     static constexpr std::string_view m_questIsEnabledPath = "/Chassis/IsQuestEnabled";
     static constexpr std::string_view m_questPosePath = "/Chassis/QuestPose3d";
+    static constexpr std::string_view m_questIsConnectedPath = "Chassis/QuestConnected";
+    static constexpr std::string_view m_questIsGoofyPath = "Chassis/QuestIsGoofy";
+
+    bool m_isQuestGoofy = false;
+
+    bool m_isConnected = false;
 };
