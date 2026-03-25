@@ -15,8 +15,7 @@
 
 // Team 302 Includes
 #include "utils/PoseUtils.h"
-#include "auton/AllianceZoneManager.h"
-#include "auton/NeutralZoneManager.h"
+
 
 // Units Includes
 #include "units/math.h"
@@ -110,7 +109,7 @@ bool PoseUtils::IsPoseAtOrigin(const frc::Pose2d &pose,
 ///------------------------------------------------------------------
 bool PoseUtils::IsPoseOffField(const frc::Pose2d &pose)
 {
-    if (pose.X() > m_fieldMinX && pose.X() < m_fieldMaxX && pose.Y() > m_fieldMinY && pose.Y() < m_fieldMaxY)
+    if (pose.X() > m_kFieldMinX && pose.X() < m_kFieldMaxX && pose.Y() > m_kFieldMinY && pose.Y() < m_kFieldMaxY)
     {
         return false;
     }
@@ -122,7 +121,7 @@ bool PoseUtils::IsPoseOffField(const frc::Pose2d &pose)
 
 bool PoseUtils::IsPoseJumping(const frc::Pose2d &pose1, const frc::Pose2d &pose2)
 {
-    if (GetDeltaBetweenPoses(pose1, pose2) > m_jumpThreshold)
+    if (GetDeltaBetweenPoses(pose1, pose2) > m_kJumpThreshold)
     {
         return true;
     }
