@@ -916,7 +916,7 @@ std::string Launcher::GetCurrentStateName()
 
 bool Launcher::IsTurretAtTarget()
 {
-	if (m_turretEnabled)
+	if (m_turretEnabled && RebuiltTargetCalculator::GetInstance()->IsValidTurretAngle())
 	{
 		units::angle::degree_t turretError = m_cachedTurretPosition - m_targetTurretAngle;
 		m_cachedTurretAtTarget = ((units::math::abs(turretError) < m_turretAngleThreshold));
