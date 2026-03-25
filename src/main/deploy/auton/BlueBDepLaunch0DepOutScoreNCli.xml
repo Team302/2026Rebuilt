@@ -7,7 +7,7 @@ choreoname = "BlueMLDepotOutpost_A"
 time = "4.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "BlueLaunchZone.xml"/>
-<zone filename = "BlueDepotZone.xml"/>
+<!-- <zone filename = "BlueDepotZone.xml"/> -->
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
