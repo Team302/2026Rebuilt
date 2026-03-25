@@ -177,7 +177,7 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
     units::degree_t robotRelativeGoal = relativeRot.Degrees();
 
     units::degree_t bestAngle = 0_deg;
-    bool hasFoundValidAngle = false;
+    m_hasFoundValidAngle = false;
     units::degree_t minError = 360_deg;
 
     for (int i = -1; i <= 1; i++)
@@ -191,12 +191,12 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
             {
                 bestAngle = potentialSetpoint;
                 minError = error;
-                hasFoundValidAngle = true;
+                m_hasFoundValidAngle = true;
             }
         }
     }
 
-    if (!hasFoundValidAngle)
+    if (!m_hasFoundValidAngle)
     {
         units::degree_t normalizedGoal = relativeRot.Degrees();
         if (normalizedGoal < 0_deg)
@@ -204,7 +204,6 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
         bestAngle = std::clamp(normalizedGoal, m_minLauncherAngle, m_maxLauncherAngle);
     }
 
-    m_hasFoundValidAngle = hasFoundValidAngle;
     m_field->UpdateObject(kLauncherPositionName, frc::Pose2d(GetMechanismWorldPosition(), robotPose.Rotation() + frc::Rotation2d(bestAngle)));
     m_cachedLauncherTarget = units::angle::turn_t(bestAngle.value());
 
