@@ -157,15 +157,17 @@ robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlB
 
     // Driver Controls
     {TeleopControlFunctions::RESET_POSITION, driverDPad90},
-    {TeleopControlFunctions::ROBOT_ORIENTED_DRIVE, driverDPad0},
+    {TeleopControlFunctions::ROBOT_ORIENTED_DRIVE, driverLStickPressed},
     {TeleopControlFunctions::SYSID_MODIFER, driverSelectButton},
+    {TeleopControlFunctions::SWEEP_BEHIND_HUB_INCREMENT, driverDPad0},
+    {TeleopControlFunctions::SWEEP_BEHIND_HUB_DECREMENT, driverDPad180},
 
     // Season Specific Driver Controls
     {TeleopControlFunctions::INTAKE, driverRTriggerPressed},
     {TeleopControlFunctions::EXPEL, driverLTriggerPressed},
 
     {TeleopControlFunctions::DRIVE_TO_HUB, driverAButton},
-    {TeleopControlFunctions::SWEEP_BEHIND_BUMP, driverAButton},
+    {TeleopControlFunctions::SWEEP_BEHIND_HUB, driverAButton},
     {TeleopControlFunctions::LEVEL1_CLIMB, driverAButton},
 
     {TeleopControlFunctions::DRIVE_TO_OUTPOST, driverBButton},

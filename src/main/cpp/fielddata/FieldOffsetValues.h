@@ -35,15 +35,18 @@ enum class FIELD_OFFSET_ITEMS
 
     HUB_X, ///< X-coordinate of the hub center with offset applied (meters)
 
-    BUMP_ALLIANCE_X, ///< X-coordinate of the bump on the alliance zone side (meters)
-    BUMP_ALLIANCE_Y, ///< Y-coordinate of the bump on the alliance zone side (meters)
-    BUMP_NEUTRAL_X,  ///< X-coordinate of the bump on the neutral zone side (meters)
-    BUMP_NEUTRAL_Y,  ///< Y-coordinate of the bump on the neutral zone side (meters)
-
-    TOWER_OUTPOST_X, ///< X-coordinate offset of the outpost
-    TOWER_DEPOT_X,   ///< X-coordinate offset of the depot neutral side
-    TOWER_OUTPOST_Y, ///< Y-coordinate offset of the outpost
-    TOWER_DEPOT_Y    ///< Y-coordinate offset of the depot neutral side
+    BUMP_ALLIANCE_X_0, ///< X-coordinate of the first bump (closest to hub) on the alliance zone side (meters)
+    BUMP_ALLIANCE_X_1, ///< X-coordinate of the second bump (middle) on the alliance zone side (meters)
+    BUMP_ALLIANCE_X_2, ///< X-coordinate of the third bump (farthest from hub) on the alliance zone side (meters)
+    BUMP_ALLIANCE_Y,   ///< Y-coordinate of the bump on the alliance zone side (meters)
+    BUMP_NEUTRAL_X_0,  ///< X-coordinate of the first bump (closest to hub) on the neutral zone side (meters)
+    BUMP_NEUTRAL_X_1,  ///< X-coordinate of the second bump (middle) on the neutral zone side (meters)
+    BUMP_NEUTRAL_X_2,  ///< X-coordinate of the third bump (farthest from hub) on the neutral zone side (meters)
+    BUMP_NEUTRAL_Y,    ///< Y-coordinate of the bump on the neutral zone side (meters)
+    TOWER_OUTPOST_X,   ///< X-coordinate offset of the outpost
+    TOWER_DEPOT_X,     ///< X-coordinate offset of the depot neutral side
+    TOWER_OUTPOST_Y,   ///< Y-coordinate offset of the outpost
+    TOWER_DEPOT_Y      ///< Y-coordinate offset of the depot neutral side
 };
 
 //====================================================================================================================================================
@@ -236,6 +239,8 @@ public:
     /// @brief      Get the blue neutral-side bump edge X-coordinate
     /// @return     units::length::meter_t - Blue neutral bump X (hub center X + BUMP_OFFSET)
     units::length::meter_t GetBlueNeutralBumpEdgeX() const { return m_blueNeutralBumpEdgeX; }
+
+    // TODO: adding 8 of these three in red three in NZclosetoRed three in NZclosetoBlue and three in blue
 
     //------------------------------------------------------------------
     // Bump Midpoint Y-Coordinate Getters
@@ -471,7 +476,7 @@ private:
     static constexpr units::length::inch_t DEPOT_OFFSET = 3.0_in;
 
     /// @brief Bump offset distance from hub center to the bump edge on each side (meters)
-    static constexpr units::length::meter_t BUMP_OFFSET = 1.5_m;
+    static constexpr units::length::meter_t BUMP_OFFSET = 63.7401575_in;
 
     /// @brief Additional X-offset applied when computing outpost approach positions (meters)
     static constexpr units::length::meter_t OUTPOST_APPROACH_OFFSET = 0.5_m;

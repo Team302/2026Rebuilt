@@ -176,6 +176,12 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).X() - TRENCH_OFFSET;
         m_neutralBlueTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_DEPOT).X() + TRENCH_OFFSET;
 
+        // idk what to put here yet
+        m_somethingsomehinghubsweep0 = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() - 15.0_in;
+        m_somethingsomehinghubsweep1 = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X();
+        m_somethingsomehinghubsweep2 = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() + 15.0_in;
+        // putting the bump 012 stuff here just need to fugure out a few things
+
         m_redDepotTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y();
         m_redOutpostTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y();
         m_blueDepotTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y();
@@ -208,6 +214,8 @@ FieldOffsetValues::FieldOffsetValues()
         m_redNeutralBumpEdgeX = units::length::meter_t{0.0};
         m_blueAllianceBumpEdgeX = units::length::meter_t{0.0};
         m_blueNeutralBumpEdgeX = units::length::meter_t{0.0};
+
+        // put variable
 
         m_redBumpDepotY = units::length::meter_t{0.0};
         m_redBumpOutpostY = units::length::meter_t{0.0};
@@ -332,13 +340,13 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
     }
 
     // Alliance-side bump X-coordinate query
-    else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X)
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X_1)
     {
         return isRedSide ? m_redAllianceBumpEdgeX : m_blueAllianceBumpEdgeX;
     }
 
     // Neutral-side bump X-coordinate query
-    else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X)
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X_1)
     {
         return isRedSide ? m_redNeutralBumpEdgeX : m_blueNeutralBumpEdgeX;
     }
@@ -365,6 +373,24 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
         // Default to blue depot bump
         return m_blueBumpDepotY;
     }
+
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X_0)
+    {
+        return isRedSide ? m_redAllianceBumpEdgeX : m_blueAllianceBumpEdgeX;
+    }
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X_0)
+    {
+        return isRedSide ? m_redNeutralBumpEdgeX : m_blueNeutralBumpEdgeX;
+    } // how do I subtract 15 from this?
+
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X_2)
+    {
+        return isRedSide ? m_redAllianceBumpEdgeX : m_blueAllianceBumpEdgeX;
+    }
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X_2)
+    {
+        return isRedSide ? m_redNeutralBumpEdgeX : m_blueNeutralBumpEdgeX;
+    } // how do I add 15 to this?
 
     // Unknown item type - return safe default
     else
