@@ -177,6 +177,7 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
     units::degree_t robotRelativeGoal = relativeRot.Degrees();
 
     units::degree_t bestAngle = 0_deg;
+    bool hasFoundValidAngle = false;
     units::degree_t minError = 360_deg;
 
     for (int i = -1; i <= 1; i++)
@@ -190,12 +191,12 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
             {
                 bestAngle = potentialSetpoint;
                 minError = error;
-                m_hasFoundValidAngle = true;
+                hasFoundValidAngle = true;
             }
         }
     }
 
-    if (!m_hasFoundValidAngle)
+    if (!hasFoundValidAngle)
     {
         units::degree_t normalizedGoal = relativeRot.Degrees();
         if (normalizedGoal < 0_deg)
@@ -203,6 +204,7 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
         bestAngle = std::clamp(normalizedGoal, m_minLauncherAngle, m_maxLauncherAngle);
     }
 
+    m_hasFoundValidAngle = hasFoundValidAngle;
     m_field->UpdateObject(kLauncherPositionName, frc::Pose2d(GetMechanismWorldPosition(), robotPose.Rotation() + frc::Rotation2d(bestAngle)));
     m_cachedLauncherTarget = units::angle::turn_t(bestAngle.value());
 
@@ -371,10 +373,4 @@ void RebuiltTargetCalculator::RefreshAllianceCache()
         m_outpostPassingPosition = m_fieldConstants->GetFieldElementPose2d(m_outpostPassingTarget).Translation();
         m_depotPassingPosition = m_fieldConstants->GetFieldElementPose2d(m_depotPassingTarget).Translation();
     }
-}
-units::angle::degree_t RebuiltTargetCalculator::GetClampedLaunchingAngle(units::angle::degree_t angle)
-{
-    bool isRed = m_cachedAlliance == frc::DriverStation::Alliance::kRed;
-    if (isRed)
-        return std::clamp(angle, units::angle::degree_t(91.0), units::angle::degree_t(267.0));
 }
