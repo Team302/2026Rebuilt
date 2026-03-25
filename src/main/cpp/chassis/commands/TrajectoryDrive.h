@@ -123,7 +123,7 @@ private:
     static constexpr double kIDrive{0.0};
     static constexpr double kDDrive{0.0};
 
-    static constexpr double kPHeading{6.0};
+    static constexpr double kPHeading{4.0};
     static constexpr double kIHeading{0.0};
     static constexpr double kDHeading{0.0};
 
