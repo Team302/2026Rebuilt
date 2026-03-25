@@ -15,7 +15,7 @@ choreoname = "BlueMLDepotOutpost_B"
 time = "15.0"
 intakeState = "STATE_INTAKE">
 <zone filename = "BlueLaunchZone.xml"/>
-<zone filename = "BlueOutpostZone.xml"/>
+<!-- <zone filename = "BlueOutpostZone.xml"/> -->
 </primitive>
 
 
