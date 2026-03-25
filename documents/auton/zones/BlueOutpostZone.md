@@ -23,7 +23,7 @@
 | Property | Value |
 |----------|-------|
 | Type | Circle |
-| Centre X | 40.0 m |
+| Centre X | 0.6 m |
 | Centre Y | 0.6 m |
 | Radius | 0.40 m |
 

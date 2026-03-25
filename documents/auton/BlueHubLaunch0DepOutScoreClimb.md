@@ -56,7 +56,7 @@ stateDiagram-v2
 ### Step 2 -- BlueMLDepotOutpost_A
 
 - **File:** [`BlueMLDepotOutpost_A.traj`](../../src/main/deploy/choreo/BlueMLDepotOutpost_A.traj)
-- **Duration:** 3.563 s
+- **Duration:** 2.616 s
 - **Timeout in auton XML:** 4.0 s
 - **Colour in overview:** `#00d4ff`
 
@@ -65,14 +65,12 @@ stateDiagram-v2
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
 | 1 | 3.545 | 5.55 | 151.9 |
-| 2 | 0.422 | 5.976 | 180.0 |
-| 3 | 1.813 | 4.798 | 341.6 |
-| 4 | 2.722 | 3.776 | 180.0 |
+| 2 | 0.778 | 5.967 | 180.0 |
 
 ### Step 3 -- BlueMLDepotOutpost_B
 
 - **File:** [`BlueMLDepotOutpost_B.traj`](../../src/main/deploy/choreo/BlueMLDepotOutpost_B.traj)
-- **Duration:** 2.786 s
+- **Duration:** 5.696 s
 - **Timeout in auton XML:** 4.0 s
 - **Colour in overview:** `#ffcc00`
 
@@ -80,9 +78,11 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 2.722 | 3.776 | 180.0 |
-| 2 | 2.594 | 1.605 | 180.0 |
-| 3 | 0.352 | 0.64 | 180.0 |
+| 1 | 0.529 | 5.957 | 180.0 |
+| 2 | 2.088 | 5.231 | 0.0 |
+| 3 | 2.722 | 3.776 | 180.0 |
+| 4 | 2.594 | 1.605 | 180.0 |
+| 5 | 0.55 | 0.673 | 180.0 |
 
 ### Step 4 -- BlueMLDepotOutpost_C
 
