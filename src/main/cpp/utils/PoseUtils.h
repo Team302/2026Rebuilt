@@ -96,11 +96,8 @@ public:
     /// @brief      Checks if a pose is considered outside the playable field area
     /// @param[in]  pose - Pose to check
     /// @return     true if pose is outside all defined gameplay zones, false otherwise
-    /// @details    Determines whether the pose lies within any valid gameplay region
-    ///             (e.g., alliance-specific zones or the neutral zone). If the pose does not
-    ///             belong to any of these zones, it is treated as being off the field. Useful
-    ///             for validating pose estimates and detecting potential sensor errors that
-    ///             result in impossible or out-of-bounds positions.
+    /// @details    Determines if the pose's x and y coordinates fall outside the defined field boundaries (e.g. 0 to 54.1 ft in x, 0 to 26.5 ft in y).
+    ///             This can be used to detect if a pose estimate is invalid or if the robot has somehow left the field. The specific field boundaries can be adjusted based on the actual dimensions of the field being used.
     //-------------------------------------------------------------------
     static bool IsPoseOffField(const frc::Pose2d &pose);
 
