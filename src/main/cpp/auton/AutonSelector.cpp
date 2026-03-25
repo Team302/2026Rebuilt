@@ -27,15 +27,15 @@
 #include <dirent.h>
 #endif
 
-#include <frc/smartdashboard/SmartDashboard.h>
-#include <frc/Filesystem.h>
 #include "networktables/NetworkTableInstance.h"
+#include <frc/Filesystem.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 // Team302 includes
 #include "auton/AutonSelector.h"
-#include "utils/logging/debug/Logger.h"
-#include "utils/FMSData.h"
 #include "feedback/DriverFeedback.h"
+#include "utils/FMSData.h"
+#include "utils/logging/debug/Logger.h"
 
 #include <pugixml/pugixml.hpp>
 
@@ -173,6 +173,7 @@ void AutonSelector::PutChoicesOnDashboard()
 	m_neutralZoneAmount.AddOption("3", "3");
 	m_neutralZoneAmount.AddOption("4", "4");
 	m_neutralZoneAmount.AddOption("5", "5");
+	m_neutralZoneAmount.SetDefaultOption("3", "3");
 	frc::SmartDashboard::PutData("Times in Neutral Zone", &m_neutralZoneAmount);
 
 	// Area in NZ
@@ -185,23 +186,26 @@ void AutonSelector::PutChoicesOnDashboard()
 	// Depot Option
 	m_targetDepot.AddOption("true", "Dep");
 	m_targetDepot.AddOption("false", "NDep");
+	m_targetDepot.SetDefaultOption("false", "NDep");
 	frc::SmartDashboard::PutData("Has Depot?", &m_targetDepot);
 
 	// Outpost Option
 	m_targetOutpost.AddOption("true", "Out");
 	m_targetOutpost.AddOption("false", "NOut");
+	m_targetOutpost.SetDefaultOption("false", "NOut");
 	frc::SmartDashboard::PutData("Has Outpost?", &m_targetOutpost);
 
 	// Climbing Option
 	m_climbing.AddOption("true", "Climb");
 	m_climbing.AddOption("false", "NCli");
+	m_climbing.SetDefaultOption("false", "NCli");
 	frc::SmartDashboard::PutData("Climb?", &m_climbing);
 
 	// Preload Option
 	m_desiredPreload.AddOption("Launch", "Launch");
 	m_desiredPreload.AddOption("Drop", "Drop");
 	m_desiredPreload.AddOption("Keep", "Keep");
-	m_desiredPreload.SetDefaultOption("Launch", "Launch");
+	m_desiredPreload.SetDefaultOption("Keep", "Keep");
 	frc::SmartDashboard::PutData("Desired Preload", &m_desiredPreload);
 
 	// Fuel Strategy Option
