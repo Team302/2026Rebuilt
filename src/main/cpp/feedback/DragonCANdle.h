@@ -20,9 +20,9 @@
 
 #include <ctre/phoenix6/CANdle.hpp>
 
+#include <frc/AddressableLED.h>
 #include <frc/DriverStation.h>
 #include <frc/Timer.h>
-#include <frc/AddressableLED.h>
 #include <frc/simulation/AddressableLEDSim.h>
 #include <frc/util/Color.h>
 
@@ -130,4 +130,7 @@ private:
 	AnimationMode m_prevAnimMode{AnimationMode::OFF};
 	frc::Color m_prevPrimaryColor{frc::Color::kGreen};
 	frc::Color m_prevSecondaryColor{frc::Color::kBlack};
+
+	// isfirstrun
+	bool m_firstRun{true};
 };
