@@ -92,6 +92,25 @@ public:
     static bool IsPoseAtOrigin(const frc::Pose2d &pose,
                                units::length::centimeter_t positionTolerance);
 
+    //-------------------------------------------------------------------
+    /// @brief      Checks if a pose is outside the field boundaries
+    /// @param[in]  pose - Pose to check
+    /// @return     true if pose is outside the field boundaries, false otherwise
+    /// @details    Compares the pose's x and y coordinates against the known field dimensions defined in FieldConstants. Useful for validating pose estimates and
+    ///             detecting potential sensor errors that result in impossible positions. Assumes the field is a rectangle defined by (0,0) to (fieldLength, fieldWidth).
+    //-------------------------------------------------------------------
+    static bool IsPoseOffField(const frc::Pose2d &pose);
+
+    //-------------------------------------------------------------------
+    /// @brief      Checks if the change between two poses is unreasonably large (potential "jump")
+    /// @param[in]  pose1 - First pose to compare
+    /// @param[in]  pose2 - Second pose to compare
+    /// @return     true if the distance between pose1 and pose2 exceeds a reasonable threshold, false otherwise
+    /// @details    Used to detect potential "jumps" in pose estimates that may indicate sensor errors or miscalculations.
+    ///             The threshold for what constitutes a "jump" can be defined based on the expected maximum speed of the robot and the time between pose updates. For example, if the robot cannot physically move more than 1 meter in 100 milliseconds, then a change greater than that could be considered a jump.
+    //-------------------------------------------------------------------
+    static bool IsPoseJumping(const frc::Pose2d &pose1, const frc::Pose2d &pose2);
+
     //------------------------------------------------------------------
     /// @brief      Determines which of two field elements is closest to a pose
     /// @param[in]  pose - Reference pose to measure from

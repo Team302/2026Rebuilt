@@ -15,6 +15,8 @@
 
 // Team 302 Includes
 #include "utils/PoseUtils.h"
+#include "auton/AllianceZoneManager.h"
+#include "auton/NeutralZoneManager.h"
 
 // Units Includes
 #include "units/math.h"
@@ -99,6 +101,29 @@ bool PoseUtils::IsPoseAtOrigin(const frc::Pose2d &pose,
 {
     static const frc::Pose2d kOrigin{};
     return IsSamePose(pose, kOrigin, positionTolerance);
+}
+
+//------------------------------------------------------------------
+/// @brief      Checks if a pose is outside the field boundaries
+/// @param[in]  pose - Pose to check
+/// @return     true if pose is outside the field boundaries, false otherwise
+///------------------------------------------------------------------
+bool PoseUtils::IsPoseOffField(const frc::Pose2d &pose)
+{
+    if (AllianceZoneManager::GetInstance()->IsInOtherAllianceZone() == false && AllianceZoneManager::GetInstance()->IsInAllianceZone() == false && NeutralZoneManager::GetInstance()->IsInNeutralZone() == false)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool PoseUtils::IsPoseJumping(const frc::Pose2d &pose1, const frc::Pose2d &pose2)
+{
+    if (GetDeltaBetweenPoses(pose1, pose2) > 5_m)
+    {
+        return true;
+    }
+    return false;
 }
 
 //------------------------------------------------------------------

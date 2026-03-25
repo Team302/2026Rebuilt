@@ -133,7 +133,7 @@ void DragonQuest::GetEstimatedPose()
     const PoseFrame &latest = frames.back();
     frc::Pose3d robotPose = QuestPoseToRobotPose3d(latest.questPose3d);
 
-    if (PoseUtils::GetDeltaBetweenPoses(robotPose.ToPose2d(), m_lastCalculatedPose.ToPose2d()) > 5_m)
+    if (PoseUtils::IsPoseJumping(robotPose.ToPose2d(), m_lastCalculatedPose.ToPose2d()) == true)
     {
         m_isQuestGoofy = true;
     }
@@ -142,7 +142,7 @@ void DragonQuest::GetEstimatedPose()
         m_isQuestGoofy = false;
     }
 
-    if (AllianceZoneManager::GetInstance()->IsInOtherAllianceZone() == false && AllianceZoneManager::GetInstance()->IsInAllianceZone() == false && NeutralZoneManager::GetInstance()->IsInNeutralZone() == false)
+    if (PoseUtils::IsPoseOffField(robotPose.ToPose2d()) == true)
     {
         m_isQuestGoofy = true;
     }
