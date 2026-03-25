@@ -103,7 +103,7 @@ private:
     // ── Standard deviations for pose estimator ──
     static constexpr double m_stdxy{0.02};
     static constexpr double m_stddeg{0.035};
-
+    
     // ── Cached latest pose ──
     frc::Pose3d m_lastCalculatedPose;
     units::time::second_t m_lastPoseTimestamp{0.0};

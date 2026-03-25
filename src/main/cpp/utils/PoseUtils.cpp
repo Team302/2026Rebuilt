@@ -110,16 +110,19 @@ bool PoseUtils::IsPoseAtOrigin(const frc::Pose2d &pose,
 ///------------------------------------------------------------------
 bool PoseUtils::IsPoseOffField(const frc::Pose2d &pose)
 {
-    if (AllianceZoneManager::GetInstance()->IsInOtherAllianceZone() == false && AllianceZoneManager::GetInstance()->IsInAllianceZone() == false && NeutralZoneManager::GetInstance()->IsInNeutralZone() == false)
+    if (pose.X() > m_fieldMinX && pose.X() < m_fieldMaxX && pose.Y() > m_fieldMinY && pose.Y() < m_fieldMaxY)
+    {
+        return false;
+    }
+    else
     {
         return true;
     }
-    return false;
 }
 
 bool PoseUtils::IsPoseJumping(const frc::Pose2d &pose1, const frc::Pose2d &pose2)
 {
-    if (GetDeltaBetweenPoses(pose1, pose2) > 5_m)
+    if (GetDeltaBetweenPoses(pose1, pose2) > m_jumpThreshold)
     {
         return true;
     }
