@@ -78,8 +78,9 @@ jobs:
            \n\n## Current .github/CODEBASE_CONTEXT.md (may be empty):\n${EXISTING}\
            \n\n## Source code snapshot:\n${SOURCE}\
            \n\nGenerate a comprehensive, well-structured \`CODEBASE_CONTEXT.md\` in Markdown.\
-           Use clear headings. Be concise but thorough. Preserve any manually written notes\
-           in the existing context that are not derivable from source. Only output the Markdown file content — no preamble."
+           Use clear headings. Be concise but thorough. Preserve any manually written notes and retain any season specific wordings\
+           in the existing context that are not derivable from source. Don't remove sections or context without those source files\
+            also being removed. Only output the Markdown file content — no preamble."
 
           # Call the GitHub Models endpoint (OpenAI-compatible, uses GITHUB_TOKEN)
           RESPONSE=$(curl -s \
