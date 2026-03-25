@@ -109,7 +109,7 @@ bool PoseUtils::IsPoseAtOrigin(const frc::Pose2d &pose,
 ///------------------------------------------------------------------
 bool PoseUtils::IsPoseOffField(const frc::Pose2d &pose)
 {
-    if (pose.X() > m_kFieldMinX && pose.X() < m_kFieldMaxX && pose.Y() > m_kFieldMinY && pose.Y() < m_kFieldMaxY)
+    if (pose.X() >= m_kFieldMinX && pose.X() <= m_kFieldMaxX && pose.Y() >= m_kFieldMinY && pose.Y() <= m_kFieldMaxY)
     {
         return false;
     }
