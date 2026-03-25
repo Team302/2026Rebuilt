@@ -6,7 +6,6 @@
 choreoname = "BlueMLDepotOutpost_A"
 time = "4.0"
 intakeState = "STATE_INTAKE">
-<zone filename = "BlueLaunchZone.xml"/>
 <!-- <zone filename = "BlueDepotZone.xml"/> -->
 </primitive>
 
@@ -18,5 +17,8 @@ intakeState = "STATE_INTAKE">
 <zone filename = "BlueOutpostZone.xml"/>
 </primitive>
 
+<primitive id = "DRIVE_STOP_MECH"
+time = "5.0">
+</primitive>
 
 </auton>
