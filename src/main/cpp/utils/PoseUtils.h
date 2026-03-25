@@ -144,5 +144,5 @@ public:
     static constexpr units::length::meter_t m_fieldMaxX = 54.1_m;
     static constexpr units::length::meter_t m_fieldMaxY = 26.5_m;
     static constexpr units::length::meter_t m_fieldMinX = 0.0_m;
-    static constexpr units::length::meter_t m_fieldMinY = 0.0_m
+    static constexpr units::length::meter_t m_fieldMinY = 0.0_m;
 };
