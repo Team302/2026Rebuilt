@@ -80,7 +80,8 @@ jobs:
            \n\nGenerate a comprehensive, well-structured \`CODEBASE_CONTEXT.md\` in Markdown.\
            Use clear headings. Be concise but thorough. Preserve any manually written notes and retain any season specific wordings\
            in the existing context that are not derivable from source. Don't remove sections or context without those source files\
-            also being removed. Only output the Markdown file content — no preamble."
+           also being removed. Only update context based on files that have changes in the PR. Only output the Markdown file content\
+           — no preamble."
 
           # Call the GitHub Models endpoint (OpenAI-compatible, uses GITHUB_TOKEN)
           RESPONSE=$(curl -s \
