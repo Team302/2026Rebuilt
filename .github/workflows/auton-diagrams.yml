@@ -9,6 +9,7 @@ on:
     branches: [ main ]
     paths:
       - 'src/main/deploy/auton/**/*.xml'
+      - 'src/main/deploy/choreo/**/*.traj'
       - 'tools/auton_diagram_gen.py'
       - 'tools/auton_zone_field_gen.py'
 
@@ -50,14 +51,17 @@ jobs:
           GEN_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
                         -- "$GENERATOR" "$ZONE_GENERATOR" || true)
 
-          if [ -n "$GEN_CHANGED" ]; then
-            echo "Generator script changed — regenerating ALL auton XMLs"
+          TRAJ_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+                         -- 'src/main/deploy/choreo/*.traj' || true)
+
+          if [ -n "$GEN_CHANGED" ] || [ -n "$TRAJ_CHANGED" ]; then
+            echo "Generator script or trajectory changed — regenerating ALL auton XMLs"
             CHANGED=$(find src/main/deploy/auton -maxdepth 1 -name '*.xml' | sort)
           fi
 
           ZONE_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
                          -- 'src/main/deploy/auton/zones/*.xml' || true)
-          if [ -n "$GEN_CHANGED" ]; then
+          if [ -n "$GEN_CHANGED" ] || [ -n "$TRAJ_CHANGED" ]; then
             ZONE_CHANGED="yes"
           fi
 
