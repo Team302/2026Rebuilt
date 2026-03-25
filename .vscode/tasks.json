@@ -1,0 +1,119 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Robot Code (Release)",
+            "type": "shell",
+            "command": "${workspaceFolder}/build302.bat",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Builds the robot code in release mode using gradlew frcProgramReleaseExecutable",
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "clear": true
+            }
+        },
+        {
+            "label": "Build Robot Code (Release Verbose)",
+            "type": "shell",
+            "command": "${workspaceFolder}/build302v.bat",
+            "group": "build",
+            "detail": "Builds the robot code in release mode with verbose (--info) output",
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "clear": true
+            }
+        },
+        {
+            "label": "Clean Build",
+            "type": "shell",
+            "command": "${workspaceFolder}/clean.bat",
+            "group": "build",
+            "detail": "Cleans all build artifacts using gradlew clean",
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "clear": true
+            }
+        },
+        {
+            "label": "Clean and Build (Release)",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Clean Build",
+                "Build Robot Code (Release)"
+            ],
+            "group": "build",
+            "detail": "Cleans all build artifacts then builds the robot code in release mode",
+            "problemMatcher": []
+        },
+        {
+            "label": "Deploy to RoboRIO",
+            "type": "shell",
+            "command": "${workspaceFolder}/gradlew.bat",
+            "args": [
+                "deploy"
+            ],
+            "group": "build",
+            "detail": "Builds and deploys the robot code to the RoboRIO",
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "clear": true
+            }
+        },
+        {
+            "label": "Simulate Robot",
+            "type": "shell",
+            "command": "${workspaceFolder}/gradlew.bat",
+            "args": [
+                "simulateExternalCpp"
+            ],
+            "group": "test",
+            "detail": "Runs the robot code in the WPILib simulation environment",
+            "problemMatcher": [],
+            "isBackground": true,
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "clear": true
+            }
+        },
+        {
+            "label": "Full Gradle Build",
+            "type": "shell",
+            "command": "${workspaceFolder}/gradlew.bat",
+            "args": [
+                "build"
+            ],
+            "group": "build",
+            "detail": "Runs the full Gradle build (compile, test, check)",
+            "problemMatcher": [],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "clear": true
+            }
+        }
+    ]
+}
