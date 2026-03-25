@@ -140,9 +140,9 @@ public:
     //------------------------------------------------------------------
     static FieldConstants::FIELD_ELEMENT GetClosestFieldElement(const frc::Pose2d &pose, FieldConstants::FIELD_ELEMENT firstElement, FieldConstants::FIELD_ELEMENT secondElement, FieldConstants *fieldConstants);
 
-    static constexpr units::length::meter_t m_jumpThreshold = 5.0_m;
-    static constexpr units::length::meter_t m_fieldMaxX = 54.1_m;
-    static constexpr units::length::meter_t m_fieldMaxY = 26.5_m;
-    static constexpr units::length::meter_t m_fieldMinX = 0.0_m;
-    static constexpr units::length::meter_t m_fieldMinY = 0.0_m;
+    static constexpr units::length::meter_t m_jumpThreshold = 5.0_ft;
+    static constexpr units::length::meter_t m_fieldMaxX = 54.1_ft;
+    static constexpr units::length::meter_t m_fieldMaxY = 26.5_ft;
+    static constexpr units::length::meter_t m_fieldMinX = 0.0_ft;
+    static constexpr units::length::meter_t m_fieldMinY = 0.0_ft;
 };
