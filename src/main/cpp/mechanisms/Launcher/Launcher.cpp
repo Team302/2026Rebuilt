@@ -957,7 +957,7 @@ void Launcher::UpdateCachedLoggingValues()
 	auto chassisSpeeds = m_chassis != nullptr ? m_chassis->GetState().Speeds : frc::ChassisSpeeds();
 	auto Speed = units::math::sqrt(units::math::abs(chassisSpeeds.vx * chassisSpeeds.vx) + units::math::abs(chassisSpeeds.vy * chassisSpeeds.vy));
 
-	m_hasValidTurretAngle = RebuiltTargetCalculator::GetInstance()->IsValidTurretAngle();
+	m_hasValidTurretAngle = m_targetCalculator->IsValidTurretAngle();
 	m_cachedHoodError = (hoodError < m_hoodAngleThreshold);
 	m_cachedLauncherSpeedError = launcherSpeedError < m_launcherVelocityThreshold;
 	m_cachedinLaunchzone = (inLaunchzone);
