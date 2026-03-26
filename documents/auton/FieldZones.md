@@ -71,7 +71,7 @@
 | `BlueLeftBumpZoneRect` | rect | (3.14,4.65) to (5.97,6.69) | BOTH | OVER BUMP |
 | `BlueLeftTrenchZone` | circle | cx=4.65, cy=7.45, r=0.40 | BOTH | -- |
 | `BlueNZDeadZone` | rect | (5.21,3.5) to (8.23,4.5) | BLUE | -- |
-| `BlueOutpostZone` | circle | cx=40.0, cy=0.6, r=0.40 | BOTH | TO OUTPOST |
+| `BlueOutpostZone` | circle | cx=0.6, cy=0.6, r=0.40 | BOTH | TO OUTPOST |
 | `BlueRightBumpZone` | circle | cx=4.6, cy=2.54, r=0.70 | BOTH | OVER BUMP |
 | `BlueRightBumpZoneRect` | rect | (3.14,1.6) to (5.97,3.64) | BOTH | OVER BUMP |
 | `BlueRightTrenchZone` | circle | cx=4.63, cy=0.64, r=0.40 | BOTH | -- |

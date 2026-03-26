@@ -474,7 +474,10 @@ private:
     static constexpr units::length::meter_t BUMP_OFFSET = 1.5_m;
 
     /// @brief Additional X-offset applied when computing outpost approach positions (meters)
-    static constexpr units::length::meter_t OUTPOST_APPROACH_OFFSET = 0.5_m;
+    static constexpr units::length::meter_t OUTPOST_OFFSET = 0.5_m;
+
+    /// @brief Additional X-offset applied when computing outpost approach positions (meters)
+    static constexpr units::length::meter_t OUTPOST_APPROACH_OFFSET = 0.4_m;
 
     /// @brief X-offset from tower center to the outpost/depot side approach position (meters)
     static constexpr units::length::meter_t TOWER_X_OFFSET = 1.0_m;
@@ -492,5 +495,5 @@ private:
     static constexpr units::angle::degree_t FACE_NON_ORIGIN_SIDE_WALL = 90_deg;
 
     /// @brief Half-width offset applied to position the robot at the trench entrance (meters)
-    static constexpr units::length::meter_t TRENCH_OFFSET = 0.5_m;
+    static constexpr units::length::meter_t TRENCH_OFFSET = 1.0_m;
 };

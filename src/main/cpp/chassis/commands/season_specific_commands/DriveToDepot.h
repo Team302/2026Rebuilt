@@ -53,4 +53,11 @@ protected:
     /// @see        DriveToDepot.cpp for full implementation details
     //------------------------------------------------------------------
     struct DriveToPoses GetDriveToPoses() override;
+
+    units::velocity::meters_per_second_t GetMaxVelocity() const override { return kMaxVelocityDriveToDepot; }                     // Limit max velocity for safe bump crossing;
+    units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const override { return kMaxAccelerationDriveToDepot; } // Limit max acceleration for safe bump crossing;
+
+private:
+    static constexpr units::velocity::meters_per_second_t kMaxVelocityDriveToDepot = 2.0_mps;
+    static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationDriveToDepot = 1.0_mps_sq;
 };

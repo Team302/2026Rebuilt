@@ -1,0 +1,172 @@
+name: Update Codebase Context
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/main/**"
+
+permissions:
+  contents: write
+  pull-requests: write
+  models: read # Required for GitHub Models / Copilot API access
+
+jobs:
+  update-context:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout full history so we can diff ──────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ── 2. Gather source files under src/main ────────────────────────────────
+      - name: Collect src/main source files
+        id: gather
+        run: |
+          echo "Collecting Java source files from src/main..."
+
+          # Build a single concatenated dump of all .java files (truncated for token safety)
+          SOURCE_DUMP=""
+          FILE_LIST=""
+
+          while IFS= read -r -d '' file; do
+            rel="${file#./}"
+            FILE_LIST="${FILE_LIST}${rel}\n"
+            SOURCE_DUMP="${SOURCE_DUMP}\n\n### FILE: ${rel}\n\`\`\`java\n$(head -c 3000 "$file")\n\`\`\`"
+          done < <(find src/main -name "*.java" -print0 | sort -z)
+
+          # Also grab build.gradle / build.gradle.kts if present
+          for f in build.gradle build.gradle.kts; do
+            [ -f "$f" ] && SOURCE_DUMP="${SOURCE_DUMP}\n\n### FILE: ${f}\n\`\`\`groovy\n$(cat "$f")\n\`\`\`"
+          done
+
+          # Read existing context file from .github/ (may be empty/absent)
+          EXISTING_CONTEXT=""
+          [ -f ".github/CODEBASE_CONTEXT.md" ] && EXISTING_CONTEXT=$(cat .github/CODEBASE_CONTEXT.md)
+
+          # Write to temp files to avoid shell quoting issues
+          printf '%b' "$SOURCE_DUMP"   > /tmp/source_dump.txt
+          printf '%b' "$FILE_LIST"     > /tmp/file_list.txt
+          printf '%s' "$EXISTING_CONTEXT" > /tmp/existing_context.txt
+
+          echo "Files collected."
+
+      # ── 3. Call GitHub Models (Copilot-backed) to regenerate context ─────────
+      - name: Generate updated context via Copilot
+        id: generate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SOURCE=$(cat /tmp/source_dump.txt)
+          FILE_LIST=$(cat /tmp/file_list.txt)
+          EXISTING=$(cat /tmp/existing_context.txt)
+
+          PROMPT="You are a senior FRC (FIRST Robotics Competition) software engineer.\
+           Your job is to maintain a living \`CODEBASE_CONTEXT.md\` (stored at \`.github/CODEBASE_CONTEXT.md\`) for a WPILib-based robot codebase (2026 season).\
+           \n\nThis file is automatically read by GitHub Copilot as context for the entire repo, so write it to be maximally useful to an AI coding assistant and human developers alike.\
+           \n\nThe file should help Copilot and developers quickly understand:\
+           - Robot subsystems and their responsibilities\
+           - Key commands and auto routines\
+           - Hardware mappings (motor controllers, sensors, CAN IDs)\
+           - Architecture decisions and patterns used\
+           - Any noteworthy TODOs or known issues\
+           \n\n## Current file list under src/main:\n${FILE_LIST}\
+           \n\n## Current .github/CODEBASE_CONTEXT.md (may be empty):\n${EXISTING}\
+           \n\n## Source code snapshot:\n${SOURCE}\
+           \n\nGenerate a comprehensive, well-structured \`CODEBASE_CONTEXT.md\` in Markdown.\
+           Use clear headings. Be concise but thorough. Preserve any manually written notes and retain any season specific wordings\
+           in the existing context that are not derivable from source. Don't remove sections or context without those source files\
+           also being removed. Only update context based on files that have changes in the PR. Only output the Markdown file content\
+           — no preamble."
+
+          # Call the GitHub Models endpoint (OpenAI-compatible, uses GITHUB_TOKEN)
+          RESPONSE=$(curl -s \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n \
+              --arg prompt "$PROMPT" \
+              '{
+                model: "gpt-4o",
+                messages: [{ role: "user", content: $prompt }],
+                max_tokens: 4096,
+                temperature: 0.2
+              }')" \
+            "https://models.inference.ai.azure.com/chat/completions")
+
+          # Extract the content from the response
+          echo "$RESPONSE" | jq -r '.choices[0].message.content' > /tmp/new_context.md
+
+          # Verify we got something useful
+          LINES=$(wc -l < /tmp/new_context.md)
+          echo "Generated context: ${LINES} lines"
+
+          if [ "$LINES" -lt 5 ]; then
+            echo "ERROR: Generated context looks too short. Raw response:"
+            echo "$RESPONSE"
+            exit 1
+          fi
+
+      # ── 4. Check if anything actually changed ────────────────────────────────
+      - name: Check for changes
+        id: diff
+        run: |
+          if diff -q .github/CODEBASE_CONTEXT.md /tmp/new_context.md > /dev/null 2>&1; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes to codebase_context.md — skipping PR."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Changes detected."
+          fi
+
+      # ── 5. Commit to a new branch and open a PR ───────────────────────────────
+      - name: Create PR with updated context
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Configure git
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Create a unique branch name
+          BRANCH="bot/update-codebase-context-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "$BRANCH"
+
+          # Apply the new context
+          cp /tmp/new_context.md .github/CODEBASE_CONTEXT.md
+
+          git add .github/CODEBASE_CONTEXT.md
+          git commit -m "docs: auto-update .github/CODEBASE_CONTEXT.md from src/main changes
+
+          Triggered by push to main.
+          Updated by GitHub Copilot (gpt-4o via GitHub Models).
+          [skip ci]"
+
+          git push origin "$BRANCH"
+
+          # Build PR body with a short diff summary
+          DIFF_SUMMARY=$(diff .github/CODEBASE_CONTEXT.md /tmp/new_context.md | head -60 || true)
+
+          gh pr create \
+            --title "docs: Update .github/CODEBASE_CONTEXT.md (auto-generated)" \
+            --body "## 🤖 Automated Codebase Context Update
+
+          This PR was automatically generated by the \`update-codebase-context\` workflow after a push to \`main\` modified files under \`src/main/\`.
+
+          ### What changed
+          GitHub Copilot (via GitHub Models \`gpt-4o\`) re-analyzed the robot source code and produced an updated \`.github/CODEBASE_CONTEXT.md\`.
+
+          > **Please review before merging.** The AI may have missed manual notes or made incorrect assumptions. Edit this PR's branch directly if adjustments are needed.
+
+          ### Trigger commit
+          - Commit: \`${{ github.sha }}\`
+          - Author: \`${{ github.actor }}\`
+          - Pushed at: \`$(date -u)\`" \
+            --head "$BRANCH" \
+            --base "main" \
+            --label "documentation" \
+            --label "automated"
