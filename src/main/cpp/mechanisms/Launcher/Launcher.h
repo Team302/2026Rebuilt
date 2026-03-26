@@ -295,7 +295,7 @@ private:
 	units::current::ampere_t m_isLaunchingCurrentThreshold = 21.0_A;
 	frc::Timer m_launchCurrentTimer;
 	units::time::second_t m_isLaunchingTimeThreshold = 1.0_s;
-
+	bool m_hasValidTurretAngle = false;
 	bool m_cachedHoodError = false;
 	bool m_cachedLauncherSpeedError = false;
 	bool m_cachedinLaunchzone = false;
