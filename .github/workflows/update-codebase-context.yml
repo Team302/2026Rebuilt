@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - "src/main/**"
+      - "build.gradle"
+      - "build.gradle.kts"
 
 permissions:
   contents: write
@@ -30,53 +32,84 @@ jobs:
       - name: Collect src/main source files
         id: gather
         run: |
-          echo "Collecting Java source files from src/main..."
+          # ── Collect changed paths in one diff covering ALL relevant paths ────
+          # Build files are diffed separately from src/main so they're never
+          # missed when both change in the same push.
+          CHANGED_SRC=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+                        -- 'src/main/**' || true)
+          CHANGED_BUILD=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+                          -- 'build.gradle' 'build.gradle.kts' || true)
 
-          # Files changed in this push (src/main only)
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
-                          -- 'src/main/**' || true)
+          # Combine into one newline-separated list for membership checks
+          ALL_CHANGED=$(printf '%s\n%s' "$CHANGED_SRC" "$CHANGED_BUILD" | sed '/^$/d' | sort -u)
+
+          echo "Files changed in this push:"
+          echo "$ALL_CHANGED"
+
+          # ── Helper: exact line-anchored membership test ───────────────────────
+          # grep -qF can match "Foo.cpp" inside "SubFoo.cpp" because it's a
+          # substring search. grep -qxF requires the entire line to match,
+          # so "src/main/Foo.cpp" only matches "src/main/Foo.cpp" exactly.
+          is_changed() {
+            echo "$ALL_CHANGED" | grep -qxF "$1"
+          }
 
           CHANGED_DUMP=""
           UNCHANGED_LIST=""
           FILE_LIST=""
 
+          # ── C++ sources (.cpp, .h, .hpp) ─────────────────────────────────────────
           while IFS= read -r -d '' file; do
             rel="${file#./}"
             FILE_LIST="${FILE_LIST}${rel}\n"
 
-            if echo "$CHANGED_FILES" | grep -qF "$rel"; then
-              # Changed — send full content (capped at 6000 chars for token safety)
-              CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${rel}\n\`\`\`java\n$(head -c 6000 "$file")\n\`\`\`"
+            if is_changed "$rel"; then
+              CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${rel}\n\`\`\`cpp\n$(head -c 6000 "$file")\n\`\`\`"
             else
-              # Unchanged — name only
               UNCHANGED_LIST="${UNCHANGED_LIST}  - ${rel}\n"
             fi
-          done < <(find src/main -name "*.java" -print0 | sort -z)
+          done < <(find src/main \( -name "*.cpp" -o -name "*.h" -o -name "*.hpp" \) -print0 | sort -z)
 
-          # Also grab build.gradle / build.gradle.kts if present
+          # ── Resource / config files (json, xml, yaml, toml, csv, properties) ─
+          # These can affect context (e.g. vendordeps, deploy configs, auton CSVs)
+          # and are included under src/main/** in the trigger.
+          while IFS= read -r -d '' file; do
+            rel="${file#./}"
+            FILE_LIST="${FILE_LIST}${rel}\n"
+
+            if is_changed "$rel"; then
+              CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${rel}\n\`\`\`\n$(head -c 3000 "$file")\n\`\`\`"
+            else
+              UNCHANGED_LIST="${UNCHANGED_LIST}  - ${rel}\n"
+            fi
+          done < <(find src/main \
+                     \( -name "*.json" -o -name "*.xml" -o -name "*.yaml" \
+                        -o -name "*.yml" -o -name "*.toml" -o -name "*.csv" \
+                        -o -name "*.properties" \) \
+                     -print0 | sort -z)
+
+          # ── Build files (diffed independently of src/main/**) ─────────────────
           for f in build.gradle build.gradle.kts; do
-            if [ -f "$f" ]; then
-              if echo "$CHANGED_FILES" | grep -qF "$f"; then
-                CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${f}\n\`\`\`groovy\n$(cat "$f")\n\`\`\`"
-              else
-                UNCHANGED_LIST="${UNCHANGED_LIST}  - ${f}\n"
-              fi
+            [ -f "$f" ] || continue
+            FILE_LIST="${FILE_LIST}${f}\n"
+            if is_changed "$f"; then
+              CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${f}\n\`\`\`groovy\n$(cat "$f")\n\`\`\`"
+            else
+              UNCHANGED_LIST="${UNCHANGED_LIST}  - ${f}\n"
             fi
           done
 
-          # Read existing context file
+          # ── Existing context ──────────────────────────────────────────────────
           EXISTING_CONTEXT=""
           [ -f ".github/CODEBASE_CONTEXT.md" ] && EXISTING_CONTEXT=$(cat .github/CODEBASE_CONTEXT.md)
           EXISTING_LINES=$(wc -l < .github/CODEBASE_CONTEXT.md 2>/dev/null || echo "0")
 
-          printf '%b' "$CHANGED_DUMP"    > /tmp/changed_dump.txt
-          printf '%b' "$UNCHANGED_LIST"  > /tmp/unchanged_list.txt
-          printf '%b' "$FILE_LIST"       > /tmp/file_list.txt
+          printf '%b' "$CHANGED_DUMP"     > /tmp/changed_dump.txt
+          printf '%b' "$UNCHANGED_LIST"   > /tmp/unchanged_list.txt
+          printf '%b' "$FILE_LIST"        > /tmp/file_list.txt
           printf '%s' "$EXISTING_CONTEXT" > /tmp/existing_context.txt
           echo "$EXISTING_LINES"          > /tmp/existing_lines.txt
 
-          echo "Changed files sent to model:"
-          echo "$CHANGED_FILES"
           echo "Existing context: ${EXISTING_LINES} lines"
 
       # ── 3. Call GitHub Models (Copilot-backed) to update context ─────────────
@@ -195,20 +228,20 @@ jobs:
             DELTA_STR="${LINE_DELTA} ⚠️ lines were removed — review carefully"
           fi
 
-          # Changed files list for PR body
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
-                          -- 'src/main/**' || true)
+          # Changed files list for PR body (covers src/main AND build files)
           CHANGED_LIST=""
+          ALL_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+                        -- 'src/main/**' 'build.gradle' 'build.gradle.kts' || true)
           while IFS= read -r f; do
             [ -z "$f" ] && continue
             CHANGED_LIST="${CHANGED_LIST}- \`${f}\`"$'\n'
-          done <<< "$CHANGED_FILES"
+          done <<< "$ALL_CHANGED"
 
           gh pr create \
             --title "docs: Update .github/CODEBASE_CONTEXT.md (auto-generated)" \
             --body "## 🤖 Automated Codebase Context Update
 
-          This PR was automatically generated after a push to \`main\` modified files under \`src/main/\`.
+          This PR was automatically generated after a push to \`main\` modified files under \`src/main/\` or build files.
           Only sections relevant to the changed files below were updated; all other sections are unchanged.
 
           ### Source files changed
