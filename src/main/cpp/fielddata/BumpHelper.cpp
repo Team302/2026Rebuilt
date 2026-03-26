@@ -25,9 +25,12 @@
 //====================================================================================================================================================
 
 #include "fielddata/BumpHelper.h"
+#include "Robot.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "fielddata/FieldOffsetValues.h"
 #include "frc/geometry/Pose2d.h"
+#include "teleopcontrol/TeleopControl.h"
+#include "teleopcontrol/TeleopControlMap.h"
 
 /// @brief Singleton instance pointer - initialized to nullptr for lazy instantiation
 BumpHelper *BumpHelper::m_instance = nullptr;
@@ -162,7 +165,7 @@ BUMP_ID BumpHelper::CalcNearestBump() const
 ///             nearest-first, where index 0 is the starting bump and index 1 is the
 ///             cross-field destination bump
 //------------------------------------------------------------------
-std::vector<BumpPosition> BumpHelper::GetNearestAndCrossFieldBumpEdges(bool isInNeutralZone) const
+std::vector<BumpPosition> BumpHelper::GetNearestAndCrossFieldBumpEdges(bool isInNeutralZone)
 {
     std::vector<BumpPosition> values;
 
@@ -197,5 +200,45 @@ std::vector<BumpPosition> BumpHelper::GetNearestAndCrossFieldBumpEdges(bool isIn
         values.emplace_back(BumpPosition{outpostId, bumpX, outpostY});
     }
     return values;
+
+    if (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_INCREMENT))
+    {
+        m_rewindLatch = true;
+        m_incVal += 1;
+        if (m_incVal = 1)
+        {
+            m_rewindLatch = true;
+        }
+        if (m_incVal = 1)
+        {
+            if (m_incVal = 2)
+            {
+                m_rewindLatch = true;
+            }
+        }
+    }
+
+    // put latch
+
+    if (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_DOWN))
+    {
+        m_rewindLatch = false + (TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_INCREMENT);
+        {
+        }
+        if (m_driverDPad0ButtonReleased && m_rewindLatch == false)
+        {
+            m_rewindLatch = true;
+        }
+    }
+
+    if (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_DECREMENT))
+    {
+        m_rewindLatch = false + (TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_DECREMENT);
+        {
+        }
+        if (m_driverDPad0ButtonReleased && m_rewindLatch == false)
+        {
+            m_rewindLatch = true;
+        }
+    }
 }
-// put latch

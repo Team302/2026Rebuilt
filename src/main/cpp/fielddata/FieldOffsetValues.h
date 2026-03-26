@@ -498,4 +498,21 @@ private:
 
     /// @brief Half-width offset applied to position the robot at the trench entrance (meters)
     static constexpr units::length::meter_t TRENCH_OFFSET = 0.8_m;
+
+    //-------------------------------------------------------------------------
+    // Sweep Behind Hub Constants
+    //-------------------------------------------------------------------------
+    units::length::inch_t m_BlueAllianceSweep0X; ///< X-coordinate for the first sweep waypoint on the blue alliance side (inches)
+    units::length::inch_t m_BlueAllianceSweep1X; ///< X-coordinate for the middle sweep waypoint on the blue alliance side (inches)
+    units::length::inch_t m_BlueAllianceSweep2X; ///< X-coordinate for the last sweep waypoint on the blue alliance side (inches)
+    units::length::inch_t m_BlueNeutralSweep0X;  ///< X-coordinate for the first sweep waypoint on the blue neutral side (inches)
+    units::length::inch_t m_BlueNeutralSweep1X;  ///< X-coordinate for the middle sweep waypoint on the blue neutral side (inches)
+    units::length::inch_t m_BlueNeutralSweep2X;  ///< X-coordinate for the last sweep waypoint on the blue neutral side (inches)
+
+    units::length::inch_t m_RedAllianceSweep0X; ///< X-coordinate for the first sweep waypoint on the red alliance side (inches)
+    units::length::inch_t m_RedAllianceSweep1X; ///< X-coordinate for the middle sweep waypoint on the red alliance side (inches)
+    units::length::inch_t m_RedAllianceSweep2X; ///< X-coordinate for the last sweep waypoint on the red alliance side (inches)
+    units::length::inch_t m_RedNeutralSweep0X;  ///< X-coordinate for the first sweep waypoint on the red neutral side (inches)
+    units::length::inch_t m_RedNeutralSweep1X;  ///< X-coordinate for the middle sweep waypoint on the red neutral side (inches)
+    units::length::inch_t m_RedNeutralSweep2X;  ///< X-coordinate for the last sweep waypoint on the red neutral side (inches)
 };
