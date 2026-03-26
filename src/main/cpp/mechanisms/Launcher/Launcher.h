@@ -122,6 +122,11 @@ public:
 		m_agitatorPercentOut.Output = percentOut;
 		m_agitatorActiveTarget = &m_agitatorPercentOut;
 	}
+	void UpdateTargetAgitatorPositionTurns(units::angle::turn_t position)
+	{
+		m_agitatorPositionTurns.Position = position;
+		m_agitatorActiveTarget = &m_agitatorPositionTurns.WithSlot(0);
+	}
 
 	void CreateAndRegisterStates();
 	void Cyclic();
@@ -197,6 +202,7 @@ private:
 	ControlData *m_velocityRPS;
 	ControlData *m_positionDegreesHood;
 	ControlData *m_positionDegreesTurret;
+	ControlData *m_positionDegreesAgitator;
 
 	void InitializeTalonFXLauncherCompBot302();
 	void InitializeTalonFXSHoodCompBot302();
@@ -211,6 +217,7 @@ private:
 	ctre::phoenix6::controls::DutyCycleOut m_turretPercentOut{0.0};
 	ctre::phoenix6::controls::DutyCycleOut m_indexerPercentOut{0.0};
 	ctre::phoenix6::controls::DutyCycleOut m_agitatorPercentOut{0.0};
+	ctre::phoenix6::controls::PositionVoltage m_agitatorPositionTurns{units::angle::turn_t(0.0)};
 	ctre::phoenix6::controls::MotionMagicVoltage m_hoodPositionDegreesHood{units::angle::degree_t(0.0)};
 	ctre::phoenix6::controls::MotionMagicVoltage m_turretPositionDegreesTurret{units::angle::degree_t(0.0)};
 	ctre::phoenix6::controls::VelocityVoltage m_launcherVelocityRPS{units::angular_velocity::turns_per_second_t(0.0)};

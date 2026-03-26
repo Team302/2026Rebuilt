@@ -49,6 +49,8 @@ void IdleState::Init()
 	m_mechanism->PublishLaunchMode(false);
 
 	m_mechanism->ResetLaunchCurrentTimer();
+	m_maxSpindexerTarget = m_mechanism->GetIndexer()->GetPosition().GetValue();
+	m_minSpindexerTarget = m_maxSpindexerTarget - m_spindexerTarget;
 }
 
 void IdleState::InitCompBot302()
@@ -61,6 +63,23 @@ void IdleState::InitCompBot302()
 
 void IdleState::Run()
 {
+	bool goingToMin = false;
+	units::angle::turn_t currentSpindexerPosition = m_mechanism->GetIndexer()->GetPosition().GetValue();
+	if (currentSpindexerPosition >= m_minSpindexerTarget && !m_minReached)
+	{
+		goingToMin = true;
+		m_mechanism->UpdateTargetAgitatorPositionTurns(m_minSpindexerTarget);
+		if (currentSpindexerPosition == m_minSpindexerTarget)
+			m_minReached = true;
+	}
+	else if (currentSpindexerPosition <= m_maxSpindexerTarget && m_minReached)
+	{
+		goingToMin = false;
+		m_mechanism->UpdateTargetAgitatorPositionTurns(m_maxSpindexerTarget);
+		if (currentSpindexerPosition == m_maxSpindexerTarget)
+			m_minReached = false;
+	}
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Indexer"), string("going to min"), goingToMin);
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("IdleState"), string("Run"));
 }
 
@@ -93,7 +112,6 @@ bool IdleState::IsTransitionCondition(bool considerGamepadTransitions)
 			m_Timer->Reset();
 		}
 	}
-
 	return (m_mechanism->IsLauncherInitialized() && m_mechanism->GetCurrentState() == Launcher::STATE_INITIALIZE) ||
 		   (launchingDone) ||
 		   (!m_mechanism->IsInClimbMode() && (m_mechanism->GetCurrentState() == Launcher::STATE_CLIMB || m_mechanism->GetCurrentState() == Launcher::STATE_EMPTY_HOPPER)) ||

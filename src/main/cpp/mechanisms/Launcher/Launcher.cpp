@@ -262,6 +262,28 @@ void Launcher::CreateCompBot302()
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
+	m_positionDegreesAgitator = new ControlData(
+		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
+		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
+		"m_positionDegreesAgitator",					  // std::string indentifier
+		0,												  // double proportional
+		0,												  // double integral
+		0,												  // double derivative
+		0,												  // double feedforward
+		0,												  // double velocityGain
+		0,												  // double accelartionGain
+		0,												  // double staticFrictionGain,
+
+		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
+		0,														 // double integralZone
+		0,														 // double maxAcceleration
+		0,														 // double cruiseVelocity
+		0,														 // double peakValue
+		0,														 // double nominalValue
+		false,													 // bool enableFOC
+		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
+		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
+	);
 
 	ReadConstants("Launcher.xml", 302);
 }
@@ -644,6 +666,16 @@ void Launcher::InitializeTalonFXAgitatorCompBot302()
 
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
 	configs.Feedback.SensorToMechanismRatio = 3;
+
+	configs.Slot0.kI = m_positionDegreesAgitator->GetI();
+	configs.Slot0.kD = m_positionDegreesAgitator->GetD();
+	configs.Slot0.kG = m_positionDegreesAgitator->GetF();
+	configs.Slot0.kS = m_positionDegreesAgitator->GetS();
+	configs.Slot0.kV = m_positionDegreesAgitator->GetV();
+	configs.Slot0.kP = m_positionDegreesAgitator->GetP();
+	configs.Slot0.kA = m_positionDegreesAgitator->GetA();
+	configs.Slot0.GravityType = m_positionDegreesAgitator->GetGravityType();
+	configs.Slot0.StaticFeedforwardSign = m_positionDegreesAgitator->GetStaticFeedforwardSign();
 
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
