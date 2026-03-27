@@ -287,5 +287,5 @@
     <circle cx="0" cy="0" r="3" fill="#ffffff" fill-opacity="0.9"/>
   </g>
   <rect x="195.8" y="122.4" width="118.0" height="11" rx="3" fill="#000000" fill-opacity="0.65"/>
-  <text x="199.8" y="131.4" font-size="9" fill="#00d4ff" font-family="monospace" font-weight="bold">S2: BlueMLDepotOutpost_A</text>
+  <text x="199.8" y="131.4" font-size="9" fill="#00d4ff" font-family="monospace" font-weight="bold">S1: BlueMLDepotOutpost_A</text>
 </svg>
