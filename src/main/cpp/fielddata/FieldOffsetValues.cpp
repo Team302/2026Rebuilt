@@ -127,8 +127,8 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueTowerDepotY = blueTowerCenter.Y() + TOWER_Y_OFFSET;
 
         // Set outpost X coordinates equal to depot X (aligned on 2026 field)
-        m_blueOutpostX = m_blueDepotX;
-        m_redOutpostX = m_redDepotX;
+        m_blueOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_OUTPOST_CENTER).X() + units::length::meter_t{OUTPOST_OFFSET};
+        m_redOutpostX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_OUTPOST_CENTER).X() - units::length::meter_t{OUTPOST_OFFSET};
 
         m_blueOutpostApproachX = m_blueOutpostX + OUTPOST_APPROACH_OFFSET; // Approach position is offset from outpost X
         m_redOutpostApproachX = m_redOutpostX - OUTPOST_APPROACH_OFFSET;   // Approach position is offset from outpost X

@@ -1,0 +1,169 @@
+name: Auton Diagrams
+
+# Regenerates documents/auton/<n>.md whenever the corresponding
+# src/main/deploy/auton/<n>.xml changes and opens a PR with the result.
+# Never pushes directly to main.
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/main/deploy/auton/**/*.xml'
+      - 'src/main/deploy/choreo/**/*.traj'
+      - 'tools/auton_diagram_gen.py'
+      - 'tools/auton_zone_field_gen.py'
+
+# ── Prevent race conditions from overlapping pushes ──────────────────────────
+# If a second push lands before this run finishes, cancel the in-progress run
+# and start fresh. Only one run of this workflow executes at a time.
+concurrency:
+  group: auton-diagrams
+  cancel-in-progress: true
+
+jobs:
+  regenerate-diagrams:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # needed to push the bot branch
+      pull-requests: write  # needed to open the PR
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # ── Determine what changed ────────────────────────────────────────────────
+      - name: Determine changed auton XML files
+        id: changed
+        run: |
+          GENERATOR="tools/auton_diagram_gen.py"
+          ZONE_GENERATOR="tools/auton_zone_field_gen.py"
+
+          CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+                    -- 'src/main/deploy/auton/*.xml' || true)
+
+          GEN_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+                        -- "$GENERATOR" "$ZONE_GENERATOR" || true)
+
+          TRAJ_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+                         -- 'src/main/deploy/choreo/*.traj' || true)
+
+          if [ -n "$GEN_CHANGED" ] || [ -n "$TRAJ_CHANGED" ]; then
+            echo "Generator script or trajectory changed — regenerating ALL auton XMLs"
+            CHANGED=$(find src/main/deploy/auton -maxdepth 1 -name '*.xml' | sort)
+          fi
+
+          ZONE_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} \
+                         -- 'src/main/deploy/auton/zones/*.xml' || true)
+          if [ -n "$GEN_CHANGED" ] || [ -n "$TRAJ_CHANGED" ]; then
+            ZONE_CHANGED="yes"
+          fi
+
+          echo "files<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$CHANGED"   >> "$GITHUB_OUTPUT"
+          echo "EOF"        >> "$GITHUB_OUTPUT"
+
+          # Fix: avoid nested double-quotes by computing the value into a
+          # variable first, then writing it to GITHUB_OUTPUT separately.
+          if [ -n "$ZONE_CHANGED" ]; then
+            ZONES_OUT="true"
+          else
+            ZONES_OUT="false"
+          fi
+          echo "zones_changed=$ZONES_OUT" >> "$GITHUB_OUTPUT"
+
+      # ── Regenerate diagrams ───────────────────────────────────────────────────
+      - name: Regenerate Markdown diagrams
+        if: steps.changed.outputs.files != ''
+        run: |
+          while IFS= read -r xmlfile; do
+            [ -z "$xmlfile" ] && continue
+            echo "Generating diagram for: $xmlfile"
+            python3 tools/auton_diagram_gen.py "$xmlfile"
+          done <<< "${{ steps.changed.outputs.files }}"
+
+      - name: Regenerate field zone diagram
+        if: steps.changed.outputs.zones_changed == 'true'
+        run: python3 tools/auton_zone_field_gen.py
+
+      # ── Open a PR with the results ────────────────────────────────────────────
+      - name: Create PR with updated diagrams
+        if: steps.changed.outputs.files != '' || steps.changed.outputs.zones_changed == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add documents/auton/
+
+          # Nothing actually changed in the generated output — exit cleanly
+          if git diff --cached --quiet; then
+            echo "No diagram changes to commit — skipping PR."
+            exit 0
+          fi
+
+          # ── Close any existing open bot PR for auton diagrams ────────────────
+          # concurrency: cancel-in-progress handles overlapping runs, but a PR
+          # from a previous run may still be open if it was never merged.
+          EXISTING_PR=$(gh pr list \
+            --head "bot/auton-diagrams" \
+            --state open \
+            --json number \
+            --jq '.[0].number' 2>/dev/null || true)
+
+          if [ -n "$EXISTING_PR" ]; then
+            echo "Closing stale PR #$EXISTING_PR before opening a fresh one"
+            gh pr close "$EXISTING_PR" --comment \
+              "Superseded by a newer push (${{ github.sha }}). Closing in favour of an updated PR."
+          fi
+
+          # ── Commit to a fixed branch name (force-push to keep it tidy) ───────
+          BRANCH="bot/auton-diagrams"
+
+          # Delete the remote branch if it exists so we start clean
+          git push origin --delete "$BRANCH" 2>/dev/null || true
+
+          git checkout -b "$BRANCH"
+          git commit -m "docs(auton): regenerate Mermaid diagrams [skip ci]
+
+          Triggered by ${{ github.actor }} @ ${{ github.sha }}"
+          git push origin "$BRANCH"
+
+          # ── Build a human-readable list of affected auton paths ───────────────
+          AUTON_LIST=""
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            AUTON_LIST="${AUTON_LIST}- \`$f\`"$'\n'
+          done <<< "${{ steps.changed.outputs.files }}"
+
+          ZONE_NOTE=""
+          if [ "${{ steps.changed.outputs.zones_changed }}" = "true" ]; then
+            ZONE_NOTE=$'\n'"- \`documents/auton/field_zones.md\` (field zone diagram)"
+          fi
+
+          # ── Open the PR ───────────────────────────────────────────────────────
+          gh pr create \
+            --title "docs(auton): regenerate Mermaid diagrams" \
+            --body "## 🗺️ Auton Diagram Update
+
+          This PR was automatically generated after a push to \`main\` changed one or more auton XML files or generator scripts.
+
+          ### Regenerated files
+          ${AUTON_LIST}${ZONE_NOTE}
+
+          ### Trigger
+          - Commit: \`${{ github.sha }}\`
+          - Author: \`${{ github.actor }}\`
+
+          > Review the Mermaid diagrams below before merging. If the output looks wrong, fix the generator script or XML and push again — this PR will be replaced automatically." \
+            --head "$BRANCH" \
+            --base "main" \
+            --label "documentation" \
+            --label "automated"

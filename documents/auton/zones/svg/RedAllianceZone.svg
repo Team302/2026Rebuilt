@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="442" viewBox="0 0 900 442">
+  <rect x="0" y="0" width="900" height="442" fill="#1a1a1a"/>
+  <rect x="0" y="0" width="218.7" height="442" fill="#0d1a3a" fill-opacity="0.6"/>
+  <text x="109.4" y="14" text-anchor="middle" font-size="11" fill="#5588ff" font-family="sans-serif">BLUE ALLIANCE</text>
+  <rect x="262.5" y="0" width="386.0" height="442" fill="#1a1a1a" fill-opacity="0.6"/>
+  <text x="455.5" y="14" text-anchor="middle" font-size="11" fill="#aaaaaa" font-family="sans-serif">NEUTRAL ZONE</text>
+  <rect x="686.2" y="0" width="213.8" height="442" fill="#3a0d0d" fill-opacity="0.6"/>
+  <text x="793.1" y="14" text-anchor="middle" font-size="11" fill="#ff5555" font-family="sans-serif">RED ALLIANCE</text>
+  <rect x="0" y="0" width="900" height="442" fill="none" stroke="#888888" stroke-width="2"/>
+  <line x1="0.0" y1="442" x2="0.0" y2="436" stroke="#666" stroke-width="1"/>
+  <text x="0.0" y="434" text-anchor="middle" font-size="8" fill="#888" font-family="monospace">0m</text>
+  <line x1="109.4" y1="442" x2="109.4" y2="436" stroke="#666" stroke-width="1"/>
+  <text x="109.4" y="434" text-anchor="middle" font-size="8" fill="#888" font-family="monospace">2m</text>
+  <line x1="218.7" y1="442" x2="218.7" y2="436" stroke="#666" stroke-width="1"/>
+  <text x="218.7" y="434" text-anchor="middle" font-size="8" fill="#888" font-family="monospace">4m</text>
+  <line x1="328.1" y1="442" x2="328.1" y2="436" stroke="#666" stroke-width="1"/>
+  <text x="328.1" y="434" text-anchor="middle" font-size="8" fill="#888" font-family="monospace">6m</text>
+  <line x1="437.4" y1="442" x2="437.4" y2="436" stroke="#666" stroke-width="1"/>
+  <text x="437.4" y="434" text-anchor="middle" font-size="8" fill="#888" font-family="monospace">8m</text>
+  <line x1="546.8" y1="442" x2="546.8" y2="436" stroke="#666" stroke-width="1"/>
+  <text x="546.8" y="434" text-anchor="middle" font-size="8" fill="#888" font-family="monospace">10m</text>
+  <line x1="656.1" y1="442" x2="656.1" y2="436" stroke="#666" stroke-width="1"/>
+  <text x="656.1" y="434" text-anchor="middle" font-size="8" fill="#888" font-family="monospace">12m</text>
+  <line x1="765.5" y1="442" x2="765.5" y2="436" stroke="#666" stroke-width="1"/>
+  <text x="765.5" y="434" text-anchor="middle" font-size="8" fill="#888" font-family="monospace">14m</text>
+  <line x1="874.8" y1="442" x2="874.8" y2="436" stroke="#666" stroke-width="1"/>
+  <text x="874.8" y="434" text-anchor="middle" font-size="8" fill="#888" font-family="monospace">16m</text>
+  <line x1="0" y1="442.9" x2="6" y2="442.9" stroke="#666" stroke-width="1"/>
+  <text x="8" y="442.9" dominant-baseline="middle" font-size="8" fill="#888" font-family="monospace">0m</text>
+  <line x1="0" y1="333.5" x2="6" y2="333.5" stroke="#666" stroke-width="1"/>
+  <text x="8" y="333.5" dominant-baseline="middle" font-size="8" fill="#888" font-family="monospace">2m</text>
+  <line x1="0" y1="224.2" x2="6" y2="224.2" stroke="#666" stroke-width="1"/>
+  <text x="8" y="224.2" dominant-baseline="middle" font-size="8" fill="#888" font-family="monospace">4m</text>
+  <line x1="0" y1="114.8" x2="6" y2="114.8" stroke="#666" stroke-width="1"/>
+  <text x="8" y="114.8" dominant-baseline="middle" font-size="8" fill="#888" font-family="monospace">6m</text>
+  <line x1="0" y1="5.5" x2="6" y2="5.5" stroke="#666" stroke-width="1"/>
+  <text x="8" y="5.5" dominant-baseline="middle" font-size="8" fill="#888" font-family="monospace">8m</text>
+  <rect x="0.0" y="0.0" width="218.7" height="442.9" fill="#1a3a8a" fill-opacity="0.18" stroke="#0d2060" stroke-width="0.8" stroke-opacity="0.4"/>
+  <circle cx="32.8" cy="241.7" r="32.8" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <rect x="687.8" y="195.7" width="208.3" height="59.1" fill="#1a3a8a" fill-opacity="0.18" stroke="#0d2060" stroke-width="0.8" stroke-opacity="0.4"/>
+  <circle cx="16.4" cy="120.3" r="27.3" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <rect x="0.0" y="0.0" width="218.7" height="442.9" fill="#1a3a8a" fill-opacity="0.18" stroke="#0d2060" stroke-width="0.8" stroke-opacity="0.4"/>
+  <circle cx="251.5" cy="136.1" r="38.3" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <rect x="171.7" y="77.1" width="154.7" height="111.5" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <circle cx="254.3" cy="35.5" r="21.9" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <rect x="284.9" y="196.8" width="165.1" height="54.7" fill="#1a3a8a" fill-opacity="0.18" stroke="#0d2060" stroke-width="0.8" stroke-opacity="0.4"/>
+  <circle cx="32.8" cy="410.1" r="21.9" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <circle cx="251.5" cy="304.0" r="38.3" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <rect x="171.7" y="243.9" width="154.7" height="111.5" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <circle cx="253.2" cy="407.9" r="21.9" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <rect x="262.5" y="7.1" width="386.0" height="435.8" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <circle cx="875.4" cy="204.5" r="32.8" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <rect x="6.6" y="192.5" width="207.2" height="61.2" fill="#8a1a1a" fill-opacity="0.18" stroke="#601010" stroke-width="0.8" stroke-opacity="0.4"/>
+  <circle cx="885.8" cy="328.1" r="27.3" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <rect x="686.2" y="0.0" width="213.8" height="442.9" fill="#8a1a1a" fill-opacity="0.18" stroke="#601010" stroke-width="0.8" stroke-opacity="0.4"/>
+  <circle cx="653.4" cy="304.0" r="38.3" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <rect x="593.8" y="257.5" width="125.2" height="97.9" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <circle cx="651.2" cy="406.8" r="21.9" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <rect x="284.9" y="194.1" width="334.6" height="52.5" fill="#8a1a1a" fill-opacity="0.18" stroke="#601010" stroke-width="0.8" stroke-opacity="0.4"/>
+  <circle cx="896.7" cy="38.3" r="27.3" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <circle cx="652.9" cy="136.1" r="38.3" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <rect x="577.9" y="78.7" width="157.5" height="114.8" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <circle cx="651.2" cy="38.8" r="21.9" fill="#2a6a2a" fill-opacity="0.18" stroke="#1a4a1a" stroke-width="0.8" stroke-opacity="0.4"/>
+  <rect x="683.2" y="-3.0" width="219.8" height="448.9" fill="none" stroke="#ffff00" stroke-width="2.5" stroke-opacity="0.7" rx="2"/>
+  <rect x="686.2" y="0.0" width="213.8" height="442.9" fill="#8a1a1a" fill-opacity="0.75" stroke="#601010" stroke-width="2"/>
+  <rect x="739.4" y="212.4" width="107.5" height="13" rx="3" fill="#000000" fill-opacity="0.7"/>
+  <text x="793.1" y="221.4" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="bold" fill="#ffffff" font-family="monospace">RedAllianceZone</text>
+</svg>
