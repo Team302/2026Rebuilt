@@ -16,7 +16,6 @@
 // Team 302 Includes
 #include "utils/PoseUtils.h"
 
-
 // Units Includes
 #include "units/math.h"
 
@@ -109,23 +108,12 @@ bool PoseUtils::IsPoseAtOrigin(const frc::Pose2d &pose,
 ///------------------------------------------------------------------
 bool PoseUtils::IsPoseOffField(const frc::Pose2d &pose)
 {
-    if (pose.X() >= m_kFieldMinX && pose.X() <= m_kFieldMaxX && pose.Y() >= m_kFieldMinY && pose.Y() <= m_kFieldMaxY)
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
+    return !(pose.X() < m_kFieldMinX || pose.X() > m_kFieldMaxX || pose.Y() < m_kFieldMinY || pose.Y() > m_kFieldMaxY);
 }
 
 bool PoseUtils::IsPoseJumping(const frc::Pose2d &pose1, const frc::Pose2d &pose2)
 {
-    if (GetDeltaBetweenPoses(pose1, pose2) > m_kJumpThreshold)
-    {
-        return true;
-    }
-    return false;
+    return (GetDeltaBetweenPoses(pose1, pose2) > m_kJumpThreshold);
 }
 
 //------------------------------------------------------------------
