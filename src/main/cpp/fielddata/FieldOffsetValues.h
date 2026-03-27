@@ -322,21 +322,57 @@ public:
     /// @return     units::length::meter_t - Y of BLUE_TRENCH_ALLIANCE_OUTPOST
     units::length::meter_t GetBlueOutpostTrenchY() const { return m_blueOutpostTrenchY; }
 
-    units::inch_t GetBlueAllianceSweep0X() const { return m_BlueAllianceSweep0X; }
-    units::inch_t GetBlueAllianceSweep1X() const { return m_BlueAllianceSweep1X; }
-    units::inch_t GetBlueAllianceSweep2X() const { return m_BlueAllianceSweep2X; }
+    //------------------------------------------------------------------
+    // Sweep Behind Hub Lane-Based Getters
+    //------------------------------------------------------------------
 
-    units::inch_t GetBlueNeutralSweep0X() const { return m_BlueNeutralSweep0X; }
-    units::inch_t GetBlueNeutralSweep1X() const { return m_BlueNeutralSweep1X; }
-    units::inch_t GetBlueNeutralSweep2X() const { return m_BlueNeutralSweep2X; }
+    /// @brief      Get the blue alliance sweep X-coordinate for the given lane
+    /// @param[in]  lane - Lane index (0, 1, or 2); clamped to [0, 2]
+    /// @return     units::inch_t - X-coordinate for the requested sweep lane
+    units::inch_t GetBlueAllianceSweepX(int lane) const
+    {
+        if (lane <= 0)
+            return m_BlueAllianceSweep0X;
+        if (lane >= 2)
+            return m_BlueAllianceSweep2X;
+        return m_BlueAllianceSweep1X;
+    }
 
-    units::inch_t GetRedAllianceSweep0X() const { return m_RedAllianceSweep0X; }
-    units::inch_t GetRedAllianceSweep1X() const { return m_RedAllianceSweep1X; }
-    units::inch_t GetRedAllianceSweep2X() const { return m_RedAllianceSweep2X; }
+    /// @brief      Get the blue neutral sweep X-coordinate for the given lane
+    /// @param[in]  lane - Lane index (0, 1, or 2); clamped to [0, 2]
+    /// @return     units::inch_t - X-coordinate for the requested sweep lane
+    units::inch_t GetBlueNeutralSweepX(int lane) const
+    {
+        if (lane <= 0)
+            return m_BlueNeutralSweep0X;
+        if (lane >= 2)
+            return m_BlueNeutralSweep2X;
+        return m_BlueNeutralSweep1X;
+    }
 
-    units::inch_t GetRedNeutralSweep0X() const { return m_RedNeutralSweep0X; }
-    units::inch_t GetRedNeutralSweep1X() const { return m_RedNeutralSweep1X; }
-    units::inch_t GetRedNeutralSweep2X() const { return m_RedNeutralSweep2X; }
+    /// @brief      Get the red alliance sweep X-coordinate for the given lane
+    /// @param[in]  lane - Lane index (0, 1, or 2); clamped to [0, 2]
+    /// @return     units::inch_t - X-coordinate for the requested sweep lane
+    units::inch_t GetRedAllianceSweepX(int lane) const
+    {
+        if (lane <= 0)
+            return m_RedAllianceSweep0X;
+        if (lane >= 2)
+            return m_RedAllianceSweep2X;
+        return m_RedAllianceSweep1X;
+    }
+
+    /// @brief      Get the red neutral sweep X-coordinate for the given lane
+    /// @param[in]  lane - Lane index (0, 1, or 2); clamped to [0, 2]
+    /// @return     units::inch_t - X-coordinate for the requested sweep lane
+    units::inch_t GetRedNeutralSweepX(int lane) const
+    {
+        if (lane <= 0)
+            return m_RedNeutralSweep0X;
+        if (lane >= 2)
+            return m_RedNeutralSweep2X;
+        return m_RedNeutralSweep1X;
+    }
 
 private:
     //------------------------------------------------------------------
@@ -517,6 +553,8 @@ private:
 
     /// @brief Half-width offset applied to position the robot at the trench entrance (meters)
     static constexpr units::length::meter_t TRENCH_OFFSET = 1.0_m;
+
+    static constexpr units::length::inch_t SWEEP_LANE_WIDTH = 15.0_in; ///< Width of each lane in the sweep behind hub path (inches)
 
     //-------------------------------------------------------------------------
     // Sweep Behind Hub Constants

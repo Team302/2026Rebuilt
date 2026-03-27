@@ -178,10 +178,14 @@ std::vector<BumpPosition> BumpHelper::GetNearestAndCrossFieldBumpEdges(bool isIn
     bool isRed = (bump == BUMP_ID::RED_OUTPOST_BUMP || bump == BUMP_ID::RED_DEPOT_BUMP);
     bool nearestIsOutpost = (bump == BUMP_ID::RED_OUTPOST_BUMP || bump == BUMP_ID::BLUE_OUTPOST_BUMP);
 
-    // Select the X coordinate for the current side of the bump (neutral vs alliance)
+    LaneSelector();
+
+    // Select the X coordinate for the current side of the bump based on m_lane (0, 1, or 2)
     auto bumpX = isRed
-                     ? (isInNeutralZone ? offsetVals->GetRedNeutralBumpEdgeX() : offsetVals->GetRedAllianceBumpEdgeX())
-                     : (isInNeutralZone ? offsetVals->GetBlueNeutralBumpEdgeX() : offsetVals->GetBlueAllianceBumpEdgeX());
+                     ? (isInNeutralZone ? units::length::meter_t(offsetVals->GetRedNeutralSweepX(m_lane))
+                                        : units::length::meter_t(offsetVals->GetRedAllianceSweepX(m_lane)))
+                     : (isInNeutralZone ? units::length::meter_t(offsetVals->GetBlueNeutralSweepX(m_lane))
+                                        : units::length::meter_t(offsetVals->GetBlueAllianceSweepX(m_lane)));
 
     // Select Y coordinates for outpost and depot bumps on this alliance side
     auto outpostY = isRed ? offsetVals->GetRedBumpTrenchOutpostYOffset() : offsetVals->GetBlueBumpTrenchOutpostYOffset();
@@ -210,25 +214,27 @@ void BumpHelper::LaneSelector()
 
     if (!m_isIncrementPressed && !m_isDecrementPressed)
     {
-
-        // bool m_decrementLatch = false;
-        // bool m_incrementLatch = false;
-        // bool m_rewindLatch = false;
+        m_incrementLatch = false;
+        m_decrementLatch = false;
+        return;
     }
-    if (m_isIncrementPressed && !m_isDecrementPressed && !m_incrementLatch)
+
+    if (m_isIncrementPressed && !m_incrementLatch)
     {
         m_incrementLatch = true;
-        if (m_incVal > 2)
-            m_incVal += 1;
+        if (m_lane < 2)
+        {
+            m_lane += 1;
+        }
+        return;
     }
 
-    if (!m_isIncrementPressed && m_isDecrementPressed)
+    if (m_isDecrementPressed && !m_decrementLatch)
     {
-        if (m_isIncrementPressed == true && m_isDecrementPressed == false)
+        m_decrementLatch = true;
+        if (m_lane > 0)
         {
-            m_decrementLatch = true;
-            if (m_incVal < 0)
-                m_incVal -= 1;
+            m_lane -= 1;
         }
     }
 }

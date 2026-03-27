@@ -180,7 +180,7 @@ private:
     bool m_driverDPad0ButtonReleased = true;   ///< State tracking for driver D-pad button to prevent multiple toggles on a single press
     bool m_driverDPad180ButtonReleased = true; ///< State tracking for driver D-pad button to prevent multiple toggles on a single press
     bool m_rewindLatch = false;
-    int m_incVal = 0;
+    int m_lane = 0;
     bool m_incrementLatch = false;
     bool m_decrementLatch = false;
     bool m_isIncrementPressed = false;
