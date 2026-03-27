@@ -153,7 +153,7 @@ constexpr TeleopControlButton extra4DPad225 = {TeleopControlMappingEnums::EXTRA4
 constexpr TeleopControlButton extra4DPad270 = {TeleopControlMappingEnums::EXTRA4, TeleopControlMappingEnums::POV_270, TeleopControlMappingEnums::STANDARD};
 constexpr TeleopControlButton extra4DPad315 = {TeleopControlMappingEnums::EXTRA4, TeleopControlMappingEnums::POV_315, TeleopControlMappingEnums::STANDARD};
 
-robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlButton> teleopControlMapButtonMap{
+inline robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlButton> teleopControlMapButtonMap{
 
     // Driver Controls
     {TeleopControlFunctions::RESET_POSITION, driverDPad90},
@@ -239,7 +239,7 @@ constexpr TeleopControlAxis extra4RJoystickY = {TeleopControlMappingEnums::EXTRA
 constexpr TeleopControlAxis extra4LTrigger = {TeleopControlMappingEnums::EXTRA4, TeleopControlMappingEnums::LEFT_TRIGGER, TeleopControlMappingEnums::APPLY_STANDARD_DEADBAND, TeleopControlMappingEnums::CUBED, TeleopControlMappingEnums::SYNCED, 1.0};
 constexpr TeleopControlAxis extra4RTrigger = {TeleopControlMappingEnums::EXTRA4, TeleopControlMappingEnums::RIGHT_TRIGGER, TeleopControlMappingEnums::APPLY_STANDARD_DEADBAND, TeleopControlMappingEnums::CUBED, TeleopControlMappingEnums::SYNCED, 1.0};
 
-robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlAxis> teleopControlMapAxisMap{
+inline robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlAxis> teleopControlMapAxisMap{
 
     // Driver Controls
     {TeleopControlFunctions::HOLONOMIC_DRIVE_FORWARD, driverLJoystickY},
