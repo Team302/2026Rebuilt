@@ -46,7 +46,8 @@ void LaunchState::Init()
 
 	m_timer.Reset();
 	m_timer.Start();
-
+	if (frc::DriverStation::IsAutonomous())
+		m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
 	m_currentExtenderTarget = m_extenderTargetUp;
 
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
