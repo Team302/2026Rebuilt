@@ -322,6 +322,22 @@ public:
     /// @return     units::length::meter_t - Y of BLUE_TRENCH_ALLIANCE_OUTPOST
     units::length::meter_t GetBlueOutpostTrenchY() const { return m_blueOutpostTrenchY; }
 
+    units::inch_t GetBlueAllianceSweep0X() const { return m_BlueAllianceSweep0X; }
+    units::inch_t GetBlueAllianceSweep1X() const { return m_BlueAllianceSweep1X; }
+    units::inch_t GetBlueAllianceSweep2X() const { return m_BlueAllianceSweep2X; }
+
+    units::inch_t GetBlueNeutralSweep0X() const { return m_BlueNeutralSweep0X; }
+    units::inch_t GetBlueNeutralSweep1X() const { return m_BlueNeutralSweep1X; }
+    units::inch_t GetBlueNeutralSweep2X() const { return m_BlueNeutralSweep2X; }
+
+    units::inch_t GetRedAllianceSweep0X() const { return m_RedAllianceSweep0X; }
+    units::inch_t GetRedAllianceSweep1X() const { return m_RedAllianceSweep1X; }
+    units::inch_t GetRedAllianceSweep2X() const { return m_RedAllianceSweep2X; }
+
+    units::inch_t GetRedNeutralSweep0X() const { return m_RedNeutralSweep0X; }
+    units::inch_t GetRedNeutralSweep1X() const { return m_RedNeutralSweep1X; }
+    units::inch_t GetRedNeutralSweep2X() const { return m_RedNeutralSweep2X; }
+
 private:
     //------------------------------------------------------------------
     /// @brief      Private constructor for singleton pattern

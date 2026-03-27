@@ -162,6 +162,8 @@ private:
     //------------------------------------------------------------------
     ~BumpHelper() = default;
 
+    // units::in GetOffsetPosition();
+
     //------------------------------------------------------------------
     // Member Variables
     //------------------------------------------------------------------
@@ -179,4 +181,11 @@ private:
     bool m_driverDPad180ButtonReleased = true; ///< State tracking for driver D-pad button to prevent multiple toggles on a single press
     bool m_rewindLatch = false;
     int m_incVal = 0;
+    bool m_incrementLatch = false;
+    bool m_decrementLatch = false;
+    bool m_isIncrementPressed = false;
+    bool m_isDecrementPressed = false;
+    void LaneSelector();
+
+    // put in an int called lane selctor that returns 0 1 2
 };

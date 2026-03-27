@@ -31,6 +31,8 @@
 #include "frc/geometry/Pose2d.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "teleopcontrol/TeleopControlMap.h"
+#include "utils/FMSData.h"
+#include <frc/smartdashboard/SmartDashboard.h>
 
 /// @brief Singleton instance pointer - initialized to nullptr for lazy instantiation
 BumpHelper *BumpHelper::m_instance = nullptr;
@@ -200,45 +202,92 @@ std::vector<BumpPosition> BumpHelper::GetNearestAndCrossFieldBumpEdges(bool isIn
         values.emplace_back(BumpPosition{outpostId, bumpX, outpostY});
     }
     return values;
+}
+void BumpHelper::LaneSelector()
+{
+    m_isIncrementPressed = TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_INCREMENT);
+    m_isDecrementPressed = TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_DECREMENT);
 
-    if (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_INCREMENT))
+    if (!m_isIncrementPressed && !m_isDecrementPressed)
     {
-        m_rewindLatch = true;
-        m_incVal += 1;
-        if (m_incVal = 1)
-        {
-            m_rewindLatch = true;
-        }
-        if (m_incVal = 1)
-        {
-            if (m_incVal = 2)
-            {
-                m_rewindLatch = true;
-            }
-        }
+
+        // bool m_decrementLatch = false;
+        // bool m_incrementLatch = false;
+        // bool m_rewindLatch = false;
+    }
+    if (m_isIncrementPressed && !m_isDecrementPressed && !m_incrementLatch)
+    {
+        m_incrementLatch = true;
+        if (m_incVal > 2)
+            m_incVal += 1;
     }
 
-    // put latch
-
-    if (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::UPDATE_TARGET_OFFSET_DOWN))
+    if (!m_isIncrementPressed && m_isDecrementPressed)
     {
-        m_rewindLatch = false + (TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_INCREMENT);
+        if (m_isIncrementPressed == true && m_isDecrementPressed == false)
         {
-        }
-        if (m_driverDPad0ButtonReleased && m_rewindLatch == false)
-        {
-            m_rewindLatch = true;
-        }
-    }
-
-    if (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_DECREMENT))
-    {
-        m_rewindLatch = false + (TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_DECREMENT);
-        {
-        }
-        if (m_driverDPad0ButtonReleased && m_rewindLatch == false)
-        {
-            m_rewindLatch = true;
+            m_decrementLatch = true;
+            if (m_incVal < 0)
+                m_incVal -= 1;
         }
     }
 }
+//-----------
+
+//     if (m_isIncrementPressed == false && m_isDecrementPressed == true)
+//     {
+//         {
+//             m_decrementLatch = true;
+//             m_incVal += 2;
+//         }
+//         if (m_isIncrementPressed == false && m_isDecrementPressed == true)
+//         {
+//             m_decrementLatch = true;
+//             m_incVal += 2;
+//         }
+//         if (m_isIncrementPressed == false && m_isDecrementPressed == true)
+//         {
+//             m_rewindLatch = true;
+//             m_incVal = 0;
+//         }
+//     }
+// }
+
+// units::length::inch_t FieldOffsetValues::GetOffsetPosition()
+// {
+//     auto offsetVals = FieldOffsetValues::GetInstance();
+//     if (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_INCREMENT) && !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_DECREMENT))
+//     {
+//         m_decrementLatch = false;
+//         m_incrementLatch = false;
+//     }
+//     else
+//     {
+//         if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_INCREMENT) && m_incrementLatch == false && m_incVal < 2)
+//         {
+//             m_incrementLatch = true;
+//             m_incVal += 1;
+//         }
+//         else if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_DECREMENT) && m_decrementLatch == false && m_incVal > 0)
+//         {
+//             m_decrementLatch = true;
+//             m_incVal -= 1;
+//         }
+//     }
+//     if (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed)
+//     {
+//         if (m_incVal == 0)
+//         {
+//             return offsetVals->GetValue(true, offsetVals->GetRedAllianceSweep0X())
+//         }
+//         else if (m_incVal == 1)
+//         {
+//             return offsetVals-> // GetValue(true, offsetVals->GetRedAllianceSweep0X()) + offsetVals->GetBumpSweepIncrement();
+//         }
+//         else if (m_incVal == 2)
+//         {
+//             return offsetVals->GetBumpSweepIncrement() * 2;
+//         }
+//     }
+
+//     return 0_in;
