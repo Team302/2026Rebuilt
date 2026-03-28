@@ -35,6 +35,16 @@
   <text x="7" y="114.8" dominant-baseline="middle" font-size="7" fill="#666" font-family="monospace">6m</text>
   <line x1="0" y1="5.5" x2="5" y2="5.5" stroke="#555" stroke-width="1"/>
   <text x="7" y="5.5" dominant-baseline="middle" font-size="7" fill="#666" font-family="monospace">8m</text>
+  <rect x="220.8" y="254.3" width="61.1" height="100.6" fill="none" stroke="#4d7dff" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="224.8" y="263.3" text-anchor="start" font-size="8" fill="#9bb6ff" font-family="monospace">BumpDepotElement</text>
+  <rect x="220.8" y="88.0" width="61.1" height="100.6" fill="none" stroke="#4d7dff" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="224.8" y="97.0" text-anchor="start" font-size="8" fill="#9bb6ff" font-family="monospace">BumpOutpostElement</text>
+  <rect x="218.7" y="189.0" width="65.3" height="65.3" fill="none" stroke="#4d7dff" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="222.7" y="198.0" text-anchor="start" font-size="8" fill="#9bb6ff" font-family="monospace">HubElement</text>
+  <rect x="218.7" y="354.9" width="65.3" height="17.0" fill="none" stroke="#4d7dff" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="222.7" y="363.9" text-anchor="start" font-size="8" fill="#9bb6ff" font-family="monospace">TrenchADepotElement</text>
+  <rect x="218.7" y="71.1" width="65.3" height="17.0" fill="none" stroke="#4d7dff" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="222.7" y="80.1" text-anchor="start" font-size="8" fill="#9bb6ff" font-family="monospace">TrenchAOutpostElement</text>
   <polyline points="420.84,139.70 421.17,140.28 422.17,142.04 423.81,144.97 426.06,149.11 428.91,154.45 432.30,161.03 436.16,168.86 440.39,177.98 444.79,188.44 450.70,206.43 453.27,219.16 454.54,231.64 454.61,243.53 453.56,254.68 451.45,265.00 448.32,274.44 444.20,282.96 439.12,290.55 433.08,297.19 428.00,301.49 424.40,304.00 420.59,306.29 416.55,308.36 412.30,310.19 407.82,311.80 403.13,313.18 398.21,314.34 393.07,315.27 387.70,315.98 379.23,316.63 373.30,316.79 367.14,316.73 360.74,316.45 354.11,315.97 347.24,315.28 340.12,314.40 332.75,313.33 325.10,312.11 317.15,310.81 308.94,309.61 297.28,308.41 286.02,307.67 275.32,307.19 265.23,306.86 255.76,306.64 246.92,306.50 238.71,306.41 231.13,306.37 224.18,306.36 214.94,306.37 209.57,306.41 204.83,306.44 200.72,306.49 197.25,306.53 194.40,306.57 192.19,306.60 190.61,306.63 189.66,306.65 189.35,306.65" fill="none" stroke="#ffcc00" stroke-width="2" stroke-opacity="0.85" stroke-linejoin="round" stroke-linecap="round"/>
   <g id="pose1000" transform="translate(420.84,139.70) rotate(90.00)">
     <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ffcc00" stroke-width="1.5" stroke-opacity="0.6"/>

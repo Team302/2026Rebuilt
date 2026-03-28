@@ -13,21 +13,21 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : Step 1 - TRAJECTORY_DRIVE BlueMLDrop2_A
-    Step2 : Step 2 - TRAJECTORY_DRIVE BlueMLDrop2_B
-    Step3 : Step 3 - TRAJECTORY_DRIVE BlueMLDrop2_C
-    Step4 : Step 4 - TRAJECTORY_DRIVE BlueMLDrop2_D
+    Step1 : "Step 1 - TRAJECTORY_DRIVE BlueMLDrop2_A"
+    Step2 : "Step 2 - TRAJECTORY_DRIVE BlueMLDrop2_B"
+    Step3 : "Step 3 - TRAJECTORY_DRIVE BlueMLDrop2_C"
+    Step4 : "Step 4 - TRAJECTORY_DRIVE BlueMLDrop2_D"
 
     class Step1 intake
     class Step2 intake
     class Step3 noIntake
     class Step4 intake
 
-    [*] --> Step1 : start
-    Step1 --> Step2: intake=INTAKE zones=LeftBumpZone DRIVE_OVER_BUMP
-    Step2 --> Step3: intake=INTAKE zones=RightBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH
-    Step3 --> Step4: zones=RightBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH
-    Step4 --> [*]: intake=INTAKE zones=RightBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH
+    [*] --> Step1 : "start"
+    Step1 --> Step2: "intake=INTAKE | zones=LeftBumpZone DRIVE_OVER_BUMP"
+    Step2 --> Step3: "intake=INTAKE | zones=RightBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
+    Step3 --> Step4: "zones=RightBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
+    Step4 --> [*]: "intake=INTAKE | zones=RightBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
 ```
 
 ## Primitive Summary

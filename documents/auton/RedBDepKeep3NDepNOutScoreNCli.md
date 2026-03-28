@@ -13,14 +13,14 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : Step 1 - TRAJECTORY_DRIVE BlueMLDrop3_Init
-    Step2 : Step 2 - TRAJECTORY_DRIVE BlueMLDrop3_A
-    Step3 : Step 3 - TRAJECTORY_DRIVE BlueMLDrop3_C
-    Step4 : Step 4 - DRIVE_STOP_MECH --
-    Step5 : Step 5 - TRAJECTORY_DRIVE BlueMLDrop3_C2
-    Step6 : Step 6 - TRAJECTORY_DRIVE BlueMLDrop3_D
-    Step7 : Step 7 - TRAJECTORY_DRIVE BlueMLDrop3_F
-    Step8 : Step 8 - DRIVE_STOP_MECH --
+    Step1 : "Step 1 - TRAJECTORY_DRIVE BlueMLDrop3_Init"
+    Step2 : "Step 2 - TRAJECTORY_DRIVE BlueMLDrop3_A"
+    Step3 : "Step 3 - TRAJECTORY_DRIVE BlueMLDrop3_C"
+    Step4 : "Step 4 - DRIVE_STOP_MECH --"
+    Step5 : "Step 5 - TRAJECTORY_DRIVE BlueMLDrop3_C2"
+    Step6 : "Step 6 - TRAJECTORY_DRIVE BlueMLDrop3_D"
+    Step7 : "Step 7 - TRAJECTORY_DRIVE BlueMLDrop3_F"
+    Step8 : "Step 8 - DRIVE_STOP_MECH --"
 
     class Step1 noIntake
     class Step2 intake
@@ -31,14 +31,14 @@ stateDiagram-v2
     class Step7 intake
     class Step8 noIntake
 
-    [*] --> Step1 : start
-    Step1 --> Step2: zones=LeftBumpZoneRect DRIVE_OVER_BUMP
-    Step2 --> Step3: intake=INTAKE
-    Step3 --> Step4: zones=LeftBumpZoneRect DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH
+    [*] --> Step1 : "start"
+    Step1 --> Step2: "zones=LeftBumpZoneRect DRIVE_OVER_BUMP"
+    Step2 --> Step3: "intake=INTAKE"
+    Step3 --> Step4: "zones=LeftBumpZoneRect DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
     Step4 --> Step5
-    Step5 --> Step6: intake=INTAKE zones=LeftBumpZoneRect DRIVE_OVER_BUMP
-    Step6 --> Step7: intake=INTAKE
-    Step7 --> Step8: intake=INTAKE zones=LeftBumpZoneRect DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH
+    Step5 --> Step6: "intake=INTAKE | zones=LeftBumpZoneRect DRIVE_OVER_BUMP"
+    Step6 --> Step7: "intake=INTAKE"
+    Step7 --> Step8: "intake=INTAKE | zones=LeftBumpZoneRect DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
     Step8 --> [*]
 ```
 
@@ -72,10 +72,10 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 3.615 | 6.26 | 90.0 |
-| 2 | 3.474 | 5.523 | 310.4 |
-| 3 | 4.546 | 5.556 | 308.7 |
-| 4 | 5.672 | 5.534 | 321.5 |
+| 1 | 12.845 | 1.84 | 270.0 |
+| 2 | 12.986 | 2.577 | 130.4 |
+| 3 | 11.914 | 2.544 | 128.7 |
+| 4 | 10.788 | 2.566 | 141.5 |
 
 ### Step 2 -- BlueMLDrop3_A
 
@@ -88,15 +88,15 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 5.098 | 3.499 | 45.0 |
-| 2 | 5.899 | 5.729 | 53.1 |
-| 3 | 6.213 | 6.66 | 14.0 |
-| 4 | 7.112 | 7.007 | 269.6 |
-| 5 | 7.884 | 6.704 | 228.1 |
-| 6 | 8.065 | 5.588 | 0.0 |
-| 7 | 7.87 | 4.278 | 228.1 |
-| 8 | 6.538 | 4.657 | 137.6 |
-| 9 | 5.523 | 5.408 | 133.8 |
+| 1 | 11.362 | 4.601 | 225.0 |
+| 2 | 10.561 | 2.371 | 233.1 |
+| 3 | 10.247 | 1.44 | 194.0 |
+| 4 | 9.348 | 1.093 | 89.6 |
+| 5 | 8.576 | 1.396 | 48.1 |
+| 6 | 8.395 | 2.512 | 180.0 |
+| 7 | 8.59 | 3.822 | 48.1 |
+| 8 | 9.922 | 3.443 | 317.6 |
+| 9 | 10.937 | 2.692 | 313.8 |
 
 ### Step 3 -- BlueMLDrop3_C
 
@@ -109,8 +109,8 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 5.813 | 5.631 | 135.0 |
-| 2 | 3.171 | 5.653 | 135.0 |
+| 1 | 10.647 | 2.469 | 315.0 |
+| 2 | 13.289 | 2.447 | 315.0 |
 
 ### Step 5 -- BlueMLDrop3_C2
 
@@ -123,8 +123,8 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 3.36 | 5.631 | 306.2 |
-| 2 | 5.813 | 5.631 | 306.8 |
+| 1 | 13.1 | 2.469 | 126.2 |
+| 2 | 10.647 | 2.469 | 126.8 |
 
 ### Step 6 -- BlueMLDrop3_D
 
@@ -137,12 +137,12 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 5.813 | 5.631 | 268.5 |
-| 2 | 5.769 | 4.446 | 303.7 |
-| 3 | 7.144 | 4.045 | 51.1 |
-| 4 | 7.664 | 5.052 | 79.2 |
-| 5 | 7.35 | 6.308 | 123.7 |
-| 6 | 5.91 | 5.745 | 136.6 |
+| 1 | 10.647 | 2.469 | 88.5 |
+| 2 | 10.691 | 3.654 | 123.7 |
+| 3 | 9.316 | 4.055 | 231.1 |
+| 4 | 8.796 | 3.048 | 259.2 |
+| 5 | 9.11 | 1.792 | 303.7 |
+| 6 | 10.55 | 2.355 | 316.6 |
 
 ### Step 7 -- BlueMLDrop3_F
 
@@ -155,8 +155,8 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 5.813 | 5.631 | 135.0 |
-| 2 | 3.268 | 5.631 | 135.0 |
+| 1 | 10.647 | 2.469 | 315.0 |
+| 2 | 13.192 | 2.469 | 315.0 |
 
 ## Zone Legend
 

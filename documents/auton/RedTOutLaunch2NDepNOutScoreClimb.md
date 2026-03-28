@@ -13,11 +13,11 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : Step 1 - TRAJECTORY_DRIVE BlueRightBumpNZNZ_A
-    Step2 : Step 2 - TRAJECTORY_DRIVE RightToLeftNZ
-    Step3 : Step 3 - TRAJECTORY_DRIVE BlueRightBumpNZNZ_C
-    Step4 : Step 4 - TRAJECTORY_DRIVE LeftToRightNZ
-    Step5 : Step 5 - TRAJECTORY_DRIVE BlueRightBumpNZNZ_E
+    Step1 : "Step 1 - TRAJECTORY_DRIVE BlueRightBumpNZNZ_A"
+    Step2 : "Step 2 - TRAJECTORY_DRIVE RightToLeftNZ"
+    Step3 : "Step 3 - TRAJECTORY_DRIVE BlueRightBumpNZNZ_C"
+    Step4 : "Step 4 - TRAJECTORY_DRIVE LeftToRightNZ"
+    Step5 : "Step 5 - TRAJECTORY_DRIVE BlueRightBumpNZNZ_E"
 
     class Step1 noIntake
     class Step2 noIntake
@@ -25,12 +25,12 @@ stateDiagram-v2
     class Step4 noIntake
     class Step5 noIntake
 
-    [*] --> Step1 : start
-    Step1 --> Step2: zones=RightBumpZone DRIVE_OVER_BUMP
-    Step2 --> Step3: zones=LeftBumpZone DRIVE_OVER_BUMP
-    Step3 --> Step4: zones=LeftBumpZone DRIVE_OVER_BUMP
+    [*] --> Step1 : "start"
+    Step1 --> Step2: "zones=RightBumpZone DRIVE_OVER_BUMP"
+    Step2 --> Step3: "zones=LeftBumpZone DRIVE_OVER_BUMP"
+    Step3 --> Step4: "zones=LeftBumpZone DRIVE_OVER_BUMP"
     Step4 --> Step5
-    Step5 --> [*]: zones=RightBumpZone DRIVE_OVER_BUMP
+    Step5 --> [*]: "zones=RightBumpZone DRIVE_OVER_BUMP"
 ```
 
 ## Primitive Summary
@@ -60,9 +60,9 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 3.736 | 0.604 | 233.2 |
-| 2 | 2.513 | 2.342 | 180.0 |
-| 3 | 4.561 | 2.666 | 215.0 |
+| 1 | 12.724 | 7.496 | 53.2 |
+| 2 | 13.947 | 5.758 | 0.0 |
+| 3 | 11.899 | 5.434 | 35.0 |
 
 ### Step 2 -- RightToLeftNZ
 
@@ -75,10 +75,10 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 5.347 | 2.797 | 45.0 |
-| 2 | 7.741 | 2.506 | 90.0 |
-| 3 | 7.636 | 5.169 | 173.2 |
-| 4 | 3.672 | 5.579 | 225.0 |
+| 1 | 11.113 | 5.303 | 225.0 |
+| 2 | 8.719 | 5.594 | 270.0 |
+| 3 | 8.824 | 2.931 | 353.2 |
+| 4 | 12.788 | 2.521 | 45.0 |
 
 ### Step 3 -- BlueRightBumpNZNZ_C
 
@@ -91,8 +91,8 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 4.649 | 5.569 | 315.0 |
-| 2 | 2.572 | 5.525 | 156.4 |
+| 1 | 11.811 | 2.531 | 135.0 |
+| 2 | 13.888 | 2.575 | 336.4 |
 
 ### Step 4 -- LeftToRightNZ
 
@@ -105,10 +105,10 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 5.404 | 5.635 | 225.0 |
-| 2 | 7.323 | 5.639 | 310.7 |
-| 3 | 7.532 | 2.798 | 225.0 |
-| 4 | 3.729 | 2.74 | 225.0 |
+| 1 | 11.056 | 2.465 | 45.0 |
+| 2 | 9.137 | 2.461 | 130.7 |
+| 3 | 8.928 | 5.302 | 45.0 |
+| 4 | 12.731 | 5.36 | 45.0 |
 
 ### Step 5 -- BlueRightBumpNZNZ_E
 
@@ -121,9 +121,9 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 3.788 | 2.69 | 135.0 |
-| 2 | 2.896 | 3.874 | 180.0 |
-| 3 | 1.143 | 3.108 | 180.0 |
+| 1 | 12.672 | 5.41 | 315.0 |
+| 2 | 13.564 | 4.226 | 0.0 |
+| 3 | 15.317 | 4.992 | 0.0 |
 
 ## Zone Legend
 

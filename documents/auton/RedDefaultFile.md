@@ -15,7 +15,10 @@ stateDiagram-v2
 
 
 
-    [*] --> Step1 : start
+    Empty : "No primitives defined"
+    class Empty noIntake
+    [*] --> Empty : "start"
+    Empty --> [*] : "done"
 ```
 
 ## Primitive Summary
