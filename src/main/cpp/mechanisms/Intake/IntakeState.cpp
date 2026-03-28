@@ -59,13 +59,14 @@ void IntakeState::Run()
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("IntakeState"), string("Run"));
 	if (m_mechanism->GetCahcedExtenderPositionDegrees() < 30.0_tr)
 	{
-		m_intakeTarget = 1.0;
+		m_intakeTarget = 5400_rpm;
 	}
 	else
 	{
-		m_intakeTarget = 0.0;
+		m_intakeTarget = 0.0_rpm;
 	}
-	m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
+	m_mechanism->UpdateTargetIntakeVelocityRPM(m_intakeTarget);
+	// m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
 }
 
 void IntakeState::Exit()

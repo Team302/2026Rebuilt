@@ -74,6 +74,11 @@ public:
 		m_intakePercentOut.Output = percentOut;
 		m_intakeActiveTarget = &m_intakePercentOut;
 	}
+	void UpdateTargetIntakeVelocityRPM(units::angular_velocity::revolutions_per_minute_t velocity)
+	{
+		m_intakeVelocityRPM.Velocity = velocity;
+		m_intakeActiveTarget = &m_intakeVelocityRPM;
+	}
 	void UpdateTargetExtenderPercentOut(double percentOut)
 	{
 		m_extenderPercentOut.Output = percentOut;
@@ -135,6 +140,7 @@ private:
 	ctre::phoenix6::hardware::CANdi *m_intakeCANdi;
 
 	ControlData *m_percentOut;
+	ControlData *m_velocityRPM;
 	ControlData *m_positionDegUp;
 	ControlData *m_positionDegDown;
 
@@ -142,6 +148,7 @@ private:
 	void InitializeTalonFXSExtenderCompBot302();
 
 	ctre::phoenix6::controls::DutyCycleOut m_intakePercentOut{0.0};
+	ctre::phoenix6::controls::VelocityVoltage m_intakeVelocityRPM{0.0_rpm};
 	ctre::phoenix6::controls::DutyCycleOut m_extenderPercentOut{0.0};
 	ctre::phoenix6::controls::MotionMagicVoltage m_extenderPositionDeg{0_tr};
 	ctre::phoenix6::controls::ControlRequest *m_intakeActiveTarget = &m_intakePercentOut;
