@@ -50,7 +50,7 @@ void ExpelState::Init()
 
 void ExpelState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
+	m_mechanism->UpdateTargetIntakeVelocityRPM(m_intakeTarget);
 	m_mechanism->UpdateTargetExtenderPercentOut(m_extenderTarget);
 }
 

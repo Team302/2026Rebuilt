@@ -45,7 +45,7 @@ namespace IntakeStates
 		void InitCompBot302();
 		RobotIdentifier m_RobotId;
 
-		const double m_intakeTarget = double(-1);
+		const units::angular_velocity::revolutions_per_minute_t m_intakeTarget = -1.0_rpm;
 		const double m_extenderTarget = -0.25;
 	};
 }
