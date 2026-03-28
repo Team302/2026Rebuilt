@@ -8,16 +8,27 @@
     },
     {
       "axis": "z",
-      "degrees": 0
+      "degrees": 90
     }
   ],
-  "position": [0, 0, 0.051],
+  "position": [
+    0.21,
+    0.378,
+    0.051
+  ],
   "cameras": [
     {
       "name": "Quest",
       "rotations": [],
-      "position": [-0.2848864, -0.2631948, 0.4257548],
-      "resolution": [1920, 1080],
+      "position": [
+        -0.2848864,
+        -0.2631948,
+        0.4257548
+      ],
+      "resolution": [
+        1920,
+        1080
+      ],
       "fov": 54.5
     },
     {
@@ -28,8 +39,15 @@
           "degrees": 180
         }
       ],
-      "position": [-0.2, 0, 0.2],
-      "resolution": [640, 480],
+      "position": [
+        -0.2,
+        0,
+        0.2
+      ],
+      "resolution": [
+        640,
+        480
+      ],
       "fov": 54.5
     }
   ],
