@@ -142,7 +142,7 @@ public:
     /// @see        CalcNearestBump() for bump identification
     /// @see        FieldOffsetValues for the coordinate source data
     //------------------------------------------------------------------
-    std::vector<BumpPosition> GetNearestAndCrossFieldBumpEdges(bool isInNeutralZone);
+    std::vector<BumpPosition> GetNearestAndCrossFieldBumpEdges(bool isInNeutralZone) const;
 
 private:
     //------------------------------------------------------------------
@@ -162,8 +162,6 @@ private:
     //------------------------------------------------------------------
     ~BumpHelper() = default;
 
-    // units::in GetOffsetPosition();
-
     //------------------------------------------------------------------
     // Member Variables
     //------------------------------------------------------------------
@@ -176,8 +174,4 @@ private:
 
     /// @brief Singleton instance pointer (lazy initialization)
     static BumpHelper *m_instance;
-
-    bool m_driverDPad0ButtonReleased = true;   ///< State tracking for driver D-pad button to prevent multiple toggles on a single press
-    bool m_driverDPad180ButtonReleased = true; ///< State tracking for driver D-pad button to prevent multiple toggles on a single press
-    bool m_rewindLatch = false;
 };

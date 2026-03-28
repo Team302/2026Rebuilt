@@ -240,8 +240,6 @@ public:
     /// @return     units::length::meter_t - Blue neutral bump X (hub center X + BUMP_OFFSET)
     units::length::meter_t GetBlueNeutralBumpEdgeX() const { return m_blueNeutralBumpEdgeX; }
 
-    // TODO: adding 8 of these three in red three in NZclosetoRed three in NZclosetoBlue and three in blue
-
     //------------------------------------------------------------------
     // Bump Midpoint Y-Coordinate Getters
     //------------------------------------------------------------------
@@ -544,7 +542,9 @@ private:
     /// @brief Small inward nudge applied to depot neutral-side X positions (inches)
     static constexpr units::length::inch_t DEPOT_OFFSET = 3.0_in;
 
-    /// @brief Bump offset distance from hub center to the bump edge on each side (meters)
+    /// @brief Bump offset distance from hub center to the bump edge on each side
+    /// @details 63.7401575 in ≈ 1.619 m, measured from field CAD as the distance from
+    ///          the hub center to the nearest bump edge
     static constexpr units::length::meter_t BUMP_OFFSET = 63.7401575_in;
 
     /// @brief Additional X-offset applied when computing outpost approach positions (meters)

@@ -166,7 +166,7 @@ BUMP_ID BumpHelper::CalcNearestBump() const
 ///             nearest-first, where index 0 is the starting bump and index 1 is the
 ///             cross-field destination bump
 //------------------------------------------------------------------
-std::vector<BumpPosition> BumpHelper::GetNearestAndCrossFieldBumpEdges(bool isInNeutralZone)
+std::vector<BumpPosition> BumpHelper::GetNearestAndCrossFieldBumpEdges(bool isInNeutralZone) const
 {
     std::vector<BumpPosition> values;
 

@@ -229,7 +229,18 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueAllianceBumpEdgeX = units::length::meter_t{0.0};
         m_blueNeutralBumpEdgeX = units::length::meter_t{0.0};
 
-        // put variable
+        m_blueAllianceSweep0X = units::length::inch_t{0.0};
+        m_blueAllianceSweep1X = units::length::inch_t{0.0};
+        m_blueAllianceSweep2X = units::length::inch_t{0.0};
+        m_blueNeutralSweep0X = units::length::inch_t{0.0};
+        m_blueNeutralSweep1X = units::length::inch_t{0.0};
+        m_blueNeutralSweep2X = units::length::inch_t{0.0};
+        m_redAllianceSweep0X = units::length::inch_t{0.0};
+        m_redAllianceSweep1X = units::length::inch_t{0.0};
+        m_redAllianceSweep2X = units::length::inch_t{0.0};
+        m_redNeutralSweep0X = units::length::inch_t{0.0};
+        m_redNeutralSweep1X = units::length::inch_t{0.0};
+        m_redNeutralSweep2X = units::length::inch_t{0.0};
 
         m_redBumpDepotY = units::length::meter_t{0.0};
         m_redBumpOutpostY = units::length::meter_t{0.0};
@@ -390,21 +401,21 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
 
     else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X_0)
     {
-        return isRedSide ? m_redAllianceBumpEdgeX : m_blueAllianceBumpEdgeX;
+        return isRedSide ? units::length::meter_t{m_redAllianceSweep0X} : units::length::meter_t{m_blueAllianceSweep0X};
     }
     else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X_0)
     {
-        return isRedSide ? m_redNeutralBumpEdgeX : m_blueNeutralBumpEdgeX;
-    } // how do I subtract 15 from this?
+        return isRedSide ? units::length::meter_t{m_redNeutralSweep0X} : units::length::meter_t{m_blueNeutralSweep0X};
+    }
 
     else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X_2)
     {
-        return isRedSide ? m_redAllianceBumpEdgeX : m_blueAllianceBumpEdgeX;
+        return isRedSide ? units::length::meter_t{m_redAllianceSweep2X} : units::length::meter_t{m_blueAllianceSweep2X};
     }
     else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X_2)
     {
-        return isRedSide ? m_redNeutralBumpEdgeX : m_blueNeutralBumpEdgeX;
-    } // how do I add 15 to this?
+        return isRedSide ? units::length::meter_t{m_redNeutralSweep2X} : units::length::meter_t{m_blueNeutralSweep2X};
+    }
 
     // Unknown item type - return safe default
     else
