@@ -137,15 +137,9 @@ FieldOffsetValues::FieldOffsetValues()
         auto redHubCenter = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER);
         auto blueHubCenter = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER);
 
-        // Calculate hub positions with 2.0m offset toward neutral zone for navigation
+        // Calculate hub positions with offset toward neutral zone for navigation
         m_blueHubX = blueHubCenter.X() - HUB_OFFSET;
         m_redHubX = redHubCenter.X() + HUB_OFFSET;
-
-        // Calculate bump X positions 1.5m from hub centers
-        m_redAllianceBumpEdgeX = redHubCenter.X() + BUMP_OFFSET;   // Alliance side of red bump
-        m_redNeutralBumpEdgeX = redHubCenter.X() - BUMP_OFFSET;    // Neutral side of red bump
-        m_blueAllianceBumpEdgeX = blueHubCenter.X() - BUMP_OFFSET; // Alliance side of blue bump
-        m_blueNeutralBumpEdgeX = blueHubCenter.X() + BUMP_OFFSET;  // Neutral side of blue bump
 
         // Calculate bump Y positions as midpoints between hub and trenches
         m_redBumpDepotY = (((redHubCenter.Y() +
@@ -176,25 +170,31 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).X() - TRENCH_OFFSET;
         m_neutralBlueTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_DEPOT).X() + TRENCH_OFFSET;
 
-        // Calculate the X positions for the cross-field sweep for blue alliance (3 points: 15 in inside blue hub center, at blue hub center, and 15 in outside blue hub center)
-        m_BlueAllianceSweep0X = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_ALLIANCE_CENTER).X() - 15.0_in;
-        m_BlueAllianceSweep1X = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_ALLIANCE_CENTER).X();
-        m_BlueAllianceSweep2X = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_ALLIANCE_CENTER).X() + 15.0_in;
-
-        // Calculate the X positions for the cross-field sweep for Neutral zone (3 points: 15 in inside blue hub center, at blue hub center, and 15 in outside blue hub center)
-        m_BlueNeutralSweep0X = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() - 15.0_in;
-        m_BlueNeutralSweep1X = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X();
-        m_BlueNeutralSweep2X = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_HUB_CENTER).X() + 15.0_in;
+        // Calculate bump X positions with offset from hub centers
+        m_redAllianceBumpEdgeX = redHubCenter.X() + BUMP_OFFSET;   // Alliance side of red bump
+        m_redNeutralBumpEdgeX = redHubCenter.X() - BUMP_OFFSET;    // Neutral side of red bump
+        m_blueAllianceBumpEdgeX = blueHubCenter.X() - BUMP_OFFSET; // Alliance side of blue bump
+        m_blueNeutralBumpEdgeX = blueHubCenter.X() + BUMP_OFFSET;  // Neutral side of blue bump
 
         // Calculate the X positions for the cross-field sweep for blue alliance (3 points: 15 in inside blue hub center, at blue hub center, and 15 in outside blue hub center)
-        m_RedAllianceSweep0X = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_ALLIANCE_CENTER).X() - 15.0_in;
-        m_RedAllianceSweep1X = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_ALLIANCE_CENTER).X();
-        m_RedAllianceSweep2X = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_ALLIANCE_CENTER).X() + 15.0_in;
+        m_blueAllianceSweep0X = blueHubCenter.X() - BUMP_OFFSET;
+        m_blueAllianceSweep1X = m_blueAllianceSweep0X - SWEEP_LANE_WIDTH;
+        m_blueAllianceSweep2X = m_blueAllianceSweep1X - SWEEP_LANE_WIDTH;
 
         // Calculate the X positions for the cross-field sweep for Neutral zone (3 points: 15 in inside blue hub center, at blue hub center, and 15 in outside blue hub center)
-        m_RedNeutralSweep0X = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER).X() - 15.0_in;
-        m_RedNeutralSweep1X = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER).X();
-        m_RedNeutralSweep2X = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_HUB_CENTER).X() + 15.0_in;
+        m_blueNeutralSweep0X = blueHubCenter.X() + BUMP_OFFSET;
+        m_blueNeutralSweep1X = m_blueNeutralSweep0X + SWEEP_LANE_WIDTH;
+        m_blueNeutralSweep2X = m_blueNeutralSweep1X + SWEEP_LANE_WIDTH;
+
+        // Calculate the X positions for the cross-field sweep for blue alliance (3 points: 15 in inside blue hub center, at blue hub center, and 15 in outside blue hub center)
+        m_redAllianceSweep0X = redHubCenter.X() + BUMP_OFFSET;
+        m_redAllianceSweep1X = m_redAllianceSweep0X - SWEEP_LANE_WIDTH;
+        m_redAllianceSweep2X = m_redAllianceSweep1X - SWEEP_LANE_WIDTH;
+
+        // Calculate the X positions for the cross-field sweep for Neutral zone (3 points: 15 in inside blue hub center, at blue hub center, and 15 in outside blue hub center)
+        m_redNeutralSweep0X = redHubCenter.X() - BUMP_OFFSET;
+        m_redNeutralSweep1X = m_redNeutralSweep0X + SWEEP_LANE_WIDTH;
+        m_redNeutralSweep2X = m_redNeutralSweep1X + SWEEP_LANE_WIDTH;
 
         m_redDepotTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y();
         m_redOutpostTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y();
