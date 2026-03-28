@@ -57,6 +57,45 @@ def mx(x: float) -> float:
 def my(y: float) -> float:
     return (FIELD_H - y) * SCALE
 
+
+def is_red_auton(auton_stem: str) -> bool:
+    """Return True when an auton file is a Red routine by filename prefix."""
+    return auton_stem.startswith("Red")
+
+
+def mirror_heading_for_red(heading_rad: float) -> float:
+    """Rotate heading 180 degrees for full field mirroring (X and Y)."""
+    return math.atan2(math.sin(heading_rad + math.pi), math.cos(heading_rad + math.pi))
+
+
+def mirror_traj_for_red(traj: dict) -> dict:
+    """Return a mirrored copy of trajectory data across both field axes."""
+    mirrored_waypoints = [
+        {
+            "x": round(FIELD_W - wp["x"], 3),
+            "y": round(FIELD_H - wp["y"], 3),
+            "heading_deg": round((wp["heading_deg"] + 180.0) % 360.0, 1),
+        }
+        for wp in traj["waypoints"]
+    ]
+
+    mirrored_samples = [
+        {
+            "x": FIELD_W - s["x"],
+            "y": FIELD_H - s["y"],
+            "heading": mirror_heading_for_red(s["heading"]),
+        }
+        for s in traj["samples"]
+    ]
+
+    return {
+        "name": traj["name"],
+        "file": traj["file"],
+        "duration": traj["duration"],
+        "waypoints": mirrored_waypoints,
+        "samples": mirrored_samples,
+    }
+
 # Default attribute values from auton.dtd
 DTD_DEFAULTS = {
     "id": "DO_NOTHING",
@@ -482,6 +521,8 @@ def generate_traj_section(step_data: list[dict], auton_stem: str, zone_overlays:
 
     TRAJ_SVG_DIR.mkdir(parents=True, exist_ok=True)
 
+    mirror_for_red = is_red_auton(auton_stem)
+
     # --- Build list of (step, choreo, traj, color_idx) assigning colours in
     #     order of appearance -- same index used for both overview and per-step SVGs.
     all_trajs = []
@@ -489,6 +530,8 @@ def generate_traj_section(step_data: list[dict], auton_stem: str, zone_overlays:
     for ci, d in enumerate(traj_steps):
         traj = parse_traj(d["choreo"])
         if traj:
+            if mirror_for_red:
+                traj = mirror_traj_for_red(traj)
             color_idx_map[d["choreo"]] = ci
             all_trajs.append((d["step"], d["choreo"], traj, ci))
 
@@ -518,6 +561,8 @@ def generate_traj_section(step_data: list[dict], auton_stem: str, zone_overlays:
     for d in traj_steps:
         choreo_name = d["choreo"]
         traj = parse_traj(choreo_name)
+        if traj and mirror_for_red:
+            traj = mirror_traj_for_red(traj)
         traj_link = (
             f"[`{choreo_name}.traj`](../../{traj['file']})"
             if traj else f"`{choreo_name}.traj` *(not found)*"
