@@ -68,6 +68,17 @@ DTD_DEFAULTS = {
 }
 
 
+def mermaid_safe_text(text: str) -> str:
+    """Return Mermaid-safe ASCII label text.
+
+    Mermaid state labels can fail on unexpected punctuation and non-ASCII chars.
+    We normalize to plain ASCII, collapse whitespace, and avoid double quotes.
+    """
+    ascii_text = text.encode("ascii", errors="replace").decode("ascii")
+    ascii_text = ascii_text.replace('"', "'").replace("\\", "/")
+    return " ".join(ascii_text.split())
+
+
 def parse_zone_effects(zone_filename: str) -> dict:
     """Return a dict of interesting attributes from a zone XML file.
 
@@ -88,6 +99,155 @@ def parse_zone_effects(zone_filename: str) -> dict:
     except ET.ParseError:
         pass
     return effects
+
+
+def parse_zone_geometry(zone_filename: str) -> dict | None:
+    """Return geometry + style attrs for one zone XML file, or None.
+
+    Supported geometry:
+      - circlex/circley/radius (radius stored in centimetres)
+      - x1_rect/y1_rect/x2_rect/y2_rect
+    """
+    zone_path = ZONES_DIR / zone_filename
+    if not zone_path.exists():
+        return None
+
+    try:
+        root = ET.parse(zone_path).getroot()
+    except ET.ParseError:
+        return None
+
+    for zone_el in root.iter("zone"):
+        alliance = zone_el.get("allianceColor", "BOTH")
+        path_opt = zone_el.get("pathUpdateOption", "NOTHING")
+
+        if zone_el.get("circlex") is not None:
+            try:
+                cx = float(zone_el.get("circlex", 0.0))
+                cy = float(zone_el.get("circley", 0.0))
+                r = float(zone_el.get("radius", 0.0)) / 100.0
+            except ValueError:
+                return None
+            return {
+                "name": zone_filename.replace(".xml", ""),
+                "type": "circle",
+                "alliance": alliance,
+                "pathUpdateOption": path_opt,
+                "cx": cx,
+                "cy": cy,
+                "r": r,
+            }
+
+        if zone_el.get("x1_rect") is not None:
+            try:
+                x1 = float(zone_el.get("x1_rect", 0.0))
+                y1 = float(zone_el.get("y1_rect", 0.0))
+                x2 = float(zone_el.get("x2_rect", 0.0))
+                y2 = float(zone_el.get("y2_rect", 0.0))
+            except ValueError:
+                return None
+            return {
+                "name": zone_filename.replace(".xml", ""),
+                "type": "rect",
+                "alliance": alliance,
+                "pathUpdateOption": path_opt,
+                "x1": min(x1, x2),
+                "y1": min(y1, y2),
+                "x2": max(x1, x2),
+                "y2": max(y1, y2),
+            }
+
+    return None
+
+
+def infer_auton_alliance(auton_stem: str) -> str:
+    """Infer alliance from auton filename prefix: Blue*, Red*, or BOTH."""
+    if auton_stem.startswith("Blue"):
+        return "BLUE"
+    if auton_stem.startswith("Red"):
+        return "RED"
+    return "BOTH"
+
+
+def collect_element_zone_overlays(step_data: list[dict], auton_stem: str) -> list[dict]:
+    """Collect zone geometries for files ending with Element.xml.
+
+    Priority:
+      1) Element zones explicitly referenced by primitives.
+      2) If none are referenced, include alliance-matching Element zones.
+    """
+    element_zone_files: set[str] = set()
+    for step in step_data:
+        for zf in step.get("zones", []):
+            if zf.endswith("Element.xml"):
+                element_zone_files.add(zf)
+
+    if not element_zone_files:
+        alliance = infer_auton_alliance(auton_stem)
+        for zpath in sorted(ZONES_DIR.glob("*Element.xml")):
+            name = zpath.name
+            if alliance == "BLUE" and not name.startswith("Blue"):
+                continue
+            if alliance == "RED" and not name.startswith("Red"):
+                continue
+            element_zone_files.add(name)
+
+    overlays: list[dict] = []
+    for zf in sorted(element_zone_files):
+        geom = parse_zone_geometry(zf)
+        if geom is not None:
+            overlays.append(geom)
+    return overlays
+
+
+def _zone_overlay_style(alliance: str) -> tuple[str, str]:
+    if alliance == "BLUE":
+        return ("#4d7dff", "#9bb6ff")
+    if alliance == "RED":
+        return ("#ff6b6b", "#ffc0c0")
+    return ("#66c08a", "#bde8cd")
+
+
+def _element_zone_overlay_svg(shape: dict) -> str:
+    """Render one Element-zone overlay on top of the field background."""
+    stroke_col, text_col = _zone_overlay_style(shape.get("alliance", "BOTH"))
+    label = shape["name"].replace("Blue", "").replace("Red", "")
+    lines: list[str] = []
+
+    if shape["type"] == "circle":
+        cx, cy, r = shape["cx"], shape["cy"], shape["r"]
+        if cx > FIELD_W * 1.5 or cy > FIELD_H * 1.5 or r <= 0:
+            return ""
+        svgcx, svgcy, svgr = mx(cx), my(cy), r * SCALE
+        lines.append(
+            f'  <circle cx="{svgcx:.1f}" cy="{svgcy:.1f}" r="{svgr:.1f}" '
+            f'fill="none" stroke="{stroke_col}" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>'
+        )
+        ly = svgcy - svgr - 4
+        lines.append(
+            f'  <text x="{svgcx:.1f}" y="{ly:.1f}" text-anchor="middle" font-size="8" '
+            f'fill="{text_col}" font-family="monospace">{label}</text>'
+        )
+    else:
+        x1, y1, x2, y2 = shape["x1"], shape["y1"], shape["x2"], shape["y2"]
+        rx1 = mx(max(0.0, min(x1, FIELD_W)))
+        ry1 = my(max(0.0, min(y2, FIELD_H)))
+        rw = mx(max(0.0, min(x2, FIELD_W))) - rx1
+        rh = my(max(0.0, min(y1, FIELD_H))) - ry1
+        if rw <= 0 or rh <= 0:
+            return ""
+        lines.append(
+            f'  <rect x="{rx1:.1f}" y="{ry1:.1f}" width="{rw:.1f}" height="{rh:.1f}" '
+            f'fill="none" stroke="{stroke_col}" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>'
+        )
+        lx = rx1 + 4
+        ly = ry1 + 9
+        lines.append(
+            f'  <text x="{lx:.1f}" y="{ly:.1f}" text-anchor="start" font-size="8" '
+            f'fill="{text_col}" font-family="monospace">{label}</text>'
+        )
+
+    return "\n".join(lines)
 
 
 def zone_label(zone_filename: str, effects: dict) -> str:
@@ -252,7 +412,7 @@ def _robot_svg(px: float, py: float, heading_rad: float,
 _TRAJ_COLORS = ["#00d4ff", "#ffcc00", "#ff6688", "#88ff44", "#ff8800", "#cc88ff"]
 
 
-def render_traj_svg(trajs: list[tuple[int, str, dict, int]]) -> str:
+def render_traj_svg(trajs: list[tuple[int, str, dict, int]], zone_overlays: list[dict] | None = None) -> str:
     """Render one SVG showing the field + all provided trajectories overlaid.
 
     trajs: list of (step_number, choreo_name, traj_dict, color_index)
@@ -261,6 +421,11 @@ def render_traj_svg(trajs: list[tuple[int, str, dict, int]]) -> str:
     Returns the full SVG string.
     """
     body_lines = [_field_bg_svg()]
+
+    for shape in (zone_overlays or []):
+        overlay = _element_zone_overlay_svg(shape)
+        if overlay:
+            body_lines.append(overlay)
 
     for step_num, choreo_name, traj, color_idx in trajs:
         color = _TRAJ_COLORS[color_idx % len(_TRAJ_COLORS)]
@@ -306,7 +471,7 @@ def render_traj_svg(trajs: list[tuple[int, str, dict, int]]) -> str:
     )
 
 
-def generate_traj_section(step_data: list[dict], auton_stem: str) -> str:
+def generate_traj_section(step_data: list[dict], auton_stem: str, zone_overlays: list[dict]) -> str:
     """Return a Markdown section with trajectory SVGs and waypoint tables."""
     traj_steps = [
         d for d in step_data
@@ -331,7 +496,7 @@ def generate_traj_section(step_data: list[dict], auton_stem: str) -> str:
     overview_svg_path = TRAJ_SVG_DIR / overview_svg_name
     if all_trajs:
         overview_svg_path.write_text(
-            render_traj_svg(all_trajs), encoding="ascii", errors="replace"
+            render_traj_svg(all_trajs, zone_overlays=zone_overlays), encoding="ascii", errors="replace"
         )
 
     lines = ["## Trajectory Details", ""]
@@ -374,7 +539,7 @@ def generate_traj_section(step_data: list[dict], auton_stem: str) -> str:
             svg_name = f"{auton_stem}_step{d['step']}_{choreo_name}.svg"
             svg_path = TRAJ_SVG_DIR / svg_name
             svg_path.write_text(
-                render_traj_svg([(d["step"], choreo_name, traj, ci)]),
+                render_traj_svg([(d["step"], choreo_name, traj, ci)], zone_overlays=zone_overlays),
                 encoding="ascii", errors="replace"
             )
             rel = f"svg/traj/{svg_name}"
@@ -480,7 +645,8 @@ def generate_markdown(xml_path: Path) -> str:
     # State label declarations  (id : description)
     for d in step_data:
         traj_part = f" {d['choreo']}" if d["choreo"] and d["choreo"] != "—" else ""
-        mermaid_lines.append(f"    Step{d['step']} : Step {d['step']} - {d['prim_id']}{traj_part}")
+        state_label = mermaid_safe_text(f"Step {d['step']} - {d['prim_id']}{traj_part}")
+        mermaid_lines.append(f'    Step{d["step"]} : "{state_label}"')
     mermaid_lines.append("")
 
     # Apply classDef per step based on intake state
@@ -490,7 +656,14 @@ def generate_markdown(xml_path: Path) -> str:
     mermaid_lines.append("")
 
     # Transitions
-    mermaid_lines.append("    [*] --> Step1 : start")
+    if not step_data:
+        # Mermaid requires transitions to/from concrete states; [*] --> [*] is invalid.
+        mermaid_lines.append('    Empty : "No primitives defined"')
+        mermaid_lines.append('    class Empty noIntake')
+        mermaid_lines.append('    [*] --> Empty : "start"')
+        mermaid_lines.append('    Empty --> [*] : "done"')
+    else:
+        mermaid_lines.append('    [*] --> Step1 : "start"')
     for d in step_data:
         src = f"Step{d['step']}"
         dst = f"Step{d['step'] + 1}" if d["step"] < len(step_data) else "[*]"
@@ -522,8 +695,8 @@ def generate_markdown(xml_path: Path) -> str:
             # Separate multiple zones with a space only
             parts.append("zones=" + " ".join(zone_labels_short))
 
-        # Join parts with a space — no commas in the arrow label
-        arrow_label = (": " + " ".join(parts)) if parts else ""
+        # Quote transition labels so Mermaid won't choke on punctuation.
+        arrow_label = f': "{mermaid_safe_text(" | ".join(parts))}"' if parts else ""
         mermaid_lines.append(f"    {src} --> {dst}{arrow_label}")
 
     mermaid_block = "\n".join(mermaid_lines)
@@ -559,7 +732,8 @@ def generate_markdown(xml_path: Path) -> str:
     # ------------------------------------------------------------------ #
     # 4. Trajectory details section                                        #
     # ------------------------------------------------------------------ #
-    traj_section = generate_traj_section(step_data, stem)
+    zone_overlays = collect_element_zone_overlays(step_data, stem)
+    traj_section = generate_traj_section(step_data, stem, zone_overlays)
 
     # ------------------------------------------------------------------ #
     # 5. Assemble full document                                            #
