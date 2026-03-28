@@ -895,6 +895,10 @@ void Launcher::DataLog(uint64_t timestamp)
 	LogDoubleData(timestamp, m_loggingHoodTargetPath, m_targetHoodAngle.value(), m_loggingTurnsUnits);
 	LogDoubleData(timestamp, m_loggingTurretAngleTargetPath, m_targetTurretAngle.value(), m_loggingTurnsUnits);
 
+	// Actual mechanism positions (degrees for readability)
+	LogDoubleData(timestamp, m_loggingHoodActualPath, units::angle::degree_t{m_cachedHoodPosition}.value(), "deg");
+	LogDoubleData(timestamp, m_loggingTurretActualPath, units::angle::degree_t{m_cachedTurretPosition}.value(), "deg");
+
 	// Mechanism state
 	LogStringData(timestamp, m_loggingLauncherStatePath, GetCurrentStateName());
 	LogBoolData(timestamp, m_loggingProtectedModePath, m_launcherProtectedMode);

@@ -276,6 +276,8 @@ private:
 	static constexpr std::string_view m_loggingLauncherTargetPath = "/Launcher/TargetLauncherVelocity";
 	static constexpr std::string_view m_loggingHoodTargetPath = "/Launcher/HoodTargetAngle";
 	static constexpr std::string_view m_loggingTurretAngleTargetPath = "/Launcher/TargetTurretAngle";
+	static constexpr std::string_view m_loggingHoodActualPath = "/Launcher/HoodActualAngle";
+	static constexpr std::string_view m_loggingTurretActualPath = "/Launcher/TurretActualAngle";
 	static constexpr std::string_view m_loggingLauncherStatePath = "/Launcher/State";
 	static constexpr std::string_view m_loggingProtectedModePath = "/Launcher/IsProtectedMode";
 	static constexpr std::string_view m_loggingTurnsUnits = "Turns";
