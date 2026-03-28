@@ -13,12 +13,12 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : Step 1 - DRIVE_STOP_MECH --
-    Step2 : Step 2 - TRAJECTORY_DRIVE BlueMLDepotOutpost_A
-    Step3 : Step 3 - TRAJECTORY_DRIVE BlueMLDepotOutpost_B
-    Step4 : Step 4 - TRAJECTORY_DRIVE BlueMLDepotOutpost_C
-    Step5 : Step 5 - TRAJECTORY_DRIVE BlueMLDepotOutpost_D
-    Step6 : Step 6 - DRIVE_STOP_MECH --
+    Step1 : "Step 1 - DRIVE_STOP_MECH --"
+    Step2 : "Step 2 - TRAJECTORY_DRIVE BlueMLDepotOutpost_A"
+    Step3 : "Step 3 - TRAJECTORY_DRIVE BlueMLDepotOutpost_B"
+    Step4 : "Step 4 - TRAJECTORY_DRIVE BlueMLDepotOutpost_C"
+    Step5 : "Step 5 - TRAJECTORY_DRIVE BlueMLDepotOutpost_D"
+    Step6 : "Step 6 - DRIVE_STOP_MECH --"
 
     class Step1 noIntake
     class Step2 intake
@@ -27,13 +27,13 @@ stateDiagram-v2
     class Step5 intake
     class Step6 noIntake
 
-    [*] --> Step1 : start
-    Step1 --> Step2: launcher=LAUNCH
-    Step2 --> Step3: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH DepotZone DRIVE_TO_DEPOT
-    Step3 --> Step4: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH OutpostZone DRIVE_TO_OUTPOST
-    Step4 --> Step5: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH
-    Step5 --> Step6: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH
-    Step6 --> [*]: zones=ClimbingZone DRIVE_TO_TOWER
+    [*] --> Step1 : "start"
+    Step1 --> Step2: "launcher=LAUNCH"
+    Step2 --> Step3: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH DepotZone DRIVE_TO_DEPOT"
+    Step3 --> Step4: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH OutpostZone DRIVE_TO_OUTPOST"
+    Step4 --> Step5: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step5 --> Step6: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step6 --> [*]: "zones=ClimbingZone DRIVE_TO_TOWER"
 ```
 
 ## Primitive Summary
@@ -64,8 +64,8 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 3.545 | 5.55 | 151.9 |
-| 2 | 0.778 | 5.967 | 180.0 |
+| 1 | 12.915 | 2.55 | 331.9 |
+| 2 | 15.682 | 2.133 | 0.0 |
 
 ### Step 3 -- BlueMLDepotOutpost_B
 
@@ -78,11 +78,11 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 0.529 | 5.957 | 180.0 |
-| 2 | 2.088 | 5.231 | 0.0 |
-| 3 | 2.722 | 3.776 | 180.0 |
-| 4 | 2.594 | 1.605 | 180.0 |
-| 5 | 0.55 | 0.673 | 180.0 |
+| 1 | 15.931 | 2.143 | 0.0 |
+| 2 | 14.372 | 2.869 | 180.0 |
+| 3 | 13.738 | 4.324 | 0.0 |
+| 4 | 13.866 | 6.495 | 0.0 |
+| 5 | 15.91 | 7.427 | 0.0 |
 
 ### Step 4 -- BlueMLDepotOutpost_C
 
@@ -95,9 +95,9 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 0.352 | 0.64 | 180.0 |
-| 2 | 2.381 | 2.137 | 233.7 |
-| 3 | 0.863 | 2.947 | 357.9 |
+| 1 | 16.108 | 7.46 | 0.0 |
+| 2 | 14.079 | 5.963 | 53.7 |
+| 3 | 15.597 | 5.153 | 177.9 |
 
 ### Step 5 -- BlueMLDepotOutpost_D
 

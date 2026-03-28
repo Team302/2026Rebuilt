@@ -13,11 +13,11 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : Step 1 - DRIVE_STOP_MECH --
-    Step2 : Step 2 - TRAJECTORY_DRIVE BlueMiddleRightToOutpost
-    Step3 : Step 3 - TRAJECTORY_DRIVE RightToLeftAlliance
-    Step4 : Step 4 - TRAJECTORY_DRIVE DepotToLaunchToClimb
-    Step5 : Step 5 - DRIVE_STOP_MECH --
+    Step1 : "Step 1 - DRIVE_STOP_MECH --"
+    Step2 : "Step 2 - TRAJECTORY_DRIVE BlueMiddleRightToOutpost"
+    Step3 : "Step 3 - TRAJECTORY_DRIVE RightToLeftAlliance"
+    Step4 : "Step 4 - TRAJECTORY_DRIVE DepotToLaunchToClimb"
+    Step5 : "Step 5 - DRIVE_STOP_MECH --"
 
     class Step1 noIntake
     class Step2 intake
@@ -25,12 +25,12 @@ stateDiagram-v2
     class Step4 intake
     class Step5 noIntake
 
-    [*] --> Step1 : start
-    Step1 --> Step2: launcher=LAUNCH
-    Step2 --> Step3: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH OutpostZone DRIVE_TO_OUTPOST
-    Step3 --> Step4: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH DepotZone DRIVE_TO_DEPOT
-    Step4 --> Step5: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH
-    Step5 --> [*]: zones=ClimbingZone DRIVE_TO_TOWER
+    [*] --> Step1 : "start"
+    Step1 --> Step2: "launcher=LAUNCH"
+    Step2 --> Step3: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH OutpostZone DRIVE_TO_OUTPOST"
+    Step3 --> Step4: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH DepotZone DRIVE_TO_DEPOT"
+    Step4 --> Step5: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step5 --> [*]: "zones=ClimbingZone DRIVE_TO_TOWER"
 ```
 
 ## Primitive Summary
@@ -60,8 +60,8 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 3.89 | 2.588 | 233.0 |
-| 2 | 0.652 | 0.567 | 180.0 |
+| 1 | 12.57 | 5.512 | 53.0 |
+| 2 | 15.808 | 7.533 | 0.0 |
 
 ### Step 3 -- RightToLeftAlliance
 
@@ -74,9 +74,9 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 0.652 | 0.567 | 182.5 |
-| 2 | 2.445 | 3.98 | 180.0 |
-| 3 | 0.461 | 6.151 | 210.9 |
+| 1 | 15.808 | 7.533 | 2.5 |
+| 2 | 14.015 | 4.12 | 0.0 |
+| 3 | 15.999 | 1.949 | 30.9 |
 
 ### Step 4 -- DepotToLaunchToClimb
 
@@ -89,9 +89,9 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 0.461 | 6.151 | 210.9 |
-| 2 | 1.463 | 5.368 | 159.0 |
-| 3 | 1.349 | 4.741 | 180.0 |
+| 1 | 15.999 | 1.949 | 30.9 |
+| 2 | 14.997 | 2.732 | 339.0 |
+| 3 | 15.111 | 3.359 | 0.0 |
 
 ## Zone Legend
 

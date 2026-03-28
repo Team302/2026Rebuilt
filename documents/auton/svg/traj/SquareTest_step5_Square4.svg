@@ -35,6 +35,26 @@
   <text x="7" y="114.8" dominant-baseline="middle" font-size="7" fill="#666" font-family="monospace">6m</text>
   <line x1="0" y1="5.5" x2="5" y2="5.5" stroke="#555" stroke-width="1"/>
   <text x="7" y="5.5" dominant-baseline="middle" font-size="7" fill="#666" font-family="monospace">8m</text>
+  <rect x="220.8" y="254.3" width="61.1" height="100.6" fill="none" stroke="#4d7dff" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="224.8" y="263.3" text-anchor="start" font-size="8" fill="#9bb6ff" font-family="monospace">BumpDepotElement</text>
+  <rect x="220.8" y="88.0" width="61.1" height="100.6" fill="none" stroke="#4d7dff" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="224.8" y="97.0" text-anchor="start" font-size="8" fill="#9bb6ff" font-family="monospace">BumpOutpostElement</text>
+  <rect x="218.7" y="189.0" width="65.3" height="65.3" fill="none" stroke="#4d7dff" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="222.7" y="198.0" text-anchor="start" font-size="8" fill="#9bb6ff" font-family="monospace">HubElement</text>
+  <rect x="218.7" y="354.9" width="65.3" height="17.0" fill="none" stroke="#4d7dff" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="222.7" y="363.9" text-anchor="start" font-size="8" fill="#9bb6ff" font-family="monospace">TrenchADepotElement</text>
+  <rect x="218.7" y="71.1" width="65.3" height="17.0" fill="none" stroke="#4d7dff" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="222.7" y="80.1" text-anchor="start" font-size="8" fill="#9bb6ff" font-family="monospace">TrenchAOutpostElement</text>
+  <rect x="623.0" y="254.3" width="61.1" height="100.6" fill="none" stroke="#ff6b6b" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="627.0" y="263.3" text-anchor="start" font-size="8" fill="#ffc0c0" font-family="monospace">BumpDepotElement</text>
+  <rect x="623.0" y="88.0" width="61.1" height="100.6" fill="none" stroke="#ff6b6b" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="627.0" y="97.0" text-anchor="start" font-size="8" fill="#ffc0c0" font-family="monospace">BumpOutpostElement</text>
+  <rect x="620.9" y="189.0" width="65.3" height="65.3" fill="none" stroke="#ff6b6b" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="624.9" y="198.0" text-anchor="start" font-size="8" fill="#ffc0c0" font-family="monospace">HubElement</text>
+  <rect x="620.9" y="354.9" width="65.3" height="17.0" fill="none" stroke="#ff6b6b" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="624.9" y="363.9" text-anchor="start" font-size="8" fill="#ffc0c0" font-family="monospace">TrenchADepotElement</text>
+  <rect x="620.9" y="71.1" width="65.3" height="17.0" fill="none" stroke="#ff6b6b" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="624.9" y="80.1" text-anchor="start" font-size="8" fill="#ffc0c0" font-family="monospace">TrenchAOutpostElement</text>
   <polyline points="328.07,278.86 328.07,278.81 328.07,278.66 328.07,278.42 328.07,277.64 328.07,277.10 328.07,276.47 328.07,275.74 328.07,274.91 328.07,273.98 328.07,272.96 328.07,271.84 328.06,269.30 328.06,267.89 328.06,266.38 328.06,264.77 328.06,263.07 328.06,261.26 328.06,259.36 328.06,255.27 328.06,253.07 328.06,250.78 328.06,248.40 328.06,245.91 328.06,243.33 328.05,240.65 328.05,235.00 328.05,232.02 328.05,228.95 328.05,225.79 328.05,222.57 328.05,219.41 328.05,216.34 328.05,213.37 328.05,207.71 328.06,205.03 328.06,202.45 328.06,199.96 328.06,197.58 328.06,195.29 328.06,193.09 328.06,189.00 328.06,187.10 328.06,185.29 328.06,183.59 328.06,181.98 328.06,180.47 328.06,179.06 328.07,176.52 328.07,175.40 328.07,174.38 328.07,173.45 328.07,172.62 328.07,171.89 328.07,171.26 328.07,170.72 328.07,169.94 328.07,169.70 328.07,169.55 328.07,169.50" fill="none" stroke="#88ff44" stroke-width="2" stroke-opacity="0.85" stroke-linejoin="round" stroke-linecap="round"/>
   <g id="pose3000" transform="translate(328.07,278.86) rotate(-90.00)">
     <rect x="-20.83" y="-25.00" width="41.66" height="50.00" rx="3" fill="#88ff44" fill-opacity="0.25" stroke="#88ff44" stroke-width="1.2" stroke-opacity="0.7"/>
