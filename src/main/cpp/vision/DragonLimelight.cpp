@@ -262,6 +262,11 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
     // Get the pose estimate
     auto poseEstimate = LimelightHelpers::getBotPoseEstimate_wpiBlue_MegaTag2(m_networkTableName);
 
+    if (PoseUtils::IsPoseOffField(poseEstimate.pose))
+    {
+        return std::nullopt;
+    }
+
     double xyStds = .7;
     double degStds = 9999999;
     m_megatag2PosBool = true;
@@ -269,11 +274,6 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
                      poseEstimate.timestampSeconds,
                      {xyStds, xyStds, degStds},
                      PoseEstimationStrategy::MEGA_TAG_2};
-
-    if (PoseUtils::IsPoseOffField(poseEstimate.pose))
-    {
-        return std::nullopt;
-    }
     return m_megatag2Pos;
 }
 
