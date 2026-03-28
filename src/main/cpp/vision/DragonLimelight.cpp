@@ -30,6 +30,7 @@
 #include "units/angle.h"
 #include "units/length.h"
 #include "units/time.h"
+#include "utils/PoseUtils.h"
 
 // Team 302 includes
 #include "chassis/ChassisConfigMgr.h"
@@ -232,7 +233,6 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag1Pose()
     {
         return std::nullopt;
     }
-
     auto pose3d = frc::Pose3d{limelightMeasurement.pose};
 
     units::time::millisecond_t currentTime = frc::Timer::GetFPGATimestamp();
@@ -259,7 +259,6 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
     {
         return std::nullopt;
     }
-
     // Get the pose estimate
     auto poseEstimate = LimelightHelpers::getBotPoseEstimate_wpiBlue_MegaTag2(m_networkTableName);
 
@@ -271,6 +270,10 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
                      {xyStds, xyStds, degStds},
                      PoseEstimationStrategy::MEGA_TAG_2};
 
+    if (PoseUtils::IsPoseOffField(poseEstimate.pose))
+    {
+        return std::nullopt;
+    }
     return m_megatag2Pos;
 }
 
