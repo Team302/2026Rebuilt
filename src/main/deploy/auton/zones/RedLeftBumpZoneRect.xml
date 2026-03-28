@@ -4,9 +4,9 @@
 <auton>
 <zone
 x1_rect = "10.57"
-y1_rect = "1.60"
+y1_rect = "1.41"
 x2_rect = "13.45"
-y2_rect = "3.39"
+y2_rect = "3.51"
 pathUpdateOption = "DRIVE_OVER_BUMP"
 />
 </auton>
