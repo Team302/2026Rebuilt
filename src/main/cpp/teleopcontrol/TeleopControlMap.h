@@ -160,7 +160,7 @@ inline robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopC
     {TeleopControlFunctions::ROBOT_ORIENTED_DRIVE, driverLStickPressed},
     {TeleopControlFunctions::SYSID_MODIFER, driverSelectButton},
     {TeleopControlFunctions::SWEEP_BEHIND_HUB_INCREMENT, driverDPad0},
-    {TeleopControlFunctions::SWEEP_BEHIND_HUB_DECREMENT, driverDPad0},
+    {TeleopControlFunctions::SWEEP_BEHIND_HUB_DECREMENT, driverDPad180},
 
     // Season Specific Driver Controls
     {TeleopControlFunctions::INTAKE, driverRTriggerPressed},

@@ -28,11 +28,10 @@
 #include "Robot.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "fielddata/FieldOffsetValues.h"
+#include "fielddata/SweepLaneChanger.h"
 #include "frc/geometry/Pose2d.h"
-#include "teleopcontrol/TeleopControl.h"
-#include "teleopcontrol/TeleopControlMap.h"
 #include "utils/FMSData.h"
-#include <frc/smartdashboard/SmartDashboard.h>
+#include "utils/logging/debug/Logger.h"
 
 /// @brief Singleton instance pointer - initialized to nullptr for lazy instantiation
 BumpHelper *BumpHelper::m_instance = nullptr;
@@ -178,14 +177,14 @@ std::vector<BumpPosition> BumpHelper::GetNearestAndCrossFieldBumpEdges(bool isIn
     bool isRed = (bump == BUMP_ID::RED_OUTPOST_BUMP || bump == BUMP_ID::RED_DEPOT_BUMP);
     bool nearestIsOutpost = (bump == BUMP_ID::RED_OUTPOST_BUMP || bump == BUMP_ID::BLUE_OUTPOST_BUMP);
 
-    LaneSelector();
+    auto lane = SweepLaneChanger::GetInstance()->GetLane();
 
-    // Select the X coordinate for the current side of the bump based on m_lane (0, 1, or 2)
+    // Select the X coordinate for the current side of the bump based on lane (0, 1, or 2)
     auto bumpX = isRed
-                     ? (isInNeutralZone ? units::length::meter_t(offsetVals->GetRedNeutralSweepX(m_lane))
-                                        : units::length::meter_t(offsetVals->GetRedAllianceSweepX(m_lane)))
-                     : (isInNeutralZone ? units::length::meter_t(offsetVals->GetBlueNeutralSweepX(m_lane))
-                                        : units::length::meter_t(offsetVals->GetBlueAllianceSweepX(m_lane)));
+                     ? (isInNeutralZone ? offsetVals->GetRedNeutralSweepX(lane)
+                                        : offsetVals->GetRedAllianceSweepX(lane))
+                     : (isInNeutralZone ? offsetVals->GetBlueNeutralSweepX(lane)
+                                        : offsetVals->GetBlueAllianceSweepX(lane));
 
     // Select Y coordinates for outpost and depot bumps on this alliance side
     auto outpostY = isRed ? offsetVals->GetRedBumpTrenchOutpostYOffset() : offsetVals->GetBlueBumpTrenchOutpostYOffset();
@@ -207,93 +206,3 @@ std::vector<BumpPosition> BumpHelper::GetNearestAndCrossFieldBumpEdges(bool isIn
     }
     return values;
 }
-void BumpHelper::LaneSelector()
-{
-    m_isIncrementPressed = TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_INCREMENT);
-    m_isDecrementPressed = TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_DECREMENT);
-
-    if (!m_isIncrementPressed && !m_isDecrementPressed)
-    {
-        m_incrementLatch = false;
-        m_decrementLatch = false;
-        return;
-    }
-
-    if (m_isIncrementPressed && !m_incrementLatch)
-    {
-        m_incrementLatch = true;
-        if (m_lane < 2)
-        {
-            m_lane += 1;
-        }
-        return;
-    }
-
-    if (m_isDecrementPressed && !m_decrementLatch)
-    {
-        m_decrementLatch = true;
-        if (m_lane > 0)
-        {
-            m_lane -= 1;
-        }
-    }
-}
-//-----------
-
-//     if (m_isIncrementPressed == false && m_isDecrementPressed == true)
-//     {
-//         {
-//             m_decrementLatch = true;
-//             m_incVal += 2;
-//         }
-//         if (m_isIncrementPressed == false && m_isDecrementPressed == true)
-//         {
-//             m_decrementLatch = true;
-//             m_incVal += 2;
-//         }
-//         if (m_isIncrementPressed == false && m_isDecrementPressed == true)
-//         {
-//             m_rewindLatch = true;
-//             m_incVal = 0;
-//         }
-//     }
-// }
-
-// units::length::inch_t FieldOffsetValues::GetOffsetPosition()
-// {
-//     auto offsetVals = FieldOffsetValues::GetInstance();
-//     if (!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_INCREMENT) && !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_DECREMENT))
-//     {
-//         m_decrementLatch = false;
-//         m_incrementLatch = false;
-//     }
-//     else
-//     {
-//         if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_INCREMENT) && m_incrementLatch == false && m_incVal < 2)
-//         {
-//             m_incrementLatch = true;
-//             m_incVal += 1;
-//         }
-//         else if (TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_DECREMENT) && m_decrementLatch == false && m_incVal > 0)
-//         {
-//             m_decrementLatch = true;
-//             m_incVal -= 1;
-//         }
-//     }
-//     if (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed)
-//     {
-//         if (m_incVal == 0)
-//         {
-//             return offsetVals->GetValue(true, offsetVals->GetRedAllianceSweep0X())
-//         }
-//         else if (m_incVal == 1)
-//         {
-//             return offsetVals-> // GetValue(true, offsetVals->GetRedAllianceSweep0X()) + offsetVals->GetBumpSweepIncrement();
-//         }
-//         else if (m_incVal == 2)
-//         {
-//             return offsetVals->GetBumpSweepIncrement() * 2;
-//         }
-//     }
-
-//     return 0_in;
