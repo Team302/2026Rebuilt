@@ -102,21 +102,6 @@ bool PoseUtils::IsPoseAtOrigin(const frc::Pose2d &pose,
 }
 
 //------------------------------------------------------------------
-/// @brief      Checks if a pose is outside the field boundaries
-/// @param[in]  pose - Pose to check
-/// @return     true if pose is outside the field boundaries, false otherwise
-///------------------------------------------------------------------
-bool PoseUtils::IsPoseOffField(const frc::Pose2d &pose)
-{
-    return !(pose.X() < m_kFieldMinX || pose.X() > m_kFieldMaxX || pose.Y() < m_kFieldMinY || pose.Y() > m_kFieldMaxY);
-}
-
-bool PoseUtils::IsPoseJumping(const frc::Pose2d &pose1, const frc::Pose2d &pose2)
-{
-    return (GetDeltaBetweenPoses(pose1, pose2) > m_kJumpThreshold);
-}
-
-//------------------------------------------------------------------
 /// @brief      Determines which field element is closest to a reference pose
 /// @param[in]  pose - Reference pose to measure from (typically robot position)
 /// @param[in]  firstElement - First field element to consider

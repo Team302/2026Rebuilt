@@ -10,7 +10,6 @@
  */
 #pragma once
 
-#include <functional>
 #include <optional>
 #include <string>
 #include <vector>
@@ -128,68 +127,6 @@ public:
      */
     bool IsConnected();
 
-    // Callback registration methods
-
-    /**
-     * Registers a callback that fires once when the Quest headset transitions from disconnected to
-     * connected. The callback is evaluated each CommandPeriodic() call.
-     *
-     * @param callback Function to invoke on connection
-     */
-    void OnConnected(std::function<void()> callback);
-
-    /**
-     * Registers a callback that fires once when the Quest headset transitions from connected to
-     * disconnected. The callback is evaluated each CommandPeriodic() call.
-     *
-     * @param callback Function to invoke on disconnection
-     */
-    void OnDisconnected(std::function<void()> callback);
-
-    /**
-     * Registers a callback that fires once when the Quest headset transitions from not-tracking to
-     * actively tracking. The callback is evaluated each CommandPeriodic() call.
-     *
-     * @param callback Function to invoke when tracking is acquired
-     */
-    void OnTrackingAcquired(std::function<void()> callback);
-
-    /**
-     * Registers a callback that fires once when the Quest headset transitions from actively tracking
-     * to not-tracking. The callback is evaluated each CommandPeriodic() call.
-     *
-     * @param callback Function to invoke when tracking is lost
-     */
-    void OnTrackingLost(std::function<void()> callback);
-
-    /**
-     * Registers a callback that fires once when the Quest battery level drops at or below the given
-     * threshold. The callback will not fire again until the battery rises above the threshold and
-     * drops back down.
-     *
-     * @param thresholdPercent Battery percentage (0-100) at or below which the callback fires
-     * @param callback Function receiving the current battery percentage when the threshold is crossed
-     */
-    void OnLowBattery(int thresholdPercent, std::function<void(int)> callback);
-
-#ifdef __FRC_ROBORIO__
-    /**
-     * Registers a callback that fires for each command response where the command succeeded. Called
-     * from CommandPeriodic().
-     *
-     * @param callback Function receiving the raw command response
-     */
-    void OnCommandSuccess(std::function<void(const questnav::protos::commands::ProtobufQuestNavCommandResponse &)> callback);
-
-    /**
-     * Registers a callback that fires for each command response where the command failed. Called from
-     * CommandPeriodic().
-     *
-     * @param callback Function receiving the raw command response
-     */
-    void OnCommandFailure(std::function<void(const questnav::protos::commands::ProtobufQuestNavCommandResponse &)> callback);
-#endif
-
     /**
      * Gets the latency of the Quest > Robot Connection. Returns the latency between the current time
      * and the last frame data update.
@@ -270,13 +207,6 @@ private:
      * DriverStation at an interval.
      */
     void CheckVersionMatch();
-
-    /**
-     * Evaluates connection, tracking, and battery state against cached values and fires any
-     * registered callbacks when state transitions are detected.
-     */
-    void CheckStateCallbacks();
-
 #ifdef __FRC_ROBORIO__
     /**
      * Helper: convert a protobuf Pose3d into an frc::Pose3d.
@@ -312,21 +242,4 @@ private:
 
     /// The last time QuestNavLib and QuestNav were checked for a match
     double m_lastVersionCheckTime = 0.0;
-
-    // Callback state tracking
-    bool m_lastConnectedState = false;
-    bool m_lastTrackingState = false;
-    bool m_lowBatteryFired = false;
-    int m_lowBatteryThreshold = 20;
-
-    // Callbacks
-    std::function<void()> m_onConnectedCallback;
-    std::function<void()> m_onDisconnectedCallback;
-    std::function<void()> m_onTrackingAcquiredCallback;
-    std::function<void()> m_onTrackingLostCallback;
-    std::function<void(int)> m_onLowBatteryCallback;
-#ifdef __FRC_ROBORIO__
-    std::function<void(const questnav::protos::commands::ProtobufQuestNavCommandResponse &)> m_onSuccessCallback;
-    std::function<void(const questnav::protos::commands::ProtobufQuestNavCommandResponse &)> m_onFailureCallback;
-#endif
 };
