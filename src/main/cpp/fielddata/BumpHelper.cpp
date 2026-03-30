@@ -173,6 +173,7 @@ std::vector<BumpPosition> BumpHelper::GetNearestAndCrossFieldBumpEdges(bool isIn
     bool isRed = (bump == BUMP_ID::RED_OUTPOST_BUMP || bump == BUMP_ID::RED_DEPOT_BUMP);
     bool nearestIsOutpost = (bump == BUMP_ID::RED_OUTPOST_BUMP || bump == BUMP_ID::BLUE_OUTPOST_BUMP);
 
+    // Select the X coordinate for the current side of the bump (neutral vs alliance)
     auto bumpX = isRed
                      ? (isInNeutralZone ? offsetVals->GetRedNeutralBumpEdgeX() : offsetVals->GetRedAllianceBumpEdgeX())
                      : (isInNeutralZone ? offsetVals->GetBlueNeutralBumpEdgeX() : offsetVals->GetBlueAllianceBumpEdgeX());
