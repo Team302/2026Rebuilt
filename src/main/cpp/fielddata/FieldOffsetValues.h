@@ -555,7 +555,7 @@ private:
     /// @brief Bump offset distance from hub center to the bump edge on each side
     /// @details 63.7401575 in ≈ 1.619 m, measured from field CAD as the distance from
     ///          the hub center to the nearest bump edge
-    static constexpr units::length::meter_t BUMP_OFFSET = 63.7401575_in;
+    static constexpr units::length::meter_t BUMP_OFFSET{63.7401575_in};
 
     /// @brief Additional X-offset applied when computing outpost approach positions (meters)
     static constexpr units::length::meter_t OUTPOST_OFFSET = 0.5_m;
