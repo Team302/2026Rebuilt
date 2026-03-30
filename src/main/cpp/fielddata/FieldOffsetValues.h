@@ -337,7 +337,7 @@ public:
     //------------------------------------------------------------------
 
     /// @brief      Get the blue alliance sweep X-coordinate for the given lane
-    /// @param[in]  lane - Lane index (0, 1, or 2); clamped to [0, 2]
+    /// @param[in]  lane - Lane index, if outside valid range it is clamped to the nearest valid lane
     /// @return     units::inch_t - X-coordinate for the requested sweep lane
     units::inch_t GetBlueAllianceSweepX(int lane) const
     {
@@ -352,7 +352,7 @@ public:
     }
 
     /// @brief      Get the blue neutral sweep X-coordinate for the given lane
-    /// @param[in]  lane - Lane index (0, 1, or 2); clamped to [0, 2]
+    /// @param[in]  lane - Lane index, if outside valid range it is clamped to the nearest valid lane
     /// @return     units::inch_t - X-coordinate for the requested sweep lane
     units::inch_t GetBlueNeutralSweepX(int lane) const
     {
@@ -367,7 +367,7 @@ public:
     }
 
     /// @brief      Get the red alliance sweep X-coordinate for the given lane
-    /// @param[in]  lane - Lane index (0, 1, or 2); clamped to [0, 2]
+    /// @param[in]  lane - Lane index, if outside valid range it is clamped to the nearest valid lane
     /// @return     units::inch_t - X-coordinate for the requested sweep lane
     units::inch_t GetRedAllianceSweepX(int lane) const
     {
@@ -382,7 +382,7 @@ public:
     }
 
     /// @brief      Get the red neutral sweep X-coordinate for the given lane
-    /// @param[in]  lane - Lane index (0, 1, or 2); clamped to [0, 2]
+    /// @param[in]  lane - Lane index, if outside valid range it is clamped to the nearest valid lane
     /// @return     units::inch_t - X-coordinate for the requested sweep lane
     units::inch_t GetRedNeutralSweepX(int lane) const
     {

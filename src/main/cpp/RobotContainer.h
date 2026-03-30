@@ -24,9 +24,4 @@ class RobotContainer
 public:
     RobotContainer();
     ~RobotContainer() = default;
-
-private:
-    SwerveContainer *m_swervecontainer;
-    DragonVisionPoseEstimator *m_visionPoseEstimator;
-    SweepLaneChanger *m_sweepLaneChanger;
 };

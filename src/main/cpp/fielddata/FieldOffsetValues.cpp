@@ -398,13 +398,13 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
     // lane 1 alliance-side bump X-coordinate query
     else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X_LANE_1)
     {
-        return isRedSide ? m_redAllianceBumpEdgeX : m_blueAllianceBumpEdgeX;
+        return isRedSide ? units::length::meter_t{m_redAllianceSweep1X} : units::length::meter_t{m_blueAllianceSweep1X};
     }
 
     // lane 1 Neutral-side bump X-coordinate query
     else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X_LANE_1)
     {
-        return isRedSide ? m_redNeutralBumpEdgeX : m_blueNeutralBumpEdgeX;
+        return isRedSide ? units::length::meter_t{m_redNeutralSweep1X} : units::length::meter_t{m_blueNeutralSweep1X};
     }
 
     // lane 2 alliance-side bump X-coordinate query

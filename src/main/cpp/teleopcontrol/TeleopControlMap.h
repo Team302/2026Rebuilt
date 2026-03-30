@@ -153,7 +153,7 @@ constexpr TeleopControlButton extra4DPad225 = {TeleopControlMappingEnums::EXTRA4
 constexpr TeleopControlButton extra4DPad270 = {TeleopControlMappingEnums::EXTRA4, TeleopControlMappingEnums::POV_270, TeleopControlMappingEnums::STANDARD};
 constexpr TeleopControlButton extra4DPad315 = {TeleopControlMappingEnums::EXTRA4, TeleopControlMappingEnums::POV_315, TeleopControlMappingEnums::STANDARD};
 
-inline robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlButton> teleopControlMapButtonMap{
+inline const robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlButton> teleopControlMapButtonMap{
 
     // Driver Controls
     {TeleopControlFunctions::RESET_POSITION, driverDPad90},
