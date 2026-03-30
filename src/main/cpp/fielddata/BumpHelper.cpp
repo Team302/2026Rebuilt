@@ -28,6 +28,7 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "fielddata/FieldOffsetValues.h"
 #include "frc/geometry/Pose2d.h"
+#include "teleopcontrol/SweepLaneChanger.h"
 
 /// @brief Singleton instance pointer - initialized to nullptr for lazy instantiation
 BumpHelper *BumpHelper::m_instance = nullptr;
@@ -173,10 +174,13 @@ std::vector<BumpPosition> BumpHelper::GetNearestAndCrossFieldBumpEdges(bool isIn
     bool isRed = (bump == BUMP_ID::RED_OUTPOST_BUMP || bump == BUMP_ID::RED_DEPOT_BUMP);
     bool nearestIsOutpost = (bump == BUMP_ID::RED_OUTPOST_BUMP || bump == BUMP_ID::BLUE_OUTPOST_BUMP);
 
-    // Select the X coordinate for the current side of the bump (neutral vs alliance)
+    // Get the lane x value
+    auto lane = SweepLaneChanger::GetInstance()->GetLane();
     auto bumpX = isRed
-                     ? (isInNeutralZone ? offsetVals->GetRedNeutralBumpEdgeX() : offsetVals->GetRedAllianceBumpEdgeX())
-                     : (isInNeutralZone ? offsetVals->GetBlueNeutralBumpEdgeX() : offsetVals->GetBlueAllianceBumpEdgeX());
+                     ? (isInNeutralZone ? offsetVals->GetRedNeutralSweepX(lane)
+                                        : offsetVals->GetRedAllianceSweepX(lane))
+                     : (isInNeutralZone ? offsetVals->GetBlueNeutralSweepX(lane)
+                                        : offsetVals->GetBlueAllianceSweepX(lane));
 
     // Select Y coordinates for outpost and depot bumps on this alliance side
     auto outpostY = isRed ? offsetVals->GetRedBumpTrenchOutpostYOffset() : offsetVals->GetBlueBumpTrenchOutpostYOffset();
