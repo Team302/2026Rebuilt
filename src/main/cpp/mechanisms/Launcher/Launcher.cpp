@@ -765,6 +765,8 @@ ControlData *Launcher::GetControlData(string name)
 		return m_positionDegreesHood;
 	if (name.compare("PositionDegreesTurret") == 0)
 		return m_positionDegreesTurret;
+	if (name.compare("PositionDegreesAgitator") == 0)
+		return m_positionDegreesAgitator;
 
 	return nullptr;
 }
