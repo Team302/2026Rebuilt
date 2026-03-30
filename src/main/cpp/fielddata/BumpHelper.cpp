@@ -25,13 +25,10 @@
 //====================================================================================================================================================
 
 #include "fielddata/BumpHelper.h"
-#include "Robot.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "fielddata/FieldOffsetValues.h"
 #include "fielddata/SweepLaneChanger.h"
 #include "frc/geometry/Pose2d.h"
-#include "utils/FMSData.h"
-#include "utils/logging/debug/Logger.h"
 
 /// @brief Singleton instance pointer - initialized to nullptr for lazy instantiation
 BumpHelper *BumpHelper::m_instance = nullptr;

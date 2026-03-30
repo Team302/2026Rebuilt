@@ -17,6 +17,7 @@
 
 class SwerveContainer;
 class DragonVisionPoseEstimator;
+class SweepLaneChanger;
 
 class RobotContainer
 {
@@ -27,4 +28,5 @@ public:
 private:
     SwerveContainer *m_swervecontainer;
     DragonVisionPoseEstimator *m_visionPoseEstimator;
+    SweepLaneChanger *m_sweepLaneChanger;
 };

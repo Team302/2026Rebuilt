@@ -166,7 +166,7 @@ private:
     /// @brief Drive to tower command for season-specific autonomous navigation (climb mode)
     std::unique_ptr<DriveToTower> m_driveToTower;
 
-    /// @brief Sweep behind bump command for season-specific autonomous navigation
+    /// @brief Sweep behind hub command for season-specific autonomous navigation
     std::unique_ptr<SweepBehindHub> m_sweepBehindHub;
 
     /// @brief Drive along nearest wall command for season-specific autonomous navigation

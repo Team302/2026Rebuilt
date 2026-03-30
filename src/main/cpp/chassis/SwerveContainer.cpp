@@ -154,7 +154,7 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     auto driveToTower = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_TOWER);
     // Sweep behind bump is on the same button as DriveToHub, so comment this out.
     // leaving it here so it is easy if we change this mapping.
-    // auto sweepBehindHub = controller->GetCommandTrigger(TeleopControlFunctions::SWEEP_BEHIND_BUMP);
+    // auto sweepBehindHub = controller->GetCommandTrigger(TeleopControlFunctions::SWEEP_BEHIND_HUB);
 
     // Drive to trench is on the same button as DriveAlongNearestWall, so comment this out.
     // leaving it here so it is easy if we change this mapping.

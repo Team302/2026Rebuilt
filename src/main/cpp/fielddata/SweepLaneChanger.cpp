@@ -15,9 +15,7 @@
 
 #include "fielddata/SweepLaneChanger.h"
 #include "teleopcontrol/TeleopControl.h"
-#include "teleopcontrol/TeleopControlMap.h"
 #include "utils/PeriodicLooper.h"
-
 SweepLaneChanger *SweepLaneChanger::m_instance = nullptr;
 SweepLaneChanger *SweepLaneChanger::GetInstance()
 {

@@ -28,25 +28,35 @@
 //====================================================================================================================================================
 enum class FIELD_OFFSET_ITEMS
 {
+    // drive to depot
     DEPOT_X, ///< X-coordinate of the depot neutral side position (meters)
 
+    // drive to outpost
     OUTPOST_X,          ///< X-coordinate of the outpost position (meters)
     OUTPOST_APPROACH_X, ///< X-coordinate of the outpost approach position (meters)
 
+    // drive to hub
     HUB_X, ///< X-coordinate of the hub center with offset applied (meters)
 
-    BUMP_ALLIANCE_X_0, ///< X-coordinate of the first bump (closest to hub) on the alliance zone side (meters)
-    BUMP_ALLIANCE_X_1, ///< X-coordinate of the second bump (middle) on the alliance zone side (meters)
-    BUMP_ALLIANCE_X_2, ///< X-coordinate of the third bump (farthest from hub) on the alliance zone side (meters)
-    BUMP_ALLIANCE_Y,   ///< Y-coordinate of the bump on the alliance zone side (meters)
-    BUMP_NEUTRAL_X_0,  ///< X-coordinate of the first bump (closest to hub) on the neutral zone side (meters)
-    BUMP_NEUTRAL_X_1,  ///< X-coordinate of the second bump (middle) on the neutral zone side (meters)
-    BUMP_NEUTRAL_X_2,  ///< X-coordinate of the third bump (farthest from hub) on the neutral zone side (meters)
-    BUMP_NEUTRAL_Y,    ///< Y-coordinate of the bump on the neutral zone side (meters)
-    TOWER_OUTPOST_X,   ///< X-coordinate offset of the outpost
-    TOWER_DEPOT_X,     ///< X-coordinate offset of the depot neutral side
-    TOWER_OUTPOST_Y,   ///< Y-coordinate offset of the outpost
-    TOWER_DEPOT_Y      ///< Y-coordinate offset of the depot neutral side
+    // drive over bump
+    BUMP_ALLIANCE_X, ///< X-coordinate of the bump on the alliance zone side (meters)
+    BUMP_ALLIANCE_Y, ///< Y-coordinate of the bump on the alliance zone side (meters)
+    BUMP_NEUTRAL_X,  ///< X-coordinate of the bump on the neutral zone side (meters)
+    BUMP_NEUTRAL_Y,  ///< Y-coordinate of the bump on the neutral zone side (meters)
+
+    // sweep behind hub
+    BUMP_ALLIANCE_X_LANE_0, ///< X-coordinate of the first bump (closest to hub) on the alliance zone side (meters)
+    BUMP_ALLIANCE_X_LANE_1, ///< X-coordinate of the second bump (middle) on the alliance zone side (meters)
+    BUMP_ALLIANCE_X_LANE_2, ///< X-coordinate of the third bump (farthest from hub) on the alliance zone side (meters)
+    BUMP_NEUTRAL_X_LANE_0,  ///< X-coordinate of the first bump (closest to hub) on the neutral zone side (meters)
+    BUMP_NEUTRAL_X_LANE_1,  ///< X-coordinate of the second bump (middle) on the neutral zone side (meters)
+    BUMP_NEUTRAL_X_LANE_2,  ///< X-coordinate of the third bump (farthest from hub) on the neutral zone side (meters)
+
+    // drive to tower
+    TOWER_OUTPOST_X, ///< X-coordinate offset of the outpost
+    TOWER_DEPOT_X,   ///< X-coordinate offset of the depot neutral side
+    TOWER_OUTPOST_Y, ///< Y-coordinate offset of the outpost
+    TOWER_DEPOT_Y    ///< Y-coordinate offset of the depot neutral side
 };
 
 //====================================================================================================================================================

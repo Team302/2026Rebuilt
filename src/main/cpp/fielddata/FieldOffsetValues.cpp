@@ -365,15 +365,50 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
     }
 
     // Alliance-side bump X-coordinate query
-    else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X_1)
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X)
     {
         return isRedSide ? m_redAllianceBumpEdgeX : m_blueAllianceBumpEdgeX;
     }
 
     // Neutral-side bump X-coordinate query
-    else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X_1)
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X)
     {
         return isRedSide ? m_redNeutralBumpEdgeX : m_blueNeutralBumpEdgeX;
+    }
+
+    // lane 0 alliance-side bump X-coordinate query
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X_LANE_0)
+    {
+        return isRedSide ? units::length::meter_t{m_redAllianceSweep0X} : units::length::meter_t{m_blueAllianceSweep0X};
+    }
+    // lane 0 Neutral-side bump X-coordinate query
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X_LANE_0)
+    {
+        return isRedSide ? units::length::meter_t{m_redNeutralSweep0X} : units::length::meter_t{m_blueNeutralSweep0X};
+    }
+
+    // lane 1 alliance-side bump X-coordinate query
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X_LANE_1)
+    {
+        return isRedSide ? m_redAllianceBumpEdgeX : m_blueAllianceBumpEdgeX;
+    }
+
+    // lane 1 Neutral-side bump X-coordinate query
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X_LANE_1)
+    {
+        return isRedSide ? m_redNeutralBumpEdgeX : m_blueNeutralBumpEdgeX;
+    }
+
+    // lane 2 alliance-side bump X-coordinate query
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X_LANE_2)
+    {
+        return isRedSide ? units::length::meter_t{m_redAllianceSweep2X} : units::length::meter_t{m_blueAllianceSweep2X};
+    }
+
+    // lane 2 Neutral-side bump X-coordinate query
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X_LANE_2)
+    {
+        return isRedSide ? units::length::meter_t{m_redNeutralSweep2X} : units::length::meter_t{m_blueNeutralSweep2X};
     }
 
     // Bump Y-coordinate query (dynamic based on nearest bump)
@@ -397,24 +432,6 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
         }
         // Default to blue depot bump
         return m_blueBumpDepotY;
-    }
-
-    else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X_0)
-    {
-        return isRedSide ? units::length::meter_t{m_redAllianceSweep0X} : units::length::meter_t{m_blueAllianceSweep0X};
-    }
-    else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X_0)
-    {
-        return isRedSide ? units::length::meter_t{m_redNeutralSweep0X} : units::length::meter_t{m_blueNeutralSweep0X};
-    }
-
-    else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X_2)
-    {
-        return isRedSide ? units::length::meter_t{m_redAllianceSweep2X} : units::length::meter_t{m_blueAllianceSweep2X};
-    }
-    else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X_2)
-    {
-        return isRedSide ? units::length::meter_t{m_redNeutralSweep2X} : units::length::meter_t{m_blueNeutralSweep2X};
     }
 
     // Unknown item type - return safe default

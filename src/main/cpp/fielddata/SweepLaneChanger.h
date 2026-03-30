@@ -16,7 +16,7 @@
 #pragma once
 #include "state/StateMgr.h"
 
-class SweepLaneChanger : StateMgr
+class SweepLaneChanger : public StateMgr
 {
 
 public:
