@@ -167,18 +167,18 @@ inline robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopC
     {TeleopControlFunctions::INTAKE, driverRTriggerPressed},
     {TeleopControlFunctions::EXPEL, driverLTriggerPressed},
 
-    // {TeleopControlFunctions::DRIVE_TO_HUB, driverAButton},  Actually mapped in SwerveContainer
-    // {TeleopControlFunctions::SWEEP_BEHIND_HUB, driverAButton}, Actually mapped in SwerveContainer
+    {TeleopControlFunctions::DRIVE_TO_HUB, driverAButton},     // Actually mapped in SwerveContainer
+    {TeleopControlFunctions::SWEEP_BEHIND_HUB, driverAButton}, // Actually mapped in SwerveContainer
     {TeleopControlFunctions::LEVEL1_CLIMB, driverAButton},
 
-    // {TeleopControlFunctions::DRIVE_TO_OUTPOST, driverBButton}, Actually mapped in SwerveContainer
-    // {TeleopControlFunctions::DRIVE_TO_TOWER, driverBButton}, Actually mapped in SwerveContainer
+    {TeleopControlFunctions::DRIVE_TO_OUTPOST, driverBButton}, // Actually mapped in SwerveContainer
+    {TeleopControlFunctions::DRIVE_TO_TOWER, driverBButton},   // Actually mapped in SwerveContainer
 
-    // {TeleopControlFunctions::DRIVE_ALONG_NEAREST_WALL, driverXButton}, Actually mapped in SwerveContainer
-    // {TeleopControlFunctions::DRIVE_TO_TOWER, driverXButton}, Actually mapped in SwerveContainer
-    // {TeleopControlFunctions::DRIVE_TO_TRENCH, driverXButton}, Actually mapped in SwerveContainer
+    {TeleopControlFunctions::DRIVE_ALONG_NEAREST_WALL, driverXButton}, // Actually mapped in SwerveContainer
+    {TeleopControlFunctions::DRIVE_TO_TOWER, driverXButton},           // Actually mapped in SwerveContainer
+    {TeleopControlFunctions::DRIVE_TO_TRENCH, driverXButton},          // Actually mapped in SwerveContainer
 
-    // {TeleopControlFunctions::DRIVE_OVER_BUMP, driverYButton}, Actually mapped in SwerveContainer
+    {TeleopControlFunctions::DRIVE_OVER_BUMP, driverYButton}, // Actually mapped in SwerveContainer
     {TeleopControlFunctions::LEVEL3_CLIMB, driverYButton},
 
     {TeleopControlFunctions::CLIMB_MODE, driverStartButton},
