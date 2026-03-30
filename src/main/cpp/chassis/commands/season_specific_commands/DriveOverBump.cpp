@@ -115,8 +115,6 @@ struct DriveToPoses DriveOverBump::GetDriveToPoses()
 
         // Retrieve field coordinates for both sides of the bump
         auto offsetVals = FieldOffsetValues::GetInstance();
-        // Use the bump-edge X coordinates (LANE_1) instead of the sweep-lane X (LANE_0)
-        // so the robot targets the actual bump edge when crossing.
         auto neutralX = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X);
         auto neutralY = offsetVals->GetValue(isRed, FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_Y);
 
