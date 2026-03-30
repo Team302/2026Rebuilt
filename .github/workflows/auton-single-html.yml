@@ -1,0 +1,51 @@
+name: Auton Single HTML
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/main/deploy/auton/**/*.xml'
+      - 'src/main/deploy/choreo/**/*.traj'
+      - 'tools/auton_diagram_gen.py'
+      - 'tools/auton_zone_field_gen.py'
+      - 'tools/auton_docs_html_gen.py'
+  workflow_dispatch:
+
+concurrency:
+  group: auton-single-html
+  cancel-in-progress: true
+
+jobs:
+  build-single-html:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Regenerate field zones markdown and SVG
+        run: python3 tools/auton_zone_field_gen.py
+
+      - name: Regenerate all auton markdown and trajectory SVG docs
+        run: |
+          set -e
+          for xmlfile in $(find src/main/deploy/auton -maxdepth 1 -name '*.xml' | sort); do
+            echo "Generating markdown for: ${xmlfile}"
+            python3 tools/auton_diagram_gen.py "${xmlfile}"
+          done
+
+      - name: Generate single-file offline HTML
+        run: python3 tools/auton_docs_html_gen.py --output documents/auton/AutonDocs.html
+
+      - name: Upload AutonDocs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AutonDocs-html
+          path: documents/auton/AutonDocs.html
+          retention-days: 30
+          if-no-files-found: error

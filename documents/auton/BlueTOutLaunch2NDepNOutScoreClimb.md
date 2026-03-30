@@ -13,11 +13,11 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : Step 1 - TRAJECTORY_DRIVE BlueRightBumpNZNZ_A
-    Step2 : Step 2 - TRAJECTORY_DRIVE RightToLeftNZ
-    Step3 : Step 3 - TRAJECTORY_DRIVE BlueRightBumpNZNZ_C
-    Step4 : Step 4 - TRAJECTORY_DRIVE LeftToRightNZ
-    Step5 : Step 5 - TRAJECTORY_DRIVE BlueRightBumpNZNZ_E
+    Step1 : "Step 1 - TRAJECTORY_DRIVE BlueRightBumpNZNZ_A"
+    Step2 : "Step 2 - TRAJECTORY_DRIVE RightToLeftNZ"
+    Step3 : "Step 3 - TRAJECTORY_DRIVE BlueRightBumpNZNZ_C"
+    Step4 : "Step 4 - TRAJECTORY_DRIVE LeftToRightNZ"
+    Step5 : "Step 5 - TRAJECTORY_DRIVE BlueRightBumpNZNZ_E"
 
     class Step1 noIntake
     class Step2 noIntake
@@ -25,11 +25,11 @@ stateDiagram-v2
     class Step4 noIntake
     class Step5 noIntake
 
-    [*] --> Step1 : start
-    Step1 --> Step2: zones=RightBumpZone DRIVE_OVER_BUMP
+    [*] --> Step1 : "start"
+    Step1 --> Step2: "zones=RightBumpZone DRIVE_OVER_BUMP"
     Step2 --> Step3
-    Step3 --> Step4: zones=LeftBumpZone DRIVE_OVER_BUMP
-    Step4 --> Step5: zones=RightBumpZone DRIVE_OVER_BUMP
+    Step3 --> Step4: "zones=LeftBumpZone DRIVE_OVER_BUMP"
+    Step4 --> Step5: "zones=RightBumpZone DRIVE_OVER_BUMP"
     Step5 --> [*]
 ```
 

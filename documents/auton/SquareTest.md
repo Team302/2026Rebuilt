@@ -13,11 +13,11 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : Step 1 - RESET_POSITION Square1
-    Step2 : Step 2 - TRAJECTORY_DRIVE Square1
-    Step3 : Step 3 - TRAJECTORY_DRIVE Square2
-    Step4 : Step 4 - TRAJECTORY_DRIVE Square3
-    Step5 : Step 5 - TRAJECTORY_DRIVE Square4
+    Step1 : "Step 1 - RESET_POSITION Square1"
+    Step2 : "Step 2 - TRAJECTORY_DRIVE Square1"
+    Step3 : "Step 3 - TRAJECTORY_DRIVE Square2"
+    Step4 : "Step 4 - TRAJECTORY_DRIVE Square3"
+    Step5 : "Step 5 - TRAJECTORY_DRIVE Square4"
 
     class Step1 noIntake
     class Step2 noIntake
@@ -25,7 +25,7 @@ stateDiagram-v2
     class Step4 noIntake
     class Step5 noIntake
 
-    [*] --> Step1 : start
+    [*] --> Step1 : "start"
     Step1 --> Step2
     Step2 --> Step3
     Step3 --> Step4
