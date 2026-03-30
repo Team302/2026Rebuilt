@@ -13,18 +13,18 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : Step 1 - TRAJECTORY_DRIVE BlueLDepotOutpost_A
-    Step2 : Step 2 - TRAJECTORY_DRIVE BlueLDepNO_b
-    Step3 : Step 3 - DRIVE_STOP_MECH --
+    Step1 : "Step 1 - TRAJECTORY_DRIVE BlueLDepotOutpost_A"
+    Step2 : "Step 2 - TRAJECTORY_DRIVE BlueLDepNO_b"
+    Step3 : "Step 3 - DRIVE_STOP_MECH --"
 
     class Step1 intake
     class Step2 intake
     class Step3 noIntake
 
-    [*] --> Step1 : start
-    Step1 --> Step2: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH
-    Step2 --> Step3: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH
-    Step3 --> [*]: zones=ClimbingZone DRIVE_TO_TOWER
+    [*] --> Step1 : "start"
+    Step1 --> Step2: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step2 --> Step3: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step3 --> [*]: "zones=ClimbingZone DRIVE_TO_TOWER"
 ```
 
 ## Primitive Summary
@@ -52,9 +52,9 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 3.66 | 7.482 | 137.7 |
-| 2 | 1.078 | 7.183 | 0.0 |
-| 3 | 0.806 | 5.828 | 270.0 |
+| 1 | 12.8 | 0.618 | 317.7 |
+| 2 | 15.382 | 0.917 | 180.0 |
+| 3 | 15.654 | 2.272 | 90.0 |
 
 ### Step 2 -- BlueLDepNO_b
 
@@ -67,8 +67,8 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 0.806 | 5.828 | 270.0 |
-| 2 | 1.059 | 4.814 | 180.0 |
+| 1 | 15.654 | 2.272 | 90.0 |
+| 2 | 15.401 | 3.286 | 0.0 |
 
 ## Zone Legend
 

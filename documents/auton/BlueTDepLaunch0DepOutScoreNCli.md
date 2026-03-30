@@ -13,15 +13,15 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : Step 1 - TRAJECTORY_DRIVE BlueLDepotOutpost_A
-    Step2 : Step 2 - TRAJECTORY_DRIVE BlueLDepotOutpost_B
+    Step1 : "Step 1 - TRAJECTORY_DRIVE BlueLDepotOutpost_A"
+    Step2 : "Step 2 - TRAJECTORY_DRIVE BlueLDepotOutpost_B"
 
     class Step1 intake
     class Step2 intake
 
-    [*] --> Step1 : start
-    Step1 --> Step2: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH
-    Step2 --> [*]: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH OutpostZone DRIVE_TO_OUTPOST
+    [*] --> Step1 : "start"
+    Step1 --> Step2: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step2 --> [*]: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH OutpostZone DRIVE_TO_OUTPOST"
 ```
 
 ## Primitive Summary

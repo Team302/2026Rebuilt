@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "zone.dtd">
+
+<auton>
+<zone
+x1_rect = "4.0381"
+y1_rect = "3.45"
+x2_rect = "5.1557"
+y2_rect = "1.61"
+allianceColor = "BLUE"
+/>
+</auton>

@@ -13,15 +13,15 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : Step 1 - TRAJECTORY_DRIVE BlueROut
-    Step2 : Step 2 - DRIVE_STOP_MECH --
+    Step1 : "Step 1 - TRAJECTORY_DRIVE BlueROut"
+    Step2 : "Step 2 - DRIVE_STOP_MECH --"
 
     class Step1 intake
     class Step2 noIntake
 
-    [*] --> Step1 : start
-    Step1 --> Step2: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH
-    Step2 --> [*]: zones=LaunchZone PREPARE_TO_LAUNCH
+    [*] --> Step1 : "start"
+    Step1 --> Step2: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step2 --> [*]: "zones=LaunchZone PREPARE_TO_LAUNCH"
 ```
 
 ## Primitive Summary
@@ -48,9 +48,9 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 3.615 | 0.748 | 234.3 |
-| 2 | 0.485 | 0.748 | 180.0 |
-| 3 | 1.417 | 1.181 | 220.8 |
+| 1 | 12.845 | 7.352 | 54.3 |
+| 2 | 15.975 | 7.352 | 0.0 |
+| 3 | 15.043 | 6.919 | 40.8 |
 
 ## Zone Legend
 
