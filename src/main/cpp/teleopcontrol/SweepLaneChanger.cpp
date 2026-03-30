@@ -14,8 +14,10 @@
 //====================================================================================================================================================
 
 #include "teleopcontrol/SweepLaneChanger.h"
+#include "frc/smartdashboard/SmartDashboard.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "utils/PeriodicLooper.h"
+
 SweepLaneChanger *SweepLaneChanger::m_instance = nullptr;
 SweepLaneChanger *SweepLaneChanger::GetInstance()
 {
@@ -29,6 +31,7 @@ SweepLaneChanger *SweepLaneChanger::GetInstance()
 SweepLaneChanger::SweepLaneChanger()
 {
     PeriodicLooper::GetInstance()->RegisterAll(this);
+    frc::SmartDashboard::PutNumber(m_sweepLaneNT, m_lane);
 }
 
 void SweepLaneChanger::RunCurrentState()
@@ -53,9 +56,10 @@ void SweepLaneChanger::RunCurrentState()
     if (m_isIncrementPressed && !m_incrementLatch)
     {
         m_incrementLatch = true;
-        if (m_lane < 2)
+        if (m_lane < 3)
         {
             m_lane += 1;
+            frc::SmartDashboard::PutNumber(m_sweepLaneNT, m_lane);
         }
         return;
     }
@@ -66,6 +70,7 @@ void SweepLaneChanger::RunCurrentState()
         if (m_lane > 0)
         {
             m_lane -= 1;
+            frc::SmartDashboard::PutNumber(m_sweepLaneNT, m_lane);
         }
     }
 }

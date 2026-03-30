@@ -48,9 +48,11 @@ enum class FIELD_OFFSET_ITEMS
     BUMP_ALLIANCE_X_LANE_0, ///< X-coordinate of the first bump (closest to hub) on the alliance zone side (meters)
     BUMP_ALLIANCE_X_LANE_1, ///< X-coordinate of the second bump (middle) on the alliance zone side (meters)
     BUMP_ALLIANCE_X_LANE_2, ///< X-coordinate of the third bump (farthest from hub) on the alliance zone side (meters)
+    BUMP_ALLIANCE_X_LANE_3, ///< X-coordinate of the fourth bump on the alliance zone side (meters)
     BUMP_NEUTRAL_X_LANE_0,  ///< X-coordinate of the first bump (closest to hub) on the neutral zone side (meters)
     BUMP_NEUTRAL_X_LANE_1,  ///< X-coordinate of the second bump (middle) on the neutral zone side (meters)
     BUMP_NEUTRAL_X_LANE_2,  ///< X-coordinate of the third bump (farthest from hub) on the neutral zone side (meters)
+    BUMP_NEUTRAL_X_LANE_3,  ///< X-coordinate of the fourth bump on the neutral zone side (meters)
 
     // drive to tower
     TOWER_OUTPOST_X, ///< X-coordinate offset of the outpost
@@ -341,9 +343,12 @@ public:
     {
         if (lane <= 0)
             return m_blueAllianceSweep0X;
-        if (lane >= 2)
+        if (lane == 1)
+            return m_blueAllianceSweep1X;
+        if (lane == 2)
             return m_blueAllianceSweep2X;
-        return m_blueAllianceSweep1X;
+
+        return m_blueAllianceSweep3X;
     }
 
     /// @brief      Get the blue neutral sweep X-coordinate for the given lane
@@ -353,9 +358,12 @@ public:
     {
         if (lane <= 0)
             return m_blueNeutralSweep0X;
-        if (lane >= 2)
+        if (lane == 1)
+            return m_blueNeutralSweep1X;
+        if (lane == 2)
             return m_blueNeutralSweep2X;
-        return m_blueNeutralSweep1X;
+
+        return m_blueNeutralSweep3X;
     }
 
     /// @brief      Get the red alliance sweep X-coordinate for the given lane
@@ -365,9 +373,12 @@ public:
     {
         if (lane <= 0)
             return m_redAllianceSweep0X;
-        if (lane >= 2)
+        if (lane == 1)
+            return m_redAllianceSweep1X;
+        if (lane == 2)
             return m_redAllianceSweep2X;
-        return m_redAllianceSweep1X;
+
+        return m_redAllianceSweep3X;
     }
 
     /// @brief      Get the red neutral sweep X-coordinate for the given lane
@@ -377,9 +388,12 @@ public:
     {
         if (lane <= 0)
             return m_redNeutralSweep0X;
-        if (lane >= 2)
+        if (lane == 1)
+            return m_redNeutralSweep1X;
+        if (lane == 2)
             return m_redNeutralSweep2X;
-        return m_redNeutralSweep1X;
+
+        return m_redNeutralSweep3X;
     }
 
 private:
@@ -524,18 +538,22 @@ private:
     // Sweep Behind Hub Constants
     //-------------------------------------------------------------------------
     units::length::inch_t m_blueAllianceSweep0X; ///< X-coordinate for the first sweep waypoint on the blue alliance side (inches)
-    units::length::inch_t m_blueAllianceSweep1X; ///< X-coordinate for the middle sweep waypoint on the blue alliance side (inches)
-    units::length::inch_t m_blueAllianceSweep2X; ///< X-coordinate for the last sweep waypoint on the blue alliance side (inches)
+    units::length::inch_t m_blueAllianceSweep1X; ///< X-coordinate for the second sweep waypoint on the blue alliance side (inches)
+    units::length::inch_t m_blueAllianceSweep2X; ///< X-coordinate for the third sweep waypoint on the blue alliance side (inches)
+    units::length::inch_t m_blueAllianceSweep3X; ///< X-coordinate for the fourth sweep waypoint on the blue alliance side (inches)
     units::length::inch_t m_blueNeutralSweep0X;  ///< X-coordinate for the first sweep waypoint on the blue neutral side (inches)
-    units::length::inch_t m_blueNeutralSweep1X;  ///< X-coordinate for the middle sweep waypoint on the blue neutral side (inches)
-    units::length::inch_t m_blueNeutralSweep2X;  ///< X-coordinate for the last sweep waypoint on the blue neutral side (inches)
+    units::length::inch_t m_blueNeutralSweep1X;  ///< X-coordinate for the second sweep waypoint on the blue neutral side (inches)
+    units::length::inch_t m_blueNeutralSweep2X;  ///< X-coordinate for the third sweep waypoint on the blue neutral side (inches)
+    units::length::inch_t m_blueNeutralSweep3X;  ///< X-coordinate for the fourth sweep waypoint on the blue neutral side (inches)
 
     units::length::inch_t m_redAllianceSweep0X; ///< X-coordinate for the first sweep waypoint on the red alliance side (inches)
-    units::length::inch_t m_redAllianceSweep1X; ///< X-coordinate for the middle sweep waypoint on the red alliance side (inches)
-    units::length::inch_t m_redAllianceSweep2X; ///< X-coordinate for the last sweep waypoint on the red alliance side (inches)
+    units::length::inch_t m_redAllianceSweep1X; ///< X-coordinate for the second sweep waypoint on the red alliance side (inches)
+    units::length::inch_t m_redAllianceSweep2X; ///< X-coordinate for the third sweep waypoint on the red alliance side (inches)
+    units::length::inch_t m_redAllianceSweep3X; ///< X-coordinate for the fourth sweep waypoint on the red alliance side (inches)
     units::length::inch_t m_redNeutralSweep0X;  ///< X-coordinate for the first sweep waypoint on the red neutral side (inches)
-    units::length::inch_t m_redNeutralSweep1X;  ///< X-coordinate for the middle sweep waypoint on the red neutral side (inches)
-    units::length::inch_t m_redNeutralSweep2X;  ///< X-coordinate for the last sweep waypoint on the red neutral side (inches)
+    units::length::inch_t m_redNeutralSweep1X;  ///< X-coordinate for the second sweep waypoint on the red neutral side (inches)
+    units::length::inch_t m_redNeutralSweep2X;  ///< X-coordinate for the third sweep waypoint on the red neutral side (inches)
+    units::length::inch_t m_redNeutralSweep3X;  ///< X-coordinate for the fourth sweep waypoint on the red neutral side (inches)
 
     units::length::meter_t m_redDepotTrenchY;    ///< Y of RED_TRENCH_ALLIANCE_DEPOT (trench entrance for red depot)
     units::length::meter_t m_redOutpostTrenchY;  ///< Y of RED_TRENCH_ALLIANCE_OUTPOST (trench entrance for red outpost)
@@ -583,4 +601,5 @@ private:
 
     static constexpr units::length::inch_t SWEEP_LANE_WIDTH = 36.0_in;   ///< Width of each lane in the sweep behind hub path (inches)
     static constexpr units::length::inch_t SWEEP_START_OFFSET = 36.0_in; ///< Starting offset for the sweep lanes (inches)
+    static constexpr double SWEEP_BY_TOWER_FACTOR = 1.55;                /// Sweep under tower
 };

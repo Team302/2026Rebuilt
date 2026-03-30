@@ -15,6 +15,7 @@
 
 #pragma once
 #include "state/StateMgr.h"
+#include <string>
 
 class SweepLaneChanger : public StateMgr
 {
@@ -30,6 +31,8 @@ private:
     bool m_decrementLatch = false;
     bool m_isIncrementPressed = false;
     bool m_isDecrementPressed = false;
+
+    const std::string m_sweepLaneNT = "SweepLane";
 
     SweepLaneChanger();
     ~SweepLaneChanger() = default;

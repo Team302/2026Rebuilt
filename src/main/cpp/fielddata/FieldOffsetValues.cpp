@@ -180,21 +180,25 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueAllianceSweep0X = blueHubCenter.X() - SWEEP_START_OFFSET;
         m_blueAllianceSweep1X = m_blueAllianceSweep0X - SWEEP_LANE_WIDTH;
         m_blueAllianceSweep2X = m_blueAllianceSweep1X - SWEEP_LANE_WIDTH;
+        m_blueAllianceSweep3X = m_blueAllianceSweep2X - (SWEEP_BY_TOWER_FACTOR * SWEEP_LANE_WIDTH); // avoid hitting the tower
 
         // Calculate the X positions for the cross-field sweep for Neutral zone
         m_blueNeutralSweep0X = blueHubCenter.X() + SWEEP_START_OFFSET;
         m_blueNeutralSweep1X = m_blueNeutralSweep0X + SWEEP_LANE_WIDTH;
         m_blueNeutralSweep2X = m_blueNeutralSweep1X + SWEEP_LANE_WIDTH;
+        m_blueNeutralSweep3X = m_blueNeutralSweep2X + SWEEP_LANE_WIDTH;
 
         // Calculate the X positions for the cross-field sweep for blue alliance (in opposite alliance zone)
         m_redAllianceSweep0X = redHubCenter.X() + SWEEP_START_OFFSET;
         m_redAllianceSweep1X = m_redAllianceSweep0X + SWEEP_LANE_WIDTH;
         m_redAllianceSweep2X = m_redAllianceSweep1X + SWEEP_LANE_WIDTH;
+        m_redAllianceSweep3X = m_redAllianceSweep2X + (SWEEP_BY_TOWER_FACTOR * SWEEP_LANE_WIDTH); // avoid hitting the tower
 
         // Calculate the X positions for the cross-field sweep for Neutral zone
         m_redNeutralSweep0X = redHubCenter.X() - SWEEP_START_OFFSET;
         m_redNeutralSweep1X = m_redNeutralSweep0X - SWEEP_LANE_WIDTH;
         m_redNeutralSweep2X = m_redNeutralSweep1X - SWEEP_LANE_WIDTH;
+        m_redNeutralSweep3X = m_redNeutralSweep2X - SWEEP_LANE_WIDTH;
 
         m_redDepotTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y();
         m_redOutpostTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y();
@@ -232,15 +236,19 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueAllianceSweep0X = units::length::inch_t{0.0};
         m_blueAllianceSweep1X = units::length::inch_t{0.0};
         m_blueAllianceSweep2X = units::length::inch_t{0.0};
+        m_blueAllianceSweep3X = units::length::inch_t{0.0};
         m_blueNeutralSweep0X = units::length::inch_t{0.0};
         m_blueNeutralSweep1X = units::length::inch_t{0.0};
         m_blueNeutralSweep2X = units::length::inch_t{0.0};
+        m_blueNeutralSweep3X = units::length::inch_t{0.0};
         m_redAllianceSweep0X = units::length::inch_t{0.0};
         m_redAllianceSweep1X = units::length::inch_t{0.0};
         m_redAllianceSweep2X = units::length::inch_t{0.0};
+        m_redAllianceSweep3X = units::length::inch_t{0.0};
         m_redNeutralSweep0X = units::length::inch_t{0.0};
         m_redNeutralSweep1X = units::length::inch_t{0.0};
         m_redNeutralSweep2X = units::length::inch_t{0.0};
+        m_redNeutralSweep3X = units::length::inch_t{0.0};
 
         m_redBumpDepotY = units::length::meter_t{0.0};
         m_redBumpOutpostY = units::length::meter_t{0.0};
@@ -409,6 +417,18 @@ units::length::meter_t FieldOffsetValues::GetValue(bool isRedSide, FIELD_OFFSET_
     else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X_LANE_2)
     {
         return isRedSide ? units::length::meter_t{m_redNeutralSweep2X} : units::length::meter_t{m_blueNeutralSweep2X};
+    }
+
+    // lane 3 alliance-side bump X-coordinate query
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_ALLIANCE_X_LANE_3)
+    {
+        return isRedSide ? units::length::meter_t{m_redAllianceSweep3X} : units::length::meter_t{m_blueAllianceSweep3X};
+    }
+
+    // lane 3 Neutral-side bump X-coordinate query
+    else if (item == FIELD_OFFSET_ITEMS::BUMP_NEUTRAL_X_LANE_3)
+    {
+        return isRedSide ? units::length::meter_t{m_redNeutralSweep3X} : units::length::meter_t{m_blueNeutralSweep3X};
     }
 
     // Bump Y-coordinate query (dynamic based on nearest bump)
