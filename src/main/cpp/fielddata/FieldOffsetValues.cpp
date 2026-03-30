@@ -186,7 +186,7 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueNeutralSweep0X = blueHubCenter.X() + SWEEP_START_OFFSET;
         m_blueNeutralSweep1X = m_blueNeutralSweep0X + SWEEP_LANE_WIDTH;
         m_blueNeutralSweep2X = m_blueNeutralSweep1X + SWEEP_LANE_WIDTH;
-        m_blueNeutralSweep3X = m_blueNeutralSweep2X + SWEEP_LANE_WIDTH;
+        m_blueNeutralSweep3X = m_blueNeutralSweep2X + SWEEP_LANE_WIDTH + SWEEP_MIDDLE_EXTRA;
 
         // Calculate the X positions for the cross-field sweep for blue alliance (in opposite alliance zone)
         m_redAllianceSweep0X = redHubCenter.X() + SWEEP_START_OFFSET;
@@ -198,7 +198,7 @@ FieldOffsetValues::FieldOffsetValues()
         m_redNeutralSweep0X = redHubCenter.X() - SWEEP_START_OFFSET;
         m_redNeutralSweep1X = m_redNeutralSweep0X - SWEEP_LANE_WIDTH;
         m_redNeutralSweep2X = m_redNeutralSweep1X - SWEEP_LANE_WIDTH;
-        m_redNeutralSweep3X = m_redNeutralSweep2X - SWEEP_LANE_WIDTH;
+        m_redNeutralSweep3X = m_redNeutralSweep2X - SWEEP_LANE_WIDTH - SWEEP_MIDDLE_EXTRA;
 
         m_redDepotTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y();
         m_redOutpostTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y();
