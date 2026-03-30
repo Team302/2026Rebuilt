@@ -3,10 +3,10 @@
 
 <auton>
 <zone
-x1_rect = "8.23"
-y1_rect = "3.55"
-x2_rect = "11.25"
-y2_rect = "4.59"
+x1_rect = "5.21"
+y1_rect = "3.59"
+x2_rect = "11.33"
+y2_rect = "4.55"
 allianceColor = "RED"
 launcherState = "STATE_OFF"
 />
