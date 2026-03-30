@@ -914,14 +914,14 @@ std::string Launcher::GetCurrentStateName()
 
 bool Launcher::IsTurretAtTarget()
 {
-	if (!m_hasValidTurretAngle)
+	m_cachedTurretAtTarget = false;
+	if (m_turretEnabled)
 	{
-		return false;
-	}
-	if (m_turretEnabled && m_hasValidTurretAngle)
-	{
-		units::angle::degree_t turretError = m_cachedTurretPosition - m_targetTurretAngle;
-		m_cachedTurretAtTarget = ((units::math::abs(turretError) < m_turretAngleThreshold));
+		if (m_hasValidTurretAngle)
+		{
+			units::angle::degree_t turretError = m_cachedTurretPosition - m_targetTurretAngle;
+			m_cachedTurretAtTarget = ((units::math::abs(turretError) < m_turretAngleThreshold));
+		}
 	}
 	else
 	{
