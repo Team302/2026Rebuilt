@@ -13,52 +13,26 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include "fielddata/SweepLaneChanger.h"
-#include "teleopcontrol/TeleopControl.h"
-#include "utils/PeriodicLooper.h"
-SweepLaneChanger *SweepLaneChanger::m_instance = nullptr;
-SweepLaneChanger *SweepLaneChanger::GetInstance()
+#pragma once
+#include "state/StateMgr.h"
+
+class SweepLaneChanger : public StateMgr
 {
-    if (m_instance == nullptr)
-    {
-        m_instance = new SweepLaneChanger();
-    }
-    return m_instance;
-}
 
-SweepLaneChanger::SweepLaneChanger()
-{
-    PeriodicLooper::GetInstance()->RegisterAll(this);
-}
+public:
+    void RunCurrentState() override;
+    static SweepLaneChanger *GetInstance();
+    int GetLane() const { return m_lane; }
 
-void SweepLaneChanger::RunCurrentState()
-{
-    m_isIncrementPressed = TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_INCREMENT);
-    m_isDecrementPressed = TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_DECREMENT);
+private:
+    int m_lane = 0;
+    bool m_incrementLatch = false;
+    bool m_decrementLatch = false;
+    bool m_isIncrementPressed = false;
+    bool m_isDecrementPressed = false;
 
-    if (!m_isIncrementPressed && !m_isDecrementPressed)
-    {
-        m_incrementLatch = false;
-        m_decrementLatch = false;
-        return;
-    }
+    SweepLaneChanger();
+    ~SweepLaneChanger() = default;
 
-    if (m_isIncrementPressed && !m_incrementLatch)
-    {
-        m_incrementLatch = true;
-        if (m_lane < 2)
-        {
-            m_lane += 1;
-        }
-        return;
-    }
-
-    if (m_isDecrementPressed && !m_decrementLatch)
-    {
-        m_decrementLatch = true;
-        if (m_lane > 0)
-        {
-            m_lane -= 1;
-        }
-    }
-}
+    static SweepLaneChanger *m_instance;
+};

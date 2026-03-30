@@ -159,25 +159,26 @@ inline robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopC
     {TeleopControlFunctions::RESET_POSITION, driverDPad90},
     {TeleopControlFunctions::ROBOT_ORIENTED_DRIVE, driverLStickPressed},
     {TeleopControlFunctions::SYSID_MODIFER, driverSelectButton},
+
+    // Season Specific Driver Controls
     {TeleopControlFunctions::SWEEP_BEHIND_HUB_INCREMENT, driverDPad0},
     {TeleopControlFunctions::SWEEP_BEHIND_HUB_DECREMENT, driverDPad180},
 
-    // Season Specific Driver Controls
     {TeleopControlFunctions::INTAKE, driverRTriggerPressed},
     {TeleopControlFunctions::EXPEL, driverLTriggerPressed},
 
-    {TeleopControlFunctions::DRIVE_TO_HUB, driverAButton},
-    {TeleopControlFunctions::SWEEP_BEHIND_HUB, driverAButton},
+    // {TeleopControlFunctions::DRIVE_TO_HUB, driverAButton},  Actually mapped in SwerveContainer
+    // {TeleopControlFunctions::SWEEP_BEHIND_HUB, driverAButton}, Actually mapped in SwerveContainer
     {TeleopControlFunctions::LEVEL1_CLIMB, driverAButton},
 
-    {TeleopControlFunctions::DRIVE_TO_OUTPOST, driverBButton},
-    {TeleopControlFunctions::DRIVE_TO_TOWER, driverBButton},
+    // {TeleopControlFunctions::DRIVE_TO_OUTPOST, driverBButton}, Actually mapped in SwerveContainer
+    // {TeleopControlFunctions::DRIVE_TO_TOWER, driverBButton}, Actually mapped in SwerveContainer
 
-    {TeleopControlFunctions::DRIVE_ALONG_NEAREST_WALL, driverXButton},
-    {TeleopControlFunctions::DRIVE_TO_TOWER, driverXButton},
-    {TeleopControlFunctions::DRIVE_TO_TRENCH, driverXButton},
+    // {TeleopControlFunctions::DRIVE_ALONG_NEAREST_WALL, driverXButton}, Actually mapped in SwerveContainer
+    // {TeleopControlFunctions::DRIVE_TO_TOWER, driverXButton}, Actually mapped in SwerveContainer
+    // {TeleopControlFunctions::DRIVE_TO_TRENCH, driverXButton}, Actually mapped in SwerveContainer
 
-    {TeleopControlFunctions::DRIVE_OVER_BUMP, driverYButton},
+    // {TeleopControlFunctions::DRIVE_OVER_BUMP, driverYButton}, Actually mapped in SwerveContainer
     {TeleopControlFunctions::LEVEL3_CLIMB, driverYButton},
 
     {TeleopControlFunctions::CLIMB_MODE, driverStartButton},

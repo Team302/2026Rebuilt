@@ -13,26 +13,59 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#pragma once
-#include "state/StateMgr.h"
-
-class SweepLaneChanger : public StateMgr
+#include "teleopcontrol/SweepLaneChanger.h"
+#include "teleopcontrol/TeleopControl.h"
+#include "utils/PeriodicLooper.h"
+SweepLaneChanger *SweepLaneChanger::m_instance = nullptr;
+SweepLaneChanger *SweepLaneChanger::GetInstance()
 {
+    if (m_instance == nullptr)
+    {
+        m_instance = new SweepLaneChanger();
+    }
+    return m_instance;
+}
 
-public:
-    void RunCurrentState() override;
-    static SweepLaneChanger *GetInstance();
-    int GetLane() const { return m_lane; }
+SweepLaneChanger::SweepLaneChanger()
+{
+    PeriodicLooper::GetInstance()->RegisterAll(this);
+}
 
-private:
-    int m_lane = 0;
-    bool m_incrementLatch = false;
-    bool m_decrementLatch = false;
-    bool m_isIncrementPressed = false;
-    bool m_isDecrementPressed = false;
+void SweepLaneChanger::RunCurrentState()
+{
+    m_isIncrementPressed = TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_INCREMENT);
+    m_isDecrementPressed = TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::SWEEP_BEHIND_HUB_DECREMENT);
 
-    SweepLaneChanger();
-    ~SweepLaneChanger() = default;
+    if (!m_isIncrementPressed)
+    {
+        m_incrementLatch = false;
+    }
 
-    static SweepLaneChanger *m_instance;
-};
+    if (!m_isDecrementPressed)
+    {
+        m_decrementLatch = false;
+    }
+    if (!m_isIncrementPressed && !m_isDecrementPressed)
+    {
+        return;
+    }
+
+    if (m_isIncrementPressed && !m_incrementLatch)
+    {
+        m_incrementLatch = true;
+        if (m_lane < 2)
+        {
+            m_lane += 1;
+        }
+        return;
+    }
+
+    if (m_isDecrementPressed && !m_decrementLatch)
+    {
+        m_decrementLatch = true;
+        if (m_lane > 0)
+        {
+            m_lane -= 1;
+        }
+    }
+}
