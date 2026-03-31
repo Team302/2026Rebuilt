@@ -49,7 +49,7 @@ void IdleState::Init()
 	m_mechanism->PublishLaunchMode(false);
 
 	m_mechanism->ResetLaunchCurrentTimer();
-	m_maxSpindexerTarget = m_mechanism->GetIndexer()->GetPosition().GetValue();
+	m_maxSpindexerTarget = m_mechanism->GetAgitator()->GetPosition().GetValue();
 	m_minSpindexerTarget = m_maxSpindexerTarget - m_spindexerTarget;
 }
 
@@ -64,7 +64,7 @@ void IdleState::InitCompBot302()
 void IdleState::Run()
 {
 	bool goingToMin = false;
-	units::angle::degree_t currentSpindexerPosition = m_mechanism->GetIndexer()->GetPosition().GetValue();
+	units::angle::degree_t currentSpindexerPosition = m_mechanism->GetAgitator()->GetPosition().GetValue();
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Indexer"), string("actual"), currentSpindexerPosition.value());
 	if (!m_minReached)
 	{
