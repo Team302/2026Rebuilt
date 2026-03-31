@@ -17,6 +17,7 @@
 #include "chassis/commands/TrajectoryDrive.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "fielddata/BumpHelper.h"
+#include "state/IRobotStateChangeSubscriber.h"
 
 //====================================================================================================================================================
 /// @class DriveAlongNearestWall
@@ -51,7 +52,7 @@
 /// @see TrajectoryDrive Base class providing trajectory following functionality
 /// @see BumpHelper Utility for identifying nearest bump/wall
 //====================================================================================================================================================
-class DriveAlongNearestWall : public TrajectoryDrive
+class DriveAlongNearestWall : public TrajectoryDrive, public IRobotStateChangeSubscriber
 {
 public:
     //------------------------------------------------------------------
@@ -107,4 +108,8 @@ private:
 
     static constexpr double m_maxPercentToJoinReversePath = 0.3;
     static constexpr double m_maxPercentToJoinForwardPath = 0.5;
+
+    void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
+
+    bool m_isLaunching = false;
 };
