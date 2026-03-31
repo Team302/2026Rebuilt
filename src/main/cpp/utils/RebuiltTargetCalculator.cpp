@@ -163,16 +163,7 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
     UpdateChassisSpeeds();
     UpdateChassisPose();
 
-    auto currentSpeeds = GetChassisVelocity();
-
-    static constexpr units::meters_per_second_t kSpeedTol = 0.05_mps;
-    static constexpr units::radians_per_second_t kOmegaTol = 1_deg_per_s;
-    bool speedsChanged =
-        units::math::abs(currentSpeeds.vx - m_lastCachedSpeeds.vx) > kSpeedTol ||
-        units::math::abs(currentSpeeds.vy - m_lastCachedSpeeds.vy) > kSpeedTol ||
-        units::math::abs(currentSpeeds.omega - m_lastCachedSpeeds.omega) > kOmegaTol;
-
-    if (GetChassisPose() == m_lastChassisPose && !speedsChanged)
+    if (GetChassisPose() == m_lastChassisPose)
     {
         return m_cachedLauncherTarget;
     }
@@ -215,7 +206,6 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
 
     m_field->UpdateObject(kLauncherPositionName, frc::Pose2d(GetMechanismWorldPosition(), robotPose.Rotation() + frc::Rotation2d(bestAngle)));
     m_cachedLauncherTarget = units::angle::turn_t(bestAngle.value());
-    m_lastCachedSpeeds = currentSpeeds;
 
     return m_cachedLauncherTarget;
 }

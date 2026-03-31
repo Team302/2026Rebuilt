@@ -171,6 +171,11 @@ private:
 
     subsystems::CommandSwerveDrivetrain *m_chassis;
 
+    /// True if the robot was above the speed threshold on the previous cycle.
+    /// Used to force one final pose update on the transition from moving → stopped,
+    /// ensuring the cache busts once so calculations rerun with zero speeds.
+    bool m_wasMoving = false;
+
     /**
      * \brief Calculate how much the mechanism's world position shifts due to rotation during lookahead.
      *

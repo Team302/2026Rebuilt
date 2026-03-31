@@ -87,12 +87,12 @@ units::meter_t TargetCalculator::CalculateMechanismDistanceToTarget(units::time:
     auto realTarget = GetTargetPosition();
     auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
 
-    // Apply rotational compensation for the mechanism offset sweeping during flight
-    if (lookaheadTime > 0_s)
-    {
-        auto mechDelta = CalculateRotationalMechDelta(lookaheadTime);
-        targetPos = targetPos - mechDelta;
-    }
+    // // Apply rotational compensation for the mechanism offset sweeping during flight
+    // if (lookaheadTime > 0_s)
+    // {
+    //     auto mechDelta = CalculateRotationalMechDelta(lookaheadTime);
+    //     targetPos = targetPos - mechDelta;
+    // }
 
     m_cachedMechanismDistanceToTarget = mechanismPos.Distance(targetPos);
     return m_cachedMechanismDistanceToTarget;
@@ -149,11 +149,20 @@ frc::Pose2d TargetCalculator::GetVirtualTargetPose(
 void TargetCalculator::UpdateChassisPose(bool forceUpdate)
 {
     m_lastChassisPose = m_chassisPose;
-    if (m_chassis != nullptr &&
-        (forceUpdate || units::math::abs(m_currentChassisSpeeds.vx) >= m_translationSpeedThreshold || units::math::abs(m_currentChassisSpeeds.vy) >= m_translationSpeedThreshold || units::math::abs(m_currentChassisSpeeds.omega) >= m_rotationSpeedThreshold))
+
+    bool isMoving = units::math::abs(m_currentChassisSpeeds.vx) >= m_translationSpeedThreshold ||
+                    units::math::abs(m_currentChassisSpeeds.vy) >= m_translationSpeedThreshold ||
+                    units::math::abs(m_currentChassisSpeeds.omega) >= m_rotationSpeedThreshold;
+
+    // Update the pose while moving, when forced, or on the one cycle after we stop.
+    // The "just stopped" cycle ensures the cache busts once so all callers recompute
+    // with zero speeds and the virtual-target offset unwinds back to the real target.
+    if (m_chassis != nullptr && (forceUpdate || isMoving || m_wasMoving))
     {
         m_chassisPose = m_chassis->GetPose();
     }
+
+    m_wasMoving = isMoving;
 }
 
 void TargetCalculator::UpdateChassisSpeeds()

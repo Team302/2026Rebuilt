@@ -353,9 +353,5 @@ private:
     /// Cached launcher target angle from last calculation (in turns)
     units::angle::turn_t m_cachedLauncherTarget = 0_tr;
 
-    /// Cached chassis speeds from the last launcher target calculation,
-    /// used to detect deceleration and bust the pose-equality cache guard
-    frc::ChassisSpeeds m_lastCachedSpeeds{};
-
     /// @}
 };
