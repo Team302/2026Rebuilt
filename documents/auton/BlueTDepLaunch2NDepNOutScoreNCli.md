@@ -13,12 +13,12 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : Step 1 - DRIVE_STOP_MECH --
-    Step2 : Step 2 - TRAJECTORY_DRIVE BlueLeftBumpNZNZ_A
-    Step3 : Step 3 - TRAJECTORY_DRIVE LeftToRightNZ
-    Step4 : Step 4 - TRAJECTORY_DRIVE BlueLeftBumpNZNZ_C
-    Step5 : Step 5 - TRAJECTORY_DRIVE RightToLeftNZ
-    Step6 : Step 6 - TRAJECTORY_DRIVE BlueLeftBumpNZNZ_D
+    Step1 : "Step 1 - DRIVE_STOP_MECH --"
+    Step2 : "Step 2 - TRAJECTORY_DRIVE BlueLeftBumpNZNZ_A"
+    Step3 : "Step 3 - TRAJECTORY_DRIVE LeftToRightNZ"
+    Step4 : "Step 4 - TRAJECTORY_DRIVE BlueLeftBumpNZNZ_C"
+    Step5 : "Step 5 - TRAJECTORY_DRIVE RightToLeftNZ"
+    Step6 : "Step 6 - TRAJECTORY_DRIVE BlueLeftBumpNZNZ_D"
 
     class Step1 noIntake
     class Step2 intake
@@ -27,13 +27,13 @@ stateDiagram-v2
     class Step5 intake
     class Step6 noIntake
 
-    [*] --> Step1 : start
-    Step1 --> Step2: launcher=LAUNCH
-    Step2 --> Step3: intake=INTAKE zones=LeftBumpZone DRIVE_OVER_BUMP
-    Step3 --> Step4: intake=INTAKE zones=RightBumpZone DRIVE_OVER_BUMP
-    Step4 --> Step5: zones=LaunchZone PREPARE_TO_LAUNCH
-    Step5 --> Step6: intake=INTAKE zones=RightBumpZone DRIVE_OVER_BUMP LeftBumpZone DRIVE_OVER_BUMP
-    Step6 --> [*]: zones=LaunchZone PREPARE_TO_LAUNCH
+    [*] --> Step1 : "start"
+    Step1 --> Step2: "launcher=LAUNCH"
+    Step2 --> Step3: "intake=INTAKE | zones=LeftBumpZone DRIVE_OVER_BUMP"
+    Step3 --> Step4: "intake=INTAKE | zones=RightBumpZone DRIVE_OVER_BUMP"
+    Step4 --> Step5: "zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step5 --> Step6: "intake=INTAKE | zones=RightBumpZone DRIVE_OVER_BUMP LeftBumpZone DRIVE_OVER_BUMP"
+    Step6 --> [*]: "zones=LaunchZone PREPARE_TO_LAUNCH"
 ```
 
 ## Primitive Summary

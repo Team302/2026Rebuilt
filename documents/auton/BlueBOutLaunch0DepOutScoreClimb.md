@@ -13,11 +13,11 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : Step 1 - DRIVE_STOP_MECH --
-    Step2 : Step 2 - TRAJECTORY_DRIVE BlueMiddleRightToOutpost
-    Step3 : Step 3 - TRAJECTORY_DRIVE RightToLeftAlliance
-    Step4 : Step 4 - TRAJECTORY_DRIVE DepotToLaunchToClimb
-    Step5 : Step 5 - DRIVE_STOP_MECH --
+    Step1 : "Step 1 - DRIVE_STOP_MECH --"
+    Step2 : "Step 2 - TRAJECTORY_DRIVE BlueMiddleRightToOutpost"
+    Step3 : "Step 3 - TRAJECTORY_DRIVE RightToLeftAlliance"
+    Step4 : "Step 4 - TRAJECTORY_DRIVE DepotToLaunchToClimb"
+    Step5 : "Step 5 - DRIVE_STOP_MECH --"
 
     class Step1 noIntake
     class Step2 intake
@@ -25,12 +25,12 @@ stateDiagram-v2
     class Step4 intake
     class Step5 noIntake
 
-    [*] --> Step1 : start
-    Step1 --> Step2: launcher=LAUNCH
-    Step2 --> Step3: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH OutpostZone DRIVE_TO_OUTPOST
-    Step3 --> Step4: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH
-    Step4 --> Step5: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH DepotZone DRIVE_TO_DEPOT
-    Step5 --> [*]: zones=ClimbingZone DRIVE_TO_TOWER
+    [*] --> Step1 : "start"
+    Step1 --> Step2: "launcher=LAUNCH"
+    Step2 --> Step3: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH OutpostZone DRIVE_TO_OUTPOST"
+    Step3 --> Step4: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step4 --> Step5: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH DepotZone DRIVE_TO_DEPOT"
+    Step5 --> [*]: "zones=ClimbingZone DRIVE_TO_TOWER"
 ```
 
 ## Primitive Summary

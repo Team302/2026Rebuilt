@@ -774,7 +774,7 @@ bool Launcher::IsLauncherAtTarget()
 	}
 	else
 	{
-		return true;
+		return m_cachedHoodError && m_cachedinLaunchzone && m_cachedIsChassisSpeed && m_cachedLauncherSpeedError;
 	}
 }
 
@@ -914,15 +914,20 @@ std::string Launcher::GetCurrentStateName()
 
 bool Launcher::IsTurretAtTarget()
 {
-	if (m_turretEnabled && m_hasValidTurretAngle)
+	m_cachedTurretAtTarget = false;
+	if (m_turretEnabled)
 	{
-		units::angle::degree_t turretError = m_cachedTurretPosition - m_targetTurretAngle;
-		m_cachedTurretAtTarget = ((units::math::abs(turretError) < m_turretAngleThreshold));
+		if (m_hasValidTurretAngle)
+		{
+			units::angle::degree_t turretError = m_cachedTurretPosition - m_targetTurretAngle;
+			m_cachedTurretAtTarget = ((units::math::abs(turretError) < m_turretAngleThreshold));
+		}
 	}
 	else
 	{
 		m_cachedTurretAtTarget = m_chassis->IsChassisAtRotationTarget();
 	}
+
 	return m_cachedTurretAtTarget;
 }
 void Launcher::UpdateTurretEnabled()

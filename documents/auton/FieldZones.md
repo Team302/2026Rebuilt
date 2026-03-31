@@ -15,9 +15,12 @@
 ## Individual Zone Pages
 
 - [BlueAllianceZone](zones/BlueAllianceZone.md)
+- [BlueBumpDepotElement](zones/BlueBumpDepotElement.md)
+- [BlueBumpOutpostElement](zones/BlueBumpOutpostElement.md)
 - [BlueClimbingZone](zones/BlueClimbingZone.md)
 - [BlueDeadZone](zones/BlueDeadZone.md)
 - [BlueDepotZone](zones/BlueDepotZone.md)
+- [BlueHubElement](zones/BlueHubElement.md)
 - [BlueLaunchZone](zones/BlueLaunchZone.md)
 - [BlueLeftBumpZone](zones/BlueLeftBumpZone.md)
 - [BlueLeftBumpZoneRect](zones/BlueLeftBumpZoneRect.md)
@@ -27,11 +30,16 @@
 - [BlueRightBumpZone](zones/BlueRightBumpZone.md)
 - [BlueRightBumpZoneRect](zones/BlueRightBumpZoneRect.md)
 - [BlueRightTrenchZone](zones/BlueRightTrenchZone.md)
+- [BlueTrenchADepotElement](zones/BlueTrenchADepotElement.md)
+- [BlueTrenchAOutpostElement](zones/BlueTrenchAOutpostElement.md)
 - [NeutralZone](zones/NeutralZone.md)
 - [RedAllianceZone](zones/RedAllianceZone.md)
+- [RedBumpDepotElement](zones/RedBumpDepotElement.md)
+- [RedBumpOutpostElement](zones/RedBumpOutpostElement.md)
 - [RedClimbingZone](zones/RedClimbingZone.md)
 - [RedDeadZone](zones/RedDeadZone.md)
 - [RedDepotZone](zones/RedDepotZone.md)
+- [RedHubElement](zones/RedHubElement.md)
 - [RedLaunchZone](zones/RedLaunchZone.md)
 - [RedLeftBumpZone](zones/RedLeftBumpZone.md)
 - [RedLeftBumpZoneRect](zones/RedLeftBumpZoneRect.md)
@@ -41,6 +49,8 @@
 - [RedRightBumpZone](zones/RedRightBumpZone.md)
 - [RedRightBumpZoneRect](zones/RedRightBumpZoneRect.md)
 - [RedRightTrenchZone](zones/RedRightTrenchZone.md)
+- [RedTrenchADepotElement](zones/RedTrenchADepotElement.md)
+- [RedTrenchAOutpostElement](zones/RedTrenchAOutpostElement.md)
 
 ## Zone Legend
 
@@ -63,9 +73,12 @@
 | Zone | Type | Key Coords (m) | Alliance | Effects |
 |------|------|----------------|----------|---------|
 | `BlueAllianceZone` | rect | (0.0,0.0) to (4.0,8.1) | BLUE | -- |
+| `BlueBumpDepotElement` | rect | (4.0381,1.61) to (5.1557,3.45) | BLUE | -- |
+| `BlueBumpOutpostElement` | rect | (4.0381,4.65) to (5.1557,6.49) | BLUE | -- |
 | `BlueClimbingZone` | circle | cx=0.6, cy=3.68, r=0.60 | BOTH | TO TOWER, WANT TO CLIMB |
 | `BlueDeadZone` | rect | (12.58,3.44) to (16.39,4.52) | BLUE | -- |
 | `BlueDepotZone` | circle | cx=0.3, cy=5.9, r=0.50 | BOTH | TO DEPOT |
+| `BlueHubElement` | rect | (4.0,3.45) to (5.1938,4.6438) | BLUE | -- |
 | `BlueLaunchZone` | rect | (0.0,0.0) to (4.0,8.1) | BLUE | PREPARE TO LAUNCH |
 | `BlueLeftBumpZone` | circle | cx=4.6, cy=5.61, r=0.70 | BOTH | OVER BUMP |
 | `BlueLeftBumpZoneRect` | rect | (3.14,4.65) to (5.97,6.69) | BOTH | OVER BUMP |
@@ -75,11 +88,16 @@
 | `BlueRightBumpZone` | circle | cx=4.6, cy=2.54, r=0.70 | BOTH | OVER BUMP |
 | `BlueRightBumpZoneRect` | rect | (3.14,1.6) to (5.97,3.64) | BOTH | OVER BUMP |
 | `BlueRightTrenchZone` | circle | cx=4.63, cy=0.64, r=0.40 | BOTH | -- |
-| `NeutralZone` | rect | (4.8,0.0) to (11.86,7.97) | BOTH | -- |
+| `BlueTrenchADepotElement` | rect | (4.0,1.3) to (5.1938,1.61) | BLUE | -- |
+| `BlueTrenchAOutpostElement` | rect | (4.0,6.49) to (5.1938,6.8) | BLUE | -- |
+| `NeutralZone` | rect | (4.8,0.0) to (11.86,8.1) | BOTH | -- |
 | `RedAllianceZone` | rect | (12.55,0.0) to (16.55,8.1) | RED | -- |
+| `RedBumpDepotElement` | rect | (11.3943,1.61) to (12.5119,3.45) | RED | -- |
+| `RedBumpOutpostElement` | rect | (11.3943,4.65) to (12.5119,6.49) | RED | -- |
 | `RedClimbingZone` | circle | cx=16.01, cy=4.36, r=0.60 | BOTH | TO TOWER, WANT TO CLIMB |
 | `RedDeadZone` | rect | (0.12,3.46) to (3.91,4.58) | RED | -- |
 | `RedDepotZone` | circle | cx=16.2, cy=2.1, r=0.50 | BOTH | TO DEPOT |
+| `RedHubElement` | rect | (11.3562,3.45) to (12.55,4.6438) | RED | -- |
 | `RedLaunchZone` | rect | (12.55,0.0) to (16.55,8.1) | RED | PREPARE TO LAUNCH |
 | `RedLeftBumpZone` | circle | cx=11.95, cy=2.54, r=0.70 | BOTH | OVER BUMP |
 | `RedLeftBumpZoneRect` | rect | (10.86,1.6) to (13.15,3.39) | BOTH | OVER BUMP |
@@ -89,3 +107,5 @@
 | `RedRightBumpZone` | circle | cx=11.94, cy=5.61, r=0.70 | BOTH | OVER BUMP |
 | `RedRightBumpZoneRect` | rect | (10.57,4.56) to (13.45,6.66) | BOTH | OVER BUMP |
 | `RedRightTrenchZone` | circle | cx=11.91, cy=7.39, r=0.40 | BOTH | -- |
+| `RedTrenchADepotElement` | rect | (11.3562,1.3) to (12.55,1.61) | RED | -- |
+| `RedTrenchAOutpostElement` | rect | (11.3562,6.49) to (12.55,6.8) | RED | -- |

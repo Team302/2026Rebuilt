@@ -13,12 +13,12 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : Step 1 - TRAJECTORY_DRIVE BlueMRDrop2_A
-    Step2 : Step 2 - TRAJECTORY_DRIVE BlueMRDrop2_B
-    Step3 : Step 3 - TRAJECTORY_DRIVE BlueMRDrop2_C
-    Step4 : Step 4 - TRAJECTORY_DRIVE BlueMRDrop2_D
-    Step5 : Step 5 - TRAJECTORY_DRIVE BlueMRDrop2_E
-    Step6 : Step 6 - TRAJECTORY_DRIVE BlueMRDrop2_F
+    Step1 : "Step 1 - TRAJECTORY_DRIVE BlueMRDrop2_A"
+    Step2 : "Step 2 - TRAJECTORY_DRIVE BlueMRDrop2_B"
+    Step3 : "Step 3 - TRAJECTORY_DRIVE BlueMRDrop2_C"
+    Step4 : "Step 4 - TRAJECTORY_DRIVE BlueMRDrop2_D"
+    Step5 : "Step 5 - TRAJECTORY_DRIVE BlueMRDrop2_E"
+    Step6 : "Step 6 - TRAJECTORY_DRIVE BlueMRDrop2_F"
 
     class Step1 intake
     class Step2 intake
@@ -27,13 +27,13 @@ stateDiagram-v2
     class Step5 intake
     class Step6 intake
 
-    [*] --> Step1 : start
-    Step1 --> Step2: intake=INTAKE zones=RightBumpZone DRIVE_OVER_BUMP
-    Step2 --> Step3: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH
-    Step3 --> Step4: zones=LeftBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH
-    Step4 --> Step5: intake=INTAKE zones=LeftBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH
-    Step5 --> Step6: intake=INTAKE zones=LaunchZone PREPARE_TO_LAUNCH
-    Step6 --> [*]: intake=INTAKE zones=RightBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH
+    [*] --> Step1 : "start"
+    Step1 --> Step2: "intake=INTAKE | zones=RightBumpZone DRIVE_OVER_BUMP"
+    Step2 --> Step3: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step3 --> Step4: "zones=LeftBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
+    Step4 --> Step5: "intake=INTAKE | zones=LeftBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
+    Step5 --> Step6: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step6 --> [*]: "intake=INTAKE | zones=RightBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
 ```
 
 ## Primitive Summary
@@ -64,8 +64,8 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 3.712 | 2.61 | 235.1 |
-| 2 | 6.932 | 2.466 | 245.0 |
+| 1 | 12.748 | 5.49 | 55.1 |
+| 2 | 9.528 | 5.634 | 65.0 |
 
 ### Step 2 -- BlueMRDrop2_B
 
@@ -78,11 +78,11 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 6.932 | 2.466 | 232.1 |
-| 2 | 6.722 | 3.011 | 90.0 |
-| 3 | 6.679 | 3.488 | 90.0 |
-| 4 | 6.625 | 4.885 | 90.0 |
-| 5 | 6.109 | 5.565 | 139.0 |
+| 1 | 9.528 | 5.634 | 52.1 |
+| 2 | 9.738 | 5.089 | 270.0 |
+| 3 | 9.781 | 4.612 | 270.0 |
+| 4 | 9.835 | 3.215 | 270.0 |
+| 5 | 10.351 | 2.535 | 319.0 |
 
 ### Step 3 -- BlueMRDrop2_C
 
@@ -95,8 +95,8 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 6.109 | 5.548 | 138.6 |
-| 2 | 3.249 | 5.681 | 138.6 |
+| 1 | 10.351 | 2.552 | 318.6 |
+| 2 | 13.211 | 2.419 | 318.6 |
 
 ### Step 4 -- BlueMRDrop2_D
 
@@ -116,11 +116,11 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 5.26 | 5.783 | 138.6 |
-| 2 | 6.506 | 5.675 | 137.9 |
-| 3 | 6.278 | 3.997 | 270.0 |
-| 4 | 6.841 | 2.914 | 270.0 |
-| 5 | 5.813 | 2.438 | 245.0 |
+| 1 | 11.2 | 2.317 | 318.6 |
+| 2 | 9.954 | 2.425 | 317.9 |
+| 3 | 10.182 | 4.103 | 90.0 |
+| 4 | 9.619 | 5.186 | 90.0 |
+| 5 | 10.647 | 5.662 | 65.0 |
 
 ### Step 6 -- BlueMRDrop2_F
 
@@ -133,8 +133,8 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 3.712 | 2.61 | 235.1 |
-| 2 | 5.813 | 2.438 | 245.0 |
+| 1 | 12.748 | 5.49 | 55.1 |
+| 2 | 10.647 | 5.662 | 65.0 |
 
 ## Zone Legend
 
