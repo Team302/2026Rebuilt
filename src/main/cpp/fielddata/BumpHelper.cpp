@@ -25,6 +25,7 @@
 //====================================================================================================================================================
 
 #include "fielddata/BumpHelper.h"
+#include "auton/NeutralZoneManager.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "fielddata/FieldOffsetValues.h"
 #include "frc/geometry/Pose2d.h"
@@ -59,7 +60,9 @@ BumpHelper *BumpHelper::GetInstance()
 ///             first-time initialization of the singleton.
 //------------------------------------------------------------------
 BumpHelper::BumpHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
-                           m_fieldConstants(FieldConstants::GetInstance())
+                           m_fieldConstants(FieldConstants::GetInstance()),
+                           m_neutralZoneMgr(NeutralZoneManager::GetInstance()),
+                           m_sweepLaneChanger(SweepLaneChanger::GetInstance())
 {
 }
 
@@ -175,7 +178,7 @@ std::vector<BumpPosition> BumpHelper::GetNearestAndCrossFieldBumpEdges(bool isIn
     bool nearestIsOutpost = (bump == BUMP_ID::RED_OUTPOST_BUMP || bump == BUMP_ID::BLUE_OUTPOST_BUMP);
 
     // Get the lane x value
-    auto lane = SweepLaneChanger::GetInstance()->GetLane();
+    auto lane = m_neutralZoneMgr->IsInNeutralZone() ? m_sweepLaneChanger->GetLane() : m_sweepLaneChanger->GetMaxLanes();
     auto bumpX = isRed
                      ? (isInNeutralZone ? offsetVals->GetRedNeutralSweepX(lane)
                                         : offsetVals->GetRedAllianceSweepX(lane))

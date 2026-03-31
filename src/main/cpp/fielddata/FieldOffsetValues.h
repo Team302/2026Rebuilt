@@ -600,7 +600,8 @@ private:
     static constexpr units::length::meter_t TRENCH_OFFSET = 1.0_m;
 
     static constexpr units::length::inch_t SWEEP_LANE_WIDTH = 36.0_in;   // Width of each lane in the sweep behind hub path (inches)
-    static constexpr units::length::inch_t SWEEP_START_OFFSET = 36.0_in; // Starting offset for the sweep lanes (inches)
+    static constexpr units::length::inch_t SWEEP_START_OFFSET = 44.0_in; // Starting offset for the sweep lanes (inches)
     static constexpr units::length::inch_t SWEEP_MIDDLE_EXTRA = 6.0_in;  // additional offset to make sure we are past the center line
     static constexpr double SWEEP_BY_TOWER_FACTOR = 1.55;                /// Sweep under tower
+    static constexpr units::length::inch_t SWEEP_Y_END_OFFSET = 12.0_in;
 };

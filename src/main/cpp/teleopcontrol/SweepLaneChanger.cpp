@@ -56,7 +56,7 @@ void SweepLaneChanger::RunCurrentState()
     if (m_isIncrementPressed && !m_incrementLatch)
     {
         m_incrementLatch = true;
-        if (m_lane < 3)
+        if (m_lane < m_maxLanes)
         {
             m_lane += 1;
             frc::SmartDashboard::PutNumber(m_sweepLaneNT, m_lane);
@@ -67,7 +67,7 @@ void SweepLaneChanger::RunCurrentState()
     if (m_isDecrementPressed && !m_decrementLatch)
     {
         m_decrementLatch = true;
-        if (m_lane > 0)
+        if (m_lane > m_minLanes)
         {
             m_lane -= 1;
             frc::SmartDashboard::PutNumber(m_sweepLaneNT, m_lane);

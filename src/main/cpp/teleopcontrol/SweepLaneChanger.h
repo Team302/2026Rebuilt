@@ -24,6 +24,7 @@ public:
     void RunCurrentState() override;
     static SweepLaneChanger *GetInstance();
     int GetLane() const { return m_lane; }
+    int GetMaxLanes() const { return m_maxLanes; }
 
 private:
     int m_lane = 0;
@@ -33,6 +34,9 @@ private:
     bool m_isDecrementPressed = false;
 
     const std::string m_sweepLaneNT = "SweepLane";
+
+    static constexpr int m_minLanes = 0;
+    static constexpr int m_maxLanes = 3;
 
     SweepLaneChanger();
     ~SweepLaneChanger() = default;
