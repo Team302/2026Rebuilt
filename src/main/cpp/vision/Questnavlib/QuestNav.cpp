@@ -459,7 +459,7 @@ void QuestNav::OnTrackingLost(std::function<void()> callback)
 }
 void QuestNav::OnLowBattery(int thresholdPercent, std::function<void(int)> callback)
 {
-    m_lowBatteryThreshold = thresholdPercent;
+    m_lowBatteryThreshold = std::clamp(thresholdPercent, 0, 100);
     m_onLowBatteryCallback = callback;
 }
 #ifdef __FRC_ROBORIO__
