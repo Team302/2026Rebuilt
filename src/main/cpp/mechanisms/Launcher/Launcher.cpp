@@ -642,7 +642,7 @@ void Launcher::InitializeTalonFXAgitatorCompBot302()
 
 	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
-	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.05);
+	configs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = units::time::second_t(0.5);
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
@@ -686,6 +686,8 @@ void Launcher::InitializeTalonFXAgitatorCompBot302()
 	}
 	if (!status.IsOK())
 		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_agitator", "m_agitator Status", status.GetName());
+
+	m_agitator->SetPosition(0.0_tr);
 }
 
 void Launcher::SetCurrentState(int state, bool run)
