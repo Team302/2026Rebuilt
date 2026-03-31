@@ -20,8 +20,8 @@
 #include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Translation2d.h>
 #include <frc/kinematics/ChassisSpeeds.h>
-#include <units/length.h>
 #include <units/angle.h>
+#include <units/length.h>
 
 /**
  * \class TargetCalculator
@@ -170,6 +170,20 @@ private:
     static constexpr units::radians_per_second_t m_rotationSpeedThreshold{0.25_deg_per_s};
 
     subsystems::CommandSwerveDrivetrain *m_chassis;
+
+    /**
+     * \brief Calculate how much the mechanism's world position shifts due to rotation during lookahead.
+     *
+     * Integrates omega * lookaheadTime to find the future robot heading, then computes the
+     * difference between the future and current mechanism-offset world vectors.  This delta
+     * can be subtracted from a virtual target so that mechanism-relative callers
+     * (CalculateMechanismAngleToTarget, CalculateMechanismDistanceToTarget) aim correctly
+     * when the robot is spinning, without affecting chassis-center callers.
+     *
+     * \param lookaheadTime Time in seconds for projectile flight
+     * \return Translation2d representing the change in mechanism world position due to rotation
+     */
+    frc::Translation2d CalculateRotationalMechDelta(units::time::second_t lookaheadTime) const;
 
     // Cached calculation results to avoid recalculation when pose hasn't changed
     units::meter_t m_cachedDistanceToTarget = 0_m;

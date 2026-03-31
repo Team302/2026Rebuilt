@@ -44,6 +44,16 @@ frc::Translation2d TargetCalculator::CalculateVirtualTarget(
         realTarget.Y() - offsetY};
 }
 
+frc::Translation2d TargetCalculator::CalculateRotationalMechDelta(units::time::second_t lookaheadTime) const
+{
+    units::degree_t futureHeading = m_chassisPose.Rotation().Degrees() +
+                                    units::degree_t{m_currentChassisSpeeds.omega.value() * lookaheadTime.value()};
+
+    frc::Translation2d currentMechOffset = m_mechanismOffset.RotateBy(m_chassisPose.Rotation());
+    frc::Translation2d futureMechOffset = m_mechanismOffset.RotateBy(frc::Rotation2d{futureHeading});
+    return futureMechOffset - currentMechOffset;
+}
+
 frc::Translation2d TargetCalculator::GetMechanismWorldPosition() const
 {
     return m_chassisPose.Translation() + m_mechanismOffset.RotateBy(m_chassisPose.Rotation());
@@ -77,6 +87,13 @@ units::meter_t TargetCalculator::CalculateMechanismDistanceToTarget(units::time:
     auto realTarget = GetTargetPosition();
     auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
 
+    // Apply rotational compensation for the mechanism offset sweeping during flight
+    if (lookaheadTime > 0_s)
+    {
+        auto mechDelta = CalculateRotationalMechDelta(lookaheadTime);
+        targetPos = targetPos - mechDelta;
+    }
+
     m_cachedMechanismDistanceToTarget = mechanismPos.Distance(targetPos);
     return m_cachedMechanismDistanceToTarget;
 }
@@ -101,6 +118,14 @@ units::degree_t TargetCalculator::CalculateMechanismAngleToTarget(units::time::s
 
     auto realTarget = GetTargetPosition();
     auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
+
+    // Apply rotational compensation for the mechanism offset sweeping during flight
+    if (lookaheadTime > 0_s)
+    {
+        auto mechDelta = CalculateRotationalMechDelta(lookaheadTime);
+        targetPos = targetPos - mechDelta;
+    }
+
     frc::Translation2d vectorToTarget = targetPos - mechanismPos;
 
     m_cachedMechanismAngleToTarget = vectorToTarget.Angle().Degrees();

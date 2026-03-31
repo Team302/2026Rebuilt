@@ -856,19 +856,6 @@ void Launcher::InitilaizeLauncher()
 		(!m_turretEnabled && hoodReverseLimitSwitchTripped) ||
 		frc::RobotBase::IsSimulation())
 	{
-		// if (m_turretEnabled) // MECH_TODO: verify auto reseting limitswitches work with new launcher. May have to enable if we are using the remote sensor as well
-		// {
-		// 	if (turretReverseLimitSwitchTripped == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)
-		// 	{
-		// 		m_turret->SetPosition(m_minTurretAngle);
-		// 	}
-		// 	else
-		// 	{
-		// 		m_turret->SetPosition(m_maxTurretAngle);
-		// 	}
-		// }
-		// m_hood->SetPosition(m_minHoodAngle);
-
 		m_launcherInitialized = true;
 	}
 }
