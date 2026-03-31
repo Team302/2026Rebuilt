@@ -35,6 +35,7 @@
 // Static strings to avoid repeated heap allocations in logging
 static const std::string kQuestNavDebug = "questnavdebug";
 static const std::string kLogIsConnected = "m_isConnected";
+static const std::string kLogIsTracking = "m_isTracking";
 static const std::string kLogSetRobotPoseX = "SetRobotPoseX";
 static const std::string kLogSetRobotPoseY = "SetRobotPoseY";
 static const std::string kLogSetRobotPoseRot = "SetRobotPoseRot";
@@ -249,13 +250,15 @@ void DragonQuest::NotifyStateUpdate(RobotStateChanges::StateChange change, bool 
 DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
 {
     m_isConnected = m_questNav.IsConnected();
+    m_isTracking = m_questNav.IsTracking();
 
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogHasReset, m_hasReset);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogIsConnected, m_isConnected);
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogIsTracking, m_isTracking);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogIsQuestEnabled, m_isQuestEnabled);
 
     DragonVisionPoseEstimatorStruct str;
-    if (!m_hasReset || !m_isConnected || !m_isQuestEnabled || m_isQuestGoofy)
+    if (!m_hasReset || !m_isConnected || !m_isQuestEnabled || m_isQuestGoofy || !m_isTracking)
     {
         str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE;
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, kQuestNavDebug, kLogConfidence, kLogConfidenceNone);

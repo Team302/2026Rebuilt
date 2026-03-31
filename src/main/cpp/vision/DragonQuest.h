@@ -132,4 +132,6 @@ private:
     bool m_isQuestGoofy = false;
 
     bool m_isConnected = false;
+
+    bool m_isTracking = false;
 };
