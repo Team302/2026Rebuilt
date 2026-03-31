@@ -143,11 +143,11 @@
   <text x="653.4" y="275.7" text-anchor="middle" dominant-baseline="auto" font-size="9" fill="#ffffff" font-family="monospace">LeftBumpZone</text>
   <rect x="630.2" y="278.7" width="46.5" height="10" rx="2" fill="#000000" fill-opacity="0.55"/>
   <text x="653.4" y="286.7" text-anchor="middle" dominant-baseline="auto" font-size="7" fill="#555555" font-family="monospace">OVER BUMP</text>
-  <rect x="593.8" y="257.5" width="125.2" height="97.9" fill="#2a6a2a" fill-opacity="0.55" stroke="#1a4a1a" stroke-width="1.5"/>
-  <rect x="594.8" y="259.5" width="94.0" height="10" rx="2" fill="#000000" fill-opacity="0.55"/>
-  <text x="597.8" y="267.5" text-anchor="start" dominant-baseline="auto" font-size="9" fill="#ffffff" font-family="monospace">LeftBumpZoneRect</text>
-  <rect x="594.8" y="270.5" width="46.5" height="10" rx="2" fill="#000000" fill-opacity="0.55"/>
-  <text x="597.8" y="278.5" text-anchor="start" dominant-baseline="auto" font-size="7" fill="#555555" font-family="monospace">OVER BUMP</text>
+  <rect x="577.9" y="251.0" width="157.5" height="114.8" fill="#2a6a2a" fill-opacity="0.55" stroke="#1a4a1a" stroke-width="1.5"/>
+  <rect x="578.9" y="253.0" width="94.0" height="10" rx="2" fill="#000000" fill-opacity="0.55"/>
+  <text x="581.9" y="261.0" text-anchor="start" dominant-baseline="auto" font-size="9" fill="#ffffff" font-family="monospace">LeftBumpZoneRect</text>
+  <rect x="578.9" y="264.0" width="46.5" height="10" rx="2" fill="#000000" fill-opacity="0.55"/>
+  <text x="581.9" y="272.0" text-anchor="start" dominant-baseline="auto" font-size="7" fill="#555555" font-family="monospace">OVER BUMP</text>
   <circle cx="651.2" cy="406.8" r="21.9" fill="#2a6a2a" fill-opacity="0.55" stroke="#1a4a1a" stroke-width="1.5"/>
   <rect x="609.7" y="386.9" width="83.0" height="10" rx="2" fill="#000000" fill-opacity="0.55"/>
   <text x="651.2" y="394.9" text-anchor="middle" dominant-baseline="auto" font-size="9" fill="#ffffff" font-family="monospace">LeftTrenchZone</text>
