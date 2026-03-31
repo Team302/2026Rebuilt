@@ -927,8 +927,6 @@ bool Launcher::IsTurretAtTarget()
 	{
 		m_cachedTurretAtTarget = m_chassis->IsChassisAtRotationTarget();
 	}
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Turret At Target", m_cachedTurretAtTarget);
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Turret Valid", m_targetCalculator->IsValidTurretAngle());
 
 	return m_cachedTurretAtTarget;
 }

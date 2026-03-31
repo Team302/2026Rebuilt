@@ -237,7 +237,7 @@ private:
 	units::angle::turn_t m_maxHoodAngle = 30.0_tr;
 	units::angle::turn_t m_minTurretAngle = 87_tr;
 	units::angle::turn_t m_maxTurretAngle = 266.5_tr;
-	units::angle::turn_t m_turretAngleThreshold = 3.0_tr; // MECH_TODO: tune and change value for new turret
+	units::angle::turn_t m_turretAngleThreshold = 5.0_tr;
 	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 150.0_rpm;
 	units::angle::turn_t m_hoodAngleThreshold = 0.5_tr;
 	units::velocity::meters_per_second_t m_chassisSpeedThreshold = 3.0_mps;
