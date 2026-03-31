@@ -301,7 +301,8 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 0.40025033775117571611799914493373;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.3584933796296296;
+	// configs.ExternalFeedback.SensorToMechanismRatio = 0.40025033775117571611799914493373;
 
 	configs.Slot0.kI = m_positionDegUp->GetI();
 	configs.Slot0.kD = m_positionDegUp->GetD();

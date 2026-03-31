@@ -152,9 +152,7 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     auto driveToHub = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_HUB);
     auto driveToOutpost = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_OUTPOST);
     auto driveToTower = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_TOWER);
-    // Sweep behind bump is on the same button as DriveToHub, so comment this out.
-    // leaving it here so it is easy if we change this mapping.
-    // auto sweepBehindHub = controller->GetCommandTrigger(TeleopControlFunctions::SWEEP_BEHIND_HUB);
+    auto sweepBehindHub = controller->GetCommandTrigger(TeleopControlFunctions::SWEEP_BEHIND_BUMP);
 
     // Drive to trench is on the same button as DriveAlongNearestWall, so comment this out.
     // leaving it here so it is easy if we change this mapping.
@@ -187,15 +185,20 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     driveToHub.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                   {
     if (!m_climbModeStatus) {
-        if (AllianceZoneManager::GetInstance()->IsInAllianceZone())  {
-            return frc2::ProxyCommand(m_driveToHub.get()).ToPtr();
-        } else {
-            return frc2::ProxyCommand(m_sweepBehindHub.get()).ToPtr();
-        }
-    } else {
+        return frc2::ProxyCommand(m_driveToHub.get()).ToPtr();
+    }
+    else {
         return frc2::cmd::None(); 
     } }));
 
+    sweepBehindHub.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
+                                                      {
+    if (!m_climbModeStatus) {
+            return frc2::ProxyCommand(m_sweepBehindBump.get()).ToPtr();
+        
+    } else {
+        return frc2::cmd::None(); 
+    } }));
     // Drive To Outpost - Autonomous navigation to outpost location
     // Disabled during climb mode in favor of future climb navigation
     driveToOutpost.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
