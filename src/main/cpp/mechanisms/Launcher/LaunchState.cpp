@@ -54,7 +54,7 @@ void LaunchState::InitCompBot302()
 {
 	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
 	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
-	m_mechanism->UpdateTargetAgitatorPercentOut(m_agitatorTarget);
+	m_mechanism->UpdateTargetSpindexerPercentOut(m_spindexerTarget);
 }
 
 void LaunchState::Run()
@@ -65,7 +65,7 @@ void LaunchState::Run()
 		!TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::MANUAL_LAUNCH) &&
 		frc::DriverStation::IsTeleop())
 	{
-		m_mechanism->UpdateTargetAgitatorPercentOut(0.0);
+		m_mechanism->UpdateTargetSpindexerPercentOut(0.0);
 	}
 }
 

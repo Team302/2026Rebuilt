@@ -49,8 +49,9 @@ void IdleState::Init()
 	m_mechanism->PublishLaunchMode(false);
 
 	m_mechanism->ResetLaunchCurrentTimer();
-	m_maxSpindexerTarget = m_mechanism->GetAgitator()->GetPosition().GetValue();
+	m_maxSpindexerTarget = m_mechanism->GetSpindexer()->GetPosition().GetValue();
 	m_minSpindexerTarget = m_maxSpindexerTarget - m_spindexerTarget;
+	m_minReached = false;
 }
 
 void IdleState::InitCompBot302()
@@ -58,34 +59,24 @@ void IdleState::InitCompBot302()
 	m_mechanism->UpdateTargetLauncherVelocityRPS(m_launcherTarget);
 	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
 	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
-	m_mechanism->UpdateTargetAgitatorPercentOut(m_agitatorTarget);
+	m_mechanism->UpdateTargetSpindexerPercentOut(m_spindexerTarget);
 }
 
 void IdleState::Run()
 {
-	bool goingToMin = false;
-	units::angle::degree_t currentSpindexerPosition = m_mechanism->GetAgitator()->GetPosition().GetValue();
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Indexer"), string("actual"), currentSpindexerPosition.value());
-	if (!m_minReached)
-	{
-		goingToMin = true;
-		m_mechanism->UpdateTargetAgitatorPositionTurns(m_minSpindexerTarget);
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Indexer"), string("target"), m_minSpindexerTarget.value());
-		if (currentSpindexerPosition <= m_minSpindexerTarget)
-			m_minReached = true;
-	}
-	else
-	{
-		goingToMin = false;
-		m_mechanism->UpdateTargetAgitatorPositionTurns(m_maxSpindexerTarget);
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Indexer"), string("target"), m_maxSpindexerTarget.value());
-		if (currentSpindexerPosition >= m_maxSpindexerTarget)
-			m_minReached = false;
-	}
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Indexer"), string("going to min"), goingToMin);
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("IdleState"), string("Run"));
-}
+	auto currentSpindexerPosition = m_mechanism->GetSpindexer()->GetPosition().GetValue();
 
+	m_mechanism->UpdateTargetSpindexerPositionTurns(m_minReached ? m_maxSpindexerTarget : m_minSpindexerTarget);
+
+	if (currentSpindexerPosition <= m_minSpindexerTarget)
+	{
+		m_minReached = true;
+	}
+	else if (currentSpindexerPosition >= m_maxSpindexerTarget)
+	{
+		m_minReached = false;
+	}
+}
 void IdleState::Exit()
 {
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("IdleState"), string("Exit"));

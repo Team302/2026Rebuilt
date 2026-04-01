@@ -51,12 +51,12 @@ namespace LauncherStates
 		const double m_transferTarget = double(0);
 		const units::angle::turn_t m_turretTarget = units::angle::turn_t(0);
 		const double m_indexerTarget = double(0);
-		const double m_agitatorTarget = double(0);
+		const double m_spindexerTarget = double(0);
 		units::angle::degree_t m_minSpindexerTarget;
 		units::angle::degree_t m_maxSpindexerTarget;
-		units::angle::degree_t m_spindexerTarget = 30_deg;
+		units::angle::degree_t m_spindexerTargetAng = 30_deg;
 		frc::Timer *m_Timer;
 		units::time::second_t m_launchTimer = 0.25_s;
 		bool m_minReached = false;
-	};
+		};
 }

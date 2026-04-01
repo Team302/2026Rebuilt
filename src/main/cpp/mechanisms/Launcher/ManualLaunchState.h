@@ -50,6 +50,6 @@ namespace LauncherStates
 		const double m_transferTarget = double(1);
 		const units::angle::turn_t m_turretTarget = units::angle::turn_t(180);
 		const double m_indexerTarget = double(1);
-		const double m_agitatorTarget = double(1);
+		const double m_spindexerTarget = double(1);
 	};
 }
