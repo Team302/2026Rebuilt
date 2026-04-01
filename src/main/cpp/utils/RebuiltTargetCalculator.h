@@ -223,7 +223,7 @@ private:
 
     /// Mechanism position offset from robot center in robot frame (meters)
     /// Default: -3.333 inches (behind center), 4.604 inches (starboard/right of center)
-    static constexpr frc::Translation2d m_mechanismOffset{-3.333_in, 4.604_in};
+    static constexpr frc::Translation2d m_mechanismOffset{-4.6_in, 4.3_in};
 
     /// @}
 
