@@ -20,7 +20,7 @@
 #include "units/angle.h"
 
 //====================================================================================================================================================
-/// @class SweepBehindBump
+/// @class SweepBehindHub
 /// @brief Command to autonomously drive the robot over a field bump using a two-stage navigation approach
 ///
 /// This command extends DriveToPose to provide specialized functionality for safely navigating over the bumps
@@ -49,22 +49,22 @@
 /// @see BumpHelper Utility for identifying nearest bump
 /// @see FieldOffsetValues Field coordinate management
 //====================================================================================================================================================
-class SweepBehindBump : public DriveToPose
+class SweepBehindHub : public DriveToPose
 {
 public:
     //------------------------------------------------------------------
-    /// @brief      Constructor for SweepBehindBump command
+    /// @brief      Constructor for SweepBehindHub command
     /// @param[in]  chassis - Pointer to the swerve drive subsystem that will execute the movement
     /// @details    Initializes the command with the chassis reference for autonomous navigation.
     ///             The constructor sets up the base DriveToPose functionality.
     //------------------------------------------------------------------
-    SweepBehindBump(subsystems::CommandSwerveDrivetrain *chassis);
+    SweepBehindHub(subsystems::CommandSwerveDrivetrain *chassis);
 
     //------------------------------------------------------------------
     /// @brief      Destructor (default implementation)
     /// @details    No cleanup required as all resources are managed by parent class or are value types
     //------------------------------------------------------------------
-    ~SweepBehindBump() = default;
+    ~SweepBehindHub() = default;
 
 protected:
     //------------------------------------------------------------------
@@ -94,6 +94,6 @@ private:
     static constexpr units::angle::degree_t kAngleTolerance = 15.0_deg;
     static constexpr units::length::inch_t kYTransitionToEndPointTolerance = 15.5_in;
 
-    // static constexpr units::velocity::meters_per_second_t kMaxVelocitySweepBehindBump = 2.0_mps;
-    // static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationSweepBehindBump = 1.0_mps_sq;
+    // static constexpr units::velocity::meters_per_second_t kMaxVelocitySweepBehindHub = 2.0_mps;
+    // static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationSweepBehindHub = 1.0_mps_sq;
 };

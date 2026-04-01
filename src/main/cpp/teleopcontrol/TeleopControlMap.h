@@ -153,29 +153,32 @@ constexpr TeleopControlButton extra4DPad225 = {TeleopControlMappingEnums::EXTRA4
 constexpr TeleopControlButton extra4DPad270 = {TeleopControlMappingEnums::EXTRA4, TeleopControlMappingEnums::POV_270, TeleopControlMappingEnums::STANDARD};
 constexpr TeleopControlButton extra4DPad315 = {TeleopControlMappingEnums::EXTRA4, TeleopControlMappingEnums::POV_315, TeleopControlMappingEnums::STANDARD};
 
-robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlButton> teleopControlMapButtonMap{
+inline const robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlButton> teleopControlMapButtonMap{
 
     // Driver Controls
     {TeleopControlFunctions::RESET_POSITION, driverDPad90},
-    {TeleopControlFunctions::ROBOT_ORIENTED_DRIVE, driverDPad0},
+    {TeleopControlFunctions::ROBOT_ORIENTED_DRIVE, driverLStickPressed},
     {TeleopControlFunctions::SYSID_MODIFER, driverSelectButton},
 
     // Season Specific Driver Controls
+    {TeleopControlFunctions::SWEEP_BEHIND_HUB_INCREMENT, driverDPad0},
+    {TeleopControlFunctions::SWEEP_BEHIND_HUB_DECREMENT, driverDPad180},
+
     {TeleopControlFunctions::INTAKE, driverRTriggerPressed},
     {TeleopControlFunctions::EXPEL, driverLTriggerPressed},
 
     {TeleopControlFunctions::DRIVE_TO_HUB, driverRStickPressed},
-    {TeleopControlFunctions::SWEEP_BEHIND_BUMP, driverAButton},
+    {TeleopControlFunctions::SWEEP_BEHIND_HUB, driverAButton},
     {TeleopControlFunctions::LEVEL1_CLIMB, driverAButton},
 
-    {TeleopControlFunctions::DRIVE_TO_OUTPOST, driverBButton},
-    {TeleopControlFunctions::DRIVE_TO_TOWER, driverBButton},
+    {TeleopControlFunctions::DRIVE_TO_OUTPOST, driverBButton}, // Actually mapped in SwerveContainer
+    {TeleopControlFunctions::DRIVE_TO_TOWER, driverBButton},   // Actually mapped in SwerveContainer
 
-    {TeleopControlFunctions::DRIVE_ALONG_NEAREST_WALL, driverXButton},
-    {TeleopControlFunctions::DRIVE_TO_TOWER, driverXButton},
-    {TeleopControlFunctions::DRIVE_TO_TRENCH, driverXButton},
+    {TeleopControlFunctions::DRIVE_ALONG_NEAREST_WALL, driverXButton}, // Actually mapped in SwerveContainer
+    {TeleopControlFunctions::DRIVE_TO_TOWER, driverXButton},           // Actually mapped in SwerveContainer
+    {TeleopControlFunctions::DRIVE_TO_TRENCH, driverXButton},          // Actually mapped in SwerveContainer
 
-    {TeleopControlFunctions::DRIVE_OVER_BUMP, driverYButton},
+    {TeleopControlFunctions::DRIVE_OVER_BUMP, driverYButton}, // Actually mapped in SwerveContainer
     {TeleopControlFunctions::LEVEL3_CLIMB, driverYButton},
 
     {TeleopControlFunctions::CLIMB_MODE, driverStartButton},
@@ -237,7 +240,7 @@ constexpr TeleopControlAxis extra4RJoystickY = {TeleopControlMappingEnums::EXTRA
 constexpr TeleopControlAxis extra4LTrigger = {TeleopControlMappingEnums::EXTRA4, TeleopControlMappingEnums::LEFT_TRIGGER, TeleopControlMappingEnums::APPLY_STANDARD_DEADBAND, TeleopControlMappingEnums::CUBED, TeleopControlMappingEnums::SYNCED, 1.0};
 constexpr TeleopControlAxis extra4RTrigger = {TeleopControlMappingEnums::EXTRA4, TeleopControlMappingEnums::RIGHT_TRIGGER, TeleopControlMappingEnums::APPLY_STANDARD_DEADBAND, TeleopControlMappingEnums::CUBED, TeleopControlMappingEnums::SYNCED, 1.0};
 
-robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlAxis> teleopControlMapAxisMap{
+inline robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopControlAxis> teleopControlMapAxisMap{
 
     // Driver Controls
     {TeleopControlFunctions::HOLONOMIC_DRIVE_FORWARD, driverLJoystickY},
