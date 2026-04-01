@@ -13,14 +13,14 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : Step 1 - TRAJECTORY_DRIVE BlueMRDrop3_Init
-    Step2 : Step 2 - TRAJECTORY_DRIVE BlueMRDrop3_A
-    Step3 : Step 3 - TRAJECTORY_DRIVE BlueMRDrop3_C
-    Step4 : Step 4 - DRIVE_STOP_MECH --
-    Step5 : Step 5 - TRAJECTORY_DRIVE BlueMRDrop3_D
-    Step6 : Step 6 - TRAJECTORY_DRIVE BlueMRDrop3_E
-    Step7 : Step 7 - TRAJECTORY_DRIVE BlueMRDrop3_F
-    Step8 : Step 8 - DRIVE_STOP_MECH --
+    Step1 : "Step 1 - TRAJECTORY_DRIVE BlueMRDrop3_Init"
+    Step2 : "Step 2 - TRAJECTORY_DRIVE BlueMRDrop3_A"
+    Step3 : "Step 3 - TRAJECTORY_DRIVE BlueMRDrop3_C"
+    Step4 : "Step 4 - DRIVE_STOP_MECH --"
+    Step5 : "Step 5 - TRAJECTORY_DRIVE BlueMRDrop3_D"
+    Step6 : "Step 6 - TRAJECTORY_DRIVE BlueMRDrop3_E"
+    Step7 : "Step 7 - TRAJECTORY_DRIVE BlueMRDrop3_F"
+    Step8 : "Step 8 - DRIVE_STOP_MECH --"
 
     class Step1 noIntake
     class Step2 intake
@@ -31,14 +31,14 @@ stateDiagram-v2
     class Step7 noIntake
     class Step8 noIntake
 
-    [*] --> Step1 : start
-    Step1 --> Step2: zones=RightBumpZoneRect DRIVE_OVER_BUMP
-    Step2 --> Step3: intake=INTAKE
-    Step3 --> Step4: zones=RightBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH
+    [*] --> Step1 : "start"
+    Step1 --> Step2: "zones=RightBumpZoneRect DRIVE_OVER_BUMP"
+    Step2 --> Step3: "intake=INTAKE"
+    Step3 --> Step4: "zones=RightBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
     Step4 --> Step5
-    Step5 --> Step6: intake=INTAKE zones=RightBumpZone DRIVE_OVER_BUMP
-    Step6 --> Step7: intake=INTAKE
-    Step7 --> Step8: zones=LaunchZone PREPARE_TO_LAUNCH RightBumpZone DRIVE_OVER_BUMP
+    Step5 --> Step6: "intake=INTAKE | zones=RightBumpZone DRIVE_OVER_BUMP"
+    Step6 --> Step7: "intake=INTAKE"
+    Step7 --> Step8: "zones=LaunchZone PREPARE_TO_LAUNCH RightBumpZone DRIVE_OVER_BUMP"
     Step8 --> [*]
 ```
 
@@ -72,8 +72,8 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 3.463 | 1.858 | 322.1 |
-| 2 | 3.463 | 2.605 | 335.3 |
+| 1 | 12.997 | 6.242 | 142.1 |
+| 2 | 12.997 | 5.495 | 155.3 |
 
 ### Step 2 -- BlueMRDrop3_A
 
@@ -86,13 +86,13 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 4.812 | 4.253 | 315.0 |
-| 2 | 5.942 | 2.426 | 315.0 |
-| 3 | 6.511 | 1.43 | 8.2 |
-| 4 | 8.012 | 1.496 | 118.0 |
-| 5 | 7.824 | 3.646 | 150.4 |
-| 6 | 6.363 | 3.876 | 226.2 |
-| 7 | 5.945 | 2.44 | 224.1 |
+| 1 | 11.648 | 3.847 | 135.0 |
+| 2 | 10.518 | 5.674 | 135.0 |
+| 3 | 9.949 | 6.67 | 188.2 |
+| 4 | 8.448 | 6.604 | 298.0 |
+| 5 | 8.636 | 4.454 | 330.4 |
+| 6 | 10.097 | 4.224 | 46.2 |
+| 7 | 10.515 | 5.66 | 44.1 |
 
 ### Step 3 -- BlueMRDrop3_C
 
@@ -105,8 +105,8 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 5.723 | 2.554 | 221.4 |
-| 2 | 3.327 | 2.546 | 221.1 |
+| 1 | 10.737 | 5.546 | 41.4 |
+| 2 | 13.133 | 5.554 | 41.1 |
 
 ### Step 5 -- BlueMRDrop3_D
 
@@ -119,8 +119,8 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 3.311 | 2.605 | 138.6 |
-| 2 | 5.758 | 2.573 | 135.0 |
+| 1 | 13.149 | 5.495 | 318.6 |
+| 2 | 10.702 | 5.527 | 315.0 |
 
 ### Step 6 -- BlueMRDrop3_E
 
@@ -133,11 +133,11 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 5.822 | 2.464 | 75.9 |
-| 2 | 5.813 | 3.482 | 45.5 |
-| 3 | 6.642 | 3.638 | 296.6 |
-| 4 | 6.79 | 1.274 | 245.5 |
-| 5 | 5.797 | 2.448 | 245.8 |
+| 1 | 10.638 | 5.636 | 255.9 |
+| 2 | 10.647 | 4.618 | 225.5 |
+| 3 | 9.818 | 4.462 | 116.6 |
+| 4 | 9.67 | 6.826 | 65.5 |
+| 5 | 10.663 | 5.652 | 65.8 |
 
 ### Step 7 -- BlueMRDrop3_F
 
@@ -150,8 +150,8 @@ stateDiagram-v2
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
-| 1 | 5.942 | 2.426 | 225.0 |
-| 2 | 3.316 | 2.354 | 225.0 |
+| 1 | 10.518 | 5.674 | 45.0 |
+| 2 | 13.144 | 5.746 | 45.0 |
 
 ## Zone Legend
 

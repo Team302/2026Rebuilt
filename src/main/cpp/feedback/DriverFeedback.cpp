@@ -318,10 +318,9 @@ void DriverFeedback::UpdateDiagnosticLEDs()
         backLeftLL = limelightRunning[DragonVision::kBackLeftLimelightIndex];
 
         questStatus = m_dragonVision->HealthCheckQuest();
-
-        m_LEDStates->SetQuestStatus(questStatus);
-        m_LEDStates->SetLimelightStatuses(backLeftLL);
     }
+    m_LEDStates->SetQuestStatus(questStatus);
+    m_LEDStates->SetLimelightStatuses(backLeftLL);
 
     // Add Data Logger Connection Status dataLoggerConnected = ...
     m_LEDStates->SetDataLoggerStatus(dataLoggerConnected);

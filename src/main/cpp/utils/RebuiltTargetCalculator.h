@@ -121,6 +121,7 @@ public:
      * \note Updates field visualization via UpdatePassingTargetsOnField()
      */
     void UpdateTargetOffset();
+    bool IsValidTurretAngle() { return m_hasFoundValidAngle; }
 
 private:
     /**
@@ -340,6 +341,8 @@ private:
 
     /// Previous state of right button (for detecting rising edge)
     bool m_prevRightPressed = false;
+
+    bool m_hasFoundValidAngle = false;
 
     /// @}
 

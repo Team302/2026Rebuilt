@@ -23,12 +23,12 @@
 | Property | Value |
 |----------|-------|
 | Type | Rectangle |
-| X1 | 10.86 m |
-| Y1 | 1.6 m |
-| X2 | 13.15 m |
-| Y2 | 3.39 m |
-| Width | 2.290 m |
-| Height | 1.790 m |
+| X1 | 10.57 m |
+| Y1 | 1.41 m |
+| X2 | 13.45 m |
+| Y2 | 3.51 m |
+| Width | 2.880 m |
+| Height | 2.100 m |
 
 ---
 

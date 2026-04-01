@@ -13,14 +13,14 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : Step 1 - TRAJECTORY_DRIVE BlueMLDrop3_Init
-    Step2 : Step 2 - TRAJECTORY_DRIVE BlueMLDrop3_A
-    Step3 : Step 3 - TRAJECTORY_DRIVE BlueMLDrop3_C
-    Step4 : Step 4 - DRIVE_STOP_MECH --
-    Step5 : Step 5 - TRAJECTORY_DRIVE BlueMLDrop3_C2
-    Step6 : Step 6 - TRAJECTORY_DRIVE BlueMLDrop3_D
-    Step7 : Step 7 - TRAJECTORY_DRIVE BlueMLDrop3_F
-    Step8 : Step 8 - DRIVE_STOP_MECH --
+    Step1 : "Step 1 - TRAJECTORY_DRIVE BlueMLDrop3_Init"
+    Step2 : "Step 2 - TRAJECTORY_DRIVE BlueMLDrop3_A"
+    Step3 : "Step 3 - TRAJECTORY_DRIVE BlueMLDrop3_C"
+    Step4 : "Step 4 - DRIVE_STOP_MECH --"
+    Step5 : "Step 5 - TRAJECTORY_DRIVE BlueMLDrop3_C2"
+    Step6 : "Step 6 - TRAJECTORY_DRIVE BlueMLDrop3_D"
+    Step7 : "Step 7 - TRAJECTORY_DRIVE BlueMLDrop3_F"
+    Step8 : "Step 8 - DRIVE_STOP_MECH --"
 
     class Step1 noIntake
     class Step2 intake
@@ -31,14 +31,14 @@ stateDiagram-v2
     class Step7 intake
     class Step8 noIntake
 
-    [*] --> Step1 : start
-    Step1 --> Step2: zones=LeftBumpZoneRect DRIVE_OVER_BUMP
-    Step2 --> Step3: intake=INTAKE
-    Step3 --> Step4: zones=LeftBumpZoneRect DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH
+    [*] --> Step1 : "start"
+    Step1 --> Step2: "zones=LeftBumpZoneRect DRIVE_OVER_BUMP"
+    Step2 --> Step3: "intake=INTAKE"
+    Step3 --> Step4: "zones=LeftBumpZoneRect DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
     Step4 --> Step5
-    Step5 --> Step6: intake=INTAKE zones=LeftBumpZone DRIVE_OVER_BUMP
-    Step6 --> Step7: intake=INTAKE
-    Step7 --> Step8: intake=INTAKE zones=LeftBumpZoneRect DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH
+    Step5 --> Step6: "intake=INTAKE | zones=LeftBumpZone DRIVE_OVER_BUMP"
+    Step6 --> Step7: "intake=INTAKE"
+    Step7 --> Step8: "intake=INTAKE | zones=LeftBumpZoneRect DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
     Step8 --> [*]
 ```
 
