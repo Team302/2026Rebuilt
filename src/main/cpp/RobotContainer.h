@@ -17,14 +17,11 @@
 
 class SwerveContainer;
 class DragonVisionPoseEstimator;
+class SweepLaneChanger;
 
 class RobotContainer
 {
 public:
     RobotContainer();
     ~RobotContainer() = default;
-
-private:
-    SwerveContainer *m_swervecontainer;
-    DragonVisionPoseEstimator *m_visionPoseEstimator;
 };

@@ -46,7 +46,7 @@ public:
 
 	static DragonCANdle *GetInstance();
 
-	void Initialize(int canID, int stripSize, const std::string &canBus = "rio", StripTypeValue type = StripTypeValue::GRB);
+	void Initialize(int canID, int stripSize, const std::string &canBus = "rio", StripTypeValue type = StripTypeValue::RGB);
 	void Periodic();
 
 	// ===== Animation Control =====

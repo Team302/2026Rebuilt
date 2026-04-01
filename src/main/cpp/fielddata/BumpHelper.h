@@ -17,9 +17,11 @@
 // C++ includes
 #include <vector>
 
+#include "auton/NeutralZoneManager.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/geometry/Pose2d.h"
+#include "teleopcontrol/SweepLaneChanger.h"
 #include "units/length.h"
 
 //====================================================================================================================================================
@@ -171,6 +173,8 @@ private:
 
     /// @brief Pointer to field constants singleton for field element positions
     FieldConstants *m_fieldConstants;
+    NeutralZoneManager *m_neutralZoneMgr;
+    SweepLaneChanger *m_sweepLaneChanger;
 
     /// @brief Singleton instance pointer (lazy initialization)
     static BumpHelper *m_instance;
