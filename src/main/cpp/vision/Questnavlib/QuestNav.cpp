@@ -34,7 +34,7 @@
 // Version – mirror the Java BuildConfig.APP_VERSION.
 // Update this string whenever you update the QuestNav vendordep.
 // ──────────────────────────────────────────────────────────────────────────────
-static constexpr const char *kLibVersion = "2025.2.0";
+static constexpr const char *kLibVersion = "2026.2.2.0";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Constructor
@@ -170,7 +170,7 @@ std::optional<int> QuestNav::GetTrackingLostCounter()
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// IsConnected – true when the last frame arrived within 50 ms
+// IsConnected – true when the last frame arrived within 120 ms
 // ──────────────────────────────────────────────────────────────────────────────
 bool QuestNav::IsConnected()
 {
@@ -179,7 +179,7 @@ bool QuestNav::IsConnected()
     double lastChangeMicroseconds = static_cast<double>(m_frameDataSubscriber.GetLastChange());
     double lastChangeSeconds = lastChangeMicroseconds / 1'000'000.0;
     double staleness = nowSeconds - lastChangeSeconds;
-    return staleness < 0.050; // 50 ms threshold
+    return staleness < 0.120; // 120 ms threshold
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -294,6 +294,7 @@ std::vector<PoseFrame> QuestNav::GetAllUnreadPoseFrames()
 void QuestNav::CommandPeriodic()
 {
     CheckVersionMatch();
+    CheckStateCallbacks();
 
 #ifdef __FRC_ROBORIO__
     auto responses = m_responseSubscriber.ReadQueue();
@@ -306,10 +307,21 @@ void QuestNav::CommandPeriodic()
             continue; // Skip unparseable responses
         }
 
-        if (!response.success())
+        if (response.success())
+        {
+            if (m_onSuccessCallback)
+            {
+                m_onSuccessCallback(response);
+            }
+        }
+        else
         {
             std::string msg = "QuestNav command failed!\n" + response.error_message();
             Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "QuestNav", "questnavCommandFailed", msg);
+            if (m_onFailureCallback)
+            {
+                m_onFailureCallback(response);
+            }
         }
     }
 #endif
@@ -365,6 +377,101 @@ void QuestNav::CheckVersionMatch()
         Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "QuestNav", "questnavLibVersionMismatch", msg);
     }
 }
+
+// ──────────────────────────────────────────────────────────────────────────────
+// CheckStateCallbacks (private)
+// ──────────────────────────────────────────────────────────────────────────────
+void QuestNav::CheckStateCallbacks()
+{
+    // --- Connection state ---
+    bool connected = IsConnected();
+    if (connected != m_lastConnectedState)
+    {
+        if (connected)
+        {
+            if (m_onConnectedCallback)
+                m_onConnectedCallback();
+        }
+        else
+        {
+            if (m_onDisconnectedCallback)
+                m_onDisconnectedCallback();
+        }
+        m_lastConnectedState = connected;
+    }
+
+    // --- Tracking state ---
+    bool tracking = IsTracking();
+    if (tracking != m_lastTrackingState)
+    {
+        if (tracking)
+        {
+            if (m_onTrackingAcquiredCallback)
+                m_onTrackingAcquiredCallback();
+        }
+        else
+        {
+            if (m_onTrackingLostCallback)
+                m_onTrackingLostCallback();
+        }
+        m_lastTrackingState = tracking;
+    }
+
+    // --- Low battery ---
+    if (m_onLowBatteryCallback)
+    {
+        auto levelOpt = GetBatteryPercent();
+        if (levelOpt.has_value())
+        {
+            int level = levelOpt.value();
+            if (level <= m_lowBatteryThreshold && !m_lowBatteryFired)
+            {
+                m_onLowBatteryCallback(level);
+                m_lowBatteryFired = true;
+            }
+            else if (level > m_lowBatteryThreshold)
+            {
+                // Reset so the callback can fire again if battery dips below again
+                m_lowBatteryFired = false;
+            }
+        }
+    }
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Callbacks
+// ──────────────────────────────────────────────────────────────────────────────
+void QuestNav::OnConnected(std::function<void()> callback)
+{
+    m_onConnectedCallback = callback;
+}
+void QuestNav::OnDisconnected(std::function<void()> callback)
+{
+    m_onDisconnectedCallback = callback;
+}
+void QuestNav::OnTrackingAcquired(std::function<void()> callback)
+{
+    m_onTrackingAcquiredCallback = callback;
+}
+void QuestNav::OnTrackingLost(std::function<void()> callback)
+{
+    m_onTrackingLostCallback = callback;
+}
+void QuestNav::OnLowBattery(int thresholdPercent, std::function<void(int)> callback)
+{
+    m_lowBatteryThreshold = std::clamp(thresholdPercent, 0, 100);
+    m_onLowBatteryCallback = callback;
+}
+#ifdef __FRC_ROBORIO__
+void QuestNav::OnCommandSuccess(std::function<void(const questnav::protos::commands::ProtobufQuestNavCommandResponse &)> callback)
+{
+    m_onSuccessCallback = callback;
+}
+void QuestNav::OnCommandFailure(std::function<void(const questnav::protos::commands::ProtobufQuestNavCommandResponse &)> callback)
+{
+    m_onFailureCallback = callback;
+}
+#endif
 
 #ifdef __FRC_ROBORIO__
 

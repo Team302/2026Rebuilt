@@ -100,7 +100,7 @@
 | `RedHubElement` | rect | (11.3562,3.45) to (12.55,4.6438) | RED | -- |
 | `RedLaunchZone` | rect | (12.55,0.0) to (16.55,8.1) | RED | PREPARE TO LAUNCH |
 | `RedLeftBumpZone` | circle | cx=11.95, cy=2.54, r=0.70 | BOTH | OVER BUMP |
-| `RedLeftBumpZoneRect` | rect | (10.86,1.6) to (13.15,3.39) | BOTH | OVER BUMP |
+| `RedLeftBumpZoneRect` | rect | (10.57,1.41) to (13.45,3.51) | BOTH | OVER BUMP |
 | `RedLeftTrenchZone` | circle | cx=11.91, cy=0.66, r=0.40 | BOTH | -- |
 | `RedNZDeadZone` | rect | (5.21,3.59) to (11.33,4.55) | RED | -- |
 | `RedOutpostZone` | circle | cx=16.4, cy=7.4, r=0.50 | BOTH | TO OUTPOST |
