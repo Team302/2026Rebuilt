@@ -127,4 +127,9 @@ private:
     // --- Previous rumble state (avoid redundant SetRumble writes) ---
     bool m_prevRumbleState = false;
     bool m_turretEnabled = false;
+
+    // Netwoktable for PI-logger
+    std::shared_ptr<nt::NetworkTable> m_loggerTable = nullptr;
+
+    // is the pi on?
 };
