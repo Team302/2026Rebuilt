@@ -792,14 +792,14 @@ void Launcher::CalculateTargets()
 
 	if (m_turretEnabled)
 	{
-		m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, units::degree_t(m_cachedTurretPosition.value())); // passing degree back to rebuilt calculator, everything in launcher is in turns due to sensor to mech ratio, but phyiscal units is degrees
+		m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(units::degree_t(m_cachedTurretPosition.value())); // passing degree back to rebuilt calculator, everything in launcher is in turns due to sensor to mech ratio, but phyiscal units is degrees
 	}
 	else
 	{
 		m_targetTurretAngle = 180_deg;
-		m_chassis->SetTargetChassisRotation(m_targetCalculator->GetChassisTargetForLaunching(m_lookaheadTime));
+		m_chassis->SetTargetChassisRotation(m_targetCalculator->GetChassisTargetForLaunching());
 	}
-	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateMechanismDistanceToTarget(m_lookaheadTime);
+	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateMechanismDistanceToTarget();
 	if (AllianceZoneManager::GetInstance()->IsInAllianceZone())
 	{
 		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_scoringDistanceArray, m_scoringHoodAngleArray, distanceToTarget);

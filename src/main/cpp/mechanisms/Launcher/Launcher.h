@@ -228,8 +228,6 @@ private:
 	bool m_isHubActive = false;
 	bool m_startLaunching = false;
 
-	units::time::second_t m_lookaheadTime = 1.0_s;
-
 	units::angle::turn_t m_targetTurretAngle = 0.0_tr;
 	units::angular_velocity::revolutions_per_minute_t m_targetLauncherAngularVelocity = 0.0_rpm;
 	units::angle::turn_t m_targetHoodAngle = 0.0_tr;

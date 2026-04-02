@@ -17,6 +17,7 @@
 #include "teleopcontrol/TeleopControl.h"
 #include "utils/AngleUtils.h"
 #include "utils/FMSData.h"
+#include "utils/InterpolateUtils.h"
 #include "utils/PoseUtils.h"
 #include "utils/logging/debug/Logger.h"
 // Static string constants — constructed once, never copied on each call
@@ -157,7 +158,7 @@ frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
  * \param currentLauncherAngle Current launcher angle in degrees (for minimum-error optimization)
  * \return Optimal launcher angle in rotations (0-1.0 scale, where 1.0 = 360°)
  */
-units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::second_t lookAheadTime, units::angle::degree_t currentLauncherAngle)
+units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::angle::degree_t currentLauncherAngle)
 {
     ValidateAlliance();
     UpdateChassisSpeeds();
@@ -167,6 +168,8 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
     {
         return m_cachedLauncherTarget;
     }
+
+    auto lookAheadTime = GetLookAheadTime();
 
     m_field->UpdateObject(kCurrentTargetName, GetVirtualTargetPose(lookAheadTime));
 
@@ -209,11 +212,13 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
 
     return m_cachedLauncherTarget;
 }
-units::angle::degree_t RebuiltTargetCalculator::GetChassisTargetForLaunching(units::time::second_t lookAheadTime)
+units::angle::degree_t RebuiltTargetCalculator::GetChassisTargetForLaunching()
 {
     ValidateAlliance();
     UpdateChassisSpeeds();
     UpdateChassisPose();
+
+    auto lookAheadTime = GetLookAheadTime();
 
     m_field->UpdateObject(kCurrentTargetName, GetVirtualTargetPose(lookAheadTime));
 
@@ -335,6 +340,30 @@ void RebuiltTargetCalculator::UpdatePassingTargetsOnField()
 
     m_field->UpdateObject(kDepotPassingTargetName, depotPose);
     m_field->UpdateObject(kOutpostPassingTargetName, outpostPose);
+}
+
+/**
+ * Computes the lookahead time for virtual-target compensation based on distance to target.
+ *
+ * When the robot is stationary, returns 0 s so no virtual offset is applied.
+ * When moving, uses CalculateMechanismDistanceToTarget (with 0 s lookahead for the
+ * current real distance) and interpolates the flight time from the lookup table.
+ *
+ * \return Lookahead time in seconds
+ */
+units::time::second_t RebuiltTargetCalculator::GetLookAheadTime()
+{
+    auto velocity = GetChassisVelocity();
+    bool isMoving = units::math::abs(velocity.vx) >= 0.05_mps ||
+                    units::math::abs(velocity.vy) >= 0.05_mps;
+
+    if (!isMoving)
+    {
+        return 0_s;
+    }
+
+    units::length::inch_t distance = CalculateMechanismDistanceToTarget(0_s);
+    return InterpolateUtils::linearInterpolate(m_LookAheadDistances, m_LookAheadTimes, distance);
 }
 
 /**
