@@ -49,7 +49,16 @@ void DragonCANdle::Initialize(int canID, int stripSize, const std::string &canBu
     configs.LED.BrightnessScalar = 1.0;
     configs.LED.StripType = type;
     configs.CANdleFeatures.VBatOutputMode = signals::VBatOutputModeValue::On;
-    m_candle->GetConfigurator().Apply(configs);
+
+    ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
+    for (int i = 0; i < 5; ++i)
+    {
+        status = m_candle->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+        if (status.IsOK())
+            break;
+    }
+    if (!status.IsOK())
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_candle", "m_candle Status", status.GetName());
 
     m_externalCount = stripSize;
 
