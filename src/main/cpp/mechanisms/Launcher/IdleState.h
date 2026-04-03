@@ -40,6 +40,7 @@ namespace LauncherStates
 		void Exit() override;
 		bool AtTarget() override;
 		bool IsTransitionCondition(bool considerGamepadTransitions) override;
+		void AgitateSpindexer();
 
 	private:
 		Launcher *m_mechanism;
@@ -58,5 +59,5 @@ namespace LauncherStates
 		frc::Timer *m_Timer;
 		units::time::second_t m_launchTimer = 0.25_s;
 		bool m_minReached = false;
-		};
+	};
 }
