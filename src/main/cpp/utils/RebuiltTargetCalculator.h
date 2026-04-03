@@ -19,10 +19,12 @@
 #include "utils/DragonField.h"
 #include "utils/TargetCalculator.h"
 
+#include <array>
 #include <frc/DriverStation.h>
 #include <frc/geometry/Translation2d.h>
 #include <string>
 #include <units/length.h>
+#include <units/time.h>
 
 /**
  * \class RebuiltTargetCalculator
@@ -99,9 +101,9 @@ public:
      * \note Updates the field visualization with calculated launcher position
      * \see GetMechanismWorldPosition(), CalculateMechanismAngleToTarget()
      */
-    units::angle::turn_t GetLauncherTarget(units::time::second_t lookAheadTime, units::angle::degree_t currentLauncherAngle);
+    units::angle::turn_t GetLauncherTarget(units::angle::degree_t currentLauncherAngle);
 
-    units::angle::degree_t GetChassisTargetForLaunching(units::time::second_t lookAheadTime);
+    units::angle::degree_t GetChassisTargetForLaunching();
 
     /**
      * \brief Process controller input to adjust target positions
@@ -196,6 +198,26 @@ private:
      * \see ValidateAlliance()
      */
     void RefreshAllianceCache();
+
+    /**
+     * \brief Compute the lookahead time for virtual-target compensation based on distance to target.
+     *
+     * Returns 0 s when the robot is stationary (no virtual-target offset needed).
+     * When moving, interpolates flight time from a distance → time lookup table so that
+     * faster projectiles at longer ranges are correctly modeled without the caller
+     * needing to know or pass the value.
+     *
+     * \return Lookahead time in seconds (0 s when stationary)
+     */
+    units::time::second_t GetLookAheadTime();
+
+    // Distance (inches) → lookahead time (seconds) lookup table.
+    static constexpr std::array<units::length::inch_t, 13> m_LookAheadDistances{
+        46.1_in, 68.5_in, 87.6_in, 97.8_in, 110.3_in, 127.4_in, 149.3_in,
+        167.8_in, 183.3_in, 197.0_in, 238.7_in, 277.5_in, 314.9_in};
+    static constexpr std::array<units::time::second_t, 13> m_LookAheadTimes{
+        1.07_s, 1.01_s, 0.88_s, 0.92_s, 0.966_s, 0.90_s, 0.96_s,
+        0.97_s, 1.10_s, 1.20_s, 1.30_s, 1.40_s, 1.60_s};
 
     static RebuiltTargetCalculator *m_instance;
 
