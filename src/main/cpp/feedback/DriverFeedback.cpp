@@ -324,7 +324,7 @@ void DriverFeedback::UpdateDiagnosticLEDs()
     m_LEDStates->SetQuestStatus(questStatus);
     m_LEDStates->SetLimelightStatuses(backLeftLL);
 
-    // Add Data Logger Connection Status dataLoggerConnected = ...
+    // Read the data logger connection status from the logger NetworkTable "connected" entry.
     dataLoggerConnected = m_loggerTable->GetBoolean("connected", false);
 
     m_LEDStates->SetDataLoggerStatus(dataLoggerConnected);
