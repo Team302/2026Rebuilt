@@ -13,16 +13,33 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include "RobotContainer.h"
+#pragma once
+#include "state/StateMgr.h"
+#include <string>
 
-#include "chassis/SwerveContainer.h"
-#include "teleopcontrol/SweepLaneChanger.h"
-#include "vision/DragonVisionPoseEstimator.h"
-
-RobotContainer::RobotContainer()
+class SweepLaneChanger : public StateMgr
 {
-    // Initialize all of your commands and subsystems here
-    SwerveContainer::GetInstance();
-    new DragonVisionPoseEstimator();
-    SweepLaneChanger::GetInstance();
-}
+
+public:
+    void RunCurrentState() override;
+    static SweepLaneChanger *GetInstance();
+    int GetLane() const { return m_lane; }
+    int GetMaxLanes() const { return m_maxLanes; }
+
+private:
+    int m_lane = 0;
+    bool m_incrementLatch = false;
+    bool m_decrementLatch = false;
+    bool m_isIncrementPressed = false;
+    bool m_isDecrementPressed = false;
+
+    const std::string m_sweepLaneNT = "SweepLane";
+
+    static constexpr int m_minLanes = 0;
+    static constexpr int m_maxLanes = 3;
+
+    SweepLaneChanger();
+    ~SweepLaneChanger() = default;
+
+    static SweepLaneChanger *m_instance;
+};

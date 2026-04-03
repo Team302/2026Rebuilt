@@ -34,7 +34,7 @@
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
 #include "chassis/commands/season_specific_commands/DriveToTrench.h"
-#include "chassis/commands/season_specific_commands/SweepBehindBump.h"
+#include "chassis/commands/season_specific_commands/SweepBehindHub.h"
 
 //------------------------------------------------------------------
 /// @brief      Static method to create or return the singleton instance
@@ -68,7 +68,7 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
                                      m_driveToHub(std::make_unique<DriveToHub>(m_chassis)),
                                      m_driveToOutpost(std::make_unique<DriveToOutpost>(m_chassis)),
                                      m_driveToTower(std::make_unique<DriveToTower>(m_chassis)),
-                                     m_sweepBehindBump(std::make_unique<SweepBehindBump>(m_chassis)),
+                                     m_sweepBehindHub(std::make_unique<SweepBehindHub>(m_chassis)),
                                      m_driveAlongNearestWall(std::make_unique<DriveAlongNearestWall>(m_chassis)),
                                      m_driveToTrench(std::make_unique<DriveToTrench>(m_chassis))
 
@@ -152,7 +152,7 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     auto driveToHub = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_HUB);
     auto driveToOutpost = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_OUTPOST);
     auto driveToTower = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_TOWER);
-    auto sweepBehindHub = controller->GetCommandTrigger(TeleopControlFunctions::SWEEP_BEHIND_BUMP);
+    auto sweepBehindHub = controller->GetCommandTrigger(TeleopControlFunctions::SWEEP_BEHIND_HUB);
 
     // Drive to trench is on the same button as DriveAlongNearestWall, so comment this out.
     // leaving it here so it is easy if we change this mapping.
@@ -162,63 +162,83 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     // Uses DeferredProxy to check climb mode status at execution time
     driveOverBump.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                      {
-    if (!m_climbModeStatus) {
-        return frc2::ProxyCommand(m_driveOverBump.get()).ToPtr();
-    } else {
-        return frc2::cmd::None(); // TODO add drive to Tower for Climb mode
-    } }));
+        if (!m_climbModeStatus)
+        {
+            return frc2::ProxyCommand(m_driveOverBump.get()).ToPtr();
+        }
+        else
+        {
+            return frc2::cmd::None(); // TODO add drive to Tower for Climb mode
+        } }));
 
     // Drive Along Nearest Wall - Autonomous navigation along the nearest wall
     // Disabled during climb mode in favor of future climb navigation
     driveAlongNearestWall.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                              {
-    if (!m_climbModeStatus && !NeutralZoneManager::GetInstance()->IsInNeutralZone()) {
-        return frc2::ProxyCommand(m_driveAlongNearestWall.get()).ToPtr();
-    } else if (!m_climbModeStatus && NeutralZoneManager::GetInstance()->IsInNeutralZone()) {
-        return frc2::ProxyCommand(m_driveToTrench.get()).ToPtr();
-    } else {
-        return frc2::cmd::None(); // TODO add drive to Tower for Climb mode
-    } }));
+        if (!m_climbModeStatus && !NeutralZoneManager::GetInstance()->IsInNeutralZone())
+        {
+            return frc2::ProxyCommand(m_driveAlongNearestWall.get()).ToPtr();
+        }
+        else if (!m_climbModeStatus && NeutralZoneManager::GetInstance()->IsInNeutralZone())
+        {
+            return frc2::ProxyCommand(m_driveToTrench.get()).ToPtr();
+        }
+        else
+        {
+            return frc2::cmd::None(); // TODO add drive to Tower for Climb mode
+        } }));
 
     // Drive To Hub - Autonomous navigation to hub scoring location
     // Disabled during climb mode in favor of future climb navigation
     driveToHub.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                   {
-    if (!m_climbModeStatus) {
-                return frc2::ProxyCommand(m_driveToHub.get()).ToPtr();
+        if (!m_climbModeStatus)
+        {
+            return frc2::ProxyCommand(m_driveToHub.get()).ToPtr();
         }
-     else {
-        return frc2::cmd::None(); 
-    } }));
+        else
+        {
+            return frc2::cmd::None();
+        } }));
 
     sweepBehindHub.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                       {
-    if (!m_climbModeStatus) {
-            return frc2::ProxyCommand(m_sweepBehindBump.get()).ToPtr();
-        
-    } else {
-        return frc2::cmd::None(); 
-    } }));
+        if (!m_climbModeStatus)
+        {
+            return frc2::ProxyCommand(m_sweepBehindHub.get()).ToPtr();
+        }
+        else
+        {
+            return frc2::cmd::None();
+        } }));
     // Drive To Outpost - Autonomous navigation to outpost location
     // Disabled during climb mode in favor of future climb navigation
     driveToOutpost.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                       {
-    if (!m_climbModeStatus && AllianceZoneManager::GetInstance()->IsInAllianceZone()) {
-        return frc2::ProxyCommand(m_driveToOutpost.get()).ToPtr();
-    } else if (!m_climbModeStatus && AllianceZoneManager::GetInstance()->IsInOtherAllianceZone()) {
-        return frc2::ProxyCommand(m_driveToTrench.get()).ToPtr();
-    } else {
-        return frc2::cmd::None(); 
-    } }));
+        if (!m_climbModeStatus && AllianceZoneManager::GetInstance()->IsInAllianceZone())
+        {
+            return frc2::ProxyCommand(m_driveToOutpost.get()).ToPtr();
+        }
+        else if (!m_climbModeStatus && AllianceZoneManager::GetInstance()->IsInOtherAllianceZone())
+        {
+            return frc2::ProxyCommand(m_driveToTrench.get()).ToPtr();
+        }
+        else
+        {
+            return frc2::cmd::None();
+        } }));
 
     // drive To Tower
     driveToTower.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                     {
-    if (m_climbModeStatus) {
-        return frc2::ProxyCommand(m_driveToTower.get()).ToPtr();
-    } else {
-        return frc2::cmd::None();
-    } }));
+        if (m_climbModeStatus)
+        {
+            return frc2::ProxyCommand(m_driveToTower.get()).ToPtr();
+        }
+        else
+        {
+            return frc2::cmd::None();
+        } }));
 }
 
 //------------------------------------------------------------------

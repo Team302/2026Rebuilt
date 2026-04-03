@@ -289,7 +289,7 @@ private:
     //------------------------------------------------------------------
 
     /// @brief Proportional gain for X and Y translation controllers
-    double m_translationKP = 5.0;
+    double m_translationKP = 3.0;
 
     /// @brief Integral gain for X and Y translation controllers (disabled)
     double m_translationKI = 0.0;
