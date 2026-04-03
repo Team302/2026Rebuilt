@@ -128,6 +128,6 @@ private:
     bool m_prevRumbleState = false;
     bool m_turretEnabled = false;
 
-    // Netwoktable for PI-logger
+    // NetworkTable for Pi logger
     std::shared_ptr<nt::NetworkTable> m_loggerTable = nullptr;
 };
