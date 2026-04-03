@@ -87,6 +87,8 @@ public:
 
     // Theoretical free speed (m/s) at 12 V applied output;
     // This needs to be tuned to your individual robot
+
+    // notcharlie says: change the calc in pose utils to reflect this value
     static constexpr units::meters_per_second_t kSpeedAt12Volts = 5.12_mps;
 
 private:

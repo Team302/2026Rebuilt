@@ -92,6 +92,25 @@ public:
     static bool IsPoseAtOrigin(const frc::Pose2d &pose,
                                units::length::centimeter_t positionTolerance);
 
+    //-------------------------------------------------------------------
+    /// @brief      Checks if a pose is considered outside the playable field area
+    /// @param[in]  pose - Pose to check
+    /// @return     true if pose is outside all defined gameplay zones, false otherwise
+    /// @details    Determines if the pose's x and y coordinates fall outside the defined field boundaries (e.g. 0 to 54.1 ft in x, 0 to 26.5 ft in y).
+    ///             This can be used to detect if a pose estimate is invalid or if the robot has somehow left the field. The specific field boundaries can be adjusted based on the actual dimensions of the field being used.
+    //-------------------------------------------------------------------
+    static bool IsPoseOffField(const frc::Pose2d &pose);
+
+    //-------------------------------------------------------------------
+    /// @brief      Checks if the change between two poses is unreasonably large (potential "jump")
+    /// @param[in]  pose1 - First pose to compare
+    /// @param[in]  pose2 - Second pose to compare
+    /// @return     true if the distance between pose1 and pose2 exceeds a reasonable threshold, false otherwise
+    /// @details    Used to detect potential "jumps" in pose estimates that may indicate sensor errors or miscalculations.
+    ///             The threshold for what constitutes a "jump" can be defined based on the expected maximum speed of the robot and the time between pose updates. For example, if the robot cannot physically move more than 1 meter in 100 milliseconds, then a change greater than that could be considered a jump.
+    //-------------------------------------------------------------------
+    static bool IsPoseJumping(const frc::Pose2d &pose1, const frc::Pose2d &pose2);
+
     //------------------------------------------------------------------
     /// @brief      Determines which of two field elements is closest to a pose
     /// @param[in]  pose - Reference pose to measure from
@@ -117,4 +136,11 @@ public:
     ///             the caller already has a cached FieldConstants pointer.
     //------------------------------------------------------------------
     static FieldConstants::FIELD_ELEMENT GetClosestFieldElement(const frc::Pose2d &pose, FieldConstants::FIELD_ELEMENT firstElement, FieldConstants::FIELD_ELEMENT secondElement, FieldConstants *fieldConstants);
+
+    // max speed x loop time 20 ms x 1.5 (safety factor)
+    static constexpr units::length::meter_t m_kJumpThreshold = 0.1536_m;
+    static constexpr units::length::meter_t m_kFieldMaxX = 54.1_ft;
+    static constexpr units::length::meter_t m_kFieldMaxY = 26.5_ft;
+    static constexpr units::length::meter_t m_kFieldMinX = 0.0_ft;
+    static constexpr units::length::meter_t m_kFieldMinY = 0.0_ft;
 };
