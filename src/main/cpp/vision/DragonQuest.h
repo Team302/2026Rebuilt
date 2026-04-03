@@ -23,12 +23,12 @@
 #include "frc/geometry/Transform3d.h"
 #include "frc/smartdashboard/SendableChooser.h"
 #include "frc/smartdashboard/SmartDashboard.h"
+#include "networktables/NetworkTable.h"
 #include "state/IRobotStateChangeSubscriber.h"
 #include "utils/DragonField.h"
 #include "utils/logging/signals/DragonDataLogger.h"
 #include "vision/DragonVisionPoseEstimatorStruct.h"
 #include "vision/Questnavlib/QuestNav.h"
-#include "networktables/NetworkTable.h"
 
 class DragonQuest : public IRobotStateChangeSubscriber, public DragonDataLogger
 {
@@ -119,7 +119,19 @@ private:
 
     // logging strings
 
-    static constexpr std::string_view m_questHasResetPath = "/Chassis/QuestHasReset";
-    static constexpr std::string_view m_questIsEnabledPath = "/Chassis/IsQuestEnabled";
-    static constexpr std::string_view m_questPosePath = "/Chassis/QuestPose3d";
+    static constexpr std::string_view m_questHasResetPath = "/Quest/QuestHasReset";
+    static constexpr std::string_view m_questIsEnabledPath = "/Quest/IsQuestEnabled";
+    static constexpr std::string_view m_questPosePath = "/Quest/QuestPose3d";
+    static constexpr std::string_view m_questIsConnectedPath = "Quest/QuestConnected";
+    static constexpr std::string_view m_questIsGoofyPath = "Quest/QuestIsGoofy";
+    static constexpr std::string_view m_questBatteryPath = "Quest/QuestBatteryPercent";
+    static constexpr std::string_view m_questFrameCountPath = "Quest/QuestFrameCount";
+    static constexpr std::string_view m_questTrackingLostCountPath = "Quest/QuestTrackingLostCount";
+    static constexpr std::string_view m_questAppTimestampPath = "Quest/QuestAppTimestamp";
+
+    bool m_isQuestGoofy = false;
+
+    bool m_isConnected = false;
+
+    bool m_isTracking = false;
 };

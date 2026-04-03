@@ -15,10 +15,10 @@
 
 #include "utils/RebuiltTargetCalculator.h"
 #include "teleopcontrol/TeleopControl.h"
+#include "utils/AngleUtils.h"
 #include "utils/FMSData.h"
 #include "utils/PoseUtils.h"
 #include "utils/logging/debug/Logger.h"
-#include "utils/AngleUtils.h"
 // Static string constants — constructed once, never copied on each call
 /// Identifies the outpost passing target visualization object on the field
 const std::string RebuiltTargetCalculator::kOutpostPassingTargetName = "Outpost Passing Target Position";
@@ -163,10 +163,10 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
     UpdateChassisSpeeds();
     UpdateChassisPose();
 
-    if (GetChassisPose() == m_lastChassisPose)
-    {
-        return m_cachedLauncherTarget;
-    }
+    // if (GetChassisPose() == m_lastChassisPose) // MECH_TODO Need to verify that we aren't super jittery on the turret
+    // {
+    //     return m_cachedLauncherTarget;
+    // }
 
     m_field->UpdateObject(kCurrentTargetName, GetVirtualTargetPose(lookAheadTime));
 
@@ -177,7 +177,7 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
     units::degree_t robotRelativeGoal = relativeRot.Degrees();
 
     units::degree_t bestAngle = 0_deg;
-    bool hasFoundValidAngle = false;
+    m_hasFoundValidAngle = false;
     units::degree_t minError = 360_deg;
 
     for (int i = -1; i <= 1; i++)
@@ -191,12 +191,12 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
             {
                 bestAngle = potentialSetpoint;
                 minError = error;
-                hasFoundValidAngle = true;
+                m_hasFoundValidAngle = true;
             }
         }
     }
 
-    if (!hasFoundValidAngle)
+    if (!m_hasFoundValidAngle)
     {
         units::degree_t normalizedGoal = relativeRot.Degrees();
         if (normalizedGoal < 0_deg)
@@ -219,7 +219,6 @@ units::angle::degree_t RebuiltTargetCalculator::GetChassisTargetForLaunching(uni
 
     units::degree_t fieldAngleToTarget = CalculateMechanismAngleToTarget(lookAheadTime);
 
-    fieldAngleToTarget = (m_cachedAlliance == frc::DriverStation::kBlue) ? fieldAngleToTarget - 180.0_deg : fieldAngleToTarget;
     return AngleUtils::GetEquivAngle(fieldAngleToTarget);
 }
 

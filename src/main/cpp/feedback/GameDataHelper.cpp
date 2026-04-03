@@ -26,6 +26,7 @@ GameDataHelper::GameDataHelper()
     PeriodicLooper::GetInstance()->RegisterAll(this);
     frc::SmartDashboard::PutBoolean(m_hubActiveNT, false);
     frc::SmartDashboard::PutNumber(m_allianceShiftTime, 25.0);
+    frc::SmartDashboard::PutString(m_firstActiveHubNT, m_firstActiveHub);
 }
 
 void GameDataHelper::PublishHubActive(bool value)
@@ -120,6 +121,16 @@ void GameDataHelper::RunCurrentState()
             timeToNextShift = matchTime - shiftThresholds[currentShift];
         }
 
+        if (gameData == "R" && m_firstActiveHub == "Undecided")
+        {
+            m_firstActiveHub = "Blue";
+            frc::SmartDashboard::PutString(m_firstActiveHubNT, m_firstActiveHub);
+        }
+        else if (gameData == "B" && m_firstActiveHub == "Undecided")
+        {
+            m_firstActiveHub = "Red";
+            frc::SmartDashboard::PutString(m_firstActiveHubNT, m_firstActiveHub);
+        }
         frc::SmartDashboard::PutNumber(m_allianceShiftTime, timeToNextShift.value());
         PublishShiftChangeIn5seconds(timeToNextShift <= 5.0_s && timeToNextShift > 0_s);
         PublishStartLaunching(timeToNextShift <= 1.5_s && timeToNextShift > 0_s);

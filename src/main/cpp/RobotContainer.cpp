@@ -16,11 +16,13 @@
 #include "RobotContainer.h"
 
 #include "chassis/SwerveContainer.h"
+#include "teleopcontrol/SweepLaneChanger.h"
 #include "vision/DragonVisionPoseEstimator.h"
 
 RobotContainer::RobotContainer()
 {
     // Initialize all of your commands and subsystems here
-    m_swervecontainer = SwerveContainer::GetInstance();
-    m_visionPoseEstimator = new DragonVisionPoseEstimator();
+    SwerveContainer::GetInstance();
+    new DragonVisionPoseEstimator();
+    SweepLaneChanger::GetInstance();
 }

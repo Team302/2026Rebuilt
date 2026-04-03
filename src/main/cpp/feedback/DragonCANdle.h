@@ -20,9 +20,9 @@
 
 #include <ctre/phoenix6/CANdle.hpp>
 
+#include <frc/AddressableLED.h>
 #include <frc/DriverStation.h>
 #include <frc/Timer.h>
-#include <frc/AddressableLED.h>
 #include <frc/simulation/AddressableLEDSim.h>
 #include <frc/util/Color.h>
 
@@ -46,7 +46,7 @@ public:
 
 	static DragonCANdle *GetInstance();
 
-	void Initialize(int canID, int stripSize, const std::string &canBus = "rio", StripTypeValue type = StripTypeValue::GRB);
+	void Initialize(int canID, int stripSize, const std::string &canBus = "rio", StripTypeValue type = StripTypeValue::RGB);
 	void Periodic();
 
 	// ===== Animation Control =====
@@ -130,4 +130,7 @@ private:
 	AnimationMode m_prevAnimMode{AnimationMode::OFF};
 	frc::Color m_prevPrimaryColor{frc::Color::kGreen};
 	frc::Color m_prevSecondaryColor{frc::Color::kBlack};
+
+	// is this the first run of periodic? Used to force initial LED state setup
+	bool m_firstRun{true};
 };

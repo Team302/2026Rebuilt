@@ -121,6 +121,7 @@ public:
      * \note Updates field visualization via UpdatePassingTargetsOnField()
      */
     void UpdateTargetOffset();
+    bool IsValidTurretAngle() { return m_hasFoundValidAngle; }
 
 private:
     /**
@@ -244,10 +245,10 @@ private:
     /// @{
 
     /// Minimum launcher angle in degrees (soft limit, angles below this are clamped)
-    static constexpr units::degree_t m_minLauncherAngle = 91_deg;
+    static constexpr units::degree_t m_minLauncherAngle = 90_deg;
 
     /// Maximum launcher angle in degrees (soft limit, angles above this are clamped)
-    static constexpr units::degree_t m_maxLauncherAngle = 267_deg;
+    static constexpr units::degree_t m_maxLauncherAngle = 265_deg;
 
     /// @}
 
@@ -340,6 +341,8 @@ private:
 
     /// Previous state of right button (for detecting rising edge)
     bool m_prevRightPressed = false;
+
+    bool m_hasFoundValidAngle = false;
 
     /// @}
 

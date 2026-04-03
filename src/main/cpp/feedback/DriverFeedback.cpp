@@ -113,20 +113,23 @@ void DriverFeedback::NotifyStateUpdate(RobotStateChanges::StateChange change, bo
 ///        m_diagnosticUpdateInterval loops to reduce CAN bus and network overhead.
 void DriverFeedback::UpdateFeedback()
 {
-    UpdateLEDStates();
-
-    if (DriverStation::IsDisabled())
+    if (m_LEDStates != nullptr)
     {
-        if (++m_diagnosticLoopCounter >= m_diagnosticUpdateInterval)
+        UpdateLEDStates();
+
+        if (DriverStation::IsDisabled())
         {
-            m_diagnosticLoopCounter = 0;
-            UpdateDiagnosticLEDs();
+            if (++m_diagnosticLoopCounter >= m_diagnosticUpdateInterval)
+            {
+                m_diagnosticLoopCounter = 0;
+                UpdateDiagnosticLEDs();
+            }
         }
+        m_LEDStates->Periodic();
     }
 
     UpdateRumble();
     CheckControllers();
-    m_LEDStates->Periodic();
 }
 
 /// @brief Activates or deactivates controller rumble on both controllers.
@@ -315,10 +318,9 @@ void DriverFeedback::UpdateDiagnosticLEDs()
         backLeftLL = limelightRunning[DragonVision::kBackLeftLimelightIndex];
 
         questStatus = m_dragonVision->HealthCheckQuest();
-
-        m_LEDStates->SetQuestStatus(questStatus);
-        m_LEDStates->SetLimelightStatuses(backLeftLL);
     }
+    m_LEDStates->SetQuestStatus(questStatus);
+    m_LEDStates->SetLimelightStatuses(backLeftLL);
 
     // Add Data Logger Connection Status dataLoggerConnected = ...
     m_LEDStates->SetDataLoggerStatus(dataLoggerConnected);

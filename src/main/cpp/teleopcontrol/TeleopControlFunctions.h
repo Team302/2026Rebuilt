@@ -48,10 +48,13 @@ public:
         DRIVE_TO_HUB,
         DRIVE_TO_OUTPOST,
         DRIVE_TO_TOWER,
-        SWEEP_BEHIND_BUMP,
+        SWEEP_BEHIND_HUB,
+        SWEEP_BEHIND_HUB_INCREMENT,
+        SWEEP_BEHIND_HUB_DECREMENT,
         DRIVE_TO_DEPOT,
         DRIVE_TO_FUEL,
         AUTO_DEFEND,
+        DRIVE_TO_TRENCH,
 
         // Mechanisms specific
         // Intake

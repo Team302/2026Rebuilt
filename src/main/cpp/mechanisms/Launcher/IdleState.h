@@ -16,11 +16,11 @@
 // Generated on Thursday, January 22, 2026 11:43:04 PM
 
 #pragma once
-#include <string>
 #include "frc/Timer.h"
+#include <string>
 
-#include "state/State.h"
 #include "mechanisms/Launcher/Launcher.h"
+#include "state/State.h"
 
 using namespace std;
 
@@ -46,7 +46,7 @@ namespace LauncherStates
 		void InitCompBot302();
 		RobotIdentifier m_RobotId;
 
-		const double m_launcherTarget = double(0.2);
+		const units::angular_velocity::turns_per_second_t m_launcherTarget = units::angular_velocity::turns_per_second_t(12.5);
 		const units::angle::turn_t m_hoodTarget = units::angle::turn_t(0);
 		const double m_transferTarget = double(0);
 		const units::angle::turn_t m_turretTarget = units::angle::turn_t(0);
