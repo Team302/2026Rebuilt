@@ -18,6 +18,7 @@
 #include <memory>
 
 #include "chassis/commands/TrajectoryDrive.h"
+#include "chassis/commands/season_specific_commands/AutoDefend.h"
 #include "chassis/commands/season_specific_commands/DriveAlongNearestWall.h"
 #include "chassis/commands/season_specific_commands/DriveOverBump.h"
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"

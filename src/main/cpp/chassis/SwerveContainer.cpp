@@ -70,11 +70,10 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
                                      m_driveToHub(std::make_unique<DriveToHub>(m_chassis)),
                                      m_driveToOutpost(std::make_unique<DriveToOutpost>(m_chassis)),
                                      m_driveToTower(std::make_unique<DriveToTower>(m_chassis)),
-                                     m_sweepBehindBump(std::make_unique<SweepBehindBump>(m_chassis)),
+                                     m_sweepBehindHub(std::make_unique<SweepBehindHub>(m_chassis)),
                                      m_driveAlongNearestWall(std::make_unique<DriveAlongNearestWall>(m_chassis)),
                                      m_driveToFuel(std::make_unique<DriveToFuel>(m_chassis)),
-                                     m_autoDefend(std::make_unique<AutoDefend>(m_chassis))
-                                     m_sweepBehindHub(std::make_unique<SweepBehindHub>(m_chassis)),
+                                     m_autoDefend(std::make_unique<AutoDefend>(m_chassis)),
                                      m_driveToTrench(std::make_unique<DriveToTrench>(m_chassis))
 
 {
