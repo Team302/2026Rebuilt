@@ -130,6 +130,4 @@ private:
 
     // Netwoktable for PI-logger
     std::shared_ptr<nt::NetworkTable> m_loggerTable = nullptr;
-
-    // is the pi on?
 };
