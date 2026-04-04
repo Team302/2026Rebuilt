@@ -55,9 +55,9 @@ namespace LauncherStates
 		const double m_spindexerTarget = double(0);
 		units::angle::degree_t m_minSpindexerTarget;
 		units::angle::degree_t m_maxSpindexerTarget;
-		units::angle::degree_t m_spindexerTargetAng = 30_deg;
+		const units::angle::degree_t m_spindexerTargetAng = 30_deg;
 		frc::Timer *m_Timer;
-		units::time::second_t m_launchTimer = 0.25_s;
+		const units::time::second_t m_launchTimer = 0.25_s;
 		bool m_minReached = false;
 	};
 }
