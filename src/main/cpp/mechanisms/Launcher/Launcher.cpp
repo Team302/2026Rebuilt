@@ -495,13 +495,13 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
-	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::turns_per_second_t(220);
-	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(400);
+	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::turns_per_second_t(1000);
+	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(2000);
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 0.672080457282649604817;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.1344160914565299209634;
 	// configs.ExternalFeedback.FeedbackRemoteSensorID = 6;
 	// configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RemoteCANcoder;
 	// configs.ExternalFeedback.SensorToMechanismRatio = 7.251952;
@@ -665,7 +665,7 @@ void Launcher::RefreshCachedMotorData()
 {
 	m_cachedLauncherVelocity = m_launcher->GetVelocity().GetValue();
 	m_cachedHoodPosition = m_hood->GetPosition().GetValue();
-	m_cachedTurretPosition = m_turretEnabled ? m_turret->GetPosition().GetValue() : 180_tr;
+	m_cachedTurretPosition = m_turretEnabled ? units::angle::degree_t(m_turret->GetPosition().GetValueAsDouble()) : 180.0_deg;
 	m_cachedLauncherCurrent = m_launcher->GetStatorCurrent().GetValue();
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed", units::angular_velocity::revolutions_per_minute_t(m_cachedLauncherVelocity).value());
@@ -792,7 +792,7 @@ void Launcher::CalculateTargets()
 
 	if (m_turretEnabled)
 	{
-		m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(units::degree_t(m_cachedTurretPosition.value())); // passing degree back to rebuilt calculator, everything in launcher is in turns due to sensor to mech ratio, but phyiscal units is degrees
+		m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_cachedTurretPosition);
 	}
 	else
 	{
@@ -958,5 +958,5 @@ void Launcher::UpdateCachedLoggingValues()
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_cachedHoodError", m_cachedHoodError);
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_cachedLauncherSpeedError", m_cachedLauncherSpeedError);
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_cachedinLaunchzone", m_cachedinLaunchzone);
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_targetTurretAngle", m_targetTurretAngle.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_targetTurretAngle", m_cachedTurretAtTarget);
 }

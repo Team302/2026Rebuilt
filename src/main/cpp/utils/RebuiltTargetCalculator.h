@@ -101,7 +101,7 @@ public:
      * \note Updates the field visualization with calculated launcher position
      * \see GetMechanismWorldPosition(), CalculateMechanismAngleToTarget()
      */
-    units::angle::turn_t GetLauncherTarget(units::angle::degree_t currentLauncherAngle);
+    units::angle::degree_t GetLauncherTarget(units::angle::degree_t currentLauncherAngle);
 
     units::angle::degree_t GetChassisTargetForLaunching();
 

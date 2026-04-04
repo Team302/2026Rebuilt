@@ -105,10 +105,11 @@ public:
 		m_hoodPositionDegreesHood.Position = position;
 		m_hoodActiveTarget = &m_hoodPositionDegreesHood.WithSlot(0);
 	}
-	void UpdateTargetTurretPositionDegreesTurret(units::angle::turn_t position)
+	void UpdateTargetTurretPositionDegreesTurret(units::angle::degree_t position)
 	{
-		position = std::clamp(position, m_minTurretAngle, m_maxTurretAngle);
-		m_turretPositionDegreesTurret.Position = position;
+		units::angle::turn_t positionTurn = units::angle::turn_t(position.value()); // Turns = Degrees from sensor to mech ratio, but physical units are degrees, but motor controller is in turns, so convert to turns for clamping and motor controller output, but keep target in degrees for target calculator and logging
+		positionTurn = std::clamp(positionTurn, m_minTurretAngle, m_maxTurretAngle);
+		m_turretPositionDegreesTurret.Position = positionTurn;
 		m_turretActiveTarget = &m_turretPositionDegreesTurret.WithSlot(0);
 	}
 	void UpdateTargetLauncherVelocityRPS(units::angular_velocity::turns_per_second_t velocity)
@@ -228,14 +229,14 @@ private:
 	bool m_isHubActive = false;
 	bool m_startLaunching = false;
 
-	units::angle::turn_t m_targetTurretAngle = 0.0_tr;
+	units::angle::degree_t m_targetTurretAngle = 90.0_deg;
 	units::angular_velocity::revolutions_per_minute_t m_targetLauncherAngularVelocity = 0.0_rpm;
 	units::angle::turn_t m_targetHoodAngle = 0.0_tr;
 	units::angle::turn_t m_minHoodAngle = 0.0_tr;
 	units::angle::turn_t m_maxHoodAngle = 30.0_tr;
 	units::angle::turn_t m_minTurretAngle = 87_tr;
 	units::angle::turn_t m_maxTurretAngle = 266.5_tr;
-	units::angle::turn_t m_turretAngleThreshold = 5.0_tr;
+	units::angle::degree_t m_turretAngleThreshold = 5.0_deg;
 	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 150.0_rpm;
 	units::angle::turn_t m_hoodAngleThreshold = 0.5_tr;
 	units::velocity::meters_per_second_t m_chassisSpeedThreshold = 3.0_mps;
@@ -251,20 +252,20 @@ private:
 
 	// All values in turns are actually Degree's
 	// MECH_TODO: Need to verify values after 116 inches, may need to add more points on both sides
-	std::array<units::length::inch_t, 11> m_scoringDistanceArray = {50.0_in, 60.009_in, 72.15_in, 80.5_in, 90.57_in, 99.6_in, 116_in, 125_in, 140_in, 155_in, 170_in};
-	std::array<units::angle::turn_t, 11> m_scoringHoodAngleArray = {0.0_tr, 6.0_tr, 8.5_tr, 8.0_tr, 11.8_tr, 14.84_tr, 17.8_tr, 19.85_tr, 22.436_tr, 24.644_tr, 26.474_tr};
-	std::array<units::angular_velocity::revolutions_per_minute_t, 11> m_scoringLauncherVelocityArray = {2000.0_rpm, 2050.0_rpm, 2050.0_rpm, 2100.0_rpm, 2200.0_rpm, 2200.0_rpm, 2350.0_rpm, 2427.875_rpm, 2580.56_rpm, 2756.015_rpm, 2954.24_rpm};
+	static constexpr std::array<units::length::inch_t, 11> m_scoringDistanceArray = {50.0_in, 60.009_in, 72.15_in, 80.5_in, 90.57_in, 99.6_in, 116_in, 125_in, 140_in, 155_in, 170_in};
+	static constexpr std::array<units::angle::turn_t, 11> m_scoringHoodAngleArray = {0.0_tr, 6.0_tr, 8.5_tr, 8.0_tr, 11.8_tr, 14.84_tr, 17.8_tr, 19.85_tr, 22.436_tr, 24.644_tr, 26.474_tr};
+	static constexpr std::array<units::angular_velocity::revolutions_per_minute_t, 11> m_scoringLauncherVelocityArray = {2000.0_rpm, 2050.0_rpm, 2050.0_rpm, 2100.0_rpm, 2200.0_rpm, 2200.0_rpm, 2350.0_rpm, 2427.875_rpm, 2580.56_rpm, 2756.015_rpm, 2954.24_rpm};
 
-	std::array<units::length::foot_t, 7> m_passingDistanceArray = {10.0_ft, 16.66666667_ft, 20.0_ft, 23.08333333_ft, 26.33333333_ft, 30.0_ft, 42.33333333_ft};
-	std::array<units::angle::turn_t, 7> m_passingHoodAngleArray = {23.5_tr, 23.5_tr, 23.5_tr, 29.7_tr, 30.0_tr, 30.0_tr, 30.0_tr};
-	std::array<units::angular_velocity::revolutions_per_minute_t, 7> m_passingLauncherVelocityArray = {1900.0_rpm, 2150.0_rpm, 2450.0_rpm, 2500.0_rpm, 2900.0_rpm, 3200.0_rpm, 3600.0_rpm};
+	static constexpr std::array<units::length::foot_t, 7> m_passingDistanceArray = {10.0_ft, 16.66666667_ft, 20.0_ft, 23.08333333_ft, 26.33333333_ft, 30.0_ft, 42.33333333_ft};
+	static constexpr std::array<units::angle::turn_t, 7> m_passingHoodAngleArray = {23.5_tr, 23.5_tr, 23.5_tr, 29.7_tr, 30.0_tr, 30.0_tr, 30.0_tr};
+	static constexpr std::array<units::angular_velocity::revolutions_per_minute_t, 7> m_passingLauncherVelocityArray = {1900.0_rpm, 2150.0_rpm, 2450.0_rpm, 2500.0_rpm, 2900.0_rpm, 3200.0_rpm, 3600.0_rpm};
 	// All values in turns are actually Degree's
 
 	// Cached motor status signals for performance optimization
 	// These are refreshed once per loop in RunCommonTasks() to avoid multiple CAN bus queries
 	units::angular_velocity::turns_per_second_t m_cachedLauncherVelocity = 0.0_tps;
 	units::angle::turn_t m_cachedHoodPosition = 0.0_tr;
-	units::angle::turn_t m_cachedTurretPosition = 0.0_tr;
+	units::angle::degree_t m_cachedTurretPosition = 0.0_deg;
 	units::current::ampere_t m_cachedLauncherCurrent = 0.0_A;
 
 	units::angle::turn_t m_passingHoodTargetAngle = 25.0_tr;

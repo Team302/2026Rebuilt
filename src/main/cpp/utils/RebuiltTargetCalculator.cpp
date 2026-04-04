@@ -158,7 +158,7 @@ frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
  * \param currentLauncherAngle Current launcher angle in degrees (for minimum-error optimization)
  * \return Optimal launcher angle in rotations (0-1.0 scale, where 1.0 = 360°)
  */
-units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::angle::degree_t currentLauncherAngle)
+units::angle::degree_t RebuiltTargetCalculator::GetLauncherTarget(units::angle::degree_t currentLauncherAngle)
 {
     ValidateAlliance();
     UpdateChassisSpeeds();
@@ -208,7 +208,7 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::angle::de
     }
 
     m_field->UpdateObject(kLauncherPositionName, frc::Pose2d(GetMechanismWorldPosition(), robotPose.Rotation() + frc::Rotation2d(bestAngle)));
-    m_cachedLauncherTarget = units::angle::turn_t(bestAngle.value());
+    m_cachedLauncherTarget = bestAngle;
 
     return m_cachedLauncherTarget;
 }
