@@ -18,30 +18,32 @@
 #include <string>
 
 // FRC Includes
-#include <networktables/NetworkTableInstance.h>
 #include <frc/Timer.h>
+#include <networktables/NetworkTableInstance.h>
 
 #include "Climber.h"
-#include "utils/logging/debug/Logger.h"
-#include "utils/PeriodicLooper.h"
+#include "RobotIdentifier.h"
+#include "feedback/OrchestraManager.h"
 #include "state/RobotState.h"
 #include "utils/DragonPower.h"
+#include "utils/PeriodicLooper.h"
+#include "utils/logging/debug/Logger.h"
 
 #include "ctre/phoenix6/TalonFX.hpp"
-#include "ctre/phoenix6/controls/Follower.hpp"
 #include "ctre/phoenix6/configs/Configuration.hpp"
+#include "ctre/phoenix6/controls/Follower.hpp"
 #include "frc/Solenoid.h"
+#include "mechanisms/Climber/AutonL1ClimbState.h"
+#include "mechanisms/Climber/ExitState.h"
+#include "mechanisms/Climber/L1ClimbState.h"
+#include "mechanisms/Climber/L3ClimbState.h"
+#include "mechanisms/Climber/OffState.h"
+#include "mechanisms/Climber/PrepareToClimbState.h"
+#include "mechanisms/Climber/WantToClimbState.h"
+#include "teleopcontrol/TeleopControl.h"
 #include <ctre/phoenix6/CANcoder.hpp>
 #include <ctre/phoenix6/configs/Configurator.hpp>
 #include <ctre/phoenix6/signals/SpnEnums.hpp>
-#include "mechanisms/Climber/OffState.h"
-#include "mechanisms/Climber/WantToClimbState.h"
-#include "mechanisms/Climber/PrepareToClimbState.h"
-#include "mechanisms/Climber/L1ClimbState.h"
-#include "mechanisms/Climber/L3ClimbState.h"
-#include "mechanisms/Climber/ExitState.h"
-#include "mechanisms/Climber/AutonL1ClimbState.h"
-#include "teleopcontrol/TeleopControl.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
 using ctre::phoenix6::configs::Slot1Configs;
@@ -135,6 +137,10 @@ void Climber::CreateCompBot302()
 	m_ntName = "Climber";
 	m_climber = new ctre::phoenix6::hardware::TalonFX(19, ctre::phoenix6::CANBus("canivore"));
 	m_CANdi = new ctre::phoenix6::hardware::CANdi(2, ctre::phoenix6::CANBus("canivore"));
+
+	m_orchestra = new ctre::phoenix6::Orchestra();
+	m_orchestra->AddInstrument(*m_climber);
+	OrchestraManager::GetInstance()->Register(this);
 
 	m_positionDegree = new ControlData(
 		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
@@ -244,6 +250,29 @@ void Climber::RunCommonTasks()
 	Cyclic();
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Climber", "Current State", GetCurrentStateName());
+}
+
+void Climber::LoadMusic(const std::string &filePath)
+{
+	if (m_orchestra)
+	{
+		m_orchestra->LoadMusic(filePath.c_str());
+	}
+}
+void Climber::StartMusic()
+{
+	if (m_orchestra)
+	{
+		m_orchestra->Play();
+	}
+}
+
+void Climber::StopMusic()
+{
+	if (m_orchestra)
+	{
+		m_orchestra->Stop();
+	}
 }
 
 /// @brief  Set the control constants (e.g. PIDF values).

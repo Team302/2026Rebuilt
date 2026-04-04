@@ -22,6 +22,8 @@
 #include "networktables/NetworkTableInstance.h"
 
 #include "Intake.h"
+#include "RobotIdentifier.h"
+#include "feedback/OrchestraManager.h"
 #include "state/RobotState.h"
 #include "utils/DragonPower.h"
 #include "utils/PeriodicLooper.h"
@@ -134,8 +136,13 @@ void Intake::CreateCompBot302()
 {
 	m_ntName = "Intake";
 	m_intake = new ctre::phoenix6::hardware::TalonFX(16, ctre::phoenix6::CANBus("canivore"));
-	m_extender = new ctre::phoenix6::hardware::TalonFXS(11, ctre::phoenix6::CANBus("canivore"));
-	m_intakeCANdi = new ctre::phoenix6::hardware::CANdi(11, ctre::phoenix6::CANBus("canivore"));
+	m_extender = new ctre::phoenix6::hardware::TalonFXS(17, ctre::phoenix6::CANBus("canivore"));
+	m_intakeCANdi = new ctre::phoenix6::hardware::CANdi(7, ctre::phoenix6::CANBus("canivore"));
+
+	m_orchestra = new ctre::phoenix6::Orchestra();
+	m_orchestra->AddInstrument(*m_intake);
+	m_orchestra->AddInstrument(*m_extender);
+	OrchestraManager::GetInstance()->Register(this);
 
 	m_percentOut = new ControlData(
 		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
@@ -382,11 +389,35 @@ void Intake::RunCommonTasks()
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentStateName());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "IsIntakeIn", IsIntakeIn());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Intake Position", m_cachedExtenderPositionDeg.value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Extender Target", m_extenderPositionDeg.Position.value());
 }
-/// @brief  Set the control constants (e.g. PIDF values).
-/// @param [in] ControlData*                                   pid:  the control constants
-/// @return void
+
+void Intake::LoadMusic(const std::string &filePath)
+{
+	if (m_orchestra)
+	{
+		m_orchestra->LoadMusic(filePath.c_str());
+	}
+}
+void Intake::StartMusic()
+{
+	if (m_orchestra)
+	{
+		m_orchestra->Play();
+	}
+}
+
+void Intake::StopMusic()
+{
+	if (m_orchestra)
+	{
+		m_orchestra->Stop();
+	}
+}
+
+/* void Intake::InitilaizeIntake()
+{
+		SetCurrentState(STATE_OFF, true);
+} */
 void Intake::SetControlConstants(RobotElementNames::MOTOR_CONTROLLER_USAGE identifier, int slot, ControlData pid)
 {
 }

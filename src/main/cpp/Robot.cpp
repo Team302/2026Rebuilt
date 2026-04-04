@@ -84,6 +84,7 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "feedback/DriverFeedback.h"
 #include "feedback/GameDataHelper.h"
+#include "feedback/OrchestraManager.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/DriverStation.h"
 #include "frc/RobotController.h"
@@ -120,6 +121,7 @@ Robot::Robot()
 /// updates RobotState, and refreshes drive-team feedback (vision, field position, HUD).
 void Robot::RobotPeriodic()
 {
+    OrchestraManager::GetInstance()->StopMusic();
     frc2::CommandScheduler::GetInstance().Run();
 
     m_isFMSAttached = frc::DriverStation::IsFMSAttached();
@@ -149,6 +151,8 @@ void Robot::DisabledPeriodic()
 
     m_field->UpdateEnabledStates();
     FMSData::UpdateAllianceColor();
+    OrchestraManager::GetInstance()->LoadMusic("/home/lvuser/music/ride-of-the-valkries.chrp");
+    OrchestraManager::GetInstance()->StartMusic();
 }
 
 /// @brief Called once when autonomous mode begins.

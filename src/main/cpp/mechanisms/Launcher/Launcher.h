@@ -30,19 +30,28 @@
 #include "mechanisms/base/BaseMech.h"
 #include "mechanisms/controllers/ControlData.h"
 #include "state/IRobotStateChangeSubscriber.h"
+#include "state/RobotStateChangeBroker.h"
 #include "state/RobotStateChanges.h"
 #include "state/StateMgr.h"
 
 #include "RobotIdentifier.h"
-#include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "mechanisms/configs/MechanismConfigMgr.h"
 #include "mechanisms/configs/RobotElementNames.h"
 #include "utils/logging/signals/DragonDataLogger.h"
 
-// Includes after generation
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "feedback/IOrchestraPlayable.h"
 #include "utils/RebuiltTargetCalculator.h"
 
-class Launcher : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger
+namespace ctre
+{
+	namespace phoenix6
+	{
+		class Orchestra;
+	}
+}
+
+class Launcher : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger, public IOrchestraPlayable
 {
 public:
 	enum STATE_NAMES
@@ -179,6 +188,11 @@ public:
 		m_launchCurrentTimer.Reset();
 	}
 
+	// IOrchestraPlayable Overrides
+	void LoadMusic(const std::string &filePath) override;
+	void StartMusic() override;
+	void StopMusic() override;
+
 protected:
 	RobotIdentifier m_activeRobotId;
 	std::string m_ntName;
@@ -196,6 +210,8 @@ private:
 	ctre::phoenix6::hardware::TalonFX *m_spindexer;
 	ctre::phoenix6::hardware::CANdi *m_hoodCANdi;
 	ctre::phoenix6::hardware::CANdi *m_turretCANdi;
+	ctre::phoenix6::Orchestra *m_orchestra;
+
 	// ctre::phoenix6::hardware::CANcoder *m_turretAngleSensor;
 
 	ControlData *m_percentOut;

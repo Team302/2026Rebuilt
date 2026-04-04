@@ -39,8 +39,10 @@
 #include "state/StateMgr.h"
 
 #include "RobotIdentifier.h"
+#include "feedback/IOrchestraPlayable.h"
+#include <ctre/phoenix6/Orchestra.hpp>
 
-class Intake : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger
+class Intake : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger, public IOrchestraPlayable
 {
 public:
 	enum STATE_NAMES
@@ -120,7 +122,13 @@ public:
 	bool IsInClimbMode() const { return m_isInClimbMode; }
 	bool IsLaunching() const { return m_isLaunching; }
 	bool IsIntakeIn() const { return (m_extender->GetReverseLimit(false).GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround); }
+	bool IsClearHop() const { return m_clearHop; }
 	units::angle::turn_t GetCahcedExtenderPositionDegrees() { return m_cachedExtenderPositionDeg; };
+
+	// IOrchestraPlayable Overrides
+	void LoadMusic(const std::string &filePath) override;
+	void StartMusic() override;
+	void StopMusic() override;
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -129,11 +137,10 @@ protected:
 
 private:
 	std::unordered_map<std::string, STATE_NAMES> m_stateMap;
-
 	ctre::phoenix6::hardware::TalonFX *m_intake;
 	ctre::phoenix6::hardware::TalonFXS *m_extender;
 	ctre::phoenix6::hardware::CANdi *m_intakeCANdi;
-
+	ctre::phoenix6::Orchestra *m_orchestra;
 	ControlData *m_percentOut;
 	ControlData *m_positionDegUp;
 	ControlData *m_positionDegDown;
@@ -150,6 +157,7 @@ private:
 	bool m_isInClimbMode = false;
 	bool m_isLaunching = false;
 	bool m_prevIntakeSwitchState = false;
+	bool m_clearHop = false;
 
 	units::angle::turn_t m_intakeRetractedPositionTarget{80.0};
 	units::angle::turn_t m_intakeExtendedPositionTarget{0.0};

@@ -22,6 +22,8 @@
 #include <networktables/NetworkTableInstance.h>
 
 #include "Launcher.h"
+#include "RobotIdentifier.h"
+#include "feedback/OrchestraManager.h"
 #include "state/RobotState.h"
 #include "utils/DragonPower.h"
 #include "utils/PeriodicLooper.h"
@@ -169,6 +171,15 @@ void Launcher::CreateCompBot302()
 	m_transfer = new ctre::phoenix6::hardware::TalonFX(4, ctre::phoenix6::CANBus("canivore"));
 	m_indexer = new ctre::phoenix6::hardware::TalonFX(5, ctre::phoenix6::CANBus("canivore"));
 	m_spindexer = new ctre::phoenix6::hardware::TalonFX(18, ctre::phoenix6::CANBus("canivore"));
+
+	m_orchestra = new ctre::phoenix6::Orchestra();
+	m_orchestra->AddInstrument(*m_launcher);
+	m_orchestra->AddInstrument(*m_hood);
+	m_orchestra->AddInstrument(*m_transfer);
+	m_orchestra->AddInstrument(*m_indexer);
+	m_orchestra->AddInstrument(*m_spindexer);
+	OrchestraManager::GetInstance()->Register(this);
+
 	m_hoodCANdi = new ctre::phoenix6::hardware::CANdi(7, ctre::phoenix6::CANBus("canivore"));
 	m_turretCANdi = new ctre::phoenix6::hardware::CANdi(6, ctre::phoenix6::CANBus("canivore"));
 	m_turret = m_turretEnabled ? new ctre::phoenix6::hardware::TalonFXS(6, ctre::phoenix6::CANBus("canivore")) : nullptr;
@@ -754,7 +765,30 @@ void Launcher::Update()
 
 void Launcher::Cyclic()
 {
-	Update();
+}
+
+void Launcher::LoadMusic(const std::string &filePath)
+{
+	if (m_orchestra)
+	{
+		m_orchestra->LoadMusic(filePath.c_str());
+	}
+}
+
+void Launcher::StartMusic()
+{
+	if (m_orchestra)
+	{
+		m_orchestra->Play();
+	}
+}
+
+void Launcher::StopMusic()
+{
+	if (m_orchestra)
+	{
+		m_orchestra->Stop();
+	}
 }
 
 ControlData *Launcher::GetControlData(string name)
