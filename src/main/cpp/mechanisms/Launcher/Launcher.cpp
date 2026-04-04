@@ -486,7 +486,7 @@ void Launcher::InitializeTalonFXTransferCompBot302()
 void Launcher::InitializeTalonFXSTurretCompBot302()
 {
 	TalonFXSConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(30);
+	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(45);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
 	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -523,7 +523,7 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 0.1344160914565299209634;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.16959640223397357413;
 	// configs.ExternalFeedback.FeedbackRemoteSensorID = 6;
 	// configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RemoteCANcoder;
 	// configs.ExternalFeedback.SensorToMechanismRatio = 7.251952;
@@ -804,13 +804,9 @@ bool Launcher::IsLauncherAtTarget()
 	{
 		return true;
 	}
-	if (m_turretEnabled)
-	{
-		return (m_cachedHoodError && m_cachedinLaunchzone && m_cachedIsChassisSpeed && m_cachedLauncherSpeedError && m_cachedTurretAtTarget);
-	}
 	else
 	{
-		return m_cachedHoodError && m_cachedinLaunchzone && m_cachedIsChassisSpeed && m_cachedLauncherSpeedError;
+		return (m_cachedHoodError && m_cachedinLaunchzone && m_cachedIsChassisSpeed && m_cachedLauncherSpeedError && m_cachedTurretAtTarget);
 	}
 }
 
@@ -944,11 +940,12 @@ bool Launcher::IsTurretAtTarget()
 		{
 			units::angle::degree_t turretError = m_cachedTurretPosition - m_targetTurretAngle;
 			m_cachedTurretAtTarget = ((units::math::abs(turretError) < m_turretAngleThreshold));
+			Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "turret Error", turretError.value());
 		}
 	}
 	else
 	{
-		m_cachedTurretAtTarget = m_chassis->IsChassisAtRotationTarget();
+		m_cachedTurretAtTarget = true; // m_chassis->IsChassisAtRotationTarget();
 	}
 
 	return m_cachedTurretAtTarget;

@@ -78,5 +78,5 @@ bool PrepareToLaunchState::IsTransitionCondition(bool considerGamepadTransitions
 {
 	// To get the current state use m_mechanism->GetCurrentState()
 	return ((considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH) && m_mechanism->GetCurrentState() != Launcher::STATE_LAUNCH) ||
-			(m_mechanism->GetCurrentState() == Launcher::STATE_LAUNCH && (!m_mechanism->IsInLaunchZone() || !m_mechanism->IsTurretAtTarget()) && !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH_OVERRIDE)));
+			(considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH) && m_mechanism->GetCurrentState() == Launcher::STATE_LAUNCH && (!m_mechanism->IsInLaunchZone() || !m_mechanism->IsTurretAtTarget()) && !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH_OVERRIDE)));
 }

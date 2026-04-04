@@ -212,12 +212,21 @@ private:
     units::time::second_t GetLookAheadTime();
 
     // Distance (inches) → lookahead time (seconds) lookup table.
-    static constexpr std::array<units::length::inch_t, 13> m_LookAheadDistances{
-        46.1_in, 68.5_in, 87.6_in, 97.8_in, 110.3_in, 127.4_in, 149.3_in,
-        167.8_in, 183.3_in, 197.0_in, 238.7_in, 277.5_in, 314.9_in};
-    static constexpr std::array<units::time::second_t, 13> m_LookAheadTimes{
-        1.07_s, 1.01_s, 0.88_s, 0.92_s, 0.966_s, 0.90_s, 0.96_s,
-        0.97_s, 1.10_s, 1.20_s, 1.30_s, 1.40_s, 1.60_s};
+    static constexpr std::array<units::length::inch_t, 11> m_LookAheadDistances{
+        50.0_in, 60.009_in, 72_in, 80.5_in, 90_in, 99.6_in, 116_in, 125_in, 140_in, 155_in, 170_in};
+
+    static constexpr std::array<units::time::second_t, 11> m_LookAheadTimes{
+        1.09_s,
+        1.2_s,
+        0.88_s,
+        0.955_s,
+        1.08_s,
+        1.06_s,
+        1.04_s,
+        1.115_s,
+        1.17_s,
+        1.28_s,
+        1.4_s};
 
     static RebuiltTargetCalculator *m_instance;
 

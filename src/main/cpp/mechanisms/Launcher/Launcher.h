@@ -241,8 +241,8 @@ private:
 	units::angle::turn_t m_targetHoodAngle = 0.0_tr;
 	units::angle::turn_t m_minHoodAngle = 0.0_tr;
 	units::angle::turn_t m_maxHoodAngle = 30.0_tr;
-	units::angle::turn_t m_minTurretAngle = 87_tr;
-	units::angle::turn_t m_maxTurretAngle = 266.5_tr;
+	units::angle::turn_t m_minTurretAngle = 88.07_tr;
+	units::angle::turn_t m_maxTurretAngle = 268.2_tr;
 	units::angle::degree_t m_turretAngleThreshold = 5.0_deg;
 	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 150.0_rpm;
 	units::angle::turn_t m_hoodAngleThreshold = 0.5_tr;
@@ -295,7 +295,7 @@ private:
 	static constexpr std::string_view m_loggingTurnsUnitsPath = "Turns";
 	static constexpr std::string_view m_loggingRPMUnits = "RPM";
 
-	bool m_turretEnabled = true;
+	bool m_turretEnabled = false;
 	bool m_turretEnabledButtonReleased = true;
 
 	units::current::ampere_t m_isLaunchingCurrentThreshold = 21.0_A;
