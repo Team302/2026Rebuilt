@@ -68,7 +68,7 @@ StateMgr *MechanismConfigCompBot_302::GetMechanism(MechanismTypes::MECHANISM_TYP
 void MechanismConfigCompBot_302::DefineLEDs()
 {
 	auto candle = DragonCANdle::GetInstance();
-	candle->Initialize(60, 45, std::string("rio")); // CAN ID 0, 45 LEDs external) Update with actual number of LEDs on the robot
+	candle->Initialize(60, 45, std::string("rio"), 0.75); // CAN ID 0, 45 LEDs external) Update with actual number of LEDs on the robot
 }
 
 void MechanismConfigCompBot_302::DefineCompressor()

@@ -46,14 +46,13 @@ public:
 
 	static DragonCANdle *GetInstance();
 
-	void Initialize(int canID, int stripSize, const std::string &canBus = "rio", StripTypeValue type = StripTypeValue::RGB);
+	void Initialize(int canID, int stripSize, const std::string &canBus = "rio", double brightness = 1.0, StripTypeValue type = StripTypeValue::RGB);
 	void Periodic();
 
 	// ===== Animation Control =====
 	void SetAnimation(AnimationMode mode);
 	void SetSolidColor(const frc::Color &color);
 	void SetAlternatingColors(const frc::Color &color1, const frc::Color &color2);
-	void SetBrightness(double brightness);
 	void TurnOff();
 	void SetBreathingFrequency(units::frequency::hertz_t frequency) { m_breathingFrequency = frequency; };
 	void SetBlinkingFrequency(units::frequency::hertz_t frequency) { m_blinkingFrequency = frequency; };

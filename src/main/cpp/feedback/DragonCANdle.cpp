@@ -31,7 +31,7 @@ DragonCANdle *DragonCANdle::GetInstance()
     return m_instance;
 }
 
-void DragonCANdle::Initialize(int canID, int stripSize, const std::string &canBus, StripTypeValue type)
+void DragonCANdle::Initialize(int canID, int stripSize, const std::string &canBus, double brightness, StripTypeValue type)
 {
     if (m_candle != nullptr)
     {
@@ -46,7 +46,7 @@ void DragonCANdle::Initialize(int canID, int stripSize, const std::string &canBu
     m_candle = new hardware::CANdle(canID, canBus == "rio" ? CANBus::RoboRIO() : CANBus{canBus});
 
     configs::CANdleConfiguration configs{};
-    configs.LED.BrightnessScalar = 0.75;
+    configs.LED.BrightnessScalar = brightness;
     configs.LED.StripType = type;
     configs.CANdleFeatures.VBatOutputMode = signals::VBatOutputModeValue::On;
     m_candle->GetConfigurator().Apply(configs);
@@ -95,18 +95,6 @@ void DragonCANdle::SetAlternatingColors(const frc::Color &color1, const frc::Col
     m_primaryColor = color1;
     m_secondaryColor = color2;
     m_animMode = AnimationMode::ALTERNATING;
-}
-
-void DragonCANdle::SetBrightness(double brightness)
-{
-    // if (m_candle == nullptr)
-    //     return;
-
-    // m_brightness = std::clamp(brightness, 0.0, 1.0);
-
-    // configs::CANdleConfiguration configs{};
-    // configs.LED.BrightnessScalar = m_brightness;
-    // m_candle->GetConfigurator().Apply(configs);
 }
 
 void DragonCANdle::TurnOff()
