@@ -64,7 +64,7 @@ void IdleState::InitCompBot302()
 
 void IdleState::Run()
 {
-	AgitateSpindexer();
+	// AgitateSpindexer();
 }
 void IdleState::Exit()
 {
