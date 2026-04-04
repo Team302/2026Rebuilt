@@ -75,7 +75,7 @@ DriverFeedback::DriverFeedback() : IRobotStateChangeSubscriber()
 
     m_LEDStates->SetBlinkingFrequency(m_blinkingFrequency);
 
-    m_LEDStates->SetBrightness(0.75);
+    // m_LEDStates->SetBrightness(0.75);
 
     // Pre-build NT key strings once to avoid per-loop heap allocations
     for (int i = 0; i < kMaxJoystickPorts; ++i)
