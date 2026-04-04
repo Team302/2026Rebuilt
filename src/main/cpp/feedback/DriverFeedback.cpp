@@ -75,13 +75,13 @@ DriverFeedback::DriverFeedback() : IRobotStateChangeSubscriber()
 
     m_LEDStates->SetBlinkingFrequency(m_blinkingFrequency);
 
-    m_LEDStates->SetBrightness(0.75);
-
     // Pre-build NT key strings once to avoid per-loop heap allocations
     for (int i = 0; i < kMaxJoystickPorts; ++i)
     {
         m_controllerKeys[i] = std::string("Controller") + std::to_string(i);
     }
+
+    m_loggerTable = nt::NetworkTableInstance::GetDefault().GetTable("pi-logger");
 }
 
 /// @brief Handles integer state changes — scoring mode and drive state type.
@@ -322,7 +322,9 @@ void DriverFeedback::UpdateDiagnosticLEDs()
     m_LEDStates->SetQuestStatus(questStatus);
     m_LEDStates->SetLimelightStatuses(backLeftLL);
 
-    // Add Data Logger Connection Status dataLoggerConnected = ...
+    // Read the data logger connection status from the logger NetworkTable "connected" entry.
+    dataLoggerConnected = m_loggerTable->GetBoolean("connected", false);
+
     m_LEDStates->SetDataLoggerStatus(dataLoggerConnected);
 
     if (m_launcher != nullptr)

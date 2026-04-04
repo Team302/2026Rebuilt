@@ -40,20 +40,24 @@ namespace LauncherStates
 		void Exit() override;
 		bool AtTarget() override;
 		bool IsTransitionCondition(bool considerGamepadTransitions) override;
+		void AgitateSpindexer();
 
 	private:
 		Launcher *m_mechanism;
 		void InitCompBot302();
 		RobotIdentifier m_RobotId;
 
-		const units::angular_velocity::turns_per_second_t m_launcherTarget = units::angular_velocity::turns_per_second_t(12.5);
-		const units::angle::turn_t m_hoodTarget = units::angle::turn_t(0);
-		const double m_transferTarget = double(0);
-		const units::angle::turn_t m_turretTarget = units::angle::turn_t(0);
-		const double m_indexerTarget = double(0);
-		const double m_agitatorTarget = double(0);
-
+		const units::angular_velocity::turns_per_second_t m_launcherTarget{12.5};
+		const units::angle::turn_t m_hoodTarget{0.0};
+		const double m_transferTarget{0.0};
+		const units::angle::turn_t m_turretTarget{0.0};
+		const double m_indexerTarget{0.0};
+		const double m_spindexerTarget{0.0};
+		units::angle::degree_t m_minSpindexerTarget;
+		units::angle::degree_t m_maxSpindexerTarget;
+		static constexpr units::angle::degree_t m_spindexerTargetAng{30};
 		frc::Timer *m_Timer;
-		units::time::second_t m_launchTimer = 0.25_s;
+		static constexpr units::time::second_t m_launchTimer{0.25};
+		bool m_minReached = false;
 	};
 }

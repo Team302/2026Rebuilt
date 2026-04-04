@@ -18,8 +18,8 @@
 #pragma once
 #include <string>
 
-#include "state/State.h"
 #include "mechanisms/Launcher/Launcher.h"
+#include "state/State.h"
 
 using namespace std;
 
@@ -45,11 +45,11 @@ namespace LauncherStates
 		void InitCompBot302();
 		RobotIdentifier m_RobotId;
 
-		const double m_launcherTarget = double(0);
-		const double m_hoodTarget = double(0);
-		const double m_transferTarget = double(0);
-		const double m_turretTarget = double(0);
-		const double m_indexerTarget = double(0);
-		const double m_agitatorTarget = double(0);
+		const double m_launcherTarget{0};
+		const double m_hoodTarget{0};
+		const double m_transferTarget{0};
+		const double m_turretTarget{0};
+		const double m_indexerTarget{0};
+		const double m_spindexerTarget{0};
 	};
 }

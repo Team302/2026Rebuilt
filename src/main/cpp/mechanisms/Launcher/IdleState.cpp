@@ -49,6 +49,9 @@ void IdleState::Init()
 	m_mechanism->PublishLaunchMode(false);
 
 	m_mechanism->ResetLaunchCurrentTimer();
+	m_maxSpindexerTarget = m_mechanism->GetSpindexer()->GetPosition().GetValue();
+	m_minSpindexerTarget = m_maxSpindexerTarget - m_spindexerTargetAng;
+	m_minReached = false;
 }
 
 void IdleState::InitCompBot302()
@@ -56,14 +59,13 @@ void IdleState::InitCompBot302()
 	m_mechanism->UpdateTargetLauncherVelocityRPS(m_launcherTarget);
 	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
 	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
-	m_mechanism->UpdateTargetAgitatorPercentOut(m_agitatorTarget);
+	m_mechanism->UpdateTargetSpindexerPercentOut(m_spindexerTarget);
 }
 
 void IdleState::Run()
 {
-	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("IdleState"), string("Run"));
+	// AgitateSpindexer();
 }
-
 void IdleState::Exit()
 {
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("IdleState"), string("Exit"));
@@ -93,9 +95,24 @@ bool IdleState::IsTransitionCondition(bool considerGamepadTransitions)
 			m_Timer->Reset();
 		}
 	}
-
 	return (m_mechanism->IsLauncherInitialized() && m_mechanism->GetCurrentState() == Launcher::STATE_INITIALIZE) ||
 		   (launchingDone) ||
 		   (!m_mechanism->IsInClimbMode() && (m_mechanism->GetCurrentState() == Launcher::STATE_CLIMB || m_mechanism->GetCurrentState() == Launcher::STATE_EMPTY_HOPPER)) ||
 		   (frc::DriverStation::IsAutonomous() && m_mechanism->IsFinishedLaunching());
+}
+
+void IdleState::AgitateSpindexer()
+{
+	auto currentSpindexerPosition = m_mechanism->GetSpindexer()->GetPosition().GetValue();
+
+	m_mechanism->UpdateTargetSpindexerPositionTurns(m_minReached ? m_maxSpindexerTarget : m_minSpindexerTarget);
+
+	if (currentSpindexerPosition <= m_minSpindexerTarget)
+	{
+		m_minReached = true;
+	}
+	else if (currentSpindexerPosition >= m_maxSpindexerTarget)
+	{
+		m_minReached = false;
+	}
 }
