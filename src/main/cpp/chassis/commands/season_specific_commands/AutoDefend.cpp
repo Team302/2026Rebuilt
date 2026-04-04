@@ -44,7 +44,7 @@ swerve::requests::RobotCentric AutoDefend::GetRobotDriveRequest()
         units::length::meter_t yDist = -targetinfo.second;
         yDist = std::clamp(yDist, -m_YdistLimit, m_YdistLimit);
         units::velocity::meters_per_second_t yspeed = units::meters_per_second_t(m_yController.Calculate(yDist.value()));
-        // yspeed = std::clamp(yspeed, -m_maxYSpeed, m_maxYSpeed);
+        yspeed = std::clamp(yspeed, -m_maxYSpeed, m_maxYSpeed);
 
         auto request = swerve::requests::RobotCentric{}.WithVelocityX(xspeed).WithVelocityY(yspeed).WithRotationalRate(0.0_deg_per_s);
         request.Deadband = 0.1_mps;
