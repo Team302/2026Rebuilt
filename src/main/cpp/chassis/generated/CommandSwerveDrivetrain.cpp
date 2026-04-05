@@ -1,6 +1,6 @@
 #include "chassis/generated/CommandSwerveDrivetrain.h"
-#include <frc/RobotController.h>
 #include "utils/FMSData.h"
+#include <frc/RobotController.h>
 
 using namespace subsystems;
 
@@ -58,4 +58,29 @@ bool CommandSwerveDrivetrain::IsSamePose()
     m_prevPose = GetPose();
 
     return m_debounceTimer.HasElapsed(m_samePoseTime);
+}
+void CommandSwerveDrivetrain::InitializeOrchestra()
+{
+    for (int i = 0; i < 4; ++i)
+    {
+        m_orchestra.AddInstrument(this->GetModule(i).GetDriveMotor());
+        m_orchestra.AddInstrument(this->GetModule(i).GetSteerMotor());
+    }
+    // Register this orchestra playable with the central manager
+    OrchestraManager::GetInstance()->Register(this);
+}
+// IOrchestraPlayable Overrides
+void CommandSwerveDrivetrain::LoadMusic(const std::string &filePath)
+{
+    m_orchestra.LoadMusic(filePath.c_str());
+}
+
+void CommandSwerveDrivetrain::StartMusic()
+{
+    m_orchestra.Play();
+}
+
+void CommandSwerveDrivetrain::StopMusic()
+{
+    m_orchestra.Stop();
 }

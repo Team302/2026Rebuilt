@@ -15,23 +15,46 @@
 
 #include "feedback/OrchestraManager.h"
 #include <filesystem>
+#include <algorithm>
 
-OrchestraManager *OrchestraManager::m_instance = nullptr;
+static bool g_orchestraManagerDestroyed = false;
+
+IOrchestraPlayable::~IOrchestraPlayable()
+{
+    // Auto-unregister upon destruction to prevent dangling pointers
+    if (!g_orchestraManagerDestroyed && OrchestraManager::GetInstance() != nullptr)
+    {
+        OrchestraManager::GetInstance()->Unregister(this);
+    }
+}
 
 OrchestraManager *OrchestraManager::GetInstance()
 {
-    if (m_instance == nullptr)
-    {
-        m_instance = new OrchestraManager();
-    }
-    return m_instance;
+    static OrchestraManager instance;
+    return &instance;
+}
+
+OrchestraManager::~OrchestraManager()
+{
+    g_orchestraManagerDestroyed = true;
 }
 
 void OrchestraManager::Register(IOrchestraPlayable *playable)
 {
     if (playable != nullptr)
     {
-        m_playables.push_back(playable);
+        if (std::find(m_playables.begin(), m_playables.end(), playable) == m_playables.end())
+        {
+            m_playables.push_back(playable);
+        }
+    }
+}
+
+void OrchestraManager::Unregister(IOrchestraPlayable *playable)
+{
+    if (playable != nullptr)
+    {
+        m_playables.erase(std::remove(m_playables.begin(), m_playables.end(), playable), m_playables.end());
     }
 }
 

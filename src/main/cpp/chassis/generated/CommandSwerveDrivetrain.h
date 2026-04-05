@@ -3,12 +3,15 @@
 #include "ctre/phoenix6/SignalLogger.hpp"
 
 #include <ctre/phoenix6/swerve/SwerveDrivetrain.hpp>
+#include <exception>
 #include <frc/DriverStation.h>
 #include <frc/Notifier.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/Commands.h>
 #include <frc2/command/SubsystemBase.h>
 #include <frc2/command/sysid/SysIdRoutine.h>
+#include <iostream>
+#include <memory>
 
 #include "chassis/generated/TunerSwerveBase.h"
 #include "feedback/IOrchestraPlayable.h"
@@ -335,31 +338,14 @@ namespace subsystems
         // Hand Coded*/
 
         // IOrchestraPlayable Overrides
-        void LoadMusic(const std::string &filePath) override
-        {
-            m_orchestra.LoadMusic(filePath.c_str());
-        }
+        void LoadMusic(const std::string &filePath) override;
 
-        void StartMusic() override
-        {
-            m_orchestra.Play();
-        }
+        void StartMusic() override;
 
-        void StopMusic() override
-        {
-            m_orchestra.Stop();
-        }
+        void StopMusic() override;
 
     private:
-        void InitializeOrchestra()
-        {
-            for (int i = 0; i < 4; ++i)
-            {
-                m_orchestra.AddInstrument(this->GetModule(i).GetDriveMotor());
-                m_orchestra.AddInstrument(this->GetModule(i).GetSteerMotor());
-            }
-            OrchestraManager::GetInstance()->Register(this);
-        }
+        void InitializeOrchestra();
 
         void StartSimThread();
         frc::Timer m_debounceTimer;
