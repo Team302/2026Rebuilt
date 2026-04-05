@@ -136,8 +136,8 @@ void Intake::CreateCompBot302()
 {
 	m_ntName = "Intake";
 	m_intake = new ctre::phoenix6::hardware::TalonFX(16, ctre::phoenix6::CANBus("canivore"));
-	m_extender = new ctre::phoenix6::hardware::TalonFXS(17, ctre::phoenix6::CANBus("canivore"));
-	m_intakeCANdi = new ctre::phoenix6::hardware::CANdi(7, ctre::phoenix6::CANBus("canivore"));
+	m_extender = new ctre::phoenix6::hardware::TalonFXS(11, ctre::phoenix6::CANBus("canivore"));
+	m_intakeCANdi = new ctre::phoenix6::hardware::CANdi(11, ctre::phoenix6::CANBus("canivore"));
 
 	m_orchestra = new ctre::phoenix6::Orchestra();
 	m_orchestra->AddInstrument(*m_intake);
