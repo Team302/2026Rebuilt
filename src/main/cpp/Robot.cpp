@@ -121,7 +121,6 @@ Robot::Robot()
 /// updates RobotState, and refreshes drive-team feedback (vision, field position, HUD).
 void Robot::RobotPeriodic()
 {
-    OrchestraManager::GetInstance()->StopMusic();
     frc2::CommandScheduler::GetInstance().Run();
 
     m_isFMSAttached = frc::DriverStation::IsFMSAttached();
@@ -206,6 +205,7 @@ void Robot::TeleopInit()
         }
         m_rewindLatch = true;
     }
+    OrchestraManager::GetInstance()->StopMusic();
 }
 
 /// @brief Called periodically while in teleop mode.

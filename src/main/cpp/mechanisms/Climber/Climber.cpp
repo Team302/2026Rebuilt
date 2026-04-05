@@ -175,6 +175,7 @@ void Climber::InitializeCompBot302()
 void Climber::InitializeTalonFXClimberCompBot302()
 {
 	TalonFXConfiguration configs{};
+	configs.Audio.AllowMusicDurDisable = true;
 	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);

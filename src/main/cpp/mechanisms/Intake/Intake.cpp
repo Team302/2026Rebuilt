@@ -222,6 +222,7 @@ void Intake::InitializeCompBot302()
 void Intake::InitializeTalonFXIntakeCompBot302()
 {
 	TalonFXConfiguration configs{};
+	configs.Audio.AllowMusicDurDisable = true;
 	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(120);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
@@ -271,6 +272,7 @@ void Intake::InitializeTalonFXIntakeCompBot302()
 void Intake::InitializeTalonFXSExtenderCompBot302()
 {
 	TalonFXSConfiguration configs{};
+	configs.Audio.AllowMusicDurDisable = true;
 	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(35);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);

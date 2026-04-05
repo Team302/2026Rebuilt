@@ -1,4 +1,20 @@
+//====================================================================================================================================================
+// Copyright 2026 Lake Orion Robotics FIRST Team 302
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+// OR OTHER DEALINGS IN THE SOFTWARE.
+//====================================================================================================================================================
+
 #include "feedback/OrchestraManager.h"
+#include <filesystem>
 
 OrchestraManager *OrchestraManager::m_instance = nullptr;
 
@@ -21,24 +37,48 @@ void OrchestraManager::Register(IOrchestraPlayable *playable)
 
 void OrchestraManager::LoadMusic(const std::string &filePath)
 {
-    for (auto playable : m_playables)
+    if (!std::filesystem::exists(filePath))
     {
-        playable->LoadMusic(filePath);
+        return;
+    }
+
+    // Create a copy of the vector to safely iterate, avoiding dangling pointers
+    auto playables = m_playables;
+    for (auto playable : playables)
+    {
+        if (playable != nullptr)
+        {
+            playable->LoadMusic(filePath);
+            m_musicLoaded = true;
+        }
     }
 }
 
 void OrchestraManager::StartMusic()
 {
-    for (auto playable : m_playables)
+    if (m_musicLoaded)
     {
-        playable->StartMusic();
+        // Create a copy of the vector to safely iterate, avoiding dangling pointers
+        auto playables = m_playables;
+        for (auto playable : playables)
+        {
+            if (playable != nullptr)
+            {
+                playable->StartMusic();
+            }
+        }
     }
 }
 
 void OrchestraManager::StopMusic()
 {
-    for (auto playable : m_playables)
+    // Create a copy of the vector to safely iterate, avoiding dangling pointers
+    auto playables = m_playables;
+    for (auto playable : playables)
     {
-        playable->StopMusic();
+        if (playable != nullptr)
+        {
+            playable->StopMusic();
+        }
     }
 }

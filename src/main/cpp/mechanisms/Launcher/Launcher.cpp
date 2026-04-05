@@ -313,6 +313,7 @@ void Launcher::InitializeCompBot302()
 void Launcher::InitializeTalonFXLauncherCompBot302()
 {
 	TalonFXConfiguration configs{};
+	configs.Audio.AllowMusicDurDisable = true;
 	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
@@ -371,6 +372,7 @@ void Launcher::InitializeTalonFXLauncherCompBot302()
 void Launcher::InitializeTalonFXSHoodCompBot302()
 {
 	TalonFXSConfiguration configs{};
+	configs.Audio.AllowMusicDurDisable = true;
 	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100); // MECH_TODO: Go to full speed and find current draw, then set limits accordingly
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
@@ -449,6 +451,7 @@ void Launcher::InitializeTalonFXSHoodCompBot302()
 void Launcher::InitializeTalonFXTransferCompBot302()
 {
 	TalonFXConfiguration configs{};
+	configs.Audio.AllowMusicDurDisable = true;
 	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
@@ -596,6 +599,7 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 void Launcher::InitializeTalonFXIndexerCompBot302()
 {
 	TalonFXConfiguration configs{};
+	configs.Audio.AllowMusicDurDisable = true;
 	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
@@ -644,6 +648,7 @@ void Launcher::InitializeTalonFXIndexerCompBot302()
 void Launcher::InitializeTalonFXSpindexerCompBot302()
 {
 	TalonFXConfiguration configs{};
+	configs.Audio.AllowMusicDurDisable = true;
 	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
