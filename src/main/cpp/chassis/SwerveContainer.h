@@ -28,9 +28,11 @@
 #include "chassis/commands/season_specific_commands/SweepBehindHub.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "chassis/generated/Telemetry.h"
+#include "feedback/IOrchestraPlayable.h"
 #include "frc2/command/CommandPtr.h"
 #include "state/IRobotStateChangeSubscriber.h"
 #include "teleopcontrol/TeleopControl.h"
+#include <ctre/phoenix6/Orchestra.hpp>
 
 //====================================================================================================================================================
 /// @class SwerveContainer
@@ -48,7 +50,7 @@
 /// - Providing access to trajectory drive commands for autonomous routines
 /// - Supporting system identification (SysID) for drivetrain characterization
 //====================================================================================================================================================
-class SwerveContainer : public IRobotStateChangeSubscriber
+class SwerveContainer : public IRobotStateChangeSubscriber, public IOrchestraPlayable
 {
 public:
     // declaring classes
@@ -114,6 +116,11 @@ public:
     //------------------------------------------------------------------
     DriveAlongNearestWall *GetDriveAlongNearestWallCommand() { return m_driveAlongNearestWall.get(); }
 
+    // IOrchestraPlayable Overrides
+    void LoadMusic(const std::string &filePath) override;
+    void StartMusic() override;
+    void StopMusic() override;
+
 private:
     //------------------------------------------------------------------
     /// @brief      Private constructor for singleton pattern
@@ -174,6 +181,9 @@ private:
 
     /// @brief Drive to trench command for season-specific autonomous navigation
     std::unique_ptr<DriveToTrench> m_driveToTrench;
+
+    /// @brief Orchestra instance for playing music
+    ctre::phoenix6::Orchestra *m_orchestra = nullptr;
 
     //------------------------------------------------------------------
     /// @brief      Configures button bindings for chassis control

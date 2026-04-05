@@ -19,6 +19,7 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "chassis/commands/TeleopFieldDrive.h"
 #include "chassis/commands/TeleopRobotDrive.h"
+#include "feedback/OrchestraManager.h"
 #include "frc2/command/Commands.h"
 #include "frc2/command/DeferredCommand.h"
 #include "frc2/command/ProxyCommand.h"
@@ -78,6 +79,31 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
     if (m_chassis != nullptr)
     {
         ConfigureBindings();
+        OrchestraManager::GetInstance()->Register(this);
+    }
+}
+
+void SwerveContainer::LoadMusic(const std::string &filePath)
+{
+    if (m_orchestra != nullptr)
+    {
+        m_orchestra->LoadMusic(filePath.c_str());
+    }
+}
+
+void SwerveContainer::StartMusic()
+{
+    if (m_orchestra != nullptr)
+    {
+        m_orchestra->Play();
+    }
+}
+
+void SwerveContainer::StopMusic()
+{
+    if (m_orchestra != nullptr)
+    {
+        m_orchestra->Stop();
     }
 }
 

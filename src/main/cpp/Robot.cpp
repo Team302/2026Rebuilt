@@ -193,6 +193,8 @@ void Robot::AutonomousPeriodic()
 /// Transitions PeriodicLooper to teleop state and cancels any outstanding commands.
 void Robot::TeleopInit()
 {
+    OrchestraManager::GetInstance()->StopMusic();
+
     PeriodicLooper::GetInstance()->TeleopRunCurrentState();
     frc2::CommandScheduler::GetInstance().CancelAll();
 
@@ -205,7 +207,6 @@ void Robot::TeleopInit()
         }
         m_rewindLatch = true;
     }
-    OrchestraManager::GetInstance()->StopMusic();
 }
 
 /// @brief Called periodically while in teleop mode.

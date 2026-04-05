@@ -33,5 +33,6 @@ private:
     ~OrchestraManager() = default;
 
     std::vector<IOrchestraPlayable *> m_playables = {};
+    static OrchestraManager *m_instance;
     bool m_musicLoaded = false;
 };

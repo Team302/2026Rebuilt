@@ -41,15 +41,8 @@
 
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "feedback/IOrchestraPlayable.h"
+#include <ctre/phoenix6/Orchestra.hpp>
 #include "utils/RebuiltTargetCalculator.h"
-
-namespace ctre
-{
-	namespace phoenix6
-	{
-		class Orchestra;
-	}
-}
 
 class Launcher : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger, public IOrchestraPlayable
 {
