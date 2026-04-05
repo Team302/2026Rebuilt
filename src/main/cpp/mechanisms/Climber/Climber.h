@@ -44,10 +44,8 @@
 #include "utils/logging/signals/DragonDataLogger.h"
 
 #include "RobotIdentifier.h"
-#include "feedback/IOrchestraPlayable.h"
-#include <ctre/phoenix6/Orchestra.hpp>
 
-class Climber : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger, public IOrchestraPlayable
+class Climber : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger
 {
 public:
 	enum STATE_NAMES
@@ -120,11 +118,6 @@ public:
 	units::angle::degree_t GetPigeonPitch();
 	units::angular_velocity::degrees_per_second_t GetMaxAngularVelocity() const { return m_maxAngularVelocity; }
 
-	// IOrchestraPlayable Overrides
-	void LoadMusic(const std::string &filePath) override;
-	void StartMusic() override;
-	void StopMusic() override;
-
 protected:
 	RobotIdentifier m_activeRobotId;
 	std::string m_ntName;
@@ -145,7 +138,6 @@ private:
 	ctre::phoenix6::controls::ControlRequest *m_climberActiveTarget;
 	ctre::phoenix6::controls::DutyCycleOut m_ClimberPercentOut{0.0};
 	double m_holdPercentOut = 0.05;
-	ctre::phoenix6::Orchestra *m_orchestra;
 	double m_percentOutScale = 1.0;
 
 	bool m_climbModeStatus;

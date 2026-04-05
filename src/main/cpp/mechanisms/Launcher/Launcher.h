@@ -40,11 +40,9 @@
 #include "utils/logging/signals/DragonDataLogger.h"
 
 #include "chassis/generated/CommandSwerveDrivetrain.h"
-#include "feedback/IOrchestraPlayable.h"
-#include <ctre/phoenix6/Orchestra.hpp>
 #include "utils/RebuiltTargetCalculator.h"
 
-class Launcher : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger, public IOrchestraPlayable
+class Launcher : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger
 {
 public:
 	enum STATE_NAMES
@@ -181,11 +179,6 @@ public:
 		m_launchCurrentTimer.Reset();
 	}
 
-	// IOrchestraPlayable Overrides
-	void LoadMusic(const std::string &filePath) override;
-	void StartMusic() override;
-	void StopMusic() override;
-
 protected:
 	RobotIdentifier m_activeRobotId;
 	std::string m_ntName;
@@ -203,7 +196,6 @@ private:
 	ctre::phoenix6::hardware::TalonFX *m_spindexer;
 	ctre::phoenix6::hardware::CANdi *m_hoodCANdi;
 	ctre::phoenix6::hardware::CANdi *m_turretCANdi;
-	ctre::phoenix6::Orchestra *m_orchestra;
 
 	// ctre::phoenix6::hardware::CANcoder *m_turretAngleSensor;
 

@@ -14,7 +14,8 @@
 //====================================================================================================================================================
 
 #pragma once
-#include "feedback/IOrchestraPlayable.h"
+#include <ctre/phoenix6/Orchestra.hpp>
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -23,7 +24,9 @@ class OrchestraManager
 public:
     static OrchestraManager *GetInstance();
 
-    void Register(IOrchestraPlayable *playable);
+    template <typename T>
+    void AddInstrument(T *instrument);
+
     void LoadMusic(const std::string &filePath);
     void StartMusic();
     void StopMusic();
@@ -32,7 +35,9 @@ private:
     OrchestraManager() = default;
     ~OrchestraManager() = default;
 
-    std::vector<IOrchestraPlayable *> m_playables = {};
+    std::vector<std::function<void(ctre::phoenix6::Orchestra *)>> m_instrumentAdders;
+    ctre::phoenix6::Orchestra *m_orchestra = nullptr;
     static OrchestraManager *m_instance;
     bool m_musicLoaded = false;
+    std::string m_currentFilePath = "";
 };

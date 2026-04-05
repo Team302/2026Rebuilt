@@ -79,31 +79,12 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
     if (m_chassis != nullptr)
     {
         ConfigureBindings();
-        OrchestraManager::GetInstance()->Register(this);
-    }
-}
 
-void SwerveContainer::LoadMusic(const std::string &filePath)
-{
-    if (m_orchestra != nullptr)
-    {
-        m_orchestra->LoadMusic(filePath.c_str());
-    }
-}
-
-void SwerveContainer::StartMusic()
-{
-    if (m_orchestra != nullptr)
-    {
-        m_orchestra->Play();
-    }
-}
-
-void SwerveContainer::StopMusic()
-{
-    if (m_orchestra != nullptr)
-    {
-        m_orchestra->Stop();
+        for (int i = 0; i < 4; ++i)
+        {
+            OrchestraManager::GetInstance()->AddInstrument(&(m_chassis->GetModule(i).GetDriveMotor()));
+            OrchestraManager::GetInstance()->AddInstrument(&(m_chassis->GetModule(i).GetSteerMotor()));
+        }
     }
 }
 

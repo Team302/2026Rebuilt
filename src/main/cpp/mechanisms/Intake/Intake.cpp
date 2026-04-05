@@ -139,10 +139,8 @@ void Intake::CreateCompBot302()
 	m_extender = new ctre::phoenix6::hardware::TalonFXS(11, ctre::phoenix6::CANBus("canivore"));
 	m_intakeCANdi = new ctre::phoenix6::hardware::CANdi(11, ctre::phoenix6::CANBus("canivore"));
 
-	m_orchestra = new ctre::phoenix6::Orchestra();
-	m_orchestra->AddInstrument(*m_intake);
-	m_orchestra->AddInstrument(*m_extender);
-	OrchestraManager::GetInstance()->Register(this);
+	OrchestraManager::GetInstance()->AddInstrument(m_intake);
+	OrchestraManager::GetInstance()->AddInstrument(m_extender);
 
 	m_percentOut = new ControlData(
 		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
@@ -393,32 +391,9 @@ void Intake::RunCommonTasks()
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Intake Position", m_cachedExtenderPositionDeg.value());
 }
 
-void Intake::LoadMusic(const std::string &filePath)
-{
-	if (m_orchestra)
-	{
-		m_orchestra->LoadMusic(filePath.c_str());
-	}
-}
-void Intake::StartMusic()
-{
-	if (m_orchestra)
-	{
-		m_orchestra->Play();
-	}
-}
-
-void Intake::StopMusic()
-{
-	if (m_orchestra)
-	{
-		m_orchestra->Stop();
-	}
-}
-
 /* void Intake::InitilaizeIntake()
 {
-		SetCurrentState(STATE_OFF, true);
+				SetCurrentState(STATE_OFF, true);
 } */
 void Intake::SetControlConstants(RobotElementNames::MOTOR_CONTROLLER_USAGE identifier, int slot, ControlData pid)
 {

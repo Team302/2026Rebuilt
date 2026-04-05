@@ -17,6 +17,9 @@
 #include <algorithm>
 #include <filesystem>
 
+#include <ctre/phoenix6/TalonFX.hpp>
+#include <ctre/phoenix6/TalonFXS.hpp>
+
 OrchestraManager *OrchestraManager::m_instance = nullptr;
 
 OrchestraManager *OrchestraManager::GetInstance()
@@ -28,58 +31,66 @@ OrchestraManager *OrchestraManager::GetInstance()
     return m_instance;
 }
 
-void OrchestraManager::Register(IOrchestraPlayable *playable)
+template <typename T>
+void OrchestraManager::AddInstrument(T *instrument)
 {
-    if (playable != nullptr)
+    if (instrument != nullptr)
     {
-        m_playables.push_back(playable);
-    }
-}
+        m_instrumentAdders.emplace_back([instrument](ctre::phoenix6::Orchestra *orch)
+                                        {
+            if (orch != nullptr) {
+                orch->AddInstrument(*instrument);
+            } });
 
-void OrchestraManager::LoadMusic(const std::string &filePath)
-{
-    if (!std::filesystem::exists(filePath))
-    {
-        return;
-    }
-
-    // Create a copy of the vector to safely iterate, avoiding dangling pointers
-    auto playables = m_playables;
-    for (auto playable : playables)
-    {
-        if (playable != nullptr)
+        if (m_orchestra != nullptr)
         {
-            playable->LoadMusic(filePath);
-            m_musicLoaded = true;
+            m_orchestra->AddInstrument(*instrument);
         }
     }
 }
 
+template void OrchestraManager::AddInstrument<ctre::phoenix6::hardware::TalonFX>(ctre::phoenix6::hardware::TalonFX *instrument);
+template void OrchestraManager::AddInstrument<ctre::phoenix6::hardware::TalonFXS>(ctre::phoenix6::hardware::TalonFXS *instrument);
+
+void OrchestraManager::LoadMusic(const std::string &filePath)
+{
+    m_currentFilePath = filePath;
+    m_musicLoaded = true;
+
+    if (m_orchestra == nullptr)
+    {
+        m_orchestra = new ctre::phoenix6::Orchestra();
+        for (auto &adder : m_instrumentAdders)
+        {
+            adder(m_orchestra);
+        }
+    }
+
+    m_orchestra->LoadMusic(m_currentFilePath.c_str());
+}
+
 void OrchestraManager::StartMusic()
 {
-    if (m_musicLoaded)
+    if (m_musicLoaded && m_orchestra != nullptr)
     {
-        // Create a copy of the vector to safely iterate, avoiding dangling pointers
-        auto playables = m_playables;
-        for (auto playable : playables)
+        m_orchestra->Play();
+    }
+    else if (m_musicLoaded && m_orchestra == nullptr && !m_currentFilePath.empty())
+    {
+        LoadMusic(m_currentFilePath);
+        if (m_orchestra != nullptr)
         {
-            if (playable != nullptr)
-            {
-                playable->StartMusic();
-            }
+            m_orchestra->Play();
         }
     }
 }
 
 void OrchestraManager::StopMusic()
 {
-    // Create a copy of the vector to safely iterate, avoiding dangling pointers
-    auto playables = m_playables;
-    for (auto playable : playables)
+    if (m_orchestra != nullptr)
     {
-        if (playable != nullptr)
-        {
-            playable->StopMusic();
-        }
+        m_orchestra->Stop();
+        delete m_orchestra;
+        m_orchestra = nullptr;
     }
 }
