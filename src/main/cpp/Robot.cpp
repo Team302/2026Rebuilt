@@ -97,6 +97,7 @@
 #include "utils/logging/debug/Logger.h"
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include "vision/DragonVision.h"
+#include <frc/Filesystem.h>
 
 #include "auton/NeutralZoneManager.h"
 
@@ -150,7 +151,7 @@ void Robot::DisabledPeriodic()
 
     m_field->UpdateEnabledStates();
     FMSData::UpdateAllianceColor();
-    OrchestraManager::GetInstance()->LoadMusic("/home/lvuser/music/ride-of-the-valkries.chrp");
+    OrchestraManager::GetInstance()->LoadMusic(frc::filesystem::GetDeployDirectory() + "/music/fur_elise.chrp");
     OrchestraManager::GetInstance()->StartMusic();
 }
 
