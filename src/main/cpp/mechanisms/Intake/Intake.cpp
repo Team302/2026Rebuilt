@@ -391,10 +391,6 @@ void Intake::RunCommonTasks()
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Intake Position", m_cachedExtenderPositionDeg.value());
 }
 
-/* void Intake::InitilaizeIntake()
-{
-				SetCurrentState(STATE_OFF, true);
-} */
 void Intake::SetControlConstants(RobotElementNames::MOTOR_CONTROLLER_USAGE identifier, int slot, ControlData pid)
 {
 }

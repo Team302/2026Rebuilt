@@ -768,6 +768,7 @@ void Launcher::Update()
 
 void Launcher::Cyclic()
 {
+	Update();
 }
 
 ControlData *Launcher::GetControlData(string name)
