@@ -143,6 +143,7 @@ jobs:
           printf '%b' "$DELETED_LIST"     > /tmp/deleted_list.txt
           printf '%s' "$EXISTING_CONTEXT" > /tmp/existing_context.txt
           echo "$EXISTING_LINES"          > /tmp/existing_lines.txt
+          echo "$FULL_REBUILD"            > /tmp/full_rebuild.txt
 
           echo "Existing context: ${EXISTING_LINES} lines"
           if [ -n "$DELETED_LIST" ]; then
@@ -161,38 +162,65 @@ jobs:
           DELETED_LIST=$(cat /tmp/deleted_list.txt)
           EXISTING=$(cat /tmp/existing_context.txt)
           EXISTING_LINES=$(cat /tmp/existing_lines.txt)
+          FULL_REBUILD=$(cat /tmp/full_rebuild.txt 2>/dev/null || echo "false")
 
           # ── Build the prompt and write to a file to avoid "Argument list too long" ──
           # Shell --arg passing fails when the prompt exceeds ~2 MB; writing to a file
           # and using jq --rawfile sidesteps the OS ARG_MAX limit entirely.
           # Note: no heredoc here — YAML interprets << as a merge key and breaks parsing.
-          printf '%s\n' \
-            "You are a senior FRC (FIRST Robotics Competition) software engineer maintaining \`.github/CODEBASE_CONTEXT.md\` for a WPILib-based robot codebase (2026 season). This file is read by GitHub Copilot as repo-wide context, so it must be maximally useful to an AI coding assistant and human developers alike." \
-            "" \
-            "## YOUR TASK" \
-            "A push to main changed a small number of files. Update ONLY the sections of the existing context that are directly affected by those changed files." \
-            "All other sections must be reproduced VERBATIM — do not rephrase, summarize, condense, or restructure them." \
-            "" \
-            "## STRICT RULES" \
-            "1. Unless files were deleted or renamed (see DELETED/RENAMED FILES below), the output MUST be at least EXISTING_LINES_PLACEHOLDER lines. Do NOT produce a shorter file." \
-            "2. For each entry in DELETED/RENAMED FILES: remove or update the corresponding context section. This is the ONLY circumstance where removing content is permitted." \
-            "3. Do NOT rewrite sections whose source files are listed under UNCHANGED FILES." \
-            "4. Preserve all season-specific wording, manual notes, warnings, and checklist items exactly." \
-            "5. Only output the raw Markdown — no preamble, no explanation." \
-            > /tmp/prompt.txt
+          if [ "$FULL_REBUILD" = "true" ]; then
+            # Structural-refresh mode: only file paths were sent (no source content).
+            # The model should verify the overall structure is still accurate rather than
+            # trying to update individual sections from missing source.
+            printf '%s\n' \
+              "You are a senior FRC (FIRST Robotics Competition) software engineer maintaining \`.github/CODEBASE_CONTEXT.md\` for a WPILib-based robot codebase (2026 season). This file is read by GitHub Copilot as repo-wide context, so it must be maximally useful to an AI coding assistant and human developers alike." \
+              "" \
+              "## YOUR TASK" \
+              "A full list of all files currently in the repository is provided below (paths only — no source content)." \
+              "Perform a STRUCTURAL REFRESH of the existing context document:" \
+              "  • Remove any sections that reference files or directories that no longer appear in the file list." \
+              "  • Add brief placeholder entries for any top-level directories or major source files that are in the file list but completely absent from the existing context." \
+              "  • Do NOT rewrite, rephrase, or condense any existing section whose files are still present." \
+              "  • All other content must be reproduced VERBATIM." \
+              "" \
+              "## STRICT RULES" \
+              "1. Unless files were deleted (compare file list against existing context), the output MUST be at least EXISTING_LINES_PLACEHOLDER lines." \
+              "2. Only output the raw Markdown — no preamble, no explanation." \
+              > /tmp/prompt.txt
+          else
+            printf '%s\n' \
+              "You are a senior FRC (FIRST Robotics Competition) software engineer maintaining \`.github/CODEBASE_CONTEXT.md\` for a WPILib-based robot codebase (2026 season). This file is read by GitHub Copilot as repo-wide context, so it must be maximally useful to an AI coding assistant and human developers alike." \
+              "" \
+              "## YOUR TASK" \
+              "A push to main changed a small number of files. Update ONLY the sections of the existing context that are directly affected by those changed files." \
+              "All other sections must be reproduced VERBATIM — do not rephrase, summarize, condense, or restructure them." \
+              "" \
+              "## STRICT RULES" \
+              "1. Unless files were deleted or renamed (see DELETED/RENAMED FILES below), the output MUST be at least EXISTING_LINES_PLACEHOLDER lines. Do NOT produce a shorter file." \
+              "2. For each entry in DELETED/RENAMED FILES: remove or update the corresponding context section. This is the ONLY circumstance where removing content is permitted." \
+              "3. Do NOT rewrite sections whose source files are listed under UNCHANGED FILES." \
+              "4. Preserve all season-specific wording, manual notes, warnings, and checklist items exactly." \
+              "5. Only output the raw Markdown — no preamble, no explanation." \
+              > /tmp/prompt.txt
+          fi
 
-          # Append the dynamic sections (file content) to the prompt file
-          printf '\n## DELETED / RENAMED FILES (remove or update their context sections)\n' >> /tmp/prompt.txt
-          printf '%s\n' "${DELETED_LIST:-(none)}"                                           >> /tmp/prompt.txt
+          # Append the dynamic sections to the prompt file
+          if [ "$FULL_REBUILD" = "true" ]; then
+            printf '\n## FULL FILE LIST (paths only — no source content provided)\n' >> /tmp/prompt.txt
+            printf '%s\n' "$CHANGED_DUMP"                                             >> /tmp/prompt.txt
+          else
+            printf '\n## DELETED / RENAMED FILES (remove or update their context sections)\n' >> /tmp/prompt.txt
+            printf '%s\n' "${DELETED_LIST:-(none)}"                                           >> /tmp/prompt.txt
 
-          printf '\n## CHANGED FILES (full source — update context for these only)\n'       >> /tmp/prompt.txt
-          printf '%s\n' "$CHANGED_DUMP"                                                     >> /tmp/prompt.txt
+            printf '\n## CHANGED FILES (full source — update context for these only)\n'       >> /tmp/prompt.txt
+            printf '%s\n' "$CHANGED_DUMP"                                                     >> /tmp/prompt.txt
 
-          printf '\n## UNCHANGED FILES (do not touch their context sections)\n'             >> /tmp/prompt.txt
-          printf '%s\n' "$UNCHANGED_LIST"                                                   >> /tmp/prompt.txt
+            printf '\n## UNCHANGED FILES (do not touch their context sections)\n'             >> /tmp/prompt.txt
+            printf '%s\n' "$UNCHANGED_LIST"                                                   >> /tmp/prompt.txt
+          fi
 
-          printf '\n## EXISTING CODEBASE_CONTEXT.md (%s lines — reproduce in full, editing only sections affected by changed files above)\n' "$EXISTING_LINES" >> /tmp/prompt.txt
-          printf '%s\n' "$EXISTING"                                                         >> /tmp/prompt.txt
+          printf '\n## EXISTING CODEBASE_CONTEXT.md (%s lines — reproduce in full, editing only where rules above require)\n' "$EXISTING_LINES" >> /tmp/prompt.txt
+          printf '%s\n' "$EXISTING"                                                           >> /tmp/prompt.txt
 
           # Patch the line-count placeholder now that we know it
           sed -i "s/EXISTING_LINES_PLACEHOLDER/${EXISTING_LINES}/" /tmp/prompt.txt
