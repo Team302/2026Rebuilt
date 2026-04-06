@@ -8,6 +8,7 @@ on:
       - "src/main/**"
       - "build.gradle"
       - "build.gradle.kts"
+  workflow_dispatch: # Allow manual runs from the GitHub Actions UI or CLI
 
 permissions:
   contents: write
@@ -36,8 +37,16 @@ jobs:
           # --name-status shows Added(A), Modified(M), Deleted(D), Renamed(R) etc.
           # We use this to build the explicit deleted/renamed list AND to decide
           # which files are "changed" for the content dump.
-          ALL_STATUS=$(git diff --name-status ${{ github.event.before }} ${{ github.sha }} \
-                       -- 'src/main/**' 'build.gradle' 'build.gradle.kts' || true)
+          # For workflow_dispatch runs github.event.before is empty — treat all files as changed.
+          BEFORE="${{ github.event.before }}"
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "Manual run or no before SHA — treating all src/main files as changed."
+            ALL_STATUS=$(git ls-files --format='M	%(path)' -- 'src/main/**' 'build.gradle' 'build.gradle.kts' 2>/dev/null || \
+                         git ls-tree -r --name-only HEAD -- src/main build.gradle build.gradle.kts | sed 's/^/M\t/' || true)
+          else
+            ALL_STATUS=$(git diff --name-status "$BEFORE" ${{ github.sha }} \
+                         -- 'src/main/**' 'build.gradle' 'build.gradle.kts' || true)
+          fi
 
           echo "File statuses in this push:"
           echo "$ALL_STATUS"
@@ -256,8 +265,13 @@ jobs:
 
           # Changed files list for PR body (uses name-status for full picture)
           CHANGED_LIST=""
-          ALL_STATUS=$(git diff --name-status ${{ github.event.before }} ${{ github.sha }} \
-                       -- 'src/main/**' 'build.gradle' 'build.gradle.kts' || true)
+          BEFORE="${{ github.event.before }}"
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            ALL_STATUS=$(git ls-tree -r --name-only HEAD -- src/main build.gradle build.gradle.kts | sed 's/^/M\t/' || true)
+          else
+            ALL_STATUS=$(git diff --name-status "$BEFORE" ${{ github.sha }} \
+                         -- 'src/main/**' 'build.gradle' 'build.gradle.kts' || true)
+          fi
           while IFS='	' read -r status path1 path2; do
             [ -z "$status" ] && continue
             case "$status" in
