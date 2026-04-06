@@ -143,16 +143,21 @@ void Robot::RobotPeriodic()
     UpdateDriveTeamFeedback();
 }
 
+void Robot::DisabledInit()
+{
+    OrchestraManager::GetInstance()->LoadMusic(frc::filesystem::GetDeployDirectory() + "/music/fur-elise.chrp");
+    OrchestraManager::GetInstance()->StartMusic();
+}
+
 /// @brief Called periodically while the robot is disabled.
 /// Updates the PeriodicLooper's disabled state for any mode-specific behavior.
+
 void Robot::DisabledPeriodic()
 {
     PeriodicLooper::GetInstance()->DisabledRunCurrentState();
 
     m_field->UpdateEnabledStates();
     FMSData::UpdateAllianceColor();
-    OrchestraManager::GetInstance()->LoadMusic(frc::filesystem::GetDeployDirectory() + "/music/fur_elise.chrp");
-    OrchestraManager::GetInstance()->StartMusic();
 }
 
 /// @brief Called once when autonomous mode begins.

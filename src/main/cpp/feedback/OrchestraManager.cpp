@@ -55,8 +55,7 @@ template void OrchestraManager::AddInstrument<ctre::phoenix6::hardware::TalonFXS
 void OrchestraManager::LoadMusic(const std::string &filePath)
 {
     m_currentFilePath = filePath;
-    // m_musicLoaded = std::filesystem::exists(m_currentFilePath);
-    m_musicLoaded = true;
+    m_musicLoaded = std::filesystem::exists(m_currentFilePath);
 
     if (m_orchestra == nullptr)
     {
