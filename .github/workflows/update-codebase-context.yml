@@ -110,7 +110,9 @@ jobs:
                 CHANGED_DUMP="${CHANGED_DUMP}  - ${rel}\n"
               elif is_text_ext "$rel"; then
                 LANG=$(lang_for "$rel")
-                CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${rel}\n\`\`\`${LANG}\n$(head -c 6000 "$file")\n\`\`\`"
+                # Hard cap 1 500 chars per file (~375 tokens) so many changed files
+                # don't blow past the 8k-token GitHub Models request limit.
+                CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${rel}\n\`\`\`${LANG}\n$(head -c 1500 "$file")\n\`\`\`"
               else
                 CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE (binary): ${rel}"
               fi
@@ -134,9 +136,28 @@ jobs:
           done
 
           # ── Existing context ──────────────────────────────────────────────────
+          # Hard cap: 8 000 bytes (~2 000 tokens) so it fits inside the 8k-token
+          # GitHub Models request limit alongside the changed-files content.
           EXISTING_CONTEXT=""
-          [ -f ".github/CODEBASE_CONTEXT.md" ] && EXISTING_CONTEXT=$(head -c 60000 .github/CODEBASE_CONTEXT.md)
+          [ -f ".github/CODEBASE_CONTEXT.md" ] && EXISTING_CONTEXT=$(head -c 8000 .github/CODEBASE_CONTEXT.md)
           EXISTING_LINES=$(wc -l < .github/CODEBASE_CONTEXT.md 2>/dev/null || echo "0")
+
+          # ── Hard caps on accumulated strings to guarantee total prompt < 24 KB ──
+          # GitHub Models free tier enforces an 8 000-token (~32 KB) request cap.
+          # Reserve ~8 KB for the prompt instructions + headings, leaving ~16 KB
+          # for dynamic content split across the three sections below.
+          CHANGED_DUMP_BYTES=$(printf '%b' "$CHANGED_DUMP" | wc -c)
+          if [ "$CHANGED_DUMP_BYTES" -gt 10000 ]; then
+            echo "WARNING: Changed dump is ${CHANGED_DUMP_BYTES} bytes — truncating to 10 000 bytes."
+            CHANGED_DUMP=$(printf '%b' "$CHANGED_DUMP" | head -c 10000)
+            CHANGED_DUMP="${CHANGED_DUMP}\n\n[... truncated — too many changed files for single API call ...]"
+          fi
+
+          UNCHANGED_LIST_BYTES=$(printf '%b' "$UNCHANGED_LIST" | wc -c)
+          if [ "$UNCHANGED_LIST_BYTES" -gt 4000 ]; then
+            UNCHANGED_LIST=$(printf '%b' "$UNCHANGED_LIST" | head -c 4000)
+            UNCHANGED_LIST="${UNCHANGED_LIST}\n[... truncated ...]"
+          fi
 
           printf '%b' "$CHANGED_DUMP"     > /tmp/changed_dump.txt
           printf '%b' "$UNCHANGED_LIST"   > /tmp/unchanged_list.txt
@@ -224,6 +245,17 @@ jobs:
 
           # Patch the line-count placeholder now that we know it
           sed -i "s/EXISTING_LINES_PLACEHOLDER/${EXISTING_LINES}/" /tmp/prompt.txt
+
+          # ── Guard: abort if prompt is still too large for the API ─────────────
+          # 8 000 tokens ≈ 32 000 bytes; we target staying under 24 000 bytes to
+          # leave headroom for JSON envelope overhead and output tokens.
+          PROMPT_BYTES=$(wc -c < /tmp/prompt.txt)
+          echo "Prompt size: ${PROMPT_BYTES} bytes"
+          if [ "$PROMPT_BYTES" -gt 24000 ]; then
+            echo "ERROR: Prompt is ${PROMPT_BYTES} bytes — exceeds 24 000-byte safety limit."
+            echo "Reduce the number of changed files per push, or increase per-section caps."
+            exit 1
+          fi
 
           # Build JSON payload using --rawfile so jq reads the prompt from disk,
           # completely bypassing the shell argument size limit.
