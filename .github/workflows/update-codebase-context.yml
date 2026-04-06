@@ -160,20 +160,21 @@ jobs:
           # ── Build the prompt and write to a file to avoid "Argument list too long" ──
           # Shell --arg passing fails when the prompt exceeds ~2 MB; writing to a file
           # and using jq --rawfile sidesteps the OS ARG_MAX limit entirely.
-          cat > /tmp/prompt.txt << 'PROMPT_EOF'
-You are a senior FRC (FIRST Robotics Competition) software engineer maintaining `.github/CODEBASE_CONTEXT.md` for a WPILib-based robot codebase (2026 season). This file is read by GitHub Copilot as repo-wide context, so it must be maximally useful to an AI coding assistant and human developers alike.
-
-## YOUR TASK
-A push to main changed a small number of files. Update ONLY the sections of the existing context that are directly affected by those changed files.
-All other sections must be reproduced VERBATIM — do not rephrase, summarize, condense, or restructure them.
-
-## STRICT RULES
-1. Unless files were deleted or renamed (see DELETED/RENAMED FILES below), the output MUST be at least EXISTING_LINES_PLACEHOLDER lines. Do NOT produce a shorter file.
-2. For each entry in DELETED/RENAMED FILES: remove or update the corresponding context section. This is the ONLY circumstance where removing content is permitted.
-3. Do NOT rewrite sections whose source files are listed under UNCHANGED FILES.
-4. Preserve all season-specific wording, manual notes, warnings, and checklist items exactly.
-5. Only output the raw Markdown — no preamble, no explanation.
-PROMPT_EOF
+          # Note: no heredoc here — YAML interprets << as a merge key and breaks parsing.
+          printf '%s\n' \
+            "You are a senior FRC (FIRST Robotics Competition) software engineer maintaining \`.github/CODEBASE_CONTEXT.md\` for a WPILib-based robot codebase (2026 season). This file is read by GitHub Copilot as repo-wide context, so it must be maximally useful to an AI coding assistant and human developers alike." \
+            "" \
+            "## YOUR TASK" \
+            "A push to main changed a small number of files. Update ONLY the sections of the existing context that are directly affected by those changed files." \
+            "All other sections must be reproduced VERBATIM — do not rephrase, summarize, condense, or restructure them." \
+            "" \
+            "## STRICT RULES" \
+            "1. Unless files were deleted or renamed (see DELETED/RENAMED FILES below), the output MUST be at least EXISTING_LINES_PLACEHOLDER lines. Do NOT produce a shorter file." \
+            "2. For each entry in DELETED/RENAMED FILES: remove or update the corresponding context section. This is the ONLY circumstance where removing content is permitted." \
+            "3. Do NOT rewrite sections whose source files are listed under UNCHANGED FILES." \
+            "4. Preserve all season-specific wording, manual notes, warnings, and checklist items exactly." \
+            "5. Only output the raw Markdown — no preamble, no explanation." \
+            > /tmp/prompt.txt
 
           # Append the dynamic sections (file content) to the prompt file
           printf '\n## DELETED / RENAMED FILES (remove or update their context sections)\n' >> /tmp/prompt.txt
