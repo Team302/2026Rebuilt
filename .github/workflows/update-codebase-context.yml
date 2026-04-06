@@ -33,16 +33,17 @@ jobs:
       - name: Collect src/main source files
         id: gather
         run: |
-          # ── Get full name-status diff covering ALL relevant paths ─────────────
-          # --name-status shows Added(A), Modified(M), Deleted(D), Renamed(R) etc.
-          # We use this to build the explicit deleted/renamed list AND to decide
-          # which files are "changed" for the content dump.
-          # For workflow_dispatch runs github.event.before is empty — treat all files as changed.
+          # ── Detect manual dispatch vs real push ───────────────────────────────
+          # For workflow_dispatch, github.event.before is empty/zero. We set a
+          # FULL_REBUILD flag so the content dump contains only file paths (not
+          # full source), keeping the prompt well within the API token budget.
+          # On a real push only the small diff is sent with full content as normal.
           BEFORE="${{ github.event.before }}"
+          FULL_REBUILD=false
           if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-            echo "Manual run or no before SHA — treating all src/main files as changed."
-            ALL_STATUS=$(git ls-files --format='M	%(path)' -- 'src/main/**' 'build.gradle' 'build.gradle.kts' 2>/dev/null || \
-                         git ls-tree -r --name-only HEAD -- src/main build.gradle build.gradle.kts | sed 's/^/M\t/' || true)
+            echo "Manual run — paths-only mode (no file content sent to model)."
+            FULL_REBUILD=true
+            ALL_STATUS=$(git ls-tree -r --name-only HEAD -- src/main build.gradle build.gradle.kts | sed 's/^/M\t/' || true)
           else
             ALL_STATUS=$(git diff --name-status "$BEFORE" ${{ github.sha }} \
                          -- 'src/main/**' 'build.gradle' 'build.gradle.kts' || true)
@@ -100,17 +101,17 @@ jobs:
           UNCHANGED_LIST=""
 
           # ── Walk EVERY file currently in src/main (all extensions) ───────────
-          # Using -type f with no extension filter ensures nothing is silently
-          # omitted from the unchanged list, including .traj, .chor, .txt, etc.
           while IFS= read -r -d '' file; do
             rel="${file#./}"
 
             if is_changed "$rel"; then
-              if is_text_ext "$rel"; then
+              if [ "$FULL_REBUILD" = "true" ]; then
+                # Paths-only mode: list file without content to stay within token budget
+                CHANGED_DUMP="${CHANGED_DUMP}  - ${rel}\n"
+              elif is_text_ext "$rel"; then
                 LANG=$(lang_for "$rel")
                 CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${rel}\n\`\`\`${LANG}\n$(head -c 6000 "$file")\n\`\`\`"
               else
-                # Binary/unknown — flag as changed so model is aware, no content
                 CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE (binary): ${rel}"
               fi
             else
@@ -122,7 +123,11 @@ jobs:
           for f in build.gradle build.gradle.kts; do
             [ -f "$f" ] || continue
             if is_changed "$f"; then
-              CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${f}\n\`\`\`groovy\n$(cat "$f")\n\`\`\`"
+              if [ "$FULL_REBUILD" = "true" ]; then
+                CHANGED_DUMP="${CHANGED_DUMP}  - ${f}\n"
+              else
+                CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${f}\n\`\`\`groovy\n$(cat "$f")\n\`\`\`"
+              fi
             else
               UNCHANGED_LIST="${UNCHANGED_LIST}  - ${f}\n"
             fi
