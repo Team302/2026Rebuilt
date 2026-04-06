@@ -121,7 +121,7 @@ jobs:
 
           # ── Existing context ──────────────────────────────────────────────────
           EXISTING_CONTEXT=""
-          [ -f ".github/CODEBASE_CONTEXT.md" ] && EXISTING_CONTEXT=$(cat .github/CODEBASE_CONTEXT.md)
+          [ -f ".github/CODEBASE_CONTEXT.md" ] && EXISTING_CONTEXT=$(head -c 60000 .github/CODEBASE_CONTEXT.md)
           EXISTING_LINES=$(wc -l < .github/CODEBASE_CONTEXT.md 2>/dev/null || echo "0")
 
           printf '%b' "$CHANGED_DUMP"     > /tmp/changed_dump.txt
@@ -174,9 +174,9 @@ jobs:
             -d "$(jq -n \
               --arg prompt "$PROMPT" \
               '{
-                model: "gpt-4o",
+                model: "gpt-4o-mini",
                 messages: [{ role: "user", content: $prompt }],
-                max_tokens: 8192,
+                max_tokens: 16384,
                 temperature: 0.1
               }')" \
             "https://models.inference.ai.azure.com/chat/completions")
@@ -239,7 +239,7 @@ jobs:
           git commit -m "docs: auto-update .github/CODEBASE_CONTEXT.md from src/main changes
 
           Triggered by push to main.
-          Updated by GitHub Copilot (gpt-4o via GitHub Models).
+          Updated by GitHub Copilot (gpt-4o-mini via GitHub Models).
           [skip ci]"
 
           git push origin "$BRANCH"
