@@ -42,4 +42,7 @@ private:
 	Climber *m_theClimber = nullptr;
 
 	std::unordered_map<MechanismTypes::MECHANISM_TYPE, StateMgr *> m_mechanismMap;
+	static constexpr int m_ledCanID = 60;
+	static constexpr int m_ledStripSize = 45;
+	static constexpr double m_ledBrightness = 0.75;
 };

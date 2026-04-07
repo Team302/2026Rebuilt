@@ -51,7 +51,7 @@ void DragonCANdle::Initialize(int canID, int stripSize, const std::string &canBu
     configs.CANdleFeatures.VBatOutputMode = signals::VBatOutputModeValue::On;
 
     ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
-    for (int i = 0; i < 5; ++i)
+    for (int i = 0; i < m_attemptsToConfigCandle; ++i)
     {
         status = m_candle->GetConfigurator().Apply(configs, units::time::second_t(0.25));
         if (status.IsOK())

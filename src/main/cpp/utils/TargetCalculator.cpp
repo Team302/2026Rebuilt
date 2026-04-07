@@ -87,13 +87,6 @@ units::meter_t TargetCalculator::CalculateMechanismDistanceToTarget(units::time:
     auto realTarget = GetTargetPosition();
     auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
 
-    // // Apply rotational compensation for the mechanism offset sweeping during flight
-    // if (lookaheadTime > 0_s)
-    // {
-    //     auto mechDelta = CalculateRotationalMechDelta(lookaheadTime);
-    //     targetPos = targetPos - mechDelta;
-    // }
-
     m_cachedMechanismDistanceToTarget = mechanismPos.Distance(targetPos);
     return m_cachedMechanismDistanceToTarget;
 }
@@ -118,13 +111,6 @@ units::degree_t TargetCalculator::CalculateMechanismAngleToTarget(units::time::s
 
     auto realTarget = GetTargetPosition();
     auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
-
-    // // Apply rotational compensation for the mechanism offset sweeping during flight
-    // if (lookaheadTime > 0_s)
-    // {
-    //     auto mechDelta = CalculateRotationalMechDelta(lookaheadTime);
-    //     targetPos = targetPos - mechDelta;
-    // }
 
     frc::Translation2d vectorToTarget = targetPos - mechanismPos;
 
