@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "auton.dtd">
+<auton>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueMLDrop3_Init"
+time = "3.0">
+<zone filename = "BlueLeftBumpZoneRect.xml"/>
+</primitive>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "PassingPath1_A"
+time = "3.0"
+intakeState = "STATE_INTAKE"
+launcherState = "STATE_PREPARE_TO_LAUNCH">
+</primitive>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "PassingPath1_B"
+time = "3.0"
+intakeState = "STATE_INTAKE"
+launcherState = "STATE_PREPARE_TO_LAUNCH">
+</primitive>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "PassingPath1_C"
+time = "3.0"
+intakeState = "STATE_INTAKE"
+launcherState = "STATE_PREPARE_TO_LAUNCH">
+</primitive>
+
+</auton>
