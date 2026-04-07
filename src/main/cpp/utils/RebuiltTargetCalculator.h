@@ -366,6 +366,9 @@ private:
 
     bool m_hasFoundValidAngle = false;
 
+    bool m_isSamePose = false;
+
+    bool m_isMoving = false;
     /// @}
 
     /// \name Cached Calculation Results

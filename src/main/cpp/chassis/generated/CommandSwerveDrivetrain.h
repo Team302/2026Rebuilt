@@ -323,6 +323,10 @@ namespace subsystems
         {
             return (units::math::abs(GetPose().Rotation().Degrees() - m_targetChassisRotation) < m_chassisRotationThreshold);
         }
+        bool IsMoving()
+        {
+            return (units::math::abs(GetState().Speeds.vx) > m_velocityThreshold || units::math::abs(GetState().Speeds.vy) > m_velocityThreshold);
+        }
         // Hand Coded*/
 
     private:
@@ -330,6 +334,7 @@ namespace subsystems
         frc::Timer m_debounceTimer;
         const units::time::second_t m_samePoseTime = 0.5_s;
         const units::length::inch_t m_distanceThreshold{0.25};
+        const units::velocity::meters_per_second_t m_velocityThreshold{0.05_mps};
         frc::Pose2d m_prevPose;
         units::angle::degree_t m_targetChassisRotation;
         const units::angle::degree_t m_chassisRotationThreshold{5.0_deg};
