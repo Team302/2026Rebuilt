@@ -19,6 +19,8 @@
 
 #include <ctre/phoenix6/TalonFX.hpp>
 #include <ctre/phoenix6/TalonFXS.hpp>
+#include <map>
+#include <vector>
 
 OrchestraManager *OrchestraManager::m_instance = nullptr;
 
@@ -36,16 +38,12 @@ void OrchestraManager::AddInstrument(T *instrument)
 {
     if (instrument != nullptr)
     {
+        // Store the instrument adders so we can build orchestras later in LoadMusic
         m_instrumentAdders.emplace_back([instrument](ctre::phoenix6::Orchestra *orch)
                                         {
             if (orch != nullptr) {
                 orch->AddInstrument(*instrument);
             } });
-
-        if (m_orchestra != nullptr)
-        {
-            m_orchestra->AddInstrument(*instrument);
-        }
     }
 }
 
@@ -57,40 +55,75 @@ void OrchestraManager::LoadMusic(const std::string &filePath)
     m_currentFilePath = filePath;
     m_musicLoaded = std::filesystem::exists(m_currentFilePath);
 
-    if (m_orchestra == nullptr)
+    // Clean up old orchestras
+    for (auto orch : m_orchestras)
     {
-        m_orchestra = new ctre::phoenix6::Orchestra();
-        for (auto &adder : m_instrumentAdders)
-        {
-            adder(m_orchestra);
-        }
+        delete orch;
+    }
+    m_orchestras.clear();
+
+    if (!m_musicLoaded)
+        return;
+
+    // Determine track count from map
+    int tracks = 1; // Default to 1 track per orchestra if not found
+    OrchestraMap orchestraMap;
+    auto it = orchestraMap.m_map.find(filePath);
+    if (it != orchestraMap.m_map.end())
+    {
+        tracks = it->second;
     }
 
-    m_orchestra->LoadMusic(m_currentFilePath.c_str());
+    // Chunk instruments into multiple orchestras based on track count
+    ctre::phoenix6::Orchestra *currentOrchestra = nullptr;
+    int instrumentsInCurrentOrch = 0;
+
+    for (auto &adder : m_instrumentAdders)
+    {
+        if (currentOrchestra == nullptr || instrumentsInCurrentOrch >= tracks)
+        {
+            currentOrchestra = new ctre::phoenix6::Orchestra();
+            m_orchestras.push_back(currentOrchestra);
+            instrumentsInCurrentOrch = 0;
+        }
+        adder(currentOrchestra);
+        instrumentsInCurrentOrch++;
+    }
+
+    for (auto orch : m_orchestras)
+    {
+        orch->LoadMusic(m_currentFilePath.c_str());
+    }
 }
 
 void OrchestraManager::StartMusic()
 {
-    if (m_musicLoaded && m_orchestra != nullptr)
+    if (m_musicLoaded && !m_orchestras.empty())
     {
-        m_orchestra->Play();
+        for (auto orch : m_orchestras)
+        {
+            orch->Play();
+        }
     }
-    else if (m_musicLoaded && m_orchestra == nullptr && !m_currentFilePath.empty())
+    else if (m_musicLoaded && m_orchestras.empty() && !m_currentFilePath.empty())
     {
         LoadMusic(m_currentFilePath);
-        if (m_orchestra != nullptr)
+        for (auto orch : m_orchestras)
         {
-            m_orchestra->Play();
+            orch->Play();
         }
     }
 }
 
 void OrchestraManager::StopMusic()
 {
-    if (m_orchestra != nullptr)
+    for (auto orch : m_orchestras)
     {
-        m_orchestra->Stop();
-        delete m_orchestra;
-        m_orchestra = nullptr;
+        if (orch != nullptr)
+        {
+            orch->Stop();
+            delete orch;
+        }
     }
+    m_orchestras.clear();
 }

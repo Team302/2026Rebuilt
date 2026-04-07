@@ -145,7 +145,7 @@ void Robot::RobotPeriodic()
 
 void Robot::DisabledInit()
 {
-    OrchestraManager::GetInstance()->LoadMusic(frc::filesystem::GetDeployDirectory() + "/music/fur-elise.chrp");
+    OrchestraManager::GetInstance()->LoadMusic(frc::filesystem::GetDeployDirectory() + "/music/ride-of-the-valkries.chrp");
     OrchestraManager::GetInstance()->StartMusic();
 }
 

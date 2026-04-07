@@ -12,34 +12,15 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-
-#pragma once
-#include <ctre/phoenix6/Orchestra.hpp>
-#include <functional>
+#include <map>
 #include <string>
-#include <vector>
 
-#include "feedback/OrchestraMap.h"
-
-class OrchestraManager
+class OrchestraMap
 {
 public:
-    static OrchestraManager *GetInstance();
-
-    template <typename T>
-    void AddInstrument(T *instrument);
-
-    void LoadMusic(const std::string &filePath);
-    void StartMusic();
-    void StopMusic();
-
-private:
-    OrchestraManager() = default;
-    ~OrchestraManager() = default;
-
-    std::vector<std::function<void(ctre::phoenix6::Orchestra *)>> m_instrumentAdders;
-    std::vector<ctre::phoenix6::Orchestra *> m_orchestras;
-    static OrchestraManager *m_instance;
-    bool m_musicLoaded = false;
-    std::string m_currentFilePath = "";
+    const std::map<std::string, int> m_map{
+        {"/music/fight-song.chrp", 1},
+        {"/music/fur-elise.chrp", 4},
+        {"/music/ride-of-the-valkries.chrp", 10},
+    };
 };
