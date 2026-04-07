@@ -220,9 +220,9 @@ void AutonSelector::PutChoicesOnDashboard()
 	frc::SmartDashboard::PutData("Desired Strategy", &m_fuelStrategy);
 
 	// Variation Option
-	m_variation.AddOption("Variation 1", "Var1");
-	m_variation.AddOption("Variation 2", "Var2");
-	m_variation.AddOption("Variation 3", "Var3");
+	m_variation.AddOption("Winning Auton Variation", "Win");
+	m_variation.AddOption("Losing Auton Variation", "Lose");
+	m_variation.AddOption("Inverted Variation", "Invert");
 	m_variation.AddOption("No Variation", "");
 	m_variation.SetDefaultOption("No Variation", "");
 	frc::SmartDashboard::PutData("Variation", &m_variation);
