@@ -302,7 +302,7 @@ namespace subsystems
         frc::Pose2d GetPose() { return this->GetState().Pose; };
 
         bool IsSamePose();
-
+        bool IsSamePose(units::length::inch_t distanceThreshold);
         void ResetSamePose()
         {
             m_debounceTimer.Reset();
@@ -324,7 +324,6 @@ namespace subsystems
             return (units::math::abs(GetPose().Rotation().Degrees() - m_targetChassisRotation) < m_chassisRotationThreshold);
         }
         // Hand Coded*/
-
     private:
         void StartSimThread();
         frc::Timer m_debounceTimer;

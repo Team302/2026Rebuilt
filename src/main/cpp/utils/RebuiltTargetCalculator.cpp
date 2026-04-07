@@ -354,8 +354,7 @@ void RebuiltTargetCalculator::UpdatePassingTargetsOnField()
 units::time::second_t RebuiltTargetCalculator::GetLookAheadTime()
 {
     auto velocity = GetChassisVelocity();
-    bool isMoving = units::math::abs(velocity.vx) >= 0.05_mps ||
-                    units::math::abs(velocity.vy) >= 0.05_mps;
+    bool isMoving = !GetChassis()->IsSamePose(0.3937_in);
 
     if (!isMoving)
     {

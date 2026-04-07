@@ -158,6 +158,7 @@ protected:
     void UpdateChassisSpeeds();
 
     frc::Pose2d m_lastChassisPose{};
+    subsystems::CommandSwerveDrivetrain *GetChassis() const { return m_chassis; }
 
 private:
     static TargetCalculator *m_instance;
