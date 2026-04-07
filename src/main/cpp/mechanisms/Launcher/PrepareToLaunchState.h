@@ -20,6 +20,7 @@
 
 #include "mechanisms/Launcher/Launcher.h"
 #include "state/State.h"
+#include "teleopcontrol/TeleopControl.h"
 
 using namespace std;
 
@@ -51,5 +52,6 @@ namespace LauncherStates
 		const units::angle::turn_t m_turretTarget{0.0};
 		const double m_indexerTarget{0.0};
 		const double m_spindexerTarget{0.0};
+		TeleopControl *m_teleopControl;
 	};
 }
