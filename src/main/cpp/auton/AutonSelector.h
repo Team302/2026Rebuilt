@@ -17,10 +17,10 @@
 
 #pragma once
 
+#include "units/time.h"
+#include <frc/smartdashboard/SendableChooser.h>
 #include <string>
 #include <vector>
-#include <frc/smartdashboard/SendableChooser.h>
-#include "units/time.h"
 
 class AutonSelector
 {
@@ -50,6 +50,7 @@ public:
 	std::string GetClimbingOption();
 	std::string GetDesiredPreload();
 	std::string GetFuelStrategy();
+	std::string GetVariation();
 
 	//---------------------------------------------------------------------
 	// Method: 		GetSelectedAutoFile
@@ -80,4 +81,5 @@ private:
 	frc::SendableChooser<std::string> m_desiredPreload;
 	frc::SendableChooser<std::string> m_fuelStrategy;
 	frc::SendableChooser<std::string> m_neutralZoneArea;
+	frc::SendableChooser<std::string> m_variation;
 };
