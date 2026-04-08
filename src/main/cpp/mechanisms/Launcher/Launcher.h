@@ -241,7 +241,7 @@ private:
 	units::angle::turn_t m_targetHoodAngle = 0.0_tr;
 	units::angle::turn_t m_minHoodAngle = 0.0_tr;
 	units::angle::turn_t m_maxHoodAngle = 30.0_tr;
-	units::angle::turn_t m_minTurretAngle = 88.07_tr;
+	units::angle::turn_t m_minTurretAngle = 90_tr;
 	units::angle::turn_t m_maxTurretAngle = 268.2_tr;
 	units::angle::degree_t m_turretAngleThreshold = 5.0_deg;
 	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 150.0_rpm;

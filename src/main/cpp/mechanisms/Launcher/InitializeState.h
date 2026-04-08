@@ -48,7 +48,7 @@ namespace LauncherStates
 		const double m_launcherTarget = double(0);
 		const double m_hoodTarget = double(-0.15);
 		const double m_transferTarget = double(0);
-		const double m_turretTarget = double(-0.15);
+		const double m_turretTarget = double(-0.075);
 		const double m_indexerTarget = double(0);
 		const double m_spindexerTarget = double(0);
 	};
