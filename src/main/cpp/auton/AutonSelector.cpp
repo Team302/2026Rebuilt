@@ -64,6 +64,7 @@ string AutonSelector::GetSelectedAutoFile()
 	autonfile += GetOutpostOption();
 	autonfile += GetFuelStrategy();
 	autonfile += GetClimbingOption();
+	autonfile += GetVariation();
 	autonfile += std::string(".xml");
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("auton"), string("file"), autonfile);
@@ -149,6 +150,10 @@ string AutonSelector::GetFuelStrategy()
 {
 	return m_fuelStrategy.GetSelected();
 }
+string AutonSelector::GetVariation()
+{
+	return m_variation.GetSelected();
+}
 
 //---------------------------------------------------------------------
 // Method: 		PutChoicesOnDashboard
@@ -213,4 +218,12 @@ void AutonSelector::PutChoicesOnDashboard()
 	m_fuelStrategy.AddOption("Pass", "Pass");
 	m_fuelStrategy.SetDefaultOption("Score", "Score");
 	frc::SmartDashboard::PutData("Desired Strategy", &m_fuelStrategy);
+
+	// Variation Option
+	m_variation.AddOption("Winning Auton Variation", "Win");
+	m_variation.AddOption("Losing Auton Variation", "Lose");
+	m_variation.AddOption("Inverted Variation", "Invert");
+	m_variation.AddOption("No Variation", "");
+	m_variation.SetDefaultOption("No Variation", "");
+	frc::SmartDashboard::PutData("Variation", &m_variation);
 }
