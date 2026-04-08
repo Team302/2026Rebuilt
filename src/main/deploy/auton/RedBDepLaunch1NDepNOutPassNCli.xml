@@ -2,11 +2,19 @@
 <!DOCTYPE auton SYSTEM "auton.dtd">
 <auton>
 
-
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLDrop3_Init"
+choreoname = "Passing1_Init"
 time = "3.0">
 <zone filename = "BlueLeftBumpZoneRect.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+time = "5.0"
+launcherState = "STATE_PREPARE_TO_LAUNCH"/>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "Passing1_Init_B"
+time = "3.0">
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
