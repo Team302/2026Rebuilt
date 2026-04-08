@@ -518,12 +518,12 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
 	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::turns_per_second_t(1000);
-	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(2000);
+	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(500);
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 0.16959640223397357413;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.13491211; // 0.16959640223397357413;
 	// configs.ExternalFeedback.FeedbackRemoteSensorID = 6;
 	// configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RemoteCANcoder;
 	// configs.ExternalFeedback.SensorToMechanismRatio = 7.251952;
