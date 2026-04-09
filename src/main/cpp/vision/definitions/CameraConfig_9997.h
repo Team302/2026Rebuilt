@@ -24,4 +24,8 @@ public:
     ~CameraConfig_9997() = default;
 
     void BuildCameraConfig() override;
+
+private:
+    std::unique_ptr<DragonLimelight> m_limelightFront;
+    std::unique_ptr<DragonQuest> m_quest;
 };

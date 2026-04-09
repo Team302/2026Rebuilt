@@ -15,6 +15,8 @@
 
 #pragma once
 #include "units/length.h"
+#include "vision/DragonLimelight.h"
+#include "vision/DragonQuest.h"
 #include "vision/definitions/CameraConfig.h"
 
 class CameraConfig_9998 : public CameraConfig
@@ -24,4 +26,9 @@ public:
     ~CameraConfig_9998() = default;
 
     void BuildCameraConfig() override;
+
+private:
+    std::unique_ptr<DragonLimelight> m_limelightFront;
+    std::unique_ptr<DragonLimelight> m_limelightfront3;
+    std::unique_ptr<DragonQuest> m_quest;
 };

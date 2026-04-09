@@ -44,8 +44,8 @@ private:
     frc::PIDController m_yController{kPDrive, kIDrive, kDDrive};
     frc::PIDController m_yawController{kPYaw, kIYaw, kDYaw};
 
-    units::length::meter_t m_XdistLimit = 100_m;
-    units::length::meter_t m_YdistLimit = 100_m;
+    units::length::meter_t m_XdistLimit = 5_m;
+    units::length::meter_t m_YdistLimit = 5_m;
 
     units::length::meter_t m_IntakeXOffset = 1_m;
 
