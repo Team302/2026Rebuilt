@@ -283,9 +283,9 @@ private:
 
 	// All values in turns are actually Degree's
 	// MECH_TODO: Need to verify values after 116 inches, may need to add more points on both sides
-	static constexpr std::array<units::length::inch_t, 14> m_scoringDistanceArray = {50.0_in, 60.009_in, 72.15_in, 80.5_in, 90.57_in, 99.6_in, 116_in, 125_in, 140_in, 155_in, 170_in, 200_in, 230_in, 260_in};
-	static constexpr std::array<units::angle::turn_t, 14> m_scoringHoodAngleArray = {0.0_tr, 6.0_tr, 8.5_tr, 8.0_tr, 11.8_tr, 14.84_tr, 17.8_tr, 19.85_tr, 22.436_tr, 24.644_tr, 26.5_tr, 30.1_tr, 30.1_tr, 30.1_tr};
-	static constexpr std::array<units::angular_velocity::revolutions_per_minute_t, 14> m_scoringLauncherVelocityArray = {2000.0_rpm, 2050.0_rpm, 2050.0_rpm, 2100.0_rpm, 2200.0_rpm, 2200.0_rpm, 2350.0_rpm, 2427.875_rpm, 2580.56_rpm, 2756.015_rpm, 2950.0_rpm, 3200.0_rpm, 3400.0_rpm, 3650.0_rpm};
+	static constexpr std::array<units::length::inch_t, 9> m_scoringDistanceArray = {50.0_in, 80.0_in, 110.0_in, 140.0_in, 170.0_in, 200.0_in, 230.0_in, 260.0_in, 290.0_in};
+	static constexpr std::array<units::angle::turn_t, 9> m_scoringHoodAngleArray = {0.0_tr, 8.0_tr, 15.2_tr, 17_tr, 21.8_tr, 24.4_tr, 25.5_tr, 0.0_tr, 0.0_tr};
+	static constexpr std::array<units::angular_velocity::revolutions_per_minute_t, 9> m_scoringLauncherVelocityArray = {2000.0_rpm, 2050.0_rpm, 2150.0_rpm, 2350.0_rpm, 2600.0_rpm, 2850.0_rpm, 3150.0_rpm, 0.0_rpm, 0.0_rpm};
 
 	static constexpr std::array<units::length::foot_t, 7> m_passingDistanceArray = {10.0_ft, 16.66666667_ft, 20.0_ft, 23.08333333_ft, 26.33333333_ft, 30.0_ft, 42.33333333_ft};
 	static constexpr std::array<units::angle::turn_t, 7> m_passingHoodAngleArray = {23.5_tr, 23.5_tr, 23.5_tr, 29.7_tr, 30.0_tr, 30.0_tr, 30.0_tr};
