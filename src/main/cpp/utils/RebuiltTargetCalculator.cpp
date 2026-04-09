@@ -353,8 +353,7 @@ void RebuiltTargetCalculator::UpdatePassingTargetsOnField()
  */
 units::time::second_t RebuiltTargetCalculator::GetLookAheadTime()
 {
-    auto velocity = GetChassisVelocity();
-    bool isMoving = !GetChassis()->IsSamePose(0.3937_in);
+    bool isMoving = !GetChassis()->IsSamePose(m_IsMovingDistanceThreshold);
 
     if (!isMoving)
     {
