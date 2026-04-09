@@ -47,9 +47,9 @@ namespace LauncherStates
 
 		const units::angular_velocity::turns_per_second_t m_launcherTarget = units::angular_velocity::turns_per_second_t(0);
 		const units::angle::turn_t m_hoodTarget = units::angle::turn_t(0);
-		const double m_transferTarget = double(1);
+		const units::angular_velocity::turns_per_second_t m_transferTarget{80};
 		const units::angle::turn_t m_turretTarget = units::angle::turn_t(0);
-		const double m_indexerTarget = double(1);
-		const double m_spindexerTarget = double(1);
+		const units::angular_velocity::turns_per_second_t m_indexerTarget{25};
+		const units::angular_velocity::turns_per_second_t m_spindexerTarget{22};
 	};
 }

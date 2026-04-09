@@ -48,10 +48,10 @@ namespace LauncherStates
 
 		const units::angular_velocity::turns_per_second_t m_launcherTarget{0.0};
 		const units::angle::turn_t m_hoodTarget{0.0};
-		const double m_transferTarget{0.0};
+		const units::angular_velocity::turns_per_second_t m_transferTarget{80};
 		const units::angle::turn_t m_turretTarget{0.0};
-		const double m_indexerTarget{0.0};
-		const double m_spindexerTarget{0.0};
+		const units::angular_velocity::turns_per_second_t m_indexerTarget{0};
+		const units::angular_velocity::turns_per_second_t m_spindexerTarget{0.0};
 		TeleopControl *m_teleopControl;
 	};
 }

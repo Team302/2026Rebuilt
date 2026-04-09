@@ -128,6 +128,21 @@ public:
 		m_spindexerPositionTurns.Position = position;
 		m_spindexerActiveTarget = &m_spindexerPositionTurns.WithSlot(0);
 	}
+	void UpdateTargetTransferVelocityRPS(units::angular_velocity::turns_per_second_t velocity)
+	{
+		m_transferVelocityRPS.Velocity = velocity;
+		m_transferActiveTarget = &m_transferVelocityRPS.WithSlot(0);
+	}
+	void UpdateTargetIndexerVelocityRPS(units::angular_velocity::turns_per_second_t velocity)
+	{
+		m_indexerVelocityRPS.Velocity = velocity;
+		m_indexerActiveTarget = &m_indexerVelocityRPS.WithSlot(0);
+	}
+	void UpdateTargetSpindexerVelocityRPS(units::angular_velocity::turns_per_second_t velocity)
+	{
+		m_spindexerVelocityRPS.Velocity = velocity;
+		m_spindexerActiveTarget = &m_spindexerVelocityRPS.WithSlot(1);
+	}
 
 	void CreateAndRegisterStates();
 	void Cyclic();
@@ -146,7 +161,10 @@ public:
 	ctre::phoenix6::hardware::CANdi *GetTurretCANdi() const { return m_turretCANdi; }
 
 	ControlData *GetPercentOut() const { return m_percentOut; }
-	ControlData *GetVelocityRPS() const { return m_velocityRPS; }
+	ControlData *GetVelocityLauncher() const { return m_velocityLauncher; }
+	ControlData *GetVelocityIndexer() const { return m_velocityIndexer; }
+	ControlData *GetVelocitySpindexer() const { return m_velocitySpindexer; }
+	ControlData *GetVelocityTransfer() const { return m_velocityTransfer; }
 	ControlData *GetPositionDegreesHood() const { return m_positionDegreesHood; }
 	ControlData *GetPositionDegreesTurret() const { return m_positionDegreesTurret; }
 
@@ -200,7 +218,10 @@ private:
 	// ctre::phoenix6::hardware::CANcoder *m_turretAngleSensor;
 
 	ControlData *m_percentOut;
-	ControlData *m_velocityRPS;
+	ControlData *m_velocityLauncher;
+	ControlData *m_velocityIndexer;
+	ControlData *m_velocitySpindexer;
+	ControlData *m_velocityTransfer;
 	ControlData *m_positionDegreesHood;
 	ControlData *m_positionDegreesTurret;
 	ControlData *m_positionDegreesSpindexer;
@@ -222,6 +243,9 @@ private:
 	ctre::phoenix6::controls::MotionMagicVoltage m_hoodPositionDegreesHood{units::angle::degree_t(0.0)};
 	ctre::phoenix6::controls::MotionMagicVoltage m_turretPositionDegreesTurret{units::angle::degree_t(0.0)};
 	ctre::phoenix6::controls::VelocityVoltage m_launcherVelocityRPS{units::angular_velocity::turns_per_second_t(0.0)};
+	ctre::phoenix6::controls::VelocityVoltage m_transferVelocityRPS{units::angular_velocity::turns_per_second_t(0.0)};
+	ctre::phoenix6::controls::VelocityVoltage m_indexerVelocityRPS{units::angular_velocity::turns_per_second_t(0.0)};
+	ctre::phoenix6::controls::VelocityVoltage m_spindexerVelocityRPS{units::angular_velocity::turns_per_second_t(0.0)};
 	ctre::phoenix6::controls::ControlRequest *m_launcherActiveTarget;
 	ctre::phoenix6::controls::ControlRequest *m_hoodActiveTarget;
 	ctre::phoenix6::controls::ControlRequest *m_transferActiveTarget;
@@ -255,7 +279,7 @@ private:
 	void RefreshCachedMotorData();
 
 	bool m_launcherInitialized = false;
-	bool m_tuningLauncher = false;
+	bool m_tuningLauncher = true;
 
 	// All values in turns are actually Degree's
 	// MECH_TODO: Need to verify values after 116 inches, may need to add more points on both sides
