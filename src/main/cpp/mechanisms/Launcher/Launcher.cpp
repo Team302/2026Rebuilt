@@ -168,7 +168,7 @@ void Launcher::CreateCompBot302()
 	m_hood = new ctre::phoenix6::hardware::TalonFXS(7, ctre::phoenix6::CANBus("canivore"));
 	m_transfer = new ctre::phoenix6::hardware::TalonFX(4, ctre::phoenix6::CANBus("canivore"));
 	m_indexer = new ctre::phoenix6::hardware::TalonFX(5, ctre::phoenix6::CANBus("canivore"));
-	m_agitator = new ctre::phoenix6::hardware::TalonFX(18, ctre::phoenix6::CANBus("canivore"));
+	m_spindexer = new ctre::phoenix6::hardware::TalonFX(18, ctre::phoenix6::CANBus("canivore"));
 	m_hoodCANdi = new ctre::phoenix6::hardware::CANdi(7, ctre::phoenix6::CANBus("canivore"));
 	m_turretCANdi = new ctre::phoenix6::hardware::CANdi(6, ctre::phoenix6::CANBus("canivore"));
 	m_turret = m_turretEnabled ? new ctre::phoenix6::hardware::TalonFXS(6, ctre::phoenix6::CANBus("canivore")) : nullptr;
@@ -262,6 +262,28 @@ void Launcher::CreateCompBot302()
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
+	m_positionDegreesSpindexer = new ControlData(
+		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
+		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
+		"m_positionDegreesSpindexer",					  // std::string indentifier
+		0,												  // double proportional
+		0,												  // double integral
+		0,												  // double derivative
+		0,												  // double feedforward
+		0,												  // double velocityGain
+		0,												  // double accelartionGain
+		0,												  // double staticFrictionGain,
+
+		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
+		0,														 // double integralZone
+		0,														 // double maxAcceleration
+		0,														 // double cruiseVelocity
+		0,														 // double peakValue
+		0,														 // double nominalValue
+		false,													 // bool enableFOC
+		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
+		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
+	);
 
 	ReadConstants("Launcher.xml", 302);
 }
@@ -272,7 +294,7 @@ void Launcher::InitializeCompBot302()
 	InitializeTalonFXSHoodCompBot302();
 	InitializeTalonFXTransferCompBot302();
 	InitializeTalonFXIndexerCompBot302();
-	InitializeTalonFXAgitatorCompBot302();
+	InitializeTalonFXSpindexerCompBot302();
 	if (m_turretEnabled)
 		InitializeTalonFXSTurretCompBot302();
 }
@@ -608,7 +630,7 @@ void Launcher::InitializeTalonFXIndexerCompBot302()
 		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_indexer", "m_indexer Status", status.GetName());
 }
 
-void Launcher::InitializeTalonFXAgitatorCompBot302()
+void Launcher::InitializeTalonFXSpindexerCompBot302()
 {
 	TalonFXConfiguration configs{};
 	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
@@ -620,7 +642,7 @@ void Launcher::InitializeTalonFXAgitatorCompBot302()
 
 	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
-	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.05);
+	configs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = units::time::second_t(0.5);
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
@@ -645,15 +667,27 @@ void Launcher::InitializeTalonFXAgitatorCompBot302()
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
 	configs.Feedback.SensorToMechanismRatio = 3;
 
+	configs.Slot0.kI = m_positionDegreesSpindexer->GetI();
+	configs.Slot0.kD = m_positionDegreesSpindexer->GetD();
+	configs.Slot0.kG = m_positionDegreesSpindexer->GetF();
+	configs.Slot0.kS = m_positionDegreesSpindexer->GetS();
+	configs.Slot0.kV = m_positionDegreesSpindexer->GetV();
+	configs.Slot0.kP = m_positionDegreesSpindexer->GetP();
+	configs.Slot0.kA = m_positionDegreesSpindexer->GetA();
+	configs.Slot0.GravityType = m_positionDegreesSpindexer->GetGravityType();
+	configs.Slot0.StaticFeedforwardSign = m_positionDegreesSpindexer->GetStaticFeedforwardSign();
+
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
-		status = m_agitator->GetConfigurator().Apply(configs, units::time::second_t(0.25));
+		status = m_spindexer->GetConfigurator().Apply(configs, units::time::second_t(0.25));
 		if (status.IsOK())
 			break;
 	}
 	if (!status.IsOK())
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_agitator", "m_agitator Status", status.GetName());
+		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_spindexer", "m_spindexer Status", status.GetName());
+
+	m_spindexer->SetPosition(0.0_tr);
 }
 
 void Launcher::SetCurrentState(int state, bool run)
@@ -713,7 +747,7 @@ void Launcher::Update()
 	m_hood->SetControl(*m_hoodActiveTarget);
 	m_transfer->SetControl(*m_transferActiveTarget);
 	m_indexer->SetControl(*m_indexerActiveTarget);
-	m_agitator->SetControl(*m_agitatorActiveTarget);
+	m_spindexer->SetControl(*m_spindexerActiveTarget);
 	if (m_turretEnabled)
 		m_turret->SetControl(*m_turretActiveTarget);
 }
@@ -733,6 +767,8 @@ ControlData *Launcher::GetControlData(string name)
 		return m_positionDegreesHood;
 	if (name.compare("PositionDegreesTurret") == 0)
 		return m_positionDegreesTurret;
+	if (name.compare("PositionDegreesSpindexer") == 0)
+		return m_positionDegreesSpindexer;
 
 	return nullptr;
 }
