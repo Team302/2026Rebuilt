@@ -18,6 +18,7 @@
 #include <optional>
 
 #include "frc2/command/CommandPtr.h"
+#include "networktables/NetworkTable.h"
 #include <frc/TimedRobot.h>
 
 class CyclePrimitives;
@@ -56,6 +57,7 @@ private:
     void InitializeAutonOptions();
     void InitializeDriveteamFeedback();
     void UpdateDriveTeamFeedback();
+    void UpdatePISystemTime();
 
     CyclePrimitives *m_cyclePrims;
 
@@ -68,5 +70,7 @@ private:
     DragonVisionPoseEstimatorContainer *m_dragonVisionPoseEstimator;
     DragonQuest *m_quest;
     DriverFeedback *m_feedback = nullptr;
+    std::shared_ptr<nt::NetworkTable> m_loggerTable = nullptr;
     subsystems::CommandSwerveDrivetrain *m_chassis = nullptr;
+    int m_piUpdateCounter = 0;
 };

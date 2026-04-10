@@ -74,12 +74,12 @@
 
 #include "Robot.h"
 
-#include <frc2/command/CommandScheduler.h>
-
 #include "RobotContainer.h"
 #include "RobotIdentifier.h"
 #include "auton/AutonPreviewer.h"
 #include "auton/CyclePrimitives.h"
+#include <chrono>
+#include <frc2/command/CommandScheduler.h>
 // #include "auton/drivePrimitives/AutonUtils.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "feedback/DriverFeedback.h"
@@ -112,6 +112,7 @@ Robot::Robot()
 
     m_datalogger = DragonDataLoggerMgr::GetInstance();
     m_datalogger->PeriodicDataLogInit(); // warm-load the data logger to avoid first-run stalls during matches
+    m_loggerTable = nt::NetworkTableInstance::GetDefault().GetTable("pi-logger");
 
     // auto path = AutonUtils::GetTrajectoryFromPathFile("BlueLeftInside_I"); // load choreo library so we don't get loop overruns during autonperiodic
 }
@@ -139,6 +140,7 @@ void Robot::RobotPeriodic()
     }
 
     UpdateDriveTeamFeedback();
+    UpdatePISystemTime();
 }
 
 /// @brief Called periodically while the robot is disabled.
@@ -283,6 +285,20 @@ void Robot::UpdateDriveTeamFeedback()
     if (m_feedback != nullptr)
     {
         m_feedback->UpdateFeedback();
+    }
+}
+
+void Robot::UpdatePISystemTime()
+{
+    if (m_loggerTable != nullptr)
+    {
+        if (m_piUpdateCounter >= 20)
+        {
+            auto currentTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+            m_loggerTable->PutNumber("pi-system-time", static_cast<double>(currentTime));
+            m_piUpdateCounter = 0;
+        }
+        m_piUpdateCounter++;
     }
 }
 

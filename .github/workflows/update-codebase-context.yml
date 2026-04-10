@@ -8,6 +8,7 @@ on:
       - "src/main/**"
       - "build.gradle"
       - "build.gradle.kts"
+  workflow_dispatch: # Allow manual runs from the GitHub Actions UI or CLI
 
 permissions:
   contents: write
@@ -32,12 +33,21 @@ jobs:
       - name: Collect src/main source files
         id: gather
         run: |
-          # ── Get full name-status diff covering ALL relevant paths ─────────────
-          # --name-status shows Added(A), Modified(M), Deleted(D), Renamed(R) etc.
-          # We use this to build the explicit deleted/renamed list AND to decide
-          # which files are "changed" for the content dump.
-          ALL_STATUS=$(git diff --name-status ${{ github.event.before }} ${{ github.sha }} \
-                       -- 'src/main/**' 'build.gradle' 'build.gradle.kts' || true)
+          # ── Detect manual dispatch vs real push ───────────────────────────────
+          # For workflow_dispatch, github.event.before is empty/zero. We set a
+          # FULL_REBUILD flag so the content dump contains only file paths (not
+          # full source), keeping the prompt well within the API token budget.
+          # On a real push only the small diff is sent with full content as normal.
+          BEFORE="${{ github.event.before }}"
+          FULL_REBUILD=false
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "Manual run — paths-only mode (no file content sent to model)."
+            FULL_REBUILD=true
+            ALL_STATUS=$(git ls-tree -r --name-only HEAD -- src/main build.gradle build.gradle.kts | sed 's/^/M\t/' || true)
+          else
+            ALL_STATUS=$(git diff --name-status "$BEFORE" ${{ github.sha }} \
+                         -- 'src/main/**' 'build.gradle' 'build.gradle.kts' || true)
+          fi
 
           echo "File statuses in this push:"
           echo "$ALL_STATUS"
@@ -91,17 +101,19 @@ jobs:
           UNCHANGED_LIST=""
 
           # ── Walk EVERY file currently in src/main (all extensions) ───────────
-          # Using -type f with no extension filter ensures nothing is silently
-          # omitted from the unchanged list, including .traj, .chor, .txt, etc.
           while IFS= read -r -d '' file; do
             rel="${file#./}"
 
             if is_changed "$rel"; then
-              if is_text_ext "$rel"; then
+              if [ "$FULL_REBUILD" = "true" ]; then
+                # Paths-only mode: list file without content to stay within token budget
+                CHANGED_DUMP="${CHANGED_DUMP}  - ${rel}\n"
+              elif is_text_ext "$rel"; then
                 LANG=$(lang_for "$rel")
-                CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${rel}\n\`\`\`${LANG}\n$(head -c 6000 "$file")\n\`\`\`"
+                # Hard cap 1 500 chars per file (~375 tokens) so many changed files
+                # don't blow past the 8k-token GitHub Models request limit.
+                CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${rel}\n\`\`\`${LANG}\n$(head -c 1500 "$file")\n\`\`\`"
               else
-                # Binary/unknown — flag as changed so model is aware, no content
                 CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE (binary): ${rel}"
               fi
             else
@@ -113,22 +125,46 @@ jobs:
           for f in build.gradle build.gradle.kts; do
             [ -f "$f" ] || continue
             if is_changed "$f"; then
-              CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${f}\n\`\`\`groovy\n$(cat "$f")\n\`\`\`"
+              if [ "$FULL_REBUILD" = "true" ]; then
+                CHANGED_DUMP="${CHANGED_DUMP}  - ${f}\n"
+              else
+                CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${f}\n\`\`\`groovy\n$(cat "$f")\n\`\`\`"
+              fi
             else
               UNCHANGED_LIST="${UNCHANGED_LIST}  - ${f}\n"
             fi
           done
 
           # ── Existing context ──────────────────────────────────────────────────
+          # Hard cap: 8 000 bytes (~2 000 tokens) so it fits inside the 8k-token
+          # GitHub Models request limit alongside the changed-files content.
           EXISTING_CONTEXT=""
-          [ -f ".github/CODEBASE_CONTEXT.md" ] && EXISTING_CONTEXT=$(cat .github/CODEBASE_CONTEXT.md)
+          [ -f ".github/CODEBASE_CONTEXT.md" ] && EXISTING_CONTEXT=$(head -c 8000 .github/CODEBASE_CONTEXT.md)
           EXISTING_LINES=$(wc -l < .github/CODEBASE_CONTEXT.md 2>/dev/null || echo "0")
+
+          # ── Hard caps on accumulated strings to guarantee total prompt < 24 KB ──
+          # GitHub Models free tier enforces an 8 000-token (~32 KB) request cap.
+          # Reserve ~8 KB for the prompt instructions + headings, leaving ~16 KB
+          # for dynamic content split across the three sections below.
+          CHANGED_DUMP_BYTES=$(printf '%b' "$CHANGED_DUMP" | wc -c)
+          if [ "$CHANGED_DUMP_BYTES" -gt 10000 ]; then
+            echo "WARNING: Changed dump is ${CHANGED_DUMP_BYTES} bytes — truncating to 10 000 bytes."
+            CHANGED_DUMP=$(printf '%b' "$CHANGED_DUMP" | head -c 10000)
+            CHANGED_DUMP="${CHANGED_DUMP}\n\n[... truncated — too many changed files for single API call ...]"
+          fi
+
+          UNCHANGED_LIST_BYTES=$(printf '%b' "$UNCHANGED_LIST" | wc -c)
+          if [ "$UNCHANGED_LIST_BYTES" -gt 4000 ]; then
+            UNCHANGED_LIST=$(printf '%b' "$UNCHANGED_LIST" | head -c 4000)
+            UNCHANGED_LIST="${UNCHANGED_LIST}\n[... truncated ...]"
+          fi
 
           printf '%b' "$CHANGED_DUMP"     > /tmp/changed_dump.txt
           printf '%b' "$UNCHANGED_LIST"   > /tmp/unchanged_list.txt
           printf '%b' "$DELETED_LIST"     > /tmp/deleted_list.txt
           printf '%s' "$EXISTING_CONTEXT" > /tmp/existing_context.txt
           echo "$EXISTING_LINES"          > /tmp/existing_lines.txt
+          echo "$FULL_REBUILD"            > /tmp/full_rebuild.txt
 
           echo "Existing context: ${EXISTING_LINES} lines"
           if [ -n "$DELETED_LIST" ]; then
@@ -147,38 +183,95 @@ jobs:
           DELETED_LIST=$(cat /tmp/deleted_list.txt)
           EXISTING=$(cat /tmp/existing_context.txt)
           EXISTING_LINES=$(cat /tmp/existing_lines.txt)
+          FULL_REBUILD=$(cat /tmp/full_rebuild.txt 2>/dev/null || echo "false")
 
-          PROMPT="You are a senior FRC (FIRST Robotics Competition) software engineer maintaining \`.github/CODEBASE_CONTEXT.md\` for a WPILib-based robot codebase (2026 season).\
-           This file is read by GitHub Copilot as repo-wide context, so it must be maximally useful to an AI coding assistant and human developers alike.\
-           \n\n## YOUR TASK\
-           \nA push to main changed a small number of files. Update ONLY the sections of the existing context that are directly affected by those changed files.\
-           \nAll other sections must be reproduced VERBATIM — do not rephrase, summarize, condense, or restructure them.\
-           \n\n## STRICT RULES\
-           \n1. Unless files were deleted or renamed (see DELETED/RENAMED FILES below), the output MUST be at least ${EXISTING_LINES} lines. Do NOT produce a shorter file.\
-           \n2. For each entry in DELETED/RENAMED FILES: remove or update the corresponding context section. This is the ONLY circumstance where removing content is permitted.\
-           \n3. Do NOT rewrite sections whose source files are listed under UNCHANGED FILES.\
-           \n4. Preserve all season-specific wording, manual notes, ⚠️ warnings, and checklist items exactly.\
-           \n5. Only output the raw Markdown — no preamble, no explanation.\
-           \n\n## DELETED / RENAMED FILES (remove or update their context sections)\
-           \n${DELETED_LIST:-\"(none)\"}\
-           \n\n## CHANGED FILES (full source — update context for these only)\
-           \n${CHANGED_DUMP}\
-           \n\n## UNCHANGED FILES (these exist but did NOT change — do not touch their context sections)\
-           \n${UNCHANGED_LIST}\
-           \n\n## EXISTING CODEBASE_CONTEXT.md (${EXISTING_LINES} lines — reproduce in full, editing only sections affected by changed files above)\
-           \n${EXISTING}"
+          # ── Build the prompt and write to a file to avoid "Argument list too long" ──
+          # Shell --arg passing fails when the prompt exceeds ~2 MB; writing to a file
+          # and using jq --rawfile sidesteps the OS ARG_MAX limit entirely.
+          # Note: no heredoc here — YAML interprets << as a merge key and breaks parsing.
+          if [ "$FULL_REBUILD" = "true" ]; then
+            # Structural-refresh mode: only file paths were sent (no source content).
+            # The model should verify the overall structure is still accurate rather than
+            # trying to update individual sections from missing source.
+            printf '%s\n' \
+              "You are a senior FRC (FIRST Robotics Competition) software engineer maintaining \`.github/CODEBASE_CONTEXT.md\` for a WPILib-based robot codebase (2026 season). This file is read by GitHub Copilot as repo-wide context, so it must be maximally useful to an AI coding assistant and human developers alike." \
+              "" \
+              "## YOUR TASK" \
+              "A full list of all files currently in the repository is provided below (paths only — no source content)." \
+              "Perform a STRUCTURAL REFRESH of the existing context document:" \
+              "  • Remove any sections that reference files or directories that no longer appear in the file list." \
+              "  • Add brief placeholder entries for any top-level directories or major source files that are in the file list but completely absent from the existing context." \
+              "  • Do NOT rewrite, rephrase, or condense any existing section whose files are still present." \
+              "  • All other content must be reproduced VERBATIM." \
+              "" \
+              "## STRICT RULES" \
+              "1. Unless files were deleted (compare file list against existing context), the output MUST be at least EXISTING_LINES_PLACEHOLDER lines." \
+              "2. Only output the raw Markdown — no preamble, no explanation." \
+              > /tmp/prompt.txt
+          else
+            printf '%s\n' \
+              "You are a senior FRC (FIRST Robotics Competition) software engineer maintaining \`.github/CODEBASE_CONTEXT.md\` for a WPILib-based robot codebase (2026 season). This file is read by GitHub Copilot as repo-wide context, so it must be maximally useful to an AI coding assistant and human developers alike." \
+              "" \
+              "## YOUR TASK" \
+              "A push to main changed a small number of files. Update ONLY the sections of the existing context that are directly affected by those changed files." \
+              "All other sections must be reproduced VERBATIM — do not rephrase, summarize, condense, or restructure them." \
+              "" \
+              "## STRICT RULES" \
+              "1. Unless files were deleted or renamed (see DELETED/RENAMED FILES below), the output MUST be at least EXISTING_LINES_PLACEHOLDER lines. Do NOT produce a shorter file." \
+              "2. For each entry in DELETED/RENAMED FILES: remove or update the corresponding context section. This is the ONLY circumstance where removing content is permitted." \
+              "3. Do NOT rewrite sections whose source files are listed under UNCHANGED FILES." \
+              "4. Preserve all season-specific wording, manual notes, warnings, and checklist items exactly." \
+              "5. Only output the raw Markdown — no preamble, no explanation." \
+              > /tmp/prompt.txt
+          fi
+
+          # Append the dynamic sections to the prompt file
+          if [ "$FULL_REBUILD" = "true" ]; then
+            printf '\n## FULL FILE LIST (paths only — no source content provided)\n' >> /tmp/prompt.txt
+            printf '%s\n' "$CHANGED_DUMP"                                             >> /tmp/prompt.txt
+          else
+            printf '\n## DELETED / RENAMED FILES (remove or update their context sections)\n' >> /tmp/prompt.txt
+            printf '%s\n' "${DELETED_LIST:-(none)}"                                           >> /tmp/prompt.txt
+
+            printf '\n## CHANGED FILES (full source — update context for these only)\n'       >> /tmp/prompt.txt
+            printf '%s\n' "$CHANGED_DUMP"                                                     >> /tmp/prompt.txt
+
+            printf '\n## UNCHANGED FILES (do not touch their context sections)\n'             >> /tmp/prompt.txt
+            printf '%s\n' "$UNCHANGED_LIST"                                                   >> /tmp/prompt.txt
+          fi
+
+          printf '\n## EXISTING CODEBASE_CONTEXT.md (%s lines — reproduce in full, editing only where rules above require)\n' "$EXISTING_LINES" >> /tmp/prompt.txt
+          printf '%s\n' "$EXISTING"                                                           >> /tmp/prompt.txt
+
+          # Patch the line-count placeholder now that we know it
+          sed -i "s/EXISTING_LINES_PLACEHOLDER/${EXISTING_LINES}/" /tmp/prompt.txt
+
+          # ── Guard: abort if prompt is still too large for the API ─────────────
+          # 8 000 tokens ≈ 32 000 bytes; we target staying under 24 000 bytes to
+          # leave headroom for JSON envelope overhead and output tokens.
+          PROMPT_BYTES=$(wc -c < /tmp/prompt.txt)
+          echo "Prompt size: ${PROMPT_BYTES} bytes"
+          if [ "$PROMPT_BYTES" -gt 24000 ]; then
+            echo "ERROR: Prompt is ${PROMPT_BYTES} bytes — exceeds 24 000-byte safety limit."
+            echo "Reduce the number of changed files per push, or increase per-section caps."
+            exit 1
+          fi
+
+          # Build JSON payload using --rawfile so jq reads the prompt from disk,
+          # completely bypassing the shell argument size limit.
+          jq -n \
+            --rawfile prompt /tmp/prompt.txt \
+            '{
+              model: "gpt-4o-mini",
+              messages: [{ role: "user", content: $prompt }],
+              max_tokens: 16384,
+              temperature: 0.1
+            }' > /tmp/request.json
 
           RESPONSE=$(curl -s \
             -H "Authorization: Bearer ${GITHUB_TOKEN}" \
             -H "Content-Type: application/json" \
-            -d "$(jq -n \
-              --arg prompt "$PROMPT" \
-              '{
-                model: "gpt-4o",
-                messages: [{ role: "user", content: $prompt }],
-                max_tokens: 8192,
-                temperature: 0.1
-              }')" \
+            --data-binary @/tmp/request.json \
             "https://models.inference.ai.azure.com/chat/completions")
 
           echo "$RESPONSE" | jq -r '.choices[0].message.content' > /tmp/new_context.md
@@ -239,7 +332,7 @@ jobs:
           git commit -m "docs: auto-update .github/CODEBASE_CONTEXT.md from src/main changes
 
           Triggered by push to main.
-          Updated by GitHub Copilot (gpt-4o via GitHub Models).
+          Updated by GitHub Copilot (gpt-4o-mini via GitHub Models).
           [skip ci]"
 
           git push origin "$BRANCH"
@@ -256,8 +349,13 @@ jobs:
 
           # Changed files list for PR body (uses name-status for full picture)
           CHANGED_LIST=""
-          ALL_STATUS=$(git diff --name-status ${{ github.event.before }} ${{ github.sha }} \
-                       -- 'src/main/**' 'build.gradle' 'build.gradle.kts' || true)
+          BEFORE="${{ github.event.before }}"
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            ALL_STATUS=$(git ls-tree -r --name-only HEAD -- src/main build.gradle build.gradle.kts | sed 's/^/M\t/' || true)
+          else
+            ALL_STATUS=$(git diff --name-status "$BEFORE" ${{ github.sha }} \
+                         -- 'src/main/**' 'build.gradle' 'build.gradle.kts' || true)
+          fi
           while IFS='	' read -r status path1 path2; do
             [ -z "$status" ] && continue
             case "$status" in
