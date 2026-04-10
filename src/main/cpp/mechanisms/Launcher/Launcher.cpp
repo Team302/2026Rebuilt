@@ -1083,7 +1083,7 @@ bool Launcher::IsFinishedLaunching()
 void Launcher::UpdateCachedLoggingValues()
 {
 	units::angle::degree_t hoodError = units::angle::degree_t(std::abs((m_cachedHoodPosition - m_targetHoodAngle).value()));
-	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = units::angular_velocity::revolutions_per_minute_t(std::abs((m_cachedLauncherVelocity - m_targetLauncherAngularVelocity).value()));
+	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = units::math::abs((m_cachedLauncherVelocity - m_targetLauncherAngularVelocity));
 	bool inLaunchzone = IsInLaunchZone();
 	auto chassisSpeeds = m_chassis != nullptr ? m_chassis->GetState().Speeds : frc::ChassisSpeeds();
 	auto Speed = units::math::sqrt(units::math::abs(chassisSpeeds.vx * chassisSpeeds.vx) + units::math::abs(chassisSpeeds.vy * chassisSpeeds.vy));
