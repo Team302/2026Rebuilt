@@ -361,7 +361,8 @@ units::time::second_t RebuiltTargetCalculator::GetLookAheadTime()
     }
 
     units::length::inch_t distance = CalculateMechanismDistanceToTarget(0_s);
-    return InterpolateUtils::linearInterpolate(m_LookAheadDistances, m_LookAheadTimes, distance);
+    auto lookAheadtime = InterpolateUtils::linearInterpolate(m_LookAheadDistances, m_LookAheadTimes, distance);
+    return lookAheadtime;
 }
 
 /**
