@@ -73,4 +73,5 @@ private:
     std::shared_ptr<nt::NetworkTable> m_loggerTable = nullptr;
     subsystems::CommandSwerveDrivetrain *m_chassis = nullptr;
     int m_piUpdateCounter = 0;
+    int m_piTimeRefreshDelay = 20;
 };
