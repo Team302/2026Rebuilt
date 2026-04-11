@@ -60,6 +60,7 @@ string AutonSelector::GetSelectedAutoFile()
 	autonfile += GetStartPos();
 	autonfile += GetDesiredPreload();
 	autonfile += GetNeutralZoneAmount();
+	autonfile += GetNeutralZoneArea();
 	autonfile += GetDepotOption();
 	autonfile += GetOutpostOption();
 	autonfile += GetFuelStrategy();
@@ -129,6 +130,11 @@ string AutonSelector::GetNeutralZoneAmount()
 	return m_neutralZoneAmount.GetSelected();
 }
 
+string AutonSelector::GetNeutralZoneArea()
+{
+	return m_neutralZoneArea.GetSelected();
+}
+
 string AutonSelector::GetDepotOption()
 {
 	return m_targetDepot.GetSelected();
@@ -182,11 +188,12 @@ void AutonSelector::PutChoicesOnDashboard()
 	frc::SmartDashboard::PutData("Times in Neutral Zone", &m_neutralZoneAmount);
 
 	// Area in NZ
-	m_neutralZoneArea.AddOption("half", "Half");
-	m_neutralZoneArea.AddOption("full", "Complete");
-	m_neutralZoneArea.AddOption("combo", "Combo");
-	m_neutralZoneArea.SetDefaultOption("half", "Half");
-	frc::SmartDashboard::PutData("Desired Area", &m_neutralZoneArea);
+	m_neutralZoneArea.AddOption("Half Field", "Half");
+	m_neutralZoneArea.AddOption("Full Field", "Full");
+	m_neutralZoneArea.AddOption("Both", "Combo");
+	m_neutralZoneArea.AddOption("No Variation", "");
+	m_neutralZoneArea.SetDefaultOption("No Variation", "");
+	frc::SmartDashboard::PutData("Desired Neutral Zone Coverage", &m_neutralZoneArea);
 
 	// Depot Option
 	m_targetDepot.AddOption("true", "Dep");

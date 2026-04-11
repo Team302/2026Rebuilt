@@ -45,6 +45,7 @@ public:
 	std::string GetAlianceColor();
 	std::string GetStartPos();
 	std::string GetNeutralZoneAmount();
+	std::string GetNeutralZoneArea();
 	std::string GetDepotOption();
 	std::string GetOutpostOption();
 	std::string GetClimbingOption();
