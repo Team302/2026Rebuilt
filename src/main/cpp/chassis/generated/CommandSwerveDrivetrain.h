@@ -327,7 +327,7 @@ namespace subsystems
     private:
         void StartSimThread();
         frc::Timer m_debounceTimer;
-        const units::time::second_t m_samePoseTime = 0.01_s;
+        const units::time::second_t m_samePoseTime = 0.5_s;
         const units::length::inch_t m_distanceThreshold{0.25};
         frc::Pose2d m_prevPose;
         units::angle::degree_t m_targetChassisRotation;
