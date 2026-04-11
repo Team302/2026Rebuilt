@@ -1,6 +1,6 @@
 #include "chassis/generated/CommandSwerveDrivetrain.h"
-#include <frc/RobotController.h>
 #include "utils/FMSData.h"
+#include <frc/RobotController.h>
 
 using namespace subsystems;
 
@@ -42,7 +42,12 @@ void CommandSwerveDrivetrain::StartSimThread()
 bool CommandSwerveDrivetrain::IsSamePose()
 
 {
-    bool isCurrentlyStopped = GetPose().Translation().Distance(m_prevPose.Translation()) < m_distanceThreshold;
+    return IsSamePose(m_distanceThreshold);
+}
+bool CommandSwerveDrivetrain::IsSamePose(units::length::inch_t distanceThreshold)
+
+{
+    bool isCurrentlyStopped = GetPose().Translation().Distance(m_prevPose.Translation()) < distanceThreshold;
 
     if (isCurrentlyStopped)
     {

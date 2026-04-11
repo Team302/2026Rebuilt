@@ -16,6 +16,7 @@
 #include "chassis/commands/season_specific_commands/DriveAlongNearestWall.h"
 #include "auton/drivePrimitives/AutonUtils.h"
 #include "fielddata/BumpHelper.h"
+#include "state/RobotState.h"
 #include "utils/PoseUtils.h"
 #include "utils/logging/debug/Logger.h"
 
@@ -37,6 +38,8 @@ DriveAlongNearestWall::DriveAlongNearestWall(subsystems::CommandSwerveDrivetrain
     m_redDepotAllianceSweepTrajectoryReverse = AutonUtils::GetTrajectoryFromPathFile(kDepotAllianceSweepPathReverse, true);
     m_blueOutpostAllianceSweepTrajectoryReverse = AutonUtils::GetTrajectoryFromPathFile(kOutpostAllianceSweepPathReverse, false);
     m_redOutpostAllianceSweepTrajectoryReverse = AutonUtils::GetTrajectoryFromPathFile(kOutpostAllianceSweepPathReverse, true);
+
+    RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsLaunching_Bool);
 }
 
 //------------------------------------------------------------------
@@ -115,4 +118,12 @@ void DriveAlongNearestWall::Initialize()
                              TrajectoryMatchStrategy::MATCH_XY,
                              m_yDistanceThreshold,
                              isForward ? m_maxPercentToJoinForwardPath : m_maxPercentToJoinReversePath);
+}
+
+void DriveAlongNearestWall::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value)
+{
+    if (change == RobotStateChanges::StateChange::IsLaunching_Bool)
+    {
+        m_isLaunching = value;
+    }
 }
