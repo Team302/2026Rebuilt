@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "auton.dtd">
+<auton>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "InitPassingPathRight1"
+time = "3.0">
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+time = "5.0"
+launcherState = "STATE_PREPARE_TO_LAUNCH"/>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "InitPassingPathRight2"
+time = "3.0">
+</primitive>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "PassingPathRight1"
+time = "20.0"
+intakeState = "STATE_INTAKE"
+launcherState = "STATE_PREPARE_TO_LAUNCH">
+</primitive>
+
+
+</auton>
