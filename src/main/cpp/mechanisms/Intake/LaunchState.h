@@ -50,7 +50,7 @@ namespace IntakeStates
 		// const units::angle::turn_t m_extenderTargetDown = units::angle::turn_t(0);
 		static constexpr double m_extenderTargetUp = double(0.4);
 		static constexpr double m_extenderTargetDown = double(-0.4);
-		double m_currentExtenderTarget = m_extenderTargetUp;
+		units::angle::turn_t m_currentExtenderTarget{5.0_tr};
 
 		frc::Timer m_timer;
 		static constexpr units::second_t m_bumpDuration = units::second_t(0.375);
