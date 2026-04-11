@@ -13,7 +13,8 @@ launcherState = "STATE_PREPARE_TO_LAUNCH"/>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "Passing1_Init_B"
-time = "3.0">
+time = "3.0"
+launcherState = "STATE_IDLE">
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"

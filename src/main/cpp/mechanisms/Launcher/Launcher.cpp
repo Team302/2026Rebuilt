@@ -951,6 +951,12 @@ std::string Launcher::GetCurrentStateName()
 bool Launcher::IsTurretAtTarget()
 {
 	m_cachedTurretAtTarget = false;
+
+	if (frc::RobotBase::IsSimulation() && !(GetCurrentState() == STATE_NAMES::STATE_LAUNCHER_TUNING))
+	{
+		return true;
+	}
+
 	if (m_turretEnabled)
 	{
 		if (m_hasValidTurretAngle)

@@ -23,18 +23,5 @@ intakeState = "STATE_INTAKE"
 launcherState = "STATE_PREPARE_TO_LAUNCH">
 </primitive>
 
-<primitive id = "TRAJECTORY_DRIVE"
-choreoname = "PassingPath1_B"
-time = "3.0"
-intakeState = "STATE_INTAKE"
-launcherState = "STATE_PREPARE_TO_LAUNCH">
-</primitive>
-
-<primitive id = "TRAJECTORY_DRIVE"
-choreoname = "PassingPath1_C"
-time = "3.0"
-intakeState = "STATE_INTAKE"
-launcherState = "STATE_PREPARE_TO_LAUNCH">
-</primitive>
 
 </auton>
