@@ -44,6 +44,16 @@ frc::Translation2d TargetCalculator::CalculateVirtualTarget(
         realTarget.Y() - offsetY};
 }
 
+frc::Translation2d TargetCalculator::CalculateRotationalMechDelta(units::time::second_t lookaheadTime) const
+{
+    units::degree_t futureHeading = m_chassisPose.Rotation().Degrees() +
+                                    units::degree_t{m_currentChassisSpeeds.omega.value() * lookaheadTime.value()};
+
+    frc::Translation2d currentMechOffset = m_mechanismOffset.RotateBy(m_chassisPose.Rotation());
+    frc::Translation2d futureMechOffset = m_mechanismOffset.RotateBy(frc::Rotation2d{futureHeading});
+    return futureMechOffset - currentMechOffset;
+}
+
 frc::Translation2d TargetCalculator::GetMechanismWorldPosition() const
 {
     return m_chassisPose.Translation() + m_mechanismOffset.RotateBy(m_chassisPose.Rotation());
@@ -101,6 +111,7 @@ units::degree_t TargetCalculator::CalculateMechanismAngleToTarget(units::time::s
 
     auto realTarget = GetTargetPosition();
     auto targetPos = (lookaheadTime > 0_s) ? CalculateVirtualTarget(realTarget, lookaheadTime) : realTarget;
+
     frc::Translation2d vectorToTarget = targetPos - mechanismPos;
 
     m_cachedMechanismAngleToTarget = vectorToTarget.Angle().Degrees();
@@ -124,11 +135,20 @@ frc::Pose2d TargetCalculator::GetVirtualTargetPose(
 void TargetCalculator::UpdateChassisPose(bool forceUpdate)
 {
     m_lastChassisPose = m_chassisPose;
-    if (m_chassis != nullptr &&
-        (forceUpdate || units::math::abs(m_currentChassisSpeeds.vx) >= m_translationSpeedThreshold || units::math::abs(m_currentChassisSpeeds.vy) >= m_translationSpeedThreshold || units::math::abs(m_currentChassisSpeeds.omega) >= m_rotationSpeedThreshold))
+
+    bool isMoving = units::math::abs(m_currentChassisSpeeds.vx) >= m_translationSpeedThreshold ||
+                    units::math::abs(m_currentChassisSpeeds.vy) >= m_translationSpeedThreshold ||
+                    units::math::abs(m_currentChassisSpeeds.omega) >= m_rotationSpeedThreshold;
+
+    // Update the pose while moving, when forced, or on the one cycle after we stop.
+    // The "just stopped" cycle ensures the cache busts once so all callers recompute
+    // with zero speeds and the virtual-target offset unwinds back to the real target.
+    if (m_chassis != nullptr && (forceUpdate || isMoving || m_wasMoving))
     {
         m_chassisPose = m_chassis->GetPose();
     }
+
+    m_wasMoving = isMoving;
 }
 
 void TargetCalculator::UpdateChassisSpeeds()

@@ -19,10 +19,12 @@
 #include "utils/DragonField.h"
 #include "utils/TargetCalculator.h"
 
+#include <array>
 #include <frc/DriverStation.h>
 #include <frc/geometry/Translation2d.h>
 #include <string>
 #include <units/length.h>
+#include <units/time.h>
 
 /**
  * \class RebuiltTargetCalculator
@@ -99,9 +101,9 @@ public:
      * \note Updates the field visualization with calculated launcher position
      * \see GetMechanismWorldPosition(), CalculateMechanismAngleToTarget()
      */
-    units::angle::turn_t GetLauncherTarget(units::time::second_t lookAheadTime, units::angle::degree_t currentLauncherAngle);
+    units::angle::degree_t GetLauncherTarget(units::angle::degree_t currentLauncherAngle);
 
-    units::angle::degree_t GetChassisTargetForLaunching(units::time::second_t lookAheadTime);
+    units::angle::degree_t GetChassisTargetForLaunching();
 
     /**
      * \brief Process controller input to adjust target positions
@@ -197,6 +199,34 @@ private:
      */
     void RefreshAllianceCache();
 
+    /**
+     * \brief Compute the lookahead time for virtual-target compensation based on distance to target.
+     *
+     * Returns 0 s when the robot is stationary (no virtual-target offset needed).
+     * When moving, interpolates flight time from a distance → time lookup table so that
+     * faster projectiles at longer ranges are correctly modeled without the caller
+     * needing to know or pass the value.
+     *
+     * \return Lookahead time in seconds (0 s when stationary)
+     */
+    units::time::second_t GetLookAheadTime();
+
+    // Distance (inches) → lookahead time (seconds) lookup table.
+    static constexpr std::array<units::length::inch_t, 9> m_LookAheadDistances{
+        50.0_in, 80.0_in, 110.0_in, 140.0_in, 170.0_in, 200.0_in, 230.0_in, 260.0_in, 290.0_in};
+
+    static constexpr std::array<units::time::second_t, 9> m_LookAheadTimes{
+        1.08_s,
+        1.06_s,
+        1.01_s,
+        1.04_s,
+        1.06_s,
+        1.35_s,
+        1.5_s,
+        1.65_s,
+        1.9_s,
+    };
+
     static RebuiltTargetCalculator *m_instance;
 
     /// \name String Constants
@@ -223,7 +253,7 @@ private:
 
     /// Mechanism position offset from robot center in robot frame (meters)
     /// Default: -3.333 inches (behind center), 4.604 inches (starboard/right of center)
-    static constexpr frc::Translation2d m_mechanismOffset{-3.333_in, 4.604_in};
+    static constexpr frc::Translation2d m_mechanismOffset{-4.6_in, 4.3_in};
 
     /// @}
 
@@ -352,6 +382,6 @@ private:
 
     /// Cached launcher target angle from last calculation (in turns)
     units::angle::turn_t m_cachedLauncherTarget = 0_tr;
-
+    static constexpr units::length::inch_t m_IsMovingDistanceThreshold{2}; // .05 mps * 20 miliseconds converted into inches
     /// @}
 };

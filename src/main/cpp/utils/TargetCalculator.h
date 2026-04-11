@@ -20,8 +20,8 @@
 #include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Translation2d.h>
 #include <frc/kinematics/ChassisSpeeds.h>
-#include <units/length.h>
 #include <units/angle.h>
+#include <units/length.h>
 
 /**
  * \class TargetCalculator
@@ -158,6 +158,7 @@ protected:
     void UpdateChassisSpeeds();
 
     frc::Pose2d m_lastChassisPose{};
+    subsystems::CommandSwerveDrivetrain *GetChassis() const { return m_chassis; }
 
 private:
     static TargetCalculator *m_instance;
@@ -166,10 +167,29 @@ private:
     frc::ChassisSpeeds m_currentChassisSpeeds{};
     frc::Pose2d m_chassisPose{};
 
-    static constexpr units::meters_per_second_t m_translationSpeedThreshold{0.1_mps};
-    static constexpr units::radians_per_second_t m_rotationSpeedThreshold{0.25_deg_per_s};
+    static constexpr units::meters_per_second_t m_translationSpeedThreshold{0.05_mps};
+    static constexpr units::radians_per_second_t m_rotationSpeedThreshold{1_deg_per_s};
 
     subsystems::CommandSwerveDrivetrain *m_chassis;
+
+    /// True if the robot was above the speed threshold on the previous cycle.
+    /// Used to force one final pose update on the transition from moving → stopped,
+    /// ensuring the cache busts once so calculations rerun with zero speeds.
+    bool m_wasMoving = false;
+
+    /**
+     * \brief Calculate how much the mechanism's world position shifts due to rotation during lookahead.
+     *
+     * Integrates omega * lookaheadTime to find the future robot heading, then computes the
+     * difference between the future and current mechanism-offset world vectors.  This delta
+     * can be subtracted from a virtual target so that mechanism-relative callers
+     * (CalculateMechanismAngleToTarget, CalculateMechanismDistanceToTarget) aim correctly
+     * when the robot is spinning, without affecting chassis-center callers.
+     *
+     * \param lookaheadTime Time in seconds for projectile flight
+     * \return Translation2d representing the change in mechanism world position due to rotation
+     */
+    frc::Translation2d CalculateRotationalMechDelta(units::time::second_t lookaheadTime) const;
 
     // Cached calculation results to avoid recalculation when pose hasn't changed
     units::meter_t m_cachedDistanceToTarget = 0_m;

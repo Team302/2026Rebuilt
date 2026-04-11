@@ -132,4 +132,5 @@ private:
 
 	// is this the first run of periodic? Used to force initial LED state setup
 	bool m_firstRun{true};
+	const int m_attemptsToConfigCandle{5};
 };

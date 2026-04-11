@@ -495,7 +495,7 @@ void DragonLimelight::StopRewind()
 /// ----------------------------------------------------------------------------------
 void DragonLimelight::UpdateIMUConfiguration()
 {
-    LIMELIGHT_IMU_MODE requiredMode = frc::DriverStation::IsDisabled() ? LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_AND_FUSE_WITH_INTERNAL_IMU : LIMELIGHT_IMU_MODE::USE_INTERNAL_IMU_WITH_EXTERNAL_IMU_ASSISTED_CONVERGENCE;
+    LIMELIGHT_IMU_MODE requiredMode = frc::DriverStation::IsDisabled() ? LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_AND_FUSE_WITH_INTERNAL_IMU : LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_ONLY;
 
     if (requiredMode != m_lastIMUMode)
     {

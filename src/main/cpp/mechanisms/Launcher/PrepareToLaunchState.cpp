@@ -36,7 +36,7 @@ using namespace LauncherStates;
 PrepareToLaunchState::PrepareToLaunchState(std::string stateName,
 										   int stateId,
 										   Launcher *mech,
-										   RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId)
+										   RobotIdentifier activeRobotId) : State(stateName, stateId), m_mechanism(mech), m_RobotId(activeRobotId), m_teleopControl(TeleopControl::GetInstance())
 {
 }
 
@@ -51,9 +51,9 @@ void PrepareToLaunchState::Init()
 
 void PrepareToLaunchState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
-	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
-	m_mechanism->UpdateTargetSpindexerPercentOut(m_spindexerTarget);
+	m_mechanism->UpdateTargetTransferVelocityRPS(m_transferTarget);
+	m_mechanism->UpdateTargetIndexerVelocityRPS(m_indexerTarget);
+	m_mechanism->UpdateTargetSpindexerVelocityRPS(m_spindexerTarget);
 }
 
 void PrepareToLaunchState::Run()
@@ -77,6 +77,9 @@ bool PrepareToLaunchState::AtTarget()
 bool PrepareToLaunchState::IsTransitionCondition(bool considerGamepadTransitions)
 {
 	// To get the current state use m_mechanism->GetCurrentState()
-	return ((considerGamepadTransitions && TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH) && m_mechanism->GetCurrentState() != Launcher::STATE_LAUNCH) ||
-			(m_mechanism->GetCurrentState() == Launcher::STATE_LAUNCH && (!m_mechanism->IsInLaunchZone() || !m_mechanism->IsTurretAtTarget()) && !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH_OVERRIDE)));
+	bool wantsToLaunch = considerGamepadTransitions && m_teleopControl->IsButtonPressed(TeleopControlFunctions::LAUNCH);
+	bool overrideButton = considerGamepadTransitions && m_teleopControl->IsButtonPressed(TeleopControlFunctions::LAUNCH_OVERRIDE);
+
+	return ((wantsToLaunch && m_mechanism->GetCurrentState() != Launcher::STATE_LAUNCH && !overrideButton) ||
+			(m_mechanism->GetCurrentState() == Launcher::STATE_LAUNCH && (!m_mechanism->IsInLaunchZone() || !m_mechanism->IsTurretAtTarget()))); // TO DO: Maybe want to add speed check, but need to be careful
 }

@@ -17,6 +17,7 @@
 #include "teleopcontrol/TeleopControl.h"
 #include "utils/AngleUtils.h"
 #include "utils/FMSData.h"
+#include "utils/InterpolateUtils.h"
 #include "utils/PoseUtils.h"
 #include "utils/logging/debug/Logger.h"
 // Static string constants — constructed once, never copied on each call
@@ -157,16 +158,18 @@ frc::Translation2d RebuiltTargetCalculator::GetTargetPosition()
  * \param currentLauncherAngle Current launcher angle in degrees (for minimum-error optimization)
  * \return Optimal launcher angle in rotations (0-1.0 scale, where 1.0 = 360°)
  */
-units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::second_t lookAheadTime, units::angle::degree_t currentLauncherAngle)
+units::angle::degree_t RebuiltTargetCalculator::GetLauncherTarget(units::angle::degree_t currentLauncherAngle)
 {
     ValidateAlliance();
     UpdateChassisSpeeds();
     UpdateChassisPose();
 
-    // if (GetChassisPose() == m_lastChassisPose) // MECH_TODO Need to verify that we aren't super jittery on the turret
-    // {
-    //     return m_cachedLauncherTarget;
-    // }
+    if (GetChassisPose() == m_lastChassisPose)
+    {
+        return m_cachedLauncherTarget;
+    }
+
+    auto lookAheadTime = GetLookAheadTime();
 
     m_field->UpdateObject(kCurrentTargetName, GetVirtualTargetPose(lookAheadTime));
 
@@ -205,15 +208,17 @@ units::angle::turn_t RebuiltTargetCalculator::GetLauncherTarget(units::time::sec
     }
 
     m_field->UpdateObject(kLauncherPositionName, frc::Pose2d(GetMechanismWorldPosition(), robotPose.Rotation() + frc::Rotation2d(bestAngle)));
-    m_cachedLauncherTarget = units::angle::turn_t(bestAngle.value());
+    m_cachedLauncherTarget = bestAngle;
 
     return m_cachedLauncherTarget;
 }
-units::angle::degree_t RebuiltTargetCalculator::GetChassisTargetForLaunching(units::time::second_t lookAheadTime)
+units::angle::degree_t RebuiltTargetCalculator::GetChassisTargetForLaunching()
 {
     ValidateAlliance();
     UpdateChassisSpeeds();
     UpdateChassisPose();
+
+    auto lookAheadTime = GetLookAheadTime();
 
     m_field->UpdateObject(kCurrentTargetName, GetVirtualTargetPose(lookAheadTime));
 
@@ -335,6 +340,29 @@ void RebuiltTargetCalculator::UpdatePassingTargetsOnField()
 
     m_field->UpdateObject(kDepotPassingTargetName, depotPose);
     m_field->UpdateObject(kOutpostPassingTargetName, outpostPose);
+}
+
+/**
+ * Computes the lookahead time for virtual-target compensation based on distance to target.
+ *
+ * When the robot is stationary, returns 0 s so no virtual offset is applied.
+ * When moving, uses CalculateMechanismDistanceToTarget (with 0 s lookahead for the
+ * current real distance) and interpolates the flight time from the lookup table.
+ *
+ * \return Lookahead time in seconds
+ */
+units::time::second_t RebuiltTargetCalculator::GetLookAheadTime()
+{
+    bool isMoving = !GetChassis()->IsSamePose(m_IsMovingDistanceThreshold);
+
+    if (!isMoving)
+    {
+        return 0_s;
+    }
+
+    units::length::inch_t distance = CalculateMechanismDistanceToTarget(0_s);
+    auto lookAheadtime = InterpolateUtils::linearInterpolate(m_LookAheadDistances, m_LookAheadTimes, distance);
+    return lookAheadtime;
 }
 
 /**

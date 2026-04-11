@@ -105,10 +105,11 @@ public:
 		m_hoodPositionDegreesHood.Position = position;
 		m_hoodActiveTarget = &m_hoodPositionDegreesHood.WithSlot(0);
 	}
-	void UpdateTargetTurretPositionDegreesTurret(units::angle::turn_t position)
+	void UpdateTargetTurretPositionDegreesTurret(units::angle::degree_t position)
 	{
-		position = std::clamp(position, m_minTurretAngle, m_maxTurretAngle);
-		m_turretPositionDegreesTurret.Position = position;
+		units::angle::turn_t positionTurn = units::angle::turn_t(position.value()); // Turns = Degrees from sensor to mech ratio, but physical units are degrees, but motor controller is in turns, so convert to turns for clamping and motor controller output, but keep target in degrees for target calculator and logging
+		positionTurn = std::clamp(positionTurn, m_minTurretAngle, m_maxTurretAngle);
+		m_turretPositionDegreesTurret.Position = positionTurn;
 		m_turretActiveTarget = &m_turretPositionDegreesTurret.WithSlot(0);
 	}
 	void UpdateTargetLauncherVelocityRPS(units::angular_velocity::turns_per_second_t velocity)
@@ -126,6 +127,21 @@ public:
 	{
 		m_spindexerPositionTurns.Position = position;
 		m_spindexerActiveTarget = &m_spindexerPositionTurns.WithSlot(0);
+	}
+	void UpdateTargetTransferVelocityRPS(units::angular_velocity::turns_per_second_t velocity)
+	{
+		m_transferVelocityRPS.Velocity = velocity;
+		m_transferActiveTarget = &m_transferVelocityRPS.WithSlot(0);
+	}
+	void UpdateTargetIndexerVelocityRPS(units::angular_velocity::turns_per_second_t velocity)
+	{
+		m_indexerVelocityRPS.Velocity = velocity;
+		m_indexerActiveTarget = &m_indexerVelocityRPS.WithSlot(0);
+	}
+	void UpdateTargetSpindexerVelocityRPS(units::angular_velocity::turns_per_second_t velocity)
+	{
+		m_spindexerVelocityRPS.Velocity = velocity;
+		m_spindexerActiveTarget = &m_spindexerVelocityRPS.WithSlot(1);
 	}
 
 	void CreateAndRegisterStates();
@@ -145,7 +161,10 @@ public:
 	ctre::phoenix6::hardware::CANdi *GetTurretCANdi() const { return m_turretCANdi; }
 
 	ControlData *GetPercentOut() const { return m_percentOut; }
-	ControlData *GetVelocityRPS() const { return m_velocityRPS; }
+	ControlData *GetVelocityLauncher() const { return m_velocityLauncher; }
+	ControlData *GetVelocityIndexer() const { return m_velocityIndexer; }
+	ControlData *GetVelocitySpindexer() const { return m_velocitySpindexer; }
+	ControlData *GetVelocityTransfer() const { return m_velocityTransfer; }
 	ControlData *GetPositionDegreesHood() const { return m_positionDegreesHood; }
 	ControlData *GetPositionDegreesTurret() const { return m_positionDegreesTurret; }
 
@@ -199,7 +218,10 @@ private:
 	// ctre::phoenix6::hardware::CANcoder *m_turretAngleSensor;
 
 	ControlData *m_percentOut;
-	ControlData *m_velocityRPS;
+	ControlData *m_velocityLauncher;
+	ControlData *m_velocityIndexer;
+	ControlData *m_velocitySpindexer;
+	ControlData *m_velocityTransfer;
 	ControlData *m_positionDegreesHood;
 	ControlData *m_positionDegreesTurret;
 	ControlData *m_positionDegreesSpindexer;
@@ -221,6 +243,9 @@ private:
 	ctre::phoenix6::controls::MotionMagicVoltage m_hoodPositionDegreesHood{units::angle::degree_t(0.0)};
 	ctre::phoenix6::controls::MotionMagicVoltage m_turretPositionDegreesTurret{units::angle::degree_t(0.0)};
 	ctre::phoenix6::controls::VelocityVoltage m_launcherVelocityRPS{units::angular_velocity::turns_per_second_t(0.0)};
+	ctre::phoenix6::controls::VelocityVoltage m_transferVelocityRPS{units::angular_velocity::turns_per_second_t(0.0)};
+	ctre::phoenix6::controls::VelocityVoltage m_indexerVelocityRPS{units::angular_velocity::turns_per_second_t(0.0)};
+	ctre::phoenix6::controls::VelocityVoltage m_spindexerVelocityRPS{units::angular_velocity::turns_per_second_t(0.0)};
 	ctre::phoenix6::controls::ControlRequest *m_launcherActiveTarget;
 	ctre::phoenix6::controls::ControlRequest *m_hoodActiveTarget;
 	ctre::phoenix6::controls::ControlRequest *m_transferActiveTarget;
@@ -235,16 +260,14 @@ private:
 	bool m_isHubActive = false;
 	bool m_startLaunching = false;
 
-	units::time::second_t m_lookaheadTime = 1.0_s;
-
-	units::angle::turn_t m_targetTurretAngle = 0.0_tr;
+	units::angle::degree_t m_targetTurretAngle = 90.0_deg;
 	units::angular_velocity::revolutions_per_minute_t m_targetLauncherAngularVelocity = 0.0_rpm;
 	units::angle::turn_t m_targetHoodAngle = 0.0_tr;
 	units::angle::turn_t m_minHoodAngle = 0.0_tr;
 	units::angle::turn_t m_maxHoodAngle = 30.0_tr;
-	units::angle::turn_t m_minTurretAngle = 87_tr;
-	units::angle::turn_t m_maxTurretAngle = 266.5_tr;
-	units::angle::turn_t m_turretAngleThreshold = 5.0_tr;
+	units::angle::turn_t m_minTurretAngle = 90_tr;
+	units::angle::turn_t m_maxTurretAngle = 268.2_tr;
+	units::angle::degree_t m_turretAngleThreshold = 5.0_deg;
 	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 150.0_rpm;
 	units::angle::turn_t m_hoodAngleThreshold = 0.5_tr;
 	units::velocity::meters_per_second_t m_chassisSpeedThreshold = 3.0_mps;
@@ -258,22 +281,22 @@ private:
 	bool m_launcherInitialized = false;
 	bool m_tuningLauncher = false;
 
-	// TODO MECH tune and change values in these arrays
 	// All values in turns are actually Degree's
-	std::array<units::length::inch_t, 11> m_scoringDistanceArray = {44.0_in, 61.0_in, 80_in, 115_in, 133_in, 147_in, 169.5_in, 193_in, 210_in, 230_in, 250_in};
-	std::array<units::angle::turn_t, 11> m_scoringHoodAngleArray = {0.0_tr, 0.0_tr, 0.5_tr, 10.9_tr, 15.0_tr, 18.3_tr, 20.7_tr, 21_tr, 21_tr, 21_tr, 21_tr};
-	std::array<units::angular_velocity::revolutions_per_minute_t, 11> m_scoringLauncherVelocityArray = {2000.0_rpm, 2200.0_rpm, 2400.0_rpm, 2500.0_rpm, 2500.0_rpm, 2600.0_rpm, 2750.0_rpm, 2850.0_rpm, 2950.0_rpm, 3050.0_rpm, 3150.0_rpm};
+	// MECH_TODO: Need to verify values after 116 inches, may need to add more points on both sides
+	static constexpr std::array<units::length::inch_t, 9> m_scoringDistanceArray = {50.0_in, 80.0_in, 110.0_in, 140.0_in, 170.0_in, 200.0_in, 230.0_in, 260.0_in, 290.0_in};
+	static constexpr std::array<units::angle::turn_t, 9> m_scoringHoodAngleArray = {0.0_tr, 8.0_tr, 15.2_tr, 17_tr, 21.8_tr, 24.4_tr, 25.5_tr, 30.0_tr, 30.0_tr};
+	static constexpr std::array<units::angular_velocity::revolutions_per_minute_t, 9> m_scoringLauncherVelocityArray = {2000.0_rpm, 2050.0_rpm, 2150.0_rpm, 2350.0_rpm, 2600.0_rpm, 2850.0_rpm, 3150.0_rpm, 3525.0_rpm, 3950.0_rpm};
 
-	std::array<units::length::foot_t, 7> m_passingDistanceArray = {10.0_ft, 16.66666667_ft, 20.0_ft, 23.08333333_ft, 26.33333333_ft, 30.0_ft, 42.33333333_ft};
-	std::array<units::angle::turn_t, 7> m_passingHoodAngleArray = {23.5_tr, 23.5_tr, 23.5_tr, 29.7_tr, 30.0_tr, 30.0_tr, 30.0_tr};
-	std::array<units::angular_velocity::revolutions_per_minute_t, 7> m_passingLauncherVelocityArray = {1900.0_rpm, 2150.0_rpm, 2450.0_rpm, 2500.0_rpm, 2900.0_rpm, 3200.0_rpm, 3600.0_rpm};
+	static constexpr std::array<units::length::foot_t, 7> m_passingDistanceArray = {10.0_ft, 16.66666667_ft, 20.0_ft, 23.08333333_ft, 26.33333333_ft, 30.0_ft, 42.33333333_ft};
+	static constexpr std::array<units::angle::turn_t, 7> m_passingHoodAngleArray = {23.5_tr, 23.5_tr, 23.5_tr, 29.7_tr, 30.0_tr, 30.0_tr, 30.0_tr};
+	static constexpr std::array<units::angular_velocity::revolutions_per_minute_t, 7> m_passingLauncherVelocityArray = {1900.0_rpm, 2150.0_rpm, 2450.0_rpm, 2500.0_rpm, 2900.0_rpm, 3200.0_rpm, 3600.0_rpm};
 	// All values in turns are actually Degree's
 
 	// Cached motor status signals for performance optimization
 	// These are refreshed once per loop in RunCommonTasks() to avoid multiple CAN bus queries
 	units::angular_velocity::turns_per_second_t m_cachedLauncherVelocity = 0.0_tps;
 	units::angle::turn_t m_cachedHoodPosition = 0.0_tr;
-	units::angle::turn_t m_cachedTurretPosition = 0.0_tr;
+	units::angle::degree_t m_cachedTurretPosition = 0.0_deg;
 	units::current::ampere_t m_cachedLauncherCurrent = 0.0_A;
 
 	units::angle::turn_t m_passingHoodTargetAngle = 25.0_tr;

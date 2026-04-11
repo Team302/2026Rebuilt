@@ -196,10 +196,76 @@ void Launcher::CreateCompBot302()
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_velocityRPS = new ControlData(					  // MECH_TODO: Retune PIDs
+	m_velocityLauncher = new ControlData(				  // MECH_TODO: Retune PIDs
 		ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_velocityRPS",								  // std::string indentifier
+		"m_velocityLauncher",							  // std::string indentifier
+		0,												  // double proportional
+		0,												  // double integral
+		0,												  // double derivative
+		0,												  // double feedforward
+		0,												  // double velocityGain
+		0,												  // double accelartionGain
+		0,												  // double staticFrictionGain,
+
+		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
+		0,														 // double integralZone
+		0,														 // double maxAcceleration
+		0,														 // double cruiseVelocity
+		0,														 // double peakValue
+		0,														 // double nominalValue
+		false,													 // bool enableFOC
+		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
+		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
+	);
+	m_velocityIndexer = new ControlData(				  // MECH_TODO: Retune PIDs
+		ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, // ControlModes::CONTROL_TYPE mode
+		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
+		"m_velocityIndexer",							  // std::string indentifier
+		0,												  // double proportional
+		0,												  // double integral
+		0,												  // double derivative
+		0,												  // double feedforward
+		0,												  // double velocityGain
+		0,												  // double accelartionGain
+		0,												  // double staticFrictionGain,
+
+		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
+		0,														 // double integralZone
+		0,														 // double maxAcceleration
+		0,														 // double cruiseVelocity
+		0,														 // double peakValue
+		0,														 // double nominalValue
+		false,													 // bool enableFOC
+		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
+		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
+	);
+	m_velocitySpindexer = new ControlData(				  // MECH_TODO: Retune PIDs
+		ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, // ControlModes::CONTROL_TYPE mode
+		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
+		"m_velocitySpindexer",							  // std::string indentifier
+		0,												  // double proportional
+		0,												  // double integral
+		0,												  // double derivative
+		0,												  // double feedforward
+		0,												  // double velocityGain
+		0,												  // double accelartionGain
+		0,												  // double staticFrictionGain,
+
+		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
+		0,														 // double integralZone
+		0,														 // double maxAcceleration
+		0,														 // double cruiseVelocity
+		0,														 // double peakValue
+		0,														 // double nominalValue
+		false,													 // bool enableFOC
+		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
+		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
+	);
+	m_velocityTransfer = new ControlData(				  // MECH_TODO: Retune PIDs
+		ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, // ControlModes::CONTROL_TYPE mode
+		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
+		"m_velocityTransfer",							  // std::string indentifier
 		0,												  // double proportional
 		0,												  // double integral
 		0,												  // double derivative
@@ -336,15 +402,15 @@ void Launcher::InitializeTalonFXLauncherCompBot302()
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
 	configs.Feedback.SensorToMechanismRatio = 1;
 
-	configs.Slot0.kI = m_velocityRPS->GetI();
-	configs.Slot0.kD = m_velocityRPS->GetD();
-	configs.Slot0.kG = m_velocityRPS->GetF();
-	configs.Slot0.kS = m_velocityRPS->GetS();
-	configs.Slot0.kV = m_velocityRPS->GetV();
-	configs.Slot0.kP = m_velocityRPS->GetP();
-	configs.Slot0.kA = m_velocityRPS->GetA();
-	configs.Slot0.GravityType = m_velocityRPS->GetGravityType();
-	configs.Slot0.StaticFeedforwardSign = m_velocityRPS->GetStaticFeedforwardSign();
+	configs.Slot0.kI = m_velocityLauncher->GetI();
+	configs.Slot0.kD = m_velocityLauncher->GetD();
+	configs.Slot0.kG = m_velocityLauncher->GetF();
+	configs.Slot0.kS = m_velocityLauncher->GetS();
+	configs.Slot0.kV = m_velocityLauncher->GetV();
+	configs.Slot0.kP = m_velocityLauncher->GetP();
+	configs.Slot0.kA = m_velocityLauncher->GetA();
+	configs.Slot0.GravityType = m_velocityLauncher->GetGravityType();
+	configs.Slot0.StaticFeedforwardSign = m_velocityLauncher->GetStaticFeedforwardSign();
 
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
@@ -472,6 +538,16 @@ void Launcher::InitializeTalonFXTransferCompBot302()
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
 	configs.Feedback.SensorToMechanismRatio = 1;
 
+	configs.Slot0.kI = m_velocityTransfer->GetI();
+	configs.Slot0.kD = m_velocityTransfer->GetD();
+	configs.Slot0.kG = m_velocityTransfer->GetF();
+	configs.Slot0.kS = m_velocityTransfer->GetS();
+	configs.Slot0.kV = m_velocityTransfer->GetV();
+	configs.Slot0.kP = m_velocityTransfer->GetP();
+	configs.Slot0.kA = m_velocityTransfer->GetA();
+	configs.Slot0.GravityType = m_velocityTransfer->GetGravityType();
+	configs.Slot0.StaticFeedforwardSign = m_velocityTransfer->GetStaticFeedforwardSign();
+
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
@@ -486,7 +562,7 @@ void Launcher::InitializeTalonFXTransferCompBot302()
 void Launcher::InitializeTalonFXSTurretCompBot302()
 {
 	TalonFXSConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(30);
+	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(45);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
 	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -499,14 +575,14 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 6;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
 	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS2;
 	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = units::angle::turn_t(m_maxTurretAngle);
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
 	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
 	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 6;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = m_minTurretAngle;
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
@@ -517,13 +593,13 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.MotorOutput.PeakReverseDutyCycle = -1;
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
-	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::turns_per_second_t(220);
-	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(400);
+	configs.MotionMagic.MotionMagicCruiseVelocity = units::angular_velocity::turns_per_second_t(1000);
+	configs.MotionMagic.MotionMagicAcceleration = units::angular_acceleration::turns_per_second_squared_t(2000);
 	configs.MotionMagic.MotionMagicJerk = units::angular_jerk::radians_per_second_cubed_t(0);
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 0.672080457282649604817;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.13491211; // 0.16959640223397357413;
 	// configs.ExternalFeedback.FeedbackRemoteSensorID = 6;
 	// configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RemoteCANcoder;
 	// configs.ExternalFeedback.SensorToMechanismRatio = 7.251952;
@@ -619,6 +695,15 @@ void Launcher::InitializeTalonFXIndexerCompBot302()
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
 	configs.Feedback.SensorToMechanismRatio = 3;
 
+	configs.Slot0.kI = m_velocityIndexer->GetI();
+	configs.Slot0.kD = m_velocityIndexer->GetD();
+	configs.Slot0.kG = m_velocityIndexer->GetF();
+	configs.Slot0.kS = m_velocityIndexer->GetS();
+	configs.Slot0.kV = m_velocityIndexer->GetV();
+	configs.Slot0.kP = m_velocityIndexer->GetP();
+	configs.Slot0.kA = m_velocityIndexer->GetA();
+	configs.Slot0.GravityType = m_velocityIndexer->GetGravityType();
+	configs.Slot0.StaticFeedforwardSign = m_velocityIndexer->GetStaticFeedforwardSign();
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
@@ -642,7 +727,7 @@ void Launcher::InitializeTalonFXSpindexerCompBot302()
 
 	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
-	configs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = units::time::second_t(0.5);
+	configs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = units::time::second_t(0.1);
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;
@@ -677,6 +762,16 @@ void Launcher::InitializeTalonFXSpindexerCompBot302()
 	configs.Slot0.GravityType = m_positionDegreesSpindexer->GetGravityType();
 	configs.Slot0.StaticFeedforwardSign = m_positionDegreesSpindexer->GetStaticFeedforwardSign();
 
+	configs.Slot1.kI = m_velocitySpindexer->GetI();
+	configs.Slot1.kD = m_velocitySpindexer->GetD();
+	configs.Slot1.kG = m_velocitySpindexer->GetF();
+	configs.Slot1.kS = m_velocitySpindexer->GetS();
+	configs.Slot1.kV = m_velocitySpindexer->GetV();
+	configs.Slot1.kP = m_velocitySpindexer->GetP();
+	configs.Slot1.kA = m_velocitySpindexer->GetA();
+	configs.Slot1.GravityType = m_velocitySpindexer->GetGravityType();
+	configs.Slot1.StaticFeedforwardSign = m_velocitySpindexer->GetStaticFeedforwardSign();
+
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
@@ -699,7 +794,7 @@ void Launcher::RefreshCachedMotorData()
 {
 	m_cachedLauncherVelocity = m_launcher->GetVelocity().GetValue();
 	m_cachedHoodPosition = m_hood->GetPosition().GetValue();
-	m_cachedTurretPosition = m_turretEnabled ? m_turret->GetPosition().GetValue() : 180_tr;
+	m_cachedTurretPosition = m_turretEnabled ? units::angle::degree_t(m_turret->GetPosition().GetValueAsDouble()) : 180.0_deg;
 	m_cachedLauncherCurrent = m_launcher->GetStatorCurrent().GetValue();
 
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Launcher Speed", units::angular_velocity::revolutions_per_minute_t(m_cachedLauncherVelocity).value());
@@ -761,8 +856,14 @@ ControlData *Launcher::GetControlData(string name)
 {
 	if (name.compare("PercentOut") == 0)
 		return m_percentOut;
-	if (name.compare("VelocityRPS") == 0)
-		return m_velocityRPS;
+	if (name.compare("VelocityLauncher") == 0)
+		return m_velocityLauncher;
+	if (name.compare("VelocityIndexer") == 0)
+		return m_velocityIndexer;
+	if (name.compare("VelocitySpindexer") == 0)
+		return m_velocitySpindexer;
+	if (name.compare("VelocityTransfer") == 0)
+		return m_velocityTransfer;
 	if (name.compare("PositionDegreesHood") == 0)
 		return m_positionDegreesHood;
 	if (name.compare("PositionDegreesTurret") == 0)
@@ -804,13 +905,9 @@ bool Launcher::IsLauncherAtTarget()
 	{
 		return true;
 	}
-	if (m_turretEnabled)
-	{
-		return (m_cachedHoodError && m_cachedinLaunchzone && m_cachedIsChassisSpeed && m_cachedLauncherSpeedError && m_cachedTurretAtTarget);
-	}
 	else
 	{
-		return m_cachedHoodError && m_cachedinLaunchzone && m_cachedIsChassisSpeed && m_cachedLauncherSpeedError;
+		return (m_cachedHoodError && m_cachedinLaunchzone && m_cachedIsChassisSpeed && m_cachedLauncherSpeedError && m_cachedTurretAtTarget);
 	}
 }
 
@@ -828,14 +925,14 @@ void Launcher::CalculateTargets()
 
 	if (m_turretEnabled)
 	{
-		m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_lookaheadTime, units::degree_t(m_cachedTurretPosition.value())); // passing degree back to rebuilt calculator, everything in launcher is in turns due to sensor to mech ratio, but phyiscal units is degrees
+		m_targetTurretAngle = m_targetCalculator->GetLauncherTarget(m_cachedTurretPosition);
 	}
 	else
 	{
 		m_targetTurretAngle = 180_deg;
-		m_chassis->SetTargetChassisRotation(m_targetCalculator->GetChassisTargetForLaunching(m_lookaheadTime));
+		m_chassis->SetTargetChassisRotation(m_targetCalculator->GetChassisTargetForLaunching());
 	}
-	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateMechanismDistanceToTarget(m_lookaheadTime);
+	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateMechanismDistanceToTarget();
 	if (AllianceZoneManager::GetInstance()->IsInAllianceZone())
 	{
 		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_scoringDistanceArray, m_scoringHoodAngleArray, distanceToTarget);
@@ -884,6 +981,10 @@ void Launcher::InitilaizeLauncher()
 	{
 		turretReverseLimitSwitchTripped = m_turret->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround;
 		turretForwardLimitSwitchTripped = m_turret->GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround;
+		if (turretForwardLimitSwitchTripped)
+			m_turret->SetPosition(m_maxTurretAngle);
+		else if (turretReverseLimitSwitchTripped)
+			m_turret->SetPosition(m_minTurretAngle);
 	}
 
 	auto hoodReverseLimitSwitchTripped = m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround;
@@ -892,18 +993,6 @@ void Launcher::InitilaizeLauncher()
 		(!m_turretEnabled && hoodReverseLimitSwitchTripped) ||
 		frc::RobotBase::IsSimulation())
 	{
-		// if (m_turretEnabled) // MECH_TODO: verify auto reseting limitswitches work with new launcher. May have to enable if we are using the remote sensor as well
-		// {
-		// 	if (turretReverseLimitSwitchTripped == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround)
-		// 	{
-		// 		m_turret->SetPosition(m_minTurretAngle);
-		// 	}
-		// 	else
-		// 	{
-		// 		m_turret->SetPosition(m_maxTurretAngle);
-		// 	}
-		// }
-		// m_hood->SetPosition(m_minHoodAngle);
 
 		m_launcherInitialized = true;
 	}
@@ -957,11 +1046,12 @@ bool Launcher::IsTurretAtTarget()
 		{
 			units::angle::degree_t turretError = m_cachedTurretPosition - m_targetTurretAngle;
 			m_cachedTurretAtTarget = ((units::math::abs(turretError) < m_turretAngleThreshold));
+			Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "turret Error", turretError.value());
 		}
 	}
 	else
 	{
-		m_cachedTurretAtTarget = m_chassis->IsChassisAtRotationTarget();
+		m_cachedTurretAtTarget = true; // m_chassis->IsChassisAtRotationTarget();
 	}
 
 	return m_cachedTurretAtTarget;
@@ -993,7 +1083,7 @@ bool Launcher::IsFinishedLaunching()
 void Launcher::UpdateCachedLoggingValues()
 {
 	units::angle::degree_t hoodError = units::angle::degree_t(std::abs((m_cachedHoodPosition - m_targetHoodAngle).value()));
-	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = units::angular_velocity::revolutions_per_minute_t(std::abs((m_cachedLauncherVelocity - m_targetLauncherAngularVelocity).value()));
+	units::angular_velocity::revolutions_per_minute_t launcherSpeedError = units::math::abs((m_cachedLauncherVelocity - m_targetLauncherAngularVelocity));
 	bool inLaunchzone = IsInLaunchZone();
 	auto chassisSpeeds = m_chassis != nullptr ? m_chassis->GetState().Speeds : frc::ChassisSpeeds();
 	auto Speed = units::math::sqrt(units::math::abs(chassisSpeeds.vx * chassisSpeeds.vx) + units::math::abs(chassisSpeeds.vy * chassisSpeeds.vy));
@@ -1007,5 +1097,5 @@ void Launcher::UpdateCachedLoggingValues()
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_cachedHoodError", m_cachedHoodError);
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_cachedLauncherSpeedError", m_cachedLauncherSpeedError);
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_cachedinLaunchzone", m_cachedinLaunchzone);
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_targetTurretAngle", m_targetTurretAngle.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_targetTurretAngle", m_cachedTurretAtTarget);
 }
