@@ -346,13 +346,13 @@ private:
     units::length::inch_t m_passingDepotTargetXOffset = 0_in;
 
     /// Y-axis offset for depot passing target in inches
-    units::length::inch_t m_passingDepotTargetYOffset = 0_in;
+    units::length::inch_t m_passingDepotTargetYOffset = 30_in;
 
     /// X-axis offset for outpost passing target in inches
     units::length::inch_t m_passingOutpostTargetXOffset = 0_in;
 
     /// Y-axis offset for outpost passing target in inches
-    units::length::inch_t m_passingOutpostTargetYOffset = 0_in;
+    units::length::inch_t m_passingOutpostTargetYOffset = -30_in;
 
     /// @}
 
