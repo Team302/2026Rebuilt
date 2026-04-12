@@ -27,7 +27,6 @@
 #include "utils/PeriodicLooper.h"
 #include "utils/logging/debug/Logger.h"
 
-#include "auton/DeadZoneManager.h"
 #include "ctre/phoenix6/TalonFX.hpp"
 #include "ctre/phoenix6/TalonFXS.hpp"
 #include "ctre/phoenix6/configs/Configuration.hpp"
@@ -135,6 +134,8 @@ Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MEC
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::StartLaunching_Bool);
 	RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::TurretEnabled_Bool, m_turretEnabled);
 	m_targetCalculator = RebuiltTargetCalculator::GetInstance();
+	m_allianceZoneManager = AllianceZoneManager::GetInstance();
+	m_deadZoneManager = DeadZoneManager::GetInstance();
 }
 
 std::map<std::string, Launcher::STATE_NAMES>
@@ -913,9 +914,9 @@ bool Launcher::IsLauncherAtTarget()
 
 bool Launcher::IsInLaunchZone() const
 {
-	if (!DeadZoneManager::GetInstance()->IsInDeadZone())
+	if (!m_deadZoneManager->IsInDeadZone())
 	{
-		return !(AllianceZoneManager::GetInstance()->IsInAllianceZone() && !(m_isHubActive || m_startLaunching));
+		return !(m_allianceZoneManager->IsInAllianceZone() && !(m_isHubActive || m_startLaunching));
 	}
 	return false;
 }
@@ -933,7 +934,7 @@ void Launcher::CalculateTargets()
 		m_chassis->SetTargetChassisRotation(m_targetCalculator->GetChassisTargetForLaunching());
 	}
 	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateMechanismDistanceToTarget();
-	if (AllianceZoneManager::GetInstance()->IsInAllianceZone())
+	if (m_allianceZoneManager->IsInAllianceZone())
 	{
 		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_scoringDistanceArray, m_scoringHoodAngleArray, distanceToTarget);
 		m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_scoringDistanceArray, m_scoringLauncherVelocityArray, distanceToTarget);
