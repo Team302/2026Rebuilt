@@ -136,19 +136,17 @@ void TargetCalculator::UpdateChassisPose(bool forceUpdate)
 {
     m_lastChassisPose = m_chassisPose;
 
-    bool isMoving = units::math::abs(m_currentChassisSpeeds.vx) >= m_translationSpeedThreshold ||
-                    units::math::abs(m_currentChassisSpeeds.vy) >= m_translationSpeedThreshold ||
-                    units::math::abs(m_currentChassisSpeeds.omega) >= m_rotationSpeedThreshold;
+    bool m_isMoving = !m_chassis->IsSamePose(m_isMovingDistanceThreshold);
 
     // Update the pose while moving, when forced, or on the one cycle after we stop.
     // The "just stopped" cycle ensures the cache busts once so all callers recompute
     // with zero speeds and the virtual-target offset unwinds back to the real target.
-    if (m_chassis != nullptr && (forceUpdate || isMoving || m_wasMoving))
+    if (m_chassis != nullptr && (forceUpdate || m_isMoving || m_wasMoving))
     {
         m_chassisPose = m_chassis->GetPose();
     }
 
-    m_wasMoving = isMoving;
+    m_wasMoving = m_isMoving;
 }
 
 void TargetCalculator::UpdateChassisSpeeds()

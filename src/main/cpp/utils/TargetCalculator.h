@@ -159,6 +159,7 @@ protected:
 
     frc::Pose2d m_lastChassisPose{};
     subsystems::CommandSwerveDrivetrain *GetChassis() const { return m_chassis; }
+    bool m_isMoving = false;
 
 private:
     static TargetCalculator *m_instance;
@@ -169,14 +170,13 @@ private:
 
     static constexpr units::meters_per_second_t m_translationSpeedThreshold{0.05_mps};
     static constexpr units::radians_per_second_t m_rotationSpeedThreshold{1_deg_per_s};
-
+    static constexpr units::meter_t m_isMovingDistanceThreshold{0.01_m};
     subsystems::CommandSwerveDrivetrain *m_chassis;
 
     /// True if the robot was above the speed threshold on the previous cycle.
     /// Used to force one final pose update on the transition from moving → stopped,
     /// ensuring the cache busts once so calculations rerun with zero speeds.
     bool m_wasMoving = false;
-
     /**
      * \brief Calculate how much the mechanism's world position shifts due to rotation during lookahead.
      *
@@ -189,7 +189,8 @@ private:
      * \param lookaheadTime Time in seconds for projectile flight
      * \return Translation2d representing the change in mechanism world position due to rotation
      */
-    frc::Translation2d CalculateRotationalMechDelta(units::time::second_t lookaheadTime) const;
+    frc::Translation2d
+    CalculateRotationalMechDelta(units::time::second_t lookaheadTime) const;
 
     // Cached calculation results to avoid recalculation when pose hasn't changed
     units::meter_t m_cachedDistanceToTarget = 0_m;
