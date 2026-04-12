@@ -1092,7 +1092,7 @@ void Launcher::UpdateCachedLoggingValues()
 	m_cachedHoodError = (hoodError < m_hoodAngleThreshold);
 	m_cachedLauncherSpeedError = launcherSpeedError < m_launcherVelocityThreshold;
 	m_cachedinLaunchzone = (inLaunchzone);
-	m_cachedIsChassisSpeed = (Speed < m_chassisSpeedThreshold);
+	m_cachedIsChassisSpeed = !AllianceZoneManager::GetInstance()->IsInAllianceZone() ? true : (Speed < m_chassisSpeedThreshold);
 	m_cachedTurretAtTarget = IsTurretAtTarget();
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_cachedHoodError", m_cachedHoodError);
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_cachedLauncherSpeedError", m_cachedLauncherSpeedError);

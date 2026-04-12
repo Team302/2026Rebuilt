@@ -7,18 +7,25 @@
 choreoname = "BlueLDepotOutpost_A"
 time = "4.0"
 intakeState = "STATE_INTAKE">
-<zone filename = "BlueLaunchZone.xml"/>
 <!-- <zone filename = "BlueDepotZone.xml"/> -->
 <!--This is only commented out because I like the swoop, but up to testing-->
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueLDepotOutpost_B"
-time = "4.0"
+time = "10.0"
 intakeState = "STATE_INTAKE">
-<zone filename = "BlueLaunchZone.xml"/>
 <zone filename = "BlueOutpostZone.xml"/>
 </primitive>
+
+<primitive id = "DO_NOTHING"
+launcherState = "STATE_IDLE"
+intakeState = "STATE_INTAKE"
+time = "3.0"/>
+
+<primitive id = "DRIVE_STOP_MECH"
+launcherState = "STATE_PREPARE_TO_LAUNCH"
+time = "30.0"/>
 
 
 </auton>
