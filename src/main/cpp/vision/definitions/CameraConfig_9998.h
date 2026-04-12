@@ -28,6 +28,27 @@ public:
     void BuildCameraConfig() override;
 
 private:
+    static constexpr units::length::inch_t m_limelightFrontMountingXOffset{10.1875};
+    static constexpr units::length::inch_t m_limelightFrontMountingYOffset{0};
+    static constexpr units::length::inch_t m_limelightFrontMountingZOffset{22.25};
+    static constexpr units::angle::degree_t m_limelightFrontPitch{-20};
+    static constexpr units::angle::degree_t m_limelightFrontYaw{0};
+    static constexpr units::angle::degree_t m_limelightFrontRoll{0};
+
+    static constexpr units::length::inch_t m_limelightFront3MountingXOffset{10.1875};
+    static constexpr units::length::inch_t m_limelightFront3MountingYOffset{-0.25};
+    static constexpr units::length::inch_t m_limelightFront3MountingZOffset{23.375};
+    static constexpr units::angle::degree_t m_limelightFront3Pitch{-20};
+    static constexpr units::angle::degree_t m_limelightFront3Yaw{0};
+    static constexpr units::angle::degree_t m_limelightFront3Roll{0};
+
+    static constexpr units::length::inch_t m_questMountingXOffset{-17.5};
+    static constexpr units::length::inch_t m_questMountingYOffset{-10.25};
+    static constexpr units::length::inch_t m_questMountingZOffset{21.25};
+    static constexpr units::angle::degree_t m_questPitch{0};
+    static constexpr units::angle::degree_t m_questYaw{180};
+    static constexpr units::angle::degree_t m_questRoll{0};
+
     std::unique_ptr<DragonLimelight> m_limelightFront;
     std::unique_ptr<DragonLimelight> m_limelightfront3;
     std::unique_ptr<DragonQuest> m_quest;

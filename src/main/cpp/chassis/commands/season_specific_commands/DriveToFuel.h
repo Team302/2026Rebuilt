@@ -44,12 +44,11 @@ private:
     frc::PIDController m_yController{kPDrive, kIDrive, kDDrive};
     frc::PIDController m_yawController{kPYaw, kIYaw, kDYaw};
 
-    units::length::meter_t m_XdistLimit = 5_m;
-    units::length::meter_t m_IntakeXOffset = 0.5_m;
+    static constexpr units::length::meter_t m_XdistLimit = 5_m;
+    static constexpr units::length::meter_t m_IntakeXOffset = 0.5_m;
 
-    units::velocity::meters_per_second_t m_maxXSpeed = 3_mps;
-    units::angular_velocity::degrees_per_second_t m_maxRotationalSpeed = 45_deg_per_s;
-
+    static constexpr units::velocity::meters_per_second_t m_maxXSpeed = 3_mps;
+    static constexpr units::angular_velocity::degrees_per_second_t m_maxRotationalSpeed = 45_deg_per_s;
     int m_visionCacheI = 0;
 
     std::vector<std::unique_ptr<DragonVisionStruct>> m_visionCache;
