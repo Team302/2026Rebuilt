@@ -33,6 +33,7 @@
 #include "ctre/phoenix6/controls/Follower.hpp"
 #include "mechanisms/Intake/EmptyHopperState.h"
 #include "mechanisms/Intake/ExpelState.h"
+#include "mechanisms/Intake/ForceIntakeAutonState.h"
 #include "mechanisms/Intake/IntakeState.h"
 #include "mechanisms/Intake/LaunchState.h"
 #include "mechanisms/Intake/LoadHopperState.h"
@@ -79,11 +80,15 @@ void Intake::CreateAndRegisterStates()
 	LoadHopperState *LoadHopperStateInst = new LoadHopperState(string("LoadHopper"), 5, this, m_activeRobotId);
 	AddToStateVector(LoadHopperStateInst);
 
+	ForceIntakeAutonState *ForceIntakeAutonStateInst = new ForceIntakeAutonState(string("ForceIntakeAuton"), 6, this, m_activeRobotId);
+	AddToStateVector(ForceIntakeAutonStateInst);
+
 	OffStateInst->RegisterTransitionState(IntakeStateInst);
 	OffStateInst->RegisterTransitionState(ExpelStateInst);
 	OffStateInst->RegisterTransitionState(LaunchStateInst);
 	OffStateInst->RegisterTransitionState(EmptyHopperStateInst);
 	OffStateInst->RegisterTransitionState(LoadHopperStateInst);
+	OffStateInst->RegisterTransitionState(ForceIntakeAutonStateInst);
 	IntakeStateInst->RegisterTransitionState(OffStateInst);
 	IntakeStateInst->RegisterTransitionState(LaunchStateInst);
 	IntakeStateInst->RegisterTransitionState(EmptyHopperStateInst);
@@ -99,6 +104,7 @@ void Intake::CreateAndRegisterStates()
 	EmptyHopperStateInst->RegisterTransitionState(IntakeStateInst);
 	LoadHopperStateInst->RegisterTransitionState(OffStateInst);
 	LoadHopperStateInst->RegisterTransitionState(IntakeStateInst);
+	ForceIntakeAutonStateInst->RegisterTransitionState(OffStateInst);
 }
 
 Intake::Intake(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANISM_TYPE::INTAKE, std::string("Intake")),
@@ -118,7 +124,7 @@ std::map<std::string, Intake::STATE_NAMES>
 		{"STATE_LAUNCH", Intake::STATE_NAMES::STATE_LAUNCH},
 		{"STATE_EMPTY_HOPPER", Intake::STATE_NAMES::STATE_EMPTY_HOPPER},
 		{"STATE_LOAD_HOPPER", Intake::STATE_NAMES::STATE_LOAD_HOPPER},
-	};
+		{"STATE_FORCE_INTAKE_AUTON", Intake::STATE_NAMES::STATE_FORCE_INTAKE_AUTON}};
 
 std::map<Intake::STATE_NAMES, std::string>
 	Intake::STATE_NAMESEnumToStringMap{
@@ -128,7 +134,7 @@ std::map<Intake::STATE_NAMES, std::string>
 		{Intake::STATE_NAMES::STATE_LAUNCH, "STATE_LAUNCH"},
 		{Intake::STATE_NAMES::STATE_EMPTY_HOPPER, "STATE_EMPTY_HOPPER"},
 		{Intake::STATE_NAMES::STATE_LOAD_HOPPER, "STATE_LOAD_HOPPER"},
-	};
+		{Intake::STATE_NAMES::STATE_FORCE_INTAKE_AUTON, "STATE_FORCE_INTAKE_AUTON"}};
 
 void Intake::CreateCompBot302()
 {
