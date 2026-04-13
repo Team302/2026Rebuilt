@@ -26,11 +26,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      # ── 2. Gather changed files, grouped by top-level directory ──────────────
-      # Each directory under src/main (e.g. chassis/, mechanisms/, auton/) is
-      # treated as one "batch".  build.gradle / build.gradle.kts are their own
-      # batch.  This guarantees each subsequent API call stays under the 24 KB
-      # prompt limit regardless of how many files changed in a single push.
+      # ── 2. Gather changed files, grouped by logical directory bucket ──────────
+      # src/main uses an intermediate "cpp" directory (src/main/cpp/chassis/, …).
+      # "cpp" and "deploy" are treated as passthrough dirs — we skip them and use
+      # their immediate children as the bucket names (chassis, mechanisms, auton…).
+      # This means each bucket maps 1-to-1 with a section of CODEBASE_CONTEXT.md,
+      # and each API call only sees one directory's worth of content.
+      # build.gradle / build.gradle.kts are their own "build_files" bucket.
       - name: Collect and group changed files by directory
         id: gather
         run: |
@@ -90,12 +92,43 @@ jobs:
           done <<< "$ALL_STATUS"
           printf '%b' "$DELETED_LIST" > /tmp/deleted_list.txt
 
-          # ── Discover which top-level directories under src/main have changes ──
-          # A "bucket" is the first path component after src/main/ (e.g. "chassis").
-          # Files directly in src/main/cpp/ (no sub-dir) go into bucket "cpp_root".
-          # build.gradle / build.gradle.kts are bucket "build_files".
-          mkdir -p /tmp/batches
+          # ── Discover which directories under src/main have changes ──────────────
+          # Buckets map to the subdirectories that CODEBASE_CONTEXT.md sections
+          # are organised around (chassis, mechanisms, auton, vision, …).
+          #
+          # src/main layout has an intermediate "cpp" folder:
+          #   src/main/cpp/chassis/   src/main/cpp/mechanisms/  …
+          #   src/main/deploy/        src/main/thirdparty/
+          #
+          # PASSTHROUGH_DIRS: directories whose immediate children are the real
+          # buckets. Any path component in this list is skipped and we take the
+          # next component as the bucket name instead.  This prevents "cpp" (and
+          # "deploy" if it ever grows large) from becoming a monolithic bucket.
+          PASSTHROUGH_DIRS="cpp deploy"
 
+          # derive_bucket <relative-path-under-src/main/>
+          # Prints the bucket name, e.g. "chassis", "mechanisms", "auton", …
+          # Files sitting directly inside a passthrough dir (no deeper sub-dir)
+          # land in bucket "<passthrough>_root" (e.g. "cpp_root").
+          derive_bucket() {
+            local rel="$1"
+            local comp1 comp2
+            comp1=$(echo "$rel" | cut -d'/' -f1)
+            comp2=$(echo "$rel" | cut -d'/' -f2)
+
+            # Is the first component a passthrough directory?
+            if echo "$PASSTHROUGH_DIRS" | grep -qw "$comp1"; then
+              if [ -z "$comp2" ] || [ "$comp2" = "$comp1" ]; then
+                echo "${comp1}_root"
+              else
+                echo "$comp2"
+              fi
+            else
+              echo "$comp1"
+            fi
+          }
+
+          mkdir -p /tmp/batches
           declare -A SEEN_BUCKETS
 
           while IFS='	' read -r status path1 path2; do
@@ -112,10 +145,9 @@ jobs:
               build.gradle|build.gradle.kts)
                 bucket="build_files" ;;
               src/main/*)
-                # Strip "src/main/" then take first path component
                 rel="${filepath#src/main/}"
-                bucket=$(echo "$rel" | cut -d'/' -f1)
-                [ -z "$bucket" ] && bucket="cpp_root"
+                bucket=$(derive_bucket "$rel")
+                [ -z "$bucket" ] && bucket="src_root"
                 ;;
               *) continue ;;
             esac
@@ -123,11 +155,24 @@ jobs:
             SEEN_BUCKETS["$bucket"]=1
           done <<< "$ALL_STATUS"
 
-          # ── For FULL_REBUILD, add ALL top-level dirs present on disk ──────────
+          # ── For FULL_REBUILD, add ALL real subdirectories present on disk ──────
+          # Walk two levels: skip passthrough dirs and register their children.
           if [ "$FULL_REBUILD" = "true" ]; then
             while IFS= read -r -d '' dir; do
-              bucket=$(basename "$dir")
-              SEEN_BUCKETS["$bucket"]=1
+              rel="${dir#src/main/}"
+              comp1=$(echo "$rel" | cut -d'/' -f1)
+              if echo "$PASSTHROUGH_DIRS" | grep -qw "$comp1"; then
+                # Register each child of the passthrough dir as its own bucket
+                while IFS= read -r -d '' child; do
+                  SEEN_BUCKETS["$(basename "$child")"]=1
+                done < <(find "$dir" -mindepth 1 -maxdepth 1 -type d -print0 | sort -z)
+                # Also register a root bucket for files directly in the passthrough dir
+                if find "$dir" -mindepth 1 -maxdepth 1 -type f | grep -q .; then
+                  SEEN_BUCKETS["${comp1}_root"]=1
+                fi
+              else
+                SEEN_BUCKETS["$comp1"]=1
+              fi
             done < <(find src/main -mindepth 1 -maxdepth 1 -type d -print0 | sort -z)
             SEEN_BUCKETS["build_files"]=1
           fi
@@ -158,17 +203,23 @@ jobs:
               done
             else
               # ── Source directory bucket ─────────────────────────────────────
-              # Determine the filesystem path for this bucket
+              # Resolve the filesystem path for this bucket, checking passthrough
+              # dirs (cpp, deploy, …) before falling back to a wider search.
+              SCAN_ROOT=""
               if [ -d "src/main/${bucket}" ]; then
                 SCAN_ROOT="src/main/${bucket}"
-              elif [ -d "src/main/cpp/${bucket}" ]; then
-                # Some trees nest under src/main/cpp/
-                SCAN_ROOT="src/main/cpp/${bucket}"
               else
-                # Fallback: scan anywhere under src/main matching the bucket name
-                SCAN_ROOT=$(find src/main -maxdepth 2 -type d -name "$bucket" | head -1)
-                [ -z "$SCAN_ROOT" ] && continue
+                for pt in $PASSTHROUGH_DIRS; do
+                  if [ -d "src/main/${pt}/${bucket}" ]; then
+                    SCAN_ROOT="src/main/${pt}/${bucket}"
+                    break
+                  fi
+                done
               fi
+              if [ -z "$SCAN_ROOT" ]; then
+                SCAN_ROOT=$(find src/main -mindepth 2 -maxdepth 3 -type d -name "$bucket" | head -1)
+              fi
+              [ -z "$SCAN_ROOT" ] && continue
 
               while IFS= read -r -d '' file; do
                 rel="${file#./}"
