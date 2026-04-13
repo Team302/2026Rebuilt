@@ -1,7 +1,7 @@
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "utils/FMSData.h"
+#include "utils/logging/debug/Logger.h"
 #include <frc/RobotController.h>
-
 using namespace subsystems;
 
 void CommandSwerveDrivetrain::Periodic()
@@ -63,4 +63,13 @@ bool CommandSwerveDrivetrain::IsSamePose(units::length::inch_t distanceThreshold
     m_prevPose = currentPose;
 
     return m_debounceTimer.HasElapsed(m_samePoseTime);
+}
+bool CommandSwerveDrivetrain::IsMoving()
+{
+    return IsMoving(m_velocityThreshold, m_angularVelocityThreshold);
+}
+bool CommandSwerveDrivetrain::IsMoving(units::velocity::meters_per_second_t velocityThreshold, units::angular_velocity::degrees_per_second_t angularVelocityThreshold)
+{
+    bool isCurrentlyMoving = (units::math::abs(this->GetState().Speeds.vx) > velocityThreshold) || (units::math::abs(this->GetState().Speeds.vy) > velocityThreshold) || (units::math::abs(this->GetState().Speeds.omega) > angularVelocityThreshold);
+    return isCurrentlyMoving;
 }
