@@ -57,6 +57,7 @@ src/main/cpp/
 │   │       ├── DriveToHub, DriveToOutpost, DriveToDepot
 │   │       ├── DriveToTower, DriveOverBump
 │   │       ├── DriveAlongNearestWall, SweepBehindBump
+│   │       ├── DriveToFuel, AutoDefend
 │   └── generated/                   # CTRE Swerve generated code (TunerConstants302, CommandSwerveDrivetrain)
 │
 ├── mechanisms/                      # Robot game mechanisms ⚠️ HIGHLY SEASON-DEPENDENT
@@ -86,7 +87,8 @@ src/main/cpp/
 │
 ├── fielddata/                       # Field geometry ⚠️ SEASON-DEPENDENT
 │   ├── FieldConstants               # Singleton; 2026 field element poses
-│   └── FieldAprilTagIDs             # April tag ID mapping
+│   ├── FieldAprilTagIDs             # April tag ID mapping
+│   └── SweepLaneChanger             # Utility for managing sweep lane selection
 │
 ├── vision/
 │   ├── DragonVision                 # Facade over Limelight + Quest
