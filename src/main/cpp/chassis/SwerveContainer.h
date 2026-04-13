@@ -18,9 +18,11 @@
 #include <memory>
 
 #include "chassis/commands/TrajectoryDrive.h"
+#include "chassis/commands/season_specific_commands/AutoDefend.h"
 #include "chassis/commands/season_specific_commands/DriveAlongNearestWall.h"
 #include "chassis/commands/season_specific_commands/DriveOverBump.h"
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"
+#include "chassis/commands/season_specific_commands/DriveToFuel.h"
 #include "chassis/commands/season_specific_commands/DriveToHub.h"
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
@@ -172,6 +174,11 @@ private:
     /// @brief Drive along nearest wall command for season-specific autonomous navigation
     std::unique_ptr<DriveAlongNearestWall> m_driveAlongNearestWall;
 
+    /// @brief Drive to fuel command for season-specific autonomous navigation fueled by vision targeting
+    std::unique_ptr<DriveToFuel> m_driveToFuel;
+
+    /// @brief Auto defend command for season-specific autonomous navigation targets bumpers
+    std::unique_ptr<AutoDefend> m_autoDefend;
     /// @brief Drive to trench command for season-specific autonomous navigation
     std::unique_ptr<DriveToTrench> m_driveToTrench;
 

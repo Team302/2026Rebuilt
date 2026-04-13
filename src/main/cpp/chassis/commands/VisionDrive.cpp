@@ -14,48 +14,23 @@
 //====================================================================================================================================================
 
 #include "chassis/commands/VisionDrive.h"
+#include "vision/PoseOffsetUtils.h"
 
 // Note the simplified constructor and AddRequirements call
-VisionDrive::VisionDrive(subsystems::CommandSwerveDrivetrain *chassis,
-                         TeleopControl *controller,
-                         units::velocity::meters_per_second_t maxSpeed,
-                         units::angular_velocity::degrees_per_second_t maxAngularRate) : m_chassis(chassis),
-                                                                                         m_controller(controller),
-                                                                                         m_maxSpeed(maxSpeed),
-                                                                                         m_maxAngularRate(maxAngularRate)
+VisionDrive::VisionDrive(subsystems::CommandSwerveDrivetrain *chassis) : m_chassis(chassis)
 {
     AddRequirements(m_chassis);
-    m_drivePID.SetIZone(5.0);
-    m_rotatePID.SetIZone(5.0);
+    m_maxSpeed = GetMaxVelocity();
 }
 
 void VisionDrive::Initialize()
 {
-    m_drivePID.Reset();
-    m_rotatePID.Reset();
 }
 
 void VisionDrive::Execute()
 {
-
-    // bool hasTarget = m_vision->HasTarget(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);  TODO until this uses visionstruct
-    auto hasTarget = true;
-    if (hasTarget)
-    {
-        // auto tx = m_vision->GetTx(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
-        //  auto ty = -m_vision->GetTy(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
-        auto tx = units::angle::degree_t(0.0); // TODO:  placeholder until this uses the visionstruct
-        auto ty = units::angle::degree_t(0.0); // TODO:  placeholder until this uses the visionstruct
-
-        auto rotate = std::clamp(units::angular_velocity::degrees_per_second_t(m_rotatePID.Calculate(tx.value())), -m_visionAngularRate, m_visionAngularRate);
-        auto forward = std::clamp(units::velocity::meters_per_second_t(m_drivePID.Calculate(ty.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
-
-        m_chassis->SetControl(
-            m_RobotDriveRequest.WithVelocityX(forward)
-                .WithVelocityY(0_mps)
-                .WithRotationalRate(rotate));
-    }
-    else
+    m_RobotDriveRequest = GetRobotDriveRequest();
+    if (m_RobotDriveRequest.VelocityX == 0_mps && m_RobotDriveRequest.VelocityY == 0_mps && m_RobotDriveRequest.RotationalRate == 0_deg_per_s)
     {
         double forward = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_FORWARD);
         double strafe = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE);
@@ -65,6 +40,15 @@ void VisionDrive::Execute()
             m_fieldDriveRequest.WithVelocityX(forward * m_maxSpeed)
                 .WithVelocityY(strafe * m_maxSpeed)
                 .WithRotationalRate(rotate * m_maxAngularRate));
+    }
+    else
+    {
+        if (m_visionCacheI < 5)
+        {
+            m_chassis->SetControl(m_RobotDriveRequest);
+            m_visionCacheI = 0;
+        }
+        m_visionCacheI++;
     }
 }
 

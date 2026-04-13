@@ -2165,4 +2165,31 @@ namespace LimelightHelpers
             return LimelightResultsClass();
         }
     }
+
+    // TEAM302
+
+    // Calculate center of smart target group (average of all detections)
+    inline std::pair<double, double> getSmartTargetGroupCenter(const std::string &limelightName = "")
+    {
+        std::vector<LimelightHelpers::RawDetection> detections = LimelightHelpers::getRawDetections(limelightName);
+
+        if (detections.empty())
+        {
+            return {0.0, 0.0}; // No detections
+        }
+
+        double avgTxnc = 0.0;
+        double avgTync = 0.0;
+
+        for (const auto &detection : detections)
+        {
+            avgTxnc += detection.txnc;
+            avgTync += detection.tync;
+        }
+
+        avgTxnc /= detections.size();
+        avgTync /= detections.size();
+
+        return {avgTxnc, avgTync};
+    }
 } // namespace LimelightHelpers

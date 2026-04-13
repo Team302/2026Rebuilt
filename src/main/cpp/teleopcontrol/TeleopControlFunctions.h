@@ -52,6 +52,8 @@ public:
         SWEEP_BEHIND_HUB_INCREMENT,
         SWEEP_BEHIND_HUB_DECREMENT,
         DRIVE_TO_DEPOT,
+        DRIVE_TO_FUEL,
+        AUTO_DEFEND,
         DRIVE_TO_TRENCH,
 
         // Mechanisms specific

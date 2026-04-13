@@ -12,34 +12,44 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-
 #pragma once
-#include "units/length.h"
-#include "vision/definitions/CameraConfig.h"
 
-class CameraConfig_302 : public CameraConfig
+#include <memory>
+
+#include "chassis/commands/VisionDrive.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "frc2/command/CommandHelper.h"
+#include "vision/DragonVision.h"
+
+class DriveToFuel : public frc2::CommandHelper<VisionDrive, DriveToFuel>
 {
 public:
-    CameraConfig_302() = default;
-    ~CameraConfig_302() = default;
+    DriveToFuel(subsystems::CommandSwerveDrivetrain *chassis);
 
-    void BuildCameraConfig() override;
+protected:
+    swerve::requests::RobotCentric GetRobotDriveRequest() override;
 
 private:
-    static constexpr units::length::inch_t m_ll1MountingXOffset{-10.7354};
-    static constexpr units::length::inch_t m_ll1MountingYOffset{-10.3104};
-    static constexpr units::length::inch_t m_ll1MountingZOffset{9.39};
-    static constexpr units::angle::degree_t m_ll1Pitch{5};
-    static constexpr units::angle::degree_t m_ll1Yaw{-150};
-    static constexpr units::angle::degree_t m_ll1Roll{0};
+    DragonVision *m_vision = nullptr;
 
-    static constexpr units::length::inch_t m_questMountingXOffset{-11.216};
-    static constexpr units::length::inch_t m_questMountingYOffset{-10.362};
-    static constexpr units::length::inch_t m_questMountingZOffset{16.762};
-    static constexpr units::angle::degree_t m_questPitch{0.0};
-    static constexpr units::angle::degree_t m_questYaw{180.0};
-    static constexpr units::angle::degree_t m_questRoll{0.0};
+    static constexpr double kPDrive{2};
+    static constexpr double kIDrive{0.0};
+    static constexpr double kDDrive{0.0};
 
-    std::unique_ptr<DragonLimelight> m_limelightBackLeft;
-    std::unique_ptr<DragonQuest> m_quest;
+    static constexpr double kPYaw{3};
+    static constexpr double kIYaw{0.0};
+    static constexpr double kDYaw{0.0};
+
+    frc::PIDController m_xController{kPDrive, kIDrive, kDDrive};
+    frc::PIDController m_yController{kPDrive, kIDrive, kDDrive};
+    frc::PIDController m_yawController{kPYaw, kIYaw, kDYaw};
+
+    static constexpr units::length::meter_t m_XdistLimit = 5_m;
+    static constexpr units::length::meter_t m_IntakeXOffset = 0.5_m;
+
+    static constexpr units::velocity::meters_per_second_t m_maxXSpeed = 3_mps;
+    static constexpr units::angular_velocity::degrees_per_second_t m_maxRotationalSpeed = 45_deg_per_s;
+    int m_visionCacheI = 0;
+
+    std::vector<std::unique_ptr<DragonVisionStruct>> m_visionCache;
 };
