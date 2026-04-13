@@ -50,7 +50,8 @@ public:
 		STATE_EXPEL,
 		STATE_LAUNCH,
 		STATE_EMPTY_HOPPER,
-		STATE_LOAD_HOPPER
+		STATE_LOAD_HOPPER,
+		STATE_FORCE_INTAKE_AUTON
 	};
 
 	Intake(RobotIdentifier activeRobotId);
@@ -143,7 +144,7 @@ private:
 
 	ctre::phoenix6::controls::DutyCycleOut m_intakePercentOut{0.0};
 	ctre::phoenix6::controls::DutyCycleOut m_extenderPercentOut{0.0};
-	ctre::phoenix6::controls::MotionMagicVoltage m_extenderPositionDeg{0_tr};
+	ctre::phoenix6::controls::PositionVoltage m_extenderPositionDeg{0_tr};
 	ctre::phoenix6::controls::ControlRequest *m_intakeActiveTarget = &m_intakePercentOut;
 	ctre::phoenix6::controls::ControlRequest *m_extenderActiveTarget = &m_extenderPercentOut;
 

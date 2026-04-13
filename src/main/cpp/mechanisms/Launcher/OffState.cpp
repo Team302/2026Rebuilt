@@ -72,7 +72,7 @@ void OffState::Run()
 	{
 		manualTurretPercentOut = 0;
 	}
-	m_mechanism->UpdateTargetTurretPercentOut(manualTurretPercentOut);
+	m_mechanism->UpdateTargetTurretPercentOut(manualTurretPercentOut * m_manualControlModifier);
 	m_mechanism->UpdateTargetHoodPercentOut(manualHoodPercentOut);
 	m_mechanism->UpdateTurretEnabled();
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("OffState"), string("Run"));
