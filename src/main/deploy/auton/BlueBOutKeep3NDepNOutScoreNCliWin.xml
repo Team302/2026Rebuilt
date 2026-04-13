@@ -27,7 +27,8 @@ time = "5.0">
 </primitive>
 
 <primitive id = "DRIVE_STOP_MECH"
-time = "5.0">
+launcherState = "STATE_PREPARE_TO_LAUNCH"
+time = "10.0">
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
@@ -52,7 +53,8 @@ time = "3.0">
 </primitive>
 
 <primitive id = "DRIVE_STOP_MECH"
-time = "5.0">
+launcherState = "STATE_PREPARE_TO_LAUNCH"
+time = "10.0">
 </primitive>
 
 </auton>

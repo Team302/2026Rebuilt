@@ -9,6 +9,7 @@
 
 ## Table of Contents
 1. [Project Structure](#1-project-structure)
+   - 1.5 [Deployment, Build, & Support Files](#15-deployment-build--support-files)
 2. [Build System](#2-build-system)
 3. [Robot Entry Point & Lifecycle](#3-robot-entry-point--lifecycle)
 4. [Core Singletons & Init Order](#4-core-singletons--init-order)
@@ -110,6 +111,48 @@ src/main/cpp/
 │   └── logging/                     # DragonDataLoggerMgr, DragonDataLogger
 │
 └── healthtests/                     # Hardware health checks
+```
+
+---
+
+## 1.5. Deployment, Build, & Support Files
+
+```
+src/main/
+├── deploy/                          # Deployment package files (deployed to RoboRIO)
+│   ├── 302/                         # Competition robot (COMP_BOT_302) configs
+│   ├── 9999/                        # Test chassis configs (CHASSIS_BOT_9999, etc.)
+│   ├── auton/                       # Autonomous routine XML files + DTDs
+│   ├── chassis/                     # Chassis tuning and configuration files
+│   ├── choreo/                      # Choreo trajectory files for path planning
+│   └── mechanisms/                  # Mechanism-specific configuration files
+│
+└── thirdparty/                      # Third-party C++ libraries (non-vendor)
+
+tools/                               # Code generation and utility scripts
+├── DragonCodeGenerator/             # Team 302 code generator (v20.26.x)
+│   └── templates/                   # Code generation templates
+├── auton_diagram_gen.py             # Generates autonomous routine diagrams
+├── auton_docs_html_gen.py           # Generates HTML documentation from auton XML
+└── auton_zone_field_gen.py          # Generates field zone visualization
+
+documents/                           # Design documentation and resources
+├── auton/                           # Autonomous strategy documentation (Markdown)
+├── AdvantageScopeAssets/            # AdvantageScope dashboard telemetry assets
+├── Mechanism/                       # Mechanism design and specification docs
+├── swerveprojects/                  # Swerve drive design and simulation files
+└── vision/                          # Vision system documentation
+
+elastic/                             # Elastic dashboard configuration
+└── elastic-layout.json              # Dashboard layout and telemetry mappings
+
+ctre_sim/                            # CTRE Phoenix simulation library files
+
+vendordeps/                          # WPILib third-party vendor dependencies
+├── ChoreoLib2026.json               # Choreo path planning library (2026)
+├── Phoenix5-replay-*.json           # CTRE Phoenix 5 replay (legacy)
+├── Phoenix6-replay-*.json           # CTRE Phoenix 6 replay + latest
+└── WPILibNewCommands.json          # WPILib command framework
 ```
 
 ---
