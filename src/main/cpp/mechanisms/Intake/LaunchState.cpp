@@ -63,13 +63,6 @@ void LaunchState::InitCompBot302()
 void LaunchState::Run()
 {
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("LaunchState"), string("Run"));
-	// Bump Code
-	// if ((m_timer.Get() > m_bumpDuration) && frc::DriverStation::IsAutonomous())
-	// {
-	// 	m_currentExtenderTarget = (m_currentExtenderTarget > 0) ? m_extenderTargetDown : m_extenderTargetUp;
-	// 	m_mechanism->UpdateTargetExtenderPercentOut(m_currentExtenderTarget);
-	// 	m_timer.Reset();
-	// }
 }
 
 void LaunchState::Exit()
@@ -92,4 +85,14 @@ bool LaunchState::IsTransitionCondition(bool considerGamepadTransitions)
 		return (m_mechanism->IsLaunching() && !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::FUNCTION::INTAKE));
 	else
 		return (m_mechanism->IsLaunching());
+}
+
+void LaunchState::BumpIntake()
+{
+	if ((m_timer.Get() > m_bumpDuration) && frc::DriverStation::IsAutonomous())
+	{
+		m_currentExtenderBumpTarget = (m_currentExtenderBumpTarget > 0) ? m_extenderTargetDown : m_extenderTargetUp;
+		m_mechanism->UpdateTargetExtenderPercentOut(m_currentExtenderBumpTarget);
+		m_timer.Reset();
+	}
 }
