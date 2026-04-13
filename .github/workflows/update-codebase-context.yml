@@ -8,229 +8,459 @@ on:
       - "src/main/**"
       - "build.gradle"
       - "build.gradle.kts"
-  workflow_dispatch:
-    inputs:
-      commit_sha:
-        description: "Specific commit SHA to summarize for CODEBASE_CONTEXT review input"
-        required: false
-        type: string
-      pr_number:
-        description: "PR number to comment on. If omitted, the workflow will try to resolve it from the commit."
-        required: false
-        type: string
+  workflow_dispatch: # Allow manual runs from the GitHub Actions UI or CLI
 
 permissions:
-  contents: read
-  issues: write
+  contents: write
   pull-requests: write
+  models: read # Required for GitHub Models / Copilot API access
 
 jobs:
-  comment-context:
+  update-context:
     runs-on: ubuntu-latest
 
     steps:
-      # ── 1. Checkout full history so manual SHA targeting works reliably ─────
+      # ── 1. Checkout full history so we can diff ──────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # ── 2. Collect last-commit context for external AI use ───────────────────
-      - name: Collect last commit context
+      # ── 2. Gather changed files, grouped by top-level directory ──────────────
+      # Each directory under src/main (e.g. chassis/, mechanisms/, auton/) is
+      # treated as one "batch".  build.gradle / build.gradle.kts are their own
+      # batch.  This guarantees each subsequent API call stays under the 24 KB
+      # prompt limit regardless of how many files changed in a single push.
+      - name: Collect and group changed files by directory
         id: gather
-        env:
-          INPUT_COMMIT_SHA: ${{ inputs.commit_sha }}
-          DEFAULT_SHA: ${{ github.sha }}
         run: |
-          TARGET_SHA="$DEFAULT_SHA"
-          if [ -n "$INPUT_COMMIT_SHA" ]; then
-            TARGET_SHA="$INPUT_COMMIT_SHA"
+          # ── Detect manual dispatch vs real push ───────────────────────────────
+          BEFORE="${{ github.event.before }}"
+          FULL_REBUILD=false
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            echo "Manual run — paths-only mode (no file content sent to model)."
+            FULL_REBUILD=true
+            ALL_STATUS=$(git ls-tree -r --name-only HEAD -- src/main build.gradle build.gradle.kts \
+                         | sed 's/^/M\t/' || true)
+          else
+            ALL_STATUS=$(git diff --name-status "$BEFORE" ${{ github.sha }} \
+                         -- 'src/main/**' 'build.gradle' 'build.gradle.kts' || true)
           fi
 
-          if ! git cat-file -e "${TARGET_SHA}^{commit}" 2>/dev/null; then
-            echo "Commit ${TARGET_SHA} is not available in the checked out history."
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-            exit 1
+          echo "File statuses in this push:"
+          echo "$ALL_STATUS"
+          echo "$FULL_REBUILD" > /tmp/full_rebuild.txt
+
+          # ── Helper: exact line-anchored membership test ───────────────────────
+          is_changed() {
+            echo "$ALL_STATUS" | awk -F'\t' '{print $NF}' | grep -qxF "$1"
+          }
+
+          # ── Helper: detect text files we can include source for ───────────────
+          is_text_ext() {
+            case "$1" in
+              *.cpp|*.h|*.hpp|*.c|\
+              *.json|*.xml|*.yaml|*.yml|*.toml|*.csv|*.properties|\
+              *.traj|*.chor|*.txt|*.md|*.gradle|*.kts)
+                return 0 ;;
+              *) return 1 ;;
+            esac
+          }
+
+          lang_for() {
+            case "$1" in
+              *.cpp|*.h|*.hpp|*.c) echo "cpp" ;;
+              *.gradle|*.kts)      echo "groovy" ;;
+              *.json|*.traj|*.chor) echo "json" ;;
+              *.xml)               echo "xml" ;;
+              *.yaml|*.yml)        echo "yaml" ;;
+              *.toml)              echo "toml" ;;
+              *)                   echo "" ;;
+            esac
+          }
+
+          # ── Build explicit DELETED / RENAMED section (global) ─────────────────
+          DELETED_LIST=""
+          while IFS='	' read -r status path1 path2; do
+            [ -z "$status" ] && continue
+            case "$status" in
+              D*) DELETED_LIST="${DELETED_LIST}  - DELETED: \`${path1}\`\n" ;;
+              R*) DELETED_LIST="${DELETED_LIST}  - RENAMED: \`${path1}\` → \`${path2}\`\n" ;;
+            esac
+          done <<< "$ALL_STATUS"
+          printf '%b' "$DELETED_LIST" > /tmp/deleted_list.txt
+
+          # ── Discover which top-level directories under src/main have changes ──
+          # A "bucket" is the first path component after src/main/ (e.g. "chassis").
+          # Files directly in src/main/cpp/ (no sub-dir) go into bucket "cpp_root".
+          # build.gradle / build.gradle.kts are bucket "build_files".
+          mkdir -p /tmp/batches
+
+          declare -A SEEN_BUCKETS
+
+          while IFS='	' read -r status path1 path2; do
+            [ -z "$status" ] && continue
+            # Use the destination path for renames, source for everything else
+            case "$status" in
+              R*) filepath="$path2" ;;
+              *)  filepath="$path1" ;;
+            esac
+            # Skip deleted files — they are handled via DELETED_LIST globally
+            [ "$status" = "D" ] && continue
+
+            case "$filepath" in
+              build.gradle|build.gradle.kts)
+                bucket="build_files" ;;
+              src/main/*)
+                # Strip "src/main/" then take first path component
+                rel="${filepath#src/main/}"
+                bucket=$(echo "$rel" | cut -d'/' -f1)
+                [ -z "$bucket" ] && bucket="cpp_root"
+                ;;
+              *) continue ;;
+            esac
+
+            SEEN_BUCKETS["$bucket"]=1
+          done <<< "$ALL_STATUS"
+
+          # ── For FULL_REBUILD, add ALL top-level dirs present on disk ──────────
+          if [ "$FULL_REBUILD" = "true" ]; then
+            while IFS= read -r -d '' dir; do
+              bucket=$(basename "$dir")
+              SEEN_BUCKETS["$bucket"]=1
+            done < <(find src/main -mindepth 1 -maxdepth 1 -type d -print0 | sort -z)
+            SEEN_BUCKETS["build_files"]=1
           fi
 
-          PARENT_SHA=$(git rev-parse "${TARGET_SHA}^1" 2>/dev/null || true)
-          if [ -z "$PARENT_SHA" ]; then
-            echo "No parent commit found for ${TARGET_SHA}; skipping."
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
+          # ── Write bucket list for the next step to iterate over ───────────────
+          printf '%s\n' "${!SEEN_BUCKETS[@]}" | sort > /tmp/bucket_list.txt
+          echo "Buckets to process:"
+          cat /tmp/bucket_list.txt
 
-          ALL_STATUS=$(git diff --name-status "$PARENT_SHA" "$TARGET_SHA" \
-            -- 'src/main/**' 'build.gradle' 'build.gradle.kts' || true)
+          # ── For each bucket, build its changed/unchanged file dumps ───────────
+          while IFS= read -r bucket; do
+            CHANGED_DUMP=""
+            UNCHANGED_LIST=""
 
-          if [ -z "$ALL_STATUS" ]; then
-            echo "No relevant src/main or build file changes in the last commit."
-            echo "has_changes=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
+            if [ "$bucket" = "build_files" ]; then
+              # ── Build files bucket ──────────────────────────────────────────
+              for f in build.gradle build.gradle.kts; do
+                [ -f "$f" ] || continue
+                if is_changed "$f"; then
+                  if [ "$FULL_REBUILD" = "true" ]; then
+                    CHANGED_DUMP="${CHANGED_DUMP}  - ${f}\n"
+                  else
+                    CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${f}\n\`\`\`groovy\n$(cat "$f")\n\`\`\`"
+                  fi
+                else
+                  UNCHANGED_LIST="${UNCHANGED_LIST}  - ${f}\n"
+                fi
+              done
+            else
+              # ── Source directory bucket ─────────────────────────────────────
+              # Determine the filesystem path for this bucket
+              if [ -d "src/main/${bucket}" ]; then
+                SCAN_ROOT="src/main/${bucket}"
+              elif [ -d "src/main/cpp/${bucket}" ]; then
+                # Some trees nest under src/main/cpp/
+                SCAN_ROOT="src/main/cpp/${bucket}"
+              else
+                # Fallback: scan anywhere under src/main matching the bucket name
+                SCAN_ROOT=$(find src/main -maxdepth 2 -type d -name "$bucket" | head -1)
+                [ -z "$SCAN_ROOT" ] && continue
+              fi
 
-          echo "has_changes=true" >> "$GITHUB_OUTPUT"
+              while IFS= read -r -d '' file; do
+                rel="${file#./}"
+                if is_changed "$rel"; then
+                  if [ "$FULL_REBUILD" = "true" ]; then
+                    CHANGED_DUMP="${CHANGED_DUMP}  - ${rel}\n"
+                  elif is_text_ext "$rel"; then
+                    LANG=$(lang_for "$rel")
+                    # 1 500-char cap per file (~375 tokens) — keeps one batch well
+                    # under the 10 KB changed-dump limit even with many files.
+                    CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${rel}\n\`\`\`${LANG}\n$(head -c 1500 "$file")\n\`\`\`"
+                  else
+                    CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE (binary): ${rel}"
+                  fi
+                else
+                  UNCHANGED_LIST="${UNCHANGED_LIST}  - ${rel}\n"
+                fi
+              done < <(find "$SCAN_ROOT" -type f -print0 | sort -z)
+            fi
 
+            # Skip buckets with nothing to report (can happen on FULL_REBUILD
+            # if a top-level dir exists but has no matching files after filtering)
+            if [ -z "$CHANGED_DUMP" ] && [ -z "$UNCHANGED_LIST" ]; then
+              continue
+            fi
+
+            # ── Per-bucket hard caps (same rationale as before) ────────────────
+            CHANGED_BYTES=$(printf '%b' "$CHANGED_DUMP" | wc -c)
+            if [ "$CHANGED_BYTES" -gt 10000 ]; then
+              echo "WARNING: Bucket '${bucket}' changed dump is ${CHANGED_BYTES} bytes — truncating to 10 000 bytes."
+              CHANGED_DUMP=$(printf '%b' "$CHANGED_DUMP" | head -c 10000)
+              CHANGED_DUMP="${CHANGED_DUMP}\n\n[... truncated — too many changed files in '${bucket}' for single API call ...]"
+            fi
+
+            UNCHANGED_BYTES=$(printf '%b' "$UNCHANGED_LIST" | wc -c)
+            if [ "$UNCHANGED_BYTES" -gt 4000 ]; then
+              UNCHANGED_LIST=$(printf '%b' "$UNCHANGED_LIST" | head -c 4000)
+              UNCHANGED_LIST="${UNCHANGED_LIST}\n[... truncated ...]"
+            fi
+
+            # Write per-bucket files
+            printf '%b' "$CHANGED_DUMP"   > "/tmp/batches/${bucket}_changed.txt"
+            printf '%b' "$UNCHANGED_LIST" > "/tmp/batches/${bucket}_unchanged.txt"
+
+          done < /tmp/bucket_list.txt
+
+          # ── Snapshot existing context once (shared across all batches) ────────
           EXISTING_LINES=$(wc -l < .github/CODEBASE_CONTEXT.md 2>/dev/null || echo "0")
-          git log -1 --pretty=format:'%H' "$TARGET_SHA" > /tmp/target_sha.txt
-          git log -1 --pretty=format:'%s' "$TARGET_SHA" > /tmp/commit_subject.txt
-          git log -1 --pretty=format:'%an' "$TARGET_SHA" > /tmp/commit_author.txt
-          git log -1 --pretty=format:'%B' "$TARGET_SHA" > /tmp/commit_message.txt
-          printf '%s\n' "$ALL_STATUS" > /tmp/name_status.txt
-          git diff --stat "$PARENT_SHA" "$TARGET_SHA" \
-            -- 'src/main/**' 'build.gradle' 'build.gradle.kts' > /tmp/diff_stat.txt
-          git diff --unified=3 --no-color "$PARENT_SHA" "$TARGET_SHA" \
-            -- 'src/main/**' 'build.gradle' 'build.gradle.kts' > /tmp/raw_diff.txt
-          cp .github/CODEBASE_CONTEXT.md /tmp/existing_context.md
+          # 8 000-byte cap — leaves room for per-batch changed content in the prompt
+          [ -f ".github/CODEBASE_CONTEXT.md" ] && head -c 8000 .github/CODEBASE_CONTEXT.md > /tmp/existing_context.txt || touch /tmp/existing_context.txt
           echo "$EXISTING_LINES" > /tmp/existing_lines.txt
 
-          printf '%s\n' \
-            "You are a senior FRC (FIRST Robotics Competition) software engineer maintaining .github/CODEBASE_CONTEXT.md for a WPILib-based robot codebase (2026 season). This file is read by GitHub Copilot as repo-wide context, so it must be maximally useful to an AI coding assistant and human developers alike." \
-            "" \
-            "## YOUR TASK" \
-            "A push to main changed the files summarized below. Update ONLY the sections of the existing context that are directly affected by those changes." \
-            "All other sections must be reproduced VERBATIM — do not rephrase, summarize, condense, or restructure them." \
-            "" \
-            "## STRICT RULES" \
-            "1. Unless files were deleted or renamed (see CHANGED FILES / DIFF below), the output MUST be at least ${EXISTING_LINES} lines. Do NOT produce a shorter file." \
-            "2. If a file was deleted or renamed, remove or update only the corresponding context entries. This is the ONLY circumstance where removing content is permitted." \
-            "3. Preserve all season-specific wording, manual notes, warnings, and checklist items exactly unless directly contradicted by the changed files." \
-            "4. Only output the raw Markdown for the updated .github/CODEBASE_CONTEXT.md — no preamble, no explanation." \
-            > /tmp/ai_prompt.txt
+          echo "Existing context: ${EXISTING_LINES} lines"
+          echo "Buckets queued:"; cat /tmp/bucket_list.txt
 
-      # ── 3. Resolve the PR associated with the pushed commit ──────────────────
-      - name: Resolve associated PR
-        id: pr
-        if: steps.gather.outputs.has_changes == 'true'
+      # ── 3. Process each directory bucket through the model ───────────────────
+      # We iterate the bucket list and make one API call per bucket.  Each call
+      # receives only the changed/unchanged files for that directory so the prompt
+      # stays well within the 24 KB (≈ 8 000-token) GitHub Models limit.
+      # The context file is updated in-place after each call so the next bucket's
+      # call sees the already-updated document.
+      - name: Generate updated context via Copilot (per-directory batches)
+        id: generate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          INPUT_PR_NUMBER: ${{ inputs.pr_number }}
         run: |
-          if [ -n "$INPUT_PR_NUMBER" ]; then
-            PR_NUMBER="$INPUT_PR_NUMBER"
+          FULL_REBUILD=$(cat /tmp/full_rebuild.txt)
+          EXISTING_LINES=$(cat /tmp/existing_lines.txt)
+          DELETED_LIST=$(cat /tmp/deleted_list.txt)
+          BUCKET_LIST=$(cat /tmp/bucket_list.txt)
+
+          # Working copy of the context — updated after each bucket's API call
+          cp .github/CODEBASE_CONTEXT.md /tmp/current_context.md
+
+          BUCKET_COUNT=$(echo "$BUCKET_LIST" | wc -l)
+          BUCKET_INDEX=0
+
+          while IFS= read -r bucket; do
+            BUCKET_INDEX=$(( BUCKET_INDEX + 1 ))
+            echo "=== Processing bucket ${BUCKET_INDEX}/${BUCKET_COUNT}: '${bucket}' ==="
+
+            CHANGED_DUMP=$(cat "/tmp/batches/${bucket}_changed.txt"   2>/dev/null || true)
+            UNCHANGED_LIST=$(cat "/tmp/batches/${bucket}_unchanged.txt" 2>/dev/null || true)
+            EXISTING=$(head -c 8000 /tmp/current_context.md)
+            CUR_LINES=$(wc -l < /tmp/current_context.md)
+
+            # ── Build prompt ────────────────────────────────────────────────────
+            if [ "$FULL_REBUILD" = "true" ]; then
+              printf '%s\n' \
+                "You are a senior FRC (FIRST Robotics Competition) software engineer maintaining \`.github/CODEBASE_CONTEXT.md\` for a WPILib-based robot codebase (2026 season). This file is read by GitHub Copilot as repo-wide context, so it must be maximally useful to an AI coding assistant and human developers alike." \
+                "" \
+                "## YOUR TASK" \
+                "You are processing directory bucket: \`${bucket}\`." \
+                "A full list of all files in this directory is provided below (paths only — no source content)." \
+                "Perform a STRUCTURAL REFRESH scoped to this bucket:" \
+                "  • Remove any sections that reference files or directories within \`${bucket}/\` that no longer appear in the file list." \
+                "  • Add brief placeholder entries for any major source files in \`${bucket}/\` that are in the file list but completely absent from the existing context." \
+                "  • Do NOT rewrite, rephrase, or condense any existing section whose files are still present." \
+                "  • All other content (sections for OTHER directories) must be reproduced VERBATIM." \
+                "" \
+                "## STRICT RULES" \
+                "1. Unless files in \`${bucket}/\` were deleted, the output MUST be at least ${CUR_LINES} lines." \
+                "2. Only output the raw Markdown — no preamble, no explanation." \
+                > /tmp/prompt.txt
+            else
+              printf '%s\n' \
+                "You are a senior FRC (FIRST Robotics Competition) software engineer maintaining \`.github/CODEBASE_CONTEXT.md\` for a WPILib-based robot codebase (2026 season). This file is read by GitHub Copilot as repo-wide context, so it must be maximally useful to an AI coding assistant and human developers alike." \
+                "" \
+                "## YOUR TASK" \
+                "You are processing directory bucket: \`${bucket}\`." \
+                "A push to main changed files within this directory. Update ONLY the sections of the existing context that are directly affected by the changed files listed below." \
+                "Sections for ALL OTHER directories must be reproduced VERBATIM — do not rephrase, summarize, condense, or restructure them." \
+                "" \
+                "## STRICT RULES" \
+                "1. Unless files in \`${bucket}/\` were deleted or renamed (see DELETED/RENAMED FILES), the output MUST be at least ${CUR_LINES} lines. Do NOT produce a shorter file." \
+                "2. For each entry in DELETED/RENAMED FILES that belongs to \`${bucket}/\`: remove or update the corresponding context section. This is the ONLY circumstance where removing content is permitted." \
+                "3. Do NOT rewrite sections whose source files are listed under UNCHANGED FILES." \
+                "4. Preserve all season-specific wording, manual notes, warnings, and checklist items exactly." \
+                "5. Only output the raw Markdown — no preamble, no explanation." \
+                > /tmp/prompt.txt
+            fi
+
+            # Append dynamic sections
+            if [ "$FULL_REBUILD" = "true" ]; then
+              printf '\n## FILE LIST FOR BUCKET: %s (paths only)\n' "$bucket" >> /tmp/prompt.txt
+              printf '%s\n' "$CHANGED_DUMP"                                   >> /tmp/prompt.txt
+            else
+              printf '\n## DELETED / RENAMED FILES IN THIS BUCKET\n'                          >> /tmp/prompt.txt
+              # Filter deleted list to only entries matching this bucket
+              printf '%s\n' "${DELETED_LIST:-(none)}" | grep -i "${bucket}" || printf '(none)\n'  >> /tmp/prompt.txt
+
+              printf '\n## CHANGED FILES IN BUCKET: %s (update context for these only)\n' "$bucket" >> /tmp/prompt.txt
+              printf '%s\n' "${CHANGED_DUMP:-(none)}"                                               >> /tmp/prompt.txt
+
+              printf '\n## UNCHANGED FILES IN BUCKET: %s (do not touch their sections)\n' "$bucket" >> /tmp/prompt.txt
+              printf '%s\n' "${UNCHANGED_LIST:-(none)}"                                             >> /tmp/prompt.txt
+            fi
+
+            printf '\n## EXISTING CODEBASE_CONTEXT.md (%s lines — reproduce in full, editing only where rules above require)\n' "$CUR_LINES" >> /tmp/prompt.txt
+            printf '%s\n' "$EXISTING" >> /tmp/prompt.txt
+
+            # ── Guard: abort if this bucket's prompt is too large ───────────────
+            PROMPT_BYTES=$(wc -c < /tmp/prompt.txt)
+            echo "  Prompt size for bucket '${bucket}': ${PROMPT_BYTES} bytes"
+            if [ "$PROMPT_BYTES" -gt 24000 ]; then
+              echo "ERROR: Prompt for bucket '${bucket}' is ${PROMPT_BYTES} bytes — exceeds 24 000-byte safety limit."
+              echo "This bucket has too many large files. Consider splitting into sub-directory buckets."
+              exit 1
+            fi
+
+            # ── API call ────────────────────────────────────────────────────────
+            jq -n \
+              --rawfile prompt /tmp/prompt.txt \
+              '{
+                model: "gpt-4o-mini",
+                messages: [{ role: "user", content: $prompt }],
+                max_tokens: 16384,
+                temperature: 0.1
+              }' > /tmp/request.json
+
+            RESPONSE=$(curl -s \
+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              -H "Content-Type: application/json" \
+              --data-binary @/tmp/request.json \
+              "https://models.inference.ai.azure.com/chat/completions")
+
+            echo "$RESPONSE" | jq -r '.choices[0].message.content' > /tmp/bucket_result.md
+
+            NEW_LINES=$(wc -l < /tmp/bucket_result.md)
+            echo "  Bucket '${bucket}': context ${CUR_LINES} → ${NEW_LINES} lines"
+
+            if [ "$NEW_LINES" -lt 5 ]; then
+              echo "ERROR: Generated context for bucket '${bucket}' looks too short. Raw response:"
+              echo "$RESPONSE"
+              exit 1
+            fi
+
+            # Warn if the model shrank the file significantly (>15% loss)
+            THRESHOLD=$(( CUR_LINES * 85 / 100 ))
+            if [ "$NEW_LINES" -lt "$THRESHOLD" ]; then
+              echo "WARNING: Context shrank from ${CUR_LINES} to ${NEW_LINES} lines (threshold: ${THRESHOLD}) on bucket '${bucket}'."
+              echo "The model may have incorrectly removed content. Review the PR carefully before merging."
+            fi
+
+            # ── Advance the working context for the next bucket ─────────────────
+            cp /tmp/bucket_result.md /tmp/current_context.md
+
+          done <<< "$BUCKET_LIST"
+
+          # Final result is the context after all buckets have been applied
+          cp /tmp/current_context.md /tmp/new_context.md
+
+          FINAL_LINES=$(wc -l < /tmp/new_context.md)
+          echo "All buckets processed. Final context: ${FINAL_LINES} lines (was ${EXISTING_LINES})."
+
+      # ── 4. Check if anything actually changed ────────────────────────────────
+      - name: Check for changes
+        id: diff
+        run: |
+          if diff -q .github/CODEBASE_CONTEXT.md /tmp/new_context.md > /dev/null 2>&1; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes to CODEBASE_CONTEXT.md — skipping PR."
           else
-            TARGET_SHA=$(cat /tmp/target_sha.txt)
-            PR_NUMBER=$(gh api \
-              -H "Accept: application/vnd.github+json" \
-              "/repos/${{ github.repository }}/commits/${TARGET_SHA}/pulls" \
-              --jq 'map(select(.state == "closed" or .state == "open"))[0].number' 2>/dev/null || true)
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Changes detected."
           fi
 
-          if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "null" ]; then
-            TARGET_SHA=$(cat /tmp/target_sha.txt)
-            echo "No associated PR found for commit ${TARGET_SHA}."
-            echo "found=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          echo "found=true" >> "$GITHUB_OUTPUT"
-          echo "number=${PR_NUMBER}" >> "$GITHUB_OUTPUT"
-
-      # ── 4. Build and post a reusable AI-input comment on the PR ──────────────
-      - name: Post AI input comment to PR
-        if: steps.gather.outputs.has_changes == 'true' && steps.pr.outputs.found == 'true'
+      # ── 5. Ensure required labels exist ──────────────────────────────────────
+      - name: Ensure PR labels exist
+        if: steps.diff.outputs.changed == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ steps.pr.outputs.number }}
         run: |
-          python3 <<'PY'
-          import json
-          import textwrap
-          from pathlib import Path
+          gh label create "documentation" --color "0075ca" --description "Improvements or additions to documentation" 2>/dev/null || true
+          gh label create "automated"     --color "e4e669" --description "Opened automatically by a GitHub Actions bot"  2>/dev/null || true
 
-          marker = "<!-- codebase-context-ai-input -->"
-          target_sha = Path('/tmp/target_sha.txt').read_text().strip()
-          commit_subject = Path('/tmp/commit_subject.txt').read_text().strip()
-          commit_author = Path('/tmp/commit_author.txt').read_text().strip()
-          commit_message = Path('/tmp/commit_message.txt').read_text().rstrip()
-          name_status = Path('/tmp/name_status.txt').read_text().rstrip()
-          diff_stat = Path('/tmp/diff_stat.txt').read_text().rstrip()
-          raw_diff = Path('/tmp/raw_diff.txt').read_text().rstrip()
-          prompt = Path('/tmp/ai_prompt.txt').read_text().rstrip()
-          existing_context = Path('/tmp/existing_context.md').read_text().rstrip()
-          existing_lines = Path('/tmp/existing_lines.txt').read_text().strip()
+      # ── 6. Commit to a new branch and open a PR ──────────────────────────────
+      - name: Create PR with updated context
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          header = textwrap.dedent(f"""\
-          {marker}
-          ## CODEBASE_CONTEXT update input
+          BRANCH="bot/update-codebase-context-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "$BRANCH"
 
-          This comment is generated for external AI use. It does not update `.github/CODEBASE_CONTEXT.md` automatically.
+          cp /tmp/new_context.md .github/CODEBASE_CONTEXT.md
+
+          git add .github/CODEBASE_CONTEXT.md
+          git commit -m "docs: auto-update .github/CODEBASE_CONTEXT.md from src/main changes
+
+          Triggered by push to main.
+          Updated by GitHub Copilot (gpt-4o-mini via GitHub Models).
+          [skip ci]"
+
+          git push origin "$BRANCH"
+
+          # Line count delta for the PR body
+          NEW_LINES=$(wc -l < /tmp/new_context.md)
+          EXISTING_LINES=$(cat /tmp/existing_lines.txt)
+          LINE_DELTA=$(( NEW_LINES - EXISTING_LINES ))
+          if [ "$LINE_DELTA" -ge 0 ]; then
+            DELTA_STR="+${LINE_DELTA}"
+          else
+            DELTA_STR="${LINE_DELTA} ⚠️ lines were removed — review carefully"
+          fi
+
+          BUCKET_LIST=$(cat /tmp/bucket_list.txt)
+          BUCKET_COUNT=$(echo "$BUCKET_LIST" | wc -l)
+
+          # Changed files list for PR body
+          CHANGED_LIST=""
+          BEFORE="${{ github.event.before }}"
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            ALL_STATUS=$(git ls-tree -r --name-only HEAD -- src/main build.gradle build.gradle.kts \
+                         | sed 's/^/M\t/' || true)
+          else
+            ALL_STATUS=$(git diff --name-status "$BEFORE" ${{ github.sha }} \
+                         -- 'src/main/**' 'build.gradle' 'build.gradle.kts' || true)
+          fi
+          while IFS='	' read -r status path1 path2; do
+            [ -z "$status" ] && continue
+            case "$status" in
+              D*) CHANGED_LIST="${CHANGED_LIST}- 🗑️ \`${path1}\` (deleted)"$'\n' ;;
+              R*) CHANGED_LIST="${CHANGED_LIST}- 🔄 \`${path1}\` → \`${path2}\` (renamed)"$'\n' ;;
+              A*) CHANGED_LIST="${CHANGED_LIST}- ✨ \`${path1}\` (added)"$'\n' ;;
+              *)  CHANGED_LIST="${CHANGED_LIST}- 📝 \`${path1}\`"$'\n' ;;
+            esac
+          done <<< "$ALL_STATUS"
+
+          gh pr create \
+            --title "docs: Update .github/CODEBASE_CONTEXT.md (auto-generated)" \
+            --body "## 🤖 Automated Codebase Context Update
+
+          This PR was automatically generated after a push to \`main\` modified files under \`src/main/\` or build files.
+          Context was updated in **${BUCKET_COUNT} directory batch(es)**: \`$(echo "$BUCKET_LIST" | tr '\n' ' ')\`.
+          Only sections relevant to the changed files below were updated; all other sections are unchanged.
+
+          ### Source files changed
+          ${CHANGED_LIST}
+          ### Line count
+          ${EXISTING_LINES} → ${NEW_LINES} (${DELTA_STR})
+
+          > **Please review before merging.** If lines were unexpectedly removed, edit this branch directly before merging.
 
           ### Trigger commit
-          - Commit: `{target_sha}`
-          - Author: `{commit_author}`
-          - Subject: `{commit_subject}`
-
-          ### Prompt
-          ~~~~text
-          {prompt}
-          ~~~~
-
-          ### Commit message
-          ~~~~text
-          {commit_message}
-          ~~~~
-
-          ### Changed files
-          ~~~~text
-          {name_status}
-          ~~~~
-
-          ### Diff stat
-          ~~~~text
-          {diff_stat}
-          ~~~~
-          """)
-
-          context_block = textwrap.dedent(f"""\
-          ### Existing `.github/CODEBASE_CONTEXT.md` ({existing_lines} lines)
-          ~~~~md
-          {existing_context}
-          ~~~~
-          """)
-
-          diff_header = "\n### Raw diff for affected files\n~~~~diff\n"
-          diff_footer = "\n~~~~\n"
-          body_without_diff = header + context_block
-
-          max_chars = 62000
-          available_for_diff = max_chars - len(body_without_diff) - len(diff_header) - len(diff_footer)
-          if available_for_diff < 0:
-            available_for_diff = 0
-
-          if len(raw_diff) > available_for_diff:
-            truncation_note = "\n[... raw diff truncated to fit GitHub comment size limits ...]"
-            keep = max(0, available_for_diff - len(truncation_note))
-            raw_diff = raw_diff[:keep] + truncation_note
-
-          body = body_without_diff + diff_header + raw_diff + diff_footer
-          Path('/tmp/pr_comment.md').write_text(body)
-          Path('/tmp/pr_comment.json').write_text(json.dumps({"body": body}))
-          PY
-
-          EXISTING_COMMENT_ID=$(gh api \
-            "/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" \
-            --paginate \
-            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("<!-- codebase-context-ai-input -->"))) | .id' \
-            | tail -n 1)
-
-          if [ -n "$EXISTING_COMMENT_ID" ]; then
-            gh api \
-              --method PATCH \
-              "/repos/${{ github.repository }}/issues/comments/${EXISTING_COMMENT_ID}" \
-              --input /tmp/pr_comment.json
-          else
-            gh pr comment "$PR_NUMBER" --body-file /tmp/pr_comment.md
-          fi
-
-      # ── 5. Write job summary for visibility when no PR is found ──────────────
-      - name: Write workflow summary
-        if: always()
-        run: |
-          if [ "${{ steps.gather.outputs.has_changes }}" != "true" ]; then
-            echo "No relevant src/main or build.gradle changes were found for the requested commit." >> "$GITHUB_STEP_SUMMARY"
-          elif [ "${{ steps.pr.outputs.found }}" != "true" ]; then
-            echo "Relevant changes were found, but no associated PR could be resolved for the requested commit." >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "Posted CODEBASE_CONTEXT AI input comment to PR #${{ steps.pr.outputs.number }}." >> "$GITHUB_STEP_SUMMARY"
-          fi
+          - Commit: \`${{ github.sha }}\`
+          - Author: \`${{ github.actor }}\`
+          - Pushed at: \`$(date -u)\`" \
+            --head "$BRANCH" \
+            --base "main" \
+            --label "documentation" \
+            --label "automated"
