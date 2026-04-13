@@ -164,7 +164,7 @@ units::angle::degree_t RebuiltTargetCalculator::GetLauncherTarget(units::angle::
     UpdateChassisSpeeds();
     UpdateChassisPose();
 
-    if (GetChassisPose() == m_lastChassisPose)
+    if (!m_isMoving)
     {
         return m_cachedLauncherTarget;
     }
@@ -353,15 +353,14 @@ void RebuiltTargetCalculator::UpdatePassingTargetsOnField()
  */
 units::time::second_t RebuiltTargetCalculator::GetLookAheadTime()
 {
-    bool isMoving = !GetChassis()->IsSamePose(m_IsMovingDistanceThreshold);
-
-    if (!isMoving)
+    if (!m_isMoving)
     {
         return 0_s;
     }
 
     units::length::inch_t distance = CalculateMechanismDistanceToTarget(0_s);
     auto lookAheadtime = InterpolateUtils::linearInterpolate(m_LookAheadDistances, m_LookAheadTimes, distance);
+
     return lookAheadtime;
 }
 
