@@ -275,10 +275,10 @@ private:
     /// @{
 
     /// Minimum launcher angle in degrees (soft limit, angles below this are clamped)
-    static constexpr units::degree_t m_minLauncherAngle = 90_deg;
+    static constexpr units::degree_t m_minLauncherAngle{90_deg};
 
     /// Maximum launcher angle in degrees (soft limit, angles above this are clamped)
-    static constexpr units::degree_t m_maxLauncherAngle = 265_deg;
+    static constexpr units::degree_t m_maxLauncherAngle{265_deg};
 
     /// @}
 
@@ -331,10 +331,10 @@ private:
     /// @{
 
     /// X-axis offset for main target in inches
-    units::length::inch_t m_xTargetOffset = 0_in;
+    units::length::inch_t m_xTargetOffset{0_in};
 
     /// Y-axis offset for main target in inches
-    units::length::inch_t m_yTargetOffset = 0_in;
+    units::length::inch_t m_yTargetOffset{0_in};
 
     /// @}
 
@@ -343,16 +343,16 @@ private:
     /// @{
 
     /// X-axis offset for depot passing target in inches
-    units::length::inch_t m_passingDepotTargetXOffset = 0_in;
+    units::length::inch_t m_passingDepotTargetXOffset{0_in};
 
     /// Y-axis offset for depot passing target in inches
-    units::length::inch_t m_passingDepotTargetYOffset = 30_in;
+    units::length::inch_t m_passingDepotTargetYOffset{30_in};
 
     /// X-axis offset for outpost passing target in inches
-    units::length::inch_t m_passingOutpostTargetXOffset = 0_in;
+    units::length::inch_t m_passingOutpostTargetXOffset{0_in};
 
     /// Y-axis offset for outpost passing target in inches
-    units::length::inch_t m_passingOutpostTargetYOffset = -30_in;
+    units::length::inch_t m_passingOutpostTargetYOffset{-30_in};
 
     /// @}
 
@@ -381,7 +381,7 @@ private:
     /// @{
 
     /// Cached launcher target angle from last calculation (in turns)
-    units::angle::turn_t m_cachedLauncherTarget = 0_tr;
+    units::angle::turn_t m_cachedLauncherTarget{0_tr};
     static constexpr units::length::inch_t m_IsMovingDistanceThreshold{2}; // .05 mps * 20 miliseconds converted into inches
     /// @}
 };

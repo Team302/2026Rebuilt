@@ -47,9 +47,6 @@ void LaunchState::Init()
 	m_timer.Reset();
 	m_timer.Start();
 
-	// Bump Code
-	// m_currentExtenderTarget = m_extenderTargetUp;
-
 	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
 		InitCompBot302();
 }
