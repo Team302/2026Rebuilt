@@ -27,9 +27,11 @@
 #include "utils/logging/debug/Logger.h"
 
 // Season Specific Commands
+#include "chassis/commands/season_specific_commands/AutoDefend.h"
 #include "chassis/commands/season_specific_commands/DriveAlongNearestWall.h"
 #include "chassis/commands/season_specific_commands/DriveOverBump.h"
 #include "chassis/commands/season_specific_commands/DriveToDepot.h"
+#include "chassis/commands/season_specific_commands/DriveToFuel.h"
 #include "chassis/commands/season_specific_commands/DriveToHub.h"
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
@@ -70,6 +72,8 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
                                      m_driveToTower(std::make_unique<DriveToTower>(m_chassis)),
                                      m_sweepBehindHub(std::make_unique<SweepBehindHub>(m_chassis)),
                                      m_driveAlongNearestWall(std::make_unique<DriveAlongNearestWall>(m_chassis)),
+                                     m_driveToFuel(std::make_unique<DriveToFuel>(m_chassis)),
+                                     m_autoDefend(std::make_unique<AutoDefend>(m_chassis)),
                                      m_driveToTrench(std::make_unique<DriveToTrench>(m_chassis))
 
 {
@@ -152,6 +156,9 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     auto driveToHub = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_HUB);
     auto driveToOutpost = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_OUTPOST);
     auto driveToTower = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_TOWER);
+    auto driveToFuel = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_FUEL);
+    auto autoDefend = controller->GetCommandTrigger(TeleopControlFunctions::AUTO_DEFEND);
+    // Sweep behind bump is on the same button as DriveToHub, so comment this out.
     auto sweepBehindHub = controller->GetCommandTrigger(TeleopControlFunctions::SWEEP_BEHIND_HUB);
 
     // Drive to trench is on the same button as DriveAlongNearestWall, so comment this out.
@@ -227,6 +234,24 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
         {
             return frc2::cmd::None();
         } }));
+
+    // drive to fuel
+    driveToFuel.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
+                                                   {
+    if (!m_climbModeStatus) {
+        return frc2::ProxyCommand(m_driveToFuel.get()).ToPtr();
+    } else {
+        return frc2::cmd::None();
+    } }));
+
+    // auto defend - drive to bumpers and defend against opponents
+    autoDefend.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
+                                                  {
+    if (!m_climbModeStatus) {
+        return frc2::ProxyCommand(m_autoDefend.get()).ToPtr();
+    } else {
+        return frc2::cmd::None();
+    } }));
 
     // drive To Tower
     driveToTower.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr

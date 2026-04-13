@@ -167,6 +167,11 @@ inline const robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const T
     {TeleopControlFunctions::INTAKE, driverRTriggerPressed},
     {TeleopControlFunctions::EXPEL, driverLTriggerPressed},
 
+    // {TeleopControlFunctions::DRIVE_TO_FUEL, driverAButton},
+
+    //{TeleopControlFunctions::AUTO_DEFEND, driverBButton},
+
+    {TeleopControlFunctions::DRIVE_TO_TOWER, driverBButton},
     {TeleopControlFunctions::DRIVE_TO_HUB, driverRStickPressed},
     {TeleopControlFunctions::SWEEP_BEHIND_HUB, driverAButton},
     {TeleopControlFunctions::LEVEL1_CLIMB, driverAButton},

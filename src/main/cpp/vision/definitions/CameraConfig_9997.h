@@ -24,4 +24,15 @@ public:
     ~CameraConfig_9997() = default;
 
     void BuildCameraConfig() override;
+
+private:
+    static constexpr units::length::inch_t m_limelightFrontMountingXOffset{0};
+    static constexpr units::length::inch_t m_limelightFrontMountingYOffset{0};
+    static constexpr units::length::inch_t m_limelightFrontMountingZOffset{0};
+    static constexpr units::angle::degree_t m_limelightFrontPitch{0};
+    static constexpr units::angle::degree_t m_limelightFrontYaw{0};
+    static constexpr units::angle::degree_t m_limelightFrontRoll{0};
+
+    std::unique_ptr<DragonLimelight> m_limelightFront;
+    std::unique_ptr<DragonQuest> m_quest;
 };

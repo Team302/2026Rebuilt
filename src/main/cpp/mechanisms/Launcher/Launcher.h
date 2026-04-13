@@ -40,6 +40,8 @@
 #include "utils/logging/signals/DragonDataLogger.h"
 
 // Includes after generation
+#include "auton/AllianceZoneManager.h"
+#include "auton/DeadZoneManager.h"
 #include "utils/RebuiltTargetCalculator.h"
 
 class Launcher : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger
@@ -331,4 +333,6 @@ private:
 	bool m_cachedinLaunchzone = false;
 	bool m_cachedIsChassisSpeed = false;
 	bool m_cachedTurretAtTarget = false;
+	AllianceZoneManager *m_allianceZoneManager;
+	DeadZoneManager *m_deadZoneManager;
 };

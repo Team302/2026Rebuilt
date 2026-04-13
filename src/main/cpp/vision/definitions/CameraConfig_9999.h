@@ -39,4 +39,7 @@ private:
     static constexpr units::angle::degree_t m_questPitch{0.0};
     static constexpr units::angle::degree_t m_questYaw{180.0};
     static constexpr units::angle::degree_t m_questRoll{0.0};
+
+    std::unique_ptr<DragonLimelight> m_limelightBackLeft;
+    std::unique_ptr<DragonQuest> m_quest;
 };

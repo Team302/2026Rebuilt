@@ -174,7 +174,6 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetAprilTagVis
 std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetObjectDetectionTargetInfo(const std::vector<int> &validClasses) const
 {
     std::vector<std::unique_ptr<DragonVisionStruct>> targets;
-    return targets;
     auto objects = LimelightHelpers::getRawDetections(m_networkTableName);
 
     for (auto object : objects)
@@ -208,6 +207,8 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetObjectDetec
         objectValue.get()->objectDetectionData.camPitch = m_cameraPose.Rotation().Y();
         objectValue.get()->objectDetectionData.camYaw = m_cameraPose.Rotation().Z();
         objectValue.get()->objectDetectionData.camRoll = m_cameraPose.Rotation().X();
+        objectValue.get()->objectDetectionData.targetGroupHorizontalAngle = units::angle::degree_t(LimelightHelpers::getSmartTargetGroupCenter(m_networkTableName).first);
+        objectValue.get()->objectDetectionData.targetGroupVerticalAngle = units::angle::degree_t(LimelightHelpers::getSmartTargetGroupCenter(m_networkTableName).second);
 
         targets.emplace_back(std::move(objectValue));
     }
