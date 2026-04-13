@@ -903,10 +903,7 @@ bool Launcher::IsLauncherAtTarget()
 {
 	if (frc::RobotBase::IsSimulation() && !(GetCurrentState() == STATE_NAMES::STATE_LAUNCHER_TUNING))
 	{
-		if (m_cachedinLaunchzone)
-			return true;
-		else
-			return false;
+		return m_cachedinLaunchzone;
 	}
 	else
 	{
