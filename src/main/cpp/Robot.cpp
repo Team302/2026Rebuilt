@@ -80,6 +80,7 @@
 #include "auton/CyclePrimitives.h"
 #include <chrono>
 #include <frc2/command/CommandScheduler.h>
+#include <networktables/NetworkTableInstance.h>
 // #include "auton/drivePrimitives/AutonUtils.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "feedback/DriverFeedback.h"
@@ -292,7 +293,7 @@ void Robot::UpdatePISystemTime()
 {
     if (m_loggerTable != nullptr)
     {
-        if (m_piUpdateCounter >= 20)
+        if (m_piUpdateCounter == m_piTimeRefreshDelay - 1)
         {
             auto currentTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
             m_loggerTable->PutNumber("pi-system-time", static_cast<double>(currentTime));
