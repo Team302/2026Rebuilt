@@ -168,9 +168,9 @@ private:
     frc::ChassisSpeeds m_currentChassisSpeeds{};
     frc::Pose2d m_chassisPose{};
 
-    static constexpr units::meters_per_second_t m_translationSpeedThreshold{0.05_mps};
-    static constexpr units::radians_per_second_t m_rotationSpeedThreshold{1_deg_per_s};
-    static constexpr units::meter_t m_isMovingDistanceThreshold{0.01_m};
+    static constexpr units::velocity::meters_per_second_t m_translationSpeedThreshold{0.05};
+    static constexpr units::angular_velocity::degrees_per_second_t m_rotationSpeedThreshold{1};
+    static constexpr units::length::inch_t m_isMovingDistanceThreshold{1};
     subsystems::CommandSwerveDrivetrain *m_chassis;
 
     /// True if the robot was above the speed threshold on the previous cycle.

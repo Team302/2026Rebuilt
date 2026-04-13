@@ -136,7 +136,7 @@ void TargetCalculator::UpdateChassisPose(bool forceUpdate)
 {
     m_lastChassisPose = m_chassisPose;
 
-    bool m_isMoving = !m_chassis->IsSamePose(m_isMovingDistanceThreshold);
+    m_isMoving = !m_chassis->IsSamePose();
 
     // Update the pose while moving, when forced, or on the one cycle after we stop.
     // The "just stopped" cycle ensures the cache busts once so all callers recompute
