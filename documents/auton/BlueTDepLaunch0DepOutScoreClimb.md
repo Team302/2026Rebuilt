@@ -63,7 +63,7 @@ stateDiagram-v2
 ### Step 2 -- BlueLDepotOutpost_B
 
 - **File:** [`BlueLDepotOutpost_B.traj`](../../src/main/deploy/choreo/BlueLDepotOutpost_B.traj)
-- **Duration:** 4.033 s
+- **Duration:** 1.884 s
 - **Timeout in auton XML:** 4.0 s
 - **Colour in overview:** `#ffcc00`
 
