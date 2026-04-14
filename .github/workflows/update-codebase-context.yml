@@ -26,24 +26,24 @@ jobs:
         with:
           fetch-depth: 0
 
-      # ── 2. Gather source files under src/main ────────────────────────────────
-      # Sends full content for changed text files, path-only for unchanged,
-      # and an explicit DELETED/RENAMED section so the model knows to remove
-      # or update those context sections.
-      - name: Collect src/main source files
+      # ── 2. Gather changed files, grouped by logical directory bucket ──────────
+      # src/main uses an intermediate "cpp" directory (src/main/cpp/chassis/, …).
+      # "cpp" and "deploy" are treated as passthrough dirs — we skip them and use
+      # their immediate children as the bucket names (chassis, mechanisms, auton…).
+      # This means each bucket maps 1-to-1 with a section of CODEBASE_CONTEXT.md,
+      # and each API call only sees one directory's worth of content.
+      # build.gradle / build.gradle.kts are their own "build_files" bucket.
+      - name: Collect and group changed files by directory
         id: gather
         run: |
           # ── Detect manual dispatch vs real push ───────────────────────────────
-          # For workflow_dispatch, github.event.before is empty/zero. We set a
-          # FULL_REBUILD flag so the content dump contains only file paths (not
-          # full source), keeping the prompt well within the API token budget.
-          # On a real push only the small diff is sent with full content as normal.
           BEFORE="${{ github.event.before }}"
           FULL_REBUILD=false
           if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
             echo "Manual run — paths-only mode (no file content sent to model)."
             FULL_REBUILD=true
-            ALL_STATUS=$(git ls-tree -r --name-only HEAD -- src/main build.gradle build.gradle.kts | sed 's/^/M\t/' || true)
+            ALL_STATUS=$(git ls-tree -r --name-only HEAD -- src/main build.gradle build.gradle.kts \
+                         | sed 's/^/M\t/' || true)
           else
             ALL_STATUS=$(git diff --name-status "$BEFORE" ${{ github.sha }} \
                          -- 'src/main/**' 'build.gradle' 'build.gradle.kts' || true)
@@ -51,30 +51,14 @@ jobs:
 
           echo "File statuses in this push:"
           echo "$ALL_STATUS"
+          echo "$FULL_REBUILD" > /tmp/full_rebuild.txt
 
           # ── Helper: exact line-anchored membership test ───────────────────────
-          # grep -qxF requires the entire line to match, preventing "Foo.cpp"
-          # from falsely matching inside "SubFoo.cpp".
           is_changed() {
-            # Matches any status line whose last tab-delimited field equals $1
             echo "$ALL_STATUS" | awk -F'\t' '{print $NF}' | grep -qxF "$1"
           }
 
-          # ── Build explicit DELETED / RENAMED section ──────────────────────────
-          DELETED_LIST=""
-          while IFS='	' read -r status path1 path2; do
-            [ -z "$status" ] && continue
-            case "$status" in
-              D*)
-                DELETED_LIST="${DELETED_LIST}  - DELETED: \`${path1}\`\n"
-                ;;
-              R*)
-                DELETED_LIST="${DELETED_LIST}  - RENAMED: \`${path1}\` → \`${path2}\`\n"
-                ;;
-            esac
-          done <<< "$ALL_STATUS"
-
-          # ── Helpers for file type handling ────────────────────────────────────
+          # ── Helper: detect text files we can include source for ───────────────
           is_text_ext() {
             case "$1" in
               *.cpp|*.h|*.hpp|*.c|\
@@ -97,201 +81,339 @@ jobs:
             esac
           }
 
-          CHANGED_DUMP=""
-          UNCHANGED_LIST=""
+          # ── Build explicit DELETED / RENAMED section (global) ─────────────────
+          DELETED_LIST=""
+          while IFS='	' read -r status path1 path2; do
+            [ -z "$status" ] && continue
+            case "$status" in
+              D*) DELETED_LIST="${DELETED_LIST}  - DELETED: \`${path1}\`\n" ;;
+              R*) DELETED_LIST="${DELETED_LIST}  - RENAMED: \`${path1}\` → \`${path2}\`\n" ;;
+            esac
+          done <<< "$ALL_STATUS"
+          printf '%b' "$DELETED_LIST" > /tmp/deleted_list.txt
 
-          # ── Walk EVERY file currently in src/main (all extensions) ───────────
-          while IFS= read -r -d '' file; do
-            rel="${file#./}"
+          # ── Discover which directories under src/main have changes ──────────────
+          # Buckets map to the subdirectories that CODEBASE_CONTEXT.md sections
+          # are organised around (chassis, mechanisms, auton, vision, …).
+          #
+          # src/main layout has an intermediate "cpp" folder:
+          #   src/main/cpp/chassis/   src/main/cpp/mechanisms/  …
+          #   src/main/deploy/        src/main/thirdparty/
+          #
+          # PASSTHROUGH_DIRS: directories whose immediate children are the real
+          # buckets. Any path component in this list is skipped and we take the
+          # next component as the bucket name instead.  This prevents "cpp" (and
+          # "deploy" if it ever grows large) from becoming a monolithic bucket.
+          PASSTHROUGH_DIRS="cpp deploy"
 
-            if is_changed "$rel"; then
-              if [ "$FULL_REBUILD" = "true" ]; then
-                # Paths-only mode: list file without content to stay within token budget
-                CHANGED_DUMP="${CHANGED_DUMP}  - ${rel}\n"
-              elif is_text_ext "$rel"; then
-                LANG=$(lang_for "$rel")
-                # Hard cap 1 500 chars per file (~375 tokens) so many changed files
-                # don't blow past the 8k-token GitHub Models request limit.
-                CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${rel}\n\`\`\`${LANG}\n$(head -c 1500 "$file")\n\`\`\`"
+          # derive_bucket <relative-path-under-src/main/>
+          # Prints the bucket name, e.g. "chassis", "mechanisms", "auton", …
+          # Files sitting directly inside a passthrough dir (no deeper sub-dir)
+          # land in bucket "<passthrough>_root" (e.g. "cpp_root").
+          derive_bucket() {
+            local rel="$1"
+            local comp1 comp2
+            comp1=$(echo "$rel" | cut -d'/' -f1)
+            comp2=$(echo "$rel" | cut -d'/' -f2)
+
+            # Is the first component a passthrough directory?
+            if echo "$PASSTHROUGH_DIRS" | grep -qw "$comp1"; then
+              if [ -z "$comp2" ] || [ "$comp2" = "$comp1" ]; then
+                echo "${comp1}_root"
               else
-                CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE (binary): ${rel}"
+                echo "$comp2"
               fi
             else
-              UNCHANGED_LIST="${UNCHANGED_LIST}  - ${rel}\n"
+              echo "$comp1"
             fi
-          done < <(find src/main -type f -print0 | sort -z)
+          }
 
-          # ── Build files (outside src/main, diffed separately) ─────────────────
-          for f in build.gradle build.gradle.kts; do
-            [ -f "$f" ] || continue
-            if is_changed "$f"; then
-              if [ "$FULL_REBUILD" = "true" ]; then
-                CHANGED_DUMP="${CHANGED_DUMP}  - ${f}\n"
+          mkdir -p /tmp/batches
+          declare -A SEEN_BUCKETS
+
+          while IFS='	' read -r status path1 path2; do
+            [ -z "$status" ] && continue
+            # Use the destination path for renames, source for everything else
+            case "$status" in
+              R*) filepath="$path2" ;;
+              *)  filepath="$path1" ;;
+            esac
+            # Skip deleted files — they are handled via DELETED_LIST globally
+            [ "$status" = "D" ] && continue
+
+            case "$filepath" in
+              build.gradle|build.gradle.kts)
+                bucket="build_files" ;;
+              src/main/*)
+                rel="${filepath#src/main/}"
+                bucket=$(derive_bucket "$rel")
+                [ -z "$bucket" ] && bucket="src_root"
+                ;;
+              *) continue ;;
+            esac
+
+            SEEN_BUCKETS["$bucket"]=1
+          done <<< "$ALL_STATUS"
+
+          # ── For FULL_REBUILD, add ALL real subdirectories present on disk ──────
+          # Walk two levels: skip passthrough dirs and register their children.
+          if [ "$FULL_REBUILD" = "true" ]; then
+            while IFS= read -r -d '' dir; do
+              rel="${dir#src/main/}"
+              comp1=$(echo "$rel" | cut -d'/' -f1)
+              if echo "$PASSTHROUGH_DIRS" | grep -qw "$comp1"; then
+                # Register each child of the passthrough dir as its own bucket
+                while IFS= read -r -d '' child; do
+                  SEEN_BUCKETS["$(basename "$child")"]=1
+                done < <(find "$dir" -mindepth 1 -maxdepth 1 -type d -print0 | sort -z)
+                # Also register a root bucket for files directly in the passthrough dir
+                if find "$dir" -mindepth 1 -maxdepth 1 -type f | grep -q .; then
+                  SEEN_BUCKETS["${comp1}_root"]=1
+                fi
               else
-                CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${f}\n\`\`\`groovy\n$(cat "$f")\n\`\`\`"
+                SEEN_BUCKETS["$comp1"]=1
               fi
-            else
-              UNCHANGED_LIST="${UNCHANGED_LIST}  - ${f}\n"
-            fi
-          done
+            done < <(find src/main -mindepth 1 -maxdepth 1 -type d -print0 | sort -z)
+            SEEN_BUCKETS["build_files"]=1
+          fi
 
-          # ── Existing context ──────────────────────────────────────────────────
-          # Hard cap: 8 000 bytes (~2 000 tokens) so it fits inside the 8k-token
-          # GitHub Models request limit alongside the changed-files content.
-          EXISTING_CONTEXT=""
-          [ -f ".github/CODEBASE_CONTEXT.md" ] && EXISTING_CONTEXT=$(head -c 8000 .github/CODEBASE_CONTEXT.md)
+          # ── Write bucket list for the next step to iterate over ───────────────
+          printf '%s\n' "${!SEEN_BUCKETS[@]}" | sort > /tmp/bucket_list.txt
+          echo "Buckets to process:"
+          cat /tmp/bucket_list.txt
+
+          # ── For each bucket, build its changed/unchanged file dumps ───────────
+          while IFS= read -r bucket; do
+            CHANGED_DUMP=""
+            UNCHANGED_LIST=""
+
+            if [ "$bucket" = "build_files" ]; then
+              # ── Build files bucket ──────────────────────────────────────────
+              for f in build.gradle build.gradle.kts; do
+                [ -f "$f" ] || continue
+                if is_changed "$f"; then
+                  if [ "$FULL_REBUILD" = "true" ]; then
+                    CHANGED_DUMP="${CHANGED_DUMP}  - ${f}\n"
+                  else
+                    CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${f}\n\`\`\`groovy\n$(cat "$f")\n\`\`\`"
+                  fi
+                else
+                  UNCHANGED_LIST="${UNCHANGED_LIST}  - ${f}\n"
+                fi
+              done
+            else
+              # ── Source directory bucket ─────────────────────────────────────
+              # Resolve the filesystem path for this bucket, checking passthrough
+              # dirs (cpp, deploy, …) before falling back to a wider search.
+              SCAN_ROOT=""
+              if [ -d "src/main/${bucket}" ]; then
+                SCAN_ROOT="src/main/${bucket}"
+              else
+                for pt in $PASSTHROUGH_DIRS; do
+                  if [ -d "src/main/${pt}/${bucket}" ]; then
+                    SCAN_ROOT="src/main/${pt}/${bucket}"
+                    break
+                  fi
+                done
+              fi
+              if [ -z "$SCAN_ROOT" ]; then
+                SCAN_ROOT=$(find src/main -mindepth 2 -maxdepth 3 -type d -name "$bucket" | head -1)
+              fi
+              [ -z "$SCAN_ROOT" ] && continue
+
+              while IFS= read -r -d '' file; do
+                rel="${file#./}"
+                if is_changed "$rel"; then
+                  if [ "$FULL_REBUILD" = "true" ]; then
+                    CHANGED_DUMP="${CHANGED_DUMP}  - ${rel}\n"
+                  elif is_text_ext "$rel"; then
+                    LANG=$(lang_for "$rel")
+                    # 1 500-char cap per file (~375 tokens) — keeps one batch well
+                    # under the 10 KB changed-dump limit even with many files.
+                    CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE: ${rel}\n\`\`\`${LANG}\n$(head -c 1500 "$file")\n\`\`\`"
+                  else
+                    CHANGED_DUMP="${CHANGED_DUMP}\n\n### CHANGED FILE (binary): ${rel}"
+                  fi
+                else
+                  UNCHANGED_LIST="${UNCHANGED_LIST}  - ${rel}\n"
+                fi
+              done < <(find "$SCAN_ROOT" -type f -print0 | sort -z)
+            fi
+
+            # Skip buckets with nothing to report (can happen on FULL_REBUILD
+            # if a top-level dir exists but has no matching files after filtering)
+            if [ -z "$CHANGED_DUMP" ] && [ -z "$UNCHANGED_LIST" ]; then
+              continue
+            fi
+
+            # ── Per-bucket hard caps (same rationale as before) ────────────────
+            CHANGED_BYTES=$(printf '%b' "$CHANGED_DUMP" | wc -c)
+            if [ "$CHANGED_BYTES" -gt 10000 ]; then
+              echo "WARNING: Bucket '${bucket}' changed dump is ${CHANGED_BYTES} bytes — truncating to 10 000 bytes."
+              CHANGED_DUMP=$(printf '%b' "$CHANGED_DUMP" | head -c 10000)
+              CHANGED_DUMP="${CHANGED_DUMP}\n\n[... truncated — too many changed files in '${bucket}' for single API call ...]"
+            fi
+
+            UNCHANGED_BYTES=$(printf '%b' "$UNCHANGED_LIST" | wc -c)
+            if [ "$UNCHANGED_BYTES" -gt 4000 ]; then
+              UNCHANGED_LIST=$(printf '%b' "$UNCHANGED_LIST" | head -c 4000)
+              UNCHANGED_LIST="${UNCHANGED_LIST}\n[... truncated ...]"
+            fi
+
+            # Write per-bucket files
+            printf '%b' "$CHANGED_DUMP"   > "/tmp/batches/${bucket}_changed.txt"
+            printf '%b' "$UNCHANGED_LIST" > "/tmp/batches/${bucket}_unchanged.txt"
+
+          done < /tmp/bucket_list.txt
+
+          # ── Snapshot existing context once (shared across all batches) ────────
           EXISTING_LINES=$(wc -l < .github/CODEBASE_CONTEXT.md 2>/dev/null || echo "0")
-
-          # ── Hard caps on accumulated strings to guarantee total prompt < 24 KB ──
-          # GitHub Models free tier enforces an 8 000-token (~32 KB) request cap.
-          # Reserve ~8 KB for the prompt instructions + headings, leaving ~16 KB
-          # for dynamic content split across the three sections below.
-          CHANGED_DUMP_BYTES=$(printf '%b' "$CHANGED_DUMP" | wc -c)
-          if [ "$CHANGED_DUMP_BYTES" -gt 10000 ]; then
-            echo "WARNING: Changed dump is ${CHANGED_DUMP_BYTES} bytes — truncating to 10 000 bytes."
-            CHANGED_DUMP=$(printf '%b' "$CHANGED_DUMP" | head -c 10000)
-            CHANGED_DUMP="${CHANGED_DUMP}\n\n[... truncated — too many changed files for single API call ...]"
-          fi
-
-          UNCHANGED_LIST_BYTES=$(printf '%b' "$UNCHANGED_LIST" | wc -c)
-          if [ "$UNCHANGED_LIST_BYTES" -gt 4000 ]; then
-            UNCHANGED_LIST=$(printf '%b' "$UNCHANGED_LIST" | head -c 4000)
-            UNCHANGED_LIST="${UNCHANGED_LIST}\n[... truncated ...]"
-          fi
-
-          printf '%b' "$CHANGED_DUMP"     > /tmp/changed_dump.txt
-          printf '%b' "$UNCHANGED_LIST"   > /tmp/unchanged_list.txt
-          printf '%b' "$DELETED_LIST"     > /tmp/deleted_list.txt
-          printf '%s' "$EXISTING_CONTEXT" > /tmp/existing_context.txt
-          echo "$EXISTING_LINES"          > /tmp/existing_lines.txt
-          echo "$FULL_REBUILD"            > /tmp/full_rebuild.txt
+          # 8 000-byte cap — leaves room for per-batch changed content in the prompt
+          [ -f ".github/CODEBASE_CONTEXT.md" ] && head -c 8000 .github/CODEBASE_CONTEXT.md > /tmp/existing_context.txt || touch /tmp/existing_context.txt
+          echo "$EXISTING_LINES" > /tmp/existing_lines.txt
 
           echo "Existing context: ${EXISTING_LINES} lines"
-          if [ -n "$DELETED_LIST" ]; then
-            echo "Deleted/renamed files:"
-            printf '%b' "$DELETED_LIST"
-          fi
+          echo "Buckets queued:"; cat /tmp/bucket_list.txt
 
-      # ── 3. Call GitHub Models (Copilot-backed) to update context ─────────────
-      - name: Generate updated context via Copilot
+      # ── 3. Process each directory bucket through the model ───────────────────
+      # We iterate the bucket list and make one API call per bucket.  Each call
+      # receives only the changed/unchanged files for that directory so the prompt
+      # stays well within the 24 KB (≈ 8 000-token) GitHub Models limit.
+      # The context file is updated in-place after each call so the next bucket's
+      # call sees the already-updated document.
+      - name: Generate updated context via Copilot (per-directory batches)
         id: generate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          CHANGED_DUMP=$(cat /tmp/changed_dump.txt)
-          UNCHANGED_LIST=$(cat /tmp/unchanged_list.txt)
+          FULL_REBUILD=$(cat /tmp/full_rebuild.txt)
+          EXISTING_LINES=$(cat /tmp/existing_lines.txt)
           DELETED_LIST=$(cat /tmp/deleted_list.txt)
-          EXISTING=$(cat /tmp/existing_context.txt)
-          EXISTING_LINES=$(cat /tmp/existing_lines.txt)
-          FULL_REBUILD=$(cat /tmp/full_rebuild.txt 2>/dev/null || echo "false")
+          BUCKET_LIST=$(cat /tmp/bucket_list.txt)
 
-          # ── Build the prompt and write to a file to avoid "Argument list too long" ──
-          # Shell --arg passing fails when the prompt exceeds ~2 MB; writing to a file
-          # and using jq --rawfile sidesteps the OS ARG_MAX limit entirely.
-          # Note: no heredoc here — YAML interprets << as a merge key and breaks parsing.
-          if [ "$FULL_REBUILD" = "true" ]; then
-            # Structural-refresh mode: only file paths were sent (no source content).
-            # The model should verify the overall structure is still accurate rather than
-            # trying to update individual sections from missing source.
-            printf '%s\n' \
-              "You are a senior FRC (FIRST Robotics Competition) software engineer maintaining \`.github/CODEBASE_CONTEXT.md\` for a WPILib-based robot codebase (2026 season). This file is read by GitHub Copilot as repo-wide context, so it must be maximally useful to an AI coding assistant and human developers alike." \
-              "" \
-              "## YOUR TASK" \
-              "A full list of all files currently in the repository is provided below (paths only — no source content)." \
-              "Perform a STRUCTURAL REFRESH of the existing context document:" \
-              "  • Remove any sections that reference files or directories that no longer appear in the file list." \
-              "  • Add brief placeholder entries for any top-level directories or major source files that are in the file list but completely absent from the existing context." \
-              "  • Do NOT rewrite, rephrase, or condense any existing section whose files are still present." \
-              "  • All other content must be reproduced VERBATIM." \
-              "" \
-              "## STRICT RULES" \
-              "1. Unless files were deleted (compare file list against existing context), the output MUST be at least EXISTING_LINES_PLACEHOLDER lines." \
-              "2. Only output the raw Markdown — no preamble, no explanation." \
-              > /tmp/prompt.txt
-          else
-            printf '%s\n' \
-              "You are a senior FRC (FIRST Robotics Competition) software engineer maintaining \`.github/CODEBASE_CONTEXT.md\` for a WPILib-based robot codebase (2026 season). This file is read by GitHub Copilot as repo-wide context, so it must be maximally useful to an AI coding assistant and human developers alike." \
-              "" \
-              "## YOUR TASK" \
-              "A push to main changed a small number of files. Update ONLY the sections of the existing context that are directly affected by those changed files." \
-              "All other sections must be reproduced VERBATIM — do not rephrase, summarize, condense, or restructure them." \
-              "" \
-              "## STRICT RULES" \
-              "1. Unless files were deleted or renamed (see DELETED/RENAMED FILES below), the output MUST be at least EXISTING_LINES_PLACEHOLDER lines. Do NOT produce a shorter file." \
-              "2. For each entry in DELETED/RENAMED FILES: remove or update the corresponding context section. This is the ONLY circumstance where removing content is permitted." \
-              "3. Do NOT rewrite sections whose source files are listed under UNCHANGED FILES." \
-              "4. Preserve all season-specific wording, manual notes, warnings, and checklist items exactly." \
-              "5. Only output the raw Markdown — no preamble, no explanation." \
-              > /tmp/prompt.txt
-          fi
+          # Working copy of the context — updated after each bucket's API call
+          cp .github/CODEBASE_CONTEXT.md /tmp/current_context.md
 
-          # Append the dynamic sections to the prompt file
-          if [ "$FULL_REBUILD" = "true" ]; then
-            printf '\n## FULL FILE LIST (paths only — no source content provided)\n' >> /tmp/prompt.txt
-            printf '%s\n' "$CHANGED_DUMP"                                             >> /tmp/prompt.txt
-          else
-            printf '\n## DELETED / RENAMED FILES (remove or update their context sections)\n' >> /tmp/prompt.txt
-            printf '%s\n' "${DELETED_LIST:-(none)}"                                           >> /tmp/prompt.txt
+          BUCKET_COUNT=$(echo "$BUCKET_LIST" | wc -l)
+          BUCKET_INDEX=0
 
-            printf '\n## CHANGED FILES (full source — update context for these only)\n'       >> /tmp/prompt.txt
-            printf '%s\n' "$CHANGED_DUMP"                                                     >> /tmp/prompt.txt
+          while IFS= read -r bucket; do
+            BUCKET_INDEX=$(( BUCKET_INDEX + 1 ))
+            echo "=== Processing bucket ${BUCKET_INDEX}/${BUCKET_COUNT}: '${bucket}' ==="
 
-            printf '\n## UNCHANGED FILES (do not touch their context sections)\n'             >> /tmp/prompt.txt
-            printf '%s\n' "$UNCHANGED_LIST"                                                   >> /tmp/prompt.txt
-          fi
+            CHANGED_DUMP=$(cat "/tmp/batches/${bucket}_changed.txt"   2>/dev/null || true)
+            UNCHANGED_LIST=$(cat "/tmp/batches/${bucket}_unchanged.txt" 2>/dev/null || true)
+            EXISTING=$(head -c 8000 /tmp/current_context.md)
+            CUR_LINES=$(wc -l < /tmp/current_context.md)
 
-          printf '\n## EXISTING CODEBASE_CONTEXT.md (%s lines — reproduce in full, editing only where rules above require)\n' "$EXISTING_LINES" >> /tmp/prompt.txt
-          printf '%s\n' "$EXISTING"                                                           >> /tmp/prompt.txt
+            # ── Build prompt ────────────────────────────────────────────────────
+            if [ "$FULL_REBUILD" = "true" ]; then
+              printf '%s\n' \
+                "You are a senior FRC (FIRST Robotics Competition) software engineer maintaining \`.github/CODEBASE_CONTEXT.md\` for a WPILib-based robot codebase (2026 season). This file is read by GitHub Copilot as repo-wide context, so it must be maximally useful to an AI coding assistant and human developers alike." \
+                "" \
+                "## YOUR TASK" \
+                "You are processing directory bucket: \`${bucket}\`." \
+                "A full list of all files in this directory is provided below (paths only — no source content)." \
+                "Perform a STRUCTURAL REFRESH scoped to this bucket:" \
+                "  • Remove any sections that reference files or directories within \`${bucket}/\` that no longer appear in the file list." \
+                "  • Add brief placeholder entries for any major source files in \`${bucket}/\` that are in the file list but completely absent from the existing context." \
+                "  • Do NOT rewrite, rephrase, or condense any existing section whose files are still present." \
+                "  • All other content (sections for OTHER directories) must be reproduced VERBATIM." \
+                "" \
+                "## STRICT RULES" \
+                "1. Unless files in \`${bucket}/\` were deleted, the output MUST be at least ${CUR_LINES} lines." \
+                "2. Only output the raw Markdown — no preamble, no explanation." \
+                > /tmp/prompt.txt
+            else
+              printf '%s\n' \
+                "You are a senior FRC (FIRST Robotics Competition) software engineer maintaining \`.github/CODEBASE_CONTEXT.md\` for a WPILib-based robot codebase (2026 season). This file is read by GitHub Copilot as repo-wide context, so it must be maximally useful to an AI coding assistant and human developers alike." \
+                "" \
+                "## YOUR TASK" \
+                "You are processing directory bucket: \`${bucket}\`." \
+                "A push to main changed files within this directory. Update ONLY the sections of the existing context that are directly affected by the changed files listed below." \
+                "Sections for ALL OTHER directories must be reproduced VERBATIM — do not rephrase, summarize, condense, or restructure them." \
+                "" \
+                "## STRICT RULES" \
+                "1. Unless files in \`${bucket}/\` were deleted or renamed (see DELETED/RENAMED FILES), the output MUST be at least ${CUR_LINES} lines. Do NOT produce a shorter file." \
+                "2. For each entry in DELETED/RENAMED FILES that belongs to \`${bucket}/\`: remove or update the corresponding context section. This is the ONLY circumstance where removing content is permitted." \
+                "3. Do NOT rewrite sections whose source files are listed under UNCHANGED FILES." \
+                "4. Preserve all season-specific wording, manual notes, warnings, and checklist items exactly." \
+                "5. Only output the raw Markdown — no preamble, no explanation." \
+                > /tmp/prompt.txt
+            fi
 
-          # Patch the line-count placeholder now that we know it
-          sed -i "s/EXISTING_LINES_PLACEHOLDER/${EXISTING_LINES}/" /tmp/prompt.txt
+            # Append dynamic sections
+            if [ "$FULL_REBUILD" = "true" ]; then
+              printf '\n## FILE LIST FOR BUCKET: %s (paths only)\n' "$bucket" >> /tmp/prompt.txt
+              printf '%s\n' "$CHANGED_DUMP"                                   >> /tmp/prompt.txt
+            else
+              printf '\n## DELETED / RENAMED FILES IN THIS BUCKET\n'                          >> /tmp/prompt.txt
+              # Filter deleted list to only entries matching this bucket
+              printf '%s\n' "${DELETED_LIST:-(none)}" | grep -i "${bucket}" || printf '(none)\n'  >> /tmp/prompt.txt
 
-          # ── Guard: abort if prompt is still too large for the API ─────────────
-          # 8 000 tokens ≈ 32 000 bytes; we target staying under 24 000 bytes to
-          # leave headroom for JSON envelope overhead and output tokens.
-          PROMPT_BYTES=$(wc -c < /tmp/prompt.txt)
-          echo "Prompt size: ${PROMPT_BYTES} bytes"
-          if [ "$PROMPT_BYTES" -gt 24000 ]; then
-            echo "ERROR: Prompt is ${PROMPT_BYTES} bytes — exceeds 24 000-byte safety limit."
-            echo "Reduce the number of changed files per push, or increase per-section caps."
-            exit 1
-          fi
+              printf '\n## CHANGED FILES IN BUCKET: %s (update context for these only)\n' "$bucket" >> /tmp/prompt.txt
+              printf '%s\n' "${CHANGED_DUMP:-(none)}"                                               >> /tmp/prompt.txt
 
-          # Build JSON payload using --rawfile so jq reads the prompt from disk,
-          # completely bypassing the shell argument size limit.
-          jq -n \
-            --rawfile prompt /tmp/prompt.txt \
-            '{
-              model: "gpt-4o-mini",
-              messages: [{ role: "user", content: $prompt }],
-              max_tokens: 16384,
-              temperature: 0.1
-            }' > /tmp/request.json
+              printf '\n## UNCHANGED FILES IN BUCKET: %s (do not touch their sections)\n' "$bucket" >> /tmp/prompt.txt
+              printf '%s\n' "${UNCHANGED_LIST:-(none)}"                                             >> /tmp/prompt.txt
+            fi
 
-          RESPONSE=$(curl -s \
-            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-            -H "Content-Type: application/json" \
-            --data-binary @/tmp/request.json \
-            "https://models.inference.ai.azure.com/chat/completions")
+            printf '\n## EXISTING CODEBASE_CONTEXT.md (%s lines — reproduce in full, editing only where rules above require)\n' "$CUR_LINES" >> /tmp/prompt.txt
+            printf '%s\n' "$EXISTING" >> /tmp/prompt.txt
 
-          echo "$RESPONSE" | jq -r '.choices[0].message.content' > /tmp/new_context.md
+            # ── Guard: abort if this bucket's prompt is too large ───────────────
+            PROMPT_BYTES=$(wc -c < /tmp/prompt.txt)
+            echo "  Prompt size for bucket '${bucket}': ${PROMPT_BYTES} bytes"
+            if [ "$PROMPT_BYTES" -gt 24000 ]; then
+              echo "ERROR: Prompt for bucket '${bucket}' is ${PROMPT_BYTES} bytes — exceeds 24 000-byte safety limit."
+              echo "This bucket has too many large files. Consider splitting into sub-directory buckets."
+              exit 1
+            fi
 
-          NEW_LINES=$(wc -l < /tmp/new_context.md)
-          EXISTING_LINES=$(cat /tmp/existing_lines.txt)
-          echo "Existing context: ${EXISTING_LINES} lines — Generated context: ${NEW_LINES} lines"
+            # ── API call ────────────────────────────────────────────────────────
+            jq -n \
+              --rawfile prompt /tmp/prompt.txt \
+              '{
+                model: "gpt-4o-mini",
+                messages: [{ role: "user", content: $prompt }],
+                max_tokens: 16384,
+                temperature: 0.1
+              }' > /tmp/request.json
 
-          if [ "$NEW_LINES" -lt 5 ]; then
-            echo "ERROR: Generated context looks too short. Raw response:"
-            echo "$RESPONSE"
-            exit 1
-          fi
+            RESPONSE=$(curl -s \
+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              -H "Content-Type: application/json" \
+              --data-binary @/tmp/request.json \
+              "https://models.inference.ai.azure.com/chat/completions")
 
-          # Warn loudly if the model shrunk the file significantly (>15% loss)
-          THRESHOLD=$(( EXISTING_LINES * 85 / 100 ))
-          if [ "$NEW_LINES" -lt "$THRESHOLD" ]; then
-            echo "WARNING: Generated context is ${NEW_LINES} lines but existing is ${EXISTING_LINES} lines (threshold: ${THRESHOLD})."
-            echo "The model may have incorrectly removed content. Review the PR carefully before merging."
-          fi
+            echo "$RESPONSE" | jq -r '.choices[0].message.content' > /tmp/bucket_result.md
+
+            NEW_LINES=$(wc -l < /tmp/bucket_result.md)
+            echo "  Bucket '${bucket}': context ${CUR_LINES} → ${NEW_LINES} lines"
+
+            if [ "$NEW_LINES" -lt 5 ]; then
+              echo "ERROR: Generated context for bucket '${bucket}' looks too short. Raw response:"
+              echo "$RESPONSE"
+              exit 1
+            fi
+
+            # Warn if the model shrank the file significantly (>15% loss)
+            THRESHOLD=$(( CUR_LINES * 85 / 100 ))
+            if [ "$NEW_LINES" -lt "$THRESHOLD" ]; then
+              echo "WARNING: Context shrank from ${CUR_LINES} to ${NEW_LINES} lines (threshold: ${THRESHOLD}) on bucket '${bucket}'."
+              echo "The model may have incorrectly removed content. Review the PR carefully before merging."
+            fi
+
+            # ── Advance the working context for the next bucket ─────────────────
+            cp /tmp/bucket_result.md /tmp/current_context.md
+
+          done <<< "$BUCKET_LIST"
+
+          # Final result is the context after all buckets have been applied
+          cp /tmp/current_context.md /tmp/new_context.md
+
+          FINAL_LINES=$(wc -l < /tmp/new_context.md)
+          echo "All buckets processed. Final context: ${FINAL_LINES} lines (was ${EXISTING_LINES})."
 
       # ── 4. Check if anything actually changed ────────────────────────────────
       - name: Check for changes
@@ -314,7 +436,7 @@ jobs:
           gh label create "documentation" --color "0075ca" --description "Improvements or additions to documentation" 2>/dev/null || true
           gh label create "automated"     --color "e4e669" --description "Opened automatically by a GitHub Actions bot"  2>/dev/null || true
 
-      # ── 6. Commit to a new branch and open a PR ───────────────────────────────
+      # ── 6. Commit to a new branch and open a PR ──────────────────────────────
       - name: Create PR with updated context
         if: steps.diff.outputs.changed == 'true'
         env:
@@ -347,11 +469,15 @@ jobs:
             DELTA_STR="${LINE_DELTA} ⚠️ lines were removed — review carefully"
           fi
 
-          # Changed files list for PR body (uses name-status for full picture)
+          BUCKET_LIST=$(cat /tmp/bucket_list.txt)
+          BUCKET_COUNT=$(echo "$BUCKET_LIST" | wc -l)
+
+          # Changed files list for PR body
           CHANGED_LIST=""
           BEFORE="${{ github.event.before }}"
           if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
-            ALL_STATUS=$(git ls-tree -r --name-only HEAD -- src/main build.gradle build.gradle.kts | sed 's/^/M\t/' || true)
+            ALL_STATUS=$(git ls-tree -r --name-only HEAD -- src/main build.gradle build.gradle.kts \
+                         | sed 's/^/M\t/' || true)
           else
             ALL_STATUS=$(git diff --name-status "$BEFORE" ${{ github.sha }} \
                          -- 'src/main/**' 'build.gradle' 'build.gradle.kts' || true)
@@ -371,6 +497,7 @@ jobs:
             --body "## 🤖 Automated Codebase Context Update
 
           This PR was automatically generated after a push to \`main\` modified files under \`src/main/\` or build files.
+          Context was updated in **${BUCKET_COUNT} directory batch(es)**: \`$(echo "$BUCKET_LIST" | tr '\n' ' ')\`.
           Only sections relevant to the changed files below were updated; all other sections are unchanged.
 
           ### Source files changed
