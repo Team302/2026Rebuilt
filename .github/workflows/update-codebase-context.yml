@@ -131,29 +131,35 @@ jobs:
           mkdir -p /tmp/batches
           declare -A SEEN_BUCKETS
 
-          while IFS='	' read -r status path1 path2; do
-            [ -z "$status" ] && continue
-            # Use the destination path for renames, source for everything else
-            case "$status" in
-              R*) filepath="$path2" ;;
-              *)  filepath="$path1" ;;
-            esac
-            # Skip deleted files — they are handled via DELETED_LIST globally
-            [ "$status" = "D" ] && continue
+          # On a real push, derive buckets from the git diff output.
+          # On FULL_REBUILD, ALL_STATUS contains every file in the tree (including
+          # plain files at the src/main root like example.txt) — skip this loop
+          # entirely and let the directory walk below populate SEEN_BUCKETS instead.
+          if [ "$FULL_REBUILD" = "false" ]; then
+            while IFS='	' read -r status path1 path2; do
+              [ -z "$status" ] && continue
+              # Use the destination path for renames, source for everything else
+              case "$status" in
+                R*) filepath="$path2" ;;
+                *)  filepath="$path1" ;;
+              esac
+              # Skip deleted files — they are handled via DELETED_LIST globally
+              [ "$status" = "D" ] && continue
 
-            case "$filepath" in
-              build.gradle|build.gradle.kts)
-                bucket="build_files" ;;
-              src/main/*)
-                rel="${filepath#src/main/}"
-                bucket=$(derive_bucket "$rel")
-                [ -z "$bucket" ] && bucket="src_root"
-                ;;
-              *) continue ;;
-            esac
+              case "$filepath" in
+                build.gradle|build.gradle.kts)
+                  bucket="build_files" ;;
+                src/main/*)
+                  rel="${filepath#src/main/}"
+                  bucket=$(derive_bucket "$rel")
+                  [ -z "$bucket" ] && bucket="src_root"
+                  ;;
+                *) continue ;;
+              esac
 
-            SEEN_BUCKETS["$bucket"]=1
-          done <<< "$ALL_STATUS"
+              SEEN_BUCKETS["$bucket"]=1
+            done <<< "$ALL_STATUS"
+          fi
 
           # ── For FULL_REBUILD, add ALL real subdirectories present on disk ──────
           # Walk two levels: skip passthrough dirs and register their children.
@@ -407,6 +413,11 @@ jobs:
             # ── Advance the working context for the next bucket ─────────────────
             cp /tmp/bucket_result.md /tmp/current_context.md
 
+            # Rate-limit guard: GitHub Models allows 60 000 tokens/min.
+            # A brief pause between buckets prevents hitting the ceiling when
+            # many buckets fire in rapid succession (e.g. a full rebuild).
+            sleep 5
+
           done <<< "$BUCKET_LIST"
 
           # Final result is the context after all buckets have been applied
@@ -450,7 +461,7 @@ jobs:
 
           cp /tmp/new_context.md .github/CODEBASE_CONTEXT.md
 
-          git add .github/CODEBASE_CONTEXT.md
+          git add -- .github/CODEBASE_CONTEXT.md
           git commit -m "docs: auto-update .github/CODEBASE_CONTEXT.md from src/main changes
 
           Triggered by push to main.
