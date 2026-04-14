@@ -7,11 +7,7 @@ time = "0.1"
 intakeState = "STATE_OFF">
 </primitive> -->
 
-<primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLDrop3_Init"
-time = "3.0">
-<zone filename = "BlueLeftBumpZoneRect.xml"/>
-</primitive>
+<snippet file = "initilize.xml"/>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDrop3_A"
