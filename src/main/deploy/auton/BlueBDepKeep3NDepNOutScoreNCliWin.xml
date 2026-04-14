@@ -7,7 +7,7 @@ time = "0.1"
 intakeState = "STATE_OFF">
 </primitive> -->
 
-<snippet file = "initilize.xml"/>
+<snippet file = "LeftBumpInit.xml"/>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDrop3_A"
