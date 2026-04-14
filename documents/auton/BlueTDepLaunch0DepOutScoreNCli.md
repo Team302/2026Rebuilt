@@ -15,21 +15,29 @@ stateDiagram-v2
 
     Step1 : "Step 1 - TRAJECTORY_DRIVE BlueLDepotOutpost_A"
     Step2 : "Step 2 - TRAJECTORY_DRIVE BlueLDepotOutpost_B"
+    Step3 : "Step 3 - DO_NOTHING --"
+    Step4 : "Step 4 - DRIVE_STOP_MECH --"
 
     class Step1 intake
     class Step2 intake
+    class Step3 intake
+    class Step4 noIntake
 
     [*] --> Step1 : "start"
-    Step1 --> Step2: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
-    Step2 --> [*]: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH OutpostZone DRIVE_TO_OUTPOST"
+    Step1 --> Step2: "intake=INTAKE"
+    Step2 --> Step3: "intake=INTAKE | zones=OutpostZone DRIVE_TO_OUTPOST"
+    Step3 --> Step4: "intake=INTAKE"
+    Step4 --> [*]: "launcher=PREPARE_TO_LAUNCH"
 ```
 
 ## Primitive Summary
 
 | Step | Primitive | Trajectory | Timeout | Intake | Launcher | Climber | Zones |
 |------|-----------|------------|---------|--------|----------|---------|-------|
-| 1 | TRAJECTORY_DRIVE | [BlueLDepotOutpost_A](../../src/main/deploy/choreo/BlueLDepotOutpost_A.traj) | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone |
-| 2 | TRAJECTORY_DRIVE | [BlueLDepotOutpost_B](../../src/main/deploy/choreo/BlueLDepotOutpost_B.traj) | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLaunchZone, BlueOutpostZone |
+| 1 | TRAJECTORY_DRIVE | [BlueLDepotOutpost_A](../../src/main/deploy/choreo/BlueLDepotOutpost_A.traj) | 4.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | -- |
+| 2 | TRAJECTORY_DRIVE | [BlueLDepotOutpost_B](../../src/main/deploy/choreo/BlueLDepotOutpost_B.traj) | 10.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueOutpostZone |
+| 3 | DO_NOTHING | -- | 3.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | -- |
+| 4 | DRIVE_STOP_MECH | -- | 30.0 s | STATE_OFF | STATE_PREPARE_TO_LAUNCH | STATE_OFF | -- |
 
 ## Trajectory Details
 
@@ -55,8 +63,8 @@ stateDiagram-v2
 ### Step 2 -- BlueLDepotOutpost_B
 
 - **File:** [`BlueLDepotOutpost_B.traj`](../../src/main/deploy/choreo/BlueLDepotOutpost_B.traj)
-- **Duration:** 4.033 s
-- **Timeout in auton XML:** 4.0 s
+- **Duration:** 1.884 s
+- **Timeout in auton XML:** 10.0 s
 - **Colour in overview:** `#ffcc00`
 
 <img src="svg/traj/BlueTDepLaunch0DepOutScoreNCli_step2_BlueLDepotOutpost_B.svg" alt="Trajectory BlueLDepotOutpost_B" width="900"/>
@@ -71,5 +79,4 @@ stateDiagram-v2
 
 | Zone file | Effect when entered |
 |-----------|---------------------|
-| `BlueLaunchZone` | `launcherState -> STATE_PREPARE_TO_LAUNCH` |
 | `BlueOutpostZone` | `pathUpdateOption = DRIVE_TO_OUTPOST` |
