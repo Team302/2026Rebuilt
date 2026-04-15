@@ -42,11 +42,11 @@ private:
     static constexpr units::angle::degree_t m_limelightFront3Yaw{0};
     static constexpr units::angle::degree_t m_limelightFront3Roll{0};
 
-    static constexpr units::length::inch_t m_questMountingXOffset{-17.5};
-    static constexpr units::length::inch_t m_questMountingYOffset{-10.25};
-    static constexpr units::length::inch_t m_questMountingZOffset{21.25};
-    static constexpr units::angle::degree_t m_questPitch{0};
-    static constexpr units::angle::degree_t m_questYaw{180};
+    static constexpr units::length::inch_t m_questMountingXOffset{-18.5};
+    static constexpr units::length::inch_t m_questMountingYOffset{0};
+    static constexpr units::length::inch_t m_questMountingZOffset{21.75};
+    static constexpr units::angle::degree_t m_questPitch{-3};
+    static constexpr units::angle::degree_t m_questYaw{-175};
     static constexpr units::angle::degree_t m_questRoll{0};
 
     std::unique_ptr<DragonLimelight> m_limelightFront;
