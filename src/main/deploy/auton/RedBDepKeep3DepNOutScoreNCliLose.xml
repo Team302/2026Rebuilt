@@ -33,7 +33,7 @@ launcherState = "STATE_IDLE">
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLDrop3_D"
+choreoname = "BlueMLDrop3_D_copy1"
 time = "5.0"
 intakeState = "STATE_INTAKE">
 </primitive>
