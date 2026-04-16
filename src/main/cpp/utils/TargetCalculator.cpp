@@ -61,7 +61,7 @@ frc::Translation2d TargetCalculator::GetMechanismWorldPosition() const
 
 units::meter_t TargetCalculator::CalculateDistanceToTarget(units::time::second_t lookaheadTime)
 {
-    if (m_isMoving)
+    if (!m_isMoving)
     {
         return m_cachedDistanceToTarget;
     }
@@ -77,7 +77,7 @@ units::meter_t TargetCalculator::CalculateDistanceToTarget(units::time::second_t
 
 units::meter_t TargetCalculator::CalculateMechanismDistanceToTarget(units::time::second_t lookaheadTime)
 {
-    if (m_isMoving)
+    if (!m_isMoving)
     {
         return m_cachedMechanismDistanceToTarget;
     }
@@ -102,7 +102,7 @@ units::degree_t TargetCalculator::CalculateAngleToTarget(units::time::second_t l
 
 units::degree_t TargetCalculator::CalculateMechanismAngleToTarget(units::time::second_t lookaheadTime)
 {
-    if (m_isMoving)
+    if (!m_isMoving)
     {
         return m_cachedMechanismAngleToTarget;
     }
@@ -146,14 +146,7 @@ void TargetCalculator::UpdateChassisPose(bool forceUpdate)
         m_chassisPose = m_chassis->GetPose();
     }
 
-    if (m_isMoving)
-    {
-        m_wasMovingCounter = 0;
-    }
-    else
-    {
-        m_wasMovingCounter++;
-    }
+    m_wasMovingCounter = m_isMoving ? 0 : m_wasMovingCounter + 1;
 }
 
 void TargetCalculator::UpdateChassisSpeeds()
