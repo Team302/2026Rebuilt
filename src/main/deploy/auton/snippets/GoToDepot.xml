@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "auton.dtd">
+<auton>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueMLDrop3_C_Back_copy1"
+time = "10.0"
+intakeState = "STATE_FORCE_INTAKE_AUTON">
+</primitive>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueMLDrop3_C_Forth"
+time = "10.0">
+</primitive>
+
+</auton>

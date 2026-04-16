@@ -21,7 +21,7 @@ time = "3.0">
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMRDrop3_C"
-time = "5.0">
+time = "10.0">
 <zone filename = "BlueRightBumpZone.xml"/>
 <zone filename = "BlueLaunchZone.xml"/>
 </primitive>

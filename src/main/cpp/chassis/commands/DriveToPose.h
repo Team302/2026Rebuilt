@@ -302,7 +302,7 @@ private:
     //------------------------------------------------------------------
 
     /// @brief Proportional gain for heading controller
-    double m_rotationKP = 6.0;
+    double m_rotationKP = 4.5;
 
     /// @brief Integral gain for heading controller (disabled)
     double m_rotationKI = 0.0;

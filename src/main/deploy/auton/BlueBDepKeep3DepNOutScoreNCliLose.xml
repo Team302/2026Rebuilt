@@ -10,7 +10,7 @@ intakeState = "STATE_OFF">
 <snippet file = "LeftBumpInit.xml"/>
 
 <primitive id = "TRAJECTORY_DRIVE"
-choreoname = "BlueMLDrop3_A"
+choreoname = "BlueMLDrop3_A_Var1"
 time = "3.0"
 intakeState = "STATE_INTAKE">
 </primitive>
@@ -22,16 +22,14 @@ time = "5.0">
 <zone filename = "BlueLaunchZone.xml"/>
 </primitive>
 
-<primitive id = "DRIVE_STOP_MECH"
-time = "5.0">
-</primitive>
+<snippet file = "GoToDepot.xml"/>
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDrop3_C2"
 time = "5.0"
 intakeState = "STATE_INTAKE"
 launcherState = "STATE_IDLE">
-<zone filename = "BlueLeftBumpZone.xml"/>
+<zone filename = "BlueLeftBumpZoneRect.xml"/>
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"

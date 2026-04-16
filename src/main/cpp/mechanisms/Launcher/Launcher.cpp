@@ -588,6 +588,12 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
+	configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+	configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = m_maxTurretSoftLimit;
+
+	configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+	configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = m_minTurretSoftLimit;
+
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
 	configs.MotorOutput.NeutralMode = NeutralModeValue::Brake;
 	configs.MotorOutput.PeakForwardDutyCycle = 1;
@@ -600,7 +606,7 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.Commutation.MotorArrangement = MotorArrangementValue::Minion_JST;
 
 	configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.ExternalFeedback.SensorToMechanismRatio = 0.13491211; // 0.16959640223397357413;
+	configs.ExternalFeedback.SensorToMechanismRatio = 0.1343032550470101; // 0.16959640223397357413;
 	// configs.ExternalFeedback.FeedbackRemoteSensorID = 6;
 	// configs.ExternalFeedback.ExternalFeedbackSensorSource = FeedbackSensorSourceValue::RemoteCANcoder;
 	// configs.ExternalFeedback.SensorToMechanismRatio = 7.251952;
