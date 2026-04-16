@@ -383,6 +383,6 @@ private:
     /// Cached launcher target angle from last calculation (in turns)
     units::angle::turn_t m_cachedLauncherTarget{0_tr};
 
-    static constexpr units::time::second_t m_lookAheadTimeOffset = {0.5_s};
+    static constexpr units::time::second_t m_lookAheadTimeOffset{0.0};
     /// @}
 };

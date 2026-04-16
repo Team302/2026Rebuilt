@@ -219,6 +219,28 @@ void Launcher::CreateCompBot302()
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
+	m_velocityLauncherMoving = new ControlData(			  // MECH_TODO: Retune PIDs
+		ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, // ControlModes::CONTROL_TYPE mode
+		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
+		"m_velocityLauncherMoving",						  // std::string indentifier
+		0,												  // double proportional
+		0,												  // double integral
+		0,												  // double derivative
+		0,												  // double feedforward
+		0,												  // double velocityGain
+		0,												  // double accelartionGain
+		0,												  // double staticFrictionGain,
+
+		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
+		0,														 // double integralZone
+		0,														 // double maxAcceleration
+		0,														 // double cruiseVelocity
+		0,														 // double peakValue
+		0,														 // double nominalValue
+		false,													 // bool enableFOC
+		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
+		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
+	);
 	m_velocityIndexer = new ControlData(				  // MECH_TODO: Retune PIDs
 		ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
@@ -413,6 +435,15 @@ void Launcher::InitializeTalonFXLauncherCompBot302()
 	configs.Slot0.GravityType = m_velocityLauncher->GetGravityType();
 	configs.Slot0.StaticFeedforwardSign = m_velocityLauncher->GetStaticFeedforwardSign();
 
+	configs.Slot1.kI = m_velocityLauncherMoving->GetI();
+	configs.Slot1.kD = m_velocityLauncherMoving->GetD();
+	configs.Slot1.kG = m_velocityLauncherMoving->GetF();
+	configs.Slot1.kS = m_velocityLauncherMoving->GetS();
+	configs.Slot1.kV = m_velocityLauncherMoving->GetV();
+	configs.Slot1.kP = m_velocityLauncherMoving->GetP();
+	configs.Slot1.kA = m_velocityLauncherMoving->GetA();
+	configs.Slot1.GravityType = m_velocityLauncherMoving->GetGravityType();
+	configs.Slot1.StaticFeedforwardSign = m_velocityLauncherMoving->GetStaticFeedforwardSign();
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
@@ -867,6 +898,8 @@ ControlData *Launcher::GetControlData(string name)
 		return m_percentOut;
 	if (name.compare("VelocityLauncher") == 0)
 		return m_velocityLauncher;
+	if (name.compare("VelocityLauncherMoving") == 0)
+		return m_velocityLauncherMoving;
 	if (name.compare("VelocityIndexer") == 0)
 		return m_velocityIndexer;
 	if (name.compare("VelocitySpindexer") == 0)

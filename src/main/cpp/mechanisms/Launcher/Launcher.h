@@ -164,6 +164,7 @@ public:
 
 	ControlData *GetPercentOut() const { return m_percentOut; }
 	ControlData *GetVelocityLauncher() const { return m_velocityLauncher; }
+	ControlData *GetVelocityLauncherMoving() const { return m_velocityLauncherMoving; }
 	ControlData *GetVelocityIndexer() const { return m_velocityIndexer; }
 	ControlData *GetVelocitySpindexer() const { return m_velocitySpindexer; }
 	ControlData *GetVelocityTransfer() const { return m_velocityTransfer; }
@@ -221,6 +222,7 @@ private:
 
 	ControlData *m_percentOut;
 	ControlData *m_velocityLauncher;
+	ControlData *m_velocityLauncherMoving;
 	ControlData *m_velocityIndexer;
 	ControlData *m_velocitySpindexer;
 	ControlData *m_velocityTransfer;
