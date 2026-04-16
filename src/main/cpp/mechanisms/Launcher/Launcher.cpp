@@ -136,6 +136,12 @@ Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MEC
 	m_targetCalculator = RebuiltTargetCalculator::GetInstance();
 	m_allianceZoneManager = AllianceZoneManager::GetInstance();
 	m_deadZoneManager = DeadZoneManager::GetInstance();
+
+	m_launcherVelocityRPS.EnableFOC = true;
+	m_spindexerVelocityRPS.EnableFOC = true;
+	m_indexerVelocityRPS.EnableFOC = true;
+	m_transferVelocityRPS.EnableFOC = true;
+	m_turretPositionDegreesTurret.EnableFOC = true;
 }
 
 std::map<std::string, Launcher::STATE_NAMES>
@@ -391,7 +397,7 @@ void Launcher::InitializeCompBot302()
 void Launcher::InitializeTalonFXLauncherCompBot302()
 {
 	TalonFXConfiguration configs{};
-	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(100);
+	configs.CurrentLimits.StatorCurrentLimit = units::current::ampere_t(120);
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
 	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
@@ -400,7 +406,7 @@ void Launcher::InitializeTalonFXLauncherCompBot302()
 
 	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(16.0);
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(4.5); // -3.5 V
-	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
+	configs.ClosedLoopRamps.VoltageClosedLoopRampPeriod = units::time::second_t(0.0);
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
 	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 0;

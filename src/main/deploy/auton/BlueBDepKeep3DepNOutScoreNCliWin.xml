@@ -37,7 +37,7 @@ time = "5.0"
 intakeState = "STATE_INTAKE">
 </primitive>
 
-<snippet file = "CrossBumpFromNZ"/>
+<snippet file = "CrossBumpFromNZ.xml"/>
 
 <primitive id = "DRIVE_STOP_MECH"
 time = "5.0">

@@ -7,6 +7,8 @@
 choreoname = "BlueLDepotOutpost_A"
 time = "4.0"
 intakeState = "STATE_INTAKE">
+<!-- <zone filename = "BlueDepotZone.xml"/> -->
+<!--This is only commented out because I like the swoop, but up to testing-->
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
