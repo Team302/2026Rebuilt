@@ -94,6 +94,6 @@ private:
     static constexpr units::angle::degree_t kAngleTolerance = 5.0_deg;
     static constexpr units::length::inch_t kYTransitionToEndPointTolerance = 10_in;
 
-    static constexpr units::velocity::meters_per_second_t kMaxVelocityDriveOverBump = 1.0_mps;
-    static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationDriveOverBump = 1.0_mps_sq;
+    static constexpr units::velocity::meters_per_second_t kMaxVelocityDriveOverBump = 1.5_mps;
+    static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationDriveOverBump = 0.75_mps_sq;
 };

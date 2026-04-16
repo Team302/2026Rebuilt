@@ -273,6 +273,8 @@ private:
 	units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 150.0_rpm;
 	units::angle::turn_t m_hoodAngleThreshold = 0.5_tr;
 	units::velocity::meters_per_second_t m_chassisSpeedThreshold = 3.0_mps;
+	units::angle::turn_t m_minTurretSoftLimit{93};
+	units::angle::turn_t m_maxTurretSoftLimit{265};
 
 	RebuiltTargetCalculator *m_targetCalculator;
 	subsystems::CommandSwerveDrivetrain *m_chassis;
@@ -285,9 +287,9 @@ private:
 
 	// All values in turns are actually Degree's
 	// MECH_TODO: Need to verify values after 116 inches, may need to add more points on both sides
-	static constexpr std::array<units::length::inch_t, 9> m_scoringDistanceArray = {50.0_in, 80.0_in, 110.0_in, 140.0_in, 170.0_in, 200.0_in, 230.0_in, 260.0_in, 290.0_in};
-	static constexpr std::array<units::angle::turn_t, 9> m_scoringHoodAngleArray = {0.0_tr, 8.0_tr, 15.2_tr, 17_tr, 21.8_tr, 24.4_tr, 25.5_tr, 30.0_tr, 30.0_tr};
-	static constexpr std::array<units::angular_velocity::revolutions_per_minute_t, 9> m_scoringLauncherVelocityArray = {2000.0_rpm, 2050.0_rpm, 2150.0_rpm, 2350.0_rpm, 2600.0_rpm, 2850.0_rpm, 3150.0_rpm, 3525.0_rpm, 3950.0_rpm};
+	static constexpr std::array<units::length::inch_t, 11> m_scoringDistanceArray = {50.0_in, 80.0_in, 110.0_in, 130.0_in, 140_in, 150_in, 170.0_in, 200.0_in, 230.0_in, 260.0_in, 290.0_in};
+	static constexpr std::array<units::angle::turn_t, 11> m_scoringHoodAngleArray = {0.0_tr, 8.0_tr, 15.2_tr, 18_tr, 19_tr, 20_tr, 21.8_tr, 24.4_tr, 25.5_tr, 30.0_tr, 30.0_tr};
+	static constexpr std::array<units::angular_velocity::revolutions_per_minute_t, 11> m_scoringLauncherVelocityArray = {2000.0_rpm, 2050.0_rpm, 2150.0_rpm, 2350.0_rpm, 2375_rpm, 2475_rpm, 2600.0_rpm, 2850.0_rpm, 3150.0_rpm, 3525.0_rpm, 3950.0_rpm};
 
 	static constexpr std::array<units::length::foot_t, 7> m_passingDistanceArray = {10.0_ft, 16.66666667_ft, 20.0_ft, 23.08333333_ft, 26.33333333_ft, 30.0_ft, 42.33333333_ft};
 	static constexpr std::array<units::angle::turn_t, 7> m_passingHoodAngleArray = {23.5_tr, 23.5_tr, 23.5_tr, 29.7_tr, 30.0_tr, 30.0_tr, 30.0_tr};

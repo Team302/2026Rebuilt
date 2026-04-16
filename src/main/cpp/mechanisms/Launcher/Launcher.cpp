@@ -588,6 +588,12 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
+	configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+	configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = m_maxTurretSoftLimit;
+
+	configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+	configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = m_minTurretSoftLimit;
+
 	configs.MotorOutput.Inverted = InvertedValue::CounterClockwise_Positive;
 	configs.MotorOutput.NeutralMode = NeutralModeValue::Brake;
 	configs.MotorOutput.PeakForwardDutyCycle = 1;
