@@ -31,9 +31,9 @@ stateDiagram-v2
     Step1 --> Step2: "launcher=LAUNCH"
     Step2 --> Step3: "intake=INTAKE | zones=LeftBumpZone DRIVE_OVER_BUMP"
     Step3 --> Step4: "intake=INTAKE | zones=RightBumpZone DRIVE_OVER_BUMP"
-    Step4 --> Step5: "zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step4 --> Step5: "zones=LaunchZone"
     Step5 --> Step6: "intake=INTAKE | zones=RightBumpZone DRIVE_OVER_BUMP LeftBumpZone DRIVE_OVER_BUMP"
-    Step6 --> [*]: "zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step6 --> [*]: "zones=LaunchZone"
 ```
 
 ## Primitive Summary
@@ -134,6 +134,6 @@ stateDiagram-v2
 
 | Zone file | Effect when entered |
 |-----------|---------------------|
-| `BlueLaunchZone` | `launcherState -> STATE_PREPARE_TO_LAUNCH` |
+| `BlueLaunchZone` | *(no tracked effects)* |
 | `BlueLeftBumpZone` | `pathUpdateOption = DRIVE_OVER_BUMP` |
 | `BlueRightBumpZone` | `pathUpdateOption = DRIVE_OVER_BUMP` |

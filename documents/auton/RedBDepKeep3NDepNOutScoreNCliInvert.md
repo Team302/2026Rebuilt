@@ -13,47 +13,43 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : "Step 1 - TRAJECTORY_DRIVE BlueMLDrop3_Init"
-    Step2 : "Step 2 - TRAJECTORY_DRIVE BlueMLDrop3_A_Var2"
-    Step3 : "Step 3 - TRAJECTORY_DRIVE BlueMLDrop3_C"
-    Step4 : "Step 4 - DRIVE_STOP_MECH --"
-    Step5 : "Step 5 - TRAJECTORY_DRIVE BlueMLDrop3_C2"
-    Step6 : "Step 6 - TRAJECTORY_DRIVE BlueMLDrop3_D"
-    Step7 : "Step 7 - TRAJECTORY_DRIVE BlueMLDrop3_F"
-    Step8 : "Step 8 - DRIVE_STOP_MECH --"
+    Step1 : "Step 1 - TRAJECTORY_DRIVE BlueMLDrop3_A_Var2"
+    Step2 : "Step 2 - TRAJECTORY_DRIVE BlueMLDrop3_C"
+    Step3 : "Step 3 - DRIVE_STOP_MECH --"
+    Step4 : "Step 4 - TRAJECTORY_DRIVE BlueMLDrop3_C2"
+    Step5 : "Step 5 - TRAJECTORY_DRIVE BlueMLDrop3_D"
+    Step6 : "Step 6 - TRAJECTORY_DRIVE BlueMLDrop3_F"
+    Step7 : "Step 7 - DRIVE_STOP_MECH --"
 
-    class Step1 noIntake
-    class Step2 intake
+    class Step1 intake
+    class Step2 noIntake
     class Step3 noIntake
-    class Step4 noIntake
+    class Step4 intake
     class Step5 intake
     class Step6 intake
-    class Step7 intake
-    class Step8 noIntake
+    class Step7 noIntake
 
     [*] --> Step1 : "start"
-    Step1 --> Step2: "zones=LeftBumpZoneRect DRIVE_OVER_BUMP"
-    Step2 --> Step3: "intake=INTAKE"
-    Step3 --> Step4: "zones=LeftBumpZoneRect DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
-    Step4 --> Step5
-    Step5 --> Step6: "intake=INTAKE | zones=LeftBumpZoneRect DRIVE_OVER_BUMP"
-    Step6 --> Step7: "intake=INTAKE"
-    Step7 --> Step8: "intake=INTAKE | zones=LeftBumpZoneRect DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
-    Step8 --> [*]
+    Step1 --> Step2: "intake=INTAKE"
+    Step2 --> Step3: "zones=LeftBumpZoneRect DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
+    Step3 --> Step4
+    Step4 --> Step5: "intake=INTAKE | zones=LeftBumpZoneRect DRIVE_OVER_BUMP"
+    Step5 --> Step6: "intake=INTAKE"
+    Step6 --> Step7: "intake=INTAKE | zones=LeftBumpZoneRect DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
+    Step7 --> [*]
 ```
 
 ## Primitive Summary
 
 | Step | Primitive | Trajectory | Timeout | Intake | Launcher | Climber | Zones |
 |------|-----------|------------|---------|--------|----------|---------|-------|
-| 1 | TRAJECTORY_DRIVE | [BlueMLDrop3_Init](../../src/main/deploy/choreo/BlueMLDrop3_Init.traj) | 3.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | RedLeftBumpZoneRect |
-| 2 | TRAJECTORY_DRIVE | [BlueMLDrop3_A_Var2](../../src/main/deploy/choreo/BlueMLDrop3_A_Var2.traj) | 3.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | -- |
-| 3 | TRAJECTORY_DRIVE | [BlueMLDrop3_C](../../src/main/deploy/choreo/BlueMLDrop3_C.traj) | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | RedLeftBumpZoneRect, RedLaunchZone |
-| 4 | DRIVE_STOP_MECH | -- | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
-| 5 | TRAJECTORY_DRIVE | [BlueMLDrop3_C2](../../src/main/deploy/choreo/BlueMLDrop3_C2.traj) | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLeftBumpZoneRect |
-| 6 | TRAJECTORY_DRIVE | [BlueMLDrop3_D](../../src/main/deploy/choreo/BlueMLDrop3_D.traj) | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | -- |
-| 7 | TRAJECTORY_DRIVE | [BlueMLDrop3_F](../../src/main/deploy/choreo/BlueMLDrop3_F.traj) | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLeftBumpZoneRect, RedLaunchZone |
-| 8 | DRIVE_STOP_MECH | -- | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
+| 1 | TRAJECTORY_DRIVE | [BlueMLDrop3_A_Var2](../../src/main/deploy/choreo/BlueMLDrop3_A_Var2.traj) | 3.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | -- |
+| 2 | TRAJECTORY_DRIVE | [BlueMLDrop3_C](../../src/main/deploy/choreo/BlueMLDrop3_C.traj) | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | RedLeftBumpZoneRect, RedLaunchZone |
+| 3 | DRIVE_STOP_MECH | -- | 10.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
+| 4 | TRAJECTORY_DRIVE | [BlueMLDrop3_C2](../../src/main/deploy/choreo/BlueMLDrop3_C2.traj) | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLeftBumpZoneRect |
+| 5 | TRAJECTORY_DRIVE | [BlueMLDrop3_D](../../src/main/deploy/choreo/BlueMLDrop3_D.traj) | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | -- |
+| 6 | TRAJECTORY_DRIVE | [BlueMLDrop3_F](../../src/main/deploy/choreo/BlueMLDrop3_F.traj) | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedLeftBumpZoneRect, RedLaunchZone |
+| 7 | DRIVE_STOP_MECH | -- | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
 
 ## Trajectory Details
 
@@ -61,30 +57,14 @@ stateDiagram-v2
 
 <img src="svg/traj/RedBDepKeep3NDepNOutScoreNCliInvert_all_traj.svg" alt="All trajectories for RedBDepKeep3NDepNOutScoreNCliInvert" width="900"/>
 
-### Step 1 -- BlueMLDrop3_Init
-
-- **File:** [`BlueMLDrop3_Init.traj`](../../src/main/deploy/choreo/BlueMLDrop3_Init.traj)
-- **Duration:** 2.525 s
-- **Timeout in auton XML:** 3.0 s
-- **Colour in overview:** `#00d4ff`
-
-<img src="svg/traj/RedBDepKeep3NDepNOutScoreNCliInvert_step1_BlueMLDrop3_Init.svg" alt="Trajectory BlueMLDrop3_Init" width="900"/>
-
-| # | X (m) | Y (m) | Heading (deg) |
-|---|-------|-------|---------------|
-| 1 | 12.845 | 1.84 | 270.0 |
-| 2 | 12.986 | 2.577 | 130.4 |
-| 3 | 11.914 | 2.544 | 128.7 |
-| 4 | 10.788 | 2.566 | 141.5 |
-
-### Step 2 -- BlueMLDrop3_A_Var2
+### Step 1 -- BlueMLDrop3_A_Var2
 
 - **File:** [`BlueMLDrop3_A_Var2.traj`](../../src/main/deploy/choreo/BlueMLDrop3_A_Var2.traj)
 - **Duration:** 6.169 s
 - **Timeout in auton XML:** 3.0 s
-- **Colour in overview:** `#ffcc00`
+- **Colour in overview:** `#00d4ff`
 
-<img src="svg/traj/RedBDepKeep3NDepNOutScoreNCliInvert_step2_BlueMLDrop3_A_Var2.svg" alt="Trajectory BlueMLDrop3_A_Var2" width="900"/>
+<img src="svg/traj/RedBDepKeep3NDepNOutScoreNCliInvert_step1_BlueMLDrop3_A_Var2.svg" alt="Trajectory BlueMLDrop3_A_Var2" width="900"/>
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
@@ -99,42 +79,42 @@ stateDiagram-v2
 | 9 | 10.561 | 2.371 | 316.5 |
 | 10 | 10.937 | 2.692 | 313.8 |
 
-### Step 3 -- BlueMLDrop3_C
+### Step 2 -- BlueMLDrop3_C
 
 - **File:** [`BlueMLDrop3_C.traj`](../../src/main/deploy/choreo/BlueMLDrop3_C.traj)
 - **Duration:** 1.877 s
 - **Timeout in auton XML:** 5.0 s
-- **Colour in overview:** `#ff6688`
+- **Colour in overview:** `#ffcc00`
 
-<img src="svg/traj/RedBDepKeep3NDepNOutScoreNCliInvert_step3_BlueMLDrop3_C.svg" alt="Trajectory BlueMLDrop3_C" width="900"/>
+<img src="svg/traj/RedBDepKeep3NDepNOutScoreNCliInvert_step2_BlueMLDrop3_C.svg" alt="Trajectory BlueMLDrop3_C" width="900"/>
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
 | 1 | 10.647 | 2.469 | 315.0 |
 | 2 | 13.289 | 2.447 | 315.0 |
 
-### Step 5 -- BlueMLDrop3_C2
+### Step 4 -- BlueMLDrop3_C2
 
 - **File:** [`BlueMLDrop3_C2.traj`](../../src/main/deploy/choreo/BlueMLDrop3_C2.traj)
 - **Duration:** 1.809 s
 - **Timeout in auton XML:** 5.0 s
-- **Colour in overview:** `#88ff44`
+- **Colour in overview:** `#ff6688`
 
-<img src="svg/traj/RedBDepKeep3NDepNOutScoreNCliInvert_step5_BlueMLDrop3_C2.svg" alt="Trajectory BlueMLDrop3_C2" width="900"/>
+<img src="svg/traj/RedBDepKeep3NDepNOutScoreNCliInvert_step4_BlueMLDrop3_C2.svg" alt="Trajectory BlueMLDrop3_C2" width="900"/>
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
 | 1 | 13.1 | 2.469 | 126.2 |
 | 2 | 10.647 | 2.469 | 126.8 |
 
-### Step 6 -- BlueMLDrop3_D
+### Step 5 -- BlueMLDrop3_D
 
 - **File:** [`BlueMLDrop3_D.traj`](../../src/main/deploy/choreo/BlueMLDrop3_D.traj)
 - **Duration:** 2.641 s
 - **Timeout in auton XML:** 5.0 s
-- **Colour in overview:** `#ff8800`
+- **Colour in overview:** `#88ff44`
 
-<img src="svg/traj/RedBDepKeep3NDepNOutScoreNCliInvert_step6_BlueMLDrop3_D.svg" alt="Trajectory BlueMLDrop3_D" width="900"/>
+<img src="svg/traj/RedBDepKeep3NDepNOutScoreNCliInvert_step5_BlueMLDrop3_D.svg" alt="Trajectory BlueMLDrop3_D" width="900"/>
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
@@ -145,14 +125,14 @@ stateDiagram-v2
 | 5 | 9.11 | 1.792 | 303.7 |
 | 6 | 10.55 | 2.355 | 316.6 |
 
-### Step 7 -- BlueMLDrop3_F
+### Step 6 -- BlueMLDrop3_F
 
 - **File:** [`BlueMLDrop3_F.traj`](../../src/main/deploy/choreo/BlueMLDrop3_F.traj)
 - **Duration:** 1.843 s
 - **Timeout in auton XML:** 5.0 s
-- **Colour in overview:** `#cc88ff`
+- **Colour in overview:** `#ff8800`
 
-<img src="svg/traj/RedBDepKeep3NDepNOutScoreNCliInvert_step7_BlueMLDrop3_F.svg" alt="Trajectory BlueMLDrop3_F" width="900"/>
+<img src="svg/traj/RedBDepKeep3NDepNOutScoreNCliInvert_step6_BlueMLDrop3_F.svg" alt="Trajectory BlueMLDrop3_F" width="900"/>
 
 | # | X (m) | Y (m) | Heading (deg) |
 |---|-------|-------|---------------|
