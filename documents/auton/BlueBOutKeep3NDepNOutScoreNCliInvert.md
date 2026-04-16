@@ -34,11 +34,11 @@ stateDiagram-v2
     [*] --> Step1 : "start"
     Step1 --> Step2: "zones=RightBumpZoneRect DRIVE_OVER_BUMP"
     Step2 --> Step3: "intake=INTAKE"
-    Step3 --> Step4: "zones=RightBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
+    Step3 --> Step4: "zones=RightBumpZone DRIVE_OVER_BUMP LaunchZone"
     Step4 --> Step5
     Step5 --> Step6: "intake=INTAKE | zones=RightBumpZone DRIVE_OVER_BUMP"
     Step6 --> Step7: "intake=INTAKE"
-    Step7 --> Step8: "zones=LaunchZone PREPARE_TO_LAUNCH RightBumpZone DRIVE_OVER_BUMP"
+    Step7 --> Step8: "zones=LaunchZone RightBumpZone DRIVE_OVER_BUMP"
     Step8 --> [*]
 ```
 
@@ -48,7 +48,7 @@ stateDiagram-v2
 |------|-----------|------------|---------|--------|----------|---------|-------|
 | 1 | TRAJECTORY_DRIVE | [BlueMRDrop3_Init](../../src/main/deploy/choreo/BlueMRDrop3_Init.traj) | 3.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueRightBumpZoneRect |
 | 2 | TRAJECTORY_DRIVE | [BlueMRDrop3_A_Var2](../../src/main/deploy/choreo/BlueMRDrop3_A_Var2.traj) | 3.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | -- |
-| 3 | TRAJECTORY_DRIVE | [BlueMRDrop3_C](../../src/main/deploy/choreo/BlueMRDrop3_C.traj) | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueRightBumpZone, BlueLaunchZone |
+| 3 | TRAJECTORY_DRIVE | [BlueMRDrop3_C](../../src/main/deploy/choreo/BlueMRDrop3_C.traj) | 10.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | BlueRightBumpZone, BlueLaunchZone |
 | 4 | DRIVE_STOP_MECH | -- | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
 | 5 | TRAJECTORY_DRIVE | [BlueMRDrop3_D](../../src/main/deploy/choreo/BlueMRDrop3_D.traj) | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueRightBumpZone |
 | 6 | TRAJECTORY_DRIVE | [BlueMRDrop3_E](../../src/main/deploy/choreo/BlueMRDrop3_E.traj) | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | -- |
@@ -98,7 +98,7 @@ stateDiagram-v2
 
 - **File:** [`BlueMRDrop3_C.traj`](../../src/main/deploy/choreo/BlueMRDrop3_C.traj)
 - **Duration:** 2.19 s
-- **Timeout in auton XML:** 5.0 s
+- **Timeout in auton XML:** 10.0 s
 - **Colour in overview:** `#ff6688`
 
 <img src="svg/traj/BlueBOutKeep3NDepNOutScoreNCliInvert_step3_BlueMRDrop3_C.svg" alt="Trajectory BlueMRDrop3_C" width="900"/>
@@ -157,6 +157,6 @@ stateDiagram-v2
 
 | Zone file | Effect when entered |
 |-----------|---------------------|
-| `BlueLaunchZone` | `launcherState -> STATE_PREPARE_TO_LAUNCH` |
+| `BlueLaunchZone` | *(no tracked effects)* |
 | `BlueRightBumpZone` | `pathUpdateOption = DRIVE_OVER_BUMP` |
 | `BlueRightBumpZoneRect` | `pathUpdateOption = DRIVE_OVER_BUMP` |

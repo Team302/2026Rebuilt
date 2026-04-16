@@ -27,9 +27,9 @@ stateDiagram-v2
 
     [*] --> Step1 : "start"
     Step1 --> Step2: "launcher=LAUNCH"
-    Step2 --> Step3: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH OutpostZone DRIVE_TO_OUTPOST"
-    Step3 --> Step4: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
-    Step4 --> Step5: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH DepotZone DRIVE_TO_DEPOT"
+    Step2 --> Step3: "intake=INTAKE | zones=LaunchZone OutpostZone DRIVE_TO_OUTPOST"
+    Step3 --> Step4: "intake=INTAKE | zones=LaunchZone"
+    Step4 --> Step5: "intake=INTAKE | zones=LaunchZone DepotZone DRIVE_TO_DEPOT"
     Step5 --> [*]: "zones=ClimbingZone DRIVE_TO_TOWER"
 ```
 
@@ -99,5 +99,5 @@ stateDiagram-v2
 |-----------|---------------------|
 | `BlueClimbingZone` | `pathUpdateOption = DRIVE_TO_TOWER` |
 | `BlueDepotZone` | `pathUpdateOption = DRIVE_TO_DEPOT` |
-| `BlueLaunchZone` | `launcherState -> STATE_PREPARE_TO_LAUNCH` |
+| `BlueLaunchZone` | *(no tracked effects)* |
 | `BlueOutpostZone` | `pathUpdateOption = DRIVE_TO_OUTPOST` |

@@ -49,7 +49,7 @@ stateDiagram-v2
 | 1 | TRAJECTORY_DRIVE | [BlueMRDrop3_Init](../../src/main/deploy/choreo/BlueMRDrop3_Init.traj) | 3.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | RedRightBumpZoneRect |
 | 2 | TRAJECTORY_DRIVE | [BlueMRDrop3_A_Var2](../../src/main/deploy/choreo/BlueMRDrop3_A_Var2.traj) | 3.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | -- |
 | 3 | TRAJECTORY_DRIVE | [BlueMRDrop3_C](../../src/main/deploy/choreo/BlueMRDrop3_C.traj) | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | RedRightBumpZone, RedLaunchZone |
-| 4 | DRIVE_STOP_MECH | -- | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
+| 4 | DRIVE_STOP_MECH | -- | 10.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
 | 5 | TRAJECTORY_DRIVE | [BlueMRDrop3_D](../../src/main/deploy/choreo/BlueMRDrop3_D.traj) | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | RedRightBumpZone |
 | 6 | TRAJECTORY_DRIVE | [BlueMRDrop3_E](../../src/main/deploy/choreo/BlueMRDrop3_E.traj) | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | -- |
 | 7 | TRAJECTORY_DRIVE | [BlueMRDrop3_F](../../src/main/deploy/choreo/BlueMRDrop3_F.traj) | 3.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | RedLaunchZone, RedRightBumpZone |

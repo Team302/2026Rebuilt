@@ -8,6 +8,8 @@
 > Origin (0,0) is the bottom-left (Blue alliance wall).
 > Circle radius values in the XML are stored in **centimetres** and converted to metres here.
 
+> **Note:** the following zone files had no parseable geometry and are omitted from the diagram: `BlueLaunchZone`
+
 ## Field Diagram
 
 <img src="svg/FieldZones.svg" alt="All auton field zones" width="900"/>
@@ -21,7 +23,6 @@
 - [BlueDeadZone](zones/BlueDeadZone.md)
 - [BlueDepotZone](zones/BlueDepotZone.md)
 - [BlueHubElement](zones/BlueHubElement.md)
-- [BlueLaunchZone](zones/BlueLaunchZone.md)
 - [BlueLeftBumpZone](zones/BlueLeftBumpZone.md)
 - [BlueLeftBumpZoneRect](zones/BlueLeftBumpZoneRect.md)
 - [BlueLeftTrenchZone](zones/BlueLeftTrenchZone.md)
@@ -79,7 +80,6 @@
 | `BlueDeadZone` | rect | (12.58,3.44) to (16.39,4.52) | BLUE | -- |
 | `BlueDepotZone` | circle | cx=0.3, cy=5.9, r=0.50 | BOTH | TO DEPOT |
 | `BlueHubElement` | rect | (4.0,3.45) to (5.1938,4.6438) | BLUE | -- |
-| `BlueLaunchZone` | rect | (0.0,0.0) to (4.0,8.1) | BLUE | PREPARE TO LAUNCH |
 | `BlueLeftBumpZone` | circle | cx=4.6, cy=5.61, r=0.70 | BOTH | OVER BUMP |
 | `BlueLeftBumpZoneRect` | rect | (3.14,4.65) to (5.97,6.69) | BOTH | OVER BUMP |
 | `BlueLeftTrenchZone` | circle | cx=4.65, cy=7.45, r=0.40 | BOTH | -- |
