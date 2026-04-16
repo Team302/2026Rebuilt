@@ -86,7 +86,7 @@ private:
     units::velocity::meters_per_second_t m_currentMaxSpeed;                ///< Current maximum linear speed (may be scaled).
     units::angular_velocity::degrees_per_second_t m_maxAngularRate;        ///< Maximum angular rate for normal operation.
     units::angular_velocity::degrees_per_second_t m_currentMaxAngularRate; ///< Current maximum angular rate (may be scaled).
-    static constexpr double m_launchingSpeedScale = 0.3;                   ///< Scale factor for speed reduction during launching.
+    static constexpr double m_launchingSpeedScale = 0.2;                   ///< Scale factor for speed reduction during launching.
 
     swerve::requests::FieldCentric m_fieldDriveRequest = swerve::requests::FieldCentric{}
                                                              .WithDeadband(m_maxSpeed * 0.1)                                  // TODO: Investigate this deadband vs controller deadband
