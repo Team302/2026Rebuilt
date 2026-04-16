@@ -70,6 +70,5 @@ bool CommandSwerveDrivetrain::IsMoving()
 }
 bool CommandSwerveDrivetrain::IsMoving(units::velocity::meters_per_second_t velocityThreshold, units::angular_velocity::degrees_per_second_t angularVelocityThreshold)
 {
-    bool isCurrentlyMoving = (units::math::abs(this->GetState().Speeds.vx) > velocityThreshold) || (units::math::abs(this->GetState().Speeds.vy) > velocityThreshold) || (units::math::abs(this->GetState().Speeds.omega) > angularVelocityThreshold);
-    return isCurrentlyMoving;
+    return (units::math::abs(this->GetState().Speeds.vx) > velocityThreshold) || (units::math::abs(this->GetState().Speeds.vy) > velocityThreshold) || (units::math::abs(this->GetState().Speeds.omega) > angularVelocityThreshold);
 }

@@ -334,7 +334,7 @@ namespace subsystems
         frc::Pose2d m_prevPose;
         units::angle::degree_t m_targetChassisRotation;
         const units::angle::degree_t m_chassisRotationThreshold{5.0};
-        const units::velocity::meters_per_second_t m_velocityThreshold{0.1};
-        const units::angular_velocity::degrees_per_second_t m_angularVelocityThreshold{5.0};
+        const units::velocity::meters_per_second_t m_velocityThreshold{0.05};
+        const units::angular_velocity::degrees_per_second_t m_angularVelocityThreshold{2.0};
     };
 }

@@ -382,6 +382,5 @@ private:
 
     /// Cached launcher target angle from last calculation (in turns)
     units::angle::turn_t m_cachedLauncherTarget{0_tr};
-    static constexpr units::length::inch_t m_IsMovingDistanceThreshold{2}; // .05 mps * 20 miliseconds converted into inches
     /// @}
 };
