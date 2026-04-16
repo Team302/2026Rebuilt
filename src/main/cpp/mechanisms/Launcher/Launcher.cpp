@@ -376,8 +376,8 @@ void Launcher::InitializeTalonFXLauncherCompBot302()
 	configs.CurrentLimits.SupplyCurrentLowerLimit = units::current::ampere_t(35);
 	configs.CurrentLimits.SupplyCurrentLowerTime = units::time::second_t(0);
 
-	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(11.0);
-	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(0.0); // -3.5 V
+	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(16.0);
+	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(4.5); // -3.5 V
 	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
 
 	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
@@ -663,6 +663,8 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	}
 	if (!statusCANdi.IsOK())
 		Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "m_turret", "m_turretCANdi Status", statusCANdi.GetName());
+
+	m_turret->SetPosition(m_maxTurretAngle);
 }
 
 void Launcher::InitializeTalonFXIndexerCompBot302()
