@@ -303,6 +303,8 @@ namespace subsystems
 
         bool IsSamePose();
         bool IsSamePose(units::length::inch_t distanceThreshold);
+        bool IsMoving();
+        bool IsMoving(units::velocity::meters_per_second_t distanceThreshold, units::angular_velocity::degrees_per_second_t angularVelocityThreshold);
         void ResetSamePose()
         {
             m_debounceTimer.Reset();
@@ -327,10 +329,12 @@ namespace subsystems
     private:
         void StartSimThread();
         frc::Timer m_debounceTimer;
-        const units::time::second_t m_samePoseTime = 0.5_s;
+        const units::time::second_t m_samePoseTime{0.5};
         const units::length::inch_t m_distanceThreshold{0.25};
         frc::Pose2d m_prevPose;
         units::angle::degree_t m_targetChassisRotation;
-        const units::angle::degree_t m_chassisRotationThreshold{5.0_deg};
+        const units::angle::degree_t m_chassisRotationThreshold{5.0};
+        const units::velocity::meters_per_second_t m_velocityThreshold{0.05};
+        const units::angular_velocity::degrees_per_second_t m_angularVelocityThreshold{2.0};
     };
 }

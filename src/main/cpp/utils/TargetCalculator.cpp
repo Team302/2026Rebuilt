@@ -61,7 +61,7 @@ frc::Translation2d TargetCalculator::GetMechanismWorldPosition() const
 
 units::meter_t TargetCalculator::CalculateDistanceToTarget(units::time::second_t lookaheadTime)
 {
-    if (m_chassisPose == m_lastChassisPose)
+    if (!m_isMoving)
     {
         return m_cachedDistanceToTarget;
     }
@@ -77,7 +77,7 @@ units::meter_t TargetCalculator::CalculateDistanceToTarget(units::time::second_t
 
 units::meter_t TargetCalculator::CalculateMechanismDistanceToTarget(units::time::second_t lookaheadTime)
 {
-    if (m_chassisPose == m_lastChassisPose)
+    if (!m_isMoving)
     {
         return m_cachedMechanismDistanceToTarget;
     }
@@ -102,7 +102,7 @@ units::degree_t TargetCalculator::CalculateAngleToTarget(units::time::second_t l
 
 units::degree_t TargetCalculator::CalculateMechanismAngleToTarget(units::time::second_t lookaheadTime)
 {
-    if (m_chassisPose == m_lastChassisPose)
+    if (!m_isMoving)
     {
         return m_cachedMechanismAngleToTarget;
     }
@@ -136,17 +136,17 @@ void TargetCalculator::UpdateChassisPose(bool forceUpdate)
 {
     m_lastChassisPose = m_chassisPose;
 
-    m_isMoving = !m_chassis->IsSamePose();
+    m_isMoving = m_chassis->IsMoving() || (m_wasMovingCounter <= 50);
 
     // Update the pose while moving, when forced, or on the one cycle after we stop.
     // The "just stopped" cycle ensures the cache busts once so all callers recompute
     // with zero speeds and the virtual-target offset unwinds back to the real target.
-    if (m_chassis != nullptr && (forceUpdate || m_isMoving || m_wasMoving))
+    if (m_chassis != nullptr && (forceUpdate || m_isMoving))
     {
         m_chassisPose = m_chassis->GetPose();
     }
 
-    m_wasMoving = m_isMoving;
+    m_wasMovingCounter = m_isMoving ? 0 : m_wasMovingCounter + 1;
 }
 
 void TargetCalculator::UpdateChassisSpeeds()
