@@ -203,6 +203,7 @@ public:
 		m_launchCurrentTimer.Stop();
 		m_launchCurrentTimer.Reset();
 	}
+	void TurretHasReset(bool turretHasReset) { m_turretHasReset = turretHasReset; }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -340,6 +341,7 @@ private:
 	bool m_cachedinLaunchzone = false;
 	bool m_cachedIsChassisSpeed = false;
 	bool m_cachedTurretAtTarget = false;
+	bool m_turretHasReset = false;
 	AllianceZoneManager *m_allianceZoneManager;
 	DeadZoneManager *m_deadZoneManager;
 };

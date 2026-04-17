@@ -158,7 +158,7 @@ private:
 
 	static constexpr double m_percentModifier = 0.5;
 	static constexpr units::angle::turn_t m_protectExtenderPositionDegDown{-20.0};
-	static constexpr units::angle::turn_t m_protectExtenderPositionDegUp{40.0};
+	static constexpr units::angle::turn_t m_protectExtenderPositionDegUp{50.0};
 
 	void RefreshCachedMotorData();
 

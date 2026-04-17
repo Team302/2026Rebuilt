@@ -1030,18 +1030,23 @@ void Launcher::InitilaizeLauncher()
 		turretReverseLimitSwitchTripped = m_turret->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround;
 		turretForwardLimitSwitchTripped = m_turret->GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround;
 		if (turretForwardLimitSwitchTripped)
+		{
 			m_turret->SetPosition(m_maxTurretAngle);
+			m_turretHasReset = true;
+		}
 		else if (turretReverseLimitSwitchTripped)
+		{
 			m_turret->SetPosition(m_minTurretAngle);
+			m_turretHasReset = true;
+		}
 	}
 
 	auto hoodReverseLimitSwitchTripped = m_hood->GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround;
 
-	if ((m_turretEnabled && (turretReverseLimitSwitchTripped || turretForwardLimitSwitchTripped) && hoodReverseLimitSwitchTripped) ||
+	if ((m_turretEnabled && m_turretHasReset && hoodReverseLimitSwitchTripped) ||
 		(!m_turretEnabled && hoodReverseLimitSwitchTripped) ||
 		frc::RobotBase::IsSimulation())
 	{
-
 		m_launcherInitialized = true;
 	}
 }
@@ -1119,6 +1124,7 @@ void Launcher::UpdateTurretEnabled()
 }
 bool Launcher::IsFinishedLaunching()
 {
+
 	if (m_cachedLauncherCurrent > m_isLaunchingCurrentThreshold)
 	{
 		m_launchCurrentTimer.Reset();
