@@ -89,10 +89,6 @@ bool RebuiltTargetCalculator::ValidateAlliance()
 
     auto currentAlliance = FMSData::GetAllianceColor();
 
-    bool isBlue = currentAlliance == frc::DriverStation::Alliance::kBlue;
-    m_passingOutpostTargetYOffset = isBlue ? -m_passingOutpostTargetYOffset : m_passingOutpostTargetYOffset;
-    m_passingDepotTargetYOffset = isBlue ? -m_passingDepotTargetYOffset : m_passingDepotTargetYOffset;
-
     if (currentAlliance != m_cachedAlliance)
     {
         m_cachedAlliance = currentAlliance;
