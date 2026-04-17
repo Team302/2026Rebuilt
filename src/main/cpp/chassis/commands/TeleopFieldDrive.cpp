@@ -121,7 +121,7 @@ void TeleopFieldDrive::NotifyStateUpdate(RobotStateChanges::StateChange change, 
     {
         m_isLaunching = value;
         // May be a problem if we are launching as we change zones, because we only check this code once when we start or stop launching
-        if (value && m_allianceZoneManager->IsInAllianceZone())
+        if (value /*&& m_allianceZoneManager->IsInAllianceZone()*/)
         {
             m_currentMaxSpeed = m_maxSpeed * m_launchingSpeedScale;
             m_currentMaxAngularRate = m_maxAngularRate * m_launchingSpeedScale;
