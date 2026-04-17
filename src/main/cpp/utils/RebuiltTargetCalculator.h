@@ -125,6 +125,8 @@ public:
     void UpdateTargetOffset();
     bool IsValidTurretAngle() { return m_hasFoundValidAngle; }
 
+    units::length::inch_t GetLauncherDistanceToTarget() { return CalculateMechanismDistanceToTarget(GetLookAheadTime()); }
+
 private:
     /**
      * \brief Check if alliance has changed and refresh cache if necessary

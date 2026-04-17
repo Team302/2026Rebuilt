@@ -156,3 +156,8 @@ void TargetCalculator::UpdateChassisSpeeds()
         m_currentChassisSpeeds = m_chassis->GetState().Speeds;
     }
 }
+
+void TargetCalculator::DataLog(uint64_t timestamp)
+{
+    LogDoubleData(timestamp, m_distanceToTargetPath, m_cachedMechanismDistanceToTarget.value(), "m");
+}

@@ -401,7 +401,7 @@ void Launcher::InitializeTalonFXLauncherCompBot302()
 	configs.CurrentLimits.StatorCurrentLimitEnable = true;
 	configs.CurrentLimits.SupplyCurrentLimit = units::current::ampere_t(70);
 	configs.CurrentLimits.SupplyCurrentLimitEnable = true;
-	configs.CurrentLimits.SupplyCurrentLowerLimit = units::current::ampere_t(35);
+	configs.CurrentLimits.SupplyCurrentLowerLimit = units::current::ampere_t(40);
 	configs.CurrentLimits.SupplyCurrentLowerTime = units::time::second_t(0);
 
 	configs.Voltage.PeakForwardVoltage = units::voltage::volt_t(16.0);
@@ -980,7 +980,7 @@ void Launcher::CalculateTargets()
 		m_targetTurretAngle = 180_deg;
 		m_chassis->SetTargetChassisRotation(m_targetCalculator->GetChassisTargetForLaunching());
 	}
-	units::length::inch_t distanceToTarget = m_targetCalculator->CalculateMechanismDistanceToTarget();
+	units::length::inch_t distanceToTarget = m_targetCalculator->GetLauncherDistanceToTarget();
 	if (m_allianceZoneManager->IsInAllianceZone())
 	{
 		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_scoringDistanceArray, m_scoringHoodAngleArray, distanceToTarget);
@@ -1098,7 +1098,6 @@ bool Launcher::IsTurretAtTarget()
 		{
 			units::angle::degree_t turretError = m_cachedTurretPosition - m_targetTurretAngle;
 			m_cachedTurretAtTarget = ((units::math::abs(turretError) < m_turretAngleThreshold));
-			Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "turret Error", turretError.value());
 		}
 	}
 	else
@@ -1145,9 +1144,9 @@ void Launcher::UpdateCachedLoggingValues()
 	m_cachedLauncherSpeedError = launcherSpeedError < m_launcherVelocityThreshold;
 	m_cachedinLaunchzone = (inLaunchzone);
 	m_cachedIsChassisSpeed = !AllianceZoneManager::GetInstance()->IsInAllianceZone() ? true : (Speed < m_chassisSpeedThreshold);
-	m_cachedTurretAtTarget = IsTurretAtTarget();
+	bool turretAtTarget = IsTurretAtTarget();
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_cachedHoodError", m_cachedHoodError);
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_cachedLauncherSpeedError", m_cachedLauncherSpeedError);
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_cachedinLaunchzone", m_cachedinLaunchzone);
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_targetTurretAngle", m_cachedTurretAtTarget);
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_targetTurretAngle", turretAtTarget);
 }

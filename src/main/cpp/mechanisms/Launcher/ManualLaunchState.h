@@ -47,9 +47,9 @@ namespace LauncherStates
 
 		static constexpr units::angular_velocity::turns_per_second_t m_launcherTarget{2200_rpm};
 		static constexpr units::angle::turn_t m_hoodTarget{0.4};
-		static constexpr double m_transferTarget{1};
-		static constexpr units::angle::turn_t m_turretTarget{180};
-		static constexpr double m_indexerTarget{1};
-		static constexpr double m_spindexerTarget{1};
+		static constexpr units::angle::degree_t m_turretTarget{180};
+		const units::angular_velocity::turns_per_second_t m_transferTarget{80};
+		const units::angular_velocity::turns_per_second_t m_indexerTarget{25};
+		const units::angular_velocity::turns_per_second_t m_spindexerTarget{22};
 	};
 }

@@ -117,8 +117,10 @@ public:
 	void UpdateTargetLauncherVelocityRPS(units::angular_velocity::turns_per_second_t velocity)
 	{
 		m_launcherVelocityRPS.Velocity = velocity;
-		m_launcherActiveTarget = !m_chassis->IsMoving() ? &m_launcherVelocityRPS.WithSlot(0)
-														: &m_launcherVelocityRPS.WithSlot(1);
+		m_launcherVelocityRPS.Acceleration = 100_tr_per_s_sq;
+		m_launcherActiveTarget = &m_launcherVelocityRPS.WithSlot(0);
+		// m_launcherActiveTarget = !m_chassis->IsMoving() ? &m_launcherVelocityRPS.WithSlot(0)
+		// 												: &m_launcherVelocityRPS.WithSlot(1);
 	}
 
 	void UpdateTargetSpindexerPercentOut(double percentOut)
