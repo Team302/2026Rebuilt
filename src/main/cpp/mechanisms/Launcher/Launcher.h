@@ -204,7 +204,6 @@ public:
 		m_launchCurrentTimer.Reset();
 	}
 	void TurretHasReset(bool turretHasReset) { m_turretHasReset = turretHasReset; }
-	void AgitateSpindexer();
 
 protected:
 	RobotIdentifier m_activeRobotId;
