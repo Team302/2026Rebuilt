@@ -14,7 +14,6 @@
 //====================================================================================================================================================
 
 #include "chassis/commands/TeleopFieldDrive.h"
-#include "auton/AllianceZoneManager.h"
 #include "state/RobotState.h"
 #include "utils/FMSData.h"
 #include "utils/RebuiltTargetCalculator.h"
@@ -34,6 +33,7 @@ TeleopFieldDrive::TeleopFieldDrive(subsystems::CommandSwerveDrivetrain *chassis,
     AddRequirements(m_chassis);
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsLaunching_Bool);
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::TurretEnabled_Bool);
+    m_allianceZoneManager = AllianceZoneManager::GetInstance();
 }
 /**
  * @brief Initializes the teleop field drive command.
@@ -64,7 +64,7 @@ void TeleopFieldDrive::Execute()
     double strafe = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE);
     double manualRotate = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE);
 
-    if (m_isLaunching && AllianceZoneManager::GetInstance()->IsInAllianceZone() && !m_turretEnabled)
+    if (m_isLaunching && m_allianceZoneManager->IsInAllianceZone() && !m_turretEnabled)
     {
         m_chassis->SetControl(m_fieldFacingRequest.WithVelocityX(forward * m_currentMaxSpeed)
                                   .WithVelocityY(strafe * m_currentMaxSpeed)
@@ -120,8 +120,17 @@ void TeleopFieldDrive::NotifyStateUpdate(RobotStateChanges::StateChange change, 
     if (change == RobotStateChanges::StateChange::IsLaunching_Bool)
     {
         m_isLaunching = value;
-        m_currentMaxSpeed = value ? m_maxSpeed * m_launchingSpeedScale : m_maxSpeed;
-        m_currentMaxAngularRate = value ? m_maxAngularRate * m_launchingSpeedScale : m_maxAngularRate;
+        // May be a problem if we are launching as we change zones, because we only check this code once when we start or stop launching
+        if (value && m_allianceZoneManager->IsInAllianceZone())
+        {
+            m_currentMaxSpeed = m_maxSpeed * m_launchingSpeedScale;
+            m_currentMaxAngularRate = m_maxAngularRate * m_launchingSpeedScale;
+        }
+        else
+        {
+            m_currentMaxSpeed = m_maxSpeed;
+            m_currentMaxAngularRate = m_maxAngularRate;
+        }
     }
     else if (change == RobotStateChanges::StateChange::TurretEnabled_Bool)
     {

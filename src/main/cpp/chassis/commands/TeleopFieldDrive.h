@@ -15,6 +15,7 @@
 
 #pragma once
 
+#include "auton/AllianceZoneManager.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "frc2/command/Command.h"
 #include "frc2/command/CommandHelper.h"
@@ -104,4 +105,5 @@ private:
     double m_rotationKD = 0.0;
     RebuiltTargetCalculator *m_targetCalculator = RebuiltTargetCalculator::GetInstance();
     bool m_turretEnabled = true;
+    AllianceZoneManager *m_allianceZoneManager;
 };
