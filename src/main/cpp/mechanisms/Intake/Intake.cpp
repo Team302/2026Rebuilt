@@ -473,3 +473,7 @@ std::string Intake::GetCurrentStateName()
 	STATE_NAMES state = static_cast<STATE_NAMES>(GetCurrentState());
 	return (STATE_NAMESEnumToStringMap.find(state) == STATE_NAMESEnumToStringMap.end()) ? "Unknown State" : STATE_NAMESEnumToStringMap.at(state);
 }
+void Intake::PublishIntakeMode(bool intaking)
+{
+	RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::IsIntaking_Bool, intaking);
+}
