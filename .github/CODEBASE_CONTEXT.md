@@ -88,6 +88,7 @@ src/main/cpp/
 │
 ├── fielddata/                       # Field geometry ⚠️ SEASON-DEPENDENT
 │   ├── FieldConstants               # Singleton; 2026 field element poses
+│   ├── FieldElementCalculator       # Computes derived field element poses from transforms
 │   ├── FieldAprilTagIDs             # April tag ID mapping
 │   └── SweepLaneChanger             # Utility for managing sweep lane selection
 │
@@ -125,6 +126,7 @@ src/main/
 │   ├── auton/                       # Autonomous routine XML files + DTDs
 │   ├── chassis/                     # Chassis tuning and configuration files
 │   ├── choreo/                      # Choreo trajectory files for path planning
+│   │   └── NewPath.traj             # ✨ Recently added test/development path
 │   └── mechanisms/                  # Mechanism-specific configuration files
 │
 └── thirdparty/                      # Third-party C++ libraries (non-vendor)
@@ -512,6 +514,16 @@ Singleton; call `GetFieldElementPose(FIELD_ELEMENT)` or `GetFieldElementPose2d(F
 - Trenches: `TRENCH_NEUTRAL_DEPOT`, `TRENCH_ALLIANCE_DEPOT`, `TRENCH_NEUTRAL_OUTPOST`, `TRENCH_ALLIANCE_OUTPOST`
 - Calculated: `HUB_CENTER`, `TOWER_DEPOT/OUTPOST_STICK`, `DEPOT_NEUTRAL/LEFT/RIGHT_SIDE`, `DEPOT/OUTPOST_PASSING_TARGET`
 
+### `FieldElementCalculator` ⚠️
+
+- Computes **derived** field element poses (those not directly from the field layout) by applying `Transform3d` offsets to reference poses.
+- Called by `FieldConstants` during initialization via `CalcPositionsForField()`.
+- Key offsets (2026-specific, will change each season):
+  - Hub center: X = –23.5 in from hub alliance center
+  - Tower stick offsets: left/right/center at ±19.5 in Y, 45 in X
+  - Depot offsets: center (27 in X, 87.31 in Y), left (13.5 in X, 108.31 in Y)
+- **Must update** when field geometry changes between seasons.
+
 ### `RebuiltTargetCalculator` ⚠️
 
 - Extends `TargetCalculator`
@@ -603,6 +615,7 @@ When porting this framework to a **new season**, the following must be updated:
 ### 🔴 Must Change Every Season
 
 - [ ] `fielddata/FieldConstants.h/.cpp` — all `FIELD_ELEMENT` enums and pose values
+- [ ] `fielddata/FieldElementCalculator.h/.cpp` — derived pose transforms (offsets from reference poses)
 - [ ] `fielddata/FieldAprilTagIDs.h` — April tag ID assignments
 - [ ] `auton/` zone managers — `AllianceZoneManager`, `NeutralZoneManager`, `BumpZoneManager`, `DeadZoneManager`
 - [ ] `chassis/commands/season_specific_commands/` — all game-specific drive commands (DriveToHub, etc.)
