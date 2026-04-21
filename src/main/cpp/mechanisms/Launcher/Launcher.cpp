@@ -96,6 +96,7 @@ void Launcher::CreateAndRegisterStates()
 	AddToStateVector(ManualLaunchStateInst);
 
 	AgitatorState *AgitatorStateInst = new AgitatorState(string("Agitator"), 9, this, m_activeRobotId);
+	AddToStateVector(AgitatorStateInst);
 
 	OffStateInst->RegisterTransitionState(InitializeStateInst);
 	InitializeStateInst->RegisterTransitionState(IdleStateInst);
@@ -127,6 +128,7 @@ void Launcher::CreateAndRegisterStates()
 	AgitatorStateInst->RegisterTransitionState(OffStateInst);
 	AgitatorStateInst->RegisterTransitionState(IdleStateInst);
 	AgitatorStateInst->RegisterTransitionState(PrepareToLaunchStateInst);
+	AgitatorStateInst->RegisterTransitionState(ManualLaunchStateInst);
 }
 
 Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANISM_TYPE::LAUNCHER, std::string("Launcher")),
@@ -156,7 +158,8 @@ std::map<std::string, Launcher::STATE_NAMES>
 		{"STATE_EMPTY_HOPPER", Launcher::STATE_NAMES::STATE_EMPTY_HOPPER},
 		{"STATE_CLIMB", Launcher::STATE_NAMES::STATE_CLIMB},
 		{"STATE_LAUNCHER_TUNING", Launcher::STATE_NAMES::STATE_LAUNCHER_TUNING},
-		{"STATE_MANUAL_LAUNCH", Launcher::STATE_NAMES::STATE_MANUAL_LAUNCH}};
+		{"STATE_MANUAL_LAUNCH", Launcher::STATE_NAMES::STATE_MANUAL_LAUNCH},
+		{"STATE_AGITATOR", Launcher::STATE_NAMES::STATE_AGITATOR}};
 
 std::map<Launcher::STATE_NAMES, std::string>
 	Launcher::STATE_NAMESEnumToStringMap{
@@ -168,7 +171,8 @@ std::map<Launcher::STATE_NAMES, std::string>
 		{Launcher::STATE_NAMES::STATE_EMPTY_HOPPER, "STATE_EMPTY_HOPPER"},
 		{Launcher::STATE_NAMES::STATE_CLIMB, "STATE_CLIMB"},
 		{Launcher::STATE_NAMES::STATE_LAUNCHER_TUNING, "STATE_LAUNCHER_TUNING"},
-		{Launcher::STATE_NAMES::STATE_MANUAL_LAUNCH, "STATE_MANUAL_LAUNCH"}};
+		{Launcher::STATE_NAMES::STATE_MANUAL_LAUNCH, "STATE_MANUAL_LAUNCH"},
+		{Launcher::STATE_NAMES::STATE_AGITATOR, "STATE_AGITATOR"}};
 
 void Launcher::CreateCompBot302()
 {
