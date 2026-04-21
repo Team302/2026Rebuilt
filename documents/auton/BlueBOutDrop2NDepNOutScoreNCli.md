@@ -29,11 +29,11 @@ stateDiagram-v2
 
     [*] --> Step1 : "start"
     Step1 --> Step2: "intake=INTAKE | zones=RightBumpZone DRIVE_OVER_BUMP"
-    Step2 --> Step3: "intake=INTAKE | zones=LaunchZone"
-    Step3 --> Step4: "zones=LeftBumpZone DRIVE_OVER_BUMP LaunchZone"
-    Step4 --> Step5: "intake=INTAKE | zones=LeftBumpZone DRIVE_OVER_BUMP LaunchZone"
-    Step5 --> Step6: "intake=INTAKE | zones=LaunchZone"
-    Step6 --> [*]: "intake=INTAKE | zones=RightBumpZone DRIVE_OVER_BUMP LaunchZone"
+    Step2 --> Step3: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step3 --> Step4: "zones=LeftBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
+    Step4 --> Step5: "intake=INTAKE | zones=LeftBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
+    Step5 --> Step6: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step6 --> [*]: "intake=INTAKE | zones=RightBumpZone DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
 ```
 
 ## Primitive Summary
@@ -140,6 +140,6 @@ stateDiagram-v2
 
 | Zone file | Effect when entered |
 |-----------|---------------------|
-| `BlueLaunchZone` | *(no tracked effects)* |
+| `BlueLaunchZone` | `launcherState -> STATE_PREPARE_TO_LAUNCH` |
 | `BlueLeftBumpZone` | `pathUpdateOption = DRIVE_OVER_BUMP` |
 | `BlueRightBumpZone` | `pathUpdateOption = DRIVE_OVER_BUMP` |

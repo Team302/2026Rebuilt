@@ -18,22 +18,25 @@ stateDiagram-v2
     Step3 : "Step 3 - DRIVE_STOP_MECH --"
     Step4 : "Step 4 - TRAJECTORY_DRIVE BlueMLDrop3_C2"
     Step5 : "Step 5 - TRAJECTORY_DRIVE BlueMLDrop3_D"
-    Step6 : "Step 6 - DRIVE_STOP_MECH --"
+    Step6 : "Step 6 - TRAJECTORY_DRIVE BlueMLDrop3_F"
+    Step7 : "Step 7 - DRIVE_STOP_MECH --"
 
     class Step1 intake
     class Step2 noIntake
     class Step3 noIntake
     class Step4 intake
     class Step5 intake
-    class Step6 noIntake
+    class Step6 intake
+    class Step7 noIntake
 
     [*] --> Step1 : "start"
     Step1 --> Step2: "intake=INTAKE"
-    Step2 --> Step3: "zones=LeftBumpZoneRect DRIVE_OVER_BUMP LaunchZone"
+    Step2 --> Step3: "zones=LeftBumpZoneRect DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
     Step3 --> Step4
     Step4 --> Step5: "intake=INTAKE | zones=LeftBumpZone DRIVE_OVER_BUMP"
     Step5 --> Step6: "intake=INTAKE"
-    Step6 --> [*]
+    Step6 --> Step7: "intake=INTAKE | zones=LeftBumpZoneRect DRIVE_OVER_BUMP LaunchZone PREPARE_TO_LAUNCH"
+    Step7 --> [*]
 ```
 
 ## Primitive Summary
@@ -45,7 +48,8 @@ stateDiagram-v2
 | 3 | DRIVE_STOP_MECH | -- | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
 | 4 | TRAJECTORY_DRIVE | [BlueMLDrop3_C2](../../src/main/deploy/choreo/BlueMLDrop3_C2.traj) | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLeftBumpZone |
 | 5 | TRAJECTORY_DRIVE | [BlueMLDrop3_D](../../src/main/deploy/choreo/BlueMLDrop3_D.traj) | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | -- |
-| 6 | DRIVE_STOP_MECH | -- | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
+| 6 | TRAJECTORY_DRIVE | [BlueMLDrop3_F](../../src/main/deploy/choreo/BlueMLDrop3_F.traj) | 5.0 s | STATE_INTAKE | STATE_IDLE | STATE_OFF | BlueLeftBumpZoneRect, BlueLaunchZone |
+| 7 | DRIVE_STOP_MECH | -- | 5.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
 
 ## Trajectory Details
 
@@ -120,10 +124,24 @@ stateDiagram-v2
 | 5 | 7.35 | 6.308 | 123.7 |
 | 6 | 5.91 | 5.745 | 136.6 |
 
+### Step 6 -- BlueMLDrop3_F
+
+- **File:** [`BlueMLDrop3_F.traj`](../../src/main/deploy/choreo/BlueMLDrop3_F.traj)
+- **Duration:** 1.843 s
+- **Timeout in auton XML:** 5.0 s
+- **Colour in overview:** `#ff8800`
+
+<img src="svg/traj/BlueBDepKeep3NDepNOutScoreNCliWin_step6_BlueMLDrop3_F.svg" alt="Trajectory BlueMLDrop3_F" width="900"/>
+
+| # | X (m) | Y (m) | Heading (deg) |
+|---|-------|-------|---------------|
+| 1 | 5.813 | 5.631 | 135.0 |
+| 2 | 3.268 | 5.631 | 135.0 |
+
 ## Zone Legend
 
 | Zone file | Effect when entered |
 |-----------|---------------------|
-| `BlueLaunchZone` | *(no tracked effects)* |
+| `BlueLaunchZone` | `launcherState -> STATE_PREPARE_TO_LAUNCH` |
 | `BlueLeftBumpZone` | `pathUpdateOption = DRIVE_OVER_BUMP` |
 | `BlueLeftBumpZoneRect` | `pathUpdateOption = DRIVE_OVER_BUMP` |

@@ -60,6 +60,11 @@
   <rect x="218.7" y="189.0" width="65.3" height="65.3" fill="#1a3a8a" fill-opacity="0.55" stroke="#0d2060" stroke-width="1.5"/>
   <rect x="219.7" y="191.0" width="61.0" height="10" rx="2" fill="#000000" fill-opacity="0.55"/>
   <text x="222.7" y="199.0" text-anchor="start" dominant-baseline="auto" font-size="9" fill="#ffffff" font-family="monospace">HubElement</text>
+  <rect x="0.0" y="0.0" width="218.7" height="442.9" fill="#1a3a8a" fill-opacity="0.55" stroke="#0d2060" stroke-width="1.5"/>
+  <rect x="1.0" y="2.0" width="61.0" height="10" rx="2" fill="#000000" fill-opacity="0.55"/>
+  <text x="4.0" y="10.0" text-anchor="start" dominant-baseline="auto" font-size="9" fill="#ffffff" font-family="monospace">LaunchZone</text>
+  <rect x="1.0" y="13.0" width="82.5" height="10" rx="2" fill="#000000" fill-opacity="0.55"/>
+  <text x="4.0" y="21.0" text-anchor="start" dominant-baseline="auto" font-size="7" fill="#c00040" font-family="monospace">PREPARE TO LAUNCH</text>
   <circle cx="251.5" cy="136.1" r="38.3" fill="#2a6a2a" fill-opacity="0.55" stroke="#1a4a1a" stroke-width="1.5"/>
   <rect x="215.5" y="99.9" width="72.0" height="10" rx="2" fill="#000000" fill-opacity="0.55"/>
   <text x="251.5" y="107.9" text-anchor="middle" dominant-baseline="auto" font-size="9" fill="#ffffff" font-family="monospace">LeftBumpZone</text>
