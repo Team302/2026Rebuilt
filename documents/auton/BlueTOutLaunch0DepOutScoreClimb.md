@@ -22,9 +22,9 @@ stateDiagram-v2
     class Step3 noIntake
 
     [*] --> Step1 : "start"
-    Step1 --> Step2: "intake=INTAKE | zones=LaunchZone OutpostZone DRIVE_TO_OUTPOST"
-    Step2 --> Step3: "intake=INTAKE | zones=LaunchZone DepotZone DRIVE_TO_DEPOT"
-    Step3 --> [*]: "zones=LaunchZone"
+    Step1 --> Step2: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH OutpostZone DRIVE_TO_OUTPOST"
+    Step2 --> Step3: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH DepotZone DRIVE_TO_DEPOT"
+    Step3 --> [*]: "zones=LaunchZone PREPARE_TO_LAUNCH"
 ```
 
 ## Primitive Summary
@@ -76,5 +76,5 @@ stateDiagram-v2
 | Zone file | Effect when entered |
 |-----------|---------------------|
 | `BlueDepotZone` | `pathUpdateOption = DRIVE_TO_DEPOT` |
-| `BlueLaunchZone` | *(no tracked effects)* |
+| `BlueLaunchZone` | `launcherState -> STATE_PREPARE_TO_LAUNCH` |
 | `BlueOutpostZone` | `pathUpdateOption = DRIVE_TO_OUTPOST` |
