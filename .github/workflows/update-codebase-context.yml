@@ -53,7 +53,7 @@ jobs:
           # ── Build human-readable changed-file list ────────────────────────────
           CHANGED_LIST=""
           DELETED_LIST=""
-          while IFS='' read -r status path1 path2; do
+          while IFS=$'\t' read -r status path1 path2; do
             [ -z "$status" ] && continue
             case "$status" in
               D*) CHANGED_LIST="${CHANGED_LIST}    🗑️ \`${path1}\` (deleted)"$'\n'
