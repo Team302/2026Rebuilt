@@ -89,10 +89,6 @@ bool RebuiltTargetCalculator::ValidateAlliance()
 
     auto currentAlliance = FMSData::GetAllianceColor();
 
-    bool isBlue = currentAlliance == frc::DriverStation::Alliance::kBlue;
-    m_passingOutpostTargetYOffset = isBlue ? -m_passingOutpostTargetYOffset : m_passingOutpostTargetYOffset;
-    m_passingDepotTargetYOffset = isBlue ? -m_passingDepotTargetYOffset : m_passingDepotTargetYOffset;
-
     if (currentAlliance != m_cachedAlliance)
     {
         m_cachedAlliance = currentAlliance;
@@ -366,7 +362,7 @@ units::time::second_t RebuiltTargetCalculator::GetLookAheadTime()
     units::length::inch_t distance = CalculateMechanismDistanceToTarget(0_s);
     auto lookAheadtime = InterpolateUtils::linearInterpolate(m_LookAheadDistances, m_LookAheadTimes, distance);
 
-    return lookAheadtime;
+    return (lookAheadtime + m_lookAheadTimeOffset);
 }
 
 /**

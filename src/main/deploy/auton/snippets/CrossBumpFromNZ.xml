@@ -10,4 +10,4 @@ intakeState = "STATE_INTAKE">
 <zone filename = "BlueLaunchZone.xml"/>
 </primitive>
 
-<auton/>
+</auton>

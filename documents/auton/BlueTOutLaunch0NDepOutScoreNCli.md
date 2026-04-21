@@ -20,8 +20,8 @@ stateDiagram-v2
     class Step2 noIntake
 
     [*] --> Step1 : "start"
-    Step1 --> Step2: "intake=INTAKE | zones=LaunchZone"
-    Step2 --> [*]: "zones=LaunchZone"
+    Step1 --> Step2: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step2 --> [*]: "zones=LaunchZone PREPARE_TO_LAUNCH"
 ```
 
 ## Primitive Summary
@@ -56,4 +56,4 @@ stateDiagram-v2
 
 | Zone file | Effect when entered |
 |-----------|---------------------|
-| `BlueLaunchZone` | *(no tracked effects)* |
+| `BlueLaunchZone` | `launcherState -> STATE_PREPARE_TO_LAUNCH` |

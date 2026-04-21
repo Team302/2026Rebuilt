@@ -23,7 +23,7 @@ stateDiagram-v2
 
     [*] --> Step1 : "start"
     Step1 --> Step2: "intake=INTAKE"
-    Step2 --> Step3: "intake=INTAKE | zones=LaunchZone OutpostZone DRIVE_TO_OUTPOST"
+    Step2 --> Step3: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH OutpostZone DRIVE_TO_OUTPOST"
     Step3 --> [*]
 ```
 
@@ -76,5 +76,5 @@ stateDiagram-v2
 
 | Zone file | Effect when entered |
 |-----------|---------------------|
-| `BlueLaunchZone` | *(no tracked effects)* |
+| `BlueLaunchZone` | `launcherState -> STATE_PREPARE_TO_LAUNCH` |
 | `BlueOutpostZone` | `pathUpdateOption = DRIVE_TO_OUTPOST` |

@@ -96,5 +96,5 @@ bool IdleState::IsTransitionCondition(bool considerGamepadTransitions)
 		   (launchingDone) ||
 		   (!m_mechanism->IsIntakingMode() && m_mechanism->GetCurrentState() == Launcher::STATE_AGITATOR) ||
 		   (!m_mechanism->IsInClimbMode() && (m_mechanism->GetCurrentState() == Launcher::STATE_CLIMB || m_mechanism->GetCurrentState() == Launcher::STATE_EMPTY_HOPPER)) ||
-		   (frc::DriverStation::IsAutonomous() && m_mechanism->IsFinishedLaunching());
+		   (frc::DriverStation::IsAutonomous() && m_mechanism->IsFinishedLaunching() && (m_mechanism->GetCurrentState() == Launcher::STATE_LAUNCH));
 }

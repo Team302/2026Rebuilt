@@ -24,9 +24,9 @@ stateDiagram-v2
     class Step4 noIntake
 
     [*] --> Step1 : "start"
-    Step1 --> Step2: "intake=INTAKE | zones=LaunchZone"
-    Step2 --> Step3: "intake=INTAKE | zones=LaunchZone OutpostZone DRIVE_TO_OUTPOST"
-    Step3 --> Step4: "intake=INTAKE | zones=LaunchZone"
+    Step1 --> Step2: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
+    Step2 --> Step3: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH OutpostZone DRIVE_TO_OUTPOST"
+    Step3 --> Step4: "intake=INTAKE | zones=LaunchZone PREPARE_TO_LAUNCH"
     Step4 --> [*]: "zones=ClimbingZone DRIVE_TO_TOWER"
 ```
 
@@ -94,5 +94,5 @@ stateDiagram-v2
 | Zone file | Effect when entered |
 |-----------|---------------------|
 | `BlueClimbingZone` | `pathUpdateOption = DRIVE_TO_TOWER` |
-| `BlueLaunchZone` | *(no tracked effects)* |
+| `BlueLaunchZone` | `launcherState -> STATE_PREPARE_TO_LAUNCH` |
 | `BlueOutpostZone` | `pathUpdateOption = DRIVE_TO_OUTPOST` |

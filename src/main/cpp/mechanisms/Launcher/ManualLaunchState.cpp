@@ -52,10 +52,10 @@ void ManualLaunchState::Init()
 
 void ManualLaunchState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
-	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
-	m_mechanism->UpdateTargetSpindexerPercentOut(m_spindexerTarget);
-	m_mechanism->UpdateTargetTurretPositionDegreesTurret(m_turretTarget);
+	m_mechanism->UpdateTargetTransferVelocityRPS(m_transferTarget);
+	m_mechanism->UpdateTargetIndexerVelocityRPS(m_indexerTarget);
+	m_mechanism->UpdateTargetSpindexerVelocityRPS(m_spindexerTarget);
+	m_mechanism->UpdateTargetTurretPercentOut(m_turretTarget);
 	m_mechanism->UpdateTargetHoodPositionDegreesHood(m_hoodTarget);
 	m_mechanism->UpdateTargetLauncherVelocityRPS(m_launcherTarget);
 }

@@ -2,4 +2,20 @@
 <!DOCTYPE auton SYSTEM "auton.dtd">
 <auton>
 
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "NewPath"
+time = "3.0">
+</primitive>
+
+<primitive id = "DO_NOTHING"
+launcherState = "STATE_PREPARE_TO_LAUNCH"
+intakeState = "STATE_FORCE_INTAKE_AUTON"
+time = "10.0"/>
+
+<primitive id = "DRIVE_STOP_MECH"
+launcherState = "STATE_PREPARE_TO_LAUNCH"
+time = "10.0"/>
+
+
 </auton>

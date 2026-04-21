@@ -16,6 +16,7 @@
 
 #include "chassis/ChassisConfigMgr.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "utils/logging/signals/DragonDataLogger.h"
 
 #include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Translation2d.h>
@@ -35,7 +36,7 @@
  * Subclasses should override GetTargetPosition() to define their specific target locations
  * and provide season-specific target selection logic.
  */
-class TargetCalculator
+class TargetCalculator : public DragonDataLogger
 {
 public:
     /**
@@ -131,6 +132,8 @@ public:
 
     void ForceUpdateChassisPose() { UpdateChassisPose(true); }
 
+    void DataLog(uint64_t timestamp) override;
+
 protected:
     TargetCalculator();
     ~TargetCalculator() = default;
@@ -190,7 +193,9 @@ private:
     CalculateRotationalMechDelta(units::time::second_t lookaheadTime) const;
 
     // Cached calculation results to avoid recalculation when pose hasn't changed
-    units::meter_t m_cachedDistanceToTarget = 0_m;
-    units::meter_t m_cachedMechanismDistanceToTarget = 0_m;
-    units::degree_t m_cachedMechanismAngleToTarget = 0_deg;
+    units::meter_t m_cachedDistanceToTarget{0};
+    units::meter_t m_cachedMechanismDistanceToTarget{0};
+    units::degree_t m_cachedMechanismAngleToTarget{0};
+
+    static constexpr std::string_view m_distanceToTargetPath = "/Launcher/DistanceToTarget";
 };

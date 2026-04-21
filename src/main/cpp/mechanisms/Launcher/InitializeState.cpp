@@ -48,6 +48,7 @@ void InitializeState::Init()
 		InitCompBot302();
 
 	m_mechanism->PublishLaunchMode(false);
+	m_mechanism->TurretHasReset(false);
 }
 
 void InitializeState::InitCompBot302()
