@@ -52,10 +52,10 @@ private:
     static constexpr units::length::inch_t m_yDistanceDepotOffsetRight{66.31};
     static constexpr units::length::inch_t m_zDistanceDepotOffsetRight{-21.75};
     static constexpr units::length::inch_t m_depotPassingTargetXOffset{40.0};
-    static constexpr units::length::inch_t m_depotPassingTargetYOffset{265.0};
+    static constexpr units::length::inch_t m_depotPassingTargetYOffset{220.0};
     static constexpr units::length::inch_t m_depotPassingTargetZOffset{-21.75};
     static constexpr units::length::inch_t m_outpostPassingTargetXOffset{40.0};
-    static constexpr units::length::inch_t m_outpostPassingTargetYOffset{0.0};
+    static constexpr units::length::inch_t m_outpostPassingTargetYOffset{40.0};
     static constexpr units::length::inch_t m_outpostPassingTargetZOffset{-21.75};
     static constexpr units::length::inch_t m_xNoOffset{0.0};
     static constexpr units::length::inch_t m_yNoOffset{0.0};
@@ -142,5 +142,4 @@ private:
 
     robin_hood::unordered_map<FieldConstants::FIELD_ELEMENT, TransformToPose> m_transformCalculatedMap;
     robin_hood::unordered_map<FieldConstants::FIELD_ELEMENT, TransformToPose> m_transformTagsMap;
-
 };

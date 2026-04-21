@@ -114,6 +114,7 @@ Intake::Intake(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANI
 	PeriodicLooper::GetInstance()->RegisterAll(this);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsLaunching_Bool);
+	m_extenderPositionDeg.EnableFOC = true;
 }
 
 std::map<std::string, Intake::STATE_NAMES>
@@ -436,16 +437,19 @@ void Intake::ManualControl()
 	TeleopControl *controller = TeleopControl::GetInstance();
 	if (controller != nullptr && frc::DriverStation::IsTeleop())
 	{
-		double manualExtenderPercent = m_percentModifier * (TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN));
+		double manualExtenderPercent = m_percentModifier * (TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_IN) - TeleopControl::GetInstance()->GetAxisValue(TeleopControlFunctions::MANUAL_INTAKE_OUT));
 		if (std::abs(manualExtenderPercent) > 0.05)
 		{
-			UpdateTargetExtenderPercentOut(-manualExtenderPercent);
+			if ((m_cachedExtenderPositionDeg > m_protectExtenderPositionDegUp) && manualExtenderPercent > 0.0)
+				UpdateTargetExtenderPercentOut(0.0);
+			else
+				UpdateTargetExtenderPercentOut(manualExtenderPercent);
 		}
 		else
 		{
 			if (GetCurrentState() == STATE_INTAKE || GetCurrentState() == STATE_EXPEL || GetCurrentState() == STATE_LAUNCH)
 			{
-				if (m_cachedExtenderPositionDeg < m_protectExtenderPositionDeg)
+				if (m_cachedExtenderPositionDeg < m_protectExtenderPositionDegDown)
 				{
 					UpdateTargetExtenderPercentOut(0.0);
 				}

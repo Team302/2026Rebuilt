@@ -125,6 +125,8 @@ public:
     void UpdateTargetOffset();
     bool IsValidTurretAngle() { return m_hasFoundValidAngle; }
 
+    units::length::inch_t GetLauncherDistanceToTarget() { return CalculateMechanismDistanceToTarget(GetLookAheadTime()); }
+
 private:
     /**
      * \brief Check if alliance has changed and refresh cache if necessary
@@ -346,13 +348,13 @@ private:
     units::length::inch_t m_passingDepotTargetXOffset{0_in};
 
     /// Y-axis offset for depot passing target in inches
-    units::length::inch_t m_passingDepotTargetYOffset{30_in};
+    units::length::inch_t m_passingDepotTargetYOffset{0_in};
 
     /// X-axis offset for outpost passing target in inches
     units::length::inch_t m_passingOutpostTargetXOffset{0_in};
 
     /// Y-axis offset for outpost passing target in inches
-    units::length::inch_t m_passingOutpostTargetYOffset{-30_in};
+    units::length::inch_t m_passingOutpostTargetYOffset{0_in};
 
     /// @}
 
@@ -382,5 +384,7 @@ private:
 
     /// Cached launcher target angle from last calculation (in turns)
     units::angle::turn_t m_cachedLauncherTarget{0_tr};
+
+    static constexpr units::time::second_t m_lookAheadTimeOffset{0.0};
     /// @}
 };
