@@ -2,7 +2,6 @@
 <!DOCTYPE auton SYSTEM "auton.dtd">
 <auton>
 
-<auton>
 <zone
 x1_rect = "0.00"
 y1_rect = "0.00"
