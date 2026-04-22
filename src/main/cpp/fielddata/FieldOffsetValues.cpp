@@ -200,10 +200,15 @@ FieldOffsetValues::FieldOffsetValues()
         m_redNeutralSweep2X = m_redNeutralSweep1X - SWEEP_LANE_WIDTH;
         m_redNeutralSweep3X = m_redNeutralSweep2X - SWEEP_LANE_WIDTH - SWEEP_MIDDLE_EXTRA;
 
-        m_redDepotTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y() + ALONG_WALL_BETWEEN_TRENCHES_Y_OFFSET;
-        m_redOutpostTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y() - ALONG_WALL_BETWEEN_TRENCHES_Y_OFFSET;
-        m_blueDepotTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y() - ALONG_WALL_BETWEEN_TRENCHES_Y_OFFSET;
-        m_blueOutpostTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y() + ALONG_WALL_BETWEEN_TRENCHES_Y_OFFSET;
+        const auto alongWallBetweenTrenchesYOffsetMagnitude =
+            (ALONG_WALL_BETWEEN_TRENCHES_Y_OFFSET < units::length::meter_t{0.0})
+                ? -ALONG_WALL_BETWEEN_TRENCHES_Y_OFFSET
+                : ALONG_WALL_BETWEEN_TRENCHES_Y_OFFSET;
+
+        m_redDepotTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y() - alongWallBetweenTrenchesYOffsetMagnitude;
+        m_redOutpostTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y() + alongWallBetweenTrenchesYOffsetMagnitude;
+        m_blueDepotTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y() + alongWallBetweenTrenchesYOffsetMagnitude;
+        m_blueOutpostTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y() - alongWallBetweenTrenchesYOffsetMagnitude;
     }
     else
     {
