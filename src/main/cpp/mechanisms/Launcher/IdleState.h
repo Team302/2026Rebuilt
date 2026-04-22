@@ -53,11 +53,7 @@ namespace LauncherStates
 		const units::angle::turn_t m_turretTarget{0.0};
 		const double m_indexerTarget{0.0};
 		const double m_spindexerTarget{0.0};
-		units::angle::degree_t m_minSpindexerTarget;
-		units::angle::degree_t m_maxSpindexerTarget;
-		static constexpr units::angle::degree_t m_spindexerTargetAng{30};
 		frc::Timer *m_Timer;
 		static constexpr units::time::second_t m_launchTimer{0.25};
-		bool m_minReached = false;
 	};
 }

@@ -214,6 +214,7 @@ void DriverFeedback::UpdateLEDStates()
             case Launcher::STATE_CLIMB:
             case Launcher::STATE_EMPTY_HOPPER:
             case Launcher::STATE_LAUNCHER_TUNING:
+            case Launcher::STATE_AGITATOR:
             case Launcher::STATE_MANUAL_LAUNCH:
                 desiredPrimaryColor = frc::Color::kGreen;
                 desiredAnimation = DragonCANdle::AnimationMode::SOLID;

@@ -31,6 +31,7 @@
 #include "ctre/phoenix6/TalonFXS.hpp"
 #include "ctre/phoenix6/configs/Configuration.hpp"
 #include "ctre/phoenix6/controls/Follower.hpp"
+#include "mechanisms/Launcher/AgitatorState.h"
 #include "mechanisms/Launcher/ClimbState.h"
 #include "mechanisms/Launcher/EmptyHopperState.h"
 #include "mechanisms/Launcher/IdleState.h"
@@ -94,6 +95,9 @@ void Launcher::CreateAndRegisterStates()
 	ManualLaunchState *ManualLaunchStateInst = new ManualLaunchState(string("ManualLaunch"), 8, this, m_activeRobotId);
 	AddToStateVector(ManualLaunchStateInst);
 
+	AgitatorState *AgitatorStateInst = new AgitatorState(string("Agitator"), 9, this, m_activeRobotId);
+	AddToStateVector(AgitatorStateInst);
+
 	OffStateInst->RegisterTransitionState(InitializeStateInst);
 	InitializeStateInst->RegisterTransitionState(IdleStateInst);
 	IdleStateInst->RegisterTransitionState(OffStateInst);
@@ -102,6 +106,7 @@ void Launcher::CreateAndRegisterStates()
 	IdleStateInst->RegisterTransitionState(ClimbStateInst);
 	IdleStateInst->RegisterTransitionState(LauncherTuningStateInst);
 	IdleStateInst->RegisterTransitionState(ManualLaunchStateInst);
+	IdleStateInst->RegisterTransitionState(AgitatorStateInst);
 	PrepareToLaunchStateInst->RegisterTransitionState(OffStateInst);
 	PrepareToLaunchStateInst->RegisterTransitionState(IdleStateInst);
 	PrepareToLaunchStateInst->RegisterTransitionState(LaunchStateInst);
@@ -120,6 +125,10 @@ void Launcher::CreateAndRegisterStates()
 	LauncherTuningStateInst->RegisterTransitionState(LaunchStateInst);
 	ManualLaunchStateInst->RegisterTransitionState(OffStateInst);
 	ManualLaunchStateInst->RegisterTransitionState(IdleStateInst);
+	AgitatorStateInst->RegisterTransitionState(OffStateInst);
+	AgitatorStateInst->RegisterTransitionState(IdleStateInst);
+	AgitatorStateInst->RegisterTransitionState(PrepareToLaunchStateInst);
+	AgitatorStateInst->RegisterTransitionState(ManualLaunchStateInst);
 }
 
 Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANISM_TYPE::LAUNCHER, std::string("Launcher")),
@@ -131,6 +140,7 @@ Launcher::Launcher(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MEC
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::AllowedToClimbStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::HubActive_Bool);
+	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsIntaking_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::StartLaunching_Bool);
 	RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::TurretEnabled_Bool, m_turretEnabled);
 	m_targetCalculator = RebuiltTargetCalculator::GetInstance();
@@ -154,7 +164,8 @@ std::map<std::string, Launcher::STATE_NAMES>
 		{"STATE_EMPTY_HOPPER", Launcher::STATE_NAMES::STATE_EMPTY_HOPPER},
 		{"STATE_CLIMB", Launcher::STATE_NAMES::STATE_CLIMB},
 		{"STATE_LAUNCHER_TUNING", Launcher::STATE_NAMES::STATE_LAUNCHER_TUNING},
-		{"STATE_MANUAL_LAUNCH", Launcher::STATE_NAMES::STATE_MANUAL_LAUNCH}};
+		{"STATE_MANUAL_LAUNCH", Launcher::STATE_NAMES::STATE_MANUAL_LAUNCH},
+		{"STATE_AGITATOR", Launcher::STATE_NAMES::STATE_AGITATOR}};
 
 std::map<Launcher::STATE_NAMES, std::string>
 	Launcher::STATE_NAMESEnumToStringMap{
@@ -166,7 +177,8 @@ std::map<Launcher::STATE_NAMES, std::string>
 		{Launcher::STATE_NAMES::STATE_EMPTY_HOPPER, "STATE_EMPTY_HOPPER"},
 		{Launcher::STATE_NAMES::STATE_CLIMB, "STATE_CLIMB"},
 		{Launcher::STATE_NAMES::STATE_LAUNCHER_TUNING, "STATE_LAUNCHER_TUNING"},
-		{Launcher::STATE_NAMES::STATE_MANUAL_LAUNCH, "STATE_MANUAL_LAUNCH"}};
+		{Launcher::STATE_NAMES::STATE_MANUAL_LAUNCH, "STATE_MANUAL_LAUNCH"},
+		{Launcher::STATE_NAMES::STATE_AGITATOR, "STATE_AGITATOR"}};
 
 void Launcher::CreateCompBot302()
 {
@@ -945,6 +957,10 @@ void Launcher::NotifyStateUpdate(RobotStateChanges::StateChange statechange, boo
 	{
 		m_startLaunching = value;
 	}
+	else if (statechange == RobotStateChanges::StateChange::IsIntaking_Bool)
+	{
+		m_isIntaking = value;
+	}
 }
 
 bool Launcher::IsLauncherAtTarget()
@@ -1155,4 +1171,25 @@ void Launcher::UpdateCachedLoggingValues()
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_cachedLauncherSpeedError", m_cachedLauncherSpeedError);
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_cachedinLaunchzone", m_cachedinLaunchzone);
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_targetTurretAngle", turretAtTarget);
+}
+void Launcher::AgitateSpindexer()
+{
+	auto currentSpindexerPosition = m_spindexer->GetPosition().GetValue();
+
+	UpdateTargetSpindexerPositionTurns(m_minReached ? m_maxSpindexerTarget : m_minSpindexerTarget);
+
+	if (currentSpindexerPosition <= m_minSpindexerTarget)
+	{
+		m_minReached = true;
+	}
+	else if (currentSpindexerPosition >= m_maxSpindexerTarget)
+	{
+		m_minReached = false;
+	}
+}
+void Launcher::InitializeSpindexerTargets()
+{
+	m_maxSpindexerTarget = m_spindexer->GetPosition().GetValue();
+	m_minSpindexerTarget = m_maxSpindexerTarget - m_spindexerTargetAng;
+	m_minReached = false;
 }

@@ -43,7 +43,6 @@
 #include "auton/AllianceZoneManager.h"
 #include "auton/DeadZoneManager.h"
 #include "utils/RebuiltTargetCalculator.h"
-
 class Launcher : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger
 {
 public:
@@ -57,7 +56,8 @@ public:
 		STATE_EMPTY_HOPPER,
 		STATE_CLIMB,
 		STATE_LAUNCHER_TUNING,
-		STATE_MANUAL_LAUNCH
+		STATE_MANUAL_LAUNCH,
+		STATE_AGITATOR
 	};
 
 	Launcher(RobotIdentifier activeRobotId);
@@ -189,6 +189,7 @@ public:
 	bool IsLauncherInitialized() const { return m_launcherInitialized; }
 	void SetLauncherInitialized(bool initialized) { m_launcherInitialized = initialized; }
 	bool IsTuningLauncherMode() const { return m_tuningLauncher; }
+	bool IsIntakingMode() const { return m_isIntaking; };
 	void UpdateLauncherTargets();
 	void InitilaizeLauncher();
 	void SetLauncherProtect();
@@ -203,6 +204,8 @@ public:
 		m_launchCurrentTimer.Stop();
 		m_launchCurrentTimer.Reset();
 	}
+	void AgitateSpindexer();
+	void InitializeSpindexerTargets();
 	void TurretHasReset(bool turretHasReset) { m_turretHasReset = turretHasReset; }
 
 protected:
@@ -267,6 +270,7 @@ private:
 	bool m_isAllowedToClimb = false;
 	bool m_isHubActive = false;
 	bool m_startLaunching = false;
+	bool m_isIntaking = false;
 
 	units::angle::degree_t m_targetTurretAngle = 90.0_deg;
 	units::angular_velocity::revolutions_per_minute_t m_targetLauncherAngularVelocity = 0.0_rpm;
@@ -344,4 +348,10 @@ private:
 	bool m_turretHasReset = false;
 	AllianceZoneManager *m_allianceZoneManager;
 	DeadZoneManager *m_deadZoneManager;
+
+	// Agitate Spindexer
+	units::angle::degree_t m_minSpindexerTarget;
+	units::angle::degree_t m_maxSpindexerTarget;
+	bool m_minReached;
+	static constexpr units::angle::degree_t m_spindexerTargetAng{30};
 };
