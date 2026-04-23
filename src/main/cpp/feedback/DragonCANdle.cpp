@@ -214,68 +214,108 @@ void DragonCANdle::UpdateDiagnostics()
     // Alliance
     if (m_firstRun)
     {
-        m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{m_alliance == frc::DriverStation::Alliance::kRed ? frc::Color::kRed : frc::Color::kBlue}));
-        m_candle->SetControl(controls::SolidColor{1, 1}.WithColor(RGBWColor{m_questOK ? frc::Color::kGreen : frc::Color::kRed}));
-        m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{m_limeLight ? frc::Color::kGreen : frc::Color::kRed}));
-        m_candle->SetControl(controls::SolidColor{3, 3}.WithColor(RGBWColor{m_dataLoggerOK ? frc::Color::kGreen : frc::Color::kRed}));
-        m_candle->SetControl(controls::SolidColor{4, 4}.WithColor(RGBWColor{m_intake ? frc::Color::kYellow : frc::Color::kBlack}));
-        m_candle->SetControl(controls::SolidColor{5, 5}.WithColor(RGBWColor{m_hood ? frc::Color::kBlack : frc::Color::kYellow}));
-        m_candle->SetControl(controls::SolidColor{6, 6}.WithColor(RGBWColor{m_turretZero ? frc::Color::kBlack : frc::Color::kYellow}));
-        m_candle->SetControl(controls::SolidColor{7, 7}.WithColor(RGBWColor{m_turretEnd ? frc::Color::kBlack : frc::Color::kYellow}));
+        frc::Color allianceColor = (m_alliance == frc::DriverStation::Alliance::kRed) ? frc::Color::kRed : frc::Color::kBlue;
+        frc::Color questColor    = m_questOK      ? frc::Color::kGreen  : frc::Color::kRed;
+        frc::Color llColor       = m_limeLight    ? frc::Color::kGreen  : frc::Color::kRed;
+        frc::Color loggerColor   = m_dataLoggerOK ? frc::Color::kGreen  : frc::Color::kRed;
+        frc::Color intakeColor   = m_intake       ? frc::Color::kYellow : frc::Color::kBlack;
+        frc::Color hoodColor     = m_hood         ? frc::Color::kBlack  : frc::Color::kYellow;
+        frc::Color turretZColor  = m_turretZero   ? frc::Color::kBlack  : frc::Color::kYellow;
+        frc::Color turretEColor  = m_turretEnd    ? frc::Color::kBlack  : frc::Color::kYellow;
+
+        // Onboard LEDs (0–7)
+        m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{allianceColor}));
+        m_candle->SetControl(controls::SolidColor{1, 1}.WithColor(RGBWColor{questColor}));
+        m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{llColor}));
+        m_candle->SetControl(controls::SolidColor{3, 3}.WithColor(RGBWColor{loggerColor}));
+        m_candle->SetControl(controls::SolidColor{4, 4}.WithColor(RGBWColor{intakeColor}));
+        m_candle->SetControl(controls::SolidColor{5, 5}.WithColor(RGBWColor{hoodColor}));
+        m_candle->SetControl(controls::SolidColor{6, 6}.WithColor(RGBWColor{turretZColor}));
+        m_candle->SetControl(controls::SolidColor{7, 7}.WithColor(RGBWColor{turretEColor}));
+
+        // External LEDs — 8 channels × 2 LEDs each (indices 9–16, 8 is MIA)
+        m_candle->SetControl(controls::SolidColor{ 9,  9}.WithColor(RGBWColor{allianceColor}));
+        m_candle->SetControl(controls::SolidColor{10, 10}.WithColor(RGBWColor{questColor}));
+        m_candle->SetControl(controls::SolidColor{11, 11}.WithColor(RGBWColor{llColor}));
+        m_candle->SetControl(controls::SolidColor{12, 12}.WithColor(RGBWColor{loggerColor}));
+        m_candle->SetControl(controls::SolidColor{13, 13}.WithColor(RGBWColor{intakeColor}));
+        m_candle->SetControl(controls::SolidColor{14, 14}.WithColor(RGBWColor{hoodColor}));
+        m_candle->SetControl(controls::SolidColor{15, 15}.WithColor(RGBWColor{turretZColor}));
+        m_candle->SetControl(controls::SolidColor{16, 16}.WithColor(RGBWColor{turretEColor}));
+
         m_firstRun = false;
     }
     else
     {
-
+        // Alliance color
         if (m_alliance != m_prevAlliance)
         {
-            m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{m_alliance == frc::DriverStation::Alliance::kRed ? frc::Color::kRed : frc::Color::kBlue}));
+            frc::Color c = (m_alliance == frc::DriverStation::Alliance::kRed) ? frc::Color::kRed : frc::Color::kBlue;
+            m_candle->SetControl(controls::SolidColor{0, 0}.WithColor(RGBWColor{c}));
+            m_candle->SetControl(controls::SolidColor{ 9,  9}.WithColor(RGBWColor{c}));
             m_prevAlliance = m_alliance;
         }
 
         // Quest
         if (m_questOK != m_prevQuestOK)
         {
-            m_candle->SetControl(controls::SolidColor{1, 1}.WithColor(RGBWColor{m_questOK ? frc::Color::kGreen : frc::Color::kRed}));
+            frc::Color c = m_questOK ? frc::Color::kGreen : frc::Color::kRed;
+            m_candle->SetControl(controls::SolidColor{ 1,  1}.WithColor(RGBWColor{c}));
+            m_candle->SetControl(controls::SolidColor{10, 10}.WithColor(RGBWColor{c}));
             m_prevQuestOK = m_questOK;
         }
 
-        // Limelights (aggregated)
+        // Limelight
         if (m_limeLight != m_prevLimeLight)
         {
-            m_candle->SetControl(controls::SolidColor{2, 2}.WithColor(RGBWColor{m_limeLight ? frc::Color::kGreen : frc::Color::kRed}));
+            frc::Color c = m_limeLight ? frc::Color::kGreen : frc::Color::kRed;
+            m_candle->SetControl(controls::SolidColor{ 2,  2}.WithColor(RGBWColor{c}));
+            m_candle->SetControl(controls::SolidColor{11, 11}.WithColor(RGBWColor{c}));
             m_prevLimeLight = m_limeLight;
         }
 
         // Data Logger
         if (m_dataLoggerOK != m_prevDataLoggerOK)
         {
-            m_candle->SetControl(controls::SolidColor{3, 3}.WithColor(RGBWColor{m_dataLoggerOK ? frc::Color::kGreen : frc::Color::kRed}));
+            frc::Color c = m_dataLoggerOK ? frc::Color::kGreen : frc::Color::kRed;
+            m_candle->SetControl(controls::SolidColor{ 3,  3}.WithColor(RGBWColor{c}));
+            m_candle->SetControl(controls::SolidColor{12, 12}.WithColor(RGBWColor{c}));
             m_prevDataLoggerOK = m_dataLoggerOK;
         }
 
-        // Sensors - show yellow when triggered, black when not
+        // Intake sensor
         if (m_intake != m_prevIntake)
         {
-            m_candle->SetControl(controls::SolidColor{4, 4}.WithColor(RGBWColor{m_intake ? frc::Color::kYellow : frc::Color::kBlack}));
+            frc::Color c = m_intake ? frc::Color::kYellow : frc::Color::kBlack;
+            m_candle->SetControl(controls::SolidColor{ 4,  4}.WithColor(RGBWColor{c}));
+            m_candle->SetControl(controls::SolidColor{13, 13}.WithColor(RGBWColor{c}));
             m_prevIntake = m_intake;
         }
 
+        // Hood switch
         if (m_hood != m_prevHood)
         {
-            m_candle->SetControl(controls::SolidColor{5, 5}.WithColor(RGBWColor{m_hood ? frc::Color::kBlack : frc::Color::kYellow}));
+            frc::Color c = m_hood ? frc::Color::kBlack : frc::Color::kYellow;
+            m_candle->SetControl(controls::SolidColor{ 5,  5}.WithColor(RGBWColor{c}));
+            m_candle->SetControl(controls::SolidColor{14, 14}.WithColor(RGBWColor{c}));
             m_prevHood = m_hood;
         }
 
+        // Turret zero
         if (m_turretZero != m_prevTurretZero)
         {
-            m_candle->SetControl(controls::SolidColor{6, 6}.WithColor(RGBWColor{m_turretZero ? frc::Color::kBlack : frc::Color::kYellow}));
+            frc::Color c = m_turretZero ? frc::Color::kBlack : frc::Color::kYellow;
+            m_candle->SetControl(controls::SolidColor{ 6,  6}.WithColor(RGBWColor{c}));
+            m_candle->SetControl(controls::SolidColor{15, 15}.WithColor(RGBWColor{c}));
             m_prevTurretZero = m_turretZero;
         }
 
+        // Turret end
         if (m_turretEnd != m_prevTurretEnd)
         {
-            m_candle->SetControl(controls::SolidColor{7, 7}.WithColor(RGBWColor{m_turretEnd ? frc::Color::kBlack : frc::Color::kYellow}));
+            frc::Color c = m_turretEnd ? frc::Color::kBlack : frc::Color::kYellow;
+            m_candle->SetControl(controls::SolidColor{ 7,  7}.WithColor(RGBWColor{c}));
+            m_candle->SetControl(controls::SolidColor{16, 16}.WithColor(RGBWColor{c}));
             m_prevTurretEnd = m_turretEnd;
         }
     }

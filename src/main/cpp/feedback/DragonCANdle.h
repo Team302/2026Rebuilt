@@ -82,7 +82,7 @@ private:
 	// LED Layout
 	static constexpr int m_onboardStart = 0;
 	static constexpr int m_onboardCount = 8;
-	static constexpr int m_externalStart = 8;
+	static constexpr int m_externalStart = 17;
 	int m_externalCount{0};
 
 	// Diagnostic State
