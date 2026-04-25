@@ -25,6 +25,7 @@ public:
     static SweepLaneChanger *GetInstance();
     int GetLane() const { return m_lane; }
     int GetMaxLanes() const { return m_maxLanes; }
+    void SetLane(int lane);
 
 private:
     int m_lane = 0;

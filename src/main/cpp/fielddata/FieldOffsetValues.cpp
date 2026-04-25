@@ -165,10 +165,10 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueBumpTrenchDepotYOffset = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y() - 1_ft;
         m_blueBumpTrenchOutpostYOffset = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y() + 1_ft;
 
-        m_redTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).X() + TRENCH_OFFSET;
-        m_neutralRedTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_NEUTRAL_DEPOT).X() - TRENCH_OFFSET;
-        m_blueTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).X() - TRENCH_OFFSET;
-        m_neutralBlueTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_DEPOT).X() + TRENCH_OFFSET;
+        m_redTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).X() + TRENCH_OFFSET_X;
+        m_neutralRedTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_NEUTRAL_DEPOT).X() - TRENCH_OFFSET_X;
+        m_blueTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).X() - TRENCH_OFFSET_X;
+        m_neutralBlueTrenchX = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_NEUTRAL_DEPOT).X() + TRENCH_OFFSET_X;
 
         // Calculate bump X positions with offset from hub centers
         m_redAllianceBumpEdgeX = redHubCenter.X() + BUMP_OFFSET;   // Alliance side of red bump
@@ -200,10 +200,15 @@ FieldOffsetValues::FieldOffsetValues()
         m_redNeutralSweep2X = m_redNeutralSweep1X - SWEEP_LANE_WIDTH;
         m_redNeutralSweep3X = m_redNeutralSweep2X - SWEEP_LANE_WIDTH - SWEEP_MIDDLE_EXTRA;
 
-        m_redDepotTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y() + SWEEP_Y_END_OFFSET;
-        m_redOutpostTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y() - SWEEP_Y_END_OFFSET;
-        m_blueDepotTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y() - SWEEP_Y_END_OFFSET;
-        m_blueOutpostTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y() + SWEEP_Y_END_OFFSET;
+        m_redDepotTrenchToTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y() + ALONG_WALL_BETWEEN_TRENCHES_Y_OFFSET;
+        m_redOutpostTrenchToTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y() - ALONG_WALL_BETWEEN_TRENCHES_Y_OFFSET;
+        m_blueDepotTrenchToTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y() - ALONG_WALL_BETWEEN_TRENCHES_Y_OFFSET;
+        m_blueOutpostTrenchToTrenchY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y() + ALONG_WALL_BETWEEN_TRENCHES_Y_OFFSET;
+
+        m_redDepotTrenchAcrossFieldY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_DEPOT).Y() + ACROSS_FIELD_BETWEEN_TRENCHES_Y_OFFSET;
+        m_redOutpostTrenchAcrossFieldY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_TRENCH_ALLIANCE_OUTPOST).Y() - ACROSS_FIELD_BETWEEN_TRENCHES_Y_OFFSET;
+        m_blueDepotTrenchAcrossFieldY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_DEPOT).Y() - ACROSS_FIELD_BETWEEN_TRENCHES_Y_OFFSET;
+        m_blueOutpostTrenchAcrossFieldY = fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_TRENCH_ALLIANCE_OUTPOST).Y() + ACROSS_FIELD_BETWEEN_TRENCHES_Y_OFFSET;
     }
     else
     {
@@ -265,10 +270,15 @@ FieldOffsetValues::FieldOffsetValues()
         m_blueTrenchX = units::length::meter_t{0.0};
         m_neutralBlueTrenchX = units::length::meter_t{0.0};
 
-        m_redDepotTrenchY = units::length::meter_t{0.0};
-        m_redOutpostTrenchY = units::length::meter_t{0.0};
-        m_blueDepotTrenchY = units::length::meter_t{0.0};
-        m_blueOutpostTrenchY = units::length::meter_t{0.0};
+        m_redDepotTrenchToTrenchY = units::length::meter_t{0.0};
+        m_redOutpostTrenchToTrenchY = units::length::meter_t{0.0};
+        m_blueDepotTrenchToTrenchY = units::length::meter_t{0.0};
+        m_blueOutpostTrenchToTrenchY = units::length::meter_t{0.0};
+
+        m_redDepotTrenchAcrossFieldY = units::length::meter_t{0.0};
+        m_redOutpostTrenchAcrossFieldY = units::length::meter_t{0.0};
+        m_blueDepotTrenchAcrossFieldY = units::length::meter_t{0.0};
+        m_blueOutpostTrenchAcrossFieldY = units::length::meter_t{0.0};
     }
 }
 

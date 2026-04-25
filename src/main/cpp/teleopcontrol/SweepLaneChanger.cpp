@@ -58,8 +58,7 @@ void SweepLaneChanger::RunCurrentState()
         m_incrementLatch = true;
         if (m_lane < m_maxLanes)
         {
-            m_lane += 1;
-            frc::SmartDashboard::PutNumber(m_sweepLaneNT, m_lane);
+            SetLane(m_lane + 1);
         }
         return;
     }
@@ -69,8 +68,13 @@ void SweepLaneChanger::RunCurrentState()
         m_decrementLatch = true;
         if (m_lane > m_minLanes)
         {
-            m_lane -= 1;
-            frc::SmartDashboard::PutNumber(m_sweepLaneNT, m_lane);
+            SetLane(m_lane - 1);
         }
     }
+}
+
+void SweepLaneChanger::SetLane(int lane)
+{
+    m_lane = std::clamp(lane, m_minLanes, m_maxLanes);
+    frc::SmartDashboard::PutNumber(m_sweepLaneNT, m_lane);
 }

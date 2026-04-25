@@ -17,6 +17,7 @@
 #include "chassis/commands/DriveToPose.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "fielddata/BumpHelper.h"
+#include "teleopcontrol/SweepLaneChanger.h"
 #include "units/angle.h"
 
 //====================================================================================================================================================
@@ -66,6 +67,8 @@ public:
     //------------------------------------------------------------------
     ~SweepBehindHub() = default;
 
+    bool IsFinished() override;
+
 protected:
     //------------------------------------------------------------------
     /// @brief      Calculates target poses for two-stage field crossing
@@ -86,6 +89,10 @@ private:
     ///             the sweep maneuver so it is in an optimal position after crossing.
     //------------------------------------------------------------------
     units::angle::degree_t GetRotation(BUMP_ID bump) const;
+
+    SweepLaneChanger *m_sweepLaneChanger;
+    NeutralZoneManager *m_neutralZoneManager;
+    bool m_incrementingLane = true;
 
     static constexpr units::degree_t kBlueDepotRedOutpost{270.0};
     static constexpr units::degree_t kRedDepotBlueOutpost{90.0};

@@ -23,7 +23,10 @@
 ///             appropriate poses to drive parallel to the trench/bump/hub/bump/trench line
 ///             to sweep across the field.
 //------------------------------------------------------------------
-SweepBehindHub::SweepBehindHub(subsystems::CommandSwerveDrivetrain *chassis) : DriveToPose(chassis)
+SweepBehindHub::SweepBehindHub(subsystems::CommandSwerveDrivetrain *chassis) : DriveToPose(chassis),
+                                                                               m_sweepLaneChanger(SweepLaneChanger::GetInstance()),
+                                                                               m_neutralZoneManager(NeutralZoneManager::GetInstance())
+
 {
     // Set distance threshold for pose completion detection (1 foot tolerance)
     SetDistanceThreshold(kDistanceThreshold);
@@ -84,7 +87,7 @@ struct DriveToPoses SweepBehindHub::GetDriveToPoses()
     struct DriveToPoses poses;
     poses.hasMidPose = true;
 
-    auto nearestBumps = BumpHelper::GetInstance()->GetNearestAndCrossFieldBumpEdges(NeutralZoneManager::GetInstance()->IsInNeutralZone()); // Get all bump positions for both sides of the field
+    auto nearestBumps = BumpHelper::GetInstance()->GetNearestAndCrossFieldBumpEdges(m_neutralZoneManager->IsInNeutralZone()); // Get all bump positions for both sides of the field
 
     if (!nearestBumps.empty())
     {
@@ -97,4 +100,39 @@ struct DriveToPoses SweepBehindHub::GetDriveToPoses()
         poses.endPose = frc::Pose2d(bump.x, bump.y, rotation);
     }
     return poses;
+}
+
+bool SweepBehindHub::IsFinished()
+{
+    // The command is finished when the robot has reached the end pose (cross-field bump position)
+    auto isFinished = DriveToPose::IsFinished();
+
+    auto isInNeutralZone = m_neutralZoneManager->IsInNeutralZone();
+    if (isInNeutralZone && isFinished && m_sweepLaneChanger != nullptr)
+    {
+        auto lane = m_sweepLaneChanger->GetLane();
+        if (lane <= 0)
+        {
+            lane = 1;
+            m_incrementingLane = true;
+        }
+        else if (lane == m_sweepLaneChanger->GetMaxLanes())
+        {
+            lane -= 1;
+            m_incrementingLane = false;
+        }
+        else if (m_incrementingLane)
+        {
+            lane++;
+        }
+        else
+        {
+            lane--;
+        }
+        m_sweepLaneChanger->SetLane(lane);
+        auto poses = GetDriveToPoses();
+        SetTargetPose(poses.endPose); // Update the target pose to the new end pose for the next lane
+        isFinished = false;           // Continue running to drive to the next lane
+    }
+    return isFinished;
 }
