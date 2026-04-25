@@ -17,6 +17,7 @@
 #include "frc/smartdashboard/SmartDashboard.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "utils/PeriodicLooper.h"
+#include <algorithm>
 
 SweepLaneChanger *SweepLaneChanger::m_instance = nullptr;
 SweepLaneChanger *SweepLaneChanger::GetInstance()

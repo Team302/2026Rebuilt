@@ -133,6 +133,7 @@ bool SweepBehindHub::IsFinished()
         auto poses = GetDriveToPoses();
         SetTargetPose(poses.endPose); // Update the target pose to the new end pose for the next lane
         isFinished = false;           // Continue running to drive to the next lane
+        SetIsFinished(false);         // Reset the finished flag for the next iteration
     }
     return isFinished;
 }
