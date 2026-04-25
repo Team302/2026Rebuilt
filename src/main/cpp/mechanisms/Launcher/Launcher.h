@@ -293,7 +293,7 @@ private:
 	void RefreshCachedMotorData();
 
 	bool m_launcherInitialized = false;
-	bool m_tuningLauncher = true;
+	bool m_tuningLauncher = false;
 
 	// All values in turns are actually Degree's
 	// MECH_TODO: Need to verify values after 116 inches, may need to add more points on both sides
