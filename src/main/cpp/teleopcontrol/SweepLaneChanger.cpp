@@ -13,6 +13,8 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
+#include <algorithm>
+
 #include "teleopcontrol/SweepLaneChanger.h"
 #include "frc/smartdashboard/SmartDashboard.h"
 #include "teleopcontrol/TeleopControl.h"
