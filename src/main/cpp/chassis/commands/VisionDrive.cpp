@@ -20,11 +20,12 @@
 VisionDrive::VisionDrive(subsystems::CommandSwerveDrivetrain *chassis) : m_chassis(chassis)
 {
     AddRequirements(m_chassis);
-    m_maxSpeed = GetMaxVelocity();
+
 }
 
 void VisionDrive::Initialize()
 {
+    m_maxSpeed = GetMaxVelocity();
 }
 
 void VisionDrive::Execute()

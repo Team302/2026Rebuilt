@@ -63,22 +63,9 @@ DriveToPose::DriveToPose(subsystems::CommandSwerveDrivetrain *chassis) : m_chass
 {
     AddRequirements(m_chassis);
 
-    // Configure integral zones to prevent windup when far from target
-    m_translationPIDX.SetIZone(0.5);
-    m_translationPIDY.SetIZone(0.5);
-
     // Store initial pose for movement detection
     m_prevPose = m_chassis != nullptr ? m_chassis->GetPose() : frc::Pose2d();
 
-    kMaxVelocity = GetMaxVelocity();
-    kMaxAcceleration = GetMaxAcceleration();
-
-    m_translationConstraints = frc::TrapezoidProfile<units::length::meters>::Constraints(kMaxVelocity, kMaxAcceleration);
-    m_translationPIDX = frc::ProfiledPIDController<units::length::meters>(m_translationKP, m_translationKI, m_translationKD, m_translationConstraints, 20_ms);
-    m_translationPIDY = frc::ProfiledPIDController<units::length::meters>(m_translationKP, m_translationKI, m_translationKD, m_translationConstraints, 20_ms);
-
-    // Calculate the range over which feedforward velocity is ramped
-    m_feedForwardRange = m_ffMaxRadius - m_ffMinRadius;
 }
 
 //------------------------------------------------------------------
@@ -107,6 +94,22 @@ DriveToPose::DriveToPose(subsystems::CommandSwerveDrivetrain *chassis) : m_chass
 //------------------------------------------------------------------
 void DriveToPose::Initialize()
 {
+    // Re-read velocity/acceleration limits here (not in constructor) because virtual dispatch
+    // does not work during base-class construction — derived overrides (e.g. DriveOverBump)
+    kMaxVelocity = GetMaxVelocity();
+    kMaxAcceleration = GetMaxAcceleration();
+    m_translationConstraints = frc::TrapezoidProfile<units::length::meters>::Constraints(kMaxVelocity, kMaxAcceleration);
+    m_translationPIDX = frc::ProfiledPIDController<units::length::meters>(m_translationKP, m_translationKI, m_translationKD, m_translationConstraints, 20_ms);
+    m_translationPIDY = frc::ProfiledPIDController<units::length::meters>(m_translationKP, m_translationKI, m_translationKD, m_translationConstraints, 20_ms);
+
+    // Configure integral zones to prevent windup when far from target
+    // Must be applied after controller reconstruction above so the setting is not overwritten
+    m_translationPIDX.SetIZone(0.5);
+    m_translationPIDY.SetIZone(0.5);
+
+    // Calculate the range over which feedforward velocity is ramped
+    m_feedForwardRange = m_ffMaxRadius - m_ffMinRadius;
+    
     // Get the target pose (may be overridden by derived classes)
     auto poses = GetDriveToPoses();
     m_midPointSpeed = poses.midPointSpeed;
