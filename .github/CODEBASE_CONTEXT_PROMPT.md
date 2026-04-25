@@ -16,8 +16,9 @@ Update `.github/CODEBASE_CONTEXT.md` accordingly:
 
 ## CHANGED FILES
 
-    📝 `src/main/cpp/feedback/DragonCANdle.cpp`
-    📝 `src/main/cpp/feedback/DragonCANdle.h`
+    📝 `src/main/cpp/chassis/commands/DriveToPose.cpp`
+    📝 `src/main/cpp/chassis/commands/VisionDrive.cpp`
+    📝 `src/main/cpp/chassis/commands/season_specific_commands/DriveOverBump.h`
 
 
 ## EXISTING `.github/CODEBASE_CONTEXT.md` (651 lines)
