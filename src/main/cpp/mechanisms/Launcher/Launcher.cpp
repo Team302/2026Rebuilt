@@ -237,10 +237,10 @@ void Launcher::CreateCompBot302()
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_velocityLauncherMoving = new ControlData(			  // MECH_TODO: Retune PIDs
+	m_velocityLauncherFullField = new ControlData(		  // MECH_TODO: Retune PIDs
 		ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, // ControlModes::CONTROL_TYPE mode
 		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_velocityLauncherMoving",						  // std::string indentifier
+		"m_velocityLauncherFullField",					  // std::string indentifier
 		0,												  // double proportional
 		0,												  // double integral
 		0,												  // double derivative
@@ -453,15 +453,15 @@ void Launcher::InitializeTalonFXLauncherCompBot302()
 	configs.Slot0.GravityType = m_velocityLauncher->GetGravityType();
 	configs.Slot0.StaticFeedforwardSign = m_velocityLauncher->GetStaticFeedforwardSign();
 
-	configs.Slot1.kI = m_velocityLauncherMoving->GetI();
-	configs.Slot1.kD = m_velocityLauncherMoving->GetD();
-	configs.Slot1.kG = m_velocityLauncherMoving->GetF();
-	configs.Slot1.kS = m_velocityLauncherMoving->GetS();
-	configs.Slot1.kV = m_velocityLauncherMoving->GetV();
-	configs.Slot1.kP = m_velocityLauncherMoving->GetP();
-	configs.Slot1.kA = m_velocityLauncherMoving->GetA();
-	configs.Slot1.GravityType = m_velocityLauncherMoving->GetGravityType();
-	configs.Slot1.StaticFeedforwardSign = m_velocityLauncherMoving->GetStaticFeedforwardSign();
+	configs.Slot1.kI = m_velocityLauncherFullField->GetI();
+	configs.Slot1.kD = m_velocityLauncherFullField->GetD();
+	configs.Slot1.kG = m_velocityLauncherFullField->GetF();
+	configs.Slot1.kS = m_velocityLauncherFullField->GetS();
+	configs.Slot1.kV = m_velocityLauncherFullField->GetV();
+	configs.Slot1.kP = m_velocityLauncherFullField->GetP();
+	configs.Slot1.kA = m_velocityLauncherFullField->GetA();
+	configs.Slot1.GravityType = m_velocityLauncherFullField->GetGravityType();
+	configs.Slot1.StaticFeedforwardSign = m_velocityLauncherFullField->GetStaticFeedforwardSign();
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
 	for (int i = 0; i < 5; ++i)
 	{
@@ -916,8 +916,8 @@ ControlData *Launcher::GetControlData(string name)
 		return m_percentOut;
 	if (name.compare("VelocityLauncher") == 0)
 		return m_velocityLauncher;
-	if (name.compare("VelocityLauncherMoving") == 0)
-		return m_velocityLauncherMoving;
+	if (name.compare("VelocityLauncherFullField") == 0)
+		return m_velocityLauncherFullField;
 	if (name.compare("VelocityIndexer") == 0)
 		return m_velocityIndexer;
 	if (name.compare("VelocitySpindexer") == 0)
@@ -996,19 +996,19 @@ void Launcher::CalculateTargets()
 		m_targetTurretAngle = 180_deg;
 		m_chassis->SetTargetChassisRotation(m_targetCalculator->GetChassisTargetForLaunching());
 	}
-	units::length::inch_t distanceToTarget = m_targetCalculator->GetLauncherDistanceToTarget();
+	m_distanceToTarget = m_targetCalculator->GetLauncherDistanceToTarget();
 	if (m_allianceZoneManager->IsInAllianceZone())
 	{
-		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_scoringDistanceArray, m_scoringHoodAngleArray, distanceToTarget);
-		m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_scoringDistanceArray, m_scoringLauncherVelocityArray, distanceToTarget);
+		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_scoringDistanceArray, m_scoringHoodAngleArray, m_distanceToTarget);
+		m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_scoringDistanceArray, m_scoringLauncherVelocityArray, m_distanceToTarget);
 	}
 	else
 	{
-		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingHoodAngleArray, units::length::foot_t(distanceToTarget));
-		m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingLauncherVelocityArray, units::length::foot_t(distanceToTarget));
+		m_targetHoodAngle = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingHoodAngleArray, units::length::foot_t(m_distanceToTarget));
+		m_targetLauncherAngularVelocity = InterpolateUtils::linearInterpolate(m_passingDistanceArray, m_passingLauncherVelocityArray, units::length::foot_t(m_distanceToTarget));
 	}
 
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Distance", distanceToTarget.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Distance", m_distanceToTarget.value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Target Hood", m_targetHoodAngle.value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Target Launcher Velocity", m_targetLauncherAngularVelocity.value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "turret Target", m_targetTurretAngle.value());

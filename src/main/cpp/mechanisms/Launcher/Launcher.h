@@ -118,9 +118,9 @@ public:
 	{
 		m_launcherVelocityRPS.Velocity = velocity;
 		m_launcherVelocityRPS.Acceleration = 100_tr_per_s_sq;
-		m_launcherActiveTarget = &m_launcherVelocityRPS.WithSlot(0);
-		// m_launcherActiveTarget = !m_chassis->IsMoving() ? &m_launcherVelocityRPS.WithSlot(0)
-		// 												: &m_launcherVelocityRPS.WithSlot(1);
+		// m_launcherActiveTarget = &m_launcherVelocityRPS.WithSlot(0);
+		m_launcherActiveTarget = (m_distanceToTarget > 40_ft) ? &m_launcherVelocityRPS.WithSlot(1)
+															  : &m_launcherVelocityRPS.WithSlot(0);
 	}
 
 	void UpdateTargetSpindexerPercentOut(double percentOut)
@@ -167,7 +167,7 @@ public:
 
 	ControlData *GetPercentOut() const { return m_percentOut; }
 	ControlData *GetVelocityLauncher() const { return m_velocityLauncher; }
-	ControlData *GetVelocityLauncherMoving() const { return m_velocityLauncherMoving; }
+	ControlData *GetVelocityLauncherFullField() const { return m_velocityLauncherFullField; }
 	ControlData *GetVelocityIndexer() const { return m_velocityIndexer; }
 	ControlData *GetVelocitySpindexer() const { return m_velocitySpindexer; }
 	ControlData *GetVelocityTransfer() const { return m_velocityTransfer; }
@@ -229,7 +229,7 @@ private:
 
 	ControlData *m_percentOut;
 	ControlData *m_velocityLauncher;
-	ControlData *m_velocityLauncherMoving;
+	ControlData *m_velocityLauncherFullField;
 	ControlData *m_velocityIndexer;
 	ControlData *m_velocitySpindexer;
 	ControlData *m_velocityTransfer;
@@ -303,7 +303,7 @@ private:
 
 	static constexpr std::array<units::length::foot_t, 7> m_passingDistanceArray = {10.0_ft, 16.66666667_ft, 20.0_ft, 23.08333333_ft, 26.33333333_ft, 30.0_ft, 42.33333333_ft};
 	static constexpr std::array<units::angle::turn_t, 7> m_passingHoodAngleArray = {23.5_tr, 23.5_tr, 23.5_tr, 29.7_tr, 30.0_tr, 30.0_tr, 30.0_tr};
-	static constexpr std::array<units::angular_velocity::revolutions_per_minute_t, 7> m_passingLauncherVelocityArray = {1900.0_rpm, 2150.0_rpm, 2450.0_rpm, 2500.0_rpm, 2900.0_rpm, 3600.0_rpm, 4600.0_rpm};
+	static constexpr std::array<units::angular_velocity::revolutions_per_minute_t, 7> m_passingLauncherVelocityArray = {1900.0_rpm, 2150.0_rpm, 2450.0_rpm, 2500.0_rpm, 2900.0_rpm, 3600.0_rpm, 5700.0_rpm};
 	// All values in turns are actually Degree's
 
 	// Cached motor status signals for performance optimization
@@ -354,4 +354,5 @@ private:
 	units::angle::degree_t m_maxSpindexerTarget;
 	bool m_minReached;
 	static constexpr units::angle::degree_t m_spindexerTargetAng{30};
+	units::length::inch_t m_distanceToTarget{0.0};
 };
