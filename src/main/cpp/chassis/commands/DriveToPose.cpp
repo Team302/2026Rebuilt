@@ -63,10 +63,6 @@ DriveToPose::DriveToPose(subsystems::CommandSwerveDrivetrain *chassis) : m_chass
 {
     AddRequirements(m_chassis);
 
-    // Configure integral zones to prevent windup when far from target
-    m_translationPIDX.SetIZone(0.5);
-    m_translationPIDY.SetIZone(0.5);
-
     // Store initial pose for movement detection
     m_prevPose = m_chassis != nullptr ? m_chassis->GetPose() : frc::Pose2d();
 
@@ -98,6 +94,10 @@ DriveToPose::DriveToPose(subsystems::CommandSwerveDrivetrain *chassis) : m_chass
 //------------------------------------------------------------------
 void DriveToPose::Initialize()
 {
+    // Configure integral zones to prevent windup when far from target
+    m_translationPIDX.SetIZone(0.5);
+    m_translationPIDY.SetIZone(0.5);
+
     // Re-read velocity/acceleration limits here (not in constructor) because virtual dispatch
     // does not work during base-class construction — derived overrides (e.g. DriveOverBump)
     kMaxVelocity = GetMaxVelocity();
