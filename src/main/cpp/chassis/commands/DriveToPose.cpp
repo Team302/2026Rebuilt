@@ -94,10 +94,6 @@ DriveToPose::DriveToPose(subsystems::CommandSwerveDrivetrain *chassis) : m_chass
 //------------------------------------------------------------------
 void DriveToPose::Initialize()
 {
-    // Configure integral zones to prevent windup when far from target
-    m_translationPIDX.SetIZone(0.5);
-    m_translationPIDY.SetIZone(0.5);
-
     // Re-read velocity/acceleration limits here (not in constructor) because virtual dispatch
     // does not work during base-class construction — derived overrides (e.g. DriveOverBump)
     kMaxVelocity = GetMaxVelocity();
@@ -105,6 +101,11 @@ void DriveToPose::Initialize()
     m_translationConstraints = frc::TrapezoidProfile<units::length::meters>::Constraints(kMaxVelocity, kMaxAcceleration);
     m_translationPIDX = frc::ProfiledPIDController<units::length::meters>(m_translationKP, m_translationKI, m_translationKD, m_translationConstraints, 20_ms);
     m_translationPIDY = frc::ProfiledPIDController<units::length::meters>(m_translationKP, m_translationKI, m_translationKD, m_translationConstraints, 20_ms);
+
+    // Configure integral zones to prevent windup when far from target
+    // Must be applied after controller reconstruction above so the setting is not overwritten
+    m_translationPIDX.SetIZone(0.5);
+    m_translationPIDY.SetIZone(0.5);
 
     // Calculate the range over which feedforward velocity is ramped
     m_feedForwardRange = m_ffMaxRadius - m_ffMinRadius;
