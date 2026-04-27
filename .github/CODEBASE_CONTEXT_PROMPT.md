@@ -16,24 +16,17 @@ Update `.github/CODEBASE_CONTEXT.md` accordingly:
 
 ## CHANGED FILES
 
-    📝 `build.gradle`
-    ✨ `src/main/deploy/auton/BlueBDepLaunch1NDepNOutPassNCli.xml` (added)
-    ✨ `src/main/deploy/auton/BlueBDepLaunch1NDepNOutScoreNCli.xml` (added)
-    ✨ `src/main/deploy/auton/BlueBOutLaunch1NDepNOutPassNCli.xml` (added)
-    ✨ `src/main/deploy/auton/BlueBOutLaunch1NDepNOutScoreNCli.xml` (added)
-    📝 `src/main/deploy/auton/BlueDefaultFile.xml`
-    ✨ `src/main/deploy/auton/BlueHubLaunch0NDepNOutScoreNCli.xml` (added)
-    ✨ `src/main/deploy/auton/RedBDepLaunch1NDepNOutPassNCli.xml` (added)
-    ✨ `src/main/deploy/auton/RedBDepLaunch1NDepNOutScoreNCli.xml` (added)
-    ✨ `src/main/deploy/auton/RedBOutLaunch1NDepNOutPassNCli.xml` (added)
-    ✨ `src/main/deploy/auton/RedBOutLaunch1NDepNOutScoreNCli.xml` (added)
-    📝 `src/main/deploy/auton/RedDefaultFile.xml`
-    ✨ `src/main/deploy/auton/RedHubLaunch0NDepNOutScoreNCli.xml` (added)
-    ✨ `src/main/deploy/choreo/Launch1Dep_1.traj` (added)
-    ✨ `src/main/deploy/choreo/Launch1Dep_2.traj` (added)
-    ✨ `src/main/deploy/choreo/Launch1Dep_3.traj` (added)
-    ✨ `src/main/deploy/choreo/Launch1Out_1.traj` (added)
-    ✨ `src/main/deploy/choreo/Launch1Out_2.traj` (added)
+    📝 `src/main/cpp/chassis/commands/DriveToPose.h`
+    📝 `src/main/cpp/chassis/commands/season_specific_commands/DriveOverBump.h`
+    📝 `src/main/cpp/chassis/commands/season_specific_commands/DriveToTrench.h`
+    📝 `src/main/cpp/chassis/commands/season_specific_commands/SweepBehindHub.cpp`
+    📝 `src/main/cpp/chassis/commands/season_specific_commands/SweepBehindHub.h`
+    📝 `src/main/cpp/fielddata/BumpHelper.cpp`
+    📝 `src/main/cpp/fielddata/FieldOffsetValues.cpp`
+    📝 `src/main/cpp/fielddata/FieldOffsetValues.h`
+    📝 `src/main/cpp/fielddata/TrenchHelper.cpp`
+    📝 `src/main/cpp/teleopcontrol/SweepLaneChanger.cpp`
+    📝 `src/main/cpp/teleopcontrol/SweepLaneChanger.h`
 
 
 ## EXISTING `.github/CODEBASE_CONTEXT.md` (651 lines)
