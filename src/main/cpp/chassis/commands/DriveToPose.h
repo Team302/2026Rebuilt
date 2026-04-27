@@ -193,6 +193,8 @@ protected:
     virtual units::velocity::meters_per_second_t GetMaxVelocity() const { return kMaxVelocityDefault; }
     virtual units::acceleration::meters_per_second_squared_t GetMaxAcceleration() const { return kMaxAccelerationDefault; }
 
+    void SetIsFinished(bool isFinished) { m_isFinished = isFinished; }
+
 private:
     bool ShouldSkipMidPoint() const;
 

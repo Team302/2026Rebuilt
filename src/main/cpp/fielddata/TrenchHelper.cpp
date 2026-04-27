@@ -145,14 +145,14 @@ std::vector<frc::Pose2d> TrenchHelper::GetTrenchDrivePositions(bool isRedAllianc
         switch (id)
         {
         case TRENCH_ID::RED_DEPOT_TRENCH:
-            return offsetVals->GetRedDepotTrenchY();
+            return offsetVals->GetRedDepotTrenchToTrenchY();
         case TRENCH_ID::RED_OUTPOST_TRENCH:
-            return offsetVals->GetRedOutpostTrenchY();
+            return offsetVals->GetRedOutpostTrenchToTrenchY();
         case TRENCH_ID::BLUE_DEPOT_TRENCH:
-            return offsetVals->GetBlueDepotTrenchY();
+            return offsetVals->GetBlueDepotTrenchToTrenchY();
         case TRENCH_ID::BLUE_OUTPOST_TRENCH:
         default:
-            return offsetVals->GetBlueOutpostTrenchY();
+            return offsetVals->GetBlueOutpostTrenchToTrenchY();
         }
     };
 

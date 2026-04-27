@@ -318,20 +318,33 @@ public:
 
     /// @brief      Get the red depot trench Y-coordinate
     /// @return     units::length::meter_t - Y of RED_TRENCH_ALLIANCE_DEPOT
-    units::length::meter_t GetRedDepotTrenchY() const { return m_redDepotTrenchY; }
+    units::length::meter_t GetRedDepotTrenchToTrenchY() const { return m_redDepotTrenchToTrenchY; }
 
     /// @brief      Get the red outpost trench Y-coordinate
     /// @return     units::length::meter_t - Y of RED_TRENCH_ALLIANCE_OUTPOST
-    units::length::meter_t GetRedOutpostTrenchY() const { return m_redOutpostTrenchY; }
+    units::length::meter_t GetRedOutpostTrenchToTrenchY() const { return m_redOutpostTrenchToTrenchY; }
 
     /// @brief      Get the blue depot trench Y-coordinate
     /// @return     units::length::meter_t - Y of BLUE_TRENCH_ALLIANCE_DEPOT
-    units::length::meter_t GetBlueDepotTrenchY() const { return m_blueDepotTrenchY; }
+    units::length::meter_t GetBlueDepotTrenchToTrenchY() const { return m_blueDepotTrenchToTrenchY; }
 
     /// @brief      Get the blue outpost trench Y-coordinate
     /// @return     units::length::meter_t - Y of BLUE_TRENCH_ALLIANCE_OUTPOST
-    units::length::meter_t GetBlueOutpostTrenchY() const { return m_blueOutpostTrenchY; }
+    units::length::meter_t GetBlueOutpostTrenchToTrenchY() const { return m_blueOutpostTrenchToTrenchY; }
 
+    /// @brief      Get the red depot trench Y-coordinate
+    /// @return     units::length::meter_t - Y of RED_TRENCH_ALLIANCE_DEPOT
+    units::length::meter_t GetRedDepotTrenchAcrossFieldY() const { return m_redDepotTrenchAcrossFieldY; }
+
+    /// @brief      Get the red outpost trench Y-coordinate
+    /// @return     units::length::meter_t - Y of RED_TRENCH_ALLIANCE_OUTPOST
+    units::length::meter_t GetRedOutpostTrenchAcrossFieldY() const { return m_redOutpostTrenchAcrossFieldY; }
+    /// @brief      Get the blue depot trench Y-coordinate
+    /// @return     units::length::meter_t - Y of BLUE_TRENCH_ALLIANCE_DEPOT
+    units::length::meter_t GetBlueDepotTrenchAcrossFieldY() const { return m_blueDepotTrenchAcrossFieldY; }
+    /// @brief      Get the blue outpost trench Y-coordinate
+    /// @return     units::length::meter_t - Y of BLUE_TRENCH_ALLIANCE_OUTPOST
+    units::length::meter_t GetBlueOutpostTrenchAcrossFieldY() const { return m_blueOutpostTrenchAcrossFieldY; }
     //------------------------------------------------------------------
     // Sweep Behind Hub Lane-Based Getters
     //------------------------------------------------------------------
@@ -555,10 +568,15 @@ private:
     units::length::inch_t m_redNeutralSweep2X;  ///< X-coordinate for the third sweep waypoint on the red neutral side (inches)
     units::length::inch_t m_redNeutralSweep3X;  ///< X-coordinate for the fourth sweep waypoint on the red neutral side (inches)
 
-    units::length::meter_t m_redDepotTrenchY;    ///< Y of RED_TRENCH_ALLIANCE_DEPOT (trench entrance for red depot)
-    units::length::meter_t m_redOutpostTrenchY;  ///< Y of RED_TRENCH_ALLIANCE_OUTPOST (trench entrance for red outpost)
-    units::length::meter_t m_blueDepotTrenchY;   ///< Y of BLUE_TRENCH_ALLIANCE_DEPOT (trench entrance for blue depot)
-    units::length::meter_t m_blueOutpostTrenchY; ///< Y of BLUE_TRENCH_ALLIANCE_OUTPOST (trench entrance for blue outpost)
+    units::length::meter_t m_redDepotTrenchToTrenchY;    ///< Y of RED_TRENCH_ALLIANCE_DEPOT (for drive along wall to trench entrance)
+    units::length::meter_t m_redOutpostTrenchToTrenchY;  ///< Y of RED_TRENCH_ALLIANCE_OUTPOST (for drive along wall to trench entrance)
+    units::length::meter_t m_blueDepotTrenchToTrenchY;   ///< Y of BLUE_TRENCH_ALLIANCE_DEPOT (for drive along wall to trench entrance)
+    units::length::meter_t m_blueOutpostTrenchToTrenchY; ///< Y of BLUE_TRENCH_ALLIANCE_OUTPOST (for drive along wall to trench entrance)
+
+    units::length::meter_t m_redDepotTrenchAcrossFieldY;    ///< Y of RED_TRENCH_ALLIANCE_DEPOT (for drive across field)
+    units::length::meter_t m_redOutpostTrenchAcrossFieldY;  ///< Y of RED_TRENCH_ALLIANCE_OUTPOST (for drive across field)
+    units::length::meter_t m_blueDepotTrenchAcrossFieldY;   ///< Y of BLUE_TRENCH_ALLIANCE_DEPOT (for drive across field)
+    units::length::meter_t m_blueOutpostTrenchAcrossFieldY; ///< Y of BLUE_TRENCH_ALLIANCE_OUTPOST (for drive across field)
 
     //------------------------------------------------------------------
     // Offset Constants
@@ -597,11 +615,12 @@ private:
     static constexpr units::angle::degree_t FACE_NON_ORIGIN_SIDE_WALL = 90_deg;
 
     /// @brief Half-width offset applied to position the robot at the trench entrance (meters)
-    static constexpr units::length::meter_t TRENCH_OFFSET = 1.0_m;
+    static constexpr units::length::meter_t TRENCH_OFFSET_X = 1.0_m;
 
     static constexpr units::length::inch_t SWEEP_LANE_WIDTH = 36.0_in;   // Width of each lane in the sweep behind hub path (inches)
-    static constexpr units::length::inch_t SWEEP_START_OFFSET = 44.0_in; // Starting offset for the sweep lanes (inches)
+    static constexpr units::length::inch_t SWEEP_START_OFFSET = 48.0_in; // Starting offset for the sweep lanes (inches)
     static constexpr units::length::inch_t SWEEP_MIDDLE_EXTRA = 6.0_in;  // additional offset to make sure we are past the center line
     static constexpr double SWEEP_BY_TOWER_FACTOR = 1.2;                 /// Sweep under tower
-    static constexpr units::length::inch_t SWEEP_Y_END_OFFSET = 24.0_in;
+    static constexpr units::length::inch_t ALONG_WALL_BETWEEN_TRENCHES_Y_OFFSET = 2.0_in;
+    static constexpr units::length::inch_t ACROSS_FIELD_BETWEEN_TRENCHES_Y_OFFSET = 6.0_in;
 };

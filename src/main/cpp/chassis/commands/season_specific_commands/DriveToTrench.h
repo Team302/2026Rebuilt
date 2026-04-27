@@ -94,7 +94,7 @@ private:
     static constexpr units::length::inch_t kYTransitionToEndPointTolerance = 3.0_in;
 
     /// @brief Maximum translational velocity while crossing the trench (2.0 m/s)
-    static constexpr units::velocity::meters_per_second_t kMaxVelocityDriveToTrench = 2.0_mps;
+    static constexpr units::velocity::meters_per_second_t kMaxVelocityDriveToTrench = 4.0_mps;
     /// @brief Maximum translational acceleration while crossing the trench (1.0 m/s²)
-    static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationDriveToTrench = 1.0_mps_sq;
+    static constexpr units::acceleration::meters_per_second_squared_t kMaxAccelerationDriveToTrench = 3.0_mps_sq;
 };
