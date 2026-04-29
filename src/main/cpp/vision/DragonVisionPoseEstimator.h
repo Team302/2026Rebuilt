@@ -105,4 +105,6 @@ private:
      * Prevents recalculating initial pose after the robot has been enabled.
      */
     bool m_hasBeenEnabled = false;
+
+    void CalculateInitialAutonPosition();
 };
