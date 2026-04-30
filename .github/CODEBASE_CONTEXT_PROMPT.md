@@ -17,23 +17,12 @@ Update `.github/CODEBASE_CONTEXT.md` accordingly:
 ## CHANGED FILES
 
     📝 `build.gradle`
-    ✨ `src/main/deploy/auton/BlueBDepLaunch1NDepNOutPassNCli.xml` (added)
-    ✨ `src/main/deploy/auton/BlueBDepLaunch1NDepNOutScoreNCli.xml` (added)
-    ✨ `src/main/deploy/auton/BlueBOutLaunch1NDepNOutPassNCli.xml` (added)
-    ✨ `src/main/deploy/auton/BlueBOutLaunch1NDepNOutScoreNCli.xml` (added)
-    📝 `src/main/deploy/auton/BlueDefaultFile.xml`
-    ✨ `src/main/deploy/auton/BlueHubLaunch0NDepNOutScoreNCli.xml` (added)
-    ✨ `src/main/deploy/auton/RedBDepLaunch1NDepNOutPassNCli.xml` (added)
-    ✨ `src/main/deploy/auton/RedBDepLaunch1NDepNOutScoreNCli.xml` (added)
-    ✨ `src/main/deploy/auton/RedBOutLaunch1NDepNOutPassNCli.xml` (added)
-    ✨ `src/main/deploy/auton/RedBOutLaunch1NDepNOutScoreNCli.xml` (added)
-    📝 `src/main/deploy/auton/RedDefaultFile.xml`
-    ✨ `src/main/deploy/auton/RedHubLaunch0NDepNOutScoreNCli.xml` (added)
-    ✨ `src/main/deploy/choreo/Launch1Dep_1.traj` (added)
-    ✨ `src/main/deploy/choreo/Launch1Dep_2.traj` (added)
-    ✨ `src/main/deploy/choreo/Launch1Dep_3.traj` (added)
-    ✨ `src/main/deploy/choreo/Launch1Out_1.traj` (added)
-    ✨ `src/main/deploy/choreo/Launch1Out_2.traj` (added)
+    📝 `src/main/cpp/auton/AutonSelector.cpp`
+    📝 `src/main/cpp/auton/AutonSelector.h`
+    📝 `src/main/cpp/auton/CyclePrimitives.cpp`
+    📝 `src/main/cpp/chassis/commands/TeleopFieldDrive.cpp`
+    📝 `src/main/cpp/vision/DragonVisionPoseEstimator.cpp`
+    📝 `src/main/cpp/vision/DragonVisionPoseEstimator.h`
 
 
 ## EXISTING `.github/CODEBASE_CONTEXT.md` (651 lines)
