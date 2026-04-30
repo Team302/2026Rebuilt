@@ -31,13 +31,6 @@ public:
 	// Description: This creates this object and reads the auto script (CSV)
 	//  			files and displays a list on the dashboard.
 	//---------------------------------------------------------------------
-	AutonSelector();
-
-	//---------------------------------------------------------------------
-	// Method: 		<<destructor>>
-	// Description: default cleanup
-	//---------------------------------------------------------------------
-	virtual ~AutonSelector() = default;
 
 	static AutonSelector *GetInstance();
 
@@ -68,6 +61,13 @@ private:
 	//				up on the dashboard for selection.
 	// Returns:		void
 	//---------------------------------------------------------------------
+	AutonSelector();
+
+	//---------------------------------------------------------------------
+	// Method: 		<<destructor>>
+	// Description: default cleanup
+	//---------------------------------------------------------------------
+	virtual ~AutonSelector() = default;
 
 	void PutChoicesOnDashboard();
 	bool FileExists(const std::string &name);
@@ -83,4 +83,6 @@ private:
 	frc::SendableChooser<std::string> m_fuelStrategy;
 	frc::SendableChooser<std::string> m_neutralZoneArea;
 	frc::SendableChooser<std::string> m_variation;
+
+	static AutonSelector *m_instance;
 };

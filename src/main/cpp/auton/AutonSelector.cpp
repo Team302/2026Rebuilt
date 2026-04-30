@@ -47,6 +47,16 @@ using frc::DriverStation;
 // Description: This creates this object and reads the auto script (CSV)
 //  			files and displays a list on the dashboard.
 //---------------------------------------------------------------------
+AutonSelector *AutonSelector::m_instance = nullptr;
+AutonSelector *AutonSelector::GetInstance()
+{
+	if (AutonSelector::m_instance == nullptr)
+	{
+		AutonSelector::m_instance = new AutonSelector();
+	}
+	return AutonSelector::m_instance;
+}
+
 AutonSelector::AutonSelector()
 {
 	PutChoicesOnDashboard();

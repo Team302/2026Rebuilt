@@ -49,9 +49,11 @@
 
 #include <optional>
 
+#include "auton/AutonSelector.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "frc/RobotBase.h"
 #include "frc/RobotState.h"
+#include "utils/FMSData.h"
 #include "utils/PeriodicLooper.h"
 #include "vision/DragonQuest.h"
 #include "vision/DragonVision.h"
@@ -159,6 +161,10 @@ void DragonVisionPoseEstimator::CalculateInitialPose()
         ResetPosition(pose);
         m_vision->ResetQuestRobotPose(pose);
     }
+    else
+    {
+        CalculateInitialAutonPosition();
+    }
 }
 
 /**
@@ -185,9 +191,58 @@ void DragonVisionPoseEstimator::AddVisionMeasurements()
         else
         {
             auto poses = m_vision->GetRobotPositionMegaTag2();
-            for (const auto& pose : poses)
+            for (const auto &pose : poses)
             {
                 m_chassis->AddVisionMeasurement(pose.estimatedPose.ToPose2d(), units::second_t{pose.timeStamp}, pose.visionMeasurementStdDevs);
+            }
+        }
+    }
+}
+
+void DragonVisionPoseEstimator::CalculateInitialAutonPosition()
+{
+    auto autonSelector = AutonSelector::GetInstance();
+
+    if (autonSelector != nullptr)
+    {
+        auto startingPositionAuton = autonSelector->GetStartPos();
+        if (startingPositionAuton == "BDep")
+        {
+            if (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed)
+            {
+                frc::Pose2d pose = frc::Pose2d(units::meter_t(12.904788970947266), units::meter_t(2.4483304023742676), frc::Rotation2d(180_deg));
+                ResetPosition(pose);
+            }
+            else
+            {
+                frc::Pose2d pose = frc::Pose2d(units::meter_t(3.6037278175354004), units::meter_t(5.664180278778076), frc::Rotation2d(0_deg));
+                ResetPosition(pose);
+            }
+        }
+        else if (startingPositionAuton == "Hub")
+        {
+            if (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed)
+            {
+                frc::Pose2d pose = frc::Pose2d(units::meter_t(12.904788970947266), units::meter_t(4.01835823059082), frc::Rotation2d(180_deg));
+                ResetPosition(pose);
+            }
+            else
+            {
+                frc::Pose2d pose = frc::Pose2d(units::meter_t(3.549588918685913), units::meter_t(3.9750471115112305), frc::Rotation2d(0_deg));
+                ResetPosition(pose);
+            }
+        }
+        else if (startingPositionAuton == "BOut")
+        {
+            if (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed)
+            {
+                frc::Pose2d pose = frc::Pose2d(units::meter_t(12.904788970947266), units::meter_t(5.61004161834716), frc::Rotation2d(180_deg));
+                ResetPosition(pose);
+            }
+            else
+            {
+                frc::Pose2d pose = frc::Pose2d(units::meter_t(3.6362111568450928), units::meter_t(2.4483304023742676), frc::Rotation2d(0_deg));
+                ResetPosition(pose);
             }
         }
     }
