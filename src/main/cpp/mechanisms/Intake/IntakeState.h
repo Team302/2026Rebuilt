@@ -46,6 +46,6 @@ namespace IntakeStates
 		RobotIdentifier m_RobotId;
 
 		double m_intakeTarget = double(1);
-		const double m_extenderTarget{-0.25_tr};
+		const double m_extenderTarget{-0.25};
 	};
 }

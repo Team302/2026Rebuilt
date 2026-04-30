@@ -60,6 +60,7 @@ void OffState::Run()
 	if (frc::DriverStation::IsEnabled() && !m_hasEnabled)
 	{
 		m_hasEnabled = true;
+		m_mechanism->InitializeExtender();
 		if (frc::DriverStation::IsTeleop())
 		{
 			m_mechanism->UpdateTargetExtenderPercentOut(0.0);

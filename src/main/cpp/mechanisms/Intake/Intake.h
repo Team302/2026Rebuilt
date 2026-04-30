@@ -123,6 +123,12 @@ public:
 	bool IsIntakeIn() const { return (m_extender->GetReverseLimit(false).GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround); }
 	units::angle::turn_t GetCahcedExtenderPositionDegrees() { return m_cachedExtenderPositionDeg; };
 	void PublishIntakeMode(bool intaking);
+	void InitializeExtender()
+	{
+		m_isExtenderInitialized = true;
+		m_extender->SetPosition(102.8_tr);
+	};
+	bool IsExtenderInitialized() { return m_isExtenderInitialized; }
 
 protected:
 	RobotIdentifier m_activeRobotId;
@@ -152,6 +158,7 @@ private:
 	bool m_isInClimbMode = false;
 	bool m_isLaunching = false;
 	bool m_prevIntakeSwitchState = false;
+	bool m_isExtenderInitialized = false;
 	units::angle::turn_t m_intakeRetractedPositionTarget{80.0};
 	units::angle::turn_t m_intakeExtendedPositionTarget{0.0};
 	units::angle::turn_t m_cachedExtenderPositionDeg{0.0};
