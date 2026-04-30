@@ -47,9 +47,13 @@ namespace LauncherStates
 
 		const units::angular_velocity::turns_per_second_t m_launcherTarget = units::angular_velocity::turns_per_second_t(0);
 		const units::angle::turn_t m_hoodTarget = units::angle::turn_t(0);
-		const units::angular_velocity::turns_per_second_t m_transferTarget{160};
+		const units::angular_velocity::turns_per_second_t m_passingTransferTarget{160};
+		const units::angular_velocity::turns_per_second_t m_scoringTransferTarget{80};
+
 		const units::angle::turn_t m_turretTarget = units::angle::turn_t(0);
-		const units::angular_velocity::turns_per_second_t m_indexerTarget{50};
+		const units::angular_velocity::turns_per_second_t m_passingIndexerTarget{50};
+		const units::angular_velocity::turns_per_second_t m_scoringIndexerTarget{25};
+
 		const units::angular_velocity::turns_per_second_t m_spindexerTarget{22};
 	};
 }

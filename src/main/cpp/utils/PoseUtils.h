@@ -138,7 +138,7 @@ public:
     static FieldConstants::FIELD_ELEMENT GetClosestFieldElement(const frc::Pose2d &pose, FieldConstants::FIELD_ELEMENT firstElement, FieldConstants::FIELD_ELEMENT secondElement, FieldConstants *fieldConstants);
 
     // max speed x loop time 20 ms x 1.5 (safety factor)
-    static constexpr units::length::meter_t m_kJumpThreshold = 0.1536_m;
+    static constexpr units::length::meter_t m_kJumpThreshold = 3_ft;
     static constexpr units::length::meter_t m_kFieldMaxX = 54.1_ft;
     static constexpr units::length::meter_t m_kFieldMaxY = 26.5_ft;
     static constexpr units::length::meter_t m_kFieldMinX = 0.0_ft;

@@ -207,6 +207,7 @@ public:
 	void AgitateSpindexer();
 	void InitializeSpindexerTargets();
 	void TurretHasReset(bool turretHasReset) { m_turretHasReset = turretHasReset; }
+	units::length::inch_t GetDistanceToTarget() { return m_distanceToTarget; };
 
 protected:
 	RobotIdentifier m_activeRobotId;

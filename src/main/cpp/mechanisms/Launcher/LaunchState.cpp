@@ -52,9 +52,17 @@ void LaunchState::Init()
 
 void LaunchState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetTransferVelocityRPS(m_transferTarget);
-	m_mechanism->UpdateTargetIndexerVelocityRPS(m_indexerTarget);
 	m_mechanism->UpdateTargetSpindexerVelocityRPS(m_spindexerTarget);
+	if (m_mechanism->GetDistanceToTarget() > 40_ft)
+	{
+		m_mechanism->UpdateTargetTransferVelocityRPS(m_passingTransferTarget);
+		m_mechanism->UpdateTargetIndexerVelocityRPS(m_passingIndexerTarget);
+	}
+	else
+	{
+		m_mechanism->UpdateTargetTransferVelocityRPS(m_scoringTransferTarget);
+		m_mechanism->UpdateTargetIndexerVelocityRPS(m_scoringIndexerTarget);
+	}
 }
 
 void LaunchState::Run()
