@@ -215,7 +215,7 @@ void DragonVisionPoseEstimator::CalculateInitialAutonPosition()
             }
             else
             {
-                frc::Pose2d pose = frc::Pose2d(units::meter_t(3.6037278175354004), units::meter_t(5.664180278778076), frc::Rotation2d(0_deg));
+                frc::Pose2d pose = frc::Pose2d(units::meter_t(3.6362111568450928), units::meter_t(5.577685879516602), frc::Rotation2d(0_deg));
                 ResetPosition(pose);
             }
         }
@@ -228,7 +228,7 @@ void DragonVisionPoseEstimator::CalculateInitialAutonPosition()
             }
             else
             {
-                frc::Pose2d pose = frc::Pose2d(units::meter_t(3.549588918685913), units::meter_t(3.9750471115112305), frc::Rotation2d(0_deg));
+                frc::Pose2d pose = frc::Pose2d(units::meter_t(3.6362111568450928), units::meter_t(3.9750471115112305), frc::Rotation2d(0_deg));
                 ResetPosition(pose);
             }
         }
@@ -236,7 +236,7 @@ void DragonVisionPoseEstimator::CalculateInitialAutonPosition()
         {
             if (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed)
             {
-                frc::Pose2d pose = frc::Pose2d(units::meter_t(12.904788970947266), units::meter_t(5.61004161834716), frc::Rotation2d(180_deg));
+                frc::Pose2d pose = frc::Pose2d(units::meter_t(12.904788970947266), units::meter_t(5.577685879516602), frc::Rotation2d(180_deg));
                 ResetPosition(pose);
             }
             else
