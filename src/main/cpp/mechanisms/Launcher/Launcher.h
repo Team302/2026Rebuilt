@@ -119,7 +119,7 @@ public:
 		m_launcherVelocityRPS.Velocity = velocity;
 		m_launcherVelocityRPS.Acceleration = 100_tr_per_s_sq;
 		// m_launcherActiveTarget = &m_launcherVelocityRPS.WithSlot(0);
-		m_launcherActiveTarget = (m_distanceToTarget > 40_ft) ? &m_launcherVelocityRPS.WithSlot(1)
+		m_launcherActiveTarget = (m_distanceToTarget > 35_ft) ? &m_launcherVelocityRPS.WithSlot(1)
 															  : &m_launcherVelocityRPS.WithSlot(0);
 	}
 
@@ -304,7 +304,7 @@ private:
 
 	static constexpr std::array<units::length::foot_t, 8> m_passingDistanceArray = {10.0_ft, 16.66666667_ft, 20.0_ft, 23.08333333_ft, 26.33333333_ft, 30.0_ft, 35.0_ft, 42.33333333_ft};
 	static constexpr std::array<units::angle::turn_t, 8> m_passingHoodAngleArray = {23.5_tr, 23.5_tr, 23.5_tr, 29.7_tr, 30.0_tr, 30.0_tr, 30.0_tr, 30.0_tr};
-	static constexpr std::array<units::angular_velocity::revolutions_per_minute_t, 8> m_passingLauncherVelocityArray = {1900.0_rpm, 2150.0_rpm, 2450.0_rpm, 2500.0_rpm, 2900.0_rpm, 3600.0_rpm, 4300.0_rpm, 5700.0_rpm};
+	static constexpr std::array<units::angular_velocity::revolutions_per_minute_t, 8> m_passingLauncherVelocityArray = {1900.0_rpm, 2150.0_rpm, 2450.0_rpm, 2500.0_rpm, 3000.0_rpm, 3600.0_rpm, 4300.0_rpm, 5700.0_rpm};
 	// All values in turns are actually Degree's
 
 	// Cached motor status signals for performance optimization
