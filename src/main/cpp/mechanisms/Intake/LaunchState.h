@@ -52,11 +52,13 @@ namespace IntakeStates
 		// const units::angle::turn_t m_extenderTargetDown = units::angle::turn_t(0);
 		static constexpr double m_extenderTargetUp = double(0.4);
 		static constexpr double m_extenderTargetDown = double(-0.4);
-		static constexpr units::angle::turn_t m_currentExtenderTarget{30.0_tr};
+		static constexpr units::angle::turn_t m_currentExtenderTarget{20.0_tr};
 
 		double m_currentExtenderBumpTarget{0};
 
 		frc::Timer m_timer;
-		static constexpr units::second_t m_bumpDuration = units::second_t(0.375);
+		int m_bumpCounter = 0;
+		int m_counterMax = 40;
+		static constexpr units::second_t m_bumpDuration = units::second_t(0.75);
 	};
 }
