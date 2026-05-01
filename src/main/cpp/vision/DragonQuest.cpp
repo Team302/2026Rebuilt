@@ -132,7 +132,7 @@ void DragonQuest::GetEstimatedPose()
     const PoseFrame &latest = frames.back();
     frc::Pose3d robotPose = QuestPoseToRobotPose3d(latest.questPose3d);
 
-    if (PoseUtils::IsPoseOffField(robotPose.ToPose2d()) || PoseUtils::IsPoseJumping(robotPose.ToPose2d(), m_lastCalculatedPose.ToPose2d()))
+    if (PoseUtils::IsPoseOffField(robotPose.ToPose2d()) /*|| PoseUtils::IsPoseJumping(robotPose.ToPose2d(), m_lastCalculatedPose.ToPose2d())*/)
     {
         m_isQuestGoofy = true;
     }
