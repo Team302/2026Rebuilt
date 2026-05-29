@@ -36,6 +36,7 @@ std::pair<frc::Translation2d, frc::Translation2d> PathfindToPoseWithVisionAvoida
 std::vector<std::pair<frc::Translation2d, frc::Translation2d>> PathfindToPoseWithVisionAvoidance::GetDynamicObstacles(const frc::Pose2d &currentPose)
 {
     std::vector<std::pair<frc::Translation2d, frc::Translation2d>> dynamicObstacles;
+    dynamicObstacles.push_back({frc::Translation2d{1_m, 1_m}, frc::Translation2d{1.5_m, 1.5_m}}); // Default dummy value to avoid empty vector issues
 
     if (m_vision == nullptr)
         return dynamicObstacles;

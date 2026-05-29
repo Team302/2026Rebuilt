@@ -266,6 +266,18 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
         {
             return frc2::cmd::None();
         } }));
+
+    // drive To Tower
+    pathfindToPoseWithVisionAvoidance.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
+                                                                         {
+        if (!m_climbModeStatus)
+        {
+            return frc2::ProxyCommand(m_pathfindToPoseWithVisionAvoidance.get()).ToPtr();
+        }
+        else
+        {
+            return frc2::cmd::None();
+        } }));
 }
 
 //------------------------------------------------------------------

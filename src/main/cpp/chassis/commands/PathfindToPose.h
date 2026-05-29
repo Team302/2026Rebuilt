@@ -51,6 +51,10 @@ protected:
 private:
     subsystems::CommandSwerveDrivetrain *m_chassis;
 
+    // Limits must be declared BEFORE constraints for valid initialization
+    static constexpr units::velocity::meters_per_second_t kMaxVelocity = 4_mps;
+    static constexpr units::acceleration::meters_per_second_squared_t kMaxAcceleration = 3_mps_sq;
+
     // Controllers
     frc::TrapezoidProfile<units::length::meters>::Constraints m_translationConstraints;
     frc::ProfiledPIDController<units::length::meters> m_translationPIDX;
@@ -58,10 +62,6 @@ private:
 
     // Output Request
     swerve::requests::FieldCentricFacingAngle m_driveRequest;
-
-    // Limits
-    units::velocity::meters_per_second_t kMaxVelocity = 4_mps;
-    units::acceleration::meters_per_second_squared_t kMaxAcceleration = 3_mps_sq;
 
     frc::Pose2d m_targetPose;
     frc::Pose2d m_currentPose;

@@ -38,7 +38,7 @@ void PathfindToPose::Initialize()
     m_currentPose = m_chassis != nullptr ? m_chassis->GetPose() : frc::Pose2d();
 
     // Setup target pose (can be set dynamically later via SetTargetPose)
-    m_targetPose = frc::Pose2d(1_m, 1_m, frc::Rotation2d(0_deg)); // Default dummy value
+    m_targetPose = frc::Pose2d(6_m, 2_m, frc::Rotation2d(0_deg)); // Default dummy value
 
     m_pathTimer.Reset();
     m_pathTimer.Start();
@@ -72,13 +72,11 @@ void PathfindToPose::Execute()
     pathplanner::Pathfinding::setDynamicObstacles(dynamicObstacles, m_currentPose.Translation());
 
     // 2. Replan path periodically if the target or obstacle moved significantly
-    if (m_pathTimer.Get() > 0.5_s)
+
+    if (m_replanTimer.HasElapsed(0.1_s))
     {
-        if (m_replanTimer.HasElapsed(0.5_s))
-        {
-            ReplanPath();
-            m_replanTimer.Restart();
-        }
+        ReplanPath();
+        m_replanTimer.Restart();
     }
 
     // 3. Follow the trajectory using our PIDs
