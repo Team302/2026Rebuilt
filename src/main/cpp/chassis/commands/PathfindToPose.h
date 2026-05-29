@@ -25,8 +25,6 @@
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/geometry/Pose2d.h>
 
-#include "vision/DragonVision.h"
-
 // Note: To compile this class, PathPlannerLib needs to be installed in vendordeps.
 #include <pathplanner/lib/path/PathPlannerPath.h>
 #include <pathplanner/lib/pathfinding/Pathfinding.h>
@@ -47,9 +45,11 @@ public:
 protected:
     subsystems::CommandSwerveDrivetrain *GetChassis() const { return m_chassis; }
 
+    // Override this in derived classes to provide dynamic obstacles (e.g. from vision)
+    virtual std::vector<std::pair<frc::Translation2d, frc::Translation2d>> GetDynamicObstacles(const frc::Pose2d &currentPose);
+
 private:
     subsystems::CommandSwerveDrivetrain *m_chassis;
-    DragonVision *m_vision;
 
     // Controllers
     frc::TrapezoidProfile<units::length::meters>::Constraints m_translationConstraints;
@@ -71,8 +71,6 @@ private:
     std::optional<pathplanner::PathPlannerTrajectory> m_currentTrajectory;
     frc::Timer m_pathTimer;
 
-    // Vision and Replanning
-    std::vector<std::unique_ptr<DragonVisionStruct>> m_visionCache;
     frc::Timer m_replanTimer;
 
     void ReplanPath();

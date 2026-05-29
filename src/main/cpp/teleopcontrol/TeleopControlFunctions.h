@@ -55,6 +55,7 @@ public:
         DRIVE_TO_FUEL,
         AUTO_DEFEND,
         DRIVE_TO_TRENCH,
+        PATHFIND_TO_POSE_WITH_VISION_AVOIDANCE,
 
         // Mechanisms specific
         // Intake

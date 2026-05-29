@@ -74,7 +74,8 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
                                      m_driveAlongNearestWall(std::make_unique<DriveAlongNearestWall>(m_chassis)),
                                      m_driveToFuel(std::make_unique<DriveToFuel>(m_chassis)),
                                      m_autoDefend(std::make_unique<AutoDefend>(m_chassis)),
-                                     m_driveToTrench(std::make_unique<DriveToTrench>(m_chassis))
+                                     m_driveToTrench(std::make_unique<DriveToTrench>(m_chassis)),
+                                     m_pathfindToPoseWithVisionAvoidance(std::make_unique<PathfindToPoseWithVisionAvoidance>(m_chassis))
 
 {
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
@@ -160,6 +161,7 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
     auto autoDefend = controller->GetCommandTrigger(TeleopControlFunctions::AUTO_DEFEND);
     // Sweep behind bump is on the same button as DriveToHub, so comment this out.
     auto sweepBehindHub = controller->GetCommandTrigger(TeleopControlFunctions::SWEEP_BEHIND_HUB);
+    auto pathfindToPoseWithVisionAvoidance = controller->GetCommandTrigger(TeleopControlFunctions::PATHFIND_TO_POSE_WITH_VISION_AVOIDANCE);
 
     // Drive to trench is on the same button as DriveAlongNearestWall, so comment this out.
     // leaving it here so it is easy if we change this mapping.

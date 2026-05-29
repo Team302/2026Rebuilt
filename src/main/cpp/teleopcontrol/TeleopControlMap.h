@@ -179,9 +179,10 @@ inline const robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const T
     {TeleopControlFunctions::DRIVE_TO_OUTPOST, driverBButton}, // Actually mapped in SwerveContainer
     {TeleopControlFunctions::DRIVE_TO_TOWER, driverBButton},   // Actually mapped in SwerveContainer
 
-    {TeleopControlFunctions::DRIVE_ALONG_NEAREST_WALL, driverXButton}, // Actually mapped in SwerveContainer
-    {TeleopControlFunctions::DRIVE_TO_TOWER, driverXButton},           // Actually mapped in SwerveContainer
-    {TeleopControlFunctions::DRIVE_TO_TRENCH, driverXButton},          // Actually mapped in SwerveContainer
+    // {TeleopControlFunctions::DRIVE_ALONG_NEAREST_WALL, driverXButton}, // Actually mapped in SwerveContainer
+    // {TeleopControlFunctions::DRIVE_TO_TOWER, driverXButton},           // Actually mapped in SwerveContainer
+    // {TeleopControlFunctions::DRIVE_TO_TRENCH, driverXButton},          // Actually mapped in SwerveContainer
+    {TeleopControlFunctions::PATHFIND_TO_POSE_WITH_VISION_AVOIDANCE, driverXButton}, // Actually mapped in SwerveContainer
 
     {TeleopControlFunctions::DRIVE_OVER_BUMP, driverYButton}, // Actually mapped in SwerveContainer
     {TeleopControlFunctions::LEVEL3_CLIMB, driverYButton},

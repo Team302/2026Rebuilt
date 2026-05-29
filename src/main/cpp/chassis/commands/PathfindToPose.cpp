@@ -16,14 +16,13 @@
 #include "chassis/commands/PathfindToPose.h"
 #include "frc/geometry/Rotation2d.h"
 #include "frc/geometry/Translation2d.h"
+#include "pathplanner/lib/config/RobotConfig.h"
 #include "state/RobotState.h"
 #include "utils/PoseUtils.h"
 #include "utils/logging/debug/Logger.h"
-#include "vision/PoseOffsetUtils.h"
 
 PathfindToPose::PathfindToPose(subsystems::CommandSwerveDrivetrain *chassis)
     : m_chassis(chassis),
-      m_vision(DragonVision::GetDragonVision()),
       m_translationConstraints(kMaxVelocity, kMaxAcceleration),
       m_translationPIDX(3.0, 0.0, 0.0, m_translationConstraints, 20_ms),
       m_translationPIDY(3.0, 0.0, 0.0, m_translationConstraints, 20_ms)
@@ -66,39 +65,14 @@ void PathfindToPose::Execute()
 
     m_currentPose = m_chassis->GetPose();
 
-    // 1. Detect dynamic obstacles (offending robots) via Vision
-    if (m_vision != nullptr)
-    {
-        m_vision->SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION, DRAGON_LIMELIGHT_PIPELINE::BUMPERS);
-        m_visionCache = m_vision->GetObjectDetectionTargetInfo(VisionTargetOption::CLOSEST_VALID_TARGET, std::vector<int>{});
+    // 1. Get dynamic obstacles from derived classes (or empty if base class)
+    std::vector<std::pair<frc::Translation2d, frc::Translation2d>> dynamicObstacles = GetDynamicObstacles(m_currentPose);
 
-        std::vector<std::pair<frc::Translation2d, frc::Translation2d>> dynamicObstacles;
-
-        if (!m_visionCache.empty() && m_visionCache[0].get() != nullptr)
-        {
-            // Calculate distance to the robot, similar to AutoDefend
-            auto targetinfo = PoseOffsetUtils::CalculateXYDistanceFromObject(*m_visionCache[0], 4_in);
-            units::length::meter_t xDistRelative = -targetinfo.first;
-            units::length::meter_t yDistRelative = -targetinfo.second;
-
-            // Convert relative distance to field translation
-            frc::Translation2d filterFieldTranslation = m_currentPose.Translation() + frc::Translation2d(xDistRelative, yDistRelative).RotateBy(m_currentPose.Rotation());
-
-            // Assume 1m x 1m footprint for the offending robot obstacle
-            frc::Translation2d obsSize{0.5_m, 0.5_m};
-            dynamicObstacles.push_back({filterFieldTranslation - obsSize, filterFieldTranslation + obsSize});
-
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "PathfindToPose", "Obstacle X", filterFieldTranslation.X().value());
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "PathfindToPose", "Obstacle Y", filterFieldTranslation.Y().value());
-        }
-
-        // Send the detected obstacles to PathPlanner's A* Pathfinding system
-        pathplanner::Pathfinding::setDynamicObstacles(dynamicObstacles, m_currentPose.Translation());
-    }
+    // Send the detected obstacles to PathPlanner's A* Pathfinding system
+    pathplanner::Pathfinding::setDynamicObstacles(dynamicObstacles, m_currentPose.Translation());
 
     // 2. Replan path periodically if the target or obstacle moved significantly
-    // PathPlanner's Pathfinding checks for path invalidation under the hood, but it's safe to poll
-    if (m_pathTimer.Get() > 0.5_s && pathplanner::Pathfinding::isPathfindingTargetAccessible(m_targetPose.Translation()))
+    if (m_pathTimer.Get() > 0.5_s)
     {
         if (m_replanTimer.HasElapsed(0.5_s))
         {
@@ -114,12 +88,12 @@ void PathfindToPose::Execute()
     {
         auto targetState = m_currentTrajectory.value().sample(m_pathTimer.Get());
 
-        chassisSpeeds.vx = targetState.velocity * targetState.heading.Cos();
-        chassisSpeeds.vy = targetState.velocity * targetState.heading.Sin();
+        chassisSpeeds.vx = targetState.linearVelocity * targetState.heading.Cos();
+        chassisSpeeds.vy = targetState.linearVelocity * targetState.heading.Sin();
 
         // Add PID corrections for precise positioning
-        chassisSpeeds.vx += units::velocity::meters_per_second_t(m_translationPIDX.Calculate(m_currentPose.X(), targetState.position.X()));
-        chassisSpeeds.vy += units::velocity::meters_per_second_t(m_translationPIDY.Calculate(m_currentPose.Y(), targetState.position.Y()));
+        chassisSpeeds.vx += units::velocity::meters_per_second_t(m_translationPIDX.Calculate(m_currentPose.X(), targetState.pose.X()));
+        chassisSpeeds.vy += units::velocity::meters_per_second_t(m_translationPIDY.Calculate(m_currentPose.Y(), targetState.pose.Y()));
 
         chassisSpeeds.vx = std::clamp(chassisSpeeds.vx, -kMaxVelocity, kMaxVelocity);
         chassisSpeeds.vy = std::clamp(chassisSpeeds.vy, -kMaxVelocity, kMaxVelocity);
@@ -147,22 +121,34 @@ void PathfindToPose::ReplanPath()
 
     try
     {
-        auto pathPoints = pathplanner::Pathfinding::getPathWaypoints(m_currentPose.Translation(), m_targetPose.Translation());
-        if (pathPoints.empty())
+        // For PathPlanner 2026, we don't have GetPathWaypoints directly exposed like before.
+        // Instead, PathPlanner handles the pathfinding via getCurrentPath from the pathfinder.
+        pathplanner::PathConstraints constraints(kMaxVelocity, kMaxAcceleration, 360_deg_per_s, 720_deg_per_s_sq);
+        pathplanner::GoalEndState goalState(0_mps, m_targetPose.Rotation());
+
+        pathplanner::Pathfinding::setStartPosition(m_currentPose.Translation());
+        pathplanner::Pathfinding::setGoalPosition(m_targetPose.Translation());
+
+        m_currentPath = pathplanner::Pathfinding::getCurrentPath(constraints, goalState);
+
+        if (!m_currentPath)
         {
             m_currentTrajectory = std::nullopt;
             return;
         }
 
-        // Generate PathPlannerPath from points to adhere to constraints
-        pathplanner::PathConstraints constraints(kMaxVelocity, kMaxAcceleration, 360_deg_per_s, 720_deg_per_s_sq);
-        pathplanner::GoalEndState goalState(0_mps, m_targetPose.Rotation());
-
-        m_currentPath = pathplanner::PathPlannerPath::fromPathPoints(pathPoints, constraints, goalState);
-
         // Generate Trajectory
         frc::ChassisSpeeds currentSpeeds = m_chassis->GetState().Speeds;
-        m_currentTrajectory = m_currentPath->getTrajectory(currentSpeeds, m_currentPose.Rotation());
+        pathplanner::RobotConfig config;
+        try
+        {
+            config = pathplanner::RobotConfig::fromGUISettings();
+        }
+        catch (...)
+        {
+        }
+
+        m_currentTrajectory = pathplanner::PathPlannerTrajectory(m_currentPath, currentSpeeds, m_currentPose.Rotation(), config);
 
         m_pathTimer.Restart();
     }
@@ -177,6 +163,11 @@ bool PathfindToPose::IsFinished()
 {
     // Check if we've reached the target pose within a 0.25 inch tolerance, similar to DriveToPose
     return PoseUtils::IsSamePose(m_currentPose, m_targetPose, 0.25_in);
+}
+
+std::vector<std::pair<frc::Translation2d, frc::Translation2d>> PathfindToPose::GetDynamicObstacles(const frc::Pose2d &currentPose)
+{
+    return std::vector<std::pair<frc::Translation2d, frc::Translation2d>>{};
 }
 
 void PathfindToPose::End(bool interrupted)
