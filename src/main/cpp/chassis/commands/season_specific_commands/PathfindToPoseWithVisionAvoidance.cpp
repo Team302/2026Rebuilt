@@ -14,6 +14,7 @@
 //====================================================================================================================================================
 
 #include "chassis/commands/season_specific_commands/PathfindToPoseWithVisionAvoidance.h"
+#include "utils/DragonField.h"
 #include "utils/logging/debug/Logger.h"
 #include "vision/PoseOffsetUtils.h"
 
@@ -29,14 +30,16 @@ PathfindToPoseWithVisionAvoidance::PathfindToPoseWithVisionAvoidance(subsystems:
 
 std::pair<frc::Translation2d, frc::Translation2d> PathfindToPoseWithVisionAvoidance::GetObstacleSize()
 {
-    // Assume 1m x 1m footprint for the offending robot obstacle by default
-    return {frc::Translation2d{0.5_m, 0.5_m}, frc::Translation2d{-0.5_m, -0.5_m}};
+    // Expand the bounding box to account for both the opposing robot (approx 0.5m radius)
+    // AND our robot's physical size/bumpers (approx 0.45m radius) + safety margin.
+    // Total footprint effectively prevents our robot's center from entering collision zones.
+    return {frc::Translation2d{1.5_m, 1.5_m}, frc::Translation2d{-1.5_m, -1.5_m}};
 }
 
 std::vector<std::pair<frc::Translation2d, frc::Translation2d>> PathfindToPoseWithVisionAvoidance::GetDynamicObstacles(const frc::Pose2d &currentPose)
 {
     std::vector<std::pair<frc::Translation2d, frc::Translation2d>> dynamicObstacles;
-    dynamicObstacles.push_back({frc::Translation2d{1_m, 1_m}, frc::Translation2d{1.5_m, 1.5_m}}); // Default dummy value to avoid empty vector issues
+    dynamicObstacles.push_back({frc::Translation2d{2_m, 2_m}, frc::Translation2d{2.5_m, 2.5_m}}); // Default dummy value to avoid empty vector issues
 
     if (m_vision == nullptr)
         return dynamicObstacles;
@@ -61,6 +64,22 @@ std::vector<std::pair<frc::Translation2d, frc::Translation2d>> PathfindToPoseWit
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "PathfindToPose", "Obstacle X", filterFieldTranslation.X().value());
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "PathfindToPose", "Obstacle Y", filterFieldTranslation.Y().value());
     }
+
+    // Add logging to show dynamic obstacle bounding box on Field2d
+    std::vector<frc::Pose2d> obstaclePoses;
+    for (const auto &obs : dynamicObstacles)
+    {
+        frc::Translation2d bottomLeft = obs.first;
+        frc::Translation2d topRight = obs.second;
+
+        obstaclePoses.push_back(frc::Pose2d(bottomLeft, frc::Rotation2d(0_deg)));                   // Bottom Left
+        obstaclePoses.push_back(frc::Pose2d(bottomLeft.X(), topRight.Y(), frc::Rotation2d(0_deg))); // Top Left
+        obstaclePoses.push_back(frc::Pose2d(topRight, frc::Rotation2d(0_deg)));                     // Top Right
+        obstaclePoses.push_back(frc::Pose2d(topRight.X(), bottomLeft.Y(), frc::Rotation2d(0_deg))); // Bottom Right
+        obstaclePoses.push_back(frc::Pose2d(bottomLeft, frc::Rotation2d(0_deg)));                   // Back to Bottom Left
+    }
+
+    DragonField::GetInstance()->UpdateObject("Dynamic Obstacle (Robot)", obstaclePoses);
 
     return dynamicObstacles;
 }

@@ -18,6 +18,7 @@
 #include "frc/geometry/Translation2d.h"
 #include "pathplanner/lib/config/RobotConfig.h"
 #include "state/RobotState.h"
+#include "utils/DragonField.h"
 #include "utils/PoseUtils.h"
 #include "utils/logging/debug/Logger.h"
 
@@ -39,6 +40,10 @@ void PathfindToPose::Initialize()
 
     // Setup target pose (can be set dynamically later via SetTargetPose)
     m_targetPose = frc::Pose2d(6_m, 2_m, frc::Rotation2d(0_deg)); // Default dummy value
+
+    // Make sure DragonField recognizes our custom field objects
+    DragonField::GetInstance()->AddObject("Dynamic Obstacle (Robot)", m_currentPose, true);
+    DragonField::GetInstance()->AddObject("Pathfind Predicted Path", m_currentPose, true);
 
     m_pathTimer.Reset();
     m_pathTimer.Start();
@@ -72,13 +77,10 @@ void PathfindToPose::Execute()
     pathplanner::Pathfinding::setDynamicObstacles(dynamicObstacles, m_currentPose.Translation());
 
     // 2. Replan path periodically if the target or obstacle moved significantly
-
-    if (m_replanTimer.HasElapsed(0.1_s))
+    if (m_replanTimer.HasElapsed(40_ms))
     {
         ReplanPath();
-        m_replanTimer.Restart();
     }
-
     // 3. Follow the trajectory using our PIDs
     frc::ChassisSpeeds chassisSpeeds{};
 
@@ -95,12 +97,14 @@ void PathfindToPose::Execute()
 
         chassisSpeeds.vx = std::clamp(chassisSpeeds.vx, -kMaxVelocity, kMaxVelocity);
         chassisSpeeds.vy = std::clamp(chassisSpeeds.vy, -kMaxVelocity, kMaxVelocity);
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "PathfindToPose", "Pathfinding status", "Valid path");
     }
     else
     {
         // No path could be found; brake
         chassisSpeeds.vx = 0_mps;
         chassisSpeeds.vy = 0_mps;
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "PathfindToPose", "Pathfinding status", "No valid path found to target pose");
     }
 
     // Send control request to drivetrain with heading control targeting the final pose heading
@@ -108,7 +112,7 @@ void PathfindToPose::Execute()
         m_driveRequest.WithVelocityX(chassisSpeeds.vx)
             .WithVelocityY(chassisSpeeds.vy)
             .WithTargetDirection(m_targetPose.Rotation().Degrees())
-            .WithHeadingPID(4.5, 0.0, 0.0) // Taken from DriveToPose m_rotationKP
+            .WithHeadingPID(8, 0.0, 0.0) // Taken from DriveToPose m_rotationKP
             .WithForwardPerspective(ctre::phoenix6::swerve::requests::ForwardPerspectiveValue::BlueAlliance));
 }
 
@@ -148,7 +152,18 @@ void PathfindToPose::ReplanPath()
 
         m_currentTrajectory = pathplanner::PathPlannerTrajectory(m_currentPath, currentSpeeds, m_currentPose.Rotation(), config);
 
-        m_pathTimer.Restart();
+        // Map trajectory to poses and log to Field2d
+        std::vector<frc::Pose2d> trajectoryPoses;
+        if (m_currentTrajectory.has_value())
+        {
+            for (auto state : m_currentTrajectory.value().getStates())
+            {
+                trajectoryPoses.push_back(state.pose);
+            }
+        }
+        DragonField::GetInstance()->UpdateObject("Pathfind Predicted Path", trajectoryPoses);
+
+        m_replanTimer.Restart();
     }
     catch (...)
     {
