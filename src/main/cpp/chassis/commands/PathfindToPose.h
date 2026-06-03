@@ -16,8 +16,9 @@
 #pragma once
 
 #include <memory>
+#include <optional>
+#include <utility>
 #include <vector>
-
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "frc2/command/Command.h"
 #include "frc2/command/CommandHelper.h"
