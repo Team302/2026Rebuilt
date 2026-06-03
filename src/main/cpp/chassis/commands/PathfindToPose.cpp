@@ -151,6 +151,7 @@ void PathfindToPose::ReplanPath()
         }
 
         m_currentTrajectory = pathplanner::PathPlannerTrajectory(m_currentPath, currentSpeeds, m_currentPose.Rotation(), config);
+        m_pathTimer.Restart();
 
         // Map trajectory to poses and log to Field2d
         std::vector<frc::Pose2d> trajectoryPoses;
