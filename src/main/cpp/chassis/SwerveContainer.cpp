@@ -267,7 +267,7 @@ void SwerveContainer::CreateRebuiltDriveToCommands(TeleopControl *controller)
             return frc2::cmd::None();
         } }));
 
-    // drive To Tower
+    // Pathfind to pose with vision-based obstacle avoidance
     pathfindToPoseWithVisionAvoidance.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                                          {
         if (!m_climbModeStatus)
