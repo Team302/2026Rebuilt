@@ -105,7 +105,7 @@ void DragonField::UpdateObject(const std::string &name, frc::Pose2d object)
     }
 }
 
-void DragonField::UpdateObject(const std::string &name, std::vector<frc::Pose2d> &poses)
+void DragonField::UpdateObject(const std::string &name, const std::vector<frc::Pose2d> &poses)
 {
     auto objectPair = std::find_if(m_objectNameEnabled.begin(), m_objectNameEnabled.end(),
                                    [&name](const std::pair<std::string, bool> &pair)
