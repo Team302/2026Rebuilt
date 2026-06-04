@@ -148,8 +148,10 @@ void PathfindToPose::ReplanPath()
         }
         catch (...)
         {
+            Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, "PathfindToPose", "RobotConfig", "Failed to load PathPlanner GUI settings");
+            m_currentTrajectory = std::nullopt;
+            return;
         }
-
         m_currentTrajectory = pathplanner::PathPlannerTrajectory(m_currentPath, currentSpeeds, m_currentPose.Rotation(), config);
         m_pathTimer.Restart();
 
