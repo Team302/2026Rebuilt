@@ -49,7 +49,7 @@ public:
     /// @brief Update the pose of a specific field object using an array of poses (useful for bounding boxes or paths).
     /// @param name The name identifier of the object to update.
     /// @param poses The vector of poses for the object.
-    void UpdateObject(const std::string &name, std::vector<frc::Pose2d> &poses);
+    void UpdateObject(const std::string &name, const std::vector<frc::Pose2d> &poses);
 
     /// @brief Update the pose of a specific field object if it is enabled.
     /// @param name The name identifier of the object to update.
