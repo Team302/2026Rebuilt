@@ -16,24 +16,25 @@ Update `.github/CODEBASE_CONTEXT.md` accordingly:
 
 ## CHANGED FILES
 
-    📝 `build.gradle`
-    ✨ `src/main/deploy/auton/BlueBDepLaunch1NDepNOutPassNCli.xml` (added)
-    ✨ `src/main/deploy/auton/BlueBDepLaunch1NDepNOutScoreNCli.xml` (added)
-    ✨ `src/main/deploy/auton/BlueBOutLaunch1NDepNOutPassNCli.xml` (added)
-    ✨ `src/main/deploy/auton/BlueBOutLaunch1NDepNOutScoreNCli.xml` (added)
-    📝 `src/main/deploy/auton/BlueDefaultFile.xml`
-    ✨ `src/main/deploy/auton/BlueHubLaunch0NDepNOutScoreNCli.xml` (added)
-    ✨ `src/main/deploy/auton/RedBDepLaunch1NDepNOutPassNCli.xml` (added)
-    ✨ `src/main/deploy/auton/RedBDepLaunch1NDepNOutScoreNCli.xml` (added)
-    ✨ `src/main/deploy/auton/RedBOutLaunch1NDepNOutPassNCli.xml` (added)
-    ✨ `src/main/deploy/auton/RedBOutLaunch1NDepNOutScoreNCli.xml` (added)
-    📝 `src/main/deploy/auton/RedDefaultFile.xml`
-    ✨ `src/main/deploy/auton/RedHubLaunch0NDepNOutScoreNCli.xml` (added)
-    ✨ `src/main/deploy/choreo/Launch1Dep_1.traj` (added)
-    ✨ `src/main/deploy/choreo/Launch1Dep_2.traj` (added)
-    ✨ `src/main/deploy/choreo/Launch1Dep_3.traj` (added)
-    ✨ `src/main/deploy/choreo/Launch1Out_1.traj` (added)
-    ✨ `src/main/deploy/choreo/Launch1Out_2.traj` (added)
+    📝 `src/main/cpp/mechanisms/Intake/Intake.cpp`
+    📝 `src/main/cpp/mechanisms/Intake/IntakeState.h`
+    📝 `src/main/cpp/mechanisms/Intake/LaunchState.cpp`
+    📝 `src/main/cpp/mechanisms/Intake/LaunchState.h`
+    📝 `src/main/cpp/mechanisms/Launcher/AgitatorState.cpp`
+    📝 `src/main/cpp/mechanisms/Launcher/AgitatorState.h`
+    📝 `src/main/cpp/mechanisms/Launcher/IdleState.cpp`
+    📝 `src/main/cpp/mechanisms/Launcher/IdleState.h`
+    📝 `src/main/cpp/mechanisms/Launcher/LaunchState.cpp`
+    📝 `src/main/cpp/mechanisms/Launcher/LaunchState.h`
+    📝 `src/main/cpp/mechanisms/Launcher/Launcher.h`
+    📝 `src/main/cpp/utils/PoseUtils.h`
+    📝 `src/main/cpp/vision/DragonQuest.cpp`
+    📝 `src/main/cpp/vision/DragonVisionPoseEstimator.cpp`
+    📝 `src/main/deploy/302/mechanisms/Launcher.xml`
+    ✨ `src/main/deploy/auton/BlueHubLaunch0DepNOutScoreNCli.xml` (added)
+    ✨ `src/main/deploy/auton/RedHubLaunch0DepNOutScoreNCli.xml` (added)
+    ✨ `src/main/deploy/choreo/Depot1.traj` (added)
+    ✨ `src/main/deploy/choreo/Depot2.traj` (added)
 
 
 ## EXISTING `.github/CODEBASE_CONTEXT.md` (651 lines)
