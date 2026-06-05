@@ -174,7 +174,6 @@ inline const robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const T
     {TeleopControlFunctions::DRIVE_TO_TOWER, driverBButton},
     {TeleopControlFunctions::DRIVE_TO_HUB, driverRStickPressed},
     {TeleopControlFunctions::SWEEP_BEHIND_HUB, driverAButton},
-    {TeleopControlFunctions::LEVEL1_CLIMB, driverAButton},
 
     {TeleopControlFunctions::DRIVE_TO_OUTPOST, driverBButton}, // Actually mapped in SwerveContainer
     {TeleopControlFunctions::DRIVE_TO_TOWER, driverBButton},   // Actually mapped in SwerveContainer
@@ -184,9 +183,6 @@ inline const robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const T
     {TeleopControlFunctions::DRIVE_TO_TRENCH, driverXButton},          // Actually mapped in SwerveContainer
 
     {TeleopControlFunctions::DRIVE_OVER_BUMP, driverYButton}, // Actually mapped in SwerveContainer
-    {TeleopControlFunctions::LEVEL3_CLIMB, driverYButton},
-
-    {TeleopControlFunctions::CLIMB_MODE, driverStartButton},
 
     // Season Specific Co-Pilot Controls
     {TeleopControlFunctions::UPDATE_TARGET_OFFSET_DOWN, copilotDPad180},
@@ -251,8 +247,6 @@ inline robin_hood::unordered_map<TeleopControlFunctions::FUNCTION, const TeleopC
     {TeleopControlFunctions::HOLONOMIC_DRIVE_FORWARD, driverLJoystickY},
     {TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE, driverLJoystickX},
     {TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE, driverRJoystickX},
-    {TeleopControlFunctions::CLIMB_MANUAL_ROTATE_DOWN, driverLTrigger},
-    {TeleopControlFunctions::CLIMB_MANUAL_ROTATE_UP, driverRTrigger},
 
     // Season Specific Co-Pilot Controls
     {TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_X, copilotLJoystickY},

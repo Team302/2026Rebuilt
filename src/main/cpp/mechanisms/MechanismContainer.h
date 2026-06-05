@@ -18,7 +18,6 @@
 // Forward declares
 class Intake;
 // class Launcher;   // TODO: enable when the Launcher is converted to command-based
-// class Climber;    // TODO: enable when the Climber is converted to command-based
 
 //====================================================================================================================================================
 /// @class MechanismContainer
@@ -57,11 +56,9 @@ private:
     ///        No-op if the Intake is not present on the current robot.
     void ConfigureIntake();
     // void ConfigureLauncher();   // TODO: enable when the Launcher is converted to command-based
-    // void ConfigureClimber();    // TODO: enable when the Climber is converted to command-based
 
     static MechanismContainer *m_instance;
 
     Intake *m_intake = nullptr;
     // Launcher *m_launcher = nullptr;   // TODO
-    // Climber *m_climber = nullptr;     // TODO
 };

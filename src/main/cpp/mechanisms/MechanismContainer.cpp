@@ -46,7 +46,6 @@ void MechanismContainer::ConfigureBindings()
 {
     ConfigureIntake();
     // ConfigureLauncher();   // TODO: enable when the Launcher is converted to command-based
-    // ConfigureClimber();    // TODO: enable when the Climber is converted to command-based
 }
 
 void MechanismContainer::ConfigureIntake()

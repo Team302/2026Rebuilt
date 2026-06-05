@@ -24,7 +24,6 @@
 #include "auton/AutonGrid.h"
 #include "auton/PrimitiveEnums.h"
 #include "chassis/ChassisOptionEnums.h"
-#include "mechanisms/Climber/Climber.h"
 #include "mechanisms/Intake/Intake.h"
 #include "mechanisms/Launcher/Launcher.h"
 
@@ -61,40 +60,84 @@ public:
                ZoneMode zoneMode,
                bool isLauncherStateChanged,
                bool isIntakeStateChanged,
-               bool isClimberStateChanged,
                Launcher::STATE_NAMES launcherState,
-               Intake::STATE_NAMES intakeState,
-               Climber::STATE_NAMES climberState); // declare ZoneParams public constructor with parameters xgrid1, etc.
+               Intake::STATE_NAMES intakeState); // declare ZoneParams public constructor with parameters xgrid1, etc.
 
     ZoneParams() = delete;
     ~ZoneParams() = default; // Destructor
 
-    units::length::meter_t GetX1Rect() const { return m_xgrid1rect; }
-    units::length::meter_t GetX2Rect() const { return m_xgrid2rect; }
-    units::length::meter_t GetY1Rect() const { return m_ygrid1rect; }
-    units::length::meter_t GetY2Rect() const { return m_ygrid2rect; }
+    units::length::meter_t GetX1Rect() const
+    {
+        return m_xgrid1rect;
+    }
+    units::length::meter_t GetX2Rect() const
+    {
+        return m_xgrid2rect;
+    }
+    units::length::meter_t GetY1Rect() const
+    {
+        return m_ygrid1rect;
+    }
+    units::length::meter_t GetY2Rect() const
+    {
+        return m_ygrid2rect;
+    }
 
-    ZoneMode GetZoneMode() const { return m_zoneMode; }
+    ZoneMode GetZoneMode() const
+    {
+        return m_zoneMode;
+    }
 
-    frc::Pose2d GetCircleZonePose() const { return m_circlePose; }
-    units::length::inch_t GetRadius() const { return m_radius; }
+    frc::Pose2d GetCircleZonePose() const
+    {
+        return m_circlePose;
+    }
+    units::length::inch_t GetRadius() const
+    {
+        return m_radius;
+    }
 
-    ChassisOptionEnums::DriveStateType GetPathUpdateOption() const { return m_pathUpdateOption; }
+    ChassisOptionEnums::DriveStateType GetPathUpdateOption() const
+    {
+        return m_pathUpdateOption;
+    }
 
-    ChassisOptionEnums::HeadingOption GetHeadingOption() const { return m_headingOption; }
-    ChassisOptionEnums::AutonChassisOptions GetChassisOption() const { return m_autonChassisOption; }
-    ChassisOptionEnums::AutonAvoidOptions GetAvoidOption() const { return m_avoidoption; }
+    ChassisOptionEnums::HeadingOption GetHeadingOption() const
+    {
+        return m_headingOption;
+    }
+    ChassisOptionEnums::AutonChassisOptions GetChassisOption() const
+    {
+        return m_autonChassisOption;
+    }
+    ChassisOptionEnums::AutonAvoidOptions GetAvoidOption() const
+    {
+        return m_avoidoption;
+    }
 
-    ZoneAllianceColor GetAllianceColor() const { return m_allianceColor; }
+    ZoneAllianceColor GetAllianceColor() const
+    {
+        return m_allianceColor;
+    }
 
     bool IsPoseInZone(frc::Pose2d robotPose);
 
-    bool IsLauncherStateChanging() const { return m_isLauncherStateChanged; }
-    bool IsIntakeStateChanging() const { return m_isIntakeStateChanged; }
-    bool IsClimberStateChanging() const { return m_isClimberStateChanged; }
-    Launcher::STATE_NAMES GetLauncherState() const { return m_launcherState; }
-    Intake::STATE_NAMES GetIntakeState() const { return m_intakeState; }
-    Climber::STATE_NAMES GetClimberState() const { return m_climberState; }
+    bool IsLauncherStateChanging() const
+    {
+        return m_isLauncherStateChanged;
+    }
+    bool IsIntakeStateChanging() const
+    {
+        return m_isIntakeStateChanged;
+    }
+    Launcher::STATE_NAMES GetLauncherState() const
+    {
+        return m_launcherState;
+    }
+    Intake::STATE_NAMES GetIntakeState() const
+    {
+        return m_intakeState;
+    }
 
 private:
     frc::Pose2d m_circlePose;
@@ -116,10 +159,8 @@ private:
 
     bool m_isLauncherStateChanged;
     bool m_isIntakeStateChanged;
-    bool m_isClimberStateChanged;
     Launcher::STATE_NAMES m_launcherState;
     Intake::STATE_NAMES m_intakeState;
-    Climber::STATE_NAMES m_climberState;
 };
 
 typedef std::vector<std::pair<ZoneParams *, bool>> ZoneParamsVector; // create typedef ZoneParamsVector

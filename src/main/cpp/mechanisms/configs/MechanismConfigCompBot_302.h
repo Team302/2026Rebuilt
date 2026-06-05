@@ -16,7 +16,6 @@
 // Generated on Friday, January 23, 2026 12:20:12 PM
 
 #pragma once
-#include "mechanisms/Climber/Climber.h"
 #include "mechanisms/Intake/Intake.h"
 #include "mechanisms/Launcher/Launcher.h"
 #include "mechanisms/MechanismTypes.h"
@@ -39,7 +38,6 @@ protected:
 private:
 	Intake *m_theIntake = nullptr;
 	Launcher *m_theLauncher = nullptr;
-	Climber *m_theClimber = nullptr;
 
 	std::unordered_map<MechanismTypes::MECHANISM_TYPE, BaseMech *> m_mechanismMap;
 	static constexpr int m_ledCanID = 60;

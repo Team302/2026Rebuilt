@@ -3,6 +3,5 @@
 
 <auton>
 <zone circlex="16.01" circley="4.36" radius="60.0"
-climberState = "STATE_WANT_TO_CLIMB"
 pathUpdateOption = "DRIVE_TO_TOWER"/>
 </auton>

@@ -38,7 +38,6 @@
     headingOption           ( MAINTAIN | SPECIFIED_ANGLE | FACE_GAME_PIECE | IGNORE) "IGNORE"
     launcherState		( STATE_OFF | STATE_IDLE | STATE_PREPARE_TO_LAUNCH ) "STATE_IDLE"
     intakeState		    ( STATE_OFF | STATE_INTAKE | STATE_EXPEL ) "STATE_OFF"
-	climberState		( STATE_OFF | STATE_WANT_TO_CLIMB ) "STATE_OFF"
 
 
     allianceColor ( RED | BLUE | BOTH ) "BOTH"

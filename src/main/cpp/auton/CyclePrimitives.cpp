@@ -35,7 +35,6 @@
 #include "chassis/ChassisConfigMgr.h"
 #include "chassis/ChassisOptionEnums.h"
 
-#include "mechanisms/Climber/Climber.h"
 #include "mechanisms/Intake/Intake.h"
 #include "mechanisms/Launcher/Launcher.h"
 #include "mechanisms/MechanismTypes.h"
@@ -64,8 +63,7 @@ CyclePrimitives::CyclePrimitives() : State(string("CyclePrimitives"), 0),
                                      m_chassis(),
                                      m_updatedHeadingOption(),
                                      m_cachedLauncher(nullptr),
-                                     m_cachedIntake(nullptr),
-                                     m_cachedClimber(nullptr)
+                                     m_cachedIntake(nullptr)
 {
     auto chassisConfig = ChassisConfigMgr::GetInstance();
     m_chassis = chassisConfig != nullptr ? chassisConfig->GetSwerveChassis() : nullptr;
@@ -189,10 +187,8 @@ void CyclePrimitives::RunDriveStop()
                                           ChassisOptionEnums::DriveStateType::STOP_DRIVE,
                                           false, // launcherStateChanged
                                           false, // intakeStateChanged
-                                          false, // climberStateChanged
                                           Launcher::STATE_OFF,
-                                          Intake::STATE_OFF,
-                                          Climber::STATE_OFF);
+                                          Intake::STATE_OFF);
 
         m_driveStop = m_primFactory->GetIPrimitive(params);
         m_driveStop->Init(params);
@@ -205,17 +201,14 @@ void CyclePrimitives::CacheMechanismPointers()
     // Always clear cached pointers first to avoid holding stale/dangling references
     m_cachedLauncher = nullptr;
     m_cachedIntake = nullptr;
-    m_cachedClimber = nullptr;
     auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
     if (config != nullptr)
     {
         auto launcherStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::LAUNCHER);
         auto intakeStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::INTAKE);
-        auto climberStateMgr = config->GetMechanism(MechanismTypes::MECHANISM_TYPE::CLIMBER);
 
         m_cachedLauncher = launcherStateMgr != nullptr ? dynamic_cast<Launcher *>(launcherStateMgr) : nullptr;
         m_cachedIntake = intakeStateMgr != nullptr ? dynamic_cast<Intake *>(intakeStateMgr) : nullptr;
-        m_cachedClimber = climberStateMgr != nullptr ? dynamic_cast<Climber *>(climberStateMgr) : nullptr;
     }
 }
 
@@ -232,11 +225,6 @@ void CyclePrimitives::SetMechanismStatesFromParam(PrimitiveParams *params)
         {
             m_cachedIntake->SetCurrentState(params->GetIntakeState(), true);
         }
-
-        if (m_cachedClimber != nullptr && params->IsClimberStateChanging())
-        {
-            m_cachedClimber->SetCurrentState(params->GetClimberState(), true);
-        }
     }
 }
 bool CyclePrimitives::SetMechanismStatesFromZone(std::pair<ZoneParams *, bool> *params)
@@ -252,12 +240,6 @@ bool CyclePrimitives::SetMechanismStatesFromZone(std::pair<ZoneParams *, bool> *
         if (m_cachedIntake != nullptr && params->first->IsIntakeStateChanging())
         {
             m_cachedIntake->SetCurrentState(params->first->GetIntakeState(), true);
-            return true; // Return true if we changed a mechanism state based on zone params
-        }
-
-        if (m_cachedClimber != nullptr && params->first->IsClimberStateChanging())
-        {
-            m_cachedClimber->SetCurrentState(params->first->GetClimberState(), true);
             return true; // Return true if we changed a mechanism state based on zone params
         }
     }

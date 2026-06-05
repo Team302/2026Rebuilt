@@ -27,7 +27,6 @@
 
 #include <pugixml/pugixml.hpp>
 
-#include "mechanisms/Climber/Climber.h"
 #include "mechanisms/Intake/Intake.h"
 #include "mechanisms/Launcher/Launcher.h"
 #include "mechanisms/MechanismTypes.h"
@@ -124,11 +123,9 @@ PrimitiveParamsVector PrimitiveParser::ParseXML(string fulldirfile)
 
                     Intake::STATE_NAMES intakeState = Intake::STATE_OFF;
                     Launcher::STATE_NAMES launcherState = Launcher::STATE_OFF;
-                    Climber::STATE_NAMES climberState = Climber::STATE_OFF;
 
                     bool intakeStateChanged = false;
                     bool launcherStateChanged = false;
-                    bool climberStateChanged = false;
 
                     std::string pathName;
                     std::string choreoTrajectoryName;
@@ -249,25 +246,6 @@ PrimitiveParamsVector PrimitiveParser::ParseXML(string fulldirfile)
                                 }
                             }
                         }
-                        else if (strcmp(attr.name(), "climberState") == 0)
-                        {
-                            if (config != nullptr && config->GetMechanism(MechanismTypes::MECHANISM_TYPE::CLIMBER) != nullptr)
-                            {
-                                Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("PrimitiveParser"), string("Found climber mechanism"), string(attr.value()));
-
-                                auto climberStateItr = Climber::stringToSTATE_NAMESEnumMap.find(attr.value());
-                                if (climberStateItr != Climber::stringToSTATE_NAMESEnumMap.end())
-                                {
-                                    climberState = climberStateItr->second;
-                                    climberStateChanged = true;
-                                }
-                                else
-                                {
-                                    Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("PrimitiveParser"), string("ParseXML invalid climber state"), attr.value());
-                                    hasError = true;
-                                }
-                            }
-                        }
                     }
                     if (!hasError)
                     {
@@ -302,10 +280,8 @@ PrimitiveParamsVector PrimitiveParser::ParseXML(string fulldirfile)
                                                                      pathUpdateOption,
                                                                      launcherStateChanged,
                                                                      intakeStateChanged,
-                                                                     climberStateChanged,
                                                                      launcherState,
-                                                                     intakeState,
-                                                                     climberState));
+                                                                     intakeState));
                     }
                     else
                     {
