@@ -32,8 +32,6 @@ void IntakeEmptyHopperCommand::Initialize()
 {
     m_intake->SetCurrentMode(Intake::STATE_EMPTY_HOPPER);
     m_intake->UpdateTargetIntakePercentOut(-1.0);
-    m_intake->UpdateTargetExtenderPositionDeg(units::angle::turn_t(100.0));
-    // Matches the old EmptyHopperState ordering: percent-out overrides the position target.
     m_intake->UpdateTargetExtenderPercentOut(0.2);
 }
 

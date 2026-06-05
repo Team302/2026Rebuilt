@@ -41,6 +41,21 @@ void IntakeLaunchCommand::Initialize()
 
 void IntakeLaunchCommand::Execute()
 {
+    BumpIntake();
+}
+
+void IntakeLaunchCommand::End(bool interrupted)
+{
+}
+
+bool IntakeLaunchCommand::IsFinished()
+{
+    // Holds the launch feed on until the binding (WhileTrue / auton primitive) interrupts it.
+    return false;
+}
+
+void IntakeLaunchCommand::BumpIntake()
+{
     // Periodically "bump" the extender during autonomous launching (moved from LaunchState).
     if ((m_bumpCounter > m_counterMax) && frc::DriverStation::IsAutonomous())
     {
@@ -52,14 +67,4 @@ void IntakeLaunchCommand::Execute()
     {
         m_bumpCounter++;
     }
-}
-
-void IntakeLaunchCommand::End(bool interrupted)
-{
-}
-
-bool IntakeLaunchCommand::IsFinished()
-{
-    // Holds the launch feed on until the binding (WhileTrue / auton primitive) interrupts it.
-    return false;
 }

@@ -53,6 +53,8 @@ namespace IntakeCommands
     private:
         Intake *m_intake;
 
+        void BumpIntake();
+
         // Launch "bump" behavior (moved out of the old LaunchState).
         int m_bumpCounter = 0;
         int m_counterMax = 40;
