@@ -42,6 +42,16 @@
 
 #include "RobotIdentifier.h"
 
+// Intake command classes - the command-based replacements for the old Intake states.
+// Included here so the GetXxxCommand() factories below can be defined inline. These headers
+// only forward-declare Intake, so there is no circular include.
+#include "mechanisms/Intake/commands/IntakeEmptyHopperCommand.h"
+#include "mechanisms/Intake/commands/IntakeExpelCommand.h"
+#include "mechanisms/Intake/commands/IntakeIntakeCommand.h"
+#include "mechanisms/Intake/commands/IntakeLaunchCommand.h"
+#include "mechanisms/Intake/commands/IntakeLoadHopperCommand.h"
+#include "mechanisms/Intake/commands/IntakeOffCommand.h"
+
 class Intake : public BaseMechSubsystem, public IRobotStateChangeSubscriber, public DragonDataLogger
 {
 public:
@@ -102,18 +112,40 @@ public:
 	void DataLog(uint64_t timestamp) override;
 
 	/// @brief Command factories - the command-based replacements for the old Intake states.
-	/// @details Each command sets the mechanism targets on start and then holds until interrupted.
+	/// @details Each factory just constructs the matching command class from
+	///          mechanisms/Intake/commands/. The command classes own the Initialize()/Execute()/
+	///          End()/IsFinished() lifecycle (mirroring the old states' Init()/Run()/Exit()/AtTarget()).
 	///          Binding a command with WhileTrue automatically returns the mechanism to its
 	///          default (Off) command on release.
-	frc2::CommandPtr GetOffCommand();		  ///< default command (was OffState)
-	frc2::CommandPtr GetIntakeCommand();	  ///< was IntakeState / ForceIntakeAutonState
-	frc2::CommandPtr GetExpelCommand();		  ///< was ExpelState
-	frc2::CommandPtr GetLoadHopperCommand();  ///< was LoadHopperState
-	frc2::CommandPtr GetLaunchCommand();	  ///< was LaunchState
-	frc2::CommandPtr GetEmptyHopperCommand(); ///< was EmptyHopperState
+	frc2::CommandPtr GetOffCommand() { return IntakeCommands::IntakeOffCommand(this).ToPtr(); }					///< default command (was OffState)
+	frc2::CommandPtr GetIntakeCommand() { return IntakeCommands::IntakeIntakeCommand(this).ToPtr(); }			///< was IntakeState / ForceIntakeAutonState
+	frc2::CommandPtr GetExpelCommand() { return IntakeCommands::IntakeExpelCommand(this).ToPtr(); }				///< was ExpelState
+	frc2::CommandPtr GetLoadHopperCommand() { return IntakeCommands::IntakeLoadHopperCommand(this).ToPtr(); }	///< was LoadHopperState
+	frc2::CommandPtr GetLaunchCommand() { return IntakeCommands::IntakeLaunchCommand(this).ToPtr(); }			///< was LaunchState
+	frc2::CommandPtr GetEmptyHopperCommand() { return IntakeCommands::IntakeEmptyHopperCommand(this).ToPtr(); } ///< was EmptyHopperState
 
 	/// @brief Map a STATE_NAMES value to the matching command (used by the autonomous bridge).
-	frc2::CommandPtr GetCommandForState(STATE_NAMES state);
+	frc2::CommandPtr GetCommandForState(STATE_NAMES state)
+	{
+		switch (state)
+		{
+		case STATE_INTAKE:
+			return GetIntakeCommand();
+		case STATE_EXPEL:
+			return GetExpelCommand();
+		case STATE_LAUNCH:
+			return GetLaunchCommand();
+		case STATE_EMPTY_HOPPER:
+			return GetEmptyHopperCommand();
+		case STATE_LOAD_HOPPER:
+			return GetLoadHopperCommand();
+		case STATE_FORCE_INTAKE_AUTON:
+			return GetIntakeCommand();
+		case STATE_OFF:
+		default:
+			return GetOffCommand();
+		}
+	}
 
 	RobotIdentifier getActiveRobotId() { return m_activeRobotId; }
 

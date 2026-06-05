@@ -22,12 +22,6 @@
 #include "networktables/NetworkTableInstance.h"
 
 #include "Intake.h"
-#include "mechanisms/Intake/commands/IntakeEmptyHopperCommand.h"
-#include "mechanisms/Intake/commands/IntakeExpelCommand.h"
-#include "mechanisms/Intake/commands/IntakeIntakeCommand.h"
-#include "mechanisms/Intake/commands/IntakeLaunchCommand.h"
-#include "mechanisms/Intake/commands/IntakeLoadHopperCommand.h"
-#include "mechanisms/Intake/commands/IntakeOffCommand.h"
 #include "state/RobotState.h"
 #include "utils/DragonPower.h"
 #include "utils/logging/debug/Logger.h"
@@ -444,70 +438,4 @@ std::string Intake::GetCurrentStateName()
 void Intake::PublishIntakeMode(bool intaking)
 {
 	RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::IsIntaking_Bool, intaking);
-}
-
-//====================================================================================================================================================
-// Command factories - thin wrappers that construct the per-command classes in
-// mechanisms/Intake/commands/. Each command class owns its own Initialize()/Execute()/End()/
-// IsFinished() lifecycle (mirroring the old state classes' Init()/Run()/Exit()/AtTarget()). The
-// motors are actually driven every loop by Periodic()/Update(); the commands only set the targets.
-//====================================================================================================================================================
-
-/// @brief Default command - motors off. Replaces OffState.
-frc2::CommandPtr Intake::GetOffCommand()
-{
-	return IntakeCommands::IntakeOffCommand(this).ToPtr();
-}
-
-/// @brief Intake game pieces. Replaces IntakeState (and ForceIntakeAutonState).
-frc2::CommandPtr Intake::GetIntakeCommand()
-{
-	return IntakeCommands::IntakeIntakeCommand(this).ToPtr();
-}
-
-/// @brief Expel game pieces. Replaces ExpelState.
-frc2::CommandPtr Intake::GetExpelCommand()
-{
-	return IntakeCommands::IntakeExpelCommand(this).ToPtr();
-}
-
-/// @brief Load the hopper. Replaces LoadHopperState.
-frc2::CommandPtr Intake::GetLoadHopperCommand()
-{
-	return IntakeCommands::IntakeLoadHopperCommand(this).ToPtr();
-}
-
-/// @brief Feed the launcher. Replaces LaunchState (includes the auton "bump" behavior).
-frc2::CommandPtr Intake::GetLaunchCommand()
-{
-	return IntakeCommands::IntakeLaunchCommand(this).ToPtr();
-}
-
-/// @brief Empty the hopper (climb mode). Replaces EmptyHopperState.
-frc2::CommandPtr Intake::GetEmptyHopperCommand()
-{
-	return IntakeCommands::IntakeEmptyHopperCommand(this).ToPtr();
-}
-
-/// @brief Map a STATE_NAMES value to the command that implements it (autonomous bridge).
-frc2::CommandPtr Intake::GetCommandForState(STATE_NAMES state)
-{
-	switch (state)
-	{
-	case STATE_INTAKE:
-		return GetIntakeCommand();
-	case STATE_EXPEL:
-		return GetExpelCommand();
-	case STATE_LAUNCH:
-		return GetLaunchCommand();
-	case STATE_EMPTY_HOPPER:
-		return GetEmptyHopperCommand();
-	case STATE_LOAD_HOPPER:
-		return GetLoadHopperCommand();
-	case STATE_FORCE_INTAKE_AUTON:
-		return GetIntakeCommand();
-	case STATE_OFF:
-	default:
-		return GetOffCommand();
-	}
 }
