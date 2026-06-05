@@ -1,0 +1,303 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="442" viewBox="0 0 900 442">
+  <rect x="0" y="0" width="900" height="442" fill="#1a1a1a"/>
+  <rect x="0" y="0" width="218.7" height="442" fill="#0d1a3a" fill-opacity="0.7"/>
+  <text x="109.4" y="14" text-anchor="middle" font-size="10" fill="#4466cc" font-family="sans-serif">BLUE</text>
+  <rect x="262.5" y="0" width="386.0" height="442" fill="#111111" fill-opacity="0.7"/>
+  <text x="455.5" y="14" text-anchor="middle" font-size="10" fill="#888" font-family="sans-serif">NEUTRAL</text>
+  <rect x="686.2" y="0" width="213.8" height="442" fill="#3a0d0d" fill-opacity="0.7"/>
+  <text x="793.1" y="14" text-anchor="middle" font-size="10" fill="#cc4444" font-family="sans-serif">RED</text>
+  <rect x="0" y="0" width="900" height="442" fill="none" stroke="#888" stroke-width="2"/>
+  <line x1="0.0" y1="442" x2="0.0" y2="437" stroke="#555" stroke-width="1"/>
+  <text x="0.0" y="435" text-anchor="middle" font-size="7" fill="#666" font-family="monospace">0m</text>
+  <line x1="109.4" y1="442" x2="109.4" y2="437" stroke="#555" stroke-width="1"/>
+  <text x="109.4" y="435" text-anchor="middle" font-size="7" fill="#666" font-family="monospace">2m</text>
+  <line x1="218.7" y1="442" x2="218.7" y2="437" stroke="#555" stroke-width="1"/>
+  <text x="218.7" y="435" text-anchor="middle" font-size="7" fill="#666" font-family="monospace">4m</text>
+  <line x1="328.1" y1="442" x2="328.1" y2="437" stroke="#555" stroke-width="1"/>
+  <text x="328.1" y="435" text-anchor="middle" font-size="7" fill="#666" font-family="monospace">6m</text>
+  <line x1="437.4" y1="442" x2="437.4" y2="437" stroke="#555" stroke-width="1"/>
+  <text x="437.4" y="435" text-anchor="middle" font-size="7" fill="#666" font-family="monospace">8m</text>
+  <line x1="546.8" y1="442" x2="546.8" y2="437" stroke="#555" stroke-width="1"/>
+  <text x="546.8" y="435" text-anchor="middle" font-size="7" fill="#666" font-family="monospace">10m</text>
+  <line x1="656.1" y1="442" x2="656.1" y2="437" stroke="#555" stroke-width="1"/>
+  <text x="656.1" y="435" text-anchor="middle" font-size="7" fill="#666" font-family="monospace">12m</text>
+  <line x1="765.5" y1="442" x2="765.5" y2="437" stroke="#555" stroke-width="1"/>
+  <text x="765.5" y="435" text-anchor="middle" font-size="7" fill="#666" font-family="monospace">14m</text>
+  <line x1="874.8" y1="442" x2="874.8" y2="437" stroke="#555" stroke-width="1"/>
+  <text x="874.8" y="435" text-anchor="middle" font-size="7" fill="#666" font-family="monospace">16m</text>
+  <line x1="0" y1="442.9" x2="5" y2="442.9" stroke="#555" stroke-width="1"/>
+  <text x="7" y="442.9" dominant-baseline="middle" font-size="7" fill="#666" font-family="monospace">0m</text>
+  <line x1="0" y1="333.5" x2="5" y2="333.5" stroke="#555" stroke-width="1"/>
+  <text x="7" y="333.5" dominant-baseline="middle" font-size="7" fill="#666" font-family="monospace">2m</text>
+  <line x1="0" y1="224.2" x2="5" y2="224.2" stroke="#555" stroke-width="1"/>
+  <text x="7" y="224.2" dominant-baseline="middle" font-size="7" fill="#666" font-family="monospace">4m</text>
+  <line x1="0" y1="114.8" x2="5" y2="114.8" stroke="#555" stroke-width="1"/>
+  <text x="7" y="114.8" dominant-baseline="middle" font-size="7" fill="#666" font-family="monospace">6m</text>
+  <line x1="0" y1="5.5" x2="5" y2="5.5" stroke="#555" stroke-width="1"/>
+  <text x="7" y="5.5" dominant-baseline="middle" font-size="7" fill="#666" font-family="monospace">8m</text>
+  <rect x="623.0" y="254.3" width="61.1" height="100.6" fill="none" stroke="#ff6b6b" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="627.0" y="263.3" text-anchor="start" font-size="8" fill="#ffc0c0" font-family="monospace">BumpDepotElement</text>
+  <rect x="623.0" y="88.0" width="61.1" height="100.6" fill="none" stroke="#ff6b6b" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="627.0" y="97.0" text-anchor="start" font-size="8" fill="#ffc0c0" font-family="monospace">BumpOutpostElement</text>
+  <rect x="620.9" y="189.0" width="65.3" height="65.3" fill="none" stroke="#ff6b6b" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="624.9" y="198.0" text-anchor="start" font-size="8" fill="#ffc0c0" font-family="monospace">HubElement</text>
+  <rect x="620.9" y="354.9" width="65.3" height="17.0" fill="none" stroke="#ff6b6b" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="624.9" y="363.9" text-anchor="start" font-size="8" fill="#ffc0c0" font-family="monospace">TrenchADepotElement</text>
+  <rect x="620.9" y="71.1" width="65.3" height="17.0" fill="none" stroke="#ff6b6b" stroke-width="1.6" stroke-dasharray="4 3" stroke-opacity="0.85"/>
+  <text x="624.9" y="80.1" text-anchor="start" font-size="8" fill="#ffc0c0" font-family="monospace">TrenchAOutpostElement</text>
+  <polyline points="581.89,137.52 581.63,137.85 580.49,139.33 579.04,141.21 577.08,143.75 573.67,148.17 570.51,152.26 565.50,158.75 561.14,164.38 556.26,170.67 548.95,180.08 542.86,187.89 536.20,196.32 528.25,205.97 524.83,210.03 520.42,215.09 517.20,218.63 514.05,221.93 509.93,225.98 506.91,228.74 503.93,231.27 500.04,234.27 497.18,236.25 493.43,238.52 489.91,240.31 486.47,241.72 482.03,243.00 478.84,243.52 475.78,243.67 471.91,243.29 469.19,242.58 465.80,241.08 463.46,239.54 460.75,237.09 457.28,232.46 455.09,228.19 453.24,223.23 451.32,215.56 450.28,209.00 449.42,199.19 449.17,191.03 449.26,182.18 449.89,169.30 450.73,158.83 451.86,147.65 453.33,131.87 453.92,120.66 454.39,106.83 454.60,97.30 454.75,88.52 454.87,77.95 454.92,70.90 454.94,64.58 454.95,57.32 454.94,52.74 454.93,47.79 454.91,44.94 454.90,42.83 454.89,41.18 454.88,40.81" fill="none" stroke="#ff6688" stroke-width="2" stroke-opacity="0.85" stroke-linejoin="round" stroke-linecap="round"/>
+  <g id="pose2000" transform="translate(581.89,137.52) rotate(-180.00)">
+    <rect x="-20.83" y="-25.00" width="41.66" height="50.00" rx="3" fill="#ff6688" fill-opacity="0.25" stroke="#ff6688" stroke-width="1.2" stroke-opacity="0.7"/>
+    <rect x="-16.67" y="-20.83" width="33.33" height="41.66" fill="#ff6688" fill-opacity="0.55" stroke="#ff6688" stroke-width="1.5"/>
+    <polygon points="16.67,0 2.08,14.58 2.08,-14.58" fill="#ffffff" fill-opacity="0.9"/>
+    <circle cx="0" cy="0" r="3" fill="#ffffff" fill-opacity="0.9"/>
+  </g>
+  <g id="pose2001" transform="translate(581.63,137.85) rotate(179.37)">
+    <rect x="-20.83" y="-25.00" width="41.66" height="50.00" rx="3" fill="#ff6688" fill-opacity="0.25" stroke="#ff6688" stroke-width="1.2" stroke-opacity="0.7"/>
+    <rect x="-16.67" y="-20.83" width="33.33" height="41.66" fill="#ff6688" fill-opacity="0.55" stroke="#ff6688" stroke-width="1.5"/>
+    <polygon points="16.67,0 2.08,14.58 2.08,-14.58" fill="#ffffff" fill-opacity="0.9"/>
+    <circle cx="0" cy="0" r="3" fill="#ffffff" fill-opacity="0.9"/>
+  </g>
+  <g id="pose2002" transform="translate(580.49,139.33) rotate(176.13)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2003" transform="translate(579.04,141.21) rotate(172.40)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2004" transform="translate(577.08,143.75) rotate(167.93)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2005" transform="translate(573.67,148.17) rotate(161.26)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2006" transform="translate(570.51,152.26) rotate(156.04)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2007" transform="translate(565.50,158.75) rotate(149.20)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2008" transform="translate(561.14,164.38) rotate(144.42)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2009" transform="translate(556.26,170.67) rotate(140.18)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2010" transform="translate(548.95,180.08) rotate(135.79)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2011" transform="translate(542.86,187.89) rotate(133.82)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2012" transform="translate(536.20,196.32) rotate(133.38)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2013" transform="translate(528.25,205.97) rotate(135.59)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2014" transform="translate(524.83,210.03) rotate(137.65)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2015" transform="translate(520.42,215.09) rotate(140.99)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2016" transform="translate(517.20,218.63) rotate(143.90)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2017" transform="translate(514.05,221.93) rotate(147.13)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2018" transform="translate(509.93,225.98) rotate(151.90)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2019" transform="translate(506.91,228.74) rotate(155.81)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2020" transform="translate(503.93,231.27) rotate(160.01)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2021" transform="translate(500.04,234.27) rotate(166.02)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2022" transform="translate(497.18,236.25) rotate(170.87)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2023" transform="translate(493.43,238.52) rotate(177.80)">
+    <rect x="-20.83" y="-25.00" width="41.66" height="50.00" rx="3" fill="#ff6688" fill-opacity="0.25" stroke="#ff6688" stroke-width="1.2" stroke-opacity="0.7"/>
+    <rect x="-16.67" y="-20.83" width="33.33" height="41.66" fill="#ff6688" fill-opacity="0.55" stroke="#ff6688" stroke-width="1.5"/>
+    <polygon points="16.67,0 2.08,14.58 2.08,-14.58" fill="#ffffff" fill-opacity="0.9"/>
+    <circle cx="0" cy="0" r="3" fill="#ffffff" fill-opacity="0.9"/>
+  </g>
+  <g id="pose2024" transform="translate(489.91,240.31) rotate(-175.01)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2025" transform="translate(486.47,241.72) rotate(-167.32)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2026" transform="translate(482.03,243.00) rotate(-156.56)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2027" transform="translate(478.84,243.52) rotate(-148.27)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2028" transform="translate(475.78,243.67) rotate(-139.95)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2029" transform="translate(471.91,243.29) rotate(-129.03)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2030" transform="translate(469.19,242.58) rotate(-121.13)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2031" transform="translate(465.80,241.08) rotate(-111.27)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2032" transform="translate(463.46,239.54) rotate(-104.59)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2033" transform="translate(460.75,237.09) rotate(-97.28)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2034" transform="translate(457.28,232.46) rotate(-89.26)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2035" transform="translate(455.09,228.19) rotate(-85.01)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2036" transform="translate(453.24,223.23) rotate(-81.95)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2037" transform="translate(451.32,215.56) rotate(-79.40)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2038" transform="translate(450.28,209.00) rotate(-78.44)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2039" transform="translate(449.42,199.19) rotate(-78.24)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2040" transform="translate(449.17,191.03) rotate(-78.80)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2041" transform="translate(449.26,182.18) rotate(-79.95)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2042" transform="translate(449.89,169.30) rotate(-82.37)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2043" transform="translate(450.73,158.83) rotate(-84.90)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2044" transform="translate(451.86,147.65) rotate(-88.11)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2045" transform="translate(453.33,131.87) rotate(-93.67)">
+    <rect x="-20.83" y="-25.00" width="41.66" height="50.00" rx="3" fill="#ff6688" fill-opacity="0.25" stroke="#ff6688" stroke-width="1.2" stroke-opacity="0.7"/>
+    <rect x="-16.67" y="-20.83" width="33.33" height="41.66" fill="#ff6688" fill-opacity="0.55" stroke="#ff6688" stroke-width="1.5"/>
+    <polygon points="16.67,0 2.08,14.58 2.08,-14.58" fill="#ffffff" fill-opacity="0.9"/>
+    <circle cx="0" cy="0" r="3" fill="#ffffff" fill-opacity="0.9"/>
+  </g>
+  <g id="pose2046" transform="translate(453.92,120.66) rotate(-98.74)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2047" transform="translate(454.39,106.83) rotate(-106.44)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2048" transform="translate(454.60,97.30) rotate(-112.72)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2049" transform="translate(454.75,88.52) rotate(-119.30)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2050" transform="translate(454.87,77.95) rotate(-128.35)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2051" transform="translate(454.92,70.90) rotate(-135.23)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2052" transform="translate(454.94,64.58) rotate(-142.08)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2053" transform="translate(454.95,57.32) rotate(-151.00)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2054" transform="translate(454.94,52.74) rotate(-157.40)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2055" transform="translate(454.93,47.79) rotate(-165.25)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2056" transform="translate(454.91,44.94) rotate(-170.43)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2057" transform="translate(454.90,42.83) rotate(-174.76)">
+    <line x1="0" y1="0" x2="10.00" y2="0" stroke="#ff6688" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="1.5" fill="#ff6688" fill-opacity="0.5"/>
+  </g>
+  <g id="pose2058" transform="translate(454.89,41.18) rotate(-178.76)">
+    <rect x="-20.83" y="-25.00" width="41.66" height="50.00" rx="3" fill="#ff6688" fill-opacity="0.25" stroke="#ff6688" stroke-width="1.2" stroke-opacity="0.7"/>
+    <rect x="-16.67" y="-20.83" width="33.33" height="41.66" fill="#ff6688" fill-opacity="0.55" stroke="#ff6688" stroke-width="1.5"/>
+    <polygon points="16.67,0 2.08,14.58 2.08,-14.58" fill="#ffffff" fill-opacity="0.9"/>
+    <circle cx="0" cy="0" r="3" fill="#ffffff" fill-opacity="0.9"/>
+  </g>
+  <g id="pose2059" transform="translate(454.88,40.81) rotate(-180.00)">
+    <rect x="-20.83" y="-25.00" width="41.66" height="50.00" rx="3" fill="#ff6688" fill-opacity="0.25" stroke="#ff6688" stroke-width="1.2" stroke-opacity="0.7"/>
+    <rect x="-16.67" y="-20.83" width="33.33" height="41.66" fill="#ff6688" fill-opacity="0.55" stroke="#ff6688" stroke-width="1.5"/>
+    <polygon points="16.67,0 2.08,14.58 2.08,-14.58" fill="#ffffff" fill-opacity="0.9"/>
+    <circle cx="0" cy="0" r="3" fill="#ffffff" fill-opacity="0.9"/>
+  </g>
+  <rect x="583.9" y="120.5" width="74.0" height="11" rx="3" fill="#000000" fill-opacity="0.65"/>
+  <text x="587.9" y="129.5" font-size="9" fill="#ff6688" font-family="monospace" font-weight="bold">S5: Launch1Out_2</text>
+</svg>
