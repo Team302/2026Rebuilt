@@ -42,15 +42,30 @@ AgitatorState::AgitatorState(std::string stateName,
 
 void AgitatorState::Init()
 {
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("IdleState"), string("Init"));
+
+	if (m_RobotId == RobotIdentifier::COMP_BOT_302)
+		InitCompBot302();
+	m_mechanism->PublishLaunchMode(false);
 	m_mechanism->InitializeSpindexerTargets();
 }
 
 void AgitatorState::InitCompBot302()
 {
+	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
+	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
 }
 
 void AgitatorState::Run()
 {
+	if (m_mechanism->GetDistanceToTarget() > 30_ft)
+	{
+		m_mechanism->UpdateTargetLauncherVelocityRPS(m_passingLauncherTarget);
+	}
+	else
+	{
+		m_mechanism->UpdateTargetLauncherVelocityRPS(m_scoringLauncherTarget);
+	}
 	m_mechanism->AgitateSpindexer();
 	// Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("AgitatorState"), string("Run"));
 }

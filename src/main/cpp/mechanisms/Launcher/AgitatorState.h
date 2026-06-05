@@ -45,7 +45,8 @@ namespace LauncherStates
 		void InitCompBot302();
 		RobotIdentifier m_RobotId;
 
-		const double m_launcherTarget{0};
+		const units::angular_velocity::revolutions_per_minute_t m_scoringLauncherTarget{2000};
+		const units::angular_velocity::revolutions_per_minute_t m_passingLauncherTarget{4000};
 		const double m_hoodTarget{0};
 		const double m_transferTarget{0};
 		const double m_turretTarget{0};

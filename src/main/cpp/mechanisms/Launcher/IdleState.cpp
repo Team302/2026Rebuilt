@@ -53,7 +53,6 @@ void IdleState::Init()
 
 void IdleState::InitCompBot302()
 {
-	m_mechanism->UpdateTargetLauncherVelocityRPS(m_launcherTarget);
 	m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
 	m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
 	m_mechanism->UpdateTargetSpindexerPercentOut(m_spindexerTarget);
@@ -61,7 +60,14 @@ void IdleState::InitCompBot302()
 
 void IdleState::Run()
 {
-	// AgitateSpindexer();
+	if (m_mechanism->GetDistanceToTarget() > 30_ft)
+	{
+		m_mechanism->UpdateTargetLauncherVelocityRPS(m_passingLauncherTarget);
+	}
+	else
+	{
+		m_mechanism->UpdateTargetLauncherVelocityRPS(m_launcherTarget);
+	}
 }
 void IdleState::Exit()
 {

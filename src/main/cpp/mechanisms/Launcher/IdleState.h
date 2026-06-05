@@ -48,6 +48,7 @@ namespace LauncherStates
 		RobotIdentifier m_RobotId;
 
 		const units::angular_velocity::revolutions_per_minute_t m_launcherTarget{2000};
+		const units::angular_velocity::revolutions_per_minute_t m_passingLauncherTarget{4000};
 		const units::angle::turn_t m_hoodTarget{0.0};
 		const double m_transferTarget{0.0};
 		const units::angle::turn_t m_turretTarget{0.0};
