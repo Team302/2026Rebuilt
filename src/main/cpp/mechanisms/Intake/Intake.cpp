@@ -24,20 +24,15 @@
 #include "Intake.h"
 #include "state/RobotState.h"
 #include "utils/DragonPower.h"
-#include "utils/PeriodicLooper.h"
 #include "utils/logging/debug/Logger.h"
+
+#include "frc/DriverStation.h"
+#include "frc2/command/Commands.h"
 
 #include "ctre/phoenix6/TalonFX.hpp"
 #include "ctre/phoenix6/TalonFXS.hpp"
 #include "ctre/phoenix6/configs/Configuration.hpp"
 #include "ctre/phoenix6/controls/Follower.hpp"
-#include "mechanisms/Intake/EmptyHopperState.h"
-#include "mechanisms/Intake/ExpelState.h"
-#include "mechanisms/Intake/ForceIntakeAutonState.h"
-#include "mechanisms/Intake/IntakeState.h"
-#include "mechanisms/Intake/LaunchState.h"
-#include "mechanisms/Intake/LoadHopperState.h"
-#include "mechanisms/Intake/OffState.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "utils/logging/signals/DragonDataLogger.h"
 
@@ -58,60 +53,12 @@ using ctre::phoenix6::signals::ReverseLimitTypeValue;
 using ctre::phoenix6::signals::StaticFeedforwardSignValue;
 
 using std::string;
-using namespace IntakeStates;
 
-void Intake::CreateAndRegisterStates()
-{
-	OffState *OffStateInst = new OffState(string("Off"), 0, this, m_activeRobotId);
-	AddToStateVector(OffStateInst);
-
-	IntakeState *IntakeStateInst = new IntakeState(string("Intake"), 1, this, m_activeRobotId);
-	AddToStateVector(IntakeStateInst);
-
-	ExpelState *ExpelStateInst = new ExpelState(string("Expel"), 2, this, m_activeRobotId);
-	AddToStateVector(ExpelStateInst);
-
-	LaunchState *LaunchStateInst = new LaunchState(string("Launch"), 3, this, m_activeRobotId);
-	AddToStateVector(LaunchStateInst);
-
-	EmptyHopperState *EmptyHopperStateInst = new EmptyHopperState(string("EmptyHopper"), 4, this, m_activeRobotId);
-	AddToStateVector(EmptyHopperStateInst);
-
-	LoadHopperState *LoadHopperStateInst = new LoadHopperState(string("LoadHopper"), 5, this, m_activeRobotId);
-	AddToStateVector(LoadHopperStateInst);
-
-	ForceIntakeAutonState *ForceIntakeAutonStateInst = new ForceIntakeAutonState(string("ForceIntakeAuton"), 6, this, m_activeRobotId);
-	AddToStateVector(ForceIntakeAutonStateInst);
-
-	OffStateInst->RegisterTransitionState(IntakeStateInst);
-	OffStateInst->RegisterTransitionState(ExpelStateInst);
-	OffStateInst->RegisterTransitionState(LaunchStateInst);
-	OffStateInst->RegisterTransitionState(EmptyHopperStateInst);
-	OffStateInst->RegisterTransitionState(LoadHopperStateInst);
-	OffStateInst->RegisterTransitionState(ForceIntakeAutonStateInst);
-	IntakeStateInst->RegisterTransitionState(OffStateInst);
-	IntakeStateInst->RegisterTransitionState(LaunchStateInst);
-	IntakeStateInst->RegisterTransitionState(EmptyHopperStateInst);
-	ExpelStateInst->RegisterTransitionState(OffStateInst);
-	ExpelStateInst->RegisterTransitionState(LaunchStateInst);
-	ExpelStateInst->RegisterTransitionState(EmptyHopperStateInst);
-	LaunchStateInst->RegisterTransitionState(OffStateInst);
-	LaunchStateInst->RegisterTransitionState(IntakeStateInst);
-	LaunchStateInst->RegisterTransitionState(ExpelStateInst);
-	LaunchStateInst->RegisterTransitionState(EmptyHopperStateInst);
-	LaunchStateInst->RegisterTransitionState(LoadHopperStateInst);
-	EmptyHopperStateInst->RegisterTransitionState(OffStateInst);
-	EmptyHopperStateInst->RegisterTransitionState(IntakeStateInst);
-	LoadHopperStateInst->RegisterTransitionState(OffStateInst);
-	LoadHopperStateInst->RegisterTransitionState(IntakeStateInst);
-	ForceIntakeAutonStateInst->RegisterTransitionState(OffStateInst);
-}
-
-Intake::Intake(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes::MECHANISM_TYPE::INTAKE, std::string("Intake")),
+Intake::Intake(RobotIdentifier activeRobotId) : BaseMechSubsystem(MechanismTypes::MECHANISM_TYPE::INTAKE, std::string("Intake")),
 												m_activeRobotId(activeRobotId),
-												m_stateMap()
+												m_stateMap(),
+												m_autonCommand(frc2::cmd::None())
 {
-	PeriodicLooper::GetInstance()->RegisterAll(this);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Bool);
 	RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::IsLaunching_Bool);
 	m_extenderPositionDeg.EnableFOC = true;
@@ -362,7 +309,15 @@ void Intake::InitializeTalonFXSExtenderCompBot302()
 
 void Intake::SetCurrentState(int state, bool run)
 {
-	StateMgr::SetCurrentState(state, run);
+	// Autonomous bridge: schedule the command that corresponds to the requested state.
+	// Cancel the previous auton command first so its requirement on this subsystem is released
+	// before the owning CommandPtr is replaced.
+	m_autonCommand.Cancel();
+	m_autonCommand = GetCommandForState(static_cast<STATE_NAMES>(state));
+	if (run)
+	{
+		m_autonCommand.Schedule();
+	}
 }
 
 void Intake::RefreshCachedMotorData()
@@ -370,9 +325,12 @@ void Intake::RefreshCachedMotorData()
 	m_cachedExtenderPositionDeg = m_extender->GetPosition().GetValue();
 }
 
-void Intake::RunCommonTasks()
+void Intake::Periodic()
 {
-	// This function is called once per loop before the current state Run()
+	// This function is called once per loop by the CommandScheduler (all modes) before any
+	// scheduled command's execute(). It performs the per-loop housekeeping that used to live
+	// in StateMgr::RunCommonTasks(): refresh cached sensor data, apply manual control, and
+	// push the active control requests to the motors.
 	RefreshCachedMotorData();
 
 	ManualControl();
@@ -480,4 +438,160 @@ std::string Intake::GetCurrentStateName()
 void Intake::PublishIntakeMode(bool intaking)
 {
 	RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::IsIntaking_Bool, intaking);
+}
+
+//====================================================================================================================================================
+// Command factories - command-based replacements for the old Intake state classes.
+// Each command sets the mechanism targets once on start, then holds (runs forever) until it is
+// interrupted - e.g. a WhileTrue binding releasing on button-up, or another command requiring
+// this subsystem. The motors are actually driven every loop by Periodic()/Update().
+//====================================================================================================================================================
+
+/// @brief Default command - motors off. Replaces OffState.
+frc2::CommandPtr Intake::GetOffCommand()
+{
+	return frc2::cmd::Run(
+			   [this]()
+			   {
+				   // Run-once-on-entry semantics, tracked via m_currentMode so we only publish on transition.
+				   if (m_currentMode != STATE_OFF)
+				   {
+					   m_currentMode = STATE_OFF;
+					   UpdateTargetIntakePercentOut(0.0);
+					   PublishIntakeMode(false);
+				   }
+
+				   // First time the robot is enabled, zero/reset the extender (was OffState::Run).
+				   if (frc::DriverStation::IsEnabled() && !m_hasEnabled)
+				   {
+					   m_hasEnabled = true;
+					   if (frc::DriverStation::IsTeleop())
+					   {
+						   UpdateTargetExtenderPercentOut(0.0);
+						   m_extender->SetPosition(0.0_tr);
+					   }
+					   else
+					   {
+						   UpdateTargetExtenderPositionDeg(0.0_tr);
+					   }
+				   }
+			   },
+			   {this})
+		.WithName("IntakeOff");
+}
+
+/// @brief Intake game pieces. Replaces IntakeState (and ForceIntakeAutonState).
+frc2::CommandPtr Intake::GetIntakeCommand()
+{
+	return frc2::cmd::Run([this]() {}, {this})
+		.BeforeStarting(
+			[this]()
+			{
+				m_currentMode = STATE_INTAKE;
+				UpdateTargetIntakePercentOut(1.0);
+				UpdateTargetExtenderPercentOut(-0.75);
+				PublishIntakeMode(true);
+			})
+		.WithName("Intake");
+}
+
+/// @brief Expel game pieces. Replaces ExpelState.
+frc2::CommandPtr Intake::GetExpelCommand()
+{
+	return frc2::cmd::Run([this]() {}, {this})
+		.BeforeStarting(
+			[this]()
+			{
+				m_currentMode = STATE_EXPEL;
+				UpdateTargetIntakePercentOut(-1.0);
+				UpdateTargetExtenderPercentOut(-0.25);
+				PublishIntakeMode(false);
+			})
+		.WithName("IntakeExpel");
+}
+
+/// @brief Load the hopper. Replaces LoadHopperState.
+frc2::CommandPtr Intake::GetLoadHopperCommand()
+{
+	return frc2::cmd::Run([this]() {}, {this})
+		.BeforeStarting(
+			[this]()
+			{
+				m_currentMode = STATE_LOAD_HOPPER;
+				UpdateTargetIntakePercentOut(1.0);
+				UpdateTargetExtenderPositionDeg(-10.0_tr);
+			})
+		.WithName("IntakeLoadHopper");
+}
+
+/// @brief Feed the launcher. Replaces LaunchState (includes the auton "bump" behavior).
+frc2::CommandPtr Intake::GetLaunchCommand()
+{
+	return frc2::cmd::Run([this]()
+						  { BumpIntake(); }, {this})
+		.BeforeStarting(
+			[this]()
+			{
+				m_currentMode = STATE_LAUNCH;
+				m_bumpCounter = 0;
+				m_currentExtenderBumpTarget = 0.0;
+				UpdateTargetIntakePercentOut(1.0);
+				UpdateTargetExtenderPositionDeg(20.0_tr);
+				PublishIntakeMode(false);
+			})
+		.WithName("IntakeLaunch");
+}
+
+/// @brief Empty the hopper (climb mode). Replaces EmptyHopperState.
+frc2::CommandPtr Intake::GetEmptyHopperCommand()
+{
+	return frc2::cmd::Run([this]() {}, {this})
+		.BeforeStarting(
+			[this]()
+			{
+				m_currentMode = STATE_EMPTY_HOPPER;
+				UpdateTargetIntakePercentOut(-1.0);
+				UpdateTargetExtenderPositionDeg(100.0_tr);
+				// Matches the old EmptyHopperState ordering: percent-out overrides the position target.
+				UpdateTargetExtenderPercentOut(0.2);
+			})
+		.WithName("IntakeEmptyHopper");
+}
+
+/// @brief Map a STATE_NAMES value to the command that implements it (autonomous bridge).
+frc2::CommandPtr Intake::GetCommandForState(STATE_NAMES state)
+{
+	switch (state)
+	{
+	case STATE_INTAKE:
+		return GetIntakeCommand();
+	case STATE_EXPEL:
+		return GetExpelCommand();
+	case STATE_LAUNCH:
+		return GetLaunchCommand();
+	case STATE_EMPTY_HOPPER:
+		return GetEmptyHopperCommand();
+	case STATE_LOAD_HOPPER:
+		return GetLoadHopperCommand();
+	case STATE_FORCE_INTAKE_AUTON:
+		return GetIntakeCommand();
+	case STATE_OFF:
+	default:
+		return GetOffCommand();
+	}
+}
+
+/// @brief Periodically "bump" the extender during autonomous launching (moved from LaunchState).
+void Intake::BumpIntake()
+{
+	if ((m_bumpCounter > m_counterMax) && frc::DriverStation::IsAutonomous())
+	{
+		m_currentExtenderBumpTarget = (m_currentExtenderBumpTarget > 0) ? m_extenderTargetDown : m_extenderTargetUp;
+		UpdateTargetExtenderPercentOut(m_currentExtenderBumpTarget);
+		m_bumpCounter = 0;
+	}
+	else
+	{
+		m_bumpCounter++;
+	}
 }

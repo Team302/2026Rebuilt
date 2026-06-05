@@ -42,7 +42,7 @@ void MechanismConfig::DefineCompressor()
 {
 }
 
-StateMgr *MechanismConfig::GetMechanism(MechanismTypes::MECHANISM_TYPE mechType)
+BaseMech *MechanismConfig::GetMechanism(MechanismTypes::MECHANISM_TYPE mechType)
 {
     return nullptr;
 }

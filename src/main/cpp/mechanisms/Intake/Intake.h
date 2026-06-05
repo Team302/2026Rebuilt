@@ -30,17 +30,19 @@
 #include "ctre/phoenix6/controls/Follower.hpp"
 #include "utils/logging/signals/DragonDataLogger.h"
 
+#include "frc2/command/CommandPtr.h"
+
 #include "mechanisms/base/BaseMech.h"
+#include "mechanisms/base/BaseMechSubsystem.h"
 #include "mechanisms/configs/MechanismConfigMgr.h"
 #include "mechanisms/configs/RobotElementNames.h"
 #include "mechanisms/controllers/ControlData.h"
 #include "state/IRobotStateChangeSubscriber.h"
 #include "state/RobotStateChanges.h"
-#include "state/StateMgr.h"
 
 #include "RobotIdentifier.h"
 
-class Intake : public BaseMech, public StateMgr, public IRobotStateChangeSubscriber, public DragonDataLogger
+class Intake : public BaseMechSubsystem, public IRobotStateChangeSubscriber, public DragonDataLogger
 {
 public:
 	enum STATE_NAMES
@@ -95,10 +97,23 @@ public:
 		m_extenderActiveTarget = &m_extenderPositionDeg.WithSlot(0);
 	}
 
-	void CreateAndRegisterStates();
 	void Cyclic();
-	void RunCommonTasks() override;
+	void Periodic() override;
 	void DataLog(uint64_t timestamp) override;
+
+	/// @brief Command factories - the command-based replacements for the old Intake states.
+	/// @details Each command sets the mechanism targets on start and then holds until interrupted.
+	///          Binding a command with WhileTrue automatically returns the mechanism to its
+	///          default (Off) command on release.
+	frc2::CommandPtr GetOffCommand();		  ///< default command (was OffState)
+	frc2::CommandPtr GetIntakeCommand();	  ///< was IntakeState / ForceIntakeAutonState
+	frc2::CommandPtr GetExpelCommand();		  ///< was ExpelState
+	frc2::CommandPtr GetLoadHopperCommand();  ///< was LoadHopperState
+	frc2::CommandPtr GetLaunchCommand();	  ///< was LaunchState
+	frc2::CommandPtr GetEmptyHopperCommand(); ///< was EmptyHopperState
+
+	/// @brief Map a STATE_NAMES value to the matching command (used by the autonomous bridge).
+	frc2::CommandPtr GetCommandForState(STATE_NAMES state);
 
 	RobotIdentifier getActiveRobotId() { return m_activeRobotId; }
 
@@ -113,7 +128,11 @@ public:
 	static std::map<std::string, STATE_NAMES> stringToSTATE_NAMESEnumMap;
 	static std::map<STATE_NAMES, std::string> STATE_NAMESEnumToStringMap;
 
-	void SetCurrentState(int state, bool run) override;
+	/// @brief Autonomous bridge: schedule the command matching the requested state.
+	/// @details Keeps the same signature the old StateMgr exposed so CyclePrimitives and
+	///          the auton XML pipeline continue to work unchanged.
+	void SetCurrentState(int state, bool run);
+	int GetCurrentState() const { return m_currentMode; }
 	std::string GetCurrentStateName();
 
 	void ManualControl();
@@ -152,6 +171,19 @@ private:
 	bool m_isInClimbMode = false;
 	bool m_isLaunching = false;
 	bool m_prevIntakeSwitchState = false;
+
+	// Command-based mode tracking + autonomous command handle (replaces StateMgr internals)
+	int m_currentMode = STATE_OFF;
+	bool m_hasEnabled = false;
+	frc2::CommandPtr m_autonCommand;
+
+	// Launch "bump" behavior (moved out of the old LaunchState)
+	void BumpIntake();
+	int m_bumpCounter = 0;
+	int m_counterMax = 40;
+	double m_currentExtenderBumpTarget = 0.0;
+	static constexpr double m_extenderTargetUp = 0.4;
+	static constexpr double m_extenderTargetDown = -0.4;
 	units::angle::turn_t m_intakeRetractedPositionTarget{80.0};
 	units::angle::turn_t m_intakeExtendedPositionTarget{0.0};
 	units::angle::turn_t m_cachedExtenderPositionDeg{0.0};

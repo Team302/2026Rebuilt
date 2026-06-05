@@ -29,7 +29,7 @@ public:
 	MechanismConfigCompBot_302() = default;
 	~MechanismConfigCompBot_302() = default;
 
-	StateMgr *GetMechanism(MechanismTypes::MECHANISM_TYPE mechType);
+	BaseMech *GetMechanism(MechanismTypes::MECHANISM_TYPE mechType);
 
 protected:
 	void DefineMechanisms() override;
@@ -41,7 +41,7 @@ private:
 	Launcher *m_theLauncher = nullptr;
 	Climber *m_theClimber = nullptr;
 
-	std::unordered_map<MechanismTypes::MECHANISM_TYPE, StateMgr *> m_mechanismMap;
+	std::unordered_map<MechanismTypes::MECHANISM_TYPE, BaseMech *> m_mechanismMap;
 	static constexpr int m_ledCanID = 60;
 	static constexpr int m_ledStripSize = 45;
 	static constexpr double m_ledBrightness = 0.75;
