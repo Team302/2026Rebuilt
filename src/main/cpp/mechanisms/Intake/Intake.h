@@ -133,6 +133,11 @@ public:
 	///          the auton XML pipeline continue to work unchanged.
 	void SetCurrentState(int state, bool run);
 	int GetCurrentState() const { return m_currentMode; }
+	/// @brief Set the active mode tracker. Used by the Intake command classes in their Initialize().
+	void SetCurrentMode(int mode) { m_currentMode = mode; }
+	/// @brief First-enable tracking used by IntakeOffCommand to reset the extender exactly once.
+	bool HasBeenEnabled() const { return m_hasEnabled; }
+	void SetHasBeenEnabled(bool hasEnabled) { m_hasEnabled = hasEnabled; }
 	std::string GetCurrentStateName();
 
 	void ManualControl();
@@ -177,13 +182,6 @@ private:
 	bool m_hasEnabled = false;
 	frc2::CommandPtr m_autonCommand;
 
-	// Launch "bump" behavior (moved out of the old LaunchState)
-	void BumpIntake();
-	int m_bumpCounter = 0;
-	int m_counterMax = 40;
-	double m_currentExtenderBumpTarget = 0.0;
-	static constexpr double m_extenderTargetUp = 0.4;
-	static constexpr double m_extenderTargetDown = -0.4;
 	units::angle::turn_t m_intakeRetractedPositionTarget{80.0};
 	units::angle::turn_t m_intakeExtendedPositionTarget{0.0};
 	units::angle::turn_t m_cachedExtenderPositionDeg{0.0};

@@ -22,6 +22,12 @@
 #include "networktables/NetworkTableInstance.h"
 
 #include "Intake.h"
+#include "mechanisms/Intake/commands/IntakeEmptyHopperCommand.h"
+#include "mechanisms/Intake/commands/IntakeExpelCommand.h"
+#include "mechanisms/Intake/commands/IntakeIntakeCommand.h"
+#include "mechanisms/Intake/commands/IntakeLaunchCommand.h"
+#include "mechanisms/Intake/commands/IntakeLoadHopperCommand.h"
+#include "mechanisms/Intake/commands/IntakeOffCommand.h"
 #include "state/RobotState.h"
 #include "utils/DragonPower.h"
 #include "utils/logging/debug/Logger.h"
@@ -441,121 +447,46 @@ void Intake::PublishIntakeMode(bool intaking)
 }
 
 //====================================================================================================================================================
-// Command factories - command-based replacements for the old Intake state classes.
-// Each command sets the mechanism targets once on start, then holds (runs forever) until it is
-// interrupted - e.g. a WhileTrue binding releasing on button-up, or another command requiring
-// this subsystem. The motors are actually driven every loop by Periodic()/Update().
+// Command factories - thin wrappers that construct the per-command classes in
+// mechanisms/Intake/commands/. Each command class owns its own Initialize()/Execute()/End()/
+// IsFinished() lifecycle (mirroring the old state classes' Init()/Run()/Exit()/AtTarget()). The
+// motors are actually driven every loop by Periodic()/Update(); the commands only set the targets.
 //====================================================================================================================================================
 
 /// @brief Default command - motors off. Replaces OffState.
 frc2::CommandPtr Intake::GetOffCommand()
 {
-	return frc2::cmd::Run(
-			   [this]()
-			   {
-				   // Run-once-on-entry semantics, tracked via m_currentMode so we only publish on transition.
-				   if (m_currentMode != STATE_OFF)
-				   {
-					   m_currentMode = STATE_OFF;
-					   UpdateTargetIntakePercentOut(0.0);
-					   PublishIntakeMode(false);
-				   }
-
-				   // First time the robot is enabled, zero/reset the extender (was OffState::Run).
-				   if (frc::DriverStation::IsEnabled() && !m_hasEnabled)
-				   {
-					   m_hasEnabled = true;
-					   if (frc::DriverStation::IsTeleop())
-					   {
-						   UpdateTargetExtenderPercentOut(0.0);
-						   m_extender->SetPosition(0.0_tr);
-					   }
-					   else
-					   {
-						   UpdateTargetExtenderPositionDeg(0.0_tr);
-					   }
-				   }
-			   },
-			   {this})
-		.WithName("IntakeOff");
+	return IntakeCommands::IntakeOffCommand(this).ToPtr();
 }
 
 /// @brief Intake game pieces. Replaces IntakeState (and ForceIntakeAutonState).
 frc2::CommandPtr Intake::GetIntakeCommand()
 {
-	return frc2::cmd::Run([this]() {}, {this})
-		.BeforeStarting(
-			[this]()
-			{
-				m_currentMode = STATE_INTAKE;
-				UpdateTargetIntakePercentOut(1.0);
-				UpdateTargetExtenderPercentOut(-0.75);
-				PublishIntakeMode(true);
-			})
-		.WithName("Intake");
+	return IntakeCommands::IntakeIntakeCommand(this).ToPtr();
 }
 
 /// @brief Expel game pieces. Replaces ExpelState.
 frc2::CommandPtr Intake::GetExpelCommand()
 {
-	return frc2::cmd::Run([this]() {}, {this})
-		.BeforeStarting(
-			[this]()
-			{
-				m_currentMode = STATE_EXPEL;
-				UpdateTargetIntakePercentOut(-1.0);
-				UpdateTargetExtenderPercentOut(-0.25);
-				PublishIntakeMode(false);
-			})
-		.WithName("IntakeExpel");
+	return IntakeCommands::IntakeExpelCommand(this).ToPtr();
 }
 
 /// @brief Load the hopper. Replaces LoadHopperState.
 frc2::CommandPtr Intake::GetLoadHopperCommand()
 {
-	return frc2::cmd::Run([this]() {}, {this})
-		.BeforeStarting(
-			[this]()
-			{
-				m_currentMode = STATE_LOAD_HOPPER;
-				UpdateTargetIntakePercentOut(1.0);
-				UpdateTargetExtenderPositionDeg(-10.0_tr);
-			})
-		.WithName("IntakeLoadHopper");
+	return IntakeCommands::IntakeLoadHopperCommand(this).ToPtr();
 }
 
 /// @brief Feed the launcher. Replaces LaunchState (includes the auton "bump" behavior).
 frc2::CommandPtr Intake::GetLaunchCommand()
 {
-	return frc2::cmd::Run([this]()
-						  { BumpIntake(); }, {this})
-		.BeforeStarting(
-			[this]()
-			{
-				m_currentMode = STATE_LAUNCH;
-				m_bumpCounter = 0;
-				m_currentExtenderBumpTarget = 0.0;
-				UpdateTargetIntakePercentOut(1.0);
-				UpdateTargetExtenderPositionDeg(20.0_tr);
-				PublishIntakeMode(false);
-			})
-		.WithName("IntakeLaunch");
+	return IntakeCommands::IntakeLaunchCommand(this).ToPtr();
 }
 
 /// @brief Empty the hopper (climb mode). Replaces EmptyHopperState.
 frc2::CommandPtr Intake::GetEmptyHopperCommand()
 {
-	return frc2::cmd::Run([this]() {}, {this})
-		.BeforeStarting(
-			[this]()
-			{
-				m_currentMode = STATE_EMPTY_HOPPER;
-				UpdateTargetIntakePercentOut(-1.0);
-				UpdateTargetExtenderPositionDeg(100.0_tr);
-				// Matches the old EmptyHopperState ordering: percent-out overrides the position target.
-				UpdateTargetExtenderPercentOut(0.2);
-			})
-		.WithName("IntakeEmptyHopper");
+	return IntakeCommands::IntakeEmptyHopperCommand(this).ToPtr();
 }
 
 /// @brief Map a STATE_NAMES value to the command that implements it (autonomous bridge).
@@ -578,20 +509,5 @@ frc2::CommandPtr Intake::GetCommandForState(STATE_NAMES state)
 	case STATE_OFF:
 	default:
 		return GetOffCommand();
-	}
-}
-
-/// @brief Periodically "bump" the extender during autonomous launching (moved from LaunchState).
-void Intake::BumpIntake()
-{
-	if ((m_bumpCounter > m_counterMax) && frc::DriverStation::IsAutonomous())
-	{
-		m_currentExtenderBumpTarget = (m_currentExtenderBumpTarget > 0) ? m_extenderTargetDown : m_extenderTargetUp;
-		UpdateTargetExtenderPercentOut(m_currentExtenderBumpTarget);
-		m_bumpCounter = 0;
-	}
-	else
-	{
-		m_bumpCounter++;
 	}
 }
