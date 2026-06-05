@@ -111,12 +111,6 @@ public:
 	void Periodic() override;
 	void DataLog(uint64_t timestamp) override;
 
-	/// @brief Command factories - the command-based replacements for the old Intake states.
-	/// @details Each factory just constructs the matching command class from
-	///          mechanisms/Intake/commands/. The command classes own the Initialize()/Execute()/
-	///          End()/IsFinished() lifecycle (mirroring the old states' Init()/Run()/Exit()/AtTarget()).
-	///          Binding a command with WhileTrue automatically returns the mechanism to its
-	///          default (Off) command on release.
 	frc2::CommandPtr GetOffCommand() { return IntakeCommands::IntakeOffCommand(this).ToPtr(); }					///< default command (was OffState)
 	frc2::CommandPtr GetIntakeCommand() { return IntakeCommands::IntakeIntakeCommand(this).ToPtr(); }			///< was IntakeState / ForceIntakeAutonState
 	frc2::CommandPtr GetExpelCommand() { return IntakeCommands::IntakeExpelCommand(this).ToPtr(); }				///< was ExpelState

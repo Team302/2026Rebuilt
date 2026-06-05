@@ -23,13 +23,6 @@ class Intake;
 
 namespace IntakeCommands
 {
-    /// @class IntakeExpelCommand
-    /// @brief Runs the intake in reverse to expel game pieces. This is the command-based replacement
-    ///        for the old @c ExpelState. The lifecycle methods map onto the old state methods:
-    ///        - @c Initialize() == the old @c Init()
-    ///        - @c Execute()    == the old @c Run()
-    ///        - @c End()        == the old @c Exit()
-    ///        - @c IsFinished() == the old @c AtTarget() / @c IsTransitionCondition()
     class IntakeExpelCommand : public frc2::CommandHelper<frc2::Command, IntakeExpelCommand>
     {
     public:
@@ -50,5 +43,8 @@ namespace IntakeCommands
 
     private:
         Intake *m_intake;
+
+        static constexpr double m_intakeTarget{-1};
+        static constexpr double m_extenderTarget{-0.25};
     };
 }

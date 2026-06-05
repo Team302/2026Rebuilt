@@ -17,20 +17,13 @@
 
 #include "frc2/command/Command.h"
 #include "frc2/command/CommandHelper.h"
+#include "units/angle.h"
 
 // Forward Declarations
 class Intake;
 
 namespace IntakeCommands
 {
-    /// @class IntakeEmptyHopperCommand
-    /// @brief Empties the hopper (used in climb mode): runs the intake in reverse and drives the
-    ///        extender out. This is the command-based replacement for the old @c EmptyHopperState.
-    ///        The lifecycle methods map onto the old state methods:
-    ///        - @c Initialize() == the old @c Init()
-    ///        - @c Execute()    == the old @c Run()
-    ///        - @c End()        == the old @c Exit()
-    ///        - @c IsFinished() == the old @c AtTarget() / @c IsTransitionCondition()
     class IntakeEmptyHopperCommand : public frc2::CommandHelper<frc2::Command, IntakeEmptyHopperCommand>
     {
     public:
@@ -51,5 +44,9 @@ namespace IntakeCommands
 
     private:
         Intake *m_intake;
+
+        static constexpr double m_intakeTarget{-1};
+        static constexpr units::angle::turn_t m_extenderTarget{100};
+        static constexpr double m_extenderPercentOutTarget{0.2};
     };
 }

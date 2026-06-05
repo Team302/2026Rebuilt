@@ -28,8 +28,8 @@ IntakeIntakeCommand::IntakeIntakeCommand(Intake *intake) : m_intake(intake)
 void IntakeIntakeCommand::Initialize()
 {
     m_intake->SetCurrentMode(Intake::STATE_INTAKE);
-    m_intake->UpdateTargetIntakePercentOut(1.0);
-    m_intake->UpdateTargetExtenderPercentOut(-0.75);
+    m_intake->UpdateTargetIntakePercentOut(m_intakeTarget);
+    m_intake->UpdateTargetExtenderPercentOut(m_extenderTarget);
     m_intake->PublishIntakeMode(true);
 }
 

@@ -31,8 +31,8 @@ IntakeEmptyHopperCommand::IntakeEmptyHopperCommand(Intake *intake) : m_intake(in
 void IntakeEmptyHopperCommand::Initialize()
 {
     m_intake->SetCurrentMode(Intake::STATE_EMPTY_HOPPER);
-    m_intake->UpdateTargetIntakePercentOut(-1.0);
-    m_intake->UpdateTargetExtenderPercentOut(0.2);
+    m_intake->UpdateTargetIntakePercentOut(m_intakeTarget);
+    m_intake->UpdateTargetExtenderPercentOut(m_extenderPercentOutTarget);
 }
 
 void IntakeEmptyHopperCommand::Execute()

@@ -81,8 +81,7 @@ void MechanismContainer::ConfigureIntake()
     auto expelButton = controller->GetCommandTrigger(TeleopControlFunctions::EXPEL);
     auto loadHopperButton = controller->GetCommandTrigger(TeleopControlFunctions::DRIVE_TO_OUTPOST);
 
-    // Operator-driven (gamepad) commands - only active in teleop, matching the old
-    // behavior where gamepad transitions were disabled during autonomous.
+    // Consider Gamepad Transitions (Telop)
     Intake *intake = m_intake;
     frc2::Trigger notClimbing([intake]()
                               { return !intake->IsInClimbMode(); });
@@ -91,8 +90,7 @@ void MechanismContainer::ConfigureIntake()
     (expelButton && teleop).WhileTrue(m_intake->GetExpelCommand());
     (loadHopperButton && teleop).WhileTrue(m_intake->GetLoadHopperCommand());
 
-    // Sensor / RobotState-driven commands - active in all modes (these were
-    // "sensor" transitions in the old StateMgr and ran during autonomous too).
+    // Sensor Transitions (Auton + Telop)
     frc2::Trigger launching([intake]()
                             { return intake->IsLaunching() && !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::INTAKE); });
     launching.WhileTrue(m_intake->GetLaunchCommand());

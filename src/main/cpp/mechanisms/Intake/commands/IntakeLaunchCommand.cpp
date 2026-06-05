@@ -34,8 +34,8 @@ void IntakeLaunchCommand::Initialize()
     m_intake->SetCurrentMode(Intake::STATE_LAUNCH);
     m_bumpCounter = 0;
     m_currentExtenderBumpTarget = 0.0;
-    m_intake->UpdateTargetIntakePercentOut(1.0);
-    m_intake->UpdateTargetExtenderPositionDeg(units::angle::turn_t(20.0));
+    m_intake->UpdateTargetIntakePercentOut(m_intakeTarget);
+    m_intake->UpdateTargetExtenderPositionDeg(m_currentExtenderTarget);
     m_intake->PublishIntakeMode(false);
 }
 

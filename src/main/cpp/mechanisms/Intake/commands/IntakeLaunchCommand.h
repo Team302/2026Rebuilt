@@ -23,15 +23,6 @@ class Intake;
 
 namespace IntakeCommands
 {
-    /// @class IntakeLaunchCommand
-    /// @brief Feeds the launcher: runs the intake and drives the extender up, "bumping" it back and
-    ///        forth during autonomous to keep game pieces feeding. This is the command-based
-    ///        replacement for the old @c LaunchState (the bump logic that used to live in the state
-    ///        now lives here). The lifecycle methods map onto the old state methods:
-    ///        - @c Initialize() == the old @c Init()
-    ///        - @c Execute()    == the old @c Run() (the bump behavior)
-    ///        - @c End()        == the old @c Exit()
-    ///        - @c IsFinished() == the old @c AtTarget() / @c IsTransitionCondition()
     class IntakeLaunchCommand : public frc2::CommandHelper<frc2::Command, IntakeLaunchCommand>
     {
     public:
@@ -61,5 +52,8 @@ namespace IntakeCommands
         double m_currentExtenderBumpTarget = 0.0;
         static constexpr double m_extenderTargetUp = 0.4;
         static constexpr double m_extenderTargetDown = -0.4;
+
+        static constexpr double m_intakeTarget{1.0};
+        static constexpr units::angle::turn_t m_currentExtenderTarget{20.0_tr};
     };
 }

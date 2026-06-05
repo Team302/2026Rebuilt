@@ -17,8 +17,8 @@
 #include "units/angle.h"
 
 // Team 302 Includes
-#include "mechanisms/Intake/commands/IntakeLoadHopperCommand.h"
 #include "mechanisms/Intake/Intake.h"
+#include "mechanisms/Intake/commands/IntakeLoadHopperCommand.h"
 
 using namespace IntakeCommands;
 
@@ -31,8 +31,8 @@ IntakeLoadHopperCommand::IntakeLoadHopperCommand(Intake *intake) : m_intake(inta
 void IntakeLoadHopperCommand::Initialize()
 {
 	m_intake->SetCurrentMode(Intake::STATE_LOAD_HOPPER);
-	m_intake->UpdateTargetIntakePercentOut(1.0);
-	m_intake->UpdateTargetExtenderPositionDeg(units::angle::turn_t(-10.0));
+	m_intake->UpdateTargetIntakePercentOut(m_intakeTarget);
+	m_intake->UpdateTargetExtenderPositionDeg(m_extenderTarget);
 }
 
 void IntakeLoadHopperCommand::Execute()

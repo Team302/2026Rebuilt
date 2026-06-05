@@ -23,14 +23,6 @@ class Intake;
 
 namespace IntakeCommands
 {
-    /// @class IntakeOffCommand
-    /// @brief Default Intake command - turns the intake/extender off and performs the one-time
-    ///        extender reset on first enable. This is the command-based replacement for the old
-    ///        @c OffState. The lifecycle methods map onto the old state methods as follows:
-    ///        - @c Initialize() == the old @c Init()
-    ///        - @c Execute()    == the old @c Run()
-    ///        - @c End()        == the old @c Exit()
-    ///        - @c IsFinished() == the old @c AtTarget() / @c IsTransitionCondition()
     class IntakeOffCommand : public frc2::CommandHelper<frc2::Command, IntakeOffCommand>
     {
     public:
@@ -51,5 +43,8 @@ namespace IntakeCommands
 
     private:
         Intake *m_intake;
+
+        static constexpr double m_intakeTarget{0};
+        static constexpr units::angle::turn_t m_extenderTarget{0};
     };
 }
