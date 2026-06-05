@@ -316,7 +316,7 @@ void Intake::SetCurrentState(int state, bool run)
 	m_autonCommand = GetCommandForState(static_cast<STATE_NAMES>(state));
 	if (run)
 	{
-		m_autonCommand.Schedule();
+		frc2::CommandScheduler::GetInstance().Schedule(m_autonCommand);
 	}
 }
 
