@@ -92,68 +92,47 @@ void Intake::CreateCompBot302()
 	m_intakeCANdi = new ctre::phoenix6::hardware::CANdi(11, ctre::phoenix6::CANBus("canivore"));
 
 	m_percentOut = new ControlData(
-		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
-		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_percentOut",									  // std::string indentifier
-		0,												  // double proportional
-		0,												  // double integral
-		0,												  // double derivative
-		0,												  // double feedforward
-		0,												  // double velocityGain
-		0,												  // double accelartionGain
-		0,												  // double staticFrictionGain,
-
-		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
+		"m_percentOut",											 // std::string indentifier
+		0,														 // double proportional
+		0,														 // double integral
+		0,														 // double derivative
+		0,														 // double feedforward
+		0,														 // double velocityGain
+		0,														 // double accelartionGain
+		0,														 // double staticFrictionGain,
 		0,														 // double integralZone
 		0,														 // double maxAcceleration
 		0,														 // double cruiseVelocity
-		0,														 // double peakValue
-		0,														 // double nominalValue
-		false,													 // bool enableFOC
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
 	m_positionDegUp = new ControlData(
-		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
-		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_positionDegUp",								  // std::string indentifier
-		0,												  // double proportional
-		0,												  // double integral
-		0,												  // double derivative
-		0,												  // double feedforward
-		0,												  // double velocityGain
-		0,												  // double accelartionGain
-		0,												  // double staticFrictionGain,
-
-		ControlData::FEEDFORWARD_TYPE::VOLTAGE,					 // FEEDFORWARD_TYPE feedforwadType
+		"m_positionDegUp",										 // std::string indentifier
+		0,														 // double proportional
+		0,														 // double integral
+		0,														 // double derivative
+		0,														 // double feedforward
+		0,														 // double velocityGain
+		0,														 // double accelartionGain
+		0,														 // double staticFrictionGain,
 		0,														 // double integralZone
 		0,														 // double maxAcceleration
 		0,														 // double cruiseVelocity
-		0,														 // double peakValue
-		0,														 // double nominalValue
-		false,													 // bool enableFOC
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
 	m_positionDegDown = new ControlData(
-		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
-		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_positionDegDown",							  // std::string indentifier
-		0,												  // double proportional
-		0,												  // double integral
-		0,												  // double derivative
-		0,												  // double feedforward
-		0,												  // double velocityGain
-		0,												  // double accelartionGain
-		0,												  // double staticFrictionGain,
-
-		ControlData::FEEDFORWARD_TYPE::VOLTAGE,					 // FEEDFORWARD_TYPE feedforwadType
+		"m_positionDegDown",									 // std::string indentifier
+		0,														 // double proportional
+		0,														 // double integral
+		0,														 // double derivative
+		0,														 // double feedforward
+		0,														 // double velocityGain
+		0,														 // double accelartionGain
+		0,														 // double staticFrictionGain,
 		0,														 // double integralZone
 		0,														 // double maxAcceleration
 		0,														 // double cruiseVelocity
-		0,														 // double peakValue
-		0,														 // double nominalValue
-		false,													 // bool enableFOC
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);

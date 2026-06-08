@@ -194,200 +194,137 @@ void Launcher::CreateCompBot302()
 	// m_turretAngleSensor = new ctre::phoenix6::hardware::CANcoder(6, ctre::phoenix6::CANBus("canivore"));
 
 	m_percentOut = new ControlData(
-		ControlModes::CONTROL_TYPE::PERCENT_OUTPUT,		  // ControlModes::CONTROL_TYPE mode
-		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_percentOut",									  // std::string indentifier
-		0,												  // double proportional
-		0,												  // double integral
-		0,												  // double derivative
-		0,												  // double feedforward
-		0,												  // double velocityGain
-		0,												  // double accelartionGain
-		0,												  // double staticFrictionGain,
-
-		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
+		"m_percentOut",											 // std::string indentifier
+		0,														 // double proportional
+		0,														 // double integral
+		0,														 // double derivative
+		0,														 // double feedforward
+		0,														 // double velocityGain
+		0,														 // double accelartionGain
+		0,														 // double staticFrictionGain,
 		0,														 // double integralZone
 		0,														 // double maxAcceleration
 		0,														 // double cruiseVelocity
-		0,														 // double peakValue
-		0,														 // double nominalValue
-		false,													 // bool enableFOC
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_velocityLauncher = new ControlData(				  // MECH_TODO: Retune PIDs
-		ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, // ControlModes::CONTROL_TYPE mode
-		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_velocityLauncher",							  // std::string indentifier
-		0,												  // double proportional
-		0,												  // double integral
-		0,												  // double derivative
-		0,												  // double feedforward
-		0,												  // double velocityGain
-		0,												  // double accelartionGain
-		0,												  // double staticFrictionGain,
-
-		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
+	m_velocityLauncher = new ControlData(						 // MECH_TODO: Retune PIDs
+		"m_velocityLauncher",									 // std::string indentifier
+		0,														 // double proportional
+		0,														 // double integral
+		0,														 // double derivative
+		0,														 // double feedforward
+		0,														 // double velocityGain
+		0,														 // double accelartionGain
+		0,														 // double staticFrictionGain,
 		0,														 // double integralZone
 		0,														 // double maxAcceleration
 		0,														 // double cruiseVelocity
-		0,														 // double peakValue
-		0,														 // double nominalValue
-		false,													 // bool enableFOC
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_velocityLauncherFullField = new ControlData(		  // MECH_TODO: Retune PIDs
-		ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, // ControlModes::CONTROL_TYPE mode
-		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_velocityLauncherFullField",					  // std::string indentifier
-		0,												  // double proportional
-		0,												  // double integral
-		0,												  // double derivative
-		0,												  // double feedforward
-		0,												  // double velocityGain
-		0,												  // double accelartionGain
-		0,												  // double staticFrictionGain,
-
-		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
+	m_velocityLauncherFullField = new ControlData(				 // MECH_TODO: Retune PIDs
+		"m_velocityLauncherFullField",							 // std::string indentifier
+		0,														 // double proportional
+		0,														 // double integral
+		0,														 // double derivative
+		0,														 // double feedforward
+		0,														 // double velocityGain
+		0,														 // double accelartionGain
+		0,														 // double staticFrictionGain,
 		0,														 // double integralZone
 		0,														 // double maxAcceleration
 		0,														 // double cruiseVelocity
-		0,														 // double peakValue
-		0,														 // double nominalValue
-		false,													 // bool enableFOC
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_velocityIndexer = new ControlData(				  // MECH_TODO: Retune PIDs
-		ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, // ControlModes::CONTROL_TYPE mode
-		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_velocityIndexer",							  // std::string indentifier
-		0,												  // double proportional
-		0,												  // double integral
-		0,												  // double derivative
-		0,												  // double feedforward
-		0,												  // double velocityGain
-		0,												  // double accelartionGain
-		0,												  // double staticFrictionGain,
-
-		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
+	m_velocityIndexer = new ControlData(						 // MECH_TODO: Retune PIDs
+		"m_velocityIndexer",									 // std::string indentifier
+		0,														 // double proportional
+		0,														 // double integral
+		0,														 // double derivative
+		0,														 // double feedforward
+		0,														 // double velocityGain
+		0,														 // double accelartionGain
+		0,														 // double staticFrictionGain,
 		0,														 // double integralZone
 		0,														 // double maxAcceleration
 		0,														 // double cruiseVelocity
-		0,														 // double peakValue
-		0,														 // double nominalValue
-		false,													 // bool enableFOC
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_velocitySpindexer = new ControlData(				  // MECH_TODO: Retune PIDs
-		ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, // ControlModes::CONTROL_TYPE mode
-		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_velocitySpindexer",							  // std::string indentifier
-		0,												  // double proportional
-		0,												  // double integral
-		0,												  // double derivative
-		0,												  // double feedforward
-		0,												  // double velocityGain
-		0,												  // double accelartionGain
-		0,												  // double staticFrictionGain,
-
-		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
+	m_velocitySpindexer = new ControlData(						 // MECH_TODO: Retune PIDs
+		"m_velocitySpindexer",									 // std::string indentifier
+		0,														 // double proportional
+		0,														 // double integral
+		0,														 // double derivative
+		0,														 // double feedforward
+		0,														 // double velocityGain
+		0,														 // double accelartionGain
+		0,														 // double staticFrictionGain,
 		0,														 // double integralZone
 		0,														 // double maxAcceleration
 		0,														 // double cruiseVelocity
-		0,														 // double peakValue
-		0,														 // double nominalValue
-		false,													 // bool enableFOC
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
-	m_velocityTransfer = new ControlData(				  // MECH_TODO: Retune PIDs
-		ControlModes::CONTROL_TYPE::VELOCITY_REV_PER_SEC, // ControlModes::CONTROL_TYPE mode
-		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_velocityTransfer",							  // std::string indentifier
-		0,												  // double proportional
-		0,												  // double integral
-		0,												  // double derivative
-		0,												  // double feedforward
-		0,												  // double velocityGain
-		0,												  // double accelartionGain
-		0,												  // double staticFrictionGain,
-
-		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
+	m_velocityTransfer = new ControlData(						 // MECH_TODO: Retune PIDs
+		"m_velocityTransfer",									 // std::string indentifier
+		0,														 // double proportional
+		0,														 // double integral
+		0,														 // double derivative
+		0,														 // double feedforward
+		0,														 // double velocityGain
+		0,														 // double accelartionGain
+		0,														 // double staticFrictionGain,
 		0,														 // double integralZone
 		0,														 // double maxAcceleration
 		0,														 // double cruiseVelocity
-		0,														 // double peakValue
-		0,														 // double nominalValue
-		false,													 // bool enableFOC
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
 	m_positionDegreesHood = new ControlData(
-		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
-		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_positionDegreesHood",						  // std::string indentifier
-		0,												  // double proportional
-		0,												  // double integral
-		0,												  // double derivative
-		0,												  // double feedforward
-		0,												  // double velocityGain
-		0,												  // double accelartionGain
-		0,												  // double staticFrictionGain,
-
-		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
+		"m_positionDegreesHood",								 // std::string indentifier
+		0,														 // double proportional
+		0,														 // double integral
+		0,														 // double derivative
+		0,														 // double feedforward
+		0,														 // double velocityGain
+		0,														 // double accelartionGain
+		0,														 // double staticFrictionGain,
 		0,														 // double integralZone
 		0,														 // double maxAcceleration
 		0,														 // double cruiseVelocity
-		0,														 // double peakValue
-		0,														 // double nominalValue
-		false,													 // bool enableFOC
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
 	m_positionDegreesTurret = new ControlData(
-		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
-		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_positionDegreesTurret",						  // std::string indentifier
-		0,												  // double proportional
-		0,												  // double integral
-		0,												  // double derivative
-		0,												  // double feedforward
-		0,												  // double velocityGain
-		0,												  // double accelartionGain
-		0,												  // double staticFrictionGain,
-
-		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
+		"m_positionDegreesTurret",								 // std::string indentifier
+		0,														 // double proportional
+		0,														 // double integral
+		0,														 // double derivative
+		0,														 // double feedforward
+		0,														 // double velocityGain
+		0,														 // double accelartionGain
+		0,														 // double staticFrictionGain,
 		0,														 // double integralZone
 		0,														 // double maxAcceleration
 		0,														 // double cruiseVelocity
-		0,														 // double peakValue
-		0,														 // double nominalValue
-		false,													 // bool enableFOC
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
 	m_positionDegreesSpindexer = new ControlData(
-		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
-		ControlModes::CONTROL_RUN_LOCS::MOTOR_CONTROLLER, // ControlModes::CONTROL_RUN_LOCS server
-		"m_positionDegreesSpindexer",					  // std::string indentifier
-		0,												  // double proportional
-		0,												  // double integral
-		0,												  // double derivative
-		0,												  // double feedforward
-		0,												  // double velocityGain
-		0,												  // double accelartionGain
-		0,												  // double staticFrictionGain,
-
-		ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE,				 // FEEDFORWARD_TYPE feedforwadType
+		"m_positionDegreesSpindexer",							 // std::string indentifier
+		0,														 // double proportional
+		0,														 // double integral
+		0,														 // double derivative
+		0,														 // double feedforward
+		0,														 // double velocityGain
+		0,														 // double accelartionGain
+		0,														 // double staticFrictionGain,
 		0,														 // double integralZone
 		0,														 // double maxAcceleration
 		0,														 // double cruiseVelocity
-		0,														 // double peakValue
-		0,														 // double nominalValue
-		false,													 // bool enableFOC
 		ControlData::GravityTypeValue::Elevator_Static,			 // Gravity type
 		ControlData::StaticFeedforwardSignValue::UseVelocitySign // Static feedforward sign
 	);
