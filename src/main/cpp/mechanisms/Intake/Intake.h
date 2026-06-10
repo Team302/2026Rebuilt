@@ -79,9 +79,6 @@ public:
 	/// @param pid control data / constants
 	virtual void SetControlConstants(RobotElementNames::MOTOR_CONTROLLER_USAGE indentifier, int slot, ControlData pid);
 
-	/// @brief update the output to the mechanism using the current controller and target value(s)
-	virtual void Update();
-
 	void UpdateTargetIntakePercentOut(double percentOut)
 	{
 		m_intakePercentOut.Output = percentOut;
@@ -158,9 +155,9 @@ public:
 	/// @details Keeps the same signature the old StateMgr exposed so CyclePrimitives and
 	///          the auton XML pipeline continue to work unchanged.
 	void SetCurrentState(int state, bool run);
-	int GetCurrentState() const { return m_currentMode; }
+	int GetCurrentState() const { return m_currentState; }
 	/// @brief Set the active mode tracker. Used by the Intake command classes in their Initialize().
-	void SetCurrentMode(int mode) { m_currentMode = mode; }
+	void SetCurrentState(int state) { m_currentState = state; }
 	/// @brief First-enable tracking used by IntakeOffCommand to reset the extender exactly once.
 	bool HasBeenEnabled() const { return m_hasEnabled; }
 	void SetHasBeenEnabled(bool hasEnabled) { m_hasEnabled = hasEnabled; }
@@ -180,6 +177,9 @@ protected:
 	ControlData *GetControlData(std::string name) override;
 
 private:
+	/// @brief update the output to the mechanism using the current controller and target value(s)
+	virtual void Update();
+
 	std::unordered_map<std::string, STATE_NAMES> m_stateMap;
 
 	ctre::phoenix6::hardware::TalonFX *m_intake;
@@ -204,7 +204,7 @@ private:
 	bool m_prevIntakeSwitchState = false;
 
 	// Command-based mode tracking + autonomous command handle (replaces StateMgr internals)
-	int m_currentMode = STATE_OFF;
+	int m_currentState = STATE_OFF;
 	bool m_hasEnabled = false;
 	frc2::CommandPtr m_autonCommand;
 

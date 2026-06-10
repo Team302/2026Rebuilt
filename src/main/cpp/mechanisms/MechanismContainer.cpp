@@ -74,7 +74,7 @@ void MechanismContainer::ConfigureIntake()
     // WhileTrue bindings automatically return to this default on button release.
     m_intake->SetDefaultCommand(m_intake->GetOffCommand());
 
-    auto teleop = frc2::RobotModeTriggers::Teleop();
+    auto considerGamePadTransitions = frc2::RobotModeTriggers::Teleop();
 
     auto intakeButton = controller->GetCommandTrigger(TeleopControlFunctions::INTAKE);
     auto expelButton = controller->GetCommandTrigger(TeleopControlFunctions::EXPEL);
@@ -85,13 +85,13 @@ void MechanismContainer::ConfigureIntake()
     frc2::Trigger notClimbing([intake]()
                               { return !intake->IsInClimbMode(); });
 
-    (intakeButton && notClimbing && teleop).WhileTrue(m_intake->GetIntakeCommand());
-    (expelButton && teleop).WhileTrue(m_intake->GetExpelCommand());
-    (loadHopperButton && teleop).WhileTrue(m_intake->GetLoadHopperCommand());
+    (intakeButton && notClimbing && considerGamePadTransitions).WhileTrue(m_intake->GetIntakeCommand());
+    (expelButton && considerGamePadTransitions).WhileTrue(m_intake->GetExpelCommand());
+    (loadHopperButton && considerGamePadTransitions).WhileTrue(m_intake->GetLoadHopperCommand());
 
     // Sensor Transitions (Auton + Telop)
-    frc2::Trigger launching([intake]()
-                            { return intake->IsLaunching() && !TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::INTAKE); });
+    frc2::Trigger launching([intake, intakeButton]()
+                            { return intake->IsLaunching() && intakeButton.Get(); });
     launching.WhileTrue(m_intake->GetLaunchCommand());
 
     frc2::Trigger emptyHopper([intake]()

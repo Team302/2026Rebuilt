@@ -53,8 +53,6 @@ public:
     /// @param [in] integralZone - range of the integral for a PID-based controller
     /// @param [in] maxAcceleration - maximum acceleration
     /// @param [in] cruiseVelocity - cruise velocity
-    /// @param [in] peakValue - peak value
-    /// @param [in] nominalValue - nominal value
     ControlData(
         std::string indentifier,
         double proportional,

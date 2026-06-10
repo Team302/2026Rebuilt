@@ -22,6 +22,10 @@
 
 using namespace IntakeCommands;
 
+static constexpr double m_intakeTarget{-1};
+static constexpr units::angle::turn_t m_extenderTarget{100};
+static constexpr double m_extenderPercentOutTarget{0.2};
+
 IntakeEmptyHopperCommand::IntakeEmptyHopperCommand(Intake *intake) : m_intake(intake)
 {
     AddRequirements(m_intake);
