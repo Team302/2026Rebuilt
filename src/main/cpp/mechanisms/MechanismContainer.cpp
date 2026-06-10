@@ -82,10 +82,8 @@ void MechanismContainer::ConfigureIntake()
 
     // Consider Gamepad Transitions (Telop)
     Intake *intake = m_intake;
-    frc2::Trigger notClimbing([intake]()
-                              { return !intake->IsInClimbMode(); });
 
-    (intakeButton && notClimbing && considerGamePadTransitions).WhileTrue(m_intake->GetIntakeCommand());
+    (intakeButton && considerGamePadTransitions).WhileTrue(m_intake->GetIntakeCommand());
     (expelButton && considerGamePadTransitions).WhileTrue(m_intake->GetExpelCommand());
     (loadHopperButton && considerGamePadTransitions).WhileTrue(m_intake->GetLoadHopperCommand());
 
@@ -93,10 +91,6 @@ void MechanismContainer::ConfigureIntake()
     frc2::Trigger launching([intake, intakeButton]()
                             { return intake->IsLaunching() && intakeButton.Get(); });
     launching.WhileTrue(m_intake->GetLaunchCommand());
-
-    frc2::Trigger emptyHopper([intake]()
-                              { return intake->IsInClimbMode() && !intake->IsIntakeIn(); });
-    emptyHopper.WhileTrue(m_intake->GetEmptyHopperCommand());
 
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("MechanismContainer"), std::string("Configured"), std::string("Intake"));
 }

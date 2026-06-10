@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <MechanismParameters xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <MotorControlData>
-    <MinimalMotorControlData name="PercentOut" pGain="0" iGain="0" dGain="0" fGain="0" iZone="0" sGain="0" vGain="0" aGain="0" peakValue="0" nominalValue="0" maxAcceleration="0" cruiseVelocity="0" enableFOC="false" feedForwardType="DUTY_CYCLE" controlType="PERCENT_OUTPUT" controlLoopLocation="MOTOR_CONTROLLER" />
-    <MinimalMotorControlData name="PositionDegreeUp" pGain="1" iGain=".5" dGain="0.0" fGain="1" iZone="0" sGain="0.0" vGain="0.0" aGain="0.0" peakValue="0" nominalValue="0" maxAcceleration="0" cruiseVelocity="0" enableFOC="true" feedForwardType="DUTY_CYCLE" controlType="POSITION_DEGREES" controlLoopLocation="MOTOR_CONTROLLER" />
-    <MinimalMotorControlData name="PositionDegreeDown" pGain="6" iGain="0" dGain="0.0" fGain="0.0" iZone="0" sGain="0.05" vGain="0.3" aGain="0.1" peakValue="0" nominalValue="0" maxAcceleration="0" cruiseVelocity="0" enableFOC="true" feedForwardType="DUTY_CYCLE" controlType="POSITION_DEGREES" controlLoopLocation="MOTOR_CONTROLLER" />
+    <MinimalMotorControlData name="m_percentOut" pGain="0.0" iGain="0.0" dGain="0.0" fGain="0.0" iZone="0.0" sGain="0.0" vGain="0.0" aGain="0.0" maxAcceleration="0.0" cruiseVelocity="0.0" />
+    <MinimalMotorControlData name="m_positionDeg" pGain="1.0" iGain="0.5" dGain="0.0" fGain="1.0" iZone="0.0" sGain="0.0" vGain="0.0" aGain="0.0" maxAcceleration="300.0" cruiseVelocity="150.0" />
   </MotorControlData>
 </MechanismParameters>

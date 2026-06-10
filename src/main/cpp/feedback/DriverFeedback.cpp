@@ -338,11 +338,6 @@ void DriverFeedback::UpdateDiagnosticLEDs()
         }
     }
 
-    if (m_intake != nullptr)
-    {
-        m_isIntakeIn = m_intake->IsIntakeIn();
-    }
-    m_LEDStates->SetIntakeSensor(m_isIntakeIn);
     m_LEDStates->SetHoodSwitch(hoodZeroSwitch);
     m_LEDStates->SetTurretZero(turretZero);
     m_LEDStates->SetTurretEnd(turretEnd);
