@@ -31,7 +31,7 @@ IntakeOffCommand::IntakeOffCommand(Intake *intake) : m_intake(intake)
 
 void IntakeOffCommand::Initialize()
 {
-    m_intake->SetCurrentMode(Intake::STATE_OFF);
+    m_intake->SetCurrentState(Intake::STATE_OFF);
     m_intake->UpdateTargetIntakePercentOut(m_intakeTarget);
     m_intake->PublishIntakeMode(false);
 }

@@ -31,7 +31,7 @@ IntakeLaunchCommand::IntakeLaunchCommand(Intake *intake) : m_intake(intake)
 
 void IntakeLaunchCommand::Initialize()
 {
-    m_intake->SetCurrentMode(Intake::STATE_LAUNCH);
+    m_intake->SetCurrentState(Intake::STATE_LAUNCH);
     m_bumpCounter = 0;
     m_currentExtenderBumpTarget = 0.0;
     m_intake->UpdateTargetIntakePercentOut(m_intakeTarget);

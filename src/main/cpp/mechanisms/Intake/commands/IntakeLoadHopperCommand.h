@@ -45,6 +45,6 @@ namespace IntakeCommands
         Intake *m_intake;
 
         static constexpr double m_intakeTarget{1.0};
-        static constexpr units::angle::turn_t m_extenderTarget{-10.0_tr};
+        static constexpr units::angle::turn_t m_extenderTarget{-10.0};
     };
 }

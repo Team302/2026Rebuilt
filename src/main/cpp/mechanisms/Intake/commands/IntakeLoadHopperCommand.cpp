@@ -30,7 +30,7 @@ IntakeLoadHopperCommand::IntakeLoadHopperCommand(Intake *intake) : m_intake(inta
 
 void IntakeLoadHopperCommand::Initialize()
 {
-	m_intake->SetCurrentMode(Intake::STATE_LOAD_HOPPER);
+	m_intake->SetCurrentState(Intake::STATE_LOAD_HOPPER);
 	m_intake->UpdateTargetIntakePercentOut(m_intakeTarget);
 	m_intake->UpdateTargetExtenderPositionDeg(m_extenderTarget);
 }

@@ -27,7 +27,7 @@ IntakeExpelCommand::IntakeExpelCommand(Intake *intake) : m_intake(intake)
 
 void IntakeExpelCommand::Initialize()
 {
-    m_intake->SetCurrentMode(Intake::STATE_EXPEL);
+    m_intake->SetCurrentState(Intake::STATE_EXPEL);
     m_intake->UpdateTargetIntakePercentOut(m_intakeTarget);
     m_intake->UpdateTargetExtenderPercentOut(m_extenderTarget);
     m_intake->PublishIntakeMode(false);
