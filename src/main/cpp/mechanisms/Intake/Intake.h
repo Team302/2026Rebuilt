@@ -190,6 +190,14 @@ private:
 
 	void RefreshCachedData();
 
+	// Logging Paths
+	static constexpr std::string_view m_intakeStatePath = "/Intake/State";
+	static constexpr std::string_view m_loggingIntakeTargetPath = "/Intake/IntakeMotorTarget";
+	static constexpr std::string_view m_loggingIntakeControlRequest = "/Intake/IntakeControlRequest";
+	static constexpr std::string_view m_loggingExtenderTargetPath = "/Intake/ExtenderMotorTarget";
+	static constexpr std::string_view m_loggingExtenderPositionPath = "/Intake/ExtenderPosition";
+	static constexpr std::string_view m_loggingExtenderControlRequest = "/Intake/ExtenderControlRequest";
+
 	// --- Handwritten Private Members ---
 	bool m_isInClimbMode = false;
 	bool m_isLaunching = false;
@@ -203,11 +211,4 @@ private:
 	static constexpr double m_percentModifier = 0.5;
 	static constexpr units::angle::turn_t m_protectExtenderPositionDegDown{-20.0};
 	static constexpr units::angle::turn_t m_protectExtenderPositionDegUp{50.0};
-
-	// Logging Paths
-	static constexpr std::string_view m_intakeStatePath = "/Intake/State";
-	static constexpr std::string_view m_intakePercentOutPath = "/Intake/TargetPercentOut";
-	static constexpr std::string_view m_loggingpercentUnit = "Percent";
-	static constexpr std::string_view m_loggingExtenderTargetPath = "/Intake/ExtenderTarget";
-	static constexpr std::string_view m_loggingExtenderControlRequest = "/Intake/ExtenderControlRequest";
 };

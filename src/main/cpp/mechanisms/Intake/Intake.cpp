@@ -302,12 +302,14 @@ ControlData *Intake::GetControlData(string name)
 
 void Intake::DataLog(uint64_t timestamp)
 {
-	// Control data
-	LogDoubleData(timestamp, m_intakePercentOutPath, m_intakePercentOut.Output.value(), m_loggingpercentUnit);
-
-	// Mechanism state
+	// Mechanism State
 	LogStringData(timestamp, m_intakeStatePath, GetCurrentStateName());
+
+	// Control Requests/Targets
+	LogDoubleData(timestamp, m_loggingIntakeTargetPath, m_intakePercentOut.Output.value());
+	LogStringData(timestamp, m_loggingIntakeControlRequest, std::string(m_intakeActiveTarget->GetName()));
 	LogDoubleData(timestamp, m_loggingExtenderTargetPath, m_extenderPositionDeg.Position.value());
+	LogDoubleData(timestamp, m_loggingExtenderPositionPath, m_cachedExtenderPositionDeg.value());
 	LogStringData(timestamp, m_loggingExtenderControlRequest, std::string(m_extenderActiveTarget->GetName()));
 }
 
