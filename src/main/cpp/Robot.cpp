@@ -89,7 +89,6 @@
 #include "frc/DriverStation.h"
 #include "frc/RobotController.h"
 #include "frc/Threads.h"
-#include "mechanisms/MechanismContainer.h"
 #include "mechanisms/configs/MechanismConfigMgr.h"
 #include "state/RobotState.h"
 #include "utils/DragonField.h"
@@ -244,13 +243,6 @@ void Robot::InitializeRobot()
     chassisConfig->CreateDrivetrain();
 
     new RobotContainer(); // instantiate RobotContainer to setup commands and subsystems
-
-    int32_t teamNumber = frc::RobotController::GetTeamNumber();
-    MechanismConfigMgr::GetInstance()->InitRobot((RobotIdentifier)teamNumber);
-
-    // Bind command-based mechanisms to controls. Must run AFTER MechanismConfigMgr::InitRobot()
-    // has created the mechanisms so the container can find and bind whatever exists on this robot.
-    MechanismContainer::GetInstance()->ConfigureBindings();
 
     m_robotState = RobotState::GetInstance();
     m_robotState->Init();

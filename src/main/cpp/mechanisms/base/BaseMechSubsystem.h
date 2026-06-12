@@ -19,7 +19,7 @@
 #include <string>
 
 // FRC Includes
-#include <frc2/command/SubsystemBase.h>
+#include "frc2/command/SubsystemBase.h"
 
 // Team 302 Includes
 #include "mechanisms/MechanismTypes.h"

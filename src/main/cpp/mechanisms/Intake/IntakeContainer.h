@@ -17,16 +17,11 @@
 
 // Forward declares
 class Intake;
-// class Launcher;   // TODO: enable when the Launcher is converted to command-based
 
 //====================================================================================================================================================
-/// @class MechanismContainer
+/// @class IntakeContainer
 /// @brief Singleton that wires command-based mechanisms to driver/operator controls.
 ///
-/// This is the mechanism analog of @c SwerveContainer. It owns the trigger/button
-/// bindings for every command-based mechanism, with one @c Configure<Mechanism>()
-/// method per mechanism so a mechanism can be added or removed simply by
-/// commenting out a single line in @c ConfigureBindings().
 ///
 /// The mechanism objects themselves are still created per-robot by the
 /// @c MechanismConfig (e.g. @c MechanismConfigCompBot_302). Each @c Configure*()
@@ -37,28 +32,22 @@ class Intake;
 /// @note @c ConfigureBindings() must be called after @c MechanismConfigMgr::InitRobot()
 ///       has created the mechanisms (see @c Robot::InitializeRobot()).
 //====================================================================================================================================================
-class MechanismContainer
+class IntakeContainer
 {
 public:
     /// @brief Get the singleton instance.
-    /// @return MechanismContainer* - pointer to the singleton instance
-    static MechanismContainer *GetInstance();
+    /// @return IntakeContainer* - pointer to the singleton instance
+    static IntakeContainer *GetInstance();
 
     /// @brief Bind every present command-based mechanism to its controls.
     ///        Comment out a single line here to drop a mechanism's bindings.
     void ConfigureBindings();
 
 private:
-    MechanismContainer();
-    ~MechanismContainer() = default;
+    IntakeContainer();
+    ~IntakeContainer() = default;
 
-    /// @brief Bind the Intake mechanism (default command + trigger bindings).
-    ///        No-op if the Intake is not present on the current robot.
-    void ConfigureIntake();
-    // void ConfigureLauncher();   // TODO: enable when the Launcher is converted to command-based
-
-    static MechanismContainer *m_instance;
+    static IntakeContainer *m_instance;
 
     Intake *m_intake = nullptr;
-    // Launcher *m_launcher = nullptr;   // TODO
 };

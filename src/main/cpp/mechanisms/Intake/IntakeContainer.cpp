@@ -13,7 +13,7 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include "mechanisms/MechanismContainer.h"
+#include "mechanisms/Intake/IntakeContainer.h"
 
 // FRC Includes
 #include <frc2/command/button/RobotModeTriggers.h>
@@ -28,27 +28,21 @@
 #include "teleopcontrol/TeleopControlFunctions.h"
 #include "utils/logging/debug/Logger.h"
 
-MechanismContainer *MechanismContainer::m_instance = nullptr;
-MechanismContainer *MechanismContainer::GetInstance()
+IntakeContainer *IntakeContainer::m_instance = nullptr;
+IntakeContainer *IntakeContainer::GetInstance()
 {
-    if (MechanismContainer::m_instance == nullptr)
+    if (IntakeContainer::m_instance == nullptr)
     {
-        MechanismContainer::m_instance = new MechanismContainer();
+        IntakeContainer::m_instance = new IntakeContainer();
     }
-    return MechanismContainer::m_instance;
+    return IntakeContainer::m_instance;
 }
 
-MechanismContainer::MechanismContainer()
+IntakeContainer::IntakeContainer()
 {
 }
 
-void MechanismContainer::ConfigureBindings()
-{
-    ConfigureIntake();
-    // ConfigureLauncher();   // TODO: enable when the Launcher is converted to command-based
-}
-
-void MechanismContainer::ConfigureIntake()
+void IntakeContainer::ConfigureBindings()
 {
     auto config = MechanismConfigMgr::GetInstance()->GetCurrentConfig();
     if (config == nullptr)
@@ -70,8 +64,6 @@ void MechanismContainer::ConfigureIntake()
         return;
     }
 
-    // Default command: motors off + manual control (handled in Intake::Periodic()).
-    // WhileTrue bindings automatically return to this default on button release.
     m_intake->SetDefaultCommand(m_intake->GetOffCommand());
 
     auto considerGamePadTransitions = frc2::RobotModeTriggers::Teleop();
@@ -92,5 +84,5 @@ void MechanismContainer::ConfigureIntake()
                             { return intake->IsLaunching() && intakeButton.Get(); });
     launching.WhileTrue(m_intake->GetLaunchCommand());
 
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("MechanismContainer"), std::string("Configured"), std::string("Intake"));
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("IntakeContainer"), std::string("Configured"), std::string("Intake"));
 }
