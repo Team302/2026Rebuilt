@@ -40,9 +40,8 @@ void MechanismConfigCompBot_302::DefineMechanisms()
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("Initializing mechanism"), string("Launcher"), "");
 	m_theLauncher = new Launcher(RobotIdentifier::COMP_BOT_302);
 	m_theLauncher->CreateCompBot302();
-	m_theLauncher->CreateAndRegisterStates();
 	m_theLauncher->InitializeCompBot302();
-	m_theLauncher->Init(/*m_theLauncher*/);
+	m_theLauncher->InitializeCompBot302(/*m_theLauncher*/);
 	m_mechanismMap[MechanismTypes::MECHANISM_TYPE::LAUNCHER] = m_theLauncher;
 }
 
