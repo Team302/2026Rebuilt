@@ -24,8 +24,8 @@
 #include "auton/AutonGrid.h"
 #include "auton/PrimitiveEnums.h"
 #include "chassis/ChassisOptionEnums.h"
-#include "mechanisms/Intake/Intake.h"
-#include "mechanisms/Launcher/Launcher.h"
+#include "mechanisms/intake/Intake.h"
+#include "mechanisms/launcher/Launcher.h"
 
 // Third Party Includes
 

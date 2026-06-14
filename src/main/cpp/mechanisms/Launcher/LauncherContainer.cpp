@@ -13,17 +13,17 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include "mechanisms/Launcher/LauncherContainer.h"
+#include "mechanisms/launcher/LauncherContainer.h"
 
 // FRC Includes
 #include <frc2/command/button/RobotModeTriggers.h>
 #include <frc2/command/button/Trigger.h>
 
 // Team 302 Includes
-#include "mechanisms/Launcher/Launcher.h"
 #include "mechanisms/MechanismTypes.h"
 #include "mechanisms/configs/MechanismConfig.h"
 #include "mechanisms/configs/MechanismConfigMgr.h"
+#include "mechanisms/launcher/Launcher.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "teleopcontrol/TeleopControlFunctions.h"
 #include "utils/logging/debug/Logger.h"

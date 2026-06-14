@@ -19,7 +19,7 @@
 #include "frc2/command/Commands.h"
 #include "networktables/NetworkTableInstance.h"
 
-#include "mechanisms/Intake/Intake.h"
+#include "mechanisms/intake/Intake.h"
 #include "state/RobotState.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "utils/logging/debug/Logger.h"

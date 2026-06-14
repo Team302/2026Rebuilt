@@ -16,9 +16,9 @@
 #include "RobotContainer.h"
 #include "chassis/SwerveContainer.h"
 #include "frc/RobotController.h"
-#include "mechanisms/Intake/IntakeContainer.h"
-#include "mechanisms/Launcher/LauncherContainer.h"
 #include "mechanisms/configs/MechanismConfigMgr.h"
+#include "mechanisms/intake/IntakeContainer.h"
+#include "mechanisms/launcher/LauncherContainer.h"
 #include "teleopcontrol/SweepLaneChanger.h"
 #include "vision/DragonVisionPoseEstimator.h"
 

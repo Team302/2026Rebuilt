@@ -16,10 +16,10 @@
 // Generated on Friday, January 23, 2026 12:20:12 PM
 
 #pragma once
-#include "mechanisms/Intake/Intake.h"
-#include "mechanisms/Launcher/Launcher.h"
 #include "mechanisms/MechanismTypes.h"
 #include "mechanisms/configs/MechanismConfig.h"
+#include "mechanisms/intake/Intake.h"
+#include "mechanisms/launcher/Launcher.h"
 #include "state/StateMgr.h"
 
 class MechanismConfigCompBot_302 : public MechanismConfig

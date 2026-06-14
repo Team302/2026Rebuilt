@@ -38,11 +38,11 @@
 #include "utils/logging/signals/DragonDataLogger.h"
 
 // Intake command classes
-#include "mechanisms/Intake/commands/IntakeExpelCommand.h"
-#include "mechanisms/Intake/commands/IntakeIntakeCommand.h"
-#include "mechanisms/Intake/commands/IntakeLaunchCommand.h"
-#include "mechanisms/Intake/commands/IntakeLoadHopperCommand.h"
-#include "mechanisms/Intake/commands/IntakeOffCommand.h"
+#include "mechanisms/intake/commands/IntakeExpelCommand.h"
+#include "mechanisms/intake/commands/IntakeIntakeCommand.h"
+#include "mechanisms/intake/commands/IntakeLaunchCommand.h"
+#include "mechanisms/intake/commands/IntakeLoadHopperCommand.h"
+#include "mechanisms/intake/commands/IntakeOffCommand.h"
 
 class Intake : public BaseMechSubsystem, public IRobotStateChangeSubscriber, public DragonDataLogger
 {

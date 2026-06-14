@@ -25,8 +25,8 @@
 #include "pugixml/pugixml.hpp"
 #include "utils/logging/debug/Logger.h"
 
-#include "mechanisms/Intake/Intake.h"
-#include "mechanisms/Launcher/Launcher.h"
+#include "mechanisms/intake/Intake.h"
+#include "mechanisms/launcher/Launcher.h"
 
 using namespace std;
 using namespace pugi;

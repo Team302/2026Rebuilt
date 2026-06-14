@@ -42,13 +42,13 @@
 #include "utils/logging/signals/DragonDataLogger.h"
 
 // Launcher command classes
-#include "mechanisms/Launcher/commands/LauncherIdleCommand.h"
-#include "mechanisms/Launcher/commands/LauncherInitializeCommand.h"
-#include "mechanisms/Launcher/commands/LauncherLaunchCommand.h"
-#include "mechanisms/Launcher/commands/LauncherLauncherTuningCommand.h"
-#include "mechanisms/Launcher/commands/LauncherManualLaunchCommand.h"
-#include "mechanisms/Launcher/commands/LauncherOffCommand.h"
-#include "mechanisms/Launcher/commands/LauncherPrepareToLaunchCommand.h"
+#include "mechanisms/launcher/commands/LauncherIdleCommand.h"
+#include "mechanisms/launcher/commands/LauncherInitializeCommand.h"
+#include "mechanisms/launcher/commands/LauncherLaunchCommand.h"
+#include "mechanisms/launcher/commands/LauncherLauncherTuningCommand.h"
+#include "mechanisms/launcher/commands/LauncherManualLaunchCommand.h"
+#include "mechanisms/launcher/commands/LauncherOffCommand.h"
+#include "mechanisms/launcher/commands/LauncherPrepareToLaunchCommand.h"
 
 class Launcher : public BaseMechSubsystem, public IRobotStateChangeSubscriber, public DragonDataLogger
 {
