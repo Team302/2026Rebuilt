@@ -21,8 +21,6 @@
 
 // Team 302 includes
 
-#include <gamepad/IDragonGamepad.h>
-
 struct TeleopControlAxis
 {
     TeleopControlMappingEnums::CONTROLLER controllerNumber = TeleopControlMappingEnums::CONTROLLER::UNKNOWN_CONTROLLER;

@@ -20,7 +20,6 @@
 // FRC includes
 
 // Team 302 includes
-#include <gamepad/IDragonGamepad.h>
 
 struct TeleopControlButton
 {

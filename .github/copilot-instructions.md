@@ -91,7 +91,7 @@ Each mechanism has its own folder with a main class and individual state classes
 ### Teleop Control / Gamepad
 
 - **`teleopcontrol/TeleopControl`** — Maps gamepad inputs to robot functions. Defines button/axis enums and mappings.
-- **`gamepad/`** — Gamepad abstraction layer: `IDragonGamepad` interface, `DragonXBox`, `DragonHybridController`, `DragonGamepad` implementations.
+- **`gamepad/`** — Gamepad abstraction layer: `IDragonGamepad` interface, `DragonXBox`, `DragonCommandController`, `DragonGamepad` implementations.
 - **`gamepad/axis/`**, **`gamepad/button/`** — Axis and button abstraction.
 
 ### Vision
