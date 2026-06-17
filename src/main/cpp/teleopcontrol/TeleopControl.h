@@ -86,6 +86,14 @@ public:
      */
     frc2::Trigger GetAxisAsTrigger(TeleopControlFunctions::FUNCTION function, double threshold);
 
+    /**
+     * @brief Checks if the button associated with the given function is currently pressed.
+     * This is a convenience method that allows you to check button states without needing to get the trigger.
+     * @param function The button function to check.
+     * @return True if the button is pressed, false otherwise.
+     */
+    bool IsButtonPressed(TeleopControlFunctions::FUNCTION function);
+
     void LogInformation();
 
 private:

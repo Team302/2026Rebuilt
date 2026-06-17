@@ -20,6 +20,7 @@
 // FRC includes
 
 // Team 302 includes
+#include <teleopcontrol/TeleopControlMappingEnums.h>
 
 struct TeleopControlAxis
 {

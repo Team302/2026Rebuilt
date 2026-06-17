@@ -85,11 +85,21 @@ void TeleopControl::InitializeControllers()
 
 void TeleopControl::InitializeController(int port)
 {
-	if (DriverStation::GetJoystickIsXbox(port))
-	{
-
-		m_controller.emplace_back(frc2::CommandXboxController(port));
-	}
+	// Create a CommandXboxController for every joystick port up front.
+	//
+	// NOTE: We intentionally do NOT gate creation on DriverStation::GetJoystickIsXbox(port).
+	// When TeleopControl is first constructed the Driver Station usually has not reported
+	// joystick capabilities yet (and in simulation it may never), so GetJoystickIsXbox()
+	// returns false. Gating on it meant no controllers were created, leaving m_controller
+	// empty and causing the "controller is null" problems when buttons/axes are looked up.
+	//
+	// The WPILib HID classes are just lightweight handles to a Driver Station port;
+	// constructing one for a port with nothing connected is safe and simply reads 0/false
+	// until a device appears. Because InitializeControllers() iterates the ports in order,
+	// the controller for port N is stored at m_controller[N], which lines up with the
+	// TeleopControlMappingEnums::CONTROLLER values (DRIVER = 0, CO_PILOT = 1, ...).
+	m_controller.emplace_back(new frc2::CommandXboxController(port));
+	m_numControllers = m_controller.size();
 }
 
 vector<TeleopControlFunctions::FUNCTION> TeleopControl::GetAxisFunctionsOnController(int controller)
@@ -249,7 +259,7 @@ double TeleopControl::GetAxisValue(TeleopControlFunctions::FUNCTION function) //
 		else if (info.second == TeleopControlMappingEnums::AXIS_IDENTIFIER::RIGHT_TRIGGER)
 			value = info.first->GetRightTriggerAxis();
 	}
-	return value;
+	return -value;
 }
 
 void TeleopControl::SetRumble(
@@ -369,9 +379,8 @@ frc2::Trigger TeleopControl::GetCommandTrigger(TeleopControlFunctions::FUNCTION 
 		return frc2::Trigger([]()
 							 { return false; });
 	}
-	bool isSelected = false;
 	auto info = GetButtonInfo(function);
-	auto controller = info.first;
+	frc2::CommandXboxController *controller = info.first;
 	auto buttonInfo = itr->second;
 	if (info.first != nullptr && info.second != TeleopControlMappingEnums::UNDEFINED_BUTTON)
 	{
@@ -428,4 +437,10 @@ frc2::Trigger TeleopControl::GetAxisAsTrigger(TeleopControlFunctions::FUNCTION f
 {
 	return frc2::Trigger([this, function, threshold]
 						 { return this->GetAxisValue(function) > threshold; });
+}
+
+bool TeleopControl::IsButtonPressed(TeleopControlFunctions::FUNCTION function)
+{
+	auto trigger = GetCommandTrigger(function);
+	return trigger.Get();
 }
