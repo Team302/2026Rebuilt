@@ -16,8 +16,8 @@
 #include "mechanisms/launcher/LauncherContainer.h"
 
 // FRC Includes
+#include "frc2/command/button/Trigger.h"
 #include <frc2/command/button/RobotModeTriggers.h>
-#include <frc2/command/button/Trigger.h>
 
 // Team 302 Includes
 #include "mechanisms/MechanismTypes.h"

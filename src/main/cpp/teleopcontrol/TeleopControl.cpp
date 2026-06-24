@@ -16,19 +16,20 @@
 // C++ Includes
 #include <memory>
 #include <string>
+#include <tuple>
 #include <utility>
 
 // FRC includes
+#include "frc/DriverStation.h"
 #include "frc2/command/button/CommandXboxController.h"
-#include <frc/DriverStation.h>
 
 // Team 302 includes
 #include "teleopcontrol/TeleopControl.h"
 #include "teleopcontrol/TeleopControlAxis.h"
 #include "teleopcontrol/TeleopControlButton.h"
+#include "teleopcontrol/TeleopControlFunctions.h"
+#include "teleopcontrol/TeleopControlMap.h"
 #include "utils/logging/debug/Logger.h"
-#include <teleopcontrol/TeleopControlFunctions.h>
-#include <teleopcontrol/TeleopControlMap.h>
 
 using frc::DriverStation;
 using std::make_pair;
@@ -243,23 +244,24 @@ void TeleopControl::SetAxisProfile(
 double TeleopControl::GetAxisValue(TeleopControlFunctions::FUNCTION function) // <I> - function that whose axis will be read
 {
 	double value = 0.0;
-	auto info = GetAxisInfo(function);
-	if (info.first != nullptr && info.second != TeleopControlMappingEnums::AXIS_IDENTIFIER::UNDEFINED_AXIS)
+	auto [controller, axisID] = GetAxisInfo(function);
+
+	if (controller != nullptr && axisID != TeleopControlMappingEnums::AXIS_IDENTIFIER::UNDEFINED_AXIS)
 	{
-		if (info.second == TeleopControlMappingEnums::AXIS_IDENTIFIER::LEFT_JOYSTICK_X)
-			value = info.first->GetLeftX();
-		else if (info.second == TeleopControlMappingEnums::AXIS_IDENTIFIER::LEFT_JOYSTICK_Y)
-			value = info.first->GetLeftY();
-		else if (info.second == TeleopControlMappingEnums::AXIS_IDENTIFIER::RIGHT_JOYSTICK_X)
-			value = info.first->GetRightX();
-		else if (info.second == TeleopControlMappingEnums::AXIS_IDENTIFIER::RIGHT_JOYSTICK_Y)
-			value = info.first->GetRightY();
-		else if (info.second == TeleopControlMappingEnums::AXIS_IDENTIFIER::LEFT_TRIGGER)
-			value = info.first->GetLeftTriggerAxis();
-		else if (info.second == TeleopControlMappingEnums::AXIS_IDENTIFIER::RIGHT_TRIGGER)
-			value = info.first->GetRightTriggerAxis();
+		if (axisID == TeleopControlMappingEnums::AXIS_IDENTIFIER::LEFT_JOYSTICK_X)
+			value = -1 * controller->GetLeftX();
+		else if (axisID == TeleopControlMappingEnums::AXIS_IDENTIFIER::LEFT_JOYSTICK_Y)
+			value = -1 * controller->GetLeftY();
+		else if (axisID == TeleopControlMappingEnums::AXIS_IDENTIFIER::RIGHT_JOYSTICK_X)
+			value = -1 * controller->GetRightX();
+		else if (axisID == TeleopControlMappingEnums::AXIS_IDENTIFIER::RIGHT_JOYSTICK_Y)
+			value = -1 * controller->GetRightY();
+		else if (axisID == TeleopControlMappingEnums::AXIS_IDENTIFIER::LEFT_TRIGGER)
+			value = controller->GetLeftTriggerAxis();
+		else if (axisID == TeleopControlMappingEnums::AXIS_IDENTIFIER::RIGHT_TRIGGER)
+			value = controller->GetRightTriggerAxis();
 	}
-	return -value;
+	return value;
 }
 
 void TeleopControl::SetRumble(
@@ -268,51 +270,53 @@ void TeleopControl::SetRumble(
 	bool rightRumble						   // <I> - rumble right
 )
 {
+	frc2::CommandXboxController *controller = nullptr;
+	std::tie(controller, std::ignore) = GetButtonInfo(function);
 
-	auto info = GetButtonInfo(function);
-	if (info.first != nullptr)
+	if (controller != nullptr)
 	{
 		if (leftRumble && rightRumble)
 		{
-			info.first->SetRumble(frc::GenericHID::RumbleType::kBothRumble, 1);
+			controller->SetRumble(frc::GenericHID::RumbleType::kBothRumble, 1);
 		}
 		else if (leftRumble)
 		{
-			info.first->SetRumble(frc::GenericHID::RumbleType::kLeftRumble, 1);
-			info.first->SetRumble(frc::GenericHID::RumbleType::kRightRumble, 0);
+			controller->SetRumble(frc::GenericHID::RumbleType::kLeftRumble, 1);
+			controller->SetRumble(frc::GenericHID::RumbleType::kRightRumble, 0);
 		}
 		else if (rightRumble)
 		{
-			info.first->SetRumble(frc::GenericHID::RumbleType::kRightRumble, 1);
-			info.first->SetRumble(frc::GenericHID::RumbleType::kLeftRumble, 0);
+			controller->SetRumble(frc::GenericHID::RumbleType::kRightRumble, 1);
+			controller->SetRumble(frc::GenericHID::RumbleType::kLeftRumble, 0);
 		}
 		else
 		{
-			info.first->SetRumble(frc::GenericHID::RumbleType::kBothRumble, 0);
+			controller->SetRumble(frc::GenericHID::RumbleType::kBothRumble, 0);
 		}
 	}
 	else
 	{
-		auto info2 = GetAxisInfo(function);
-		if (info2.first != nullptr)
+		frc2::CommandXboxController *controller2 = nullptr;
+		std::tie(controller2, std::ignore) = GetAxisInfo(function);
+		if (controller2 != nullptr)
 		{
 			if (leftRumble && rightRumble)
 			{
-				info2.first->SetRumble(frc::GenericHID::RumbleType::kBothRumble, 1);
+				controller2->SetRumble(frc::GenericHID::RumbleType::kBothRumble, 1);
 			}
 			else if (leftRumble)
 			{
-				info2.first->SetRumble(frc::GenericHID::RumbleType::kLeftRumble, 1);
-				info2.first->SetRumble(frc::GenericHID::RumbleType::kRightRumble, 0);
+				controller2->SetRumble(frc::GenericHID::RumbleType::kLeftRumble, 1);
+				controller2->SetRumble(frc::GenericHID::RumbleType::kRightRumble, 0);
 			}
 			else if (rightRumble)
 			{
-				info2.first->SetRumble(frc::GenericHID::RumbleType::kRightRumble, 1);
-				info2.first->SetRumble(frc::GenericHID::RumbleType::kLeftRumble, 0);
+				controller2->SetRumble(frc::GenericHID::RumbleType::kRightRumble, 1);
+				controller2->SetRumble(frc::GenericHID::RumbleType::kLeftRumble, 0);
 			}
 			else
 			{
-				info2.first->SetRumble(frc::GenericHID::RumbleType::kBothRumble, 0);
+				controller2->SetRumble(frc::GenericHID::RumbleType::kBothRumble, 0);
 			}
 		}
 	}

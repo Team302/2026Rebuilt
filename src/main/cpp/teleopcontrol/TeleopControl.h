@@ -22,17 +22,17 @@
 #include <vector>
 
 // FRC includes
+#include "frc/DriverStation.h"
 #include "frc2/command/button/CommandXboxController.h"
-#include <frc/DriverStation.h>
 // Team 302 includes
-#include <frc2/command/button/Trigger.h>
-#include <teleopcontrol/TeleopControlAxis.h>
-#include <teleopcontrol/TeleopControlButton.h>
-#include <teleopcontrol/TeleopControlFunctions.h>
-#include <teleopcontrol/TeleopControlMappingEnums.h>
+#include "frc2/command/button/Trigger.h"
+#include "teleopcontrol/TeleopControlAxis.h"
+#include "teleopcontrol/TeleopControlButton.h"
+#include "teleopcontrol/TeleopControlFunctions.h"
+#include "teleopcontrol/TeleopControlMappingEnums.h"
 
 // third part
-#include <RobinHood/robin_hood.h>
+#include "RobinHood/robin_hood.h"
 
 class TeleopControl
 {
