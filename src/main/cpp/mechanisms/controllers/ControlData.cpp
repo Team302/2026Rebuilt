@@ -22,9 +22,7 @@
 
 using namespace std;
 
-ControlData::ControlData() : m_mode(ControlModes::CONTROL_TYPE::PERCENT_OUTPUT),
-                             m_runLoc(ControlModes::CONTROL_RUN_LOCS::ROBORIO),
-                             m_identifier(string("percentOutput")),
+ControlData::ControlData() : m_identifier(string("percentOutput")),
                              m_proportional(0.0),
                              m_integral(0.0),
                              m_derivative(0.0),
@@ -32,18 +30,13 @@ ControlData::ControlData() : m_mode(ControlModes::CONTROL_TYPE::PERCENT_OUTPUT),
                              m_velocityGain(0.0),
                              m_accelerationGain(0.0),
                              m_staticFrictionGain(0.0),
-                             m_feedforwardType(FEEDFORWARD_TYPE::DUTY_CYCLE),
                              m_iZone(0.0),
                              m_maxAcceleration(0.0),
-                             m_cruiseVelocity(0.0),
-                             m_peakValue(1.0),
-                             m_nominalValue(0.0)
+                             m_cruiseVelocity(0.0)
 {
 }
 
 ControlData::ControlData(
-    ControlModes::CONTROL_TYPE mode,
-    ControlModes::CONTROL_RUN_LOCS server,
     string identifier,
     double proportional,
     double integral,
@@ -52,17 +45,11 @@ ControlData::ControlData(
     double velocityGain,
     double accelartionGain,
     double staticFrictionGain,
-    FEEDFORWARD_TYPE feedforwadType,
     double integralZone,
     double maxAcceleration,
     double cruiseVelocity,
-    double peakVal,
-    double nominalVal,
-    bool enableFOC,
     GravityTypeValue gravityType,
-    StaticFeedforwardSignValue staticFeedforwardSign) : m_mode(mode),
-                                                        m_runLoc(server),
-                                                        m_identifier(identifier),
+    StaticFeedforwardSignValue staticFeedforwardSign) : m_identifier(identifier),
                                                         m_proportional(proportional),
                                                         m_integral(integral),
                                                         m_derivative(derivative),
@@ -70,13 +57,9 @@ ControlData::ControlData(
                                                         m_velocityGain(velocityGain),
                                                         m_accelerationGain(accelartionGain),
                                                         m_staticFrictionGain(staticFrictionGain),
-                                                        m_feedforwardType(feedforwadType),
                                                         m_iZone(integralZone),
                                                         m_maxAcceleration(maxAcceleration),
                                                         m_cruiseVelocity(cruiseVelocity),
-                                                        m_peakValue(peakVal),
-                                                        m_nominalValue(nominalVal),
-                                                        m_enableFOC(enableFOC),
                                                         m_gravityType(gravityType),
                                                         m_staticFeedforwardSign(staticFeedforwardSign)
 {

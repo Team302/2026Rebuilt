@@ -2,8 +2,8 @@
 
 #include "ctre/phoenix6/SignalLogger.hpp"
 
+#include "frc/DriverStation.h"
 #include <ctre/phoenix6/swerve/SwerveDrivetrain.hpp>
-#include <frc/DriverStation.h>
 #include <frc/Notifier.h>
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/Commands.h>

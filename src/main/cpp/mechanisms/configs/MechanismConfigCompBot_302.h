@@ -16,11 +16,10 @@
 // Generated on Friday, January 23, 2026 12:20:12 PM
 
 #pragma once
-#include "mechanisms/Climber/Climber.h"
-#include "mechanisms/Intake/Intake.h"
-#include "mechanisms/Launcher/Launcher.h"
 #include "mechanisms/MechanismTypes.h"
 #include "mechanisms/configs/MechanismConfig.h"
+#include "mechanisms/intake/Intake.h"
+#include "mechanisms/launcher/Launcher.h"
 #include "state/StateMgr.h"
 
 class MechanismConfigCompBot_302 : public MechanismConfig
@@ -29,7 +28,7 @@ public:
 	MechanismConfigCompBot_302() = default;
 	~MechanismConfigCompBot_302() = default;
 
-	StateMgr *GetMechanism(MechanismTypes::MECHANISM_TYPE mechType);
+	BaseMech *GetMechanism(MechanismTypes::MECHANISM_TYPE mechType);
 
 protected:
 	void DefineMechanisms() override;
@@ -39,9 +38,8 @@ protected:
 private:
 	Intake *m_theIntake = nullptr;
 	Launcher *m_theLauncher = nullptr;
-	Climber *m_theClimber = nullptr;
 
-	std::unordered_map<MechanismTypes::MECHANISM_TYPE, StateMgr *> m_mechanismMap;
+	std::unordered_map<MechanismTypes::MECHANISM_TYPE, BaseMech *> m_mechanismMap;
 	static constexpr int m_ledCanID = 60;
 	static constexpr int m_ledStripSize = 45;
 	static constexpr double m_ledBrightness = 0.75;

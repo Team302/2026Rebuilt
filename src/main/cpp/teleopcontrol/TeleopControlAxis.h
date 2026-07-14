@@ -20,8 +20,7 @@
 // FRC includes
 
 // Team 302 includes
-
-#include <gamepad/IDragonGamepad.h>
+#include "teleopcontrol/TeleopControlMappingEnums.h"
 
 struct TeleopControlAxis
 {

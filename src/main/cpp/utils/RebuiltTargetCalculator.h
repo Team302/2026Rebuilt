@@ -19,8 +19,8 @@
 #include "utils/DragonField.h"
 #include "utils/TargetCalculator.h"
 
+#include "frc/DriverStation.h"
 #include <array>
-#include <frc/DriverStation.h>
 #include <frc/geometry/Translation2d.h>
 #include <string>
 #include <units/length.h>

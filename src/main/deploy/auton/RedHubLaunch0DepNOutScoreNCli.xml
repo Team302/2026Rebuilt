@@ -10,7 +10,7 @@ time = "3.0">
 
 <primitive id = "DO_NOTHING"
 launcherState = "STATE_PREPARE_TO_LAUNCH"
-intakeState = "STATE_FORCE_INTAKE_AUTON"
+intakeState = "STATE_INTAKE"
 time = "5.0"/>
 
 <primitive id = "DRIVE_STOP_MECH"
@@ -25,7 +25,7 @@ intakeState = "STATE_INTAKE">
 
 <primitive id = "DRIVE_STOP_MECH"
 launcherState = "STATE_PREPARE_TO_LAUNCH"
-intakeState = "STATE_FORCE_INTAKE_AUTON"
+intakeState = "STATE_INTAKE"
 time = "10.0"/>
 
 </auton>

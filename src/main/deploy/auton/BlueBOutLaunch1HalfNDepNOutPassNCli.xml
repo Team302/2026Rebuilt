@@ -19,7 +19,7 @@ time = "3.0">
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "HalfPassingRight"
 time = "20.0"
-intakeState = "STATE_FORCE_INTAKE_AUTON"
+intakeState = "STATE_INTAKE"
 launcherState = "STATE_PREPARE_TO_LAUNCH">
 </primitive>
 

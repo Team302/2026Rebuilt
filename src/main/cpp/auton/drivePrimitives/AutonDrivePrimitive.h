@@ -20,7 +20,7 @@
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "frc/Timer.h"
 #include "frc2/command/Command.h"
-#include "mechanisms/Launcher/Launcher.h"
+#include "mechanisms/launcher/Launcher.h"
 #include <frc2/command/CommandScheduler.h>
 class AutonDrivePrimitive : public IPrimitive
 {

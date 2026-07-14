@@ -244,9 +244,6 @@ void Robot::InitializeRobot()
 
     new RobotContainer(); // instantiate RobotContainer to setup commands and subsystems
 
-    int32_t teamNumber = frc::RobotController::GetTeamNumber();
-    MechanismConfigMgr::GetInstance()->InitRobot((RobotIdentifier)teamNumber);
-
     m_robotState = RobotState::GetInstance();
     m_robotState->Init();
 }

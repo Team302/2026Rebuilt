@@ -19,9 +19,9 @@
 #include <vector>
 
 #include "state/RobotStateChangeBroker.h"
+#include "state/StateMgr.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "utils/DragonField.h"
-#include "state/StateMgr.h"
 
 using frc::DriverStation;
 
@@ -176,15 +176,15 @@ void RobotState::PublishGameStateChanges()
         PublishStateChange(RobotStateChanges::GameState_Int, gameState);
     }
 }
-void RobotState::PublishClimbMode(TeleopControl *controller)
+void RobotState::PublishClimbMode(TeleopControl *controller) // Keeping commented out since we will need it in a future game
 {
-    if (controller->IsButtonPressed(TeleopControlFunctions::CLIMB_MODE))
-    {
-        if (m_climbButtonReleased)
-        {
-            m_climbModeStatus = !m_climbModeStatus;
-            PublishStateChange(RobotStateChanges::ClimbModeStatus_Bool, m_climbModeStatus);
-        }
-    }
-    m_climbButtonReleased = !controller->IsButtonPressed(TeleopControlFunctions::CLIMB_MODE);
+    // if (controller->IsButtonPressed(TeleopControlFunctions::CLIMB_MODE))
+    // {
+    //     if (m_climbButtonReleased)
+    //     {
+    //         m_climbModeStatus = !m_climbModeStatus;
+    //         PublishStateChange(RobotStateChanges::ClimbModeStatus_Bool, m_climbModeStatus);
+    //     }
+    // }
+    // m_climbButtonReleased = !controller->IsButtonPressed(TeleopControlFunctions::CLIMB_MODE);
 }
