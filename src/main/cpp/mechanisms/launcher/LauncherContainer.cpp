@@ -16,8 +16,8 @@
 #include "mechanisms/launcher/LauncherContainer.h"
 
 // FRC Includes
+#include "frc2/command/button/Trigger.h"
 #include <frc2/command/button/RobotModeTriggers.h>
-#include <frc2/command/button/Trigger.h>
 
 // Team 302 Includes
 #include "mechanisms/MechanismTypes.h"
@@ -66,11 +66,29 @@ void LauncherContainer::ConfigureBindings()
 
     m_launcher->SetDefaultCommand(m_launcher->GetOffCommand());
 
-    auto considerGamePadTransitions = frc2::RobotModeTriggers::Teleop();
+    auto considerGamepadTransitions = frc2::RobotModeTriggers::Teleop();
+    Launcher *launcher = m_launcher;
 
     // Consider Gamepad Transitions (Telop)
 
     // Sensor Transitions (Auton + Telop)
+    frc2::Trigger off([launcher]()
+                      { return launcher->IsLauncherInProtectedMode(); });
 
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("LauncherContainer"), std::string("Configured"), std::string("Launcher"));
+    off.WhileTrue(m_launcher->GetOffCommand());
+
+    frc2::Trigger initialize([launcher]()
+                             { bool a = !launcher->IsLauncherInProtectedMode();
+                                    bool b = launcher->GetCurrentState() == launcher->STATE_OFF;
+                     return (a && b) ; });
+
+    initialize.WhileTrue(m_launcher->GetInitializeCommand());
+
+    frc2::Trigger idle([launcher]()
+                       { return (launcher->IsLauncherInitialized() && launcher->GetCurrentState() == launcher->STATE_INITIALIZE); });
+
+    idle.WhileTrue(m_launcher->GetIdleCommand());
+
+    Logger::GetLogger()
+        ->LogData(LOGGER_LEVEL::PRINT, std::string("LauncherContainer"), std::string("Configured"), std::string("Launcher"));
 }

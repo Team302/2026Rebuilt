@@ -41,7 +41,6 @@ void MechanismConfigCompBot_302::DefineMechanisms()
 	m_theLauncher = new Launcher(RobotIdentifier::COMP_BOT_302);
 	m_theLauncher->CreateCompBot302();
 	m_theLauncher->InitializeCompBot302();
-	m_theLauncher->InitializeCompBot302(/*m_theLauncher*/);
 	m_mechanismMap[MechanismTypes::MECHANISM_TYPE::LAUNCHER] = m_theLauncher;
 }
 

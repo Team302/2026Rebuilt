@@ -20,8 +20,8 @@
 
 #include <ctre/phoenix6/CANdle.hpp>
 
+#include "frc/DriverStation.h"
 #include <frc/AddressableLED.h>
-#include <frc/DriverStation.h>
 #include <frc/Timer.h>
 #include <frc/simulation/AddressableLEDSim.h>
 #include <frc/util/Color.h>

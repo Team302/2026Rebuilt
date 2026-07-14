@@ -710,6 +710,7 @@ void Launcher::Periodic()
 
 	// Logging
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Current State", GetCurrentStateName());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_launcherInitalized", m_launcherInitialized);
 }
 
 /// @brief update the output to the mechanism using the current controller and target value(s)

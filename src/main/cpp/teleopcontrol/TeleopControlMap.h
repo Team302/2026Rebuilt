@@ -21,9 +21,9 @@
 
 // Team 302 includes
 // #include <gamepad/IDragonGamepad.h>
-#include <teleopcontrol/TeleopControlAxis.h>
-#include <teleopcontrol/TeleopControlButton.h>
-#include <teleopcontrol/TeleopControlFunctions.h>
+#include "teleopcontrol/TeleopControlAxis.h"
+#include "teleopcontrol/TeleopControlButton.h"
+#include "teleopcontrol/TeleopControlFunctions.h"
 
 #include <RobinHood/robin_hood.h>
 
