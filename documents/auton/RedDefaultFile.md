@@ -13,47 +13,20 @@ stateDiagram-v2
     classDef intake  fill:#1a7a3a,color:#ffffff,stroke:#0d4a1f,font-weight:bold
     classDef noIntake fill:#5a4a8a,color:#ffffff,stroke:#3a2a6a,font-weight:bold
 
-    Step1 : "Step 1 - TRAJECTORY_DRIVE NewPath"
-    Step2 : "Step 2 - DO_NOTHING --"
-    Step3 : "Step 3 - DRIVE_STOP_MECH --"
 
-    class Step1 noIntake
-    class Step2 intake
-    class Step3 noIntake
 
-    [*] --> Step1 : "start"
-    Step1 --> Step2
-    Step2 --> Step3: "intake=FORCE_INTAKE_AUTON | launcher=PREPARE_TO_LAUNCH"
-    Step3 --> [*]: "launcher=PREPARE_TO_LAUNCH"
+    Empty : "No primitives defined"
+    class Empty noIntake
+    [*] --> Empty : "start"
+    Empty --> [*] : "done"
 ```
 
 ## Primitive Summary
 
 | Step | Primitive | Trajectory | Timeout | Intake | Launcher | Climber | Zones |
 |------|-----------|------------|---------|--------|----------|---------|-------|
-| 1 | TRAJECTORY_DRIVE | [NewPath](../../src/main/deploy/choreo/NewPath.traj) | 3.0 s | STATE_OFF | STATE_IDLE | STATE_OFF | -- |
-| 2 | DO_NOTHING | -- | 10.0 s | STATE_FORCE_INTAKE_AUTON | STATE_PREPARE_TO_LAUNCH | STATE_OFF | -- |
-| 3 | DRIVE_STOP_MECH | -- | 10.0 s | STATE_OFF | STATE_PREPARE_TO_LAUNCH | STATE_OFF | -- |
 
-## Trajectory Details
 
-### All Trajectories Overview
-
-<img src="svg/traj/RedDefaultFile_all_traj.svg" alt="All trajectories for RedDefaultFile" width="900"/>
-
-### Step 1 -- NewPath
-
-- **File:** [`NewPath.traj`](../../src/main/deploy/choreo/NewPath.traj)
-- **Duration:** 0.77 s
-- **Timeout in auton XML:** 3.0 s
-- **Colour in overview:** `#00d4ff`
-
-<img src="svg/traj/RedDefaultFile_step1_NewPath.svg" alt="Trajectory NewPath" width="900"/>
-
-| # | X (m) | Y (m) | Heading (deg) |
-|---|-------|-------|---------------|
-| 1 | 12.867 | 4.049 | 180.0 |
-| 2 | 13.809 | 4.125 | 0.0 |
 
 ## Zone Legend
 
