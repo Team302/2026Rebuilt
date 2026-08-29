@@ -105,6 +105,19 @@ void DragonField::UpdateObject(const std::string &name, frc::Pose2d object)
     }
 }
 
+void DragonField::UpdateObject(const std::string &name, const std::vector<frc::Pose2d> &poses)
+{
+    auto objectPair = std::find_if(m_objectNameEnabled.begin(), m_objectNameEnabled.end(),
+                                   [&name](const std::pair<std::string, bool> &pair)
+                                   { return pair.first == name; });
+
+    if (objectPair != m_objectNameEnabled.end() && objectPair->second)
+    {
+        frc::FieldObject2d *fieldObject = m_field.GetObject(name);
+        fieldObject->SetPoses(poses);
+    }
+}
+
 /// @brief Update the enabled/disabled state of all field objects based on SmartDashboard values.
 /// @details Reads boolean values from SmartDashboard for each registered object to determine
 ///          whether they should be visible on the field display.

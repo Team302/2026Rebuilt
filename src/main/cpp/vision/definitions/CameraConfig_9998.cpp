@@ -29,7 +29,7 @@ void CameraConfig_9998::BuildCameraConfig()
     }
 
     m_limelightFront = std::make_unique<DragonLimelight>(std::string("limelight-lfront"), // networkTableName
-                                                         DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::UPPER_FRONT,
+                                                         DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::LOWER_FRONT,
                                                          DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4,  // PIPELINE initialPipeline,
                                                          DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS, // PIPELINE initialPipeline,
                                                          units::length::inch_t(m_limelightFrontMountingXOffset),
@@ -44,7 +44,7 @@ void CameraConfig_9998::BuildCameraConfig()
     vision->AddLimelight(std::move(m_limelightFront), DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
 
     m_limelightfront3 = std::make_unique<DragonLimelight>(std::string("limelight-ufront"), // networkTableName
-                                                          DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::LOWER_FRONT,
+                                                          DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::UPPER_FRONT,
                                                           DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT3,        // PIPELINE initialPipeline,
                                                           DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION, // PIPELINE initialPipeline,
                                                           units::length::inch_t(m_limelightFront3MountingXOffset),

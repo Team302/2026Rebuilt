@@ -27,6 +27,7 @@
 #include "chassis/commands/season_specific_commands/DriveToOutpost.h"
 #include "chassis/commands/season_specific_commands/DriveToTower.h"
 #include "chassis/commands/season_specific_commands/DriveToTrench.h"
+#include "chassis/commands/season_specific_commands/PathfindToPoseWithVisionAvoidance.h"
 #include "chassis/commands/season_specific_commands/SweepBehindHub.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "chassis/generated/Telemetry.h"
@@ -181,6 +182,9 @@ private:
     std::unique_ptr<AutoDefend> m_autoDefend;
     /// @brief Drive to trench command for season-specific autonomous navigation
     std::unique_ptr<DriveToTrench> m_driveToTrench;
+
+    /// @brief Drive to setpoint and avoid obstacles command for season-specific autonomous navigation
+    std::unique_ptr<PathfindToPoseWithVisionAvoidance> m_pathfindToPoseWithVisionAvoidance;
 
     //------------------------------------------------------------------
     /// @brief      Configures button bindings for chassis control
