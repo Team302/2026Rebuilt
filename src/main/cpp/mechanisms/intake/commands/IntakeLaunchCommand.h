@@ -41,7 +41,7 @@ namespace IntakeCommands
 
         // Launch "bump" behavior (moved out of the old LaunchState).
         int m_bumpCounter = 0;
-        int m_counterMax = 40;
+        int m_counterMax = 30;
         double m_currentExtenderBumpTarget = 0.0;
         static constexpr double m_extenderTargetUp = 0.4;
         static constexpr double m_extenderTargetDown = -0.4;

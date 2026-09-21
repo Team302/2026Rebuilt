@@ -64,31 +64,121 @@ void LauncherContainer::ConfigureBindings()
         return;
     }
 
-    m_launcher->SetDefaultCommand(m_launcher->GetOffCommand());
+    //==============================================================================================
+    // Binding table.
+    //
+    // One line per command. The transition logic for each command lives in its matching
+    // Get<Command>Trigger() method further down, so this table stays a flat, readable list and the
+    // per-command conditions can be regenerated/edited in isolation. Each command picks the binding
+    // flavor that fits it:
+    //
+    //   .WhileTrue(cmd) - "held" command: scheduled on the condition's false->true edge, CANCELLED on
+    //                     its true->false edge. Falls back to the default command the moment the
+    //                     condition stops being true.
+    //   .OnTrue(cmd)    - "self-governing" command: scheduled on the false->true edge, then left alone.
+    //                     Runs until its OWN IsFinished() returns true (or another command interrupts by
+    //                     requiring the subsystem).
+    //
+    // The resting state is bound as the subsystem's DEFAULT command - it runs whenever no other command
+    // requires the subsystem.
+    //==============================================================================================
 
-    auto considerGamepadTransitions = frc2::RobotModeTriggers::Teleop();
+    if (m_launcher->IsTuningLauncherMode()) // Later can get rid of tuning mode and use opModes
+    {
+        m_launcher->SetDefaultCommand(m_launcher->GetLauncherTuningCommand().IgnoringDisable(true));
+    }
+    else
+    {
+        m_launcher->SetDefaultCommand(m_launcher->GetIdleCommand().IgnoringDisable(true));
+    }
+
+    GetLauncherOffTrigger().WhileTrue(m_launcher->GetOffCommand().IgnoringDisable(true));
+
+    auto initialize = GetInitializeTrigger();
+    if (initialize.Get())
+    {
+        frc2::CommandScheduler::GetInstance().Schedule(m_launcher->GetInitializeCommand().IgnoringDisable(true));
+    }
+
+    GetManualLaunchTrigger().WhileTrue(m_launcher->GetManualLaunchCommand());
+
+    GetPrepareToLaunchTrigger().WhileTrue(m_launcher->GetPrepareToLaunchCommand());
+    GetLaunchTrigger().OnTrue(m_launcher->GetLaunchCommand());
+
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("LauncherContainer"), std::string("Configured"), std::string("Launcher"));
+}
+
+//==================================================================================================
+// Per-command transition triggers
+//==================================================================================================
+
+frc2::Trigger LauncherContainer::GetLauncherOffTrigger()
+{
+    // --- Off (protected mode) ---------------------------------------------------------------------
+    // Highest priority. Every other trigger is gated on !IsLauncherInProtectedMode() so Off wins.
+
     Launcher *launcher = m_launcher;
+    return frc2::Trigger([launcher]()
+                         { return launcher->IsLauncherInProtectedMode(); });
+}
 
-    // Consider Gamepad Transitions (Telop)
+frc2::Trigger LauncherContainer::GetInitializeTrigger()
+{
+    // --- Initialize -------------------------------------------------------------------------------
+    // Run the homing routine from boot until the launcher reports initialized. The command self-finishes
+    // (LauncherInitializeCommand::IsDone() == IsLauncherInitialized()), so when initialization
+    // completes the command ends and the default Idle command takes over. The holding condition stays
+    // true the whole time it should run so WhileTrue and IsFinished() agree.
+    Launcher *launcher = m_launcher;
+    return frc2::Trigger([launcher]()
+                         { return !launcher->IsLauncherInProtectedMode() &&
+                                  !launcher->IsLauncherInitialized(); });
+}
 
-    // Sensor Transitions (Auton + Telop)
-    frc2::Trigger off([launcher]()
-                      { return launcher->IsLauncherInProtectedMode(); });
+frc2::Trigger LauncherContainer::GetManualLaunchTrigger()
+{
+    // --- Manual launch ----------------------------------------------------------------------------
+    // Old ManualLaunchState: run while the MANUAL_LAUNCH button is held; fall back to Idle on release.
+    Launcher *launcher = m_launcher;
+    return frc2::Trigger([launcher]()
+                         { return !launcher->IsLauncherInProtectedMode() &&
+                                  TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::MANUAL_LAUNCH); });
+}
 
-    off.WhileTrue(m_launcher->GetOffCommand());
+frc2::Trigger LauncherContainer::GetPrepareToLaunchTrigger()
+{
+    // --- Prepare to launch ------------------------------------------------------------------------
+    // Normal operation (not tuning): hold the LAUNCH button to spin up in PrepareToLaunch until we are
+    // at target. The !IsLauncherAtTarget() term is what sends us BACK to Prepare from Launch if we fall
+    // off target while still holding LAUNCH (this rises again, interrupting Launch).
+    Launcher *launcher = m_launcher;
+    return frc2::Trigger([launcher]()
+                         { return !launcher->IsLauncherInProtectedMode() &&
+                                  !launcher->IsTuningLauncherMode() &&
+                                  TeleopControl::GetInstance()->IsButtonPressed(TeleopControlFunctions::LAUNCH) &&
+                                  !launcher->IsLauncherAtTarget(); });
+}
 
-    frc2::Trigger initialize([launcher]()
-                             { bool a = !launcher->IsLauncherInProtectedMode();
-                                    bool b = launcher->GetCurrentState() == launcher->STATE_OFF;
-                     return (a && b) ; });
-
-    initialize.WhileTrue(m_launcher->GetInitializeCommand());
-
-    frc2::Trigger idle([launcher]()
-                       { return (launcher->IsLauncherInitialized() && launcher->GetCurrentState() == launcher->STATE_INITIALIZE); });
-
-    idle.WhileTrue(m_launcher->GetIdleCommand());
-
-    Logger::GetLogger()
-        ->LogData(LOGGER_LEVEL::PRINT, std::string("LauncherContainer"), std::string("Configured"), std::string("Launcher"));
+frc2::Trigger LauncherContainer::GetLaunchTrigger()
+{
+    // --- Launch -----------------------------------------------------------------------------------
+    // Two ways in, matching the old LaunchState:
+    //   1. Normal: holding LAUNCH (not tuning) once we ARE at target -> mutually exclusive with Prepare.
+    //   2. Override: LAUNCH_OVERRIDE && !EXTENDER_MODIFIER -> the path out of LauncherTuning, also forces
+    //      a launch from PrepareToLaunch regardless of at-target.
+    // Bound with OnTrue (NOT WhileTrue): once scheduled, Launch is NOT cancelled when this condition goes
+    // false. It is self-governing - it runs until LauncherLaunchCommand::IsDone() returns true (launch
+    // buttons released for the debounce window, or auton launch detector) or until another command
+    // (Prepare when we fall off target while still holding LAUNCH, or Off) interrupts by requiring the
+    // subsystem. This is what prevents bouncing straight back to Idle the instant the condition drops.
+    Launcher *launcher = m_launcher;
+    return frc2::Trigger([launcher]()
+                         {
+        auto tc = TeleopControl::GetInstance();
+        bool overrideToLaunch = tc->IsButtonPressed(TeleopControlFunctions::LAUNCH_OVERRIDE) &&
+                                !tc->IsButtonPressed(TeleopControlFunctions::EXTENDER_MODIFIER);
+        bool autoLaunch = !launcher->IsTuningLauncherMode() &&
+                          tc->IsButtonPressed(TeleopControlFunctions::LAUNCH) &&
+                          launcher->IsLauncherAtTarget();
+        return !launcher->IsLauncherInProtectedMode() && (autoLaunch || overrideToLaunch); });
 }

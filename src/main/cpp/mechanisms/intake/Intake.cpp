@@ -232,7 +232,7 @@ void Intake::InitializeCANdiExtenderCompBot302()
 {
 	CANdiConfiguration CANdiConfig{};
 
-	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenHigh;
+	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenNotHigh;
 	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::PullHigh;
 	CANdiConfig.DigitalInputs.S2CloseState = ctre::phoenix6::signals::S2CloseStateValue::CloseWhenFloating;
 	CANdiConfig.DigitalInputs.S2FloatState = ctre::phoenix6::signals::S2FloatStateValue::FloatDetect;
@@ -278,7 +278,7 @@ void Intake::Periodic()
 	ManualControl();
 
 	// Logging
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "State", GetCurrentStateName());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Current State", GetCurrentStateName());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Intake Position", m_cachedExtenderPositionDeg.value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Extender Target", m_extenderPositionDeg.Position.value());
 }

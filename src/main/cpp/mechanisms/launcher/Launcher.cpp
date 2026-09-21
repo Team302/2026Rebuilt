@@ -55,7 +55,6 @@ Launcher::Launcher(RobotIdentifier id) : BaseMechSubsystem(MechanismTypes::MECHA
 	m_deadZoneManager = DeadZoneManager::GetInstance();
 
 	m_launcherVelocityLauncher.EnableFOC = true;
-	m_spindexerVelocityLauncher.EnableFOC = true;
 	m_indexerVelocityIndexer.EnableFOC = true;
 	m_transferVelocityTransfer.EnableFOC = true;
 	m_hoodPositionDegreesHood.EnableFOC = true;
@@ -464,7 +463,7 @@ void Launcher::InitializeTalonFXIndexerCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitSource = ctre::phoenix6::signals::ReverseLimitSourceValue::LimitSwitchPin;
 	configs.HardwareLimitSwitch.ReverseLimitType = ctre::phoenix6::signals::ReverseLimitTypeValue::NormallyOpen;
 
-	configs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
+	configs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
 	configs.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
 	configs.MotorOutput.PeakForwardDutyCycle = 1.0;
 	configs.MotorOutput.PeakReverseDutyCycle = -1.0;
@@ -523,7 +522,7 @@ void Launcher::InitializeTalonFXSpindexerCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitSource = ctre::phoenix6::signals::ReverseLimitSourceValue::LimitSwitchPin;
 	configs.HardwareLimitSwitch.ReverseLimitType = ctre::phoenix6::signals::ReverseLimitTypeValue::NormallyOpen;
 
-	configs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
+	configs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
 	configs.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Coast;
 	configs.MotorOutput.PeakForwardDutyCycle = 1.0;
 	configs.MotorOutput.PeakReverseDutyCycle = -1.0;
@@ -532,13 +531,21 @@ void Launcher::InitializeTalonFXSpindexerCompBot302()
 	configs.Feedback.FeedbackSensorSource = ctre::phoenix6::signals::FeedbackSensorSourceValue::RotorSensor;
 	configs.Feedback.SensorToMechanismRatio = 3.0;
 
-	configs.Slot0.kI = m_velocityLauncher->GetI();
-	configs.Slot0.kD = m_velocityLauncher->GetD();
-	configs.Slot0.kG = m_velocityLauncher->GetF();
-	configs.Slot0.kS = m_velocityLauncher->GetS();
-	configs.Slot0.kV = m_velocityLauncher->GetV();
-	configs.Slot0.kP = m_velocityLauncher->GetP();
-	configs.Slot0.kA = m_velocityLauncher->GetA();
+	configs.Slot0.kI = m_positionTurnSpindexer->GetI();
+	configs.Slot0.kD = m_positionTurnSpindexer->GetD();
+	configs.Slot0.kG = m_positionTurnSpindexer->GetF();
+	configs.Slot0.kS = m_positionTurnSpindexer->GetS();
+	configs.Slot0.kV = m_positionTurnSpindexer->GetV();
+	configs.Slot0.kP = m_positionTurnSpindexer->GetP();
+	configs.Slot0.kA = m_positionTurnSpindexer->GetA();
+
+	configs.Slot1.kI = m_velocitySpindexer->GetI();
+	configs.Slot1.kD = m_velocitySpindexer->GetD();
+	configs.Slot1.kG = m_velocitySpindexer->GetF();
+	configs.Slot1.kS = m_velocitySpindexer->GetS();
+	configs.Slot1.kV = m_velocitySpindexer->GetV();
+	configs.Slot1.kP = m_velocitySpindexer->GetP();
+	configs.Slot1.kA = m_velocitySpindexer->GetA();
 	configs.Slot0.GravityType = ctre::phoenix6::signals::GravityTypeValue::Elevator_Static;
 	configs.Slot0.StaticFeedforwardSign = ctre::phoenix6::signals::StaticFeedforwardSignValue::UseVelocitySign;
 
@@ -557,9 +564,9 @@ void Launcher::InitializeCANdiHoodCompBot302()
 {
 	CANdiConfiguration CANdiConfig{};
 
-	CANdiConfig.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenNotFloating;
-	CANdiConfig.DigitalInputs.S1FloatState = ctre::phoenix6::signals::S1FloatStateValue::BusKeeper;
-	CANdiConfig.DigitalInputs.S2CloseState = ctre::phoenix6::signals::S2CloseStateValue::CloseWhenNotLow;
+	CANdiConfig.DigitalInputs.S1CloseState = signals::S1CloseStateValue::CloseWhenFloating;
+	CANdiConfig.DigitalInputs.S1FloatState = signals::S1FloatStateValue::FloatDetect;
+	CANdiConfig.DigitalInputs.S2CloseState = ctre::phoenix6::signals::S2CloseStateValue::CloseWhenFloating;
 	CANdiConfig.DigitalInputs.S2FloatState = ctre::phoenix6::signals::S2FloatStateValue::FloatDetect;
 
 	ctre::phoenix::StatusCode status = ctre::phoenix::StatusCode::StatusCodeNotInitialized;
@@ -621,6 +628,12 @@ void Launcher::InitializeTalonFXSTurretCompBot302()
 	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = units::angle::turn_t(0.0);
 	configs.HardwareLimitSwitch.ReverseLimitSource = ctre::phoenix6::signals::ReverseLimitSourceValue::RemoteCANdiS1;
 	configs.HardwareLimitSwitch.ReverseLimitType = ctre::phoenix6::signals::ReverseLimitTypeValue::NormallyOpen;
+
+	configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+	configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = m_maxTurretSoftLimit;
+
+	configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+	configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = m_minTurretSoftLimit;
 
 	configs.MotorOutput.Inverted = ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
 	configs.MotorOutput.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
@@ -755,22 +768,19 @@ void Launcher::DataLog(uint64_t timestamp)
 
 	// Control Requests/Targets
 	LogDoubleData(timestamp, m_loggingLauncherTargetPath, m_launcherVelocityLauncher.Velocity.value());
-	LogDoubleData(timestamp, m_loggingLauncherVelocityPath, m_cachedLauncherVelocityLauncher.value());
+	LogDoubleData(timestamp, m_loggingLauncherVelocityPath, m_cachedLauncherVelocity.value());
 	LogStringData(timestamp, m_loggingLauncherControlRequest, std::string(m_launcherActiveTarget->GetName()));
 	LogDoubleData(timestamp, m_loggingHoodTargetPath, m_hoodPositionDegreesHood.Position.value());
-	LogDoubleData(timestamp, m_loggingHoodPositionPath, m_cachedHoodPositionDegreesHood.value());
+	LogDoubleData(timestamp, m_loggingHoodPositionPath, m_cachedHoodPosition.value());
 	LogStringData(timestamp, m_loggingHoodControlRequest, std::string(m_hoodActiveTarget->GetName()));
 	LogDoubleData(timestamp, m_loggingTransferTargetPath, m_transferVelocityTransfer.Velocity.value());
-	LogDoubleData(timestamp, m_loggingTransferVelocityPath, m_cachedTransferVelocityTransfer.value());
 	LogStringData(timestamp, m_loggingTransferControlRequest, std::string(m_transferActiveTarget->GetName()));
 	LogDoubleData(timestamp, m_loggingIndexerTargetPath, m_indexerVelocityIndexer.Velocity.value());
-	LogDoubleData(timestamp, m_loggingIndexerVelocityPath, m_cachedIndexerVelocityIndexer.value());
 	LogStringData(timestamp, m_loggingIndexerControlRequest, std::string(m_indexerActiveTarget->GetName()));
-	LogDoubleData(timestamp, m_loggingSpindexerTargetPath, m_spindexerVelocityLauncher.Velocity.value());
-	LogDoubleData(timestamp, m_loggingSpindexerVelocityPath, m_cachedSpindexerVelocityLauncher.value());
+	LogDoubleData(timestamp, m_loggingSpindexerTargetPath, m_spindexerVelocitySpindexer.Velocity.value());
 	LogStringData(timestamp, m_loggingSpindexerControlRequest, std::string(m_spindexerActiveTarget->GetName()));
 	LogDoubleData(timestamp, m_loggingTurretTargetPath, m_turretPositionDegreesTurret.Position.value());
-	LogDoubleData(timestamp, m_loggingTurretPositionPath, m_cachedTurretPositionDegreesTurret.value());
+	LogDoubleData(timestamp, m_loggingTurretPositionPath, m_cachedTurretPosition.value());
 	LogStringData(timestamp, m_loggingTurretControlRequest, std::string(m_turretActiveTarget->GetName()));
 }
 
@@ -854,6 +864,8 @@ void Launcher::CalculateTargets()
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Target Hood", m_targetHoodAngle.value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "Target Launcher Velocity", m_targetLauncherAngularVelocity.value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "turret Target", m_targetTurretAngle.value());
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_launcherInitialized", m_launcherInitialized);
+	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, m_ntName, "m_launcherProtectedMode", m_launcherProtectedMode);
 }
 
 void Launcher::UpdateLauncherTargets()
@@ -997,7 +1009,6 @@ void Launcher::UpdateCachedLoggingValues()
 
 void Launcher::AgitateSpindexer()
 {
-
 	auto currentSpindexerPosition = m_spindexerMotor->GetPosition().GetValue();
 
 	UpdateTargetSpindexerPositionTurnSpindexer(m_minReached ? m_maxSpindexerTarget : m_minSpindexerTarget);

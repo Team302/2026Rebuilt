@@ -16,8 +16,10 @@
 
 #pragma once
 
+#include "frc/Timer.h"
 #include "frc2/command/Command.h"
 #include "frc2/command/CommandHelper.h"
+#include "units/time.h"
 
 class Launcher;
 
@@ -36,5 +38,12 @@ namespace LauncherCommands
 
     private:
         Launcher *m_mechanism;
+
+        // Self-governed return to the default (Idle) command. The Launch trigger uses OnTrue, so once
+        // scheduled this command keeps running until IsFinished() returns true (or another command
+        // interrupts it). In teleop that happens after the launch buttons have been released for
+        // m_launchReleaseTimeout; in auton it defers to Launcher::IsFinishedLaunching().
+        frc::Timer m_launchReleaseTimer;
+        static constexpr units::time::second_t m_launchReleaseTimeout{0.25};
     };
 }

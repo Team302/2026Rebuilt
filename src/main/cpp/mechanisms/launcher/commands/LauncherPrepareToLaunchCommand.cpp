@@ -22,7 +22,7 @@
 
 using namespace LauncherCommands;
 
-static constexpr units::angular_velocity::revolutions_per_minute_t m_transferTarget{80.0};
+static constexpr units::angular_velocity::turns_per_second_t m_transferTarget{80.0};
 static constexpr double m_indexerTarget{0.0};
 static constexpr double m_spindexerTarget{0.0};
 
@@ -41,7 +41,7 @@ void LauncherPrepareToLaunchCommand::Initialize()
     m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
     m_mechanism->UpdateTargetSpindexerPercentOut(m_spindexerTarget);
 
-    m_mechanism->PublishLaunchMode(true);
+    m_mechanism->PublishLaunchMode(false);
 }
 
 void LauncherPrepareToLaunchCommand::Execute()

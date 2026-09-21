@@ -23,7 +23,7 @@
 using namespace IntakeCommands;
 
 static constexpr double m_intakeTarget{1.0};
-static constexpr units::angle::turn_t m_extenderTarget{-0.5};
+static constexpr double m_extenderTarget{-0.5};
 
 IntakeIntakeCommand::IntakeIntakeCommand(Intake *mechanism) : m_mechanism(mechanism)
 {
@@ -37,7 +37,7 @@ void IntakeIntakeCommand::Initialize()
 
     // Motor targets for Intake
     m_mechanism->UpdateTargetIntakePercentOut(m_intakeTarget);
-    m_mechanism->UpdateTargetExtenderPositionDeg(m_extenderTarget);
+    m_mechanism->UpdateTargetExtenderPercentOut(m_extenderTarget);
 
     m_mechanism->PublishIntakeMode(true);
 }

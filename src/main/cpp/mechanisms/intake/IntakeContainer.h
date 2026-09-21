@@ -15,6 +15,9 @@
 
 #pragma once
 
+// FRC / WPILib
+#include "frc2/command/button/Trigger.h"
+
 // Forward declares
 class Intake;
 
@@ -46,6 +49,33 @@ public:
 private:
     IntakeContainer();
     ~IntakeContainer() = default;
+
+    //================================================================================================
+    // Per-command transition triggers (code-generator friendly)
+    //
+    // There is one Get<Command>Trigger() per command. Each returns a wpi::cmd::Trigger whose condition
+    // answers "should this command be running right now" - a HOLDING condition, NOT the old StateMgr
+    // "enter this state" condition. Writing them as holding conditions makes the binding edges line up:
+    // when the desired command changes, the outgoing command's condition falls (cancel) as the incoming
+    // command's condition rises (schedule) in the same loop.
+    //
+    // Returning a Trigger (instead of a bool) lets ConfigureBindings() use the full command-based
+    // binding vocabulary per command - WhileTrue / OnTrue / OnFalse / ToggleOnTrue / Debounce / boolean
+    // composition (&&, ||, !) - rather than being limited to one hard-coded scheme.
+    //
+    // The generator can emit one stub per command - e.g. `return frc2::Trigger([this]() { return
+    // false; });` - and the hand-written transition logic then lives only inside these methods. The
+    // binding table in ConfigureBindings() stays hand-written, because only a human knows whether a
+    // given command is WhileTrue vs OnTrue vs the default command, etc.
+    //
+    // A default command runs whenever no other command requires the subsystem, so making it a holding
+    // trigger would fight the default command. Instead, the default command is bound directly to the
+    // subsystem via SetDefaultCommand() and is not represented by a Get<Command>Trigger().
+    //================================================================================================
+    frc2::Trigger GetIntakeTrigger();
+    frc2::Trigger GetExpelTrigger();
+    frc2::Trigger GetLoadHopperTrigger();
+    frc2::Trigger GetLaunchTrigger();
 
     static IntakeContainer *m_instance;
 
