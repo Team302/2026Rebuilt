@@ -166,17 +166,18 @@ public:
         m_turretPositionDegreesTurret.Position = positionTurn;
         m_turretActiveTarget = &m_turretPositionDegreesTurret.WithSlot(0);
     }
-    void UpdateTargetTransferVelocityTransfer(units::angular_velocity::revolutions_per_minute_t value)
+
+    void UpdateTargetTransferVelocityTransfer(units::angular_velocity::turns_per_second_t value)
     {
         m_transferVelocityTransfer.Velocity = value;
         m_transferActiveTarget = &m_transferVelocityTransfer.WithSlot(0);
     }
-    void UpdateTargetIndexerVelocityIndexer(units::angular_velocity::revolutions_per_minute_t value)
+    void UpdateTargetIndexerVelocityIndexer(units::angular_velocity::turns_per_second_t value)
     {
         m_indexerVelocityIndexer.Velocity = value;
         m_indexerActiveTarget = &m_indexerVelocityIndexer.WithSlot(0);
     }
-    void UpdateTargetSpindexerVelocitySpindexer(units::angular_velocity::revolutions_per_minute_t value)
+    void UpdateTargetSpindexerVelocitySpindexer(units::angular_velocity::turns_per_second_t value)
     {
         m_spindexerVelocitySpindexer.Velocity = value;
         m_spindexerActiveTarget = &m_spindexerVelocitySpindexer.WithSlot(1);
