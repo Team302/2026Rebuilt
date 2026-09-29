@@ -92,13 +92,7 @@ void LauncherContainer::ConfigureBindings()
         m_launcher->SetDefaultCommand(m_launcher->GetIdleCommand().IgnoringDisable(true));
     }
 
-    GetLauncherOffTrigger().WhileTrue(m_launcher->GetOffCommand().IgnoringDisable(true));
-
-    auto initialize = GetInitializeTrigger();
-    if (initialize.Get())
-    {
-        frc2::CommandScheduler::GetInstance().Schedule(m_launcher->GetInitializeCommand().IgnoringDisable(true));
-    }
+    GetInitializeTrigger().OnTrue(m_launcher->GetInitializeCommand().IgnoringDisable(true));
 
     GetManualLaunchTrigger().WhileTrue(m_launcher->GetManualLaunchCommand());
 
