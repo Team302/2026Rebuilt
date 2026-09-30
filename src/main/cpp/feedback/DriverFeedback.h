@@ -20,7 +20,7 @@
 
 #include "chassis/ChassisOptionEnums.h"
 #include "feedback/DragonCANdle.h"
-#include "mechanisms/Launcher/Launcher.h"
+#include "mechanisms/launcher/Launcher.h"
 #include "networktables/NetworkTable.h"
 #include "networktables/NetworkTableEntry.h"
 #include "networktables/NetworkTableInstance.h"

@@ -344,7 +344,7 @@ CLIMBER_CLIMBER      // Climber arm
   - `STATE_CLIMB` — stow for climb
   - `STATE_LAUNCHER_TUNING` — PID tuning mode
   - `STATE_MANUAL_LAUNCH` — driver-controlled fire
-- **Key methods:** `UpdateTargetLauncherVelocityRPS()`, `UpdateTargetHoodPositionDegreesHood()`, `UpdateTargetTurretPositionDegreesTurret()`
+- **Key methods:** `UpdateTargetLauncherVelocityLauncher()`, `UpdateTargetHoodPositionDegreesHood()`, `UpdateTargetTurretPositionDegreesTurret()`
 - **Uses:** `RebuiltTargetCalculator` for real-time hood/turret targeting
 - **Hood range:** clamped between `m_minHoodAngle` and `m_maxHoodAngle` (91–267°)
 - **Turret range:** clamped between `m_minTurretAngle` and `m_maxTurretAngle`

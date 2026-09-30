@@ -16,6 +16,7 @@
 #pragma once
 
 #include "mechanisms/MechanismTypes.h"
+#include "mechanisms/base/BaseMech.h"
 #include "mechanisms/configs/RobotElementNames.h"
 #include "state/StateMgr.h"
 
@@ -27,7 +28,10 @@ public:
 
     void BuildRobot();
 
-    virtual StateMgr *GetMechanism(MechanismTypes::MECHANISM_TYPE mechType);
+    /// @brief Get the mechanism of the given type, or nullptr if it is not present on this robot.
+    /// @details Returns the common BaseMech base so both command-based mechanisms (e.g. Intake)
+    ///          and any remaining StateMgr-based mechanisms can be returned and dynamic_cast by callers.
+    virtual BaseMech *GetMechanism(MechanismTypes::MECHANISM_TYPE mechType);
 
 protected:
     virtual void DefineMechanisms();

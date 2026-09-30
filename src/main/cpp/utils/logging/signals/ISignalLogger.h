@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2026 Lake Orion Robotics FIRST Team 302
 //
@@ -16,12 +15,12 @@
 
 #pragma once
 
+#include <array>
+#include <cstdint>
 #include <string>
 #include <string_view>
-#include <cstdint>
 #include <units/time.h>
 #include <vector>
-#include <array>
 
 #include "frc/geometry/Pose2d.h"
 #include "frc/geometry/Pose3d.h"

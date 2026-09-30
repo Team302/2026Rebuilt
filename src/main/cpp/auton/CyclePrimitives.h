@@ -39,7 +39,6 @@ class PrimitiveParams;
 class SwerveChassis;
 class Launcher;
 class Intake;
-class Climber;
 
 class CyclePrimitives : public State, DragonDataLogger
 {
@@ -81,5 +80,4 @@ private:
     // Cached mechanism pointers to avoid repeated lookups
     Launcher *m_cachedLauncher;
     Intake *m_cachedIntake;
-    Climber *m_cachedClimber;
 };

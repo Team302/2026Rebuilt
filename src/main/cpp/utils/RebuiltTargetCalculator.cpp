@@ -289,10 +289,18 @@ void RebuiltTargetCalculator::UpdateTargetOffset()
         // Passing target offsets — use cached alliance sign
         auto xSign = isBlue ? 1_in : -1_in;
         auto ySign = isBlue ? -1_in : 1_in;
-        m_passingDepotTargetXOffset += teleopControl->GetAxisValue(TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_X) * xSign;
-        m_passingDepotTargetYOffset += teleopControl->GetAxisValue(TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_Y) * ySign;
-        m_passingOutpostTargetXOffset += teleopControl->GetAxisValue(TeleopControlFunctions::UPDATE_OUTPOST_PASSING_TARGET_X) * xSign;
-        m_passingOutpostTargetYOffset += teleopControl->GetAxisValue(TeleopControlFunctions::UPDATE_OUTPOST_PASSING_TARGET_Y) * ySign;
+
+        auto depotX = teleopControl->GetAxisValue(TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_X);
+        m_passingDepotTargetXOffset = abs(depotX) > 0.1 ? (m_passingDepotTargetXOffset + depotX * xSign) : m_passingDepotTargetXOffset;
+
+        auto depotY = teleopControl->GetAxisValue(TeleopControlFunctions::UPDATE_DEPOT_PASSING_TARGET_Y);
+        m_passingDepotTargetYOffset = abs(depotY) > 0.1 ? (m_passingDepotTargetYOffset + depotY * ySign) : m_passingDepotTargetYOffset;
+
+        auto outpostX = teleopControl->GetAxisValue(TeleopControlFunctions::UPDATE_OUTPOST_PASSING_TARGET_X);
+        m_passingOutpostTargetXOffset = abs(outpostX) > 0.1 ? (m_passingOutpostTargetXOffset + outpostX * xSign) : m_passingOutpostTargetXOffset;
+
+        auto outpostY = teleopControl->GetAxisValue(TeleopControlFunctions::UPDATE_OUTPOST_PASSING_TARGET_Y);
+        m_passingOutpostTargetYOffset = abs(outpostY) > 0.1 ? (m_passingOutpostTargetYOffset + outpostY * ySign) : m_passingOutpostTargetYOffset;
     }
 
     UpdatePassingTargetsOnField();

@@ -5,7 +5,7 @@
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDrop3_C_Back_copy1"
 time = "10.0"
-intakeState = "STATE_FORCE_INTAKE_AUTON">
+intakeState = "STATE_INTAKE">
 </primitive>
 
 <primitive id = "TRAJECTORY_DRIVE"
