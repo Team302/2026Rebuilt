@@ -74,7 +74,6 @@ private:
 
     /// @brief Off has highest priority; every other trigger is gated on !off so Off always wins.
     frc2::Trigger GetLauncherOffTrigger();
-    frc2::Trigger GetInitializeTrigger();
     frc2::Trigger GetManualLaunchTrigger();
     frc2::Trigger GetPrepareToLaunchTrigger();
     frc2::Trigger GetLaunchTrigger();

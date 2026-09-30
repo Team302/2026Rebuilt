@@ -27,6 +27,10 @@ static constexpr units::angular_velocity::revolutions_per_minute_t m_scoringLaun
 static constexpr units::angular_velocity::revolutions_per_minute_t m_passingLauncherTarget{4000};
 static constexpr units::angular_velocity::revolutions_per_minute_t m_launcherTarget{2000};
 
+static constexpr units::angular_velocity::revolutions_per_minute_t m_initializeLauncherTarget{0.0};
+static constexpr double m_initializeHoodTarget{-0.15};
+static constexpr double m_initializeTurretTarget{-0.08};
+
 LauncherIdleCommand::LauncherIdleCommand(Launcher *mechanism) : m_mechanism(mechanism)
 {
     AddRequirements(m_mechanism);
@@ -38,9 +42,17 @@ void LauncherIdleCommand::Initialize()
     m_mechanism->SetCurrentState(Launcher::STATE_IDLE);
 
     // Motor targets for Idle
-    m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
-    m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
-    m_mechanism->UpdateTargetSpindexerPercentOut(m_spindexerTarget);
+    if (m_mechanism->IsLauncherInitialized())
+    {
+        m_mechanism->UpdateTargetTransferPercentOut(m_transferTarget);
+        m_mechanism->UpdateTargetIndexerPercentOut(m_indexerTarget);
+        m_mechanism->UpdateTargetSpindexerPercentOut(m_spindexerTarget);
+    }
+    else
+    {
+        m_mechanism->UpdateTargetHoodPercentOut(m_initializeHoodTarget);
+        m_mechanism->UpdateTargetTurretPercentOut(m_initializeTurretTarget);
+    }
     m_mechanism->UpdateTargetLauncherVelocityLauncher(m_launcherTarget);
 
     m_mechanism->PublishLaunchMode(false);
@@ -59,6 +71,11 @@ void LauncherIdleCommand::Execute()
     //  {
     //      m_mechanism->UpdateTargetLauncherVelocityLauncher(m_scoringLauncherTarget);
     //  }
+
+    if (!m_mechanism->IsLauncherInitialized())
+    {
+        m_mechanism->InitializeLauncher();
+    }
 
     if (m_mechanism->IsIntakingMode())
         m_mechanism->AgitateSpindexer();

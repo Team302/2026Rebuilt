@@ -43,7 +43,6 @@
 
 // Launcher command classes
 #include "mechanisms/launcher/commands/LauncherIdleCommand.h"
-#include "mechanisms/launcher/commands/LauncherInitializeCommand.h"
 #include "mechanisms/launcher/commands/LauncherLaunchCommand.h"
 #include "mechanisms/launcher/commands/LauncherLauncherTuningCommand.h"
 #include "mechanisms/launcher/commands/LauncherManualLaunchCommand.h"
@@ -56,7 +55,6 @@ public:
     enum STATE_NAMES
     {
         STATE_OFF,
-        STATE_INITIALIZE,
         STATE_IDLE,
         STATE_PREPARE_TO_LAUNCH,
         STATE_LAUNCH,
@@ -82,7 +80,6 @@ public:
 
     // Command Getters
     frc2::CommandPtr GetOffCommand() { return LauncherCommands::LauncherOffCommand(this).ToPtr(); }
-    frc2::CommandPtr GetInitializeCommand() { return LauncherCommands::LauncherInitializeCommand(this).ToPtr(); }
     frc2::CommandPtr GetIdleCommand() { return LauncherCommands::LauncherIdleCommand(this).ToPtr(); }
     frc2::CommandPtr GetPrepareToLaunchCommand() { return LauncherCommands::LauncherPrepareToLaunchCommand(this).ToPtr(); }
     frc2::CommandPtr GetLaunchCommand() { return LauncherCommands::LauncherLaunchCommand(this).ToPtr(); }
@@ -94,8 +91,6 @@ public:
     {
         switch (state)
         {
-        case STATE_INITIALIZE:
-            return GetInitializeCommand();
         case STATE_IDLE:
             return GetIdleCommand();
         case STATE_PREPARE_TO_LAUNCH:

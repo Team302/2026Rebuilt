@@ -64,7 +64,6 @@ Launcher::Launcher(RobotIdentifier id) : BaseMechSubsystem(MechanismTypes::MECHA
 std::map<std::string, Launcher::STATE_NAMES>
 	Launcher::stringToSTATE_NAMESEnumMap{
 		{"STATE_OFF", Launcher::STATE_NAMES::STATE_OFF},
-		{"STATE_INITIALIZE", Launcher::STATE_NAMES::STATE_INITIALIZE},
 		{"STATE_IDLE", Launcher::STATE_NAMES::STATE_IDLE},
 		{"STATE_PREPARE_TO_LAUNCH", Launcher::STATE_NAMES::STATE_PREPARE_TO_LAUNCH},
 		{"STATE_LAUNCH", Launcher::STATE_NAMES::STATE_LAUNCH},
@@ -74,7 +73,6 @@ std::map<std::string, Launcher::STATE_NAMES>
 std::map<Launcher::STATE_NAMES, std::string>
 	Launcher::STATE_NAMESEnumToStringMap{
 		{Launcher::STATE_NAMES::STATE_OFF, "STATE_OFF"},
-		{Launcher::STATE_NAMES::STATE_INITIALIZE, "STATE_INITIALIZE"},
 		{Launcher::STATE_NAMES::STATE_IDLE, "STATE_IDLE"},
 		{Launcher::STATE_NAMES::STATE_PREPARE_TO_LAUNCH, "STATE_PREPARE_TO_LAUNCH"},
 		{Launcher::STATE_NAMES::STATE_LAUNCH, "STATE_LAUNCH"},
@@ -708,7 +706,6 @@ void Launcher::Periodic()
 
 	if (frc::DriverStation::IsDisabled())
 	{
-		InitializeLauncher();
 		m_targetCalculator->ForceUpdateChassisPose();
 	}
 
@@ -872,7 +869,7 @@ void Launcher::UpdateLauncherTargets()
 {
 	int currentState = GetCurrentState();
 
-	if (currentState == STATE_NAMES::STATE_OFF || currentState == STATE_NAMES::STATE_INITIALIZE || currentState == STATE_NAMES::STATE_MANUAL_LAUNCH || m_tuningLauncher)
+	if (currentState == STATE_NAMES::STATE_OFF || !m_launcherInitialized || currentState == STATE_NAMES::STATE_MANUAL_LAUNCH || m_tuningLauncher)
 	{
 		return;
 	}

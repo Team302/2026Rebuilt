@@ -92,8 +92,6 @@ void LauncherContainer::ConfigureBindings()
         m_launcher->SetDefaultCommand(m_launcher->GetIdleCommand().IgnoringDisable(true));
     }
 
-    GetInitializeTrigger().OnTrue(m_launcher->GetInitializeCommand().IgnoringDisable(true));
-
     GetManualLaunchTrigger().WhileTrue(m_launcher->GetManualLaunchCommand());
 
     GetPrepareToLaunchTrigger().WhileTrue(m_launcher->GetPrepareToLaunchCommand());
@@ -114,19 +112,6 @@ frc2::Trigger LauncherContainer::GetLauncherOffTrigger()
     Launcher *launcher = m_launcher;
     return frc2::Trigger([launcher]()
                          { return launcher->IsLauncherInProtectedMode(); });
-}
-
-frc2::Trigger LauncherContainer::GetInitializeTrigger()
-{
-    // --- Initialize -------------------------------------------------------------------------------
-    // Run the homing routine from boot until the launcher reports initialized. The command self-finishes
-    // (LauncherInitializeCommand::IsDone() == IsLauncherInitialized()), so when initialization
-    // completes the command ends and the default Idle command takes over. The holding condition stays
-    // true the whole time it should run so WhileTrue and IsFinished() agree.
-    Launcher *launcher = m_launcher;
-    return frc2::Trigger([launcher]()
-                         { return !launcher->IsLauncherInProtectedMode() &&
-                                  !launcher->IsLauncherInitialized(); });
 }
 
 frc2::Trigger LauncherContainer::GetManualLaunchTrigger()
