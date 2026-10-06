@@ -22,13 +22,13 @@
 #include "frc/Filesystem.h"
 
 // Team 302 includes
-#include "mechanisms/base/BaseMech.h"
 #include "mechanisms/MechanismTypes.h"
+#include "mechanisms/base/BaseMech.h"
 #include "utils/logging/debug/Logger.h"
 
 // Third Party Includes
-#include "units/time.h"
 #include "pugixml/pugixml.hpp"
+#include "units/time.h"
 
 using namespace std;
 
@@ -111,27 +111,8 @@ void BaseMech::ReadConstants(string configfilename, int robotId)
                 theData->SetA(aNode.attribute("aGain").as_double());
                 theData->SetV(aNode.attribute("vGain").as_double());
                 theData->SetIZone(aNode.attribute("iZone").as_double());
-                theData->SetPeakValue(aNode.attribute("peakValue").as_double());
-                theData->SetNominalValue(aNode.attribute("nominalValue").as_double());
                 theData->SetMaxAcceleration(aNode.attribute("maxAcceleration").as_double());
                 theData->SetCruiseVelocity(aNode.attribute("cruiseVelocity").as_double());
-                theData->SetFOCEnabled(aNode.attribute("enableFOC").as_bool());
-
-                if (strcmp(aNode.attribute("feedForwardType").as_string(), "VOLTAGE") == 0)
-                    theData->SetFType(ControlData::FEEDFORWARD_TYPE::VOLTAGE);
-                else if (strcmp(aNode.attribute("feedForwardType").as_string(), "TORQUE_CURRENT") == 0)
-                    theData->SetFType(ControlData::FEEDFORWARD_TYPE::TORQUE_CURRENT);
-                else
-                    theData->SetFType(ControlData::FEEDFORWARD_TYPE::DUTY_CYCLE);
-
-                if (strcmp(aNode.attribute("controlType").as_string(), "VOLTAGE_OUTPUT") == 0)
-                    theData->SetMode(ControlModes::CONTROL_TYPE::VOLTAGE_OUTPUT);
-                else if (strcmp(aNode.attribute("controlType").as_string(), "POSITION_DEGREES") == 0)
-                    theData->SetMode(ControlModes::CONTROL_TYPE::POSITION_DEGREES);
-                else if (strcmp(aNode.attribute("controlType").as_string(), "POSITION_INCH") == 0)
-                    theData->SetMode(ControlModes::CONTROL_TYPE::POSITION_INCH);
-                else
-                    theData->SetMode(ControlModes::CONTROL_TYPE::PERCENT_OUTPUT);
             }
             else
             {

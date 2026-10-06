@@ -45,7 +45,7 @@ FIELD_H = 8.10
 # ---------------------------------------------------------------------------
 SVG_W = 900
 SVG_H = int(SVG_W * FIELD_H / FIELD_W)
-SCALE = SVG_W / FIELD_W   # pixels per metre
+SCALE = SVG_W / FIELD_W  # pixels per metre
 
 
 def mx(x_m: float) -> float:
@@ -63,21 +63,21 @@ def my(y_m: float) -> float:
 # Keyed by allianceColor attribute value; fallback = neutral grey.
 # ---------------------------------------------------------------------------
 ZONE_COLORS = {
-    "BLUE":    {"fill": "#1a3a8a", "stroke": "#0d2060", "text": "#ffffff"},
-    "RED":     {"fill": "#8a1a1a", "stroke": "#601010", "text": "#ffffff"},
-    "BOTH":    {"fill": "#2a6a2a", "stroke": "#1a4a1a", "text": "#ffffff"},
+    "BLUE": {"fill": "#1a3a8a", "stroke": "#0d2060", "text": "#ffffff"},
+    "RED": {"fill": "#8a1a1a", "stroke": "#601010", "text": "#ffffff"},
+    "BOTH": {"fill": "#2a6a2a", "stroke": "#1a4a1a", "text": "#ffffff"},
     "NEUTRAL": {"fill": "#4a4a4a", "stroke": "#2a2a2a", "text": "#ffffff"},
 }
 
 # Effect -> badge colour
 EFFECT_COLORS = {
-    "DRIVE_OVER_BUMP":   "#e08000",
-    "DRIVE_TO_DEPOT":    "#8000c0",
-    "DRIVE_TO_OUTPOST":  "#006080",
-    "DRIVE_TO_TOWER":    "#c06000",
-    "DRIVE_TO_HUB":      "#008080",
+    "DRIVE_OVER_BUMP": "#e08000",
+    "DRIVE_TO_DEPOT": "#8000c0",
+    "DRIVE_TO_OUTPOST": "#006080",
+    "DRIVE_TO_TOWER": "#c06000",
+    "DRIVE_TO_HUB": "#008080",
     "PREPARE_TO_LAUNCH": "#c00040",
-    "WANT_TO_CLIMB":     "#804000",
+    "WANT_TO_CLIMB": "#804000",
 }
 
 OPACITY = "0.55"
@@ -104,9 +104,6 @@ def parse_zone(xml_path: Path) -> dict | None:
         ls = z.get("launcherState", "STATE_IDLE")
         if ls and ls not in ("STATE_IDLE", "STATE_OFF"):
             effects.append(ls.replace("STATE_", "").replace("_", " "))
-        cs = z.get("climberState", "STATE_OFF")
-        if cs and cs != "STATE_OFF":
-            effects.append(cs.replace("STATE_", "").replace("_", " "))
         shape["effects"] = effects
         shape["pathUpdateOption"] = puo
 
@@ -152,9 +149,9 @@ def truncate_label(name: str, max_chars: int = 18) -> str:
     """Strip common prefixes to keep labels short."""
     for prefix in ("Blue", "Red", "Neutral"):
         if name.startswith(prefix):
-            name = name[len(prefix):]
+            name = name[len(prefix) :]
             break
-    return name if len(name) <= max_chars else name[:max_chars - 2] + ".."
+    return name if len(name) <= max_chars else name[: max_chars - 2] + ".."
 
 
 def svg_shape(shape: dict, idx: int) -> str:
@@ -217,7 +214,7 @@ def svg_shape(shape: dict, idx: int) -> str:
             return f"  <!-- SKIPPED off-field rect: {name} x1={x1} -->\n"
         # Clamp to field bounds for display
         rx1 = mx(max(0, min(x1, FIELD_W)))
-        ry1 = my(max(0, min(y2, FIELD_H)))   # note: SVG y flip
+        ry1 = my(max(0, min(y2, FIELD_H)))  # note: SVG y flip
         rw = mx(max(0, min(x2, FIELD_W))) - rx1
         rh = my(max(0, min(y1, FIELD_H))) - ry1
         if rw <= 0 or rh <= 0:
@@ -268,35 +265,57 @@ def field_background() -> str:
 
     # Blue alliance region (x=0..4m)
     bw = mx(4.0)
-    lines.append(f'  <rect x="0" y="0" width="{bw:.1f}" height="{h}" fill="#0d1a3a" fill-opacity="0.6"/>')
-    lines.append(f'  <text x="{bw/2:.1f}" y="14" text-anchor="middle" font-size="11" fill="#5588ff" font-family="sans-serif">BLUE ALLIANCE</text>')
+    lines.append(
+        f'  <rect x="0" y="0" width="{bw:.1f}" height="{h}" fill="#0d1a3a" fill-opacity="0.6"/>'
+    )
+    lines.append(
+        f'  <text x="{bw/2:.1f}" y="14" text-anchor="middle" font-size="11" fill="#5588ff" font-family="sans-serif">BLUE ALLIANCE</text>'
+    )
 
     # Neutral zone (x=4.8..11.86m)
     nzx = mx(4.8)
     nzw = mx(11.86) - nzx
-    lines.append(f'  <rect x="{nzx:.1f}" y="0" width="{nzw:.1f}" height="{h}" fill="#1a1a1a" fill-opacity="0.6"/>')
-    lines.append(f'  <text x="{nzx + nzw/2:.1f}" y="14" text-anchor="middle" font-size="11" fill="#aaaaaa" font-family="sans-serif">NEUTRAL ZONE</text>')
+    lines.append(
+        f'  <rect x="{nzx:.1f}" y="0" width="{nzw:.1f}" height="{h}" fill="#1a1a1a" fill-opacity="0.6"/>'
+    )
+    lines.append(
+        f'  <text x="{nzx + nzw/2:.1f}" y="14" text-anchor="middle" font-size="11" fill="#aaaaaa" font-family="sans-serif">NEUTRAL ZONE</text>'
+    )
 
     # Red alliance region (x=12.55..16.46m)
     rx = mx(12.55)
     rw2 = w - rx
-    lines.append(f'  <rect x="{rx:.1f}" y="0" width="{rw2:.1f}" height="{h}" fill="#3a0d0d" fill-opacity="0.6"/>')
-    lines.append(f'  <text x="{rx + rw2/2:.1f}" y="14" text-anchor="middle" font-size="11" fill="#ff5555" font-family="sans-serif">RED ALLIANCE</text>')
+    lines.append(
+        f'  <rect x="{rx:.1f}" y="0" width="{rw2:.1f}" height="{h}" fill="#3a0d0d" fill-opacity="0.6"/>'
+    )
+    lines.append(
+        f'  <text x="{rx + rw2/2:.1f}" y="14" text-anchor="middle" font-size="11" fill="#ff5555" font-family="sans-serif">RED ALLIANCE</text>'
+    )
 
     # Field border
-    lines.append(f'  <rect x="0" y="0" width="{w}" height="{h}" fill="none" stroke="#888888" stroke-width="2"/>')
+    lines.append(
+        f'  <rect x="0" y="0" width="{w}" height="{h}" fill="none" stroke="#888888" stroke-width="2"/>'
+    )
 
     # X-axis tick marks every 2m
     for xm in range(0, int(FIELD_W) + 1, 2):
         sx = mx(xm)
-        lines.append(f'  <line x1="{sx:.1f}" y1="{h}" x2="{sx:.1f}" y2="{h - 6}" stroke="#666" stroke-width="1"/>')
-        lines.append(f'  <text x="{sx:.1f}" y="{h - 8}" text-anchor="middle" font-size="8" fill="#888" font-family="monospace">{xm}m</text>')
+        lines.append(
+            f'  <line x1="{sx:.1f}" y1="{h}" x2="{sx:.1f}" y2="{h - 6}" stroke="#666" stroke-width="1"/>'
+        )
+        lines.append(
+            f'  <text x="{sx:.1f}" y="{h - 8}" text-anchor="middle" font-size="8" fill="#888" font-family="monospace">{xm}m</text>'
+        )
 
     # Y-axis tick marks every 2m
     for ym in range(0, int(FIELD_H) + 1, 2):
         sy = my(ym)
-        lines.append(f'  <line x1="0" y1="{sy:.1f}" x2="6" y2="{sy:.1f}" stroke="#666" stroke-width="1"/>')
-        lines.append(f'  <text x="8" y="{sy:.1f}" dominant-baseline="middle" font-size="8" fill="#888" font-family="monospace">{ym}m</text>')
+        lines.append(
+            f'  <line x1="0" y1="{sy:.1f}" x2="6" y2="{sy:.1f}" stroke="#666" stroke-width="1"/>'
+        )
+        lines.append(
+            f'  <text x="8" y="{sy:.1f}" dominant-baseline="middle" font-size="8" fill="#888" font-family="monospace">{ym}m</text>'
+        )
 
     return "\n".join(lines) + "\n"
 
@@ -308,9 +327,7 @@ def generate_svg(shapes: list[dict]) -> str:
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" '
         f'width="{SVG_W}" height="{SVG_H}" '
-        f'viewBox="0 0 {SVG_W} {SVG_H}">\n'
-        + body
-        + "</svg>"
+        f'viewBox="0 0 {SVG_W} {SVG_H}">\n' + body + "</svg>"
     )
 
 
@@ -324,7 +341,9 @@ def generate_table(shapes: list[dict]) -> str:
         else:
             coords = f"({s['x1']},{s['y1']}) to ({s['x2']},{s['y2']})"
         effects = ", ".join(s["effects"]) if s["effects"] else "--"
-        rows.append(f"| `{s['name']}` | {s['type']} | {coords} | {s['alliance']} | {effects} |")
+        rows.append(
+            f"| `{s['name']}` | {s['type']} | {coords} | {s['alliance']} | {effects} |"
+        )
     return header + "\n" + sep + "\n" + "\n".join(rows)
 
 
@@ -478,9 +497,7 @@ def generate_individual_svg(focus: dict, all_shapes: list[dict]) -> str:
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" '
         f'width="{SVG_W}" height="{SVG_H}" '
-        f'viewBox="0 0 {SVG_W} {SVG_H}">\n'
-        + body
-        + "</svg>"
+        f'viewBox="0 0 {SVG_W} {SVG_H}">\n' + body + "</svg>"
     )
 
 
@@ -577,9 +594,7 @@ def main() -> None:
             + "\n"
         )
 
-    zone_links = "\n".join(
-        f"- [{s['name']}](zones/{s['name']}.md)" for s in shapes
-    )
+    zone_links = "\n".join(f"- [{s['name']}](zones/{s['name']}.md)" for s in shapes)
 
     # Path from FieldZones.md (documents/auton/) to the SVG (documents/auton/svg/)
     field_svg_rel = "svg/FieldZones.svg"

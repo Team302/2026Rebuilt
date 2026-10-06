@@ -66,15 +66,6 @@ public:
         MANUAL_INTAKE_IN,
         EXTENDER_MODIFIER,
 
-        // Climber
-        CLIMB_MODE,
-        LEVEL1_CLIMB,
-        LEVEL3_CLIMB,
-        ALIGN_TO_LEFT_TOWER,
-        ALIGN_TO_RIGHT_TOWER,
-        CLIMB_MANUAL_ROTATE_DOWN,
-        CLIMB_MANUAL_ROTATE_UP,
-
         // LAUNCHER
         LAUNCHER_OFF,
         LAUNCH,

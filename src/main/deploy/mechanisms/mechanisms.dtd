@@ -17,12 +17,6 @@
   sGain CDATA #REQUIRED
   vGain CDATA #REQUIRED
   iZone CDATA #REQUIRED
-  peakValue CDATA #REQUIRED
-  nominalValue CDATA #REQUIRED
   maxAcceleration CDATA #REQUIRED
   cruiseVelocity CDATA #REQUIRED
-  enableFOC CDATA #REQUIRED
-  feedForwardType CDATA #REQUIRED
-  controlType CDATA #REQUIRED
-  controlLoopLocation CDATA #REQUIRED
 >

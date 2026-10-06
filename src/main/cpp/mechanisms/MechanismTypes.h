@@ -34,7 +34,6 @@ public:
 
 		INTAKE,
 		LAUNCHER,
-		CLIMBER,
 
 		MAX_MECHANISM_TYPES
 	};

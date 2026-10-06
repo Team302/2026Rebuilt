@@ -38,21 +38,22 @@ TRAJ_SVG_DIR = REPO_ROOT / "documents" / "auton" / "svg" / "traj"
 # ---------------------------------------------------------------------------
 # Field + SVG constants (must match auton_zone_field_gen.py)
 # ---------------------------------------------------------------------------
-FIELD_W = 16.46   # metres
-FIELD_H = 8.10    # metres
-SVG_W   = 900     # pixels
-SVG_H   = int(SVG_W * FIELD_H / FIELD_W)
-SCALE   = SVG_W / FIELD_W
+FIELD_W = 16.46  # metres
+FIELD_H = 8.10  # metres
+SVG_W = 900  # pixels
+SVG_H = int(SVG_W * FIELD_H / FIELD_W)
+SCALE = SVG_W / FIELD_W
 
 # Robot dimensions (metres)
-ROBOT_W = 0.6096   # chassis width  (short side)
-ROBOT_L = 0.762    # chassis length (long side,  front)
-BUMPER_W = 0.762   # bumper width
+ROBOT_W = 0.6096  # chassis width  (short side)
+ROBOT_L = 0.762  # chassis length (long side,  front)
+BUMPER_W = 0.762  # bumper width
 BUMPER_L = 0.9144  # bumper length  (front side)
 
 
 def mx(x: float) -> float:
     return x * SCALE
+
 
 def my(y: float) -> float:
     return (FIELD_H - y) * SCALE
@@ -96,12 +97,12 @@ def mirror_traj_for_red(traj: dict) -> dict:
         "samples": mirrored_samples,
     }
 
+
 # Default attribute values from auton.dtd
 DTD_DEFAULTS = {
     "id": "DO_NOTHING",
     "launcherState": "STATE_IDLE",
     "intakeState": "STATE_OFF",
-    "climberState": "STATE_OFF",
     "time": "--",
     "choreoname": "",
 }
@@ -367,30 +368,59 @@ def _field_bg_svg() -> str:
     lines.append(f'  <rect x="0" y="0" width="{w}" height="{h}" fill="#1a1a1a"/>')
     # Alliance region shading
     bw = mx(4.0)
-    lines.append(f'  <rect x="0" y="0" width="{bw:.1f}" height="{h}" fill="#0d1a3a" fill-opacity="0.7"/>')
-    lines.append(f'  <text x="{bw/2:.1f}" y="14" text-anchor="middle" font-size="10" fill="#4466cc" font-family="sans-serif">BLUE</text>')
+    lines.append(
+        f'  <rect x="0" y="0" width="{bw:.1f}" height="{h}" fill="#0d1a3a" fill-opacity="0.7"/>'
+    )
+    lines.append(
+        f'  <text x="{bw/2:.1f}" y="14" text-anchor="middle" font-size="10" fill="#4466cc" font-family="sans-serif">BLUE</text>'
+    )
     nzx, nzw = mx(4.8), mx(11.86) - mx(4.8)
-    lines.append(f'  <rect x="{nzx:.1f}" y="0" width="{nzw:.1f}" height="{h}" fill="#111111" fill-opacity="0.7"/>')
-    lines.append(f'  <text x="{nzx + nzw/2:.1f}" y="14" text-anchor="middle" font-size="10" fill="#888" font-family="sans-serif">NEUTRAL</text>')
+    lines.append(
+        f'  <rect x="{nzx:.1f}" y="0" width="{nzw:.1f}" height="{h}" fill="#111111" fill-opacity="0.7"/>'
+    )
+    lines.append(
+        f'  <text x="{nzx + nzw/2:.1f}" y="14" text-anchor="middle" font-size="10" fill="#888" font-family="sans-serif">NEUTRAL</text>'
+    )
     rx2 = mx(12.55)
-    lines.append(f'  <rect x="{rx2:.1f}" y="0" width="{w - rx2:.1f}" height="{h}" fill="#3a0d0d" fill-opacity="0.7"/>')
-    lines.append(f'  <text x="{rx2 + (w - rx2)/2:.1f}" y="14" text-anchor="middle" font-size="10" fill="#cc4444" font-family="sans-serif">RED</text>')
+    lines.append(
+        f'  <rect x="{rx2:.1f}" y="0" width="{w - rx2:.1f}" height="{h}" fill="#3a0d0d" fill-opacity="0.7"/>'
+    )
+    lines.append(
+        f'  <text x="{rx2 + (w - rx2)/2:.1f}" y="14" text-anchor="middle" font-size="10" fill="#cc4444" font-family="sans-serif">RED</text>'
+    )
     # Field border
-    lines.append(f'  <rect x="0" y="0" width="{w}" height="{h}" fill="none" stroke="#888" stroke-width="2"/>')
+    lines.append(
+        f'  <rect x="0" y="0" width="{w}" height="{h}" fill="none" stroke="#888" stroke-width="2"/>'
+    )
     # Axis ticks
     for xm in range(0, int(FIELD_W) + 1, 2):
         sx = mx(xm)
-        lines.append(f'  <line x1="{sx:.1f}" y1="{h}" x2="{sx:.1f}" y2="{h-5}" stroke="#555" stroke-width="1"/>')
-        lines.append(f'  <text x="{sx:.1f}" y="{h-7}" text-anchor="middle" font-size="7" fill="#666" font-family="monospace">{xm}m</text>')
+        lines.append(
+            f'  <line x1="{sx:.1f}" y1="{h}" x2="{sx:.1f}" y2="{h-5}" stroke="#555" stroke-width="1"/>'
+        )
+        lines.append(
+            f'  <text x="{sx:.1f}" y="{h-7}" text-anchor="middle" font-size="7" fill="#666" font-family="monospace">{xm}m</text>'
+        )
     for ym in range(0, int(FIELD_H) + 1, 2):
         sy = my(ym)
-        lines.append(f'  <line x1="0" y1="{sy:.1f}" x2="5" y2="{sy:.1f}" stroke="#555" stroke-width="1"/>')
-        lines.append(f'  <text x="7" y="{sy:.1f}" dominant-baseline="middle" font-size="7" fill="#666" font-family="monospace">{ym}m</text>')
+        lines.append(
+            f'  <line x1="0" y1="{sy:.1f}" x2="5" y2="{sy:.1f}" stroke="#555" stroke-width="1"/>'
+        )
+        lines.append(
+            f'  <text x="7" y="{sy:.1f}" dominant-baseline="middle" font-size="7" fill="#666" font-family="monospace">{ym}m</text>'
+        )
     return "\n".join(lines)
 
 
-def _robot_svg(px: float, py: float, heading_rad: float,
-               color: str, opacity: float, idx: int, is_waypoint: bool) -> str:
+def _robot_svg(
+    px: float,
+    py: float,
+    heading_rad: float,
+    color: str,
+    opacity: float,
+    idx: int,
+    is_waypoint: bool,
+) -> str:
     """Return SVG elements for a robot pose.
 
     The robot chassis is ROBOT_L x ROBOT_W metres (long axis = forward = heading=0).
@@ -402,14 +432,16 @@ def _robot_svg(px: float, py: float, heading_rad: float,
     # Also note SVG y-flip inverts the rotation sign.
     rot_deg = -math.degrees(heading_rad)
 
-    chassis_pw = ROBOT_L * SCALE   # side-to-side (long side = 0.762 m)
-    chassis_pl = ROBOT_W * SCALE   # forward      (short side = 0.6096 m)
-    bumper_pw  = BUMPER_L * SCALE  # side-to-side (long side = 0.9144 m)
-    bumper_pl  = BUMPER_W * SCALE  # forward      (short side = 0.762 m)
+    chassis_pw = ROBOT_L * SCALE  # side-to-side (long side = 0.762 m)
+    chassis_pl = ROBOT_W * SCALE  # forward      (short side = 0.6096 m)
+    bumper_pw = BUMPER_L * SCALE  # side-to-side (long side = 0.9144 m)
+    bumper_pl = BUMPER_W * SCALE  # forward      (short side = 0.762 m)
 
     lines = []
     gid = f"pose{idx}"
-    lines.append(f'  <g id="{gid}" transform="translate({svgx:.2f},{svgy:.2f}) rotate({rot_deg:.2f})">')
+    lines.append(
+        f'  <g id="{gid}" transform="translate({svgx:.2f},{svgy:.2f}) rotate({rot_deg:.2f})">'
+    )
 
     if is_waypoint:
         # Full bumper + chassis + direction triangle
@@ -433,7 +465,9 @@ def _robot_svg(px: float, py: float, heading_rad: float,
             f'fill="#ffffff" fill-opacity="0.9"/>'
         )
         # Waypoint dot at centre
-        lines.append(f'    <circle cx="0" cy="0" r="3" fill="#ffffff" fill-opacity="0.9"/>')
+        lines.append(
+            f'    <circle cx="0" cy="0" r="3" fill="#ffffff" fill-opacity="0.9"/>'
+        )
     else:
         # Path sample: just a tiny oriented tick
         tick = chassis_pl * 0.3
@@ -441,9 +475,11 @@ def _robot_svg(px: float, py: float, heading_rad: float,
             f'    <line x1="0" y1="0" x2="{tick:.2f}" y2="0" '
             f'stroke="{color}" stroke-width="1.5" stroke-opacity="0.6"/>'
         )
-        lines.append(f'    <circle cx="0" cy="0" r="1.5" fill="{color}" fill-opacity="0.5"/>')
+        lines.append(
+            f'    <circle cx="0" cy="0" r="1.5" fill="{color}" fill-opacity="0.5"/>'
+        )
 
-    lines.append('  </g>')
+    lines.append("  </g>")
     return "\n".join(lines)
 
 
@@ -451,7 +487,9 @@ def _robot_svg(px: float, py: float, heading_rad: float,
 _TRAJ_COLORS = ["#00d4ff", "#ffcc00", "#ff6688", "#88ff44", "#ff8800", "#cc88ff"]
 
 
-def render_traj_svg(trajs: list[tuple[int, str, dict, int]], zone_overlays: list[dict] | None = None) -> str:
+def render_traj_svg(
+    trajs: list[tuple[int, str, dict, int]], zone_overlays: list[dict] | None = None
+) -> str:
     """Render one SVG showing the field + all provided trajectories overlaid.
 
     trajs: list of (step_number, choreo_name, traj_dict, color_index)
@@ -461,7 +499,7 @@ def render_traj_svg(trajs: list[tuple[int, str, dict, int]], zone_overlays: list
     """
     body_lines = [_field_bg_svg()]
 
-    for shape in (zone_overlays or []):
+    for shape in zone_overlays or []:
         overlay = _element_zone_overlay_svg(shape)
         if overlay:
             body_lines.append(overlay)
@@ -484,8 +522,15 @@ def render_traj_svg(trajs: list[tuple[int, str, dict, int]], zone_overlays: list
         for si, s in enumerate(samples):
             is_wp = (round(s["x"], 2), round(s["y"], 2)) in waypoint_set
             body_lines.append(
-                _robot_svg(s["x"], s["y"], s["heading"], color,
-                           opacity=0.55, idx=color_idx * 1000 + si, is_waypoint=is_wp)
+                _robot_svg(
+                    s["x"],
+                    s["y"],
+                    s["heading"],
+                    color,
+                    opacity=0.55,
+                    idx=color_idx * 1000 + si,
+                    is_waypoint=is_wp,
+                )
             )
 
         # Legend label near start of path
@@ -510,10 +555,13 @@ def render_traj_svg(trajs: list[tuple[int, str, dict, int]], zone_overlays: list
     )
 
 
-def generate_traj_section(step_data: list[dict], auton_stem: str, zone_overlays: list[dict]) -> str:
+def generate_traj_section(
+    step_data: list[dict], auton_stem: str, zone_overlays: list[dict]
+) -> str:
     """Return a Markdown section with trajectory SVGs and waypoint tables."""
     traj_steps = [
-        d for d in step_data
+        d
+        for d in step_data
         if d["prim_id"] == "TRAJECTORY_DRIVE" and d["choreo"] and d["choreo"] != "--"
     ]
     if not traj_steps:
@@ -526,7 +574,7 @@ def generate_traj_section(step_data: list[dict], auton_stem: str, zone_overlays:
     # --- Build list of (step, choreo, traj, color_idx) assigning colours in
     #     order of appearance -- same index used for both overview and per-step SVGs.
     all_trajs = []
-    color_idx_map: dict[str, int] = {}   # choreo_name -> colour index
+    color_idx_map: dict[str, int] = {}  # choreo_name -> colour index
     for ci, d in enumerate(traj_steps):
         traj = parse_traj(d["choreo"])
         if traj:
@@ -539,7 +587,9 @@ def generate_traj_section(step_data: list[dict], auton_stem: str, zone_overlays:
     overview_svg_path = TRAJ_SVG_DIR / overview_svg_name
     if all_trajs:
         overview_svg_path.write_text(
-            render_traj_svg(all_trajs, zone_overlays=zone_overlays), encoding="ascii", errors="replace"
+            render_traj_svg(all_trajs, zone_overlays=zone_overlays),
+            encoding="ascii",
+            errors="replace",
         )
 
     lines = ["## Trajectory Details", ""]
@@ -548,13 +598,15 @@ def generate_traj_section(step_data: list[dict], auton_stem: str, zone_overlays:
         # Legend for overview colours
         legend_items = " ".join(
             f'<span style="color:{_TRAJ_COLORS[ci % len(_TRAJ_COLORS)]}">'
-            f'&#9632; S{step}: {name}</span>'
+            f"&#9632; S{step}: {name}</span>"
             for step, name, _, ci in all_trajs
         )
         rel = f"svg/traj/{overview_svg_name}"
         lines.append("### All Trajectories Overview")
         lines.append("")
-        lines.append(f'<img src="{rel}" alt="All trajectories for {auton_stem}" width="{SVG_W}"/>')
+        lines.append(
+            f'<img src="{rel}" alt="All trajectories for {auton_stem}" width="{SVG_W}"/>'
+        )
         lines.append("")
 
     # --- Per-step section ---
@@ -565,9 +617,14 @@ def generate_traj_section(step_data: list[dict], auton_stem: str, zone_overlays:
             traj = mirror_traj_for_red(traj)
         traj_link = (
             f"[`{choreo_name}.traj`](../../{traj['file']})"
-            if traj else f"`{choreo_name}.traj` *(not found)*"
+            if traj
+            else f"`{choreo_name}.traj` *(not found)*"
         )
-        duration_str = f"{traj['duration']} s" if traj and traj["duration"] is not None else "unknown"
+        duration_str = (
+            f"{traj['duration']} s"
+            if traj and traj["duration"] is not None
+            else "unknown"
+        )
         ci = color_idx_map.get(choreo_name, 0)
         color = _TRAJ_COLORS[ci % len(_TRAJ_COLORS)]
 
@@ -584,11 +641,16 @@ def generate_traj_section(step_data: list[dict], auton_stem: str, zone_overlays:
             svg_name = f"{auton_stem}_step{d['step']}_{choreo_name}.svg"
             svg_path = TRAJ_SVG_DIR / svg_name
             svg_path.write_text(
-                render_traj_svg([(d["step"], choreo_name, traj, ci)], zone_overlays=zone_overlays),
-                encoding="ascii", errors="replace"
+                render_traj_svg(
+                    [(d["step"], choreo_name, traj, ci)], zone_overlays=zone_overlays
+                ),
+                encoding="ascii",
+                errors="replace",
             )
             rel = f"svg/traj/{svg_name}"
-            lines.append(f'<img src="{rel}" alt="Trajectory {choreo_name}" width="{SVG_W}"/>')
+            lines.append(
+                f'<img src="{rel}" alt="Trajectory {choreo_name}" width="{SVG_W}"/>'
+            )
             lines.append("")
 
         if traj and traj["waypoints"]:
@@ -630,9 +692,10 @@ def generate_markdown(xml_path: Path) -> str:
         timeout = prim.get("time", DTD_DEFAULTS["time"])
         intake = prim.get("intakeState", DTD_DEFAULTS["intakeState"])
         launcher = prim.get("launcherState", DTD_DEFAULTS["launcherState"])
-        climber = prim.get("climberState", DTD_DEFAULTS["climberState"])
 
-        zones = [z.get("filename", "") for z in prim.findall("zone") if z.get("filename")]
+        zones = [
+            z.get("filename", "") for z in prim.findall("zone") if z.get("filename")
+        ]
         zone_effects_list: list[tuple[str, dict]] = []
         for zf in zones:
             effects = parse_zone_effects(zf)
@@ -648,14 +711,18 @@ def generate_markdown(xml_path: Path) -> str:
                 timeout=timeout,
                 intake=intake,
                 launcher=launcher,
-                climber=climber,
                 zones=zones,
                 zone_effects_list=zone_effects_list,
             )
         )
         # Trajectory link for summary table
         traj_path_exists = (CHOREO_DIR / f"{choreo}.traj").exists()
-        if prim_id == "TRAJECTORY_DRIVE" and choreo and choreo != "--" and traj_path_exists:
+        if (
+            prim_id == "TRAJECTORY_DRIVE"
+            and choreo
+            and choreo != "--"
+            and traj_path_exists
+        ):
             traj_rel = f"src/main/deploy/choreo/{choreo}.traj"
             choreo_display = f"[{choreo}](../../{traj_rel})"
         else:
@@ -669,7 +736,6 @@ def generate_markdown(xml_path: Path) -> str:
                 "timeout": timeout,
                 "intake": intake,
                 "launcher": launcher,
-                "climber": climber,
                 "zones": ", ".join(z.replace(".xml", "") for z in zones) or "--",
             }
         )
@@ -696,7 +762,9 @@ def generate_markdown(xml_path: Path) -> str:
 
     # Apply classDef per step based on intake state
     for d in step_data:
-        css_class = "noIntake" if d["intake"].replace("STATE_", "") == "OFF" else "intake"
+        css_class = (
+            "noIntake" if d["intake"].replace("STATE_", "") == "OFF" else "intake"
+        )
         mermaid_lines.append(f"    class Step{d['step']} {css_class}")
     mermaid_lines.append("")
 
@@ -704,7 +772,7 @@ def generate_markdown(xml_path: Path) -> str:
     if not step_data:
         # Mermaid requires transitions to/from concrete states; [*] --> [*] is invalid.
         mermaid_lines.append('    Empty : "No primitives defined"')
-        mermaid_lines.append('    class Empty noIntake')
+        mermaid_lines.append("    class Empty noIntake")
         mermaid_lines.append('    [*] --> Empty : "start"')
         mermaid_lines.append('    Empty --> [*] : "done"')
     else:
@@ -723,9 +791,6 @@ def generate_markdown(xml_path: Path) -> str:
         launcher_short = d["launcher"].replace("STATE_", "")
         if launcher_short not in ("IDLE", "OFF"):
             parts.append(f"launcher={launcher_short}")
-        climber_short = d["climber"].replace("STATE_", "")
-        if climber_short not in ("OFF",):
-            parts.append(f"climber={climber_short}")
         zone_labels_short: list[str] = []
         for zf, effects in d["zone_effects_list"]:
             stem_z = zf.replace(".xml", "").replace("Blue", "").replace("Red", "")
@@ -749,11 +814,15 @@ def generate_markdown(xml_path: Path) -> str:
     # ------------------------------------------------------------------ #
     # 2. Summary table                                                     #
     # ------------------------------------------------------------------ #
-    table_header = "| Step | Primitive | Trajectory | Timeout | Intake | Launcher | Climber | Zones |"
-    table_sep = "|------|-----------|------------|---------|--------|----------|---------|-------|"
+    table_header = (
+        "| Step | Primitive | Trajectory | Timeout | Intake | Launcher | Zones |"
+    )
+    table_sep = (
+        "|------|-----------|------------|---------|--------|----------|-------|"
+    )
     table_rows = "\n".join(
         f"| {r['step']} | {r['primitive']} | {r['trajectory']} | {r['timeout']} s "
-        f"| {r['intake']} | {r['launcher']} | {r['climber']} | {r['zones']} |"
+        f"| {r['intake']} | {r['launcher']} | {r['zones']} |"
         for r in summary_rows
     )
 
@@ -783,8 +852,7 @@ def generate_markdown(xml_path: Path) -> str:
     # ------------------------------------------------------------------ #
     # 5. Assemble full document                                            #
     # ------------------------------------------------------------------ #
-    doc = (
-f"""# Auton: {stem}
+    doc = f"""# Auton: {stem}
 
 > Auto-generated from [`{relative_xml}`](../../{relative_xml}).  
 > Do not edit this file manually -- push a change to the XML and the [auton-diagrams workflow](../../.github/workflows/auton-diagrams.yml) will regenerate it.
@@ -807,7 +875,7 @@ f"""# Auton: {stem}
 {legend_header}
 {legend_sep}
 {legend_rows}
-""")
+"""
     return doc
 
 
