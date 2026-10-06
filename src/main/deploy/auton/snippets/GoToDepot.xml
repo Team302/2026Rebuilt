@@ -10,6 +10,7 @@ intakeState = "STATE_INTAKE">
 
 <primitive id = "TRAJECTORY_DRIVE"
 choreoname = "BlueMLDrop3_C_Forth"
+launcherState = "STATE_PREPARE_TO_LAUNCH"
 time = "10.0">
 </primitive>
 

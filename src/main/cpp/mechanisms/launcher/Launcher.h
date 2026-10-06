@@ -355,7 +355,7 @@ private:
     units::angular_velocity::revolutions_per_minute_t m_launcherVelocityThreshold = 150.0_rpm;
     units::angle::turn_t m_hoodAngleThreshold = 0.5_tr;
     units::velocity::meters_per_second_t m_chassisSpeedThreshold = 3.0_mps;
-    units::angle::turn_t m_minTurretSoftLimit{93};
+    units::angle::turn_t m_minTurretSoftLimit{95};
     units::angle::turn_t m_maxTurretSoftLimit{265};
 
     RebuiltTargetCalculator *m_targetCalculator;
